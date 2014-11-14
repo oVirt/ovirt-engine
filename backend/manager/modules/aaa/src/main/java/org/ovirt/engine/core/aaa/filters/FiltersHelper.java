@@ -26,6 +26,9 @@ public class FiltersHelper {
         public static final String HEADER_ENGINE_AUTH_TOKEN = "OVIRT-INTERNAL-ENGINE-AUTH-TOKEN";
     }
 
+    public static final int PREFER_NEW_AUTH = (1<<0);
+    public static final int PREFER_PERSISTENCE_AUTH = (1<<1);
+
     public static BackendLocal getBackend(Context context) {
 
         try {
@@ -41,7 +44,8 @@ public class FiltersHelper {
                 || request.getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY) != null;
     }
 
-    public static boolean isPersistentAuth(HttpServletRequest req) {
+    public static int getPrefer(HttpServletRequest req) {
+        int ret = 0;
         Enumeration<String> headerValues = req.getHeaders(Constants.HEADER_PREFER);
         while (headerValues.hasMoreElements()) {
             String headerValue = headerValues.nextElement();
@@ -49,13 +53,16 @@ public class FiltersHelper {
             if (headerElements != null) {
                 for (HeaderElement headerElement : headerElements) {
                     String elementName = headerElement.getName();
+                    if ("new-auth".equalsIgnoreCase(elementName)) {
+                        ret |= PREFER_NEW_AUTH;
+                    }
                     if ("persistent-auth".equalsIgnoreCase(elementName)) {
-                        return true;
+                        ret |= PREFER_PERSISTENCE_AUTH;
                     }
                 }
             }
         }
-        return false;
+        return ret;
     }
 
     public static String getTokenInstance(String content) {

@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.aaa.filters;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -19,18 +18,20 @@ public class FiltersHelperTest {
      */
     @Test
     public void testPersistentAuthWithSeveralHeaders() {
-        assertTrue(isPersistentAuth("persistent-auth", "x", "y"));
-        assertTrue(isPersistentAuth("x", "persistent-auth", "y"));
-        assertTrue(isPersistentAuth("x", "y", "persistent-auth"));
+        assertEquals(FiltersHelper.PREFER_PERSISTENCE_AUTH, getPrefer("persistent-auth", "x", "y"));
+        assertEquals(FiltersHelper.PREFER_PERSISTENCE_AUTH, getPrefer("x", "persistent-auth", "y"));
+        assertEquals(FiltersHelper.PREFER_PERSISTENCE_AUTH, getPrefer("x", "y", "persistent-auth"));
     }
 
     /**
      * Check that the persistent authentication preference is recognized regardless of case.
      */
     @Test
-    public void testPersistentAuthIgnoresCase() {
-        assertTrue(isPersistentAuth("Persistent-Auth"));
-        assertTrue(isPersistentAuth("PERSISTENT-AUTH"));
+    public void testPreferIgnoresCase() {
+        assertEquals(FiltersHelper.PREFER_PERSISTENCE_AUTH, getPrefer("Persistent-Auth"));
+        assertEquals(FiltersHelper.PREFER_PERSISTENCE_AUTH, getPrefer("PERSISTENT-AUTH"));
+        assertEquals(FiltersHelper.PREFER_NEW_AUTH, getPrefer("new-auth"));
+        assertEquals(FiltersHelper.PREFER_NEW_AUTH, getPrefer("NEW-AUTH"));
     }
 
     /**
@@ -39,9 +40,9 @@ public class FiltersHelperTest {
      */
     @Test
     public void testPersistentAuthOtherPreferencesInSameHeader() {
-        assertTrue(isPersistentAuth("persistent-auth, x, y"));
-        assertTrue(isPersistentAuth("x, persistent-auth, y"));
-        assertTrue(isPersistentAuth("x, y, persistent-auth"));
+        assertEquals(FiltersHelper.PREFER_PERSISTENCE_AUTH, getPrefer("persistent-auth, x, y"));
+        assertEquals(FiltersHelper.PREFER_PERSISTENCE_AUTH, getPrefer("x, persistent-auth, y"));
+        assertEquals(FiltersHelper.PREFER_PERSISTENCE_AUTH, getPrefer("x, y, persistent-auth"));
     }
 
     /**
@@ -49,10 +50,12 @@ public class FiltersHelperTest {
      * ignored).
      */
     @Test
-    public void testPersistentAuthWithValue() {
-        assertTrue(isPersistentAuth("persistent-auth=false"));
-        assertTrue(isPersistentAuth("persistent-auth=true"));
-        assertTrue(isPersistentAuth("persistent-auth=junk"));
+    public void testPreferWithValue() {
+        assertEquals(FiltersHelper.PREFER_PERSISTENCE_AUTH, getPrefer("persistent-auth=false"));
+        assertEquals(FiltersHelper.PREFER_PERSISTENCE_AUTH, getPrefer("persistent-auth=true"));
+        assertEquals(FiltersHelper.PREFER_PERSISTENCE_AUTH, getPrefer("persistent-auth=junk"));
+        assertEquals(FiltersHelper.PREFER_NEW_AUTH, getPrefer("new-auth=false"));
+        assertEquals(FiltersHelper.PREFER_PERSISTENCE_AUTH | FiltersHelper.PREFER_NEW_AUTH, getPrefer("persistent-auth=false, new-auth=false"));
     }
 
     /**
@@ -60,8 +63,9 @@ public class FiltersHelperTest {
      * should be ignored).
      */
     @Test
-    public void testPersistentAuthWithParameters() {
-        assertTrue(isPersistentAuth("persistent-auth; x=0; y=0"));
+    public void testPreferParameters() {
+        assertEquals(FiltersHelper.PREFER_PERSISTENCE_AUTH, getPrefer("persistent-auth; x=0; y=0"));
+        assertEquals(FiltersHelper.PREFER_PERSISTENCE_AUTH | FiltersHelper.PREFER_NEW_AUTH, getPrefer("persistent-auth, new-auth; x=0; y=0"));
     }
 
     /**
@@ -69,9 +73,9 @@ public class FiltersHelperTest {
      */
     @Test
     public void testPersistentAuthDisabled() {
-        assertFalse(isPersistentAuth());
-        assertFalse(isPersistentAuth("x", "y"));
-        assertFalse(isPersistentAuth("x", "y"));
+        assertEquals(0, getPrefer());
+        assertEquals(0, getPrefer("x", "y"));
+        assertEquals(0, getPrefer("x", "y"));
     }
 
     /**
@@ -80,7 +84,7 @@ public class FiltersHelperTest {
      *
      * @param values the values of the {@code Prefer} header
      */
-    private boolean isPersistentAuth(String... values) {
+    private int getPrefer(String... values) {
         // Create a vector containing the values of the header:
         Vector<String> vector = new Vector<>();
         Collections.addAll(vector, values);
@@ -90,7 +94,7 @@ public class FiltersHelperTest {
         when(request.getHeaders(FiltersHelper.Constants.HEADER_PREFER)).thenReturn(vector.elements());
 
         // Call the method that checks for persistent authentication:
-        return FiltersHelper.isPersistentAuth(request);
+        return FiltersHelper.getPrefer(request);
     }
 
 }

@@ -21,7 +21,8 @@ public class RestApiSessionValidationFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
             ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
-        if (!FiltersHelper.isPersistentAuth(req)) {
+        int prefer = FiltersHelper.getPrefer(req);
+        if ((prefer & FiltersHelper.PREFER_NEW_AUTH) != 0 || (prefer & FiltersHelper.PREFER_PERSISTENCE_AUTH) == 0) {
             HttpSession session = req.getSession(false);
             if (session != null) {
                 session.invalidate();

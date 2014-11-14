@@ -52,8 +52,8 @@ public class RestApiSessionMgmtFilter implements Filter {
             throw new ServletException("No engine session");
         }
 
-        boolean persistentAuth = FiltersHelper.isPersistentAuth(req);
-        if (persistentAuth) {
+        int prefer = FiltersHelper.getPrefer(req);
+        if ((prefer & FiltersHelper.PREFER_PERSISTENCE_AUTH) != 0) {
             HttpSession session = req.getSession(true);
             session.setAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY, engineSessionId);
             try {
@@ -70,7 +70,7 @@ public class RestApiSessionMgmtFilter implements Filter {
 
         try {
             if (FiltersHelper.isAuthenticated(req)) {
-                if (persistentAuth) {
+                if ((prefer & FiltersHelper.PREFER_PERSISTENCE_AUTH) != 0) {
                     if (!Boolean.TRUE.equals(request.getAttribute(SessionConstants.REQUEST_ASYNC_KEY))) {
                         HttpSession session = req.getSession(false);
                         if (session != null) {
