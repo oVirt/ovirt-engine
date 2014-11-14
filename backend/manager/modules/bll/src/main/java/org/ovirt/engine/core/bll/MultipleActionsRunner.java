@@ -75,20 +75,22 @@ public class MultipleActionsRunner {
                 }
             }
 
-            boolean canRunActions = canRunActions(returnValues);
-
-            if (canRunActions) {
-                if (isWaitForResult) {
-                    invokeSyncCommands();
-                } else {
-                    invokeCommands();
-                }
-            }
+            invokeCommands(returnValues);
         } catch (RuntimeException e) {
             log.error("Failed to execute multiple actions of type '{}': {}", actionType, e.getMessage());
             log.error("Exception", e);
         }
         return returnValues;
+    }
+
+    private void invokeCommands(ArrayList<VdcReturnValueBase> returnValues) {
+        if (canRunActions(returnValues)) {
+            if (isWaitForResult) {
+                invokeSyncCommands();
+            } else {
+                invokeCommands();
+            }
+        }
     }
 
     private boolean canRunActions(ArrayList<VdcReturnValueBase> returnValues) {
