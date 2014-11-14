@@ -75,22 +75,7 @@ public class MultipleActionsRunner {
                 }
             }
 
-            if (getCommands().size() == 1) {
-                CorrelationIdTracker.setCorrelationId(getCommands().get(0).getCorrelationId());
-                returnValues.add(getCommands().get(0).canDoActionOnly());
-            } else {
-                checkCanDoActionsAsynchronously(returnValues);
-            }
-
-            boolean canRunActions = true;
-            if (isRunOnlyIfAllCanDoPass) {
-                for (VdcReturnValueBase value : returnValues) {
-                    if (!value.getCanDoAction()) {
-                        canRunActions = false;
-                        break;
-                    }
-                }
-            }
+            boolean canRunActions = canRunActions(returnValues);
 
             if (canRunActions) {
                 if (isWaitForResult) {
@@ -104,6 +89,24 @@ public class MultipleActionsRunner {
             log.error("Exception", e);
         }
         return returnValues;
+    }
+
+    private boolean canRunActions(ArrayList<VdcReturnValueBase> returnValues) {
+        if (getCommands().size() == 1) {
+            CorrelationIdTracker.setCorrelationId(getCommands().get(0).getCorrelationId());
+            returnValues.add(getCommands().get(0).canDoActionOnly());
+        } else {
+            checkCanDoActionsAsynchronously(returnValues);
+        }
+
+        if (isRunOnlyIfAllCanDoPass) {
+            for (VdcReturnValueBase value : returnValues) {
+                if (!value.getCanDoAction()) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
