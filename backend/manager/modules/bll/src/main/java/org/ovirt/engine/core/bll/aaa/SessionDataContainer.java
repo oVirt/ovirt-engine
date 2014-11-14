@@ -185,6 +185,22 @@ public class SessionDataContainer {
         return getPrincipalName(sessionId);
     }
 
+    public void setAuthRecord(String engineSessionId, ExtMap authRecord) {
+        setData(engineSessionId, AUTH_RECORD_PARAMETER_NAME, authRecord);
+    }
+
+    public ExtMap getAuthRecord(String engineSessionId) {
+        return (ExtMap) getData(engineSessionId, AUTH_RECORD_PARAMETER_NAME, false);
+    }
+
+    public void setPrincipalRecord(String engineSessionId, ExtMap principalRecord) {
+        setData(engineSessionId, PRINCIPAL_RECORD_PARAMETER_NAME, principalRecord);
+    }
+
+    public ExtMap getPrincipalRecord(String engineSessionId) {
+        return (ExtMap) getData(engineSessionId, PRINCIPAL_RECORD_PARAMETER_NAME, false);
+    }
+
     private void refresh(SessionInfo sessionInfo) {
         int softLimitValue = Config.<Integer> getValue(ConfigValues.UserSessionTimeOutInterval);
         if (softLimitValue > 0) {
