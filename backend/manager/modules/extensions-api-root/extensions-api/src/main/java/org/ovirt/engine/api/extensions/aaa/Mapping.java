@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.extensions.aaa;
 
 import org.ovirt.engine.api.extensions.ExtKey;
-import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.ExtUUID;
 
 /**

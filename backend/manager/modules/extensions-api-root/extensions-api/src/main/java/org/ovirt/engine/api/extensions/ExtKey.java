@@ -18,7 +18,7 @@ public class ExtKey implements Cloneable, Serializable {
 
     private static final long serialVersionUID = 7373830750276947742L;
 
-    private transient Class type;
+    private transient Class<?> type;
     private String typeName;
     private ExtUUID uuid;
     private int flags;
@@ -41,7 +41,7 @@ public class ExtKey implements Cloneable, Serializable {
      * @param uuid unique identifier for key.
      * @param flags key flags see {@link Flags}.
      */
-    public ExtKey(Class type, ExtUUID uuid, int flags) {
+    public ExtKey(Class<?> type, ExtUUID uuid, int flags) {
         this.type = type;
         this.uuid = uuid;
         this.flags = flags;
@@ -56,7 +56,7 @@ public class ExtKey implements Cloneable, Serializable {
      * @param uuid unique identifier for key.
      * @param flags key flags see {@link Flags}.
      */
-    public ExtKey(String name, Class type, UUID uuid, int flags) {
+    public ExtKey(String name, Class<?> type, UUID uuid, int flags) {
         this(type, new ExtUUID(name, uuid), flags);
     }
 
@@ -67,7 +67,7 @@ public class ExtKey implements Cloneable, Serializable {
      * @param uuid unique identifier for key.
      * @param flags key flags see {@link Flags}.
      */
-    public ExtKey(String name, Class type, String uuid, int flags) {
+    public ExtKey(String name, Class<?> type, String uuid, int flags) {
         this(name, type, UUID.fromString(uuid), flags);
     }
 
@@ -77,7 +77,7 @@ public class ExtKey implements Cloneable, Serializable {
      * @param type value type.
      * @param uuid unique identifier for key.
      */
-    public ExtKey(String name, Class type, String uuid) {
+    public ExtKey(String name, Class<?> type, String uuid) {
         this(name, type, uuid, 0);
     }
 
@@ -130,7 +130,7 @@ public class ExtKey implements Cloneable, Serializable {
      * Returns the type of the key.
      * @return Type of key.
      */
-    public Class getType() {
+    public Class<?> getType() {
         return type;
     }
 
