@@ -44,6 +44,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.AddBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.BrickAdvancedDetailsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.DetachGlusterHostsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickStatusPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.ReplaceBrickPopupPresenterWidget;
@@ -283,6 +284,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.event.EventPopupView
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.AddBrickPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.BrickAdvancedDetailsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.DetachGlusterHostsPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.GeoRepActionConfirmPopUpView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.RemoveBrickPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.RemoveBrickStatusPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.ReplaceBrickPopupView;
@@ -1171,6 +1173,10 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VolumeRebalanceStatusPopupPresenterWidget.class,
                 VolumeRebalanceStatusPopupPresenterWidget.ViewDef.class,
                 VolumeRebalanceStatusPopupView.class);
+
+        bindPresenterWidget(GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget.class,
+                GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget.ViewDef.class,
+                GeoRepActionConfirmPopUpView.class);
 
         bindPresenterWidget(RemoveBrickStatusPopupPresenterWidget.class,
                 RemoveBrickStatusPopupPresenterWidget.ViewDef.class,

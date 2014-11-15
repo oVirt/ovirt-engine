@@ -3985,4 +3985,14 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("NUMA Support")
     String numaSupport();
+
+    @DefaultStringValue("Master Volume")
+    String geoRepMasterVolume();
+
+    @DefaultStringValue("Host name (or) IP")
+    String geoRepSlaveHostIp();
+
+    @DefaultStringValue("Slave Volume")
+    String geoRepSlaveVolume();
+
 }
