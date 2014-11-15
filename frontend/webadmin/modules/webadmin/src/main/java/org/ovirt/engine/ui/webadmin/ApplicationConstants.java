@@ -3900,4 +3900,14 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("It is suggested to optimise a Volume for virt store if the volume is of replica-3 type")
     String newVolumeOptimiseForVirtStoreWarning();
+
+    @DefaultStringValue("Master Volume")
+    String geoRepMasterVolume();
+
+    @DefaultStringValue("Host name (or) IP")
+    String geoRepSlaveHostIp();
+
+    @DefaultStringValue("Slave Volume")
+    String geoRepSlaveVolume();
+
 }
