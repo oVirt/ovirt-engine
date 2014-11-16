@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog">
+
+	<ui:style>
+		.frame {
+			height: 300px;
+			margin-top: 30px;
+			margin-right: 5px;
+			margin-left: 5px;
+		}
+		.headers {
+			font-weight: bold;
+		}
+
+		.tables {
+			height: 250px;
+			border-style: solid;
+			border-width: thin;
+			border-color: gray;
+		}
+
+		.buttons {
+		    margin: 15px;
+		}
+	</ui:style>
+
+	<g:DockLayoutPanel ui:field="splitLayoutPanel" addStyleNames="{style.frame}">
+		<g:west size="350">
+			<g:FlowPanel>
+				<g:Label ui:field="excludedTitle" addStyleNames="{style.headers}" />
+				<g:ScrollPanel addStyleNames="{style.tables}">
+					<e:EntityModelCellTable ui:field="excludedTable" />
+				</g:ScrollPanel>
+			</g:FlowPanel>
+		</g:west>
+		<g:center>
+			<g:HorizontalPanel height="100%" width="100%">
+				<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+					<g:VerticalPanel>
+						<d:ShapedButton ui:field="includeButton" addStyleNames="{style.buttons}" />
+						<d:ShapedButton ui:field="excludeButton" addStyleNames="{style.buttons}" />
+					</g:VerticalPanel>
+				</g:cell>
+			</g:HorizontalPanel>
+		</g:center>
+		<g:east size="350">
+			<g:FlowPanel>
+				<g:Label ui:field="includedTitle" addStyleNames="{style.headers}" />
+				<g:ScrollPanel addStyleNames="{style.tables}">
+					<e:EntityModelCellTable ui:field="includedTable" />
+				</g:ScrollPanel>
+			</g:FlowPanel>
+		</g:east>
+	</g:DockLayoutPanel>
+
+</ui:UiBinder>

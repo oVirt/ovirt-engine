@@ -129,6 +129,30 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/arrows/tri_up_disabled.png")
     ImageResource arrowUpDisabled();
 
+    @Source("images/arrows/tri_left_normal.png")
+    ImageResource arrowLeftNormal();
+
+    @Source("images/arrows/tri_left_click.png")
+    ImageResource arrowLeftClick();
+
+    @Source("images/arrows/tri_left_over.png")
+    ImageResource arrowLeftOver();
+
+    @Source("images/arrows/tri_left_disabled.png")
+    ImageResource arrowLeftDisabled();
+
+    @Source("images/arrows/tri_right_normal.png")
+    ImageResource arrowRightNormal();
+
+    @Source("images/arrows/tri_right_click.png")
+    ImageResource arrowRightClick();
+
+    @Source("images/arrows/tri_right_over.png")
+    ImageResource arrowRightOver();
+
+    @Source("images/arrows/tri_right_disabled.png")
+    ImageResource arrowRightDisabled();
+
     // Table image columns
 
     @Source("images/comment.png")
