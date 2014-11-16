@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.network.host;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -20,6 +21,7 @@ import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -27,14 +29,16 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
-import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.UserConfiguredNetworkData;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
+import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
+import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkTopologyPersister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,12 +49,13 @@ import org.slf4j.LoggerFactory;
 @NonTransactiveCommandAttribute
 public class SetupNetworksCommand<T extends SetupNetworksParameters> extends VdsCommand<T> {
 
+    @Inject
+    private HostNetworkTopologyPersister hostNetworkTopologyPersister;
+
     public static enum SETUP_NETWORKS_RESOLUTION {
         NO_CHANGES_DETECTED;
     };
 
-    /** Time between polling attempts, to prevent flooding the host/network. */
-    private static final long POLLING_BREAK = 500;
     private static final List<VDSStatus> SUPPORTED_HOST_STATUSES =
             Arrays.asList(VDSStatus.Maintenance, VDSStatus.Up, VDSStatus.NonOperational);
     private static final Logger log = LoggerFactory.getLogger(SetupNetworksCommand.class);
@@ -154,7 +159,15 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
                 VdsHandler.handleVdsResult(retVal);
 
                 if (retVal.getSucceeded()) {
-                    setSucceeded(TransactionSupport.executeInNewTransaction(updateVdsNetworksInTx()));
+                    try (EngineLock monitoringLock = acquireMonitorLock()) {
+                        VDSReturnValue returnValue =
+                                runVdsCommand(VDSCommandType.GetCapabilities,
+                                        new VdsIdAndVdsVDSCommandParametersBase(getVds()));
+                        VDS updatedHost = (VDS) returnValue.getReturnValue();
+                        persistNetworkChanges(updatedHost);
+                    }
+
+                    setSucceeded(true);
                 }
             }
         } catch (TimeoutException e) {
@@ -211,50 +224,35 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
      * @param timeout
      */
     private void pollInterruptively(final FutureVDSCall<VDSReturnValue> setupNetworksTask) {
+        HostSetupNetworkPoller poller = new HostSetupNetworkPoller();
         while (!setupNetworksTask.isDone()) {
-            pollVds();
+            poller.poll(getVdsId());
         }
     }
 
-    /**
-     * update the new VDSM networks to DB in new transaction.
-     *
-     * @return
-     */
-    private TransactionMethod<Boolean> updateVdsNetworksInTx() {
-        return new TransactionMethod<Boolean>() {
-
+    private void persistNetworkChanges(final VDS updatedHost) {
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
-            public Boolean runInTransaction() {
-                // save the new network topology to DB
+            public Void runInTransaction() {
+
                 List<VdsNetworkInterface> ifaces = new ArrayList<>(getInterfaces());
                 ifaces.addAll(getRemovedBonds().values());
-                runVdsCommand(VDSCommandType.CollectVdsNetworkData,
-                                new CollectHostNetworkDataVdsCommandParameters(getVds(), ifaces));
+                UserConfiguredNetworkData userConfiguredNetworkData =
+                        new UserConfiguredNetworkData(Collections.<NetworkAttachment> emptyList(), ifaces);
 
-                // Update cluster networks (i.e. check if need to activate each new network)
+                // save the new network topology to DB
+                hostNetworkTopologyPersister.persistAndEnforceNetworkCompliance(updatedHost,
+                        false,
+                        userConfiguredNetworkData);
+
+                getVdsDynamicDao().updateNetConfigDirty(getVds().getId(), getVds().getNetConfigDirty());
                 for (Network net : getNetworks()) {
                     NetworkClusterHelper.setStatus(getVdsGroupId(), net);
                 }
-                return Boolean.TRUE;
-            }
-        };
-    }
 
-    private void pollVds() {
-        long timeBeforePoll = System.currentTimeMillis();
-        FutureVDSCall<VDSReturnValue> task =
-                Backend.getInstance().getResourceManager().runFutureVdsCommand(FutureVDSCommandType.Poll,
-                        new VdsIdVDSCommandParametersBase(getVds().getId()));
-        try {
-            task.get(Config.<Integer> getValue(ConfigValues.SetupNetworksPollingTimeout), TimeUnit.SECONDS);
-
-            if (System.currentTimeMillis() - timeBeforePoll < POLLING_BREAK) {
-                Thread.sleep(POLLING_BREAK);
+                return null;
             }
-        } catch (Exception e) {
-            // ignore failure. network can go down due to VDSM changing the network
-        }
+        });
     }
 
     private FutureVDSCall<VDSReturnValue> createFutureTask(final SetupNetworksVdsCommandParameters vdsCmdParams) {
@@ -262,5 +260,4 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
                 .getResourceManager()
                 .runFutureVdsCommand(FutureVDSCommandType.SetupNetworks, vdsCmdParams);
     }
-
 }
