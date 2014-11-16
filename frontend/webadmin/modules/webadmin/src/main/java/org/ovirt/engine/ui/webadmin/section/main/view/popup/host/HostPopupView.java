@@ -2,8 +2,12 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
 import java.util.List;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.ExternalEntityBase;
+import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -779,6 +783,31 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
                     showProvisionedHostsWidgets(true);
                     object.cleanHostParametersFields();
                 }
+            }
+        });
+
+        nameEditor.asValueBox().addKeyDownHandler(new KeyDownHandler() {
+            @Override
+            public void onKeyDown(KeyDownEvent event) {
+                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                    @Override
+                    public void execute() {
+                        if (object.getExternalHostProviderEnabled().getEntity() &&
+                                Boolean.TRUE.equals(object.getIsDiscoveredHosts().getEntity())) {
+                            ExternalHostGroup dhg =
+                                    (ExternalHostGroup) object.getExternalHostGroups().getSelectedItem();
+                            if (dhg != null) {
+                                String base = nameEditor.asEditor().getSubEditor().getValue();
+                                if (base == null) {
+                                    base = constants.empty();
+                                }
+                                String generatedHostName = base + "." + //$NON-NLS-1$
+                                        dhg.getDomainName();
+                                object.getHost().setEntity(generatedHostName);
+                            }
+                        }
+                    }
+                });
             }
         });
 

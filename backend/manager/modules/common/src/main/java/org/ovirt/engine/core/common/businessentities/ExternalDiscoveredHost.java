@@ -53,6 +53,7 @@ public class ExternalDiscoveredHost implements ExternalEntityBase {
     public String getDescription() {
         return "MAC: " + mac + "\n" +
                 " | DiscoverTime : " + lastReport + "\n" +
-                " | Subnet: " + subnetName;
+                " | Subnet: " + subnetName + "\n" +
+                " | IP: " + ip;
     }
 }

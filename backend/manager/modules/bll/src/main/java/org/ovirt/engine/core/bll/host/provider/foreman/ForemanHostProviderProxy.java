@@ -176,7 +176,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
         for (ForemanHost host : foremanHosts) {
             VDS vds = new VDS();
             vds.setVdsName(host.getName());
-            vds.setHostName(host.getIp());
+            vds.setHostName(host.getName());
             hosts.add(vds);
         }
         return hosts;
