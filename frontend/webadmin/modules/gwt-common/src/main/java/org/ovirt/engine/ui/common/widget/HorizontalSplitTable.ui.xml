@@ -29,9 +29,9 @@
 	<g:DockLayoutPanel ui:field="splitLayoutPanel" addStyleNames="{style.frame}">
 		<g:north size="245">
 			<g:FlowPanel>
-				<g:Label ui:field="topTitle" addStyleNames="{style.headers}" />
+				<g:Label ui:field="excludedTitle" addStyleNames="{style.headers}" />
 				<g:ScrollPanel addStyleNames="{style.tables}">
-					<e:EntityModelCellTable ui:field="topTable" />
+					<e:EntityModelCellTable ui:field="excludedTable" />
 				</g:ScrollPanel>
 			</g:FlowPanel>
 		</g:north>
@@ -39,17 +39,17 @@
 			<g:HorizontalPanel height="100%" width="100%">
 				<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
 					<g:HorizontalPanel>
-						<d:ShapedButton ui:field="downButton" addStyleNames="{style.buttons}" />
-						<d:ShapedButton ui:field="upButton" addStyleNames="{style.buttons}" />
+						<d:ShapedButton ui:field="includeButton" addStyleNames="{style.buttons}" />
+						<d:ShapedButton ui:field="excludeButton" addStyleNames="{style.buttons}" />
 					</g:HorizontalPanel>
 				</g:cell>
 			</g:HorizontalPanel>
 		</g:center>
 		<g:south size="245">
 			<g:FlowPanel>
-				<g:Label ui:field="bottomTitle" addStyleNames="{style.headers}" />
+				<g:Label ui:field="includedTitle" addStyleNames="{style.headers}" />
 				<g:ScrollPanel addStyleNames="{style.tables}">
-					<e:EntityModelCellTable ui:field="bottomTable" />
+					<e:EntityModelCellTable ui:field="includedTable" />
 				</g:ScrollPanel>
 			</g:FlowPanel>
 		</g:south>

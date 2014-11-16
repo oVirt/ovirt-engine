@@ -23,65 +23,65 @@ import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 
 public abstract class SplitTable<T> extends Composite {
 
-    private final MultiSelectionModel<T> topSelectionModel;
-    private final MultiSelectionModel<T> bottomSelectionModel;
+    private final MultiSelectionModel<T> excludedSelectionModel;
+    private final MultiSelectionModel<T> includedSelectionModel;
 
-    private final IEventListener<EventArgs> topItemsChangedListener;
-    private final IEventListener<EventArgs> bottomItemsChangedListener;
+    private final IEventListener<EventArgs> excludedItemsChangedListener;
+    private final IEventListener<EventArgs> includedItemsChangedListener;
 
-    private UICommand onDownButtonPressed;
-    private UICommand onUpButtonPressed;
-
-    @UiField(provided = true)
-    protected ShapedButton downButton;
+    private UICommand onIncludeButtonPressed;
+    private UICommand onExcludeButtonPressed;
 
     @UiField(provided = true)
-    protected ShapedButton upButton;
+    protected ShapedButton includeButton;
 
     @UiField(provided = true)
-    protected EntityModelCellTable<ListModel<T>> topTable;
+    protected ShapedButton excludeButton;
 
     @UiField(provided = true)
-    protected EntityModelCellTable<ListModel<T>> bottomTable;
+    protected EntityModelCellTable<ListModel<T>> excludedTable;
 
     @UiField(provided = true)
-    protected Label topTitle;
+    protected EntityModelCellTable<ListModel<T>> includedTable;
 
     @UiField(provided = true)
-    protected Label bottomTitle;
+    protected Label excludedTitle;
+
+    @UiField(provided = true)
+    protected Label includedTitle;
 
     @SuppressWarnings("unchecked")
-    public SplitTable(EntityModelCellTable<ListModel<T>> topTable,
-            EntityModelCellTable<ListModel<T>> bottomTable,
-            String topTitle,
-            String bottomTitle) {
+    public SplitTable(EntityModelCellTable<ListModel<T>> excludedTable,
+            EntityModelCellTable<ListModel<T>> includedTable,
+            String excludedTitle,
+            String includedTitle) {
 
-        this.topTable = topTable;
-        this.bottomTable = bottomTable;
-        this.topTitle = new Label(topTitle);
-        this.bottomTitle = new Label(bottomTitle);
+        this.excludedTable = excludedTable;
+        this.includedTable = includedTable;
+        this.excludedTitle = new Label(excludedTitle);
+        this.includedTitle = new Label(includedTitle);
 
-        downButton = createIncludeButton();
-        upButton = createExcludeButton();
+        includeButton = createIncludeButton();
+        excludeButton = createExcludeButton();
 
-        downButton.setEnabled(false);
-        upButton.setEnabled(false);
+        includeButton.setEnabled(false);
+        excludeButton.setEnabled(false);
 
         initWidget();
 
-        topSelectionModel = (MultiSelectionModel<T>) topTable.getSelectionModel();
-        bottomSelectionModel = (MultiSelectionModel<T>) bottomTable.getSelectionModel();
+        excludedSelectionModel = (MultiSelectionModel<T>) excludedTable.getSelectionModel();
+        includedSelectionModel = (MultiSelectionModel<T>) includedTable.getSelectionModel();
 
-        topItemsChangedListener = new IEventListener<EventArgs>() {
+        excludedItemsChangedListener = new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                topSelectionModel.clear();
+                excludedSelectionModel.clear();
             }
         };
-        bottomItemsChangedListener = new IEventListener<EventArgs>() {
+        includedItemsChangedListener = new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                bottomSelectionModel.clear();
+                includedSelectionModel.clear();
             }
         };
 
@@ -97,9 +97,9 @@ public abstract class SplitTable<T> extends Composite {
 
     protected abstract void initWidget();
 
-    private void addSelectionHandler(boolean topTable) {
-        final MultiSelectionModel<T> selectionModel = getSelectionModel(topTable);
-        final ShapedButton button = getButton(topTable);
+    private void addSelectionHandler(boolean excludedTable) {
+        final MultiSelectionModel<T> selectionModel = getSelectionModel(excludedTable);
+        final ShapedButton button = getButton(excludedTable);
         selectionModel.addSelectionChangeHandler(new Handler() {
 
             @Override
@@ -109,15 +109,15 @@ public abstract class SplitTable<T> extends Composite {
         });
     }
 
-    private void addClickHandler(final boolean topTableIsSource) {
-        getButton(topTableIsSource).addClickHandler(new ClickHandler() {
+    private void addClickHandler(final boolean excludedTableIsSource) {
+        getButton(excludedTableIsSource).addClickHandler(new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
-                MultiSelectionModel<T> sourceSelectionModel = getSelectionModel(topTableIsSource);
-                EntityModelCellTable<ListModel<T>> sourceTable = getTable(topTableIsSource);
-                EntityModelCellTable<ListModel<T>> targetTable = getTable(!topTableIsSource);
-                UICommand command = topTableIsSource ? onDownButtonPressed : onUpButtonPressed;
+                MultiSelectionModel<T> sourceSelectionModel = getSelectionModel(excludedTableIsSource);
+                EntityModelCellTable<ListModel<T>> sourceTable = getTable(excludedTableIsSource);
+                EntityModelCellTable<ListModel<T>> targetTable = getTable(!excludedTableIsSource);
+                UICommand command = excludedTableIsSource ? onIncludeButtonPressed : onExcludeButtonPressed;
 
                 if (command != null) {
                     command.execute();
@@ -137,29 +137,29 @@ public abstract class SplitTable<T> extends Composite {
         });
     }
 
-    private MultiSelectionModel<T> getSelectionModel(boolean top) {
-        return top ? topSelectionModel : bottomSelectionModel;
+    private MultiSelectionModel<T> getSelectionModel(boolean excluded) {
+        return excluded ? excludedSelectionModel : includedSelectionModel;
     }
 
-    private ShapedButton getButton(boolean down) {
-        return down ? downButton : upButton;
+    private ShapedButton getButton(boolean include) {
+        return include ? includeButton : excludeButton;
     }
 
-    private EntityModelCellTable<ListModel<T>> getTable(boolean top) {
-        return top ? topTable : bottomTable;
+    private EntityModelCellTable<ListModel<T>> getTable(boolean excluded) {
+        return excluded ? excludedTable : includedTable;
     }
 
     private void refresh() {
-        topSelectionModel.clear();
-        bottomSelectionModel.clear();
-        topTable.asEditor().edit(topTable.asEditor().flush());
-        bottomTable.asEditor().edit(bottomTable.asEditor().flush());
+        excludedSelectionModel.clear();
+        includedSelectionModel.clear();
+        excludedTable.asEditor().edit(excludedTable.asEditor().flush());
+        includedTable.asEditor().edit(includedTable.asEditor().flush());
     }
 
-    private void edit(ListModel<T> model, final boolean topTableIsEdited) {
-        EntityModelCellTable<ListModel<T>> table = getTable(topTableIsEdited);
+    private void edit(ListModel<T> model, final boolean excludedTableIsEdited) {
+        EntityModelCellTable<ListModel<T>> table = getTable(excludedTableIsEdited);
         ListModel<T> oldModel = table.asEditor().flush();
-        IEventListener<EventArgs> listener = topTableIsEdited ? topItemsChangedListener : bottomItemsChangedListener;
+        IEventListener<EventArgs> listener = excludedTableIsEdited ? excludedItemsChangedListener : includedItemsChangedListener;
         if (oldModel != null) {
             oldModel.getItemsChangedEvent().removeListener(listener);
         }
@@ -167,17 +167,17 @@ public abstract class SplitTable<T> extends Composite {
         table.asEditor().edit(model);
     }
 
-    public void edit(ListModel<T> topListModel, ListModel<T> bottomListModel) {
-        edit(topListModel, true);
-        edit(bottomListModel, false);
+    public void edit(ListModel<T> excludedListModel, ListModel<T> includedListModel) {
+        edit(excludedListModel, true);
+        edit(includedListModel, false);
     }
 
-    public void edit(ListModel<T> topListModel,
-            ListModel<T> bottomListModel,
-            UICommand onDownButtonPressed,
-            UICommand onUpButtonPressed) {
-        edit(topListModel, bottomListModel);
-        this.onDownButtonPressed = onDownButtonPressed;
-        this.onUpButtonPressed = onUpButtonPressed;
+    public void edit(ListModel<T> excludedListModel,
+            ListModel<T> includedListModel,
+            UICommand onIncludeButtonPressed,
+            UICommand onExcludeButtonPressed) {
+        edit(excludedListModel, includedListModel);
+        this.onIncludeButtonPressed = onIncludeButtonPressed;
+        this.onExcludeButtonPressed = onExcludeButtonPressed;
     }
 }
