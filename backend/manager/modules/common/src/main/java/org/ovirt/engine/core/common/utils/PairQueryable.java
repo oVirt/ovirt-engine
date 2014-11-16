@@ -66,14 +66,37 @@ public class PairQueryable<T extends IVdcQueryable, K extends IVdcQueryable> ext
         return true;
     }
 
-    public Object getQueryableId() {
-        return getMemberId(getFirst()) + '.' + getMemberId(getSecond());
+    @Override
+    public PairQueryableId getQueryableId() {
+        return new PairQueryableId(getMemberId(getFirst()), getMemberId(getSecond()));
     }
 
-    private String getMemberId(IVdcQueryable member) {
+    private Object getMemberId(IVdcQueryable member) {
         if (member != null) {
-            return member.getQueryableId().toString();
+            return member.getQueryableId();
         }
         return null;
+    }
+
+    private static class PairQueryableId extends Pair<Object, Object> {
+
+        private static final long serialVersionUID = 3430689533159779008L;
+
+        public PairQueryableId() {
+            this(null, null);
+        }
+
+        public PairQueryableId(Object first, Object second) {
+            super(first, second);
+        }
+
+        @Override
+        public String toString() {
+            return serializeId(getFirst()) + '.' + serializeId(getSecond());
+        }
+
+        private String serializeId(Object id) {
+            return (id == null) ? null : id.toString();
+        }
     }
 }
