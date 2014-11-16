@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
 import java.util.HashMap;
-
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 
 public enum VdcActionType {
@@ -12,14 +11,14 @@ public enum VdcActionType {
     AddVmFromScratch(3, ActionGroup.CREATE_VM, QuotaDependency.BOTH),
     RemoveVm(4, ActionGroup.DELETE_VM, QuotaDependency.STORAGE),
     UpdateVm(5, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.VDS_GROUP),
-    RebootVm(6, ActionGroup.VM_BASIC_OPERATIONS, QuotaDependency.NONE),
-    StopVm(7, ActionGroup.VM_BASIC_OPERATIONS, QuotaDependency.BOTH),
-    ShutdownVm(8, ActionGroup.VM_BASIC_OPERATIONS, QuotaDependency.VDS_GROUP),
+    RebootVm(6, ActionGroup.REBOOT_VM, QuotaDependency.NONE),
+    StopVm(7, ActionGroup.STOP_VM, QuotaDependency.BOTH),
+    ShutdownVm(8, ActionGroup.SHUT_DOWN_VM, QuotaDependency.VDS_GROUP),
     ChangeDisk(9, ActionGroup.CHANGE_VM_CD, QuotaDependency.NONE),
     PauseVm(10, QuotaDependency.NONE),
-    HibernateVm(11, ActionGroup.VM_BASIC_OPERATIONS, QuotaDependency.NONE),
-    RunVm(12, ActionGroup.VM_BASIC_OPERATIONS, QuotaDependency.VDS_GROUP),
-    RunVmOnce(13, ActionGroup.VM_BASIC_OPERATIONS, QuotaDependency.BOTH),
+    HibernateVm(11, ActionGroup.HIBERNATE_VM, QuotaDependency.NONE),
+    RunVm(12, ActionGroup.RUN_VM, QuotaDependency.VDS_GROUP),
+    RunVmOnce(13, ActionGroup.RUN_VM, QuotaDependency.BOTH),
     MigrateVm(14, ActionGroup.MIGRATE_VM, QuotaDependency.NONE),
     InternalMigrateVm(15, QuotaDependency.NONE),
     MigrateVmToServer(16, ActionGroup.MIGRATE_VM, QuotaDependency.NONE),

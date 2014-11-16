@@ -537,7 +537,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
     public void testGetEntityPermissions() {
         // Should not return null since the user has the relevant permission
         assertNotNull(dao.getEntityPermissions(DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS,
-                ActionGroup.VM_BASIC_OPERATIONS,
+                ActionGroup.RUN_VM,
                 VM_TEMPLATE_ENTITY_ID,
                 VdcObjectType.VM));
 
@@ -553,7 +553,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
         // Should not return null since the user has the relevant permission
         assertNotNull(dao.getEntityPermissionsForUserAndGroups(Guid.newGuid(),
                 DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS.toString(),
-                ActionGroup.VM_BASIC_OPERATIONS,
+                ActionGroup.RUN_VM,
                 VM_TEMPLATE_ENTITY_ID,
                 VdcObjectType.VM,
                 false));

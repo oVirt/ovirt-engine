@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui;
 
 import java.util.ArrayList;
-
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -137,7 +136,15 @@ public class RoleTreeView
         return new RoleNode(getConstants().vmRoleTree(),
                 new RoleNode[] {
                         new RoleNode(getConstants().basicOperationsRoleTree(), new RoleNode[] {
-                                new RoleNode(ActionGroup.VM_BASIC_OPERATIONS,
+                                new RoleNode(ActionGroup.REBOOT_VM,
+                                        getConstants().allowBasicVmOperationsRoleTreeTooltip()),
+                                new RoleNode(ActionGroup.STOP_VM,
+                                        getConstants().allowBasicVmOperationsRoleTreeTooltip()),
+                                new RoleNode(ActionGroup.SHUT_DOWN_VM,
+                                        getConstants().allowBasicVmOperationsRoleTreeTooltip()),
+                                new RoleNode(ActionGroup.HIBERNATE_VM,
+                                        getConstants().allowBasicVmOperationsRoleTreeTooltip()),
+                                new RoleNode(ActionGroup.RUN_VM,
                                         getConstants().allowBasicVmOperationsRoleTreeTooltip()),
                                 new RoleNode(ActionGroup.CHANGE_VM_CD,
                                         getConstants().allowToAttachCdToTheVmRoleTreeTooltip()),

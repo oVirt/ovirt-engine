@@ -25,7 +25,7 @@ public class RoleGroupMapDAOTest extends BaseDAOTestCase {
 
         dao = dbFacade.getRoleGroupMapDao();
 
-        existingRoleGroupMap = dao.getByActionGroupAndRole(ActionGroup.VM_BASIC_OPERATIONS, EXISTING_ROLE_ID);
+        existingRoleGroupMap = dao.getByActionGroupAndRole(ActionGroup.RUN_VM, EXISTING_ROLE_ID);
 
         actionGroup = ActionGroup.CONNECT_TO_VM;
         newRoleGroupMap = new RoleGroupMap(actionGroup, EXISTING_ROLE_ID);

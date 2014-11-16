@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
-
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 
 public enum ActionGroup {
@@ -9,7 +8,11 @@ public enum ActionGroup {
     CREATE_VM(1, RoleType.USER, false, ApplicationMode.VirtOnly),
     DELETE_VM(2, RoleType.USER, true, ApplicationMode.VirtOnly),
     EDIT_VM_PROPERTIES(3, RoleType.USER, true, ApplicationMode.VirtOnly),
-    VM_BASIC_OPERATIONS(4, RoleType.USER, true, ApplicationMode.VirtOnly),
+    REBOOT_VM(17, RoleType.USER, true, ApplicationMode.VirtOnly),
+    STOP_VM(18, RoleType.USER, true, ApplicationMode.VirtOnly),
+    SHUT_DOWN_VM(19, RoleType.USER, true, ApplicationMode.VirtOnly),
+    HIBERNATE_VM(21, RoleType.USER, true, ApplicationMode.VirtOnly),
+    RUN_VM(22, RoleType.USER, true, ApplicationMode.VirtOnly),
     CHANGE_VM_CD(5, RoleType.USER, true, ApplicationMode.VirtOnly),
     MIGRATE_VM(6, RoleType.USER, true, ApplicationMode.VirtOnly),
 

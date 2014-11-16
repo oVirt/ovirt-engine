@@ -22,7 +22,17 @@ public enum PermitType {
     CREATE_VM,
     DELETE_VM,
     EDIT_VM_PROPERTIES,
+    /**
+     * @deprecated This has been replaced by REBOOT_VM, STOP_VM, SHUT_DOWN_VM, HIBERNATE_VM and RUN_VM
+     *             which give more granular options for vm operations
+     */
+    @Deprecated
     VM_BASIC_OPERATIONS,
+    REBOOT_VM,
+    STOP_VM,
+    SHUT_DOWN_VM,
+    HIBERNATE_VM,
+    RUN_VM,
     CHANGE_VM_CD,
     MIGRATE_VM,
     CONNECT_TO_VM,
@@ -148,6 +158,12 @@ public enum PermitType {
         }
     }
 
+    // VM_BASIC_OPERATIONS is deprecated in ActionGroup
+    // We are keeping its id for backward compatibility.
+    public static String getVmBasicOperationsId() {
+        return "4";
+    }
+
     PermitType(ActionGroup actionGroup) {
         this.actionGroup = actionGroup;
     }
@@ -158,7 +174,7 @@ public enum PermitType {
 
     public static PermitType valueOf(ActionGroup actionGroup) {
         for (PermitType permitType : values()) {
-            if (permitType.getActionGroup().equals(actionGroup)) {
+            if (actionGroup.equals(permitType.getActionGroup())) {
                 return permitType;
             }
         }
