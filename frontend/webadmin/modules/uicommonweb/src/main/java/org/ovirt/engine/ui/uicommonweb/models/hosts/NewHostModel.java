@@ -54,6 +54,24 @@ public class NewHostModel extends HostModel {
             }
         });
 
+        getExternalHostGroups().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                externalHostGroups_SelectedItemChanged();
+            }
+        });
+
+        getIsDiscoveredHosts().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                if (Boolean.TRUE.equals(getIsDiscoveredHosts().getEntity())) {
+                    discoverHostName_SelectedItemChanged();
+                } else if (Boolean.FALSE.equals(getIsDiscoveredHosts().getEntity())) {
+                    hostName_SelectedItemChanged();
+                }
+            }
+        });
+
         getProviders().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
         getProviderSearchFilter().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
         getProviderSearchFilterLabel().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
@@ -63,8 +81,7 @@ public class NewHostModel extends HostModel {
 
     // Define events:
 
-    private void hostName_SelectedItemChanged()
-    {
+    private void hostName_SelectedItemChanged() {
         VDS vds = (VDS) getExternalHostName().getSelectedItem();
         if (vds == null) {
             vds = new VDS();
@@ -74,10 +91,21 @@ public class NewHostModel extends HostModel {
 
     private void discoverHostName_SelectedItemChanged() {
         ExternalDiscoveredHost dhost = (ExternalDiscoveredHost) getExternalDiscoveredHosts().getSelectedItem();
+        ExternalHostGroup dhg = (ExternalHostGroup) getExternalHostGroups().getSelectedItem();
         VDS vds = new VDS();
-        if (dhost != null) {
+        if (dhost != null && dhg != null) {
             vds.setVdsName(dhost.getName());
-            vds.setHostName(dhost.getIp());
+            vds.setHostName(dhost.getName() + "." + dhg.getDomainName()); //$NON-NLS-1$
+        }
+        updateModelFromVds(vds, null, false, null);
+    }
+
+    private void externalHostGroups_SelectedItemChanged() {
+        ExternalHostGroup dhg = (ExternalHostGroup) getExternalHostGroups().getSelectedItem();
+        VDS vds = new VDS();
+        if (dhg != null) {
+            vds.setVdsName(getName().getEntity());
+            vds.setHostName(getName().getEntity() + "." + dhg.getDomainName()); //$NON-NLS-1$
         }
         updateModelFromVds(vds, null, false, null);
     }
@@ -93,6 +121,7 @@ public class NewHostModel extends HostModel {
         if (provider == null) {
             return;
         }
+
         AsyncQuery getHostsQuery = new AsyncQuery();
         getHostsQuery.asyncCallback = new INewAsyncCallback() {
             @Override
@@ -110,18 +139,6 @@ public class NewHostModel extends HostModel {
                 true,
                 getProviderSearchFilter().getEntity());
 
-        AsyncQuery getDiscoveredHostsQuery = new AsyncQuery();
-        getDiscoveredHostsQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object result) {
-                ArrayList<ExternalDiscoveredHost> hosts = (ArrayList<ExternalDiscoveredHost>) result;
-                ListModel externalDiscoveredHostsListModel = getExternalDiscoveredHosts();
-                externalDiscoveredHostsListModel.setItems(hosts);
-                externalDiscoveredHostsListModel.setIsChangable(true);
-            }
-        };
-        AsyncDataProvider.getInstance().getExternalProviderDiscoveredHostList(getDiscoveredHostsQuery, provider);
-
         AsyncQuery getHostGroupsQuery = new AsyncQuery();
         getHostGroupsQuery.asyncCallback = new INewAsyncCallback() {
             @Override
@@ -130,6 +147,19 @@ public class NewHostModel extends HostModel {
                 ListModel externalHostGroupsListModel = getExternalHostGroups();
                 externalHostGroupsListModel.setItems(hostGroups);
                 externalHostGroupsListModel.setIsChangable(true);
+
+                AsyncQuery getDiscoveredHostsQuery = new AsyncQuery();
+                getDiscoveredHostsQuery.asyncCallback = new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object model, Object result) {
+                        ArrayList<ExternalDiscoveredHost> hosts = (ArrayList<ExternalDiscoveredHost>) result;
+                        ListModel externalDiscoveredHostsListModel = getExternalDiscoveredHosts();
+                        externalDiscoveredHostsListModel.setItems(hosts);
+                        externalDiscoveredHostsListModel.setIsChangable(true);
+                    }
+                };
+                AsyncDataProvider.getInstance().getExternalProviderDiscoveredHostList(getDiscoveredHostsQuery,
+                        getProviders().getSelectedItem());
             }
         };
         AsyncDataProvider.getInstance().getExternalProviderHostGroupList(getHostGroupsQuery, provider);
@@ -157,7 +187,6 @@ public class NewHostModel extends HostModel {
                 {
                     ArrayList<VDS> hosts = (ArrayList<VDS>) result;
                     ListModel<VDS> hostNameListModel = getExternalHostName();
-                    hosts.add(0, null);
                     hostNameListModel.setItems(hosts);
                     hostNameListModel.setIsChangable(true);
                     setEnableSearchHost(true);
