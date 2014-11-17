@@ -161,8 +161,8 @@ public class ExtMap implements ConcurrentMap<ExtKey, Object>, Cloneable, Seriali
      * {@inheritDoc}
      */
     @Override
-    public void putAll(Map<? extends ExtKey,? extends Object> m) {
-        for (Map.Entry<? extends ExtKey,? extends Object> entry : m.entrySet()) {
+    public void putAll(Map<? extends ExtKey, ? extends Object> m) {
+        for (Map.Entry<? extends ExtKey, ? extends Object> entry : m.entrySet()) {
             put(entry.getKey(), entry.getValue());
         }
     }
@@ -309,7 +309,7 @@ public class ExtMap implements ConcurrentMap<ExtKey, Object>, Cloneable, Seriali
      * @param m map to add.
      * @return this.
      */
-    public ExtMap mput(Map<? extends ExtKey,? extends Object> m) {
+    public ExtMap mput(Map<? extends ExtKey, ? extends Object> m) {
         putAll(m);
         return this;
     }
