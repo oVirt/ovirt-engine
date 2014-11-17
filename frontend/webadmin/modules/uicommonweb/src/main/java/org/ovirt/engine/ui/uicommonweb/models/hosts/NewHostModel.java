@@ -70,7 +70,6 @@ public class NewHostModel extends HostModel {
             vds = new VDS();
         }
         updateModelFromVds(vds, null, false, null);
-        getHost().setIsChangable(false);
     }
 
     private void discoverHostName_SelectedItemChanged() {
@@ -81,7 +80,6 @@ public class NewHostModel extends HostModel {
             vds.setHostName(dhost.getIp());
         }
         updateModelFromVds(vds, null, false, null);
-        getName().setIsChangable(true);
     }
 
     private void providers_SelectedItemChanged() {

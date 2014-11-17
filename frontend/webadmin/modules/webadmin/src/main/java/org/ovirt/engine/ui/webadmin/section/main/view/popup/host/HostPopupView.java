@@ -750,8 +750,13 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 boolean showForemanProviders = object.getExternalHostProviderEnabled().getEntity();
                 providersEditor.setVisible(showForemanProviders);
+
+                // showing or hiding radio buttons
                 provisionedHostSection.setVisible(showForemanProviders);
                 discoveredHostSection.setVisible(showForemanProviders);
+
+                // disabling ip and name textbox when using provisioned hosts
+                hostAddressEditor.setEnabled(!showForemanProviders);
 
                 if (showForemanProviders) {
                     object.updateHosts();
@@ -768,9 +773,11 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
                 if (Boolean.TRUE.equals(object.getIsDiscoveredHosts().getEntity())) {
                     rbDiscoveredHost.setValue(true);
                     showDiscoveredHostsWidgets(true);
-                } else {
+                    object.cleanHostParametersFields();
+                } else if (Boolean.FALSE.equals(object.getIsDiscoveredHosts().getEntity())) {
                     rbProvisionedHost.setValue(true);
                     showProvisionedHostsWidgets(true);
+                    object.cleanHostParametersFields();
                 }
             }
         });
@@ -918,11 +925,11 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     }
 
     private void hideProviderWidgets(final HostModel object) {
+        rbProvisionedHost.setValue(false);
+        rbDiscoveredHost.setValue(false);
         usualFormToDiscover(false);
         showExternalDiscoveredHost(false);
         showExternalProvisionedHosts(false);
-        rbProvisionedHost.setValue(false);
-        rbDiscoveredHost.setValue(false);
         object.getIsDiscoveredHosts().setEntity(null);
     }
 
@@ -933,8 +940,8 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         provisionedHostSection.setVisible(false);
         discoveredHostSection.setVisible(false);
         providersEditor.setVisible(false);
-        discoveredHostsPanel.setVisible(false);
-        searchProviderPanel.setVisible(false);
+        showExternalDiscoveredHost(false);
+        showExternalProvisionedHosts(false);
     }
 
     private void displayPassPkWindow(boolean isPasswordVisible) {
@@ -967,8 +974,6 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     private void usualFormToDiscover(boolean isDiscovered) {
         if (isDiscovered) {
             authLabel.setText(constants.hostPopupAuthLabelForExternalHost());
-            hostAddressEditor.setEnabled(true);
-            hostAddressEditor.setVisible(true);
         } else {
             authLabel.setText(constants.hostPopupAuthLabel());
             displayPassPkWindow(true);
