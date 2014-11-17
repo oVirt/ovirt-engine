@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -49,7 +50,6 @@ import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.StorageDomainDynamicDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDAO;
-import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.SyncronizeNumberOfAsyncOperations;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -146,7 +146,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         List<VDS> hosts = getVdsDAO().getAllForStoragePoolAndStatus(getStoragePool().getId(),
                 VDSStatus.Up);
         if (!hosts.isEmpty()) {
-            return RandomUtils.instance().pickRandom(hosts);
+            return hosts.get(new Random().nextInt(hosts.size()));
         }
         addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
         return null;

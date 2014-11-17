@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.utils;
 
 import java.util.List;
+import java.util.Random;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -11,7 +12,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
-import org.ovirt.engine.core.utils.RandomUtils;
 
 public class ClusterUtils {
 
@@ -33,7 +33,7 @@ public class ClusterUtils {
         if (servers == null || servers.isEmpty()) {
             return null;
         }
-        return RandomUtils.instance().pickRandom(servers);
+        return servers.get(new Random().nextInt(servers.size()));
     }
 
     /**
