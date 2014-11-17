@@ -383,9 +383,11 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         Map<String, Pair<String, String>> lockMap = new HashMap<>();
-        lockMap.put(getParameters().getStorageDomainId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE,
-                        VdcBllMessages.ACTION_TYPE_FAILED_DOMAIN_OVF_ON_UPDATE));
+        if (!getParameters().isSkipDomainChecks()) {
+            lockMap.put(getParameters().getStorageDomainId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE,
+                            VdcBllMessages.ACTION_TYPE_FAILED_DOMAIN_OVF_ON_UPDATE));
+        }
 
         for (Pair<StorageDomainOvfInfo, DiskImage> pair : domainOvfStoresInfoForUpdate) {
             StorageDomainOvfInfo storageDomainOvfInfo = pair.getFirst();

@@ -6,9 +6,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.CreateOvfStoresForStorageDomainCommandParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
@@ -47,13 +49,11 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
         super(commandId);
 
     }
+
     @Override
     protected void executeCommand() {
-        StoragePoolIsoMap map =
-                getStoragePoolIsoMapDAO().get
-                        (new StoragePoolIsoMapId(getParameters().getStorageDomainId(),
-                                getParameters().getStoragePoolId()));
-        changeDomainStatusWithCompensation(map, StorageDomainStatus.Unknown, StorageDomainStatus.Locked);
+        StoragePoolIsoMap map = loadStoragePoolIsoMap();
+        changeDomainStatusWithCompensation(map, StorageDomainStatus.Unknown, StorageDomainStatus.Locked, getCompensationContext());
 
         if (shouldPerformOvfUpdate()) {
             runInternalAction(VdcActionType.ProcessOvfUpdateForStoragePool, new StoragePoolParametersBase(getStoragePoolId()), null);
@@ -88,6 +88,12 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
         params.setParentParameters(getParameters());
         params.setSkipDomainChecks(true);
         return params;
+    }
+
+    private StoragePoolIsoMap loadStoragePoolIsoMap() {
+        return  getStoragePoolIsoMapDAO().get
+                        (new StoragePoolIsoMapId(getParameters().getStorageDomainId(),
+                                getParameters().getStoragePoolId()));
     }
 
     @Override
@@ -145,17 +151,30 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
         return getBackend().runInternalAction(VdcActionType.DeactivateStorageDomain, params, context).getSucceeded();
     }
 
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(LockProperties.Scope.Command);
+    }
+
     protected void deactivateStorageDomainAfterTaskExecution() {
         final StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase(getStorageDomainId(), getStoragePoolId());
         params.setSkipChecks(true);
         boolean newThread = getStorageDomain().getStorageDomainType() == StorageDomainType.Master && getNewMaster(false) == null;
         if (newThread) {
+            StoragePoolIsoMap map = loadStoragePoolIsoMap();
+            // The creation of the compensation context is needed in case of an engine restart between the tasks clearance and the
+            // execution of the deactivate command from the new thread. If the compensation context won't be created and the tasks
+            // will be cleared, when the engine start there's nothing to start the thread (as the end method won't be called as there
+            // are no tasks) and the domain will remain locked.
+            final CompensationContext ctx = createDefaultCompensationContext(Guid.newGuid());
+            changeDomainStatusWithCompensation(map, StorageDomainStatus.Unknown, StorageDomainStatus.Locked, ctx);
             ThreadPoolUtil.execute(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         waitForTasksToBeCleared();
                         executeDeactivateCommnad(false);
+                        ctx.resetCompensation();
                     } catch (Exception e) {
                         setSucceeded(false);
                         log.errorFormat("Error when attempting to deactivate storage domain {0}", getStorageDomainId(), e);

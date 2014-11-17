@@ -286,6 +286,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             return NoOpCompensationContext.getInstance();
         }
 
+        return createDefaultCompensationContext(commandId);
+    }
+
+    protected DefaultCompensationContext createDefaultCompensationContext(Guid commandId) {
         DefaultCompensationContext defaultContext = new DefaultCompensationContext();
         defaultContext.setCommandId(commandId);
         defaultContext.setCommandType(getClass().getName());
