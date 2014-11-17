@@ -17,6 +17,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class RoleDAOTest extends BaseDAOTestCase {
     private static final String GROUP_IDS = "26df4393-659b-4b8a-b0f6-3ee94d32e82f,08963ba9-b1c8-498d-989f-75cf8142eab7";
     private static final Guid USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
+    private static final Guid OTHER_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
     private static final int ROLE_COUNT = 5;
 
     private RoleDAO dao;
@@ -94,32 +95,30 @@ public class RoleDAOTest extends BaseDAOTestCase {
     }
 
     /**
-     * Ensures the right collection of roles is returned
+     * Ensures an admin role is returned
      */
     @Test
-    public void testGetAllForUsersAndGroups() {
-        List<Role> result = dao.getAllForUserAndGroups(USER_ID,
+    public void testAnyAdminRoleForUserAndGroups() {
+        List<Role> result = dao.getAnyAdminRoleForUserAndGroups(USER_ID,
                 GROUP_IDS, ApplicationMode.AllModes.getValue());
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        assertEquals(16, result.size());
+    }
 
-        List<Role> result1 = dao.getAllForUserAndGroups(USER_ID,
-                GROUP_IDS, ApplicationMode.VirtOnly.getValue());
-        assertNotNull(result1);
-        assertFalse(result1.isEmpty());
-        assertEquals(15, result1.size());
-
-        List<Role> result2 = dao.getAllForUserAndGroups(USER_ID,
-                GROUP_IDS, ApplicationMode.GlusterOnly.getValue());
-        assertNotNull(result2);
-        assertFalse(result2.isEmpty());
-        assertEquals(13, result2.size());
+    /**
+     * Ensures no admin role is returned
+     */
+    @Test
+    public void testNoAdminRoleForUserAndGroups() {
+        List<Role> result = dao.getAnyAdminRoleForUserAndGroups(OTHER_USER_ID,
+                GROUP_IDS, ApplicationMode.AllModes.getValue());
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
     @Test
     public void testGetAllForUsersAndGroupsInvalidUserAndGroups() {
-        List<Role> result = dao.getAllForUserAndGroups(Guid.newGuid(),
+        List<Role> result = dao.getAnyAdminRoleForUserAndGroups(Guid.newGuid(),
                 Guid.newGuid().toString(), ApplicationMode.AllModes.getValue());
         assertNotNull(result);
         assertTrue(result.isEmpty());

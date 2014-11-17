@@ -306,7 +306,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllRolesByUserIdAndGroupIds(v_user_id UUID, v_group_ids text, v_app_mode INTEGER)
+Create or replace FUNCTION GetAnyAdminRoleByUserIdAndGroupIds(v_user_id UUID, v_group_ids text, v_app_mode INTEGER)
 RETURNS SETOF roles STABLE
    AS $procedure$
 BEGIN
@@ -314,8 +314,9 @@ BEGIN
    FROM roles INNER JOIN
    permissions ON permissions.role_id = roles.id
    WHERE (roles.app_mode & v_app_mode) > 0
+   AND role_type = 1 -- admin
    AND (permissions.ad_element_id = v_user_id
-   or permissions.ad_element_id in(select id from getElementIdsByIdAndGroups(v_user_id, v_group_ids)));
+   or permissions.ad_element_id in(select id from getElementIdsByIdAndGroups(v_user_id, v_group_ids))) LIMIT 1;
 
 END; $procedure$
 LANGUAGE plpgsql;
