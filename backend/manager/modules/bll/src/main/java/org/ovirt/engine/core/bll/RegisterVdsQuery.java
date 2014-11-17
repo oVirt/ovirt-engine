@@ -156,6 +156,11 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
             // force to reload vdss by unique ID used later on
             _vdssByUniqueId = null;
             VDS vdsByUniqueId = getVdssByUniqueId().size() != 0 ? getVdssByUniqueId().get(0) : null;
+            VDS provisionedVds = DbFacade.getInstance().getVdsDao().getByName(getParameters().getVdsName());
+            if (provisionedVds != null && provisionedVds.getStatus() != VDSStatus.InstallingOS) {
+                // if not in InstallingOS status, this host is not provisioned.
+                provisionedVds = null;
+            }
 
             // in case oVirt host was added for the second time - perform approval
             if (vdsByUniqueId != null && vdsByUniqueId.getStatus() == VDSStatus.PendingApproval) {
@@ -182,13 +187,17 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
             } else {
                 vdsGroupId = getParameters().getVdsGroupId();
             }
-            // TODO: always add in pending state, and if auto approve call
-            // approve command action after registration
-            RefObject<Boolean> isPending = new RefObject<Boolean>(Boolean.FALSE);
-            getQueryReturnValue().setSucceeded(
-                    HandleOldVdssWithSameHostName(vdsByUniqueId) && HandleOldVdssWithSameName(vdsByUniqueId)
-                            && CheckAutoApprovalDefinitions(isPending)
-                            && Register(vdsByUniqueId, vdsGroupId, isPending.argvalue.booleanValue()));
+            if (provisionedVds != null) {
+                getQueryReturnValue().setSucceeded(Register(provisionedVds, vdsGroupId, false));
+            } else {
+                // TODO: always add in pending state, and if auto approve call
+                // approve command action after registration
+                RefObject<Boolean> isPending = new RefObject<Boolean>(Boolean.FALSE);
+                getQueryReturnValue().setSucceeded(
+                        HandleOldVdssWithSameHostName(vdsByUniqueId) && HandleOldVdssWithSameName(vdsByUniqueId)
+                                && CheckAutoApprovalDefinitions(isPending)
+                                && Register(vdsByUniqueId, vdsGroupId, isPending.argvalue.booleanValue()));
+            }
             log.debugFormat("RegisterVdsQuery::ExecuteCommand - Leaving Succeded value is {0}",
                     getQueryReturnValue().getSucceeded());
         }
@@ -224,13 +233,13 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         return isApprovalDispatched;
     }
 
-    private boolean Register(VDS vdsByUniqueId, Guid vdsGroupId, boolean IsPending) {
+    private boolean Register(VDS vds, Guid vdsGroupId, boolean IsPending) {
         boolean returnValue = true;
         log.debugFormat("RegisterVdsQuery::Register - Entering");
-        if (vdsByUniqueId == null) {
+        if (vds == null) {
             returnValue = registerNewHost(vdsGroupId, IsPending);
         } else {
-            returnValue = updateExistingHost(vdsByUniqueId, IsPending);
+            returnValue = updateExistingHost(vds, IsPending);
         }
         log.debugFormat("RegisterVdsQuery::Register - Leaving with value {0}", returnValue);
 
