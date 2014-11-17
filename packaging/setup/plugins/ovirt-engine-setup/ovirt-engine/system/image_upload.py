@@ -52,7 +52,10 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_INIT,
     )
     def _init(self):
-        self.environment.setdefault(osetupcons.ConfigEnv.ISO_PATHS_TO_UPLOAD, [])
+        self.environment.setdefault(
+            osetupcons.ConfigEnv.ISO_PATHS_TO_UPLOAD,
+            []
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
@@ -92,7 +95,9 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _validation(self):
-        for filename in self.environment[osetupcons.ConfigEnv.ISO_PATHS_TO_UPLOAD]:
+        for filename in self.environment[
+            osetupcons.ConfigEnv.ISO_PATHS_TO_UPLOAD
+        ]:
             if os.path.exists(filename):
                 self._enabled = True
 
@@ -125,7 +130,9 @@ class Plugin(plugin.PluginBase):
         ]
 
         # Iterate the list and copy all the files.
-        for filename in self.environment[osetupcons.ConfigEnv.ISO_PATHS_TO_UPLOAD]:
+        for filename in self.environment[
+            osetupcons.ConfigEnv.ISO_PATHS_TO_UPLOAD
+        ]:
             if os.path.exists(filename):
                 try:
                     targetFile = os.path.join(
