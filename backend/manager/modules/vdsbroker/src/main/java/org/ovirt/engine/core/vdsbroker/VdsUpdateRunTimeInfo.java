@@ -206,19 +206,6 @@ public class VdsUpdateRunTimeInfo {
         saveVmDevicesToDb();
         saveVmJobsToDb();
         saveVmGuestAgentNetworkDevices();
-        saveVmNumaNodeRuntimeData();
-    }
-
-    private void saveVmNumaNodeRuntimeData() {
-        if (!_vmStatisticsToSave.isEmpty()) {
-            final List<VmNumaNode> vmNumaNodesToUpdate = new ArrayList<>();
-            for(VmStatistics vmStats : _vmStatisticsToSave.values()) {
-                vmNumaNodesToUpdate.addAll(vmStats.getvNumaNodeStatisticsList());
-            }
-            if (!vmNumaNodesToUpdate.isEmpty()) {
-                getDbFacade().getVmNumaNodeDAO().massUpdateVmNumaNodeRuntimePinning(vmNumaNodesToUpdate);
-            }
-        }
     }
 
     private void saveVmGuestAgentNetworkDevices() {
