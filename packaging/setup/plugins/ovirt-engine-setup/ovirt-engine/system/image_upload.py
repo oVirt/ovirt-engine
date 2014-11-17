@@ -78,6 +78,10 @@ class Plugin(plugin.PluginBase):
                 osetupcons.FileLocations.OVIRT_GUEST_TOOLS_DIR,
                 'ovirt-tools-setup.iso',
             ),
+            os.path.join(
+                osetupcons.FileLocations.RHEV_GUEST_TOOLS_DIR,
+                'rhev-tools-setup.iso',
+            ),
         ]
 
     @plugin.event(
