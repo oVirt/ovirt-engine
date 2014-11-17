@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.aaa;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -7,15 +9,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Acct;
-import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.api.extensions.aaa.Authn.AuthRecord;
+import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.api.extensions.aaa.Mapping;
 import org.ovirt.engine.core.aaa.AcctUtils;
@@ -112,7 +114,13 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     }
 
     private boolean attachUserToSession(AuthenticationProfile profile, ExtMap authRecord) {
-        engineSessionId = UUID.randomUUID().toString();
+        try {
+            byte s[] = new byte[64];
+            SecureRandom.getInstance("SHA1PRNG").nextBytes(s);
+            engineSessionId = new Base64(0).encodeToString(s);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
         SessionDataContainer.getInstance().setUser(engineSessionId, getCurrentUser());
         SessionDataContainer.getInstance().refresh(engineSessionId);
         SessionDataContainer.getInstance().setAuthn(engineSessionId, profile.getAuthn());
