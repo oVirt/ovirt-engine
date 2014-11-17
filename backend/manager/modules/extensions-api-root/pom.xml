@@ -44,7 +44,23 @@
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>2.9.1</version>
+          <configuration>
+            <failsOnError>true</failsOnError>
+            <consoleOutput>true</consoleOutput>
+            <includeTestSourceDirectory>true</includeTestSourceDirectory>
+          </configuration>
+          <executions>
+            <execution>
+              <id>checkstyle</id>
+              <phase>compile</phase>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -56,10 +72,6 @@
               <artifactId>${animal.sniffer.signature}</artifactId>
               <version>1.0</version>
             </signature>
-            <ignores>
-              <ignore>sun.security.krb5.Config</ignore>
-              <ignore>sun.misc.Signal</ignore>
-            </ignores>
           </configuration>
         </plugin>
         <plugin>
