@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.userportal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -382,9 +384,8 @@ public class UserPortalItemModel extends EntityModel {
         else if (getEntity() instanceof VM && other.getEntity() instanceof VM) {
             VM thisVm = (VM) getEntity();
             VM otherVm = (VM) other.getEntity();
-
-            boolean consoleUsersEqual = thisVm.getConsoleCurentUserName() != null
-                    && thisVm.getConsoleCurentUserName().equals(otherVm.getConsoleCurentUserName());
+            boolean consoleUsersEqual = Objects.equals(thisVm.getConsoleCurentUserName(),
+                    otherVm.getConsoleCurentUserName());
 
             return  thisVm.getDynamicData().getStatus().equals(otherVm.getDynamicData().getStatus())
                     && consoleUsersEqual

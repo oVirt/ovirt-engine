@@ -19,7 +19,9 @@ import com.google.inject.Provider;
  * @param <M>
  *            List model type.
  */
-public abstract class AbstractUserPortalListProvider<M extends AbstractUserPortalListModel> extends UserPortalDataBoundModelProvider<UserPortalItemModel, M> {
+public abstract class AbstractUserPortalListProvider<M extends AbstractUserPortalListModel>
+    extends UserPortalDataBoundModelProvider<UserPortalItemModel, M>
+        implements UserPortalSearchableTableModelProvider<UserPortalItemModel, M> {
 
     private List<UserPortalItemModel> currentItems;
 
@@ -58,9 +60,17 @@ public abstract class AbstractUserPortalListProvider<M extends AbstractUserPorta
     }
 
     private void clearReferences() {
-        for(UserPortalItemModel itemModel: currentItems) {
-            itemModel.clearReferences();
+        if (currentItems != null) {
+            for(UserPortalItemModel itemModel: currentItems) {
+                itemModel.clearReferences();
+            }
         }
+    }
+
+    @Override
+    public void clearCurrentItems() {
+        clearReferences();
+        currentItems = null;
     }
 
     /**

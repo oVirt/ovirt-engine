@@ -11,12 +11,15 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.template.TemplateNewPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDataBoundModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableTableModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class UserPortalTemplateListProvider extends UserPortalDataBoundModelProvider<VmTemplate, UserPortalTemplateListModel> {
+public class UserPortalTemplateListProvider
+    extends UserPortalDataBoundModelProvider<VmTemplate, UserPortalTemplateListModel>
+    implements UserPortalSearchableTableModelProvider<VmTemplate, UserPortalTemplateListModel> {
 
     private final Provider<TemplateNewPopupPresenterWidget> newTemplatePopupProvider;
     private final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
@@ -40,6 +43,12 @@ public class UserPortalTemplateListProvider extends UserPortalDataBoundModelProv
         } else {
             return super.getModelPopup(source, lastExecutedCommand, windowModel);
         }
+    }
+
+    @Override
+    public void clearCurrentItems() {
+        // No-op, if we ever need to optimize the rendering of the templates this will be useful like in the
+        // Virtual Machine list provider.
     }
 
     @Override

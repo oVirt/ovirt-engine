@@ -3,18 +3,19 @@ package org.ovirt.engine.ui.userportal.section.main.presenter;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
-import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.HasActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabExtendedPresenter;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableTableModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 /**
  * Base class for side tab presenters that work with {@link ListWithDetailsModel}.
@@ -28,7 +29,8 @@ import com.gwtplatform.mvp.client.proxy.Proxy;
  * @param <P>
  *            Proxy type.
  */
-public abstract class AbstractSideTabWithDetailsPresenter<T, M extends ListWithDetailsModel, V extends AbstractSideTabWithDetailsPresenter.ViewDef<T>, P extends Proxy<?>>
+public abstract class AbstractSideTabWithDetailsPresenter<T, M extends ListWithDetailsModel,
+    V extends AbstractSideTabWithDetailsPresenter.ViewDef<T>, P extends Proxy<?>>
         extends AbstractModelActivationPresenter<T, M, V, P> {
 
     public interface ViewDef<T> extends View, HasActionTable<T> {
@@ -41,10 +43,12 @@ public abstract class AbstractSideTabWithDetailsPresenter<T, M extends ListWithD
     }
 
     private final PlaceManager placeManager;
+    protected final UserPortalSearchableTableModelProvider<T, M> modelProvider;
 
     public AbstractSideTabWithDetailsPresenter(EventBus eventBus, V view, P proxy,
-            PlaceManager placeManager, SearchableTableModelProvider<T, M> modelProvider) {
+            PlaceManager placeManager, UserPortalSearchableTableModelProvider<T, M> modelProvider) {
         super(eventBus, view, proxy, modelProvider, MainTabExtendedPresenter.TYPE_SetTabContent);
+        this.modelProvider = modelProvider;
         this.placeManager = placeManager;
     }
 
@@ -78,7 +82,7 @@ public abstract class AbstractSideTabWithDetailsPresenter<T, M extends ListWithD
     @Override
     protected void onReveal() {
         super.onReveal();
-
+        getView().getTable().setLoadingState(LoadingState.LOADING);
         // Clear table selection and update sub tab panel visibility
         if (hasSelection()) {
             clearSelection();
@@ -87,6 +91,12 @@ public abstract class AbstractSideTabWithDetailsPresenter<T, M extends ListWithD
         }
 
         getView().getTable().resetScrollPosition();
+    }
+
+    @Override
+    public void onHide() {
+        super.onHide();
+        modelProvider.clearCurrentItems();
     }
 
     /**
