@@ -58,7 +58,7 @@ public class XmlRpcUtils {
     private static final String HTTP = "http://";
     private static final String HTTPS = "https://";
     private static final Log log = LogFactory.getLog(XmlRpcUtils.class);
-    private static final Set<String> SUPPORTED_METHODS_FOR_LONG_CONVERSION = new HashSet<String>(Arrays.asList(""));
+    private static final Set<String> SUPPORTED_METHODS_FOR_LONG_CONVERSION = new HashSet<String>(Arrays.asList("create", "hotplugDisk"));
     static {
         if (Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication)) {
             URL keystoreUrl;
