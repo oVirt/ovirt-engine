@@ -221,8 +221,17 @@ public class BackendStorageDomainResource extends
 
     private List<LogicalUnit> getIncomingLuns(Storage storage) {
         // user may pass the LUNs under Storage, or Storage-->VolumeGroup; both are supported.
-        return !storage.getLogicalUnits().isEmpty() ? storage.getLogicalUnits() : storage.getVolumeGroup()
-                .getLogicalUnits();
+        if (storage.getLogicalUnits().isEmpty()) {
+            if (storage.getVolumeGroup() != null) {
+                return storage.getVolumeGroup().getLogicalUnits();
+            }
+            else {
+                return new ArrayList<LogicalUnit>();
+            }
+        }
+        else {
+            return storage.getLogicalUnits();
+        }
     }
 
     private Guid getHostId(StorageDomain storageDomain) {
