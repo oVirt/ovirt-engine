@@ -105,7 +105,7 @@ public class NumaMapper {
         if (model.isSetNumaNodePins()) {
             List<Pair<Guid, Pair<Boolean, Integer>>> pairs = new ArrayList<Pair<Guid, Pair<Boolean, Integer>>>();
             for (NumaNodePin pin : model.getNumaNodePins().getNumaNodePin()) {
-                Pair<Boolean, Integer> first = new Pair<Boolean, Integer>(false, pin.getIndex());
+                Pair<Boolean, Integer> first = new Pair<Boolean, Integer>(pin.isPinned(), pin.getIndex());
                 Guid guid = null;
                 NumaNode node = pin.getHostNumaNode();
                 if (node != null && node.getId() != null) {
