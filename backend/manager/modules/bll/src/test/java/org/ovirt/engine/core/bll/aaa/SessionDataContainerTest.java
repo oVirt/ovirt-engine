@@ -3,18 +3,25 @@ package org.ovirt.engine.core.bll.aaa;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.apache.commons.lang.time.DateUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.EngineSessionDAO;
+import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 /**
@@ -36,10 +43,21 @@ public class SessionDataContainerTest {
     @Before
     public void setUpContainer() {
         container = spy(SessionDataContainer.getInstance());
-        clearSession();
+        DbFacade dbFacadeMock = mock(DbFacade.class);
+        when(container.getDbFacade()).thenReturn(dbFacadeMock);
+
+        EngineSessionDAO engineSessionDAOMock = mock(EngineSessionDAO.class);
+        when(engineSessionDAOMock.remove(any(Long.class))).thenReturn(1);
+        when(dbFacadeMock.getEngineSessionDao()).thenReturn(engineSessionDAOMock);
+
+        PermissionDAO permissionsDAOMock = mock(PermissionDAO.class);
+        when(permissionsDAOMock.getAllForEntity(any(Guid.class), any(Guid.class), any(Boolean.class))).thenReturn(new ArrayList<Permissions>());
+        when(dbFacadeMock.getPermissionDao()).thenReturn(permissionsDAOMock);
+
+        DbUser user = mock(DbUser.class);
+        container.setUser(TEST_SESSION_ID, user);
     }
 
-    @After
     public void clearSession() {
         container.removeSessionOnLogout(TEST_SESSION_ID);
     }
@@ -47,6 +65,7 @@ public class SessionDataContainerTest {
     @Test
     public void testGetDataAndSetDataWithEmptySession() {
         assertNull("Get should return null with an empty session", container.getData("", TEST_KEY, false));
+        clearSession();
     }
 
     @Test
@@ -55,6 +74,7 @@ public class SessionDataContainerTest {
         assertEquals("Get should return the value with a given session",
                 TEST_VALUE,
                 container.getData(TEST_SESSION_ID, TEST_KEY, false));
+        clearSession();
     }
 
     @Test
@@ -64,6 +84,7 @@ public class SessionDataContainerTest {
         assertEquals("Get should return the value with a given session",
                 user,
                 container.getUser(TEST_SESSION_ID, false));
+        clearSession();
     }
 
     /* Tests for session management */
@@ -106,6 +127,7 @@ public class SessionDataContainerTest {
         // session should be already refreshed -> not null
         assertNotNull("Get should return null since the session wasn't refresh",
                 container.getData(TEST_SESSION_ID, USER, false));
+        clearSession();
     }
 
     @Test

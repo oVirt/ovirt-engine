@@ -8,6 +8,7 @@ import javax.ejb.DependsOn;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
+import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.dwh.DwhHeartBeat;
 import org.ovirt.engine.core.bll.gluster.GlusterJobsManager;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -98,6 +99,8 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             }
 
             SchedulingManager.getInstance().init();
+
+            SessionDataContainer.getInstance().cleanupEngineSessionsOnStartup();
 
             new DwhHeartBeat().init();
 

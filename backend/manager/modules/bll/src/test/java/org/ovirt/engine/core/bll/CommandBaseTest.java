@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -16,7 +17,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -31,10 +31,12 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
+import org.ovirt.engine.core.dao.EngineSessionDAO;
+import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
-import org.ovirt.engine.core.utils.CorrelationIdTracker;
 
 /** A test case for {@link CommandBase} */
 public class CommandBaseTest {
@@ -47,8 +49,28 @@ public class CommandBaseTest {
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
 
-    /** The session to use */
-    private String session = "";
+    protected String session = "someSession";
+
+
+    @Before
+    public void setupEnvironment() {
+        CorrelationIdTracker.clean();
+        DbUser user = mock(DbUser.class);
+        DbFacade dbFacadeMock = mock(DbFacade.class);
+        SessionDataContainer.getInstance().setDbFacade(dbFacadeMock);
+
+        EngineSessionDAO engineSessionDAOMock = mock(EngineSessionDAO.class);
+        when(engineSessionDAOMock.remove(any(Long.class))).thenReturn(1);
+        when(dbFacadeMock.getEngineSessionDao()).thenReturn(engineSessionDAOMock);
+
+        SessionDataContainer.getInstance().setUser(session, user);
+    }
+
+    @After
+    public void clearEnvironment() {
+        CorrelationIdTracker.clean();
+        SessionDataContainer.getInstance().removeSessionOnLogout(session);
+    }
 
     /** A dummy class for testing CommandBase's functionality */
     private class CommandBaseDummy extends CommandBase<VdcActionParametersBase> {
@@ -92,18 +114,9 @@ public class CommandBaseTest {
         }
     }
 
-    @Before
-    @After
-    public void clearEnvironment() {
-        CorrelationIdTracker.clean();
-        SessionDataContainer.getInstance().removeSessionOnLogout(session);
-    }
-
     /** Testing the constructor, which adds the user id to the thread local container */
     @Test
     public void testConstructor() {
-        session = RandomStringUtils.random(10);
-
         DbUser user = mock(DbUser.class);
         when(user.getId()).thenReturn(Guid.EVERYONE);
 

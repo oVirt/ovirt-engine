@@ -10,9 +10,11 @@ import org.apache.commons.lang.time.DateUtils;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Acct;
 import org.ovirt.engine.core.aaa.AcctUtils;
+import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 
@@ -31,11 +33,14 @@ public class SessionDataContainer {
     private static final String PRINCIPAL_PARAMETER_NAME = "principal";
     private static final String HARD_LIMIT_PARAMETER_NAME = "hard_limit";
     private static final String SOFT_LIMIT_PARAMETER_NAME = "soft_limit";
+    private static final String ENGINE_SESSION_SEQ_ID = "engine_session_seq_id";
 
     private static final String AUTH_RECORD_PARAMETER_NAME = "auth_record";
     private static final String PRINCIPAL_RECORD_PARAMETER_NAME = "principal_record";
 
     private static SessionDataContainer dataProviderInstance = new SessionDataContainer();
+
+    private DbFacade dbFacade;
 
     private SessionDataContainer() {
     }
@@ -88,6 +93,24 @@ public class SessionDataContainer {
         return sessionInfoMap.get(sessionId);
     }
 
+    private void persistEngineSession(String sessionId) {
+        SessionInfo sessionInfo = getSessionInfo(sessionId);
+        if (sessionInfo != null) {
+            sessionInfo.contentOfSession.put(ENGINE_SESSION_SEQ_ID,
+                    getDbFacade().getEngineSessionDao().save(new EngineSession(getUser(sessionId, false), sessionId)));
+        }
+    }
+
+    public long getEngineSessionSeqId(String sessionId) {
+        if (!sessionInfoMap.containsKey(sessionId)) {
+            throw new RuntimeException("Session not found for sessionId " + sessionId);
+        }
+        return (Long) sessionInfoMap.get(sessionId).contentOfSession.get(ENGINE_SESSION_SEQ_ID);
+    }
+
+    public void cleanupEngineSessionsOnStartup() {
+        getDbFacade().getEngineSessionDao().removeAll();
+    }
 
     /**
      * Remove the cached data of current session
@@ -125,6 +148,7 @@ public class SessionDataContainer {
      */
     public final void setUser(String sessionId, DbUser user) {
         setData(sessionId, USER_PARAMETER_NAME, user);
+        persistEngineSession(sessionId);
     }
 
     public final void setHardLimit(String sessionId, Date hardLimit) {
@@ -221,10 +245,22 @@ public class SessionDataContainer {
                 message,
                 msgArgs
                 );
+        getDbFacade().getEngineSessionDao().remove(getEngineSessionSeqId(sessionId));
         sessionInfoMap.remove(sessionId);
     }
 
     private String getPrincipalName(String sessionId) {
         return (String) getData(sessionId, PRINCIPAL_PARAMETER_NAME, false);
+    }
+
+    public void setDbFacade(DbFacade dbFacade) {
+        this.dbFacade = dbFacade;
+    }
+
+    public DbFacade getDbFacade() {
+        if (dbFacade == null) {
+            dbFacade = DbFacade.getInstance();
+        }
+        return dbFacade;
     }
 }
