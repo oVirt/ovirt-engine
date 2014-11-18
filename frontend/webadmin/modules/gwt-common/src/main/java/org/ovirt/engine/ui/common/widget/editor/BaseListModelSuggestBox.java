@@ -12,6 +12,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasConstrainedValue;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -21,6 +22,8 @@ import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.Widget;
+
+import java.util.Collection;
 
 /**
  * Base SuggestBox widget that adapts to UiCommon list model items.
@@ -243,5 +246,52 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements Ed
             scrollSelectedItemIntoView();
         }
 
+        @Override
+        protected void showSuggestions(SuggestBox suggestBox, Collection<? extends Suggestion> suggestions,
+                                       boolean isDisplayStringHTML, boolean isAutoSelectEnabled,
+                                       SuggestBox.SuggestionCallback callback) {
+            super.showSuggestions(suggestBox, suggestions, isDisplayStringHTML, isAutoSelectEnabled, callback);
+            fixIe9Scrollbar();
+        }
+
+        /**
+         * IE9 hack solving wrong scrollbar rendering.
+         * ie9 counts the width of block without scrollbar event if the scrollbar should be visible, then
+         * the scrollbar is show, content shifted to left and trimmed on left side.
+         * Resetting 'overflow-y' to 'hidden' and back to 'scroll' prevents the shift to left, extending the width
+         * adds space for scrollbar.
+         *
+         * <p>To be dropped together with IE9 support.</p>
+         *
+         * @see <a href="https://bugzilla.redhat.com/show_bug.cgi?id=1160774">Bug 1160774</a>
+         */
+        private void fixIe9Scrollbar() {
+            boolean isIe9 = Window.Navigator.getUserAgent().contains("MSIE 9.0"); //$NON-NLS-1$
+            if (isIe9 && super.isSuggestionListShowing()) {
+                final Style suggestionMenuStyle = getSuggestionMenu().getElement().getStyle();
+                final Overflow originalOverflowY = valueOfOverflow(
+                        getComputedOverflowY(getSuggestionMenu().getElement()), Overflow.SCROLL);
+                suggestionMenuStyle.setOverflowY(Overflow.HIDDEN);
+                suggestionMenuStyle.setOverflowY(originalOverflowY);
+                final int scrollbarWidthEstimate = 32; // px
+                suggestionMenuStyle.setProperty("width", "");  //$NON-NLS-1$ $NON-NLS-2$
+                suggestionMenuStyle.setWidth(
+                        getSuggestionMenu().getElement().getClientWidth() + scrollbarWidthEstimate,
+                        Unit.PX);
+            }
+        }
+
+        private native String getComputedOverflowY(final Element element) /*-{
+            return $wnd.getComputedStyle(element).overflowY;
+        }-*/;
+
+        private Overflow valueOfOverflow(String value, Overflow defaultValue) {
+            for (Overflow overflow : Overflow.values()) {
+                if (overflow.getCssName().equals(value)) {
+                    return  overflow;
+                }
+            }
+            return defaultValue;
+        }
     }
 }
