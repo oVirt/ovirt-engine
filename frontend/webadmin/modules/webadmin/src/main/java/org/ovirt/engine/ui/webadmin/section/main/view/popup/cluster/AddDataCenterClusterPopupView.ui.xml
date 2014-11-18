@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+
+    <ui:style>
+    </ui:style>
+
+    <d:SimpleDialogPanel width="400px" height="250px">
+        <d:content>
+            <g:ScrollPanel>
+                <e:EntityModelCellTable ui:field="dataCentersTable"/>
+            </g:ScrollPanel>
+        </d:content>
+    </d:SimpleDialogPanel>
+
+</ui:UiBinder>

@@ -227,13 +227,13 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
                 for (EntityModel entity : (List<EntityModel>) getListModel().getItems()) {
                     entity.setIsSelected(false);
                 }
-                getListModel().setSelectedItems(null);
 
                 // Set "IsSelected"
                 SelectionModel<? super EntityModel> selectionModel = EntityModelCellTable.this.getSelectionModel();
                 if (selectionModel instanceof SingleSelectionModel) {
                     EntityModel selectedObject =
                             ((SingleSelectionModel<EntityModel>) selectionModel).getSelectedObject();
+                    clearCurrentSelectedItems();
                     if (selectedObject != null) {
                         selectedObject.setIsSelected(true);
                         getListModel().setSelectedItem(selectedObject);
@@ -244,8 +244,14 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
                         entity.setIsSelected(true);
                         selectedItems.add(entity);
                     }
+                    clearCurrentSelectedItems();
                     getListModel().setSelectedItems(selectedItems);
                 }
+            }
+
+            private void clearCurrentSelectedItems() {
+                getListModel().setSelectedItems(null);
+                getListModel().setSelectedItem(null);
             }
         });
     }
