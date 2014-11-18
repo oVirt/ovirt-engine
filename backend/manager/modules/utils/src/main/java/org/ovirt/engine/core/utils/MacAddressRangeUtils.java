@@ -18,6 +18,7 @@ public class MacAddressRangeUtils {
     private static final int HEX_RADIX = 16;
 
     public static final long MAC_ADDRESS_MULTICAST_BIT = 0x010000000000L;
+    public static final char BOUNDARIES_DELIMITER = '-';
 
     private MacAddressRangeUtils() {
     }
@@ -33,25 +34,39 @@ public class MacAddressRangeUtils {
     }
 
     public static Collection<LongRange> parseRangeString(String ranges) {
-        if (StringUtils.isEmpty(ranges)) {
+        List<String[]> rangeStringBoundaries = rangeStringToStringBoundaries(ranges);
+
+        return parseRangeStringBoundaries(rangeStringBoundaries);
+    }
+
+    public static Collection<LongRange> parseRangeStringBoundaries(List<String[]> rangeStringBoundaries) {
+        DisjointRanges disjointRanges = new DisjointRanges();
+        for (String[] rangeStringBoundary : rangeStringBoundaries) {
+            disjointRanges.addRange(macToLong(rangeStringBoundary[0]), macToLong(rangeStringBoundary[1]));
+        }
+
+        return clipMultiCastsFromRanges(disjointRanges.getRanges());
+    }
+
+    public static List<String[]> rangeStringToStringBoundaries(String rangeString) {
+        if (StringUtils.isEmpty(rangeString)) {
             return Collections.emptyList();
         }
 
-        String[] rangesArray = ranges.split("[,]", -1);
-        DisjointRanges disjointRanges = new DisjointRanges();
-
+        List<String[]> result = new ArrayList<>();
+        String[] rangesArray = rangeString.split("[,]", -1);
         for (int i = 0; i < rangesArray.length; i++) {
-            String[] startEndArray = rangesArray[i].split("[-]", -1);
+            String[] startEndArray = rangesArray[i].split("["+ BOUNDARIES_DELIMITER+"]", -1);
 
             if (startEndArray.length == 2) {
-                disjointRanges.addRange(macToLong(startEndArray[0]), macToLong(startEndArray[1]));
+                result.add(new String[]{ startEndArray[0], startEndArray[1]});
             } else {
                 throw new IllegalArgumentException(
                         "Failed to initialize Mac Pool range. Please fix Mac Pool range: rangesArray[i]");
             }
         }
 
-        return clipMultiCastsFromRanges(disjointRanges.getRanges());
+        return result;
     }
 
     private static Collection<LongRange> clipMultiCastsFromRanges(Collection<LongRange> ranges) {
@@ -103,6 +118,10 @@ public class MacAddressRangeUtils {
         return (MAC_ADDRESS_MULTICAST_BIT & mac) != 0;
     }
 
+    public static String boundariesToRangeString(long from, long to) {
+        return macToString(from) + BOUNDARIES_DELIMITER + macToString(to);
+    }
+
     public static String macToString(long macAddress) {
         String value = String.format("%012x", macAddress);
         char[] chars = value.toCharArray();
@@ -122,22 +141,4 @@ public class MacAddressRangeUtils {
         return Long.parseLong(StringUtils.remove(mac, ':'), HEX_RADIX);
     }
 
-    public static boolean isRangeValid(String start, String end) {
-        long startNum = macToLong(start);
-        long endNum = macToLong(end);
-
-        if (startNum > endNum) {
-            return false;
-        }
-
-        Collection<LongRange> ranges = parseRangeString(start + "-" + end);
-
-        for (LongRange range : ranges) {
-            if (range.getMaximumLong() - range.getMinimumLong() < 0) {
-                return false;
-            }
-        }
-
-        return true;
-    }
 }
