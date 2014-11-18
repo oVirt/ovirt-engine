@@ -5,13 +5,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.vdscommands.DiscoverSendTargetsVDSCommandParameters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DiscoverSendTargetsVDSCommand<P extends DiscoverSendTargetsVDSCommandParameters>
         extends VdsBrokerCommand<P> {
-
-    private static final Logger log = LoggerFactory.getLogger(DiscoverSendTargetsVDSCommand.class);
     protected IQNListReturnForXmlRpc _result;
 
     public DiscoverSendTargetsVDSCommand(P parameters) {
@@ -47,16 +43,10 @@ public class DiscoverSendTargetsVDSCommand<P extends DiscoverSendTargetsVDSComma
             String[] address = tokens[0].split(":");
             String[] literals = tokens[1].split(" ");
 
+            con.setconnection(address[0]);
             con.setport(address[1]);
             con.setportal(literals[0]);
             con.setiqn(literals[1]);
-
-            // address[0] is the IP address of the target as returned from VDSM.
-            // Since we want to use the original address from the user's input (which can also be a host name),
-            // and since VDSM always returns the IP address of the target, we don't want to override it
-            // by calling con.setconnection(address[0]).
-            log.info("Connection to {} requested, VDSM returned {}.", con.getconnection(), address[0]);
-
             connections.add(con);
         }
 
