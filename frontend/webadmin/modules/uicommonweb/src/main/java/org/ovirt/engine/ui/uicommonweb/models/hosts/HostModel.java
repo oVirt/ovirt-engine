@@ -886,12 +886,12 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         setUpdateHostsCommand(new UICommand("", new ICommandTarget() { //$NON-NLS-1$
             @Override
             public void executeCommand(UICommand command) {
-                updateHosts();
+                updateProvisionedHosts();
             }
 
             @Override
             public void executeCommand(UICommand uiCommand, Object... parameters) {
-                updateHosts();
+                updateProvisionedHosts();
             }
         }));
         setProxyUpCommand(new UICommand("Up", new ICommandTarget() {    //$NON-NLS-1$
@@ -1875,6 +1875,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs
     protected abstract void setAllowChangeHostPlacementPropertiesWhenNotInMaintenance();
 
     public abstract void updateHosts();
+
+    protected abstract void updateProvisionedHosts();
 
     protected abstract void setPort(VDS vds);
 
