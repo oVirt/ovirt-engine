@@ -17,6 +17,8 @@ public class AddVdsActionParameters extends VdsOperationActionParameters {
     private String hostMac;
     private String discoverName;
     private ExternalComputeResource computeResource;
+    private String discoverIp;
+    public String getDiscoverIp() { return discoverIp; }
     public Guid getProviderId() { return providerId; };
     public ExternalHostGroup getHostGroup() { return hostGroup; };
     public String getHostMac() { return hostMac; };
@@ -33,13 +35,15 @@ public class AddVdsActionParameters extends VdsOperationActionParameters {
                                                     ExternalHostGroup hg,
                                                     ExternalComputeResource cr,
                                                     String mac,
-                                                    String discover_name) {
+                                                    String discover_name,
+                                                    String discover_ip) {
         privateAddProvisioned = true;
         hostMac = mac;
         hostGroup = hg;
         providerId = pid;
         discoverName = discover_name;
         computeResource = cr;
+        discoverIp = discover_ip;
     }
 
     public boolean getAddProvisioned() {

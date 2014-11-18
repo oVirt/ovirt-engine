@@ -21,5 +21,6 @@ public interface HostProviderProxy extends ProviderProxy {
                        ExternalComputeResource computeResource,
                        String mac,
                        String discoverName,
-                       String rootPassword);
+                       String rootPassword,
+                       String ip);
 }

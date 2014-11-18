@@ -135,7 +135,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                     getParameters().getComputeResource(),
                     getParameters().getHostMac(),
                     getParameters().getDiscoverName(),
-                    getParameters().getPassword()
+                    getParameters().getPassword(),
+                    getParameters().getDiscoverIp()
             );
 
             AuditLogableBase logable = new AuditLogableBase();
