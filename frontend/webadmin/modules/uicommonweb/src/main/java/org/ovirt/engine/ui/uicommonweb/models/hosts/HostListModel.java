@@ -1016,7 +1016,8 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
                         hostGroup,
                         computeResource,
                         discoveredHost.getMac(),
-                        discoveredHost.getName());
+                        discoveredHost.getName(),
+                        discoveredHost.getIp());
             }
 
             Frontend.getInstance().runAction(VdcActionType.AddVds, parameters,

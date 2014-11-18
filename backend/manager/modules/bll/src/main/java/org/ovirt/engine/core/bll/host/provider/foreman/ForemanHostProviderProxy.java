@@ -248,7 +248,8 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
             ExternalComputeResource computeResource,
             String mac,
             String discoverName,
-            String rootPassword) {
+            String rootPassword,
+            String ip) {
         final String entityBody = "{\n" +
                 "    \"discovered_host\": {\n" +
                 "        \"name\": \"" + vds.getName() + "\",\n" +
@@ -257,7 +258,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                 "        \"mac\": \"" + mac + "\",\n" +
                 "        \"domain_id\": \"" + hg.getDomainId() + "\",\n" +
                 "        \"subnet_id\": \"" + hg.getSubnetId() + "\",\n" +
-                "        \"ip\": \"" + vds.getHostName() + "\",\n" +
+                "        \"ip\": \"" + ip + "\",\n" +
                 "        \"architecture_id\": \"" + hg.getArchitectureId() + "\",\n" +
                 "        \"operatingsystem_id\": \"" + hg.getOsId() + "\",\n" +
                 "        \"medium_id\": \"" + hg.getMediumId() + "\",\n" +
