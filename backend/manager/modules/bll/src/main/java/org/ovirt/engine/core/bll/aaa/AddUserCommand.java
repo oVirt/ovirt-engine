@@ -42,15 +42,13 @@ public class AddUserCommand<T extends AddUserParameters> extends CommandBase<T> 
         DbUser userFromDb =
                 DbFacade.getInstance().getDbUserDao().getByExternalId(user.getDomain(), user.getExternalId());
         if (userFromDb == null) {
-            if (user.isActive()) {
-                DbFacade.getInstance().getDbUserDao().save(user);
-            }
+            DbFacade.getInstance().getDbUserDao().save(user);
         } else {
             user.setId(userFromDb.getId());
             DbFacade.getInstance().getDbUserDao().update(user);
         }
         setActionReturnValue(user.getId());
-        setSucceeded(user.isActive());
+        setSucceeded(true);
     }
 
     @Override

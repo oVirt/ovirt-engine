@@ -491,7 +491,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
      * Asserts that {@link #expectedQuotas} are relevant for the given {@link #storageId}
      */
     private void assertGetAllRelevantQuoatsForStorage(Guid storageId, int expectedQuotas) {
-        List<Quota> quotas = dao.getAllRelevantQuotasForStorage(storageId, null, false);
+        List<Quota> quotas = dao.getAllRelevantQuotasForStorage(storageId, PRIVILEGED_USER_SESSION_ID, false);
         assertEquals("Wrong number of quotas retuend", expectedQuotas, quotas.size());
     }
 
@@ -528,7 +528,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetRelevantStorageQuotaForUserWithoutPrivileges() throws Exception {
-        List<Quota> quotas = dao.getAllRelevantQuotasForStorage(FixturesTool.STORAGE_DOAMIN_NFS_MASTER, UNPRIVILEGED_USER_ID, true);
+        List<Quota> quotas = dao.getAllRelevantQuotasForStorage(FixturesTool.STORAGE_DOAMIN_NFS_MASTER, UNPRIVILEGED_USER_SESSION_ID, true);
         assertEquals("Unprivileged user is not allowed to fetch for quota", 0, quotas.size());
     }
 
@@ -538,7 +538,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetRelevantVdsGroupQuotaForUserWithoutPrivileges() throws Exception {
-        List<Quota> quotas = dao.getAllRelevantQuotasForVdsGroup(FixturesTool.VDS_GROUP_RHEL6_NFS, UNPRIVILEGED_USER_ID, true);
+        List<Quota> quotas = dao.getAllRelevantQuotasForVdsGroup(FixturesTool.VDS_GROUP_RHEL6_NFS, UNPRIVILEGED_USER_SESSION_ID, true);
         assertEquals("Unprivileged user is not allowed to fetch for quota", 0, quotas.size());
     }
 
@@ -546,7 +546,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
      * Asserts that {@link #expectedQuotas} are relevant for the given {@link #vdsGroupId}
      */
     private void assertGetAllRelevantQuoatsForVdsGroup(Guid vdsGroupId, int expectedQuotas) {
-        List<Quota> quotas = dao.getAllRelevantQuotasForVdsGroup(vdsGroupId, null, false);
+        List<Quota> quotas = dao.getAllRelevantQuotasForVdsGroup(vdsGroupId, PRIVILEGED_USER_SESSION_ID, false);
         assertEquals("Wrong number of quotas retuend", expectedQuotas, quotas.size());
     }
 

@@ -184,6 +184,13 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
         return user.getId();
     }
 
+    protected long getEngineSessionSeqId() {
+        if (engineContext.getSessionId() == null) {
+            throw new RuntimeException("No sessionId found for query " + getClass().getName());
+        }
+        return SessionDataContainer.getInstance().getEngineSessionSeqId(engineContext.getSessionId());
+    }
+
     protected DbFacade getDbFacade() {
         return DbFacade.getInstance();
     }

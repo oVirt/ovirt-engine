@@ -1243,7 +1243,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     private void copyTemplatePermissions(UniquePermissionsSet permissionsToAdd) {
         PermissionDAO dao = getDbFacade().getPermissionDao();
 
-        List<Permissions> templatePermissions = dao.getAllForEntity(getVmTemplateId(), getCurrentUser().getId(), false);
+        List<Permissions> templatePermissions = dao.getAllForEntity(getVmTemplateId(), getEngineSessionSeqId(), false);
 
         for (Permissions templatePermission : templatePermissions) {
             boolean templateOwnerRole = templatePermission.getrole_id().equals(PredefinedRoles.TEMPLATE_OWNER.getId());

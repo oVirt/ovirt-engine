@@ -28,7 +28,7 @@ public class GetAllRelevantQuotasForVdsGroupQueryTest extends AbstractQueryTest<
         // Set up the DAOs
         List<Quota> expected = Collections.singletonList(new Quota());
         QuotaDAO quotaDAOMock = mock(QuotaDAO.class);
-        when(quotaDAOMock.getAllRelevantQuotasForVdsGroup(quotaID, null, false)).thenReturn(expected);
+        when(quotaDAOMock.getAllRelevantQuotasForVdsGroup(quotaID, getQuery().getEngineSessionSeqId(), false)).thenReturn(expected);
         when(getDbFacadeMockInstance().getQuotaDao()).thenReturn(quotaDAOMock);
 
         // Run the query

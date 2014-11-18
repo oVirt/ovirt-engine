@@ -49,7 +49,7 @@ public abstract class AbstractGetEntitiesWithPermittedActionParametersQueryTest<
         when(dbFacadeMock.getEngineSessionDao()).thenReturn(engineSessionDAOMock);
 
         PermissionDAO permissionsDAOMock = mock(PermissionDAO.class);
-        when(permissionsDAOMock.getAllForEntity(any(Guid.class), any(Guid.class), any(Boolean.class))).thenReturn(new ArrayList<Permissions>());
+        when(permissionsDAOMock.getAllForEntity(any(Guid.class), any(Long.class), any(Boolean.class))).thenReturn(new ArrayList<Permissions>());
         when(dbFacadeMock.getPermissionDao()).thenReturn(permissionsDAOMock);
 
         SessionDataContainer.getInstance().setDbFacade(dbFacadeMock);

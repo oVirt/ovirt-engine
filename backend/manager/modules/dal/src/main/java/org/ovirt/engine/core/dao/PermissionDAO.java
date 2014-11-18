@@ -65,13 +65,13 @@ public interface PermissionDAO extends GenericDao<Permissions, Guid> {
      *
      * @param id
      *            the AD element
-     * @param userID
-     *            the ID of the user requesting the information
+     * @param engineSessionSeqId
+     *            the ID of the user session requesting the information
      * @param isFiltered
      *            Whether the results should be filtered according to the user's permissions
      * @return the list of permissions
      */
-    List<Permissions> getAllForAdElement(Guid id, Guid userID, boolean isFiltered);
+    List<Permissions> getAllForAdElement(Guid id, long engineSessionSeqId, boolean isFiltered);
 
     /**
      * Gets all permissions for the specified AD element only, excluding permissions of groups that it is in.
@@ -127,24 +127,24 @@ public interface PermissionDAO extends GenericDao<Permissions, Guid> {
      *
      * @param id
      *            the entity
-     * @param userID
-     *            the ID of the user requesting the information
+     * @param sessionSeqId
+     *            the ID of the user session requesting the information
      * @param isFiltered
      *            Whether the results should be filtered according to the user's permissions
      * @return the list of permissions
      */
-    List<Permissions> getAllForEntity(Guid id, Guid userID, boolean isFiltered);
+    List<Permissions> getAllForEntity(Guid id, long sessionSeqId, boolean isFiltered);
 
 
-    public List<Permissions> getAllForEntity(Guid id, Guid userID, boolean isFiltered, boolean allUsersWithPermission);
+    public List<Permissions> getAllForEntity(Guid id, long engineSessionSeqId, boolean isFiltered, boolean allUsersWithPermission);
 
-    List<Permissions> getAllForEntity(Guid id, Guid userID, boolean isFiltered, boolean allUsersWithPermission, int appMode);
+    List<Permissions> getAllForEntity(Guid id, long engineSessionSeqId, boolean isFiltered, boolean allUsersWithPermission, int appMode);
 
     List<Permissions> getTreeForEntity(Guid id, VdcObjectType type);
 
-    List<Permissions> getTreeForEntity(Guid id, VdcObjectType type, Guid userID, boolean isFiltered);
+    List<Permissions> getTreeForEntity(Guid id, VdcObjectType type, long engineSessionSeqId, boolean isFiltered);
 
-    List<Permissions> getTreeForEntity(Guid id, VdcObjectType type, Guid userID, boolean isFiltered, int appMode);
+    List<Permissions> getTreeForEntity(Guid id, VdcObjectType type, long engineSessionSeqId, boolean isFiltered, int appMode);
 
     Guid getEntityPermissions(Guid adElementId, ActionGroup actionGroup, Guid objectId, VdcObjectType vdcObjectType);
 

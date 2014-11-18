@@ -18,6 +18,7 @@ public abstract class AbstractUserQueryTest<P extends VdcQueryParametersBase, Q 
 
     private DbUser user;
     private Guid userID;
+    protected final long UNPRIVILEGED_USER_SESSION_ID = 1;
 
     @Before
     @Override

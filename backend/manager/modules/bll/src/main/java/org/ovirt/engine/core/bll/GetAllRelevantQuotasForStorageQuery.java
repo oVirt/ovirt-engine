@@ -12,7 +12,7 @@ public class GetAllRelevantQuotasForStorageQuery<P extends IdQueryParameters> ex
         getQueryReturnValue().setReturnValue(getDbFacade()
                 .getQuotaDao()
                 .getAllRelevantQuotasForStorage(getParameters().getId(),
-                        getUserID(),
+                        getEngineSessionSeqId(),
                         getParameters().isFiltered()));
     }
 }

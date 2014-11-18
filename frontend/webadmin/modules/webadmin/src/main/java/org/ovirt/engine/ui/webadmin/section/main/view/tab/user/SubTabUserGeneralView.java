@@ -10,7 +10,6 @@ import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
-import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
@@ -39,8 +38,6 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
 
     TextBoxLabel domain = new TextBoxLabel();
 
-    BooleanLabel active = new BooleanLabel();
-
     TextBoxLabel email = new TextBoxLabel();
 
     @UiField(provided = true)
@@ -67,12 +64,6 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
         formBuilder = new FormBuilder(formPanel, 1, 3);
 
         formBuilder.addFormItem(new FormItem(constants.authz(), domain, 0, 0));
-        formBuilder.addFormItem(new FormItem(constants.activeUserGeneral(), active, 1, 0) {
-            @Override
-            public boolean getIsAvailable() {
-                return isUserElement(getDetailModel());
-            }
-        });
         formBuilder.addFormItem(new FormItem(constants.emailUserGeneral(), email, 2, 0) {
             @Override
             public boolean getIsAvailable() {

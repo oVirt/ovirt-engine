@@ -49,22 +49,6 @@ public class UserGeneralModel extends EntityModel
         }
     }
 
-    private boolean active;
-
-    public boolean isActive()
-    {
-        return active;
-    }
-
-    public void setActive(boolean value)
-    {
-        if (active != value)
-        {
-            active = value;
-            onPropertyChanged(new PropertyChangedEventArgs("Active")); //$NON-NLS-1$
-        }
-    }
-
     @Override
     protected void onEntityChanged()
     {
@@ -90,6 +74,5 @@ public class UserGeneralModel extends EntityModel
 
         setDomain(user.getDomain());
         setEmail(user.getEmail());
-        setActive(user.isActive());
     }
 }

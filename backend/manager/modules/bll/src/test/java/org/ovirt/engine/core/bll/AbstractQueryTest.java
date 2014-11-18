@@ -1,21 +1,38 @@
 package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertNotSame;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
+import org.ovirt.engine.core.common.businessentities.EngineSession;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.EngineSessionDAO;
+import org.ovirt.engine.core.dao.PermissionDAO;
+import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.RandomUtils;
 
 public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q extends QueriesCommandBase<? extends P>> {
+
+    @ClassRule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.UserSessionTimeOutInterval, 60));
 
     protected P params;
     private Q query;
@@ -40,11 +57,25 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
     }
 
     protected Q setUpSpyQuery(P parameters) throws Exception {
+        DbFacade dbFacadeMock = mock(DbFacade.class);
+        DbUser dbUserMock = mock(DbUser.class);
+
+        EngineSessionDAO engineSessionDAOMock = mock(EngineSessionDAO.class);
+        when(engineSessionDAOMock.save(any(EngineSession.class))).thenReturn(RandomUtils.instance().nextLong());
+        when(engineSessionDAOMock.remove(any(Long.class))).thenReturn(1);
+        when(dbFacadeMock.getEngineSessionDao()).thenReturn(engineSessionDAOMock);
+
+        PermissionDAO permissionsDAOMock = mock(PermissionDAO.class);
+        when(permissionsDAOMock.getAllForEntity(any(Guid.class), any(Long.class), any(Boolean.class))).thenReturn(new ArrayList<Permissions>());
+        when(dbFacadeMock.getPermissionDao()).thenReturn(permissionsDAOMock);
+
+        SessionDataContainer.getInstance().setDbFacade(dbFacadeMock);
+
+        SessionDataContainer.getInstance().setUser(parameters.getSessionId(), dbUserMock);
+
         Constructor<? extends Q> con = getQueryType().getConstructor(getParameterType());
         query = spy(con.newInstance(parameters));
-        DbFacade dbFacadeMock = mock(DbFacade.class);
         doReturn(dbFacadeMock).when(query).getDbFacade();
-        DbUser dbUserMock = mock(DbUser.class);
         doReturn(dbUserMock).when(query).initUser();
         return query;
     }

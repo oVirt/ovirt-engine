@@ -110,9 +110,9 @@ BEGIN
 	    (
 		    -- get all groups of admin users
 		    SELECT ad_groups.id group_id, users.user_id
-		    FROM ad_groups, users
+		    FROM ad_groups, engine_sessions
 		    WHERE ad_groups.id IN
-		    (SELECT * FROM fnsplitteruuid(users.group_ids))
+		    (SELECT * FROM fnsplitteruuid(engine_sessions.group_ids))
 			AND users.user_id = v_userId ) temp
 		ON permissions.ad_element_id = temp.group_id;
 
@@ -675,8 +675,8 @@ RETURNS SETOF idUuidType STABLE
    AS $function$
 BEGIN
    RETURN QUERY
-   select ID from ad_groups,users where users.user_id = v_id
-   and ad_groups.id in(select * from fnsplitteruuid(users.group_ids))
+   select ad_groups.ID from ad_groups,engine_sessions where engine_sessions.user_id = v_id
+   and ad_groups.id in(select * from fnsplitteruuid(engine_sessions.group_ids))
    UNION
    select v_id
    UNION

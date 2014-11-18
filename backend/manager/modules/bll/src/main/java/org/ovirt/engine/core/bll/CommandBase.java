@@ -2332,4 +2332,15 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     protected MacPoolManagerStrategy getMacPool() {
         return MacPoolPerDcSingleton.getInstance().poolForDataCenter(getStoragePoolId());
     }
+
+    protected long getEngineSessionSeqId() {
+        String sessionId = getParameters().getSessionId();
+        if (sessionId == null && getContext() != null) {
+            sessionId = getContext().getEngineContext().getSessionId();
+        }
+        if (sessionId == null) {
+            throw new RuntimeException("No sessionId found for command " + getClass().getName());
+        }
+        return SessionDataContainer.getInstance().getEngineSessionSeqId(sessionId);
+    }
 }

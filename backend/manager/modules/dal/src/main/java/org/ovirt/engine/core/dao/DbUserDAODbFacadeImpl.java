@@ -2,11 +2,8 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
@@ -29,30 +26,15 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
             entity.setDepartment(rs.getString("department"));
             entity.setDomain(rs.getString("domain"));
             entity.setEmail(rs.getString("email"));
-            entity.setGroupNames(new LinkedList<String>(Arrays.asList(StringUtils.split(rs.getString("groups"), ','))));
             entity.setFirstName(rs.getString("name"));
             entity.setNote(rs.getString("note"));
-            entity.setNote(rs.getString("note"));
-            entity.setRole(rs.getString("role"));
-            entity.setActive(rs.getBoolean("active"));
             entity.setLastName(rs.getString("surname"));
             entity.setId(getGuidDefaultEmpty(rs, "user_id"));
             entity.setLoginName(rs.getString("username"));
             entity.setAdmin(rs.getBoolean("last_admin_check_status"));
-            entity.setGroupIds(convertToGuidList(rs.getString("group_ids"), ','));
             entity.setExternalId(rs.getString("external_id"));
             entity.setNamespace(rs.getString("namespace"));
             return entity;
-        }
-
-        private LinkedList<Guid> convertToGuidList(String str, char delimiter) {
-            LinkedList<Guid> results = new LinkedList<>();
-            if (StringUtils.isNotEmpty(str)) {
-                for (String id : str.split(String.format(" *%s *", delimiter))) {
-                    results.add(Guid.createGuidFromString(id));
-                }
-            }
-            return results;
         }
 
     }
@@ -64,16 +46,12 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
             addValue("department", user.getDepartment());
             addValue("domain", user.getDomain());
             addValue("email", user.getEmail());
-            addValue("groups", StringUtils.join(user.getGroupNames(), ","));
             addValue("name", user.getFirstName());
             addValue("note", user.getNote());
-            addValue("role", user.getRole());
-            addValue("active", user.isActive());
             addValue("surname", user.getLastName());
             addValue("user_id", user.getId());
             addValue("username", user.getLoginName());
             addValue("last_admin_check_status", user.isAdmin());
-            addValue("group_ids", StringUtils.join(user.getGroupIds(), ","));
             addValue("external_id", user.getExternalId());
             addValue("namespace", user.getNamespace());
         }

@@ -847,7 +847,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         PermissionDAO dao = getDbFacade().getPermissionDao();
 
-        List<Permissions> vmPermissions = dao.getAllForEntity(getVmId(), getCurrentUser().getId(), false);
+        List<Permissions> vmPermissions = dao.getAllForEntity(getVmId(), getEngineSessionSeqId(), false);
 
         for (Permissions vmPermission : vmPermissions) {
             permissionsToAdd.addPermission(vmPermission.getad_element_id(), vmPermission.getrole_id(),

@@ -12,7 +12,7 @@ public class GetAllRelevantQuotasForVdsGroupQuery<P extends IdQueryParameters> e
         getQueryReturnValue().setReturnValue(getDbFacade()
                 .getQuotaDao()
                 .getAllRelevantQuotasForVdsGroup(getParameters().getId(),
-                        getUserID(),
+                        getEngineSessionSeqId(),
                         getParameters().isFiltered()));
     }
 }

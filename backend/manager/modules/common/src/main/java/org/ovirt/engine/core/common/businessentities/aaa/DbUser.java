@@ -46,20 +46,11 @@ public class DbUser extends IVdcQueryable {
     @Size(max = BusinessEntitiesDefinitions.USER_DEPARTMENT_SIZE)
     private String department;
 
-    @Size(max = BusinessEntitiesDefinitions.USER_ROLE_SIZE)
-    private String role;
-
     @Size(max = BusinessEntitiesDefinitions.USER_EMAIL_SIZE)
     private String email;
 
     @Size(max = BusinessEntitiesDefinitions.USER_NOTE_SIZE)
     private String note;
-
-    /**
-     * This flag indicates if the user was available in the directory the last time that it was checked, so {@code true}
-     * means it was available and {@code false} means it wasn't.
-     */
-    private boolean active;
 
     /**
      * GUI flag only. Do not use for internal logic. The sole purpose of
@@ -82,7 +73,6 @@ public class DbUser extends IVdcQueryable {
         department = "";
         groupNames = Collections.emptyList();
         groupIds = Collections.emptyList();
-        role = "";
         note = "";
     }
 
@@ -95,8 +85,6 @@ public class DbUser extends IVdcQueryable {
         lastName = directoryUser.getLastName();
         department = directoryUser.getDepartment();
         email = directoryUser.getEmail();
-        active = true;
-        role = "";
         note = "";
         groupNames = new HashSet<String>();
         for (DirectoryGroup directoryGroup : directoryUser.getGroups()) {
@@ -192,22 +180,6 @@ public class DbUser extends IVdcQueryable {
         note = value;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String value) {
-        role = value;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean value) {
-        active = value;
-    }
-
     public boolean isGroup() {
         return loginName == null || loginName.trim().isEmpty();
     }
@@ -245,12 +217,9 @@ public class DbUser extends IVdcQueryable {
         result = prime * result + ((domain == null) ? 0 : domain.hashCode());
         result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
         result = prime * result + ((email == null) ? 0 : email.hashCode());
-        result = prime * result + ((groupNames == null) ? 0 : groupNames.hashCode());
         result = prime * result + (isAdmin ? 1231 : 1237);
         result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
         result = prime * result + ((note == null) ? 0 : note.hashCode());
-        result = prime * result + ((role == null) ? 0 : role.hashCode());
-        result = prime * result + (active ? 1231 : 1237);
         result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
         result = prime * result + ((loginName == null) ? 0 : loginName.hashCode());
         return result;
@@ -273,11 +242,8 @@ public class DbUser extends IVdcQueryable {
                 && ObjectUtils.objectsEqual(domain, other.domain)
                 && ObjectUtils.objectsEqual(namespace, other.namespace)
                 && ObjectUtils.objectsEqual(email, other.email)
-                && ObjectUtils.objectsEqual(groupNames, other.groupNames)
                 && ObjectUtils.objectsEqual(firstName, other.firstName)
                 && ObjectUtils.objectsEqual(note, other.note)
-                && ObjectUtils.objectsEqual(role, other.role)
-                && active == other.active
                 && ObjectUtils.objectsEqual(lastName, other.lastName)
                 && ObjectUtils.objectsEqual(loginName, other.loginName);
 

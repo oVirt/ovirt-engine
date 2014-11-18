@@ -49,6 +49,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
 
         new_permissions = new Permissions(AD_ELEMENT_ID, ROLE_ID, STORAGE_POOL_ID,
                 VdcObjectType.StoragePool);
+
     }
 
     /**
@@ -156,7 +157,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForAdElementFilteredWithPermissions() {
-        List<Permissions> result = dao.getAllForAdElement(AD_ELEMENT_ID, PRIVILEGED_USER_ID, true);
+        List<Permissions> result = dao.getAllForAdElement(AD_ELEMENT_ID, PRIVILEGED_USER_SESSION_ID, true);
 
         assertValidGetByAdElement(result);
     }
@@ -166,7 +167,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForAdElementFilteredWithNoPermissions() {
-        List<Permissions> result = dao.getAllForAdElement(AD_ELEMENT_ID, UNPRIVILEGED_USER_ID, true);
+        List<Permissions> result = dao.getAllForAdElement(AD_ELEMENT_ID, UNPRIVILEGED_USER_SESSION_ID, true);
 
         assertInvalidGetPermissionList(result);
     }
@@ -227,7 +228,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForEntityFilteredWithPermissions() {
-        List<Permissions> result = dao.getAllForEntity(VM_ENTITY_ID, PRIVILEGED_USER_ID, true);
+        List<Permissions> result = dao.getAllForEntity(VM_ENTITY_ID, PRIVILEGED_USER_SESSION_ID, true);
 
         assertGetAllForEntityResult(result);
     }
@@ -237,7 +238,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForEntityFilteredWithNoPermissionsFilteringDisabled() {
-        List<Permissions> result = dao.getAllForEntity(VM_ENTITY_ID, UNPRIVILEGED_USER_ID, false);
+        List<Permissions> result = dao.getAllForEntity(VM_ENTITY_ID, UNPRIVILEGED_USER_SESSION_ID, false);
 
         assertGetAllForEntityResult(result);
     }
@@ -247,14 +248,14 @@ public class PermissionDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForEntityFilteredWithNoPermissions() {
-        List<Permissions> result = dao.getAllForEntity(VM_ENTITY_ID, UNPRIVILEGED_USER_ID, true);
+        List<Permissions> result = dao.getAllForEntity(VM_ENTITY_ID, UNPRIVILEGED_USER_SESSION_ID, true);
 
         assertInvalidGetPermissionList(result);
     }
 
     @Test
     public void testGetAllUsersWithPermissionsOnEntity() {
-        List<Permissions> result = dao.getAllForEntity(VM_ENTITY_ID, PRIVILEGED_USER_ID, true, true);
+        List<Permissions> result = dao.getAllForEntity(VM_ENTITY_ID, PRIVILEGED_USER_SESSION_ID, true, true);
 
         assertNotNull(result);
         assertEquals(2, result.size());
@@ -451,29 +452,29 @@ public class PermissionDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetTreeForEntityWithRoleTypeFilteredWithPermissions() {
-        baseTestGetTreeForEntityFiltered(STORAGE_ENTITY_ID, VdcObjectType.Storage, PRIVILEGED_USER_ID, true);
+        baseTestGetTreeForEntityFiltered(STORAGE_ENTITY_ID, VdcObjectType.Storage, PRIVILEGED_USER_SESSION_ID, true);
     }
 
     @Test
     public void testGetTreeForEntityWithRoleTypeFilteredWithNoPermissionsCheckDisabled() {
-        baseTestGetTreeForEntityFiltered(STORAGE_ENTITY_ID, VdcObjectType.Storage, UNPRIVILEGED_USER_ID, false);
+        baseTestGetTreeForEntityFiltered(STORAGE_ENTITY_ID, VdcObjectType.Storage, UNPRIVILEGED_USER_SESSION_ID, false);
     }
 
     @Test
     public void testGetTreeForEntityWithRoleTypeFilteredWithNoPermissions() {
         List<Permissions> result =
-                dao.getTreeForEntity(STORAGE_ENTITY_ID, VdcObjectType.Storage, UNPRIVILEGED_USER_ID, true);
+                dao.getTreeForEntity(STORAGE_ENTITY_ID, VdcObjectType.Storage, UNPRIVILEGED_USER_SESSION_ID, true);
         assertInvalidGetPermissionList(result);
     }
     @Test
     public void testGetTreeForEntityWithAppMode() {
-        List<Permissions> result = dao.getTreeForEntity(STORAGE_ENTITY_ID, VdcObjectType.Storage, PRIVILEGED_USER_ID, true, ApplicationMode.AllModes.getValue());
+        List<Permissions> result = dao.getTreeForEntity(STORAGE_ENTITY_ID, VdcObjectType.Storage, PRIVILEGED_USER_SESSION_ID, true, ApplicationMode.AllModes.getValue());
         assertEquals(1, result.size());
 
-        List<Permissions> result2 = dao.getTreeForEntity(STORAGE_ENTITY_ID, VdcObjectType.Storage, PRIVILEGED_USER_ID, true, ApplicationMode.VirtOnly.getValue());
+        List<Permissions> result2 = dao.getTreeForEntity(STORAGE_ENTITY_ID, VdcObjectType.Storage, PRIVILEGED_USER_SESSION_ID, true, ApplicationMode.VirtOnly.getValue());
         assertEquals(1, result2.size());
 
-        List<Permissions> result3 = dao.getTreeForEntity(STORAGE_ENTITY_ID, VdcObjectType.Storage, PRIVILEGED_USER_ID, true, ApplicationMode.GlusterOnly.getValue());
+        List<Permissions> result3 = dao.getTreeForEntity(STORAGE_ENTITY_ID, VdcObjectType.Storage, PRIVILEGED_USER_SESSION_ID, true, ApplicationMode.GlusterOnly.getValue());
         assertEquals(1, result3.size());
     }
     /**
@@ -498,10 +499,10 @@ public class PermissionDAOTest extends BaseDAOTestCase {
      */
     private void baseTestGetTreeForEntityFiltered(Guid entityID,
             VdcObjectType objectType,
-            Guid userID,
+            long sessionId,
             boolean isFiltered,
             Guid... alternativeObjectIds) {
-        List<Permissions> result = dao.getTreeForEntity(entityID, objectType, userID, isFiltered);
+        List<Permissions> result = dao.getTreeForEntity(entityID, objectType, sessionId, isFiltered);
 
         assertGetTreeForEntityResult(entityID, result, alternativeObjectIds);
     }

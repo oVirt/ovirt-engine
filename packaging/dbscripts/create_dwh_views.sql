@@ -529,10 +529,10 @@ SELECT
     domain,
     username,
     department,
-    role AS user_role_title,
+    '' AS user_role_title,
     email,
     external_id,
-    active,
+    true AS active,
     _create_date AS create_date,
     _update_date AS update_date
 FROM users;

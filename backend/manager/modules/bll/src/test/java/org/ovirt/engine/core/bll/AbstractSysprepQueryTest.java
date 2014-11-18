@@ -14,5 +14,6 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 public abstract class AbstractSysprepQueryTest<P extends VdcQueryParametersBase, Q extends QueriesCommandBase<? extends P>> extends AbstractUserQueryTest<P, Q> {
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.AdUserName, ""));
+    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.AdUserName, ""),
+            mockConfig(ConfigValues.UserSessionTimeOutInterval, 60));
 }

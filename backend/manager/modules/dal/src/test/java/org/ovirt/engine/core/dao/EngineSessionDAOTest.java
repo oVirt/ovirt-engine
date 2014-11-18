@@ -21,7 +21,6 @@ public class EngineSessionDAOTest extends BaseDAOTestCase {
     private EngineSessionDAO dao;
     private EngineSession newEngineSession;
     private EngineSession existingEngineSession;
-    private final static long ID = 1;
 
     @Override
     @Before
@@ -38,7 +37,7 @@ public class EngineSessionDAOTest extends BaseDAOTestCase {
         newEngineSession.setGroupIds(new HashSet<Guid>(Arrays.asList(FixturesTool.EXISTING_GROUP_ID)));
         newEngineSession.setUserName("");
 
-        existingEngineSession = dao.get(ID);
+        existingEngineSession = dao.get(PRIVILEGED_USER_SESSION_ID);
     }
 
     /**
@@ -97,7 +96,7 @@ public class EngineSessionDAOTest extends BaseDAOTestCase {
         EngineSession result = dao.get(existingEngineSession.getId());
         assertNotNull(result);
 
-        assertEquals(dao.removeAll(), 1);
+        assertEquals(dao.removeAll(), 2);
         result = dao.get(existingEngineSession.getId());
 
         assertNull(result);

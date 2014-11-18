@@ -19,11 +19,11 @@ public class GetPermissionsForObjectQuery<P extends GetPermissionsForObjectParam
         PermissionDAO dao = getDbFacade().getPermissionDao();
         List<Permissions> perms;
         if (getParameters().getDirectOnly()) {
-            perms = dao.getAllForEntity(objectId, getUserID(), getParameters().isFiltered(), getParameters().getAllUsersWithPermission());
+            perms = dao.getAllForEntity(objectId, getEngineSessionSeqId(), getParameters().isFiltered(), getParameters().getAllUsersWithPermission());
         } else {
             perms = dao.getTreeForEntity(objectId,
                     getParameters().getVdcObjectType(),
-                    getUserID(),
+                    getEngineSessionSeqId(),
                     getParameters().isFiltered());
         }
         getQueryReturnValue().setReturnValue(perms);

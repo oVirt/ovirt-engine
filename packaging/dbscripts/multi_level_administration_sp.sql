@@ -102,7 +102,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetPermissionsByAdElementId(v_ad_element_id UUID, v_user_id UUID, v_is_filtered BOOLEAN, v_app_mode INTEGER)
+Create or replace FUNCTION GetPermissionsByAdElementId(v_ad_element_id UUID, v_engine_session_seq_id INTEGER, v_is_filtered BOOLEAN, v_app_mode INTEGER)
 RETURNS SETOF permissions_view STABLE
    AS $procedure$
 BEGIN
@@ -110,8 +110,9 @@ BEGIN
    FROM permissions_view
    WHERE (permissions_view.app_mode & v_app_mode) > 0
    AND (permissions_view.ad_element_id = v_ad_element_id
-    OR    ad_element_id IN (SELECT * FROM getUserAndGroupsById(v_ad_element_id)))
-   AND (NOT v_is_filtered OR EXISTS (SELECT 1 FROM user_permissions_permissions_view WHERE user_id = v_user_id));
+    OR    ad_element_id IN (SELECT * FROM GetSessionUserAndGroupsById(v_ad_element_id, v_engine_session_seq_id)))
+   AND (NOT v_is_filtered OR EXISTS (SELECT 1 FROM user_permissions_permissions_view uv, engine_sessions WHERE uv.user_id = engine_sessions.user_id
+                                              AND  engine_sessions.id = v_engine_session_seq_id));
 
 END; $procedure$
 LANGUAGE plpgsql;
@@ -382,8 +383,9 @@ BEGIN
 		-- get allparents of object
    and (object_id in(select id from  fn_get_entity_parents(v_object_id,v_object_type_id)))
 		-- get user and his groups
-   and ((NOT v_ignore_everyone and ad_element_id = v_everyone_object_id) or
-   ad_element_id = v_user_id or ad_element_id in(select * from fnsplitteruuid(v_group_ids)))   LIMIT 1;
+   and ((NOT v_ignore_everyone and ad_element_id = v_everyone_object_id)
+   or ad_element_id = v_user_id
+   or ad_element_id in(select * from fnsplitteruuid(v_group_ids)))   LIMIT 1;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -455,7 +457,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetPermissionsByEntityId(v_id UUID, v_user_id UUID, v_is_filtered BOOLEAN, v_app_mode INTEGER)
+Create or replace FUNCTION GetPermissionsByEntityId(v_id UUID, v_engine_session_seq_id INTEGER, v_is_filtered BOOLEAN, v_app_mode INTEGER)
 RETURNS SETOF permissions_view STABLE
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
@@ -466,12 +468,12 @@ BEGIN
    WHERE  (permissions_view.app_mode & v_app_mode) > 0
    AND object_id = v_id
    AND   (NOT v_is_filtered OR EXISTS (SELECT 1
-                                       FROM   GetUserPermissionsByEntityId(v_id, v_user_id, v_is_filtered)));
+                                       FROM   GetUserPermissionsByEntityId(v_id, v_engine_session_seq_id, v_is_filtered)));
 END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetAllUsersWithPermissionsOnEntityByEntityId(v_id UUID, v_user_id UUID, v_is_filtered BOOLEAN,  v_app_mode INTEGER)
+Create or replace FUNCTION GetAllUsersWithPermissionsOnEntityByEntityId(v_id UUID, v_engine_session_seq_id INTEGER, v_is_filtered BOOLEAN,  v_app_mode INTEGER)
 RETURNS SETOF permissions_view STABLE
    AS $procedure$
 BEGIN
@@ -480,13 +482,13 @@ BEGIN
    WHERE (permissions_view.app_mode & v_app_mode) > 0
    AND object_id = v_id
    AND   (NOT v_is_filtered OR EXISTS (SELECT 1
-                                       FROM   GetAllUsersWithPermissionsByEntityId(v_id, v_user_id, v_is_filtered)));
+                                       FROM   GetAllUsersWithPermissionsByEntityId(v_id, v_engine_session_seq_id, v_is_filtered)));
 END; $procedure$
 LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetUserPermissionsByEntityId(v_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
+Create or replace FUNCTION GetUserPermissionsByEntityId(v_id UUID, v_engine_session_seq_id INTEGER, v_is_filtered BOOLEAN)
 RETURNS SETOF permissions_view STABLE
     -- SET NOCOUNT ON added to prevent extra result sets from
     -- interfering with SELECT statements.
@@ -496,15 +498,15 @@ BEGIN
    FROM permissions_view p
    WHERE object_id = v_id
    AND   (NOT v_is_filtered OR EXISTS (SELECT 1
-                                       FROM   user_flat_groups u
+                                       FROM   engine_session_user_flat_groups u
                                        WHERE  p.ad_element_id = u.granted_id
-                                       AND    u.user_id       = v_user_id));
+                                       AND    u.engine_session_seq_id = v_engine_session_seq_id));
 END; $procedure$
 LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllUsersWithPermissionsByEntityId(v_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
+Create or replace FUNCTION GetAllUsersWithPermissionsByEntityId(v_id UUID, v_engine_session_seq_id INTEGER, v_is_filtered BOOLEAN)
 RETURNS SETOF permissions_view STABLE
    AS $procedure$
    declare r_type int4;
@@ -515,9 +517,9 @@ BEGIN
      FROM permissions_view p
      WHERE object_id in (select id from fn_get_entity_parents(v_id, r_type))
      AND   (NOT v_is_filtered OR EXISTS (SELECT 1
-                                       FROM   user_flat_groups u
+                                       FROM   engine_session_user_flat_groups u
                                        WHERE  p.ad_element_id = u.granted_id
-                                       AND    u.user_id       = v_user_id));
+                                       AND    u.engine_session_seq_id = v_engine_session_seq_id));
     END LOOP;
     return;
 END; $procedure$
@@ -558,7 +560,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetPermissionsTreeByEntityId
-(v_id UUID, v_object_type_id INTEGER, v_user_id UUID, v_is_filtered BOOLEAN, v_app_mode INTEGER)
+(v_id UUID, v_object_type_id INTEGER, v_engine_session_seq_id INTEGER, v_is_filtered BOOLEAN, v_app_mode INTEGER)
 RETURNS SETOF permissions_view STABLE
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
@@ -569,9 +571,9 @@ BEGIN
    WHERE  (p.app_mode & v_app_mode) > 0
    AND  object_id in(select id from  fn_get_entity_parents(v_id,v_object_type_id))
    AND    (NOT v_is_filtered OR EXISTS (SELECT 1
-                                        FROM   user_flat_groups u
+                                        FROM   engine_session_user_flat_groups u
                                         WHERE  p.ad_element_id = u.granted_id
-                                        AND    u.user_id       = v_user_id));
+                                        AND    u.engine_session_seq_id = v_engine_session_seq_id));
 
 END; $procedure$
 LANGUAGE plpgsql;

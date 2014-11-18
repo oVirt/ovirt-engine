@@ -1953,9 +1953,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Inherited From")
     String inheritedFromUser();
 
-    @DefaultStringValue("Active")
-    String activeUserGeneral();
-
     @DefaultStringValue("E-mail")
     String emailUserGeneral();
 

@@ -66,16 +66,16 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
 
     @Override
     public List<Permissions> getAllForAdElement(Guid id) {
-        return getAllForAdElement(id, null, false);
+        return getAllForAdElement(id, -1, false);
     }
 
     @Override
-    public List<Permissions> getAllForAdElement(Guid id, Guid userID, boolean isFiltered) {
+    public List<Permissions> getAllForAdElement(Guid id, long engineSessionSeqId, boolean isFiltered) {
         int appMode = Config.<Integer> getValue(ConfigValues.ApplicationMode);
 
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("ad_element_id", id).
-                addValue("user_id", userID).
+                addValue("engine_session_seq_id", engineSessionSeqId).
                 addValue("is_filtered", isFiltered).
                 addValue("app_mode", appMode);
 
@@ -128,24 +128,26 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
 
     @Override
     public List<Permissions> getAllForEntity(Guid id) {
-        return getAllForEntity(id, null, false);
+        return getAllForEntity(id, -1, false);
     }
 
     @Override
-    public List<Permissions> getAllForEntity(Guid id, Guid userID, boolean isFiltered) {
-        return getAllForEntity(id, userID, isFiltered, false);
+    public List<Permissions> getAllForEntity(Guid id, long engineSessionId, boolean isFiltered) {
+        return getAllForEntity(id, engineSessionId, isFiltered, false);
     }
 
     @Override
-    public List<Permissions> getAllForEntity(Guid id, Guid userID, boolean isFiltered, boolean allUsersWithPermission) {
+    public List<Permissions> getAllForEntity(Guid id, long engineSessionId, boolean isFiltered, boolean allUsersWithPermission) {
         int appMode = Config.<Integer> getValue(ConfigValues.ApplicationMode);
-        return getAllForEntity(id, userID, isFiltered, allUsersWithPermission, appMode);
+        return getAllForEntity(id, engineSessionId, isFiltered, allUsersWithPermission, appMode);
     }
 
     @Override
-    public List<Permissions> getAllForEntity(Guid id, Guid userID, boolean isFiltered, boolean allUsersWithPermission, int appMode) {
+    public List<Permissions> getAllForEntity(Guid id, long engineSessionSeqId, boolean isFiltered, boolean allUsersWithPermission, int appMode) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered)
+                .addValue("id", id)
+                .addValue("engine_session_seq_id", engineSessionSeqId)
+                .addValue("is_filtered", isFiltered)
                 .addValue("app_mode", appMode);
         String functionName = "GetPermissionsByEntityId";
         if (allUsersWithPermission) {
@@ -158,22 +160,22 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
 
     @Override
     public List<Permissions> getTreeForEntity(Guid id, VdcObjectType type) {
-        return getTreeForEntity(id, type, null, false);
+        return getTreeForEntity(id, type, -1, false);
     }
 
     @Override
-    public List<Permissions> getTreeForEntity(Guid id, VdcObjectType type, Guid userID, boolean isFiltered) {
+    public List<Permissions> getTreeForEntity(Guid id, VdcObjectType type, long engineSessionSeqId, boolean isFiltered) {
         int appMode = Config.<Integer> getValue(ConfigValues.ApplicationMode);
-        return getTreeForEntity(id, type, userID, isFiltered, appMode);
+        return getTreeForEntity(id, type, engineSessionSeqId, isFiltered, appMode);
     }
 
     @Override
-    public List<Permissions> getTreeForEntity(Guid id, VdcObjectType type, Guid userID, boolean isFiltered, int appMode) {
+    public List<Permissions> getTreeForEntity(Guid id, VdcObjectType type, long engineSessionSeqId, boolean isFiltered, int appMode) {
         MapSqlParameterSource parameterSource =
                 getCustomMapSqlParameterSource()
                         .addValue("id", id)
                         .addValue("object_type_id", type.getValue())
-                        .addValue("user_id", userID)
+                        .addValue("engine_session_seq_id", engineSessionSeqId)
                         .addValue("is_filtered", isFiltered)
                         .addValue("app_mode", appMode);
         return getCallsHandler().executeReadList("GetPermissionsTreeByEntityId",

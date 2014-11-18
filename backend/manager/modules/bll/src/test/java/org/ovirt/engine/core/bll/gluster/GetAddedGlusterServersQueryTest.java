@@ -67,7 +67,8 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.GlusterHostUUIDSupport, Version.v3_2.toString(), false),
-            mockConfig(ConfigValues.GlusterHostUUIDSupport, Version.v3_3.toString(), true));
+            mockConfig(ConfigValues.GlusterHostUUIDSupport, Version.v3_3.toString(), true),
+            mockConfig(ConfigValues.UserSessionTimeOutInterval, 60));
 
     private VDSGroup getVdsGroup(Version ver) {
         VDSGroup vdsGroup = new VDSGroup();

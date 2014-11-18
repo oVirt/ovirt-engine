@@ -939,14 +939,14 @@ INNER JOIN permissions as per on per.object_id = p.vm_pool_id;
 CREATE OR REPLACE VIEW vdc_users
 AS
 
-SELECT     'user' as user_group, users_1.name as name, users_1.user_id as user_id, users_1.surname as surname, users_1.domain as domain, users_1.username as username, users_1.groups as groups, users_1.department as department,
-                      users_1.role as role, users_1.email as email, users_1.note as note, users_1.active as active, 0 as vm_admin,
-                      users_1.last_admin_check_status as last_admin_check_status, users_1.group_ids as group_ids,
+SELECT     'user' as user_group, users_1.name as name, users_1.user_id as user_id, users_1.surname as surname, users_1.domain as domain, users_1.username as username, users_1.department as department,
+                      users_1.email as email, users_1.note as note, 0 as vm_admin,
+                      users_1.last_admin_check_status as last_admin_check_status,
                       users_1.external_id as external_id, users_1.namespace as namespace
 FROM         users AS users_1
 UNION
-SELECT     'group' as user_group, ad_groups.name as name, ad_groups.id as id, '' as surname, ad_groups.domain as domain, '' as username, '' as groups, '' as department, '' as role,
-                      '' as email, '' as note, true as active, 1 as vm_admin, null as last_admin_check_status, '' as group_ids,
+SELECT     'group' as user_group, ad_groups.name as name, ad_groups.id as id, '' as surname, ad_groups.domain as domain, '' as username, '' as department,
+                      '' as email, '' as note, 1 as vm_admin, null as last_admin_check_status,
                       ad_groups.external_id as external_id, ad_groups.namespace as namespace
 FROM         ad_groups;
 
@@ -957,8 +957,8 @@ CREATE OR REPLACE VIEW vdc_users_with_tags
 AS
 
 SELECT     users_1.user_group as user_group, users_1.name as name, permissions.object_id as vm_guid, users_1.user_id as user_id, users_1.surname as surname, users_1.domain as domain,
-                      users_1.username as username, users_1.groups as groups, users_1.department as department, users_1.role as role, roles1.name as mla_role, users_1.email as email,
-                      users_1.note as note, users_1.active as active, users_1.vm_admin as vm_admin, tags_user_map_view_1.tag_name as tag_name, tags_user_map_view_1.tag_id as tag_id, users_1.last_admin_check_status as last_admin_check_status, users_1.group_ids as group_ids,
+                      users_1.username as username, users_1.department as department, roles1.name as mla_role, users_1.email as email,
+                      users_1.note as note, users_1.vm_admin as vm_admin, tags_user_map_view_1.tag_name as tag_name, tags_user_map_view_1.tag_id as tag_id, users_1.last_admin_check_status as last_admin_check_status,
                       pools.vm_pool_name as vm_pool_name
 FROM         vdc_users AS users_1 LEFT OUTER JOIN
 users_and_groups_to_vm_pool_map_view AS pools ON users_1.user_id = pools.user_id LEFT OUTER JOIN
@@ -969,9 +969,9 @@ roles AS roles1 ON roles1.id = permissions.role_id
 WHERE     (users_1.user_group = 'user')
 UNION
 SELECT     users_2.user_group as user_group, users_2.name as name, permissions_1.object_id as vm_guid, users_2.user_id as user_id, users_2.surname as surname, users_2.domain as domain,
-                      users_2.username as username, users_2.groups as groups, users_2.department as department, users_2.role as role, roles2.name as mla_role, users_2.email as email,
-                      users_2.note as note, users_2.active as active, users_2.vm_admin as vm_admin, tags_user_group_map_view.tag_name as tag_name, tags_user_group_map_view.tag_id as tag_id,
-                      users_2.last_admin_check_status as last_admin_check_status, users_2.group_ids as group_ids , pools1.vm_pool_name as vm_pool_name
+                      users_2.username as username, users_2.department as department, roles2.name as mla_role, users_2.email as email,
+                      users_2.note as note, users_2.vm_admin as vm_admin, tags_user_group_map_view.tag_name as tag_name, tags_user_group_map_view.tag_id as tag_id,
+                      users_2.last_admin_check_status as last_admin_check_status, pools1.vm_pool_name as vm_pool_name
 FROM         vdc_users AS users_2 LEFT OUTER JOIN
 users_and_groups_to_vm_pool_map_view AS pools1 ON users_2.user_id = pools1.user_id LEFT OUTER JOIN
 permissions AS permissions_1 ON users_2.user_id = permissions_1.ad_element_id LEFT OUTER JOIN
@@ -979,7 +979,6 @@ tags AS tags_1 ON tags_1.type = 1 LEFT OUTER JOIN
 tags_user_group_map_view ON users_2.user_id = tags_user_group_map_view.group_id LEFT OUTER JOIN
 roles AS roles2 ON roles2.id = permissions_1.role_id
 WHERE     (users_2.user_group = 'group');
-
 
 
 
@@ -1346,17 +1345,17 @@ INNER JOIN storage_pool ON network.storage_pool_id = storage_pool.id;
 ----------------------------------------------
 
 -- Flatten all the objects a user can get permissions on them
-CREATE OR REPLACE VIEW user_flat_groups
+CREATE OR REPLACE VIEW engine_session_user_flat_groups
 AS
-SELECT users.user_id AS user_id, fnSplitterUuid(users.group_ids) AS granted_id
-FROM   users
+SELECT id AS engine_session_seq_id, user_id AS user_id, fnSplitterUuid(engine_sessions.group_ids) AS granted_id
+FROM   engine_sessions
 UNION ALL
 -- The user itself
-SELECT user_id, user_id FROM users
+SELECT id, user_id, user_id FROM engine_sessions
 UNION ALL
 -- user is also member of 'Everyone'
-SELECT user_id, 'EEE00000-0000-0000-0000-123456789EEE'
-FROM   users;
+SELECT id, user_id, 'EEE00000-0000-0000-0000-123456789EEE'
+FROM   engine_sessions;
 
 -- Permissions view for Clusters
 -- The user has permissions on a cluster
@@ -1386,7 +1385,7 @@ CREATE OR REPLACE VIEW user_vds_groups_permissions_view (entity_id, user_id)
 AS
 SELECT       DISTINCT entity_id, user_id
 FROM         user_vds_groups_permissions_view_base
-NATURAL JOIN user_flat_groups;
+NATURAL JOIN engine_session_user_flat_groups;
 
 
 -- Permissions view for Data Center
@@ -1424,7 +1423,7 @@ CREATE OR REPLACE VIEW user_storage_pool_permissions_view (entity_id, user_id)
 AS
 SELECT       DISTINCT entity_id, user_id
 FROM         user_storage_pool_permissions_view_base
-NATURAL JOIN user_flat_groups;
+NATURAL JOIN engine_session_user_flat_groups;
 
 
 -- Permissions for Storage Domains
@@ -1468,7 +1467,7 @@ CREATE OR REPLACE VIEW user_storage_domain_permissions_view (entity_id, user_id)
 AS
 SELECT       DISTINCT entity_id, user_id
 FROM         user_storage_domain_permissions_view_base
-NATURAL JOIN user_flat_groups;
+NATURAL JOIN engine_session_user_flat_groups;
 
 
 -- Permissions on Hosts
@@ -1495,7 +1494,7 @@ CREATE OR REPLACE VIEW user_vds_permissions_view (entity_id, user_id)
 AS
 SELECT       DISTINCT entity_id, user_id
 FROM         user_vds_permissions_view_base
-NATURAL JOIN user_flat_groups;
+NATURAL JOIN engine_session_user_flat_groups;
 
 
 -- Permissions on VM Pools
@@ -1532,7 +1531,7 @@ CREATE OR REPLACE VIEW user_vm_pool_permissions_view (entity_id, user_id)
 AS
 SELECT       DISTINCT entity_id, user_id
 FROM         user_vm_pool_permissions_view_base
-NATURAL JOIN user_flat_groups;
+NATURAL JOIN engine_session_user_flat_groups;
 
 
 -- Permissions on Templates
@@ -1566,7 +1565,7 @@ CREATE OR REPLACE VIEW user_vm_template_permissions_view (entity_id, user_id)
 AS
 SELECT       DISTINCT entity_id, user_id
 FROM         user_vm_template_permissions_view_base
-NATURAL JOIN user_flat_groups;
+NATURAL JOIN engine_session_user_flat_groups;
 
 
 -- Permissions on VMs
@@ -1598,7 +1597,7 @@ CREATE OR REPLACE VIEW user_vm_permissions_view (entity_id, user_id)
 AS
 SELECT       DISTINCT entity_id, user_id
 FROM         user_vm_permissions_view_base
-NATURAL JOIN user_flat_groups;
+NATURAL JOIN engine_session_user_flat_groups;
 
 -- Permissions on disk
 -- The user has permissions on the disk directly
@@ -1643,21 +1642,21 @@ CREATE OR REPLACE VIEW user_disk_permissions_view (entity_id, user_id)
 AS
 SELECT       DISTINCT entity_id, user_id
 FROM         user_disk_permissions_view_base
-NATURAL JOIN user_flat_groups;
+NATURAL JOIN engine_session_user_flat_groups;
 
 -- Permissions on permissions
 CREATE OR REPLACE VIEW user_permissions_permissions_view (entity_id, user_id)
 AS
 SELECT       DISTINCT id, user_id
 FROM         internal_permissions_view
-JOIN         user_flat_groups ON granted_id = ad_element_id;
+JOIN         engine_session_user_flat_groups ON granted_id = ad_element_id;
 
 -- Direct permissions assigned to user
 CREATE OR REPLACE VIEW user_object_permissions_view AS
- SELECT DISTINCT permissions.object_id AS entity_id, user_flat_groups.user_id
+ SELECT DISTINCT permissions.object_id AS entity_id, engine_session_user_flat_groups.user_id
    FROM permissions
    JOIN roles ON permissions.role_id = roles.id
-   JOIN user_flat_groups ON user_flat_groups.granted_id = permissions.ad_element_id
+   JOIN engine_session_user_flat_groups ON engine_session_user_flat_groups.granted_id = permissions.ad_element_id
    WHERE permissions.ad_element_id != getGlobalIds('everyone');
 
 -- Permissions to view users in db
@@ -1723,7 +1722,7 @@ CREATE OR REPLACE VIEW user_vnic_profile_permissions_view (entity_id, user_id)
 AS
 SELECT       DISTINCT entity_id, user_id
 FROM         user_vnic_profile_permissions_view_base
-NATURAL JOIN user_flat_groups;
+NATURAL JOIN engine_session_user_flat_groups;
 
 -- Permissions on Networks
 CREATE OR REPLACE VIEW user_network_permissions_view_base (entity_id, granted_id)
@@ -1738,7 +1737,7 @@ CREATE OR REPLACE VIEW user_network_permissions_view (entity_id, user_id)
 AS
 SELECT       DISTINCT entity_id, user_id
 FROM         user_network_permissions_view_base
-NATURAL JOIN user_flat_groups;
+NATURAL JOIN engine_session_user_flat_groups;
 
 CREATE OR REPLACE VIEW gluster_volumes_view
 AS

@@ -183,7 +183,7 @@ public interface QuotaDAO extends DAO, SearchDAO<Quota> {
      * <b>Note:</b> The quotas returned are <b>thin</b> objects, containing only the metadata of the quota,
      * not the usage data.
      */
-    public List<Quota> getAllRelevantQuotasForStorage(Guid storageId, Guid userID, boolean isFiltered);
+    public List<Quota> getAllRelevantQuotasForStorage(Guid storageId, long engineSessionSeqId, boolean isFiltered);
 
     /**
      * Returns a list of all the quotas that are relevant to the given {@link #vdsGroupId} -
@@ -192,7 +192,7 @@ public interface QuotaDAO extends DAO, SearchDAO<Quota> {
      * <b>Note:</b> The quotas returned are <b>thin</b> objects, containing only the metadata of the quota,
      * not the usage data.
      */
-    public List<Quota> getAllRelevantQuotasForVdsGroup(Guid vdsGroupId, Guid userID, boolean isFiltered);
+    public List<Quota> getAllRelevantQuotasForVdsGroup(Guid vdsGroupId, long engineSessionSeqId, boolean isFiltered);
 
     /**
      * Is the Quota in use by any Image or VM (checks only for existence of the quota id in

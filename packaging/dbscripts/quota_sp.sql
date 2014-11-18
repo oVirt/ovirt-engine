@@ -191,7 +191,7 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetAllThinQuotasByStorageId(v_storage_id UUID, v_user_id UUID, v_is_filtered boolean)
+Create or replace FUNCTION GetAllThinQuotasByStorageId(v_storage_id UUID, v_engine_session_seq_id INTEGER, v_is_filtered boolean)
 RETURNS SETOF quota_view STABLE
    AS $procedure$
 BEGIN
@@ -215,9 +215,9 @@ BEGIN
                WHERE  storage_id = v_storage_id)))
    AND (NOT v_is_filtered OR
           EXISTS (SELECT 1 FROM permissions p
-                  JOIN user_flat_groups u ON
+                  JOIN engine_session_user_flat_groups u ON
                   u.granted_id = p.ad_element_id WHERE
-                  u.user_id = v_user_id AND
+                  u.engine_session_seq_id = v_engine_session_seq_id AND
                   p.object_type_id = 17 AND -- quota object
                   p.role_id = 'def0000a-0000-0000-0000-def00000000a' AND -- consume quota
                   quota_id = p.object_id));
@@ -225,7 +225,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetAllThinQuotasByVDSGroupId(v_vds_group_id UUID, v_user_id UUID, v_is_filtered boolean)
+Create or replace FUNCTION GetAllThinQuotasByVDSGroupId(v_vds_group_id UUID, v_engine_session_seq_id INTEGER, v_is_filtered boolean)
 RETURNS SETOF quota_view STABLE
    AS $procedure$
 BEGIN
@@ -249,9 +249,9 @@ BEGIN
                WHERE  vds_group_id = v_vds_group_id)))
    AND (NOT v_is_filtered OR
           EXISTS (SELECT 1 FROM permissions p
-                  JOIN user_flat_groups u ON
+                  JOIN engine_session_user_flat_groups u ON
                   u.granted_id = p.ad_element_id WHERE
-                  u.user_id = v_user_id AND
+                  u.engine_session_seq_id = v_engine_session_seq_id AND
                   p.object_type_id = 17 AND -- quota object
                   p.role_id = 'def0000a-0000-0000-0000-def00000000a' AND -- consume quota
                   quota_id = p.object_id));

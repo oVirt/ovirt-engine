@@ -13,7 +13,7 @@ public class GetPermissionsByAdElementIdQuery<P extends IdQueryParameters>
         getQueryReturnValue().setReturnValue(
                 getDbFacade().getPermissionDao().getAllForAdElement
                         (getParameters().getId(),
-                                getUserID(),
+                                getEngineSessionSeqId(),
                                 getParameters().isFiltered()));
     }
 }

@@ -305,9 +305,11 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
     }
 
     @Override
-    public List<Quota> getAllRelevantQuotasForStorage(Guid storageId, Guid userID, boolean isFiltered) {
+    public List<Quota> getAllRelevantQuotasForStorage(Guid storageId, long engineSessionSeqId, boolean isFiltered) {
         MapSqlParameterSource quotaParameterSource = getCustomMapSqlParameterSource();
-        quotaParameterSource.addValue("storage_id", storageId).addValue("user_id", userID).addValue("is_filtered", isFiltered);
+        quotaParameterSource.addValue("storage_id", storageId)
+                .addValue("engine_session_seq_id", engineSessionSeqId)
+                .addValue("is_filtered", isFiltered);
         List<Quota> quotas =
                 getCallsHandler().executeReadList("getAllThinQuotasByStorageId",
                         getQuotaMetaDataFromResultSet(),
@@ -316,9 +318,11 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
     }
 
     @Override
-    public List<Quota> getAllRelevantQuotasForVdsGroup(Guid vdsGroupId, Guid userID, boolean isFiltered) {
+    public List<Quota> getAllRelevantQuotasForVdsGroup(Guid vdsGroupId, long engineSessionSeqId, boolean isFiltered) {
         MapSqlParameterSource quotaParameterSource = getCustomMapSqlParameterSource();
-        quotaParameterSource.addValue("vds_group_id", vdsGroupId).addValue("user_id", userID).addValue("is_filtered", isFiltered);
+        quotaParameterSource.addValue("vds_group_id", vdsGroupId)
+                .addValue("engine_session_seq_id", engineSessionSeqId)
+                .addValue("is_filtered", isFiltered);
         List<Quota> quotas =
                 getCallsHandler().executeReadList("getAllThinQuotasByVDSGroupId",
                         getQuotaMetaDataFromResultSet(),

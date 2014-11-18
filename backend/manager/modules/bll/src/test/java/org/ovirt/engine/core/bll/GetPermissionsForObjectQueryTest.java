@@ -38,7 +38,7 @@ public class GetPermissionsForObjectQueryTest extends AbstractUserQueryTest<GetP
     @Test
     public void testExecuteQueryWithDirectOnly() {
         PermissionDAO permissionDAOMock = mock(PermissionDAO.class);
-        when(permissionDAOMock.getAllForEntity(objectID, getUser().getId(), getQueryParameters().isFiltered(), false)).thenReturn(mockedPermissions);
+        when(permissionDAOMock.getAllForEntity(objectID, UNPRIVILEGED_USER_SESSION_ID, getQueryParameters().isFiltered(), false)).thenReturn(mockedPermissions);
         when(getDbFacadeMockInstance().getPermissionDao()).thenReturn(permissionDAOMock);
 
         assertQueryDAOCall(true);
@@ -52,7 +52,7 @@ public class GetPermissionsForObjectQueryTest extends AbstractUserQueryTest<GetP
         PermissionDAO permissionDAOMock = mock(PermissionDAO.class);
         when(permissionDAOMock.getTreeForEntity(objectID,
                 type,
-                getUser().getId(),
+                UNPRIVILEGED_USER_SESSION_ID,
                 getQueryParameters().isFiltered())).thenReturn(mockedPermissions);
         when(getDbFacadeMockInstance().getPermissionDao()).thenReturn(permissionDAOMock);
 
@@ -62,6 +62,7 @@ public class GetPermissionsForObjectQueryTest extends AbstractUserQueryTest<GetP
     private void assertQueryDAOCall(boolean isDirectOnly) {
         when(getQueryParameters().getObjectId()).thenReturn(objectID);
         when(getQueryParameters().getDirectOnly()).thenReturn(isDirectOnly);
+        when(getQuery().getEngineSessionSeqId()).thenReturn(UNPRIVILEGED_USER_SESSION_ID);
 
         getQuery().executeQueryCommand();
 

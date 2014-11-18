@@ -42,7 +42,8 @@ public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, Get
             mockConfig(ConfigValues.DataDir, OVIRT_ISOS_DATA_DIR),
             mockConfig(ConfigValues.OvirtIsoPrefix, OVIRT_ISO_PREFIX),
             mockConfig(ConfigValues.OvirtInitialSupportedIsoVersion, OVIRT_INIT_SUPPORTED_VERSION),
-            mockConfig(ConfigValues.OvirtNodeOS, OVIRT_NODEOS)
+            mockConfig(ConfigValues.OvirtNodeOS, OVIRT_NODEOS),
+            mockConfig(ConfigValues.UserSessionTimeOutInterval, 60)
             );
 
     @Mock

@@ -32,9 +32,7 @@ BEGIN
    end if;
 
    if v_status != '' then
-      if v_sys_entity = 'USER' then
-          v_sql := coalesce(v_sql, '') || ' where active::integer in (' || coalesce(v_status, '') || ')';
-      elsif v_sys_entity != 'TSD' then
+      if v_sys_entity != 'USER' and v_sys_entity != 'TSD' then
           v_sql := coalesce(v_sql, '') || ' where status in (' || coalesce(v_status, '') || ')';
       end if;
    end if;

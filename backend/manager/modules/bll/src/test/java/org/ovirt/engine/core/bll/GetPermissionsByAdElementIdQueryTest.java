@@ -32,7 +32,7 @@ public class GetPermissionsByAdElementIdQueryTest extends AbstractUserQueryTest<
         // Mock the DAOs
         PermissionDAO permissionDAOMock = mock(PermissionDAO.class);
         when(permissionDAOMock.getAllForAdElement
-                (adElementGuid, getUser().getId(), getQueryParameters().isFiltered())).
+                (adElementGuid, getQuery().getEngineSessionSeqId(), getQueryParameters().isFiltered())).
                 thenReturn(Collections.singletonList(expected));
         when(getDbFacadeMockInstance().getPermissionDao()).thenReturn(permissionDAOMock);
 
