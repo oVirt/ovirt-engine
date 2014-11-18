@@ -61,14 +61,12 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
                 SetHaMaintenanceModeVDSCommandParameters params
                         = new SetHaMaintenanceModeVDSCommandParameters(getVds(), HaMaintenanceMode.LOCAL, true);
                 if (!runVdsCommand(VDSCommandType.SetHaMaintenanceMode, params).getSucceeded()) {
-                    // HA maintenance failure is fatal only if the Hosted Engine vm is running on this host
-                    for (VM vm : vms) {
-                        if (vm.isHostedEngine()) {
-                            setSucceeded(false);
-                            return;
-                        }
-                    }
                     haMaintenanceFailed = true;
+                    // HA maintenance failure is fatal only if the Hosted Engine vm is running on this host
+                    if (isHostedEngineOnVds()) {
+                        setSucceeded(false);
+                        return;
+                    }
                 }
             }
 
@@ -232,6 +230,15 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         }
 
         return jobProperties;
+    }
+
+    private boolean isHostedEngineOnVds() {
+        for (VM vm : vms) {
+            if (vm.isHostedEngine()) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
