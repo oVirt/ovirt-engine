@@ -15,8 +15,15 @@ public class SetHaMaintenanceModeVDSCommand extends VdsBrokerCommand<SetHaMainte
     @Override
     protected void executeVdsBrokerCommand() {
         if (getVds().getHighlyAvailableIsConfigured()) {
-            status = getBroker().setHaMaintenanceMode(getParameters().getMode().name(), getParameters().isEnabled());
-            proceedProxyReturnValue();
+            try {
+                status = getBroker().setHaMaintenanceMode(getParameters().getMode().name(), getParameters().isEnabled());
+                proceedProxyReturnValue();
+            }
+            catch (RuntimeException e) {
+                setVdsRuntimeError(e);
+                // prevent exception handler from rethrowing an exception
+                getVDSReturnValue().setExceptionString(null);
+            }
         }
     }
 }
