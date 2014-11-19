@@ -16,7 +16,7 @@
 #
 
 
-"""ovirt-host-remove core plugin."""
+"""base core plugin."""
 
 
 from otopi import util
@@ -27,6 +27,7 @@ from . import misc
 from . import answerfile
 from . import uninstall
 from . import postinstall
+from . import reconfigure
 
 
 @util.export
@@ -36,6 +37,7 @@ def createPlugins(context):
     answerfile.Plugin(context=context)
     uninstall.Plugin(context=context)
     postinstall.Plugin(context=context)
+    reconfigure.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

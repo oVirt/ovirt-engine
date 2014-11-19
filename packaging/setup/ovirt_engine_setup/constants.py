@@ -48,6 +48,7 @@ def osetupattrs(
     summary=False,
     description=None,
     postinstallfile=False,
+    reconfigurable=False,
     answerfile_condition=lambda env: True,
     summary_condition=lambda env: True,
 ):
@@ -59,6 +60,7 @@ def osetupattrs(
                 summary=summary,
                 description=description,
                 postinstallfile=postinstallfile,
+                reconfigurable=reconfigurable,
                 answerfile_condition=answerfile_condition,
                 summary_condition=summary_condition,
             )
@@ -291,6 +293,9 @@ class CoreEnv(object):
     SETUP_ATTRS_MODULES = 'OVESETUP_CORE/setupAttributesModules'
 
     REMOTE_ENGINE = 'OVESETUP_CORE/remoteEngine'
+
+    RECONFIGURE_OPTIONAL_COMPONENTS = \
+        'OVESETUP_CORE/reconfigureOptionalComponents'
 
 
 @util.export

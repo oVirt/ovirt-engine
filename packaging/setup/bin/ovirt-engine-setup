@@ -29,6 +29,8 @@ Usage: $0
         Offline mode.
     --generate-answer=file
         Generate answer file.
+    --reconfigure-optional-components
+        Ask again about components that were disabled in previous run.
     --jboss-home=dir
         Use this jboss.
 
@@ -68,6 +70,9 @@ while [ -n "$1" ]; do
 		;;
 		--offline)
 			environment="${environment} OVESETUP_CORE/offlinePackager=bool:True PACKAGER/yumpackagerEnabled=bool:False"
+		;;
+		--reconfigure-optional-components)
+			environment="${environment} OVESETUP_CORE/reconfigureOptionalComponents=bool:True"
 		;;
 		--help)
 			usage
