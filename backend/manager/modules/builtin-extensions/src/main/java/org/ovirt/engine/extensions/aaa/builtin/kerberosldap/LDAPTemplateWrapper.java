@@ -146,10 +146,11 @@ public abstract class LDAPTemplateWrapper {
     /**
      * @param ex
      */
-    private Throwable handleException(Exception e) {
+    private void handleException(Exception e) {
         if (e instanceof RuntimeException) {
             throw (RuntimeException) e;
+        } else {
+            throw new RuntimeException(e);
         }
-        return e;
     }
 }
