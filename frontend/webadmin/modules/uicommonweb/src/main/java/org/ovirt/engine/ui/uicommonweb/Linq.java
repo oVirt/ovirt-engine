@@ -44,6 +44,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessio
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
@@ -128,6 +129,22 @@ public final class Linq
         @Override
         public int compare(GlusterBrickEntity brick1, GlusterBrickEntity brick2) {
             return brick1.getVolumeName().compareTo(brick2.getVolumeName());
+        }
+
+    }
+
+    public static class StorageDeviceComparer implements Comparator<StorageDevice>, Serializable {
+
+        private static final long serialVersionUID = -7569798731454543377L;
+
+        @Override
+        public int compare(StorageDevice device1, StorageDevice device2) {
+            // Descending order on canCreateBrick then ascending order on Name
+            int deviceStatusComparison =
+                    (device1.getCanCreateBrick() == device2.getCanCreateBrick() ? 0 : (device2.getCanCreateBrick() ? 1
+                            : -1));
+            return deviceStatusComparison == 0 ? device1.getName().compareTo(device2.getName())
+                    : deviceStatusComparison;
         }
 
     }

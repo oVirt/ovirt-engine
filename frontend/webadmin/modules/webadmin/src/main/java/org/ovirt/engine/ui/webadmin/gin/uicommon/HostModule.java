@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
+import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
@@ -27,6 +28,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterStorageDevicesListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBondInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBricksListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostEventListModel;
@@ -300,6 +302,7 @@ public class HostModule extends AbstractGinModule {
         bind(HostHardwareGeneralModel.class).in(Singleton.class);
         bind(HostHooksListModel.class).in(Singleton.class);
         bind(HostBricksListModel.class).in(Singleton.class);
+        bind(HostGlusterStorageDevicesListModel.class).in(Singleton.class);
         bind(HostInterfaceListModel.class).in(Singleton.class);
         bind(HostVmListModel.class).in(Singleton.class);
         bind(HostGlusterSwiftListModel.class).in(Singleton.class);
@@ -320,6 +323,11 @@ public class HostModule extends AbstractGinModule {
         bind(new TypeLiteral<SearchableDetailModelProvider<GlusterServerService, HostListModel<Void>, HostGlusterSwiftListModel>>(){})
             .to(new TypeLiteral<SearchableDetailTabModelProvider<GlusterServerService, HostListModel<Void>, HostGlusterSwiftListModel>>(){})
             .in(Singleton.class);
+
+        bind(new TypeLiteral<SearchableDetailModelProvider<StorageDevice, HostListModel<Void>, HostGlusterStorageDevicesListModel>>(){})
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<StorageDevice, HostListModel<Void>, HostGlusterStorageDevicesListModel>>(){})
+            .in(Singleton.class);
+
         // Permission Detail Model
         bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, HostListModel<Void>, PermissionListModel<VDS>>>(){})
             .to(new TypeLiteral<PermissionModelProvider<VDS, HostListModel<Void>>>() {

@@ -185,6 +185,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHo
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostInterfacePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostPermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostVmPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGlusterStorageDevicesPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.NetworkSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkExternalSubnetPresenter;
@@ -435,6 +436,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostHookVie
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostInterfaceView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostPermissionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostVmView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGlusterStorageDevicesView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.network.NetworkSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.network.SubTabNetworkClusterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.network.SubTabNetworkExternalSubnetView;
@@ -840,6 +842,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabHostBrickPresenter.ViewDef.class,
                 SubTabHostBrickView.class,
                 SubTabHostBrickPresenter.ProxyDef.class);
+        bindPresenter(SubTabHostGlusterStorageDevicesPresenter.class,
+                SubTabHostGlusterStorageDevicesPresenter.ViewDef.class,
+                SubTabHostGlusterStorageDevicesView.class,
+                SubTabHostGlusterStorageDevicesPresenter.ProxyDef.class);
 
         // VirtualMachine
         bindPresenter(VirtualMachineSubTabPanelPresenter.class,

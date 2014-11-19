@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterStorageDevicesListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBricksListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
@@ -40,9 +41,14 @@ public class ClusterHostListModel extends HostListModel<VDSGroup> {
             final HostVmListModel hostVmListModel, final HostEventListModel hostEventListModel,
             final HostInterfaceListModel hostInterfaceListModel,
             final HostHardwareGeneralModel hostHardwareGeneralModel, final HostHooksListModel hostHooksListModel,
-            final PermissionListModel<VDS> permissionListModel) {
+            final PermissionListModel<VDS> permissionListModel,
+            final HostGlusterStorageDevicesListModel gusterStorageDeviceListModel) {
         super(hostGeneralModel, hostGlusterSwiftListModel, hostBricksListModel, hostVmListModel, hostEventListModel,
-                hostInterfaceListModel, hostHardwareGeneralModel, hostHooksListModel, permissionListModel);
+                hostInterfaceListModel,
+                hostHardwareGeneralModel,
+                hostHooksListModel,
+                permissionListModel,
+                gusterStorageDeviceListModel);
         setUpdateMomPolicyCommand(new UICommand("updateMomPolicyCommand", this)); //$NON-NLS-1$
         getUpdateMomPolicyCommand().setAvailableInModes(ApplicationMode.VirtOnly);
     }

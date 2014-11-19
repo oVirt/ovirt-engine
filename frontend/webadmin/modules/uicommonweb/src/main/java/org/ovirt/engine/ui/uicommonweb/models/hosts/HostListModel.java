@@ -81,6 +81,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterFeaturesUtil;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterStorageDevicesListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.NumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
@@ -356,6 +357,16 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         return hostBricksListModel;
     }
 
+    private HostGlusterStorageDevicesListModel glusterStorageDeviceListModel;
+
+    public HostGlusterStorageDevicesListModel getGlusterStorageDeviceListModel() {
+        return glusterStorageDeviceListModel;
+    }
+
+    public void setGlusterStorageDeviceListModel(HostGlusterStorageDevicesListModel storageDeviceListModel) {
+        this.glusterStorageDeviceListModel = storageDeviceListModel;
+    }
+
     private final HostVmListModel hostVmListModel;
 
     public HostVmListModel getHostVmListModel(){
@@ -385,12 +396,15 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             final HostVmListModel hostVmListModel, final HostEventListModel hostEventListModel,
             final HostInterfaceListModel hostInterfaceListModel,
             final HostHardwareGeneralModel hostHardwareGeneralModel, final HostHooksListModel hostHooksListModel,
-            final PermissionListModel<VDS> permissionListModel) {
+            final PermissionListModel<VDS> permissionListModel,
+            final HostGlusterStorageDevicesListModel glusterStorageDeviceListModel) {
         this.generalModel = hostGeneralModel;
         this.glusterSwiftModel = hostGlusterSwiftListModel;
         this.hostBricksListModel = hostBricksListModel;
         this.hostVmListModel = hostVmListModel;
         this.privateHostEventListModel = hostEventListModel;
+        this.glusterStorageDeviceListModel = glusterStorageDeviceListModel;
+
         setDetailList(hostInterfaceListModel, hostHardwareGeneralModel, hostHooksListModel, permissionListModel);
 
         setTitle(ConstantsManager.getInstance().getConstants().hostsTitle());
@@ -443,6 +457,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         list.add(hostHooksListModel);
         list.add(getGlusterSwiftModel());
         list.add(getHostBricksListModel());
+        list.add(getGlusterStorageDeviceListModel());
         list.add(permissionListModel);
         setDetailModels(list);
     }
@@ -1874,6 +1889,8 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 && GlusterFeaturesUtil.isGlusterSwiftSupported(vds.getVdsGroupCompatibilityVersion()));
         getHostBricksListModel().setIsAvailable(vds != null && vds.getVdsGroupSupportsGlusterService());
         getHostVmListModel().setIsAvailable(vds != null && vds.getVdsGroupSupportsVirtService());
+        getGlusterStorageDeviceListModel().setIsAvailable(vds != null && vds.getVdsGroupSupportsGlusterService()
+                && GlusterFeaturesUtil.isGlusterBrickProvisioningSupported(vds.getVdsGroupCompatibilityVersion()));
     }
 
     @Override

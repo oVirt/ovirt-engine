@@ -3980,6 +3980,20 @@ public class AsyncDataProvider {
         };
 
         Frontend.getInstance().runQuery(VdcQueryType.GetSupportedCpuList, new GetSupportedCpuListParameters(cpuName), aQuery);
+
+    }
+
+    public void getStorageDevices(AsyncQuery aQuery, Guid hostId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source;
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterStorageDevices,
+                new VdsIdParametersBase(hostId),
+                aQuery);
     }
 
     private static class AsIsAsyncConverter implements IAsyncConverter {

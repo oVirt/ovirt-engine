@@ -2570,4 +2570,8 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("boot")
     String bootDisk();
+
+    @DefaultStringValue("Storage Devices")
+    String storageDevices();
+
 }

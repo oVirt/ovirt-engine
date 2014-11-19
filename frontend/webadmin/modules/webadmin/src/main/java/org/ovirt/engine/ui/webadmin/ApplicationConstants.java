@@ -2347,6 +2347,22 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Volume")
     String volumeName();
 
+    // Disk
+    @DefaultStringValue("Name")
+    String deviceName();
+
+    @DefaultStringValue("Type")
+    String deviceType();
+
+    @DefaultStringValue("File System Type")
+    String fileSystemType();
+
+    @DefaultStringValue("Size")
+    String size();
+
+    @DefaultStringValue("Storage Devices")
+    String storageDevices();
+
     @DefaultStringValue("Brick Directory")
     String brickDirectory();
 
@@ -4058,4 +4074,13 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Snapshot Options")
     String snapshotConfigHeaderLabel();
+
+    @DefaultStringValue("Mount Point")
+    String mountPoint();
+
+    @DefaultStringValue("Device is already in use")
+    String deviceIsAlreadyUsed();
+
+    @DefaultStringValue("Sync")
+    String syncStorageDevices();
 }
