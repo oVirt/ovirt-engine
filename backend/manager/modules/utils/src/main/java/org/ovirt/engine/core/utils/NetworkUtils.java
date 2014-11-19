@@ -14,6 +14,7 @@ import java.util.Set;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -81,7 +82,7 @@ public final class NetworkUtils {
 
     public static Map<String, Network> networksByName(List<Network> networks) {
         if (!networks.isEmpty()) {
-            Map<String, Network> byName = new HashMap<String, Network>();
+            Map<String, Network> byName = new HashMap<>();
             for (Network net : networks) {
                 byName.put(net.getName(), net);
             }
@@ -100,7 +101,7 @@ public final class NetworkUtils {
      * @return
      */
     public static List<String> filterNonVmNetworkNames(List<Network> networks, Set<String> networkNames) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         for (Network net : networks) {
             if (!net.isVmNetwork() && networkNames.contains(net.getName())) {
                 list.add(net.getName());
@@ -111,12 +112,12 @@ public final class NetworkUtils {
 
     /**
      * Fill network details for the given network devices from the given networks.<br>
-     * {@link VdsNetworkInterface.NetworkDetails#isInSync()} will be <code>true</code> IFF the logical network
+     * {@link VdsNetworkInterface.NetworkImplementationDetails#isInSync()} will be <code>true</code> IFF the logical network
      * properties are exactly the same as those defined on the network device.
-     * @param networks
-     *            The networks definitions to fill the details from.
-     * @param ifaces
-     *            The network devices to update.
+     * @param network
+     *            The network definition to fill the details from.
+     * @param iface
+     *            The network device to update.
      */
     public static VdsNetworkInterface.NetworkImplementationDetails calculateNetworkImplementationDetails(
             Network network,
@@ -296,5 +297,38 @@ public final class NetworkUtils {
             log.debug(msg, host.getHostName(), ex);
             return null;
         }
+    }
+
+    public static List<VdsNetworkInterface> getBondsWithSlavesInformation(List<VdsNetworkInterface> nics) {
+        Map<String, List<String>> bondNameToSlavesMap = getBondNameToBondSlavesMap(nics);
+        List<VdsNetworkInterface> bonds = new ArrayList<>();
+
+        for (VdsNetworkInterface nic : nics) {
+            if (nic.isBond()) {
+                bonds.add(nic);
+                String bondName = nic.getName();
+                if (bondNameToSlavesMap.containsKey(bondName)) {
+                    ((Bond) nic).getSlaves().addAll(bondNameToSlavesMap.get(bondName));
+                }
+            }
+        }
+
+        return bonds;
+    }
+
+    public static Map<String, List<String>> getBondNameToBondSlavesMap(List<VdsNetworkInterface> nics) {
+        Map<String, List<String>> bondToSlaves = new HashMap<>();
+        for (VdsNetworkInterface nic : nics) {
+            if (nic.isPartOfBond()) {
+                String bondName = nic.getBondName();
+                if (!bondToSlaves.containsKey(bondName)) {
+                    bondToSlaves.put(bondName, new ArrayList<String>());
+                }
+
+                bondToSlaves.get(bondName).add(nic.getName());
+            }
+        }
+
+        return bondToSlaves;
     }
 }

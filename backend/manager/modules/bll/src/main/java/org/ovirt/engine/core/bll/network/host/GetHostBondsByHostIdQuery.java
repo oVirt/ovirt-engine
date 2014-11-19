@@ -1,0 +1,27 @@
+package org.ovirt.engine.core.bll.network.host;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.utils.NetworkUtils;
+
+public class GetHostBondsByHostIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+
+    @Inject
+    private InterfaceDao interfaceDao;
+
+    public GetHostBondsByHostIdQuery(P parameters) {
+        super(parameters);
+    }
+
+    @Override
+    protected void executeQueryCommand() {
+        List<VdsNetworkInterface> nics = interfaceDao.getAllInterfacesForVds(getParameters().getId());
+        getQueryReturnValue().setReturnValue(NetworkUtils.getBondsWithSlavesInformation(nics));
+    }
+}
