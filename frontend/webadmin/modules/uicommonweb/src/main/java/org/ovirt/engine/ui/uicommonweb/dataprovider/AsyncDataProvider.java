@@ -3936,4 +3936,18 @@ public final class AsyncDataProvider {
                 NumaTuneMode.INTERLEAVE
         }));
     }
+
+    public static void getStorageDevices(AsyncQuery aQuery, Guid hostId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source;
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterStorageDevices,
+                new VdsIdParametersBase(hostId),
+                aQuery);
+    }
+
 }

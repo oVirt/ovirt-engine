@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
+import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
@@ -26,6 +27,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterStorageDevicesListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBondInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBricksListModel;
@@ -177,6 +179,17 @@ public class HostModule extends AbstractGinModule {
                 HostListModel.class,
                 HostBricksListModel.class);
     }
+
+    @Provides
+    @Singleton
+    public SearchableDetailModelProvider<StorageDevice, HostListModel, HostGlusterStorageDevicesListModel> getHostGlusterStorageDevicesListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new SearchableDetailTabModelProvider<StorageDevice, HostListModel, HostGlusterStorageDevicesListModel>(
+                eventBus, defaultConfirmPopupProvider,
+                HostListModel.class,
+                HostGlusterStorageDevicesListModel.class);
+    }
+
     @Provides
     @Singleton
     public SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel> getHostInterfaceListProvider(EventBus eventBus,

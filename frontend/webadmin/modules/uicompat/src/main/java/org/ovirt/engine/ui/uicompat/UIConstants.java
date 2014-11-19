@@ -2531,9 +2531,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("boot")
     String bootDisk();
 
-    @DefaultStringValue("Storage Devices")
-    String storageDevices();
-
     @DefaultStringValue("Session DB Id")
     String sessionDbId();
 
@@ -2569,5 +2566,8 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Last Day")
     String lastDay();
+
+    @DefaultStringValue("Storage Devices")
+    String storageDevices();
 }
 

@@ -77,6 +77,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterFeaturesUtil;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterStorageDevicesListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.NumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
@@ -373,6 +374,16 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
 
     public void setHostVmListModel(HostVmListModel hostVmListModel){
         this.hostVmListModel = hostVmListModel;
+    }
+
+    private HostGlusterStorageDevicesListModel glusterStorageDeviceListModel;
+
+    public HostGlusterStorageDevicesListModel getGlusterStorageDeviceListModel() {
+        return glusterStorageDeviceListModel;
+    }
+
+    public void setGlusterStorageDeviceListModel(HostGlusterStorageDevicesListModel storageDeviceListModel) {
+        this.glusterStorageDeviceListModel = storageDeviceListModel;
     }
 
     protected Object[] getSelectedKeys()
@@ -1009,7 +1020,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
             }
 
             if (Boolean.TRUE.equals(model.getIsDiscoveredHosts().getEntity())) {
-                Provider<?> provider = (Provider<?>) model.getProviders().getSelectedItem();
+                Provider<?> provider = model.getProviders().getSelectedItem();
                 ExternalHostGroup hostGroup = (ExternalHostGroup) model.getExternalHostGroups().getSelectedItem();
                 ExternalComputeResource computeResource = (ExternalComputeResource) model.getExternalComputeResource().getSelectedItem();
                 ExternalDiscoveredHost discoveredHost = (ExternalDiscoveredHost)model.getExternalDiscoveredHosts().getSelectedItem();
@@ -1855,6 +1866,8 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         setGlusterSwiftModel(new HostGlusterSwiftListModel());
         setHostBricksListModel(new HostBricksListModel());
         setHostVmListModel(new HostVmListModel());
+        setGlusterStorageDeviceListModel(new HostGlusterStorageDevicesListModel());
+
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(generalModel);
         list.add(new HostHardwareGeneralModel());
@@ -1866,6 +1879,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         list.add(getGlusterSwiftModel());
         list.add(getHostBricksListModel());
         list.add(new PermissionListModel());
+        list.add(getGlusterStorageDeviceListModel());
         setDetailModels(list);
     }
 
@@ -1877,6 +1891,8 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
                 && GlusterFeaturesUtil.isGlusterSwiftSupported(vds.getVdsGroupCompatibilityVersion()));
         getHostBricksListModel().setIsAvailable(vds != null && vds.getVdsGroupSupportsGlusterService());
         getHostVmListModel().setIsAvailable(vds != null && vds.getVdsGroupSupportsVirtService());
+        getGlusterStorageDeviceListModel().setIsAvailable(vds != null && vds.getVdsGroupSupportsGlusterService()
+                && GlusterFeaturesUtil.isGlusterBrickProvisioningSupported(vds.getVdsGroupCompatibilityVersion()));
     }
 
     @Override

@@ -325,6 +325,7 @@
 		<include name="common/businessentities/gluster/GlusterHookContentType.java"/>
 		<include name="common/businessentities/gluster/GlusterHookConflictFlags.java"/>
 		<include name="common/businessentities/gluster/GlusterVolumeSizeInfo.java"/>
+		<include name="common/businessentities/gluster/StorageDevice.java"/>
 		<include name="common/asynctasks/gluster/GlusterAsyncTask.java"/>
 		<include name="common/asynctasks/gluster/GlusterTaskStatus.java"/>
 		<include name="common/asynctasks/gluster/GlusterTaskType.java"/>

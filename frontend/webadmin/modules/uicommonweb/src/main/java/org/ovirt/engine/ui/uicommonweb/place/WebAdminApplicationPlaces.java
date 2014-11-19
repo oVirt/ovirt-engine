@@ -211,6 +211,9 @@ public class WebAdminApplicationPlaces {
     public static final String hostBricksSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
             + "gluster_bricks"; //$NON-NLS-1$
 
+    public static final String hostGlusterStorageDevicesSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
+            + "gluster_storage_devices"; //$NON-NLS-1$
+
     public static final String hostPermissionSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
             + "permissions"; //$NON-NLS-1$
 

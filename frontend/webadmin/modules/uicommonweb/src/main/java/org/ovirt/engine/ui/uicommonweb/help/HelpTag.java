@@ -454,6 +454,8 @@ public enum HelpTag {
 
     view_gluster_hook("view_gluster_hook", HelpTagType.WEBADMIN, "[gluster] Clusters main tab -> Gluster Hooks sub tab -> 'Hook Content' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    gluster_storage_devices("gluster_storage_devices", HelpTagType.WEBADMIN), //$NON-NLS-1$
+
     virtual_machines("virtual_machines", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
     vm_import("vm_import", HelpTagType.UNKNOWN), //$NON-NLS-1$

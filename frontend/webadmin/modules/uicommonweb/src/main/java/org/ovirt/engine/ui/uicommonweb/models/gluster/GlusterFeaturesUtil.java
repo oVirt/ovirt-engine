@@ -19,4 +19,8 @@ public class GlusterFeaturesUtil {
     public static boolean isGlusterForceAddBricksSupported(Version version) {
         return Version.v3_3.compareTo(version) <= 0;
     }
+
+    public static boolean isGlusterBrickProvisioningSupported(Version version) {
+        return Version.v3_5.compareTo(version) <= 0;
+    }
 }
