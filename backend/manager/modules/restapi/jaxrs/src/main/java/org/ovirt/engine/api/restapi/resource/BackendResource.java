@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -125,13 +126,16 @@ public class BackendResource extends BaseBackendResource {
 
     protected <T> List<T> getBackendCollection(Class<T> clz, VdcQueryType query, VdcQueryParametersBase queryParams) {
         try {
+            List<T> results = asCollection(clz, new ArrayList<T>());
             VdcQueryReturnValue result = runQuery(query, queryParams);
-            if (!result.getSucceeded()) {
-                backendFailure(result.getExceptionString());
-            }
-            List<T> results = asCollection(clz, result.getReturnValue());
-            if (results!=null && getMaxResults()!=NO_LIMIT && getMaxResults()<results.size()) {
-                results = results.subList(0, getMaxResults());
+            if (result!=null ) {
+                if (!result.getSucceeded()) {
+                    backendFailure(result.getExceptionString());
+                }
+                results = asCollection(clz, result.getReturnValue());
+                if (getMaxResults() != NO_LIMIT && getMaxResults() < results.size()) {
+                    results = results.subList(0, getMaxResults());
+                }
             }
             return results;
         } catch (Exception e) {

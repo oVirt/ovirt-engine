@@ -61,11 +61,17 @@ public abstract class AbstractBackendNetworksResourceTest<R extends AbstractBack
 
     @Override
     protected org.ovirt.engine.core.common.businessentities.network.Network getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.network.Network.class),
-                false,
-                false,
-                false,
-                index);
+        org.ovirt.engine.core.common.businessentities.network.Network network = new org.ovirt.engine.core.common.businessentities.network.Network();
+        NetworkCluster networkCluster = new NetworkCluster();
+        networkCluster.setDisplay(false);
+        networkCluster.setMigration(false);
+        networkCluster.setRequired(false);
+        network.setCluster(networkCluster);
+        network.setId(GUIDS[index]);
+        network.setName(NAMES[index]);
+        network.setDescription(DESCRIPTIONS[index]);
+        network.setDataCenterId(GUIDS[1]);
+        return network;
     }
 
     static org.ovirt.engine.core.common.businessentities.network.Network setUpEntityExpectations(org.ovirt.engine.core.common.businessentities.network.Network entity,

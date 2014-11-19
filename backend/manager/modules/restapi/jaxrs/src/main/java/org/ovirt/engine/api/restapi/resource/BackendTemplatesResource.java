@@ -58,7 +58,7 @@ public class BackendTemplatesResource
     public Templates list() {
         if (isFiltered())
             return mapCollection(getBackendCollection(VdcQueryType.GetAllVmTemplates,
-                    new VdcQueryParametersBase()));
+                    new VdcQueryParametersBase(), SearchType.VmTemplate));
         else
             return mapCollection(getBackendCollection(SearchType.VmTemplate));
     }

@@ -3,6 +3,8 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.easymock.EasyMock.expect;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -214,7 +216,9 @@ public class BackendNetworksResourceTest
         setUpEntityQueryExpectations(1);
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
-        verifyCollection(getCollection());
+        List<Network> networks = getCollection();
+        Collections.sort(networks, new NetworkIdComparator());
+        verifyCollection(networks);
     }
 
     protected void setUpEntityQueryExpectations(int times, Object failure) throws Exception {
@@ -232,5 +236,16 @@ public class BackendNetworksResourceTest
         StoragePool pool = control.createMock(StoragePool.class);
         expect(pool.getId()).andReturn(id).anyTimes();
         return pool;
+    }
+
+    class NetworkIdComparator implements Comparator<Network>{
+
+        @Override
+        public int compare(Network n1, Network n2) {
+            if (n1.getId().equals(n2.getId()))
+                return 0;
+            else
+                return n1.getId().toString().compareTo(n2.getId().toString());
+        }
     }
 }

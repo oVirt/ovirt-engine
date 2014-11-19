@@ -85,7 +85,7 @@ public class BackendVmsResource extends
     @Override
     public VMs list() {
         if (isFiltered())
-            return mapCollection(getBackendCollection(VdcQueryType.GetAllVms, new VdcQueryParametersBase()), true);
+            return mapCollection(getBackendCollection(VdcQueryType.GetAllVms, new VdcQueryParametersBase(), SearchType.VM), true);
         else
          return mapCollection(getBackendCollection(SearchType.VM), false);
     }

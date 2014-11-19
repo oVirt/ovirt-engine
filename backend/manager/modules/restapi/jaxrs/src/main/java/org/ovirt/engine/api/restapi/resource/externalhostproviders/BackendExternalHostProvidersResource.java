@@ -72,7 +72,7 @@ public class BackendExternalHostProvidersResource
         if (isFiltered()) {
             return getBackendCollection(
                 VdcQueryType.GetAllProviders,
-                new GetAllProvidersParameters(ProviderType.FOREMAN)
+                new GetAllProvidersParameters(ProviderType.FOREMAN), SearchType.Provider
             );
         }
         else {

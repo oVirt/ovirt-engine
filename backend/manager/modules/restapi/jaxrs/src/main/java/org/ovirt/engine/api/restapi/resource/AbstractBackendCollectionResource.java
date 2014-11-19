@@ -11,6 +11,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.ActionableResource;
@@ -112,6 +113,25 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
 
     protected List<Q> getBackendCollection(VdcQueryType query, VdcQueryParametersBase queryParams) {
         return getBackendCollection(entityType, query, queryParams);
+    }
+
+    /**
+     * get the entities according to the filter and intersect them with those resulted from running the search query
+     * @param query
+     * @param queryParams
+     * @param searchType
+     * @return
+     */
+    protected List<Q> getBackendCollection(VdcQueryType query, VdcQueryParametersBase queryParams, SearchType searchType) {
+        List<Q> filteredList = getBackendCollection(entityType, query, queryParams);
+        // check if we got search expression in the URI
+        if (QueryHelper.hasConstraint(getUriInfo(), QueryHelper.CONSTRAINT_PARAMETER)) {
+            List<Q> searchList = getBackendCollection(searchType);
+            return (List<Q>) CollectionUtils.intersection(filteredList, searchList);
+        }
+        else {
+            return filteredList;
+        }
     }
 
     protected final <T> Response performCreate(VdcActionType task,

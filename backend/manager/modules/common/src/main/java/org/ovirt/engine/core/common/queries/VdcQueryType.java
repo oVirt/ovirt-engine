@@ -223,7 +223,7 @@ public enum VdcQueryType implements Serializable {
     GetAuditLogById,
 
     // Search queries
-    Search,
+    Search(VdcQueryAuthType.User),
 
     // Public services
     GetDomainList(VdcQueryAuthType.User),

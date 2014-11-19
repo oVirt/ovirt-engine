@@ -47,7 +47,7 @@ public class BackendNetworksResource extends AbstractBackendNetworksResource imp
         Networks networks;
 
         if (isFiltered()) {
-            networks = mapCollection(getBackendCollection(queryType, getQueryParameters()));
+            networks = mapCollection(getBackendCollection(queryType, getQueryParameters(), SearchType.Network));
         } else {
             networks = mapCollection(getBackendCollection(SearchType.Network));
         }

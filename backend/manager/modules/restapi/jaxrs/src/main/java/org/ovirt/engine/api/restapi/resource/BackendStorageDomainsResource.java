@@ -70,7 +70,7 @@ public class BackendStorageDomainsResource
     public StorageDomains list() {
         if (isFiltered())
             return mapCollection(getBackendCollection(VdcQueryType.GetAllStorageDomains,
-                    new VdcQueryParametersBase()));
+                    new VdcQueryParametersBase(), SearchType.StorageDomain));
         else
             return mapCollection(getBackendCollection(SearchType.StorageDomain));
     }

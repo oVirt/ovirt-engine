@@ -159,7 +159,7 @@ public class BackendUsersResource
 
     public Users list() {
         if (isFiltered()) {
-            return mapDbUserCollection(getBackendCollection(VdcQueryType.GetAllDbUsers, new VdcQueryParametersBase()));
+            return mapDbUserCollection(getBackendCollection(VdcQueryType.GetAllDbUsers, new VdcQueryParametersBase(), SearchType.DBUser));
         }
         else {
           return mapDbUserCollection(getBackendCollection(SearchType.DBUser, getSearchPattern()));

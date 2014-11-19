@@ -44,7 +44,7 @@ public class BackendVmPoolsResource
     public VmPools list() {
         if (isFiltered()) {
             return mapCollection(getBackendCollection(VdcQueryType.GetAllVmPoolsAttachedToUser,
-                    new VdcQueryParametersBase()));
+                    new VdcQueryParametersBase(), SearchType.VmPools));
         } else {
             return mapCollection(getBackendCollection(SearchType.VmPools));
         }

@@ -138,7 +138,7 @@ public class BackendGroupsResource
     @Override
     public Groups list() {
         if (isFiltered()) {
-            return mapDbGroupCollection(getBackendCollection(VdcQueryType.GetAllDbGroups, new VdcQueryParametersBase()));
+            return mapDbGroupCollection(getBackendCollection(VdcQueryType.GetAllDbGroups, new VdcQueryParametersBase(), SearchType.DBGroup));
         }
         else {
             return mapDbGroupCollection(getBackendCollection(SearchType.DBGroup, getSearchPattern()));
