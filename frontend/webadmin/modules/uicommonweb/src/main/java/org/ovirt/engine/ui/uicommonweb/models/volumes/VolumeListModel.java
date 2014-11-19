@@ -894,6 +894,8 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
                                     list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "storage.owner-gid", optionOwnerGroupVirt)));//$NON-NLS-1$
 
+                                    list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "server.allow-insecure", "on")));//$NON-NLS-1$ $NON-NLS-2$
+
                                     final GlusterVolumeOptionEntity checkOption = getOption(volumeId, "network.ping-timeout", "10");//$NON-NLS-1$//$NON-NLS-2$
                                     List<PredicateFilter<GlusterVolumeOptionEntity>> predicaetFilters = Collections.singletonList(new PredicateFilter<GlusterVolumeOptionEntity>(new Predicate<GlusterVolumeOptionEntity>() {
                                         @Override
