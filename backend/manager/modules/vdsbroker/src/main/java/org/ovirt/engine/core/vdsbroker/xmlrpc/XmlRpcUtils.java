@@ -9,8 +9,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
@@ -295,13 +298,37 @@ public class XmlRpcUtils {
             List<Object> result = new ArrayList<>();
             for (int i = 0; i < request.getParameterCount(); i++) {
                 Object object = request.getParameter(i);
-                if (Long.class.isInstance(object)) {
-                    result.add(object.toString());
-                    continue;
-                }
-                result.add(object);
+                result.add(longToString(object));
             }
             return result.toArray();
+        }
+
+        /**
+         * Workaround the lack of Long support in VDSM by converting all
+         * Long typed variables to String.
+         *
+         * @param object object that potentially contains Long items
+         * @return new object where all the Longs are converted to Strings
+         */
+        @SuppressWarnings("unchecked")
+        private Object longToString(Object object) {
+            if (Long.class.isInstance(object)) {
+                return object.toString();
+            } else if (Map.class.isInstance(object)) {
+                Map<Object, Object> map = new HashMap<>();
+                for (Map.Entry<Object, Object> entry: ((Map<Object, Object>)object).entrySet()) {
+                    map.put(entry.getKey(), longToString(entry.getValue()));
+                }
+                return map;
+            } else if (Collection.class.isInstance(object)) {
+                List<Object> list = new ArrayList<>();
+                for (Object entry: (Collection<Object>)object) {
+                    list.add(longToString(entry));
+                }
+                return list;
+            } else {
+                return object;
+            }
         }
     };
 
