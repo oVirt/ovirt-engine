@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Bonding;
@@ -89,6 +91,60 @@ public class HostNicMapper {
             entity.setCustomProperties(CustomPropertiesParser.toMap(model.getProperties()));
         }
         return entity;
+    }
+
+    @Mapping(from = HostNIC.class, to = Bond.class)
+    public static Bond map(HostNIC model, Bond template) {
+        Bond entity = template == null ? new Bond() : template;
+
+        if (model.isSetId()) {
+            entity.setId(GuidUtils.asGuid(model.getId()));
+        }
+
+        if (model.isSetName()) {
+            entity.setName(model.getName());
+        }
+
+        if (model.isSetBonding()) {
+            entity.setBonded(true);
+            if (model.getBonding().isSetSlaves()) {
+                for (HostNIC slave : model.getBonding().getSlaves().getSlaves()) {
+                    if (slave.isSetName()) {
+                        entity.getSlaves().add(slave.getName());
+                    }
+                }
+            }
+
+            if (model.getBonding().isSetOptions()) {
+                entity.setBondOptions(calculateBondingOptionsString(model));
+            }
+        }
+
+        return entity;
+    }
+
+    private static String calculateBondingOptionsString(HostNIC model) {
+        List<Option> bondingOptions = model.getBonding().getOptions().getOptions();
+
+        if (bondingOptions.isEmpty()) {
+            return "";
+        }
+
+        StringBuilder builder = new StringBuilder();
+        appendBondingOption(builder, bondingOptions.get(0));
+
+        for(int i = 1; i < bondingOptions.size(); i++) {
+            builder.append(" ");
+            appendBondingOption(builder, bondingOptions.get(i));
+        }
+
+        return builder.toString();
+    }
+
+    private static StringBuilder appendBondingOption(StringBuilder builder, Option opt) {
+        return builder.append(opt.getName())
+                .append("=")
+                .append(opt.getValue());
     }
 
     @Mapping(from = VdsNetworkInterface.class, to = HostNIC.class)

@@ -38,7 +38,8 @@ public interface HostResource extends UpdatableResource<Host>, MeasurableResourc
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     Response remove(Action action);
 
-    @Path("{action: (approve|install|upgrade|fence|activate|deactivate|commitnetconfig|iscsidiscover|iscsilogin|forceselectspm)}/{oid}")
+    @Path("{action: (approve|install|upgrade|fence|activate|deactivate|commitnetconfig|iscsidiscover|iscsilogin|" +
+            "forceselectspm|setupnetworks)}/{oid}")
     ActionResource getActionSubresource(@PathParam("action")String action, @PathParam("oid")String oid);
 
     @POST
@@ -130,4 +131,10 @@ public interface HostResource extends UpdatableResource<Host>, MeasurableResourc
 
     @Path("devices")
     HostDevicesResource getHostDevicesResource();
+
+    @POST
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
+    @Actionable
+    @Path("setupnetworks")
+    Response setupNetworks(Action action);
 }

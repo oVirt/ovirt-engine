@@ -2091,6 +2091,7 @@ actions:
           action.checkConnectivity: xs:boolean
           action.connectivityTimeout: xs:int
           action.force: xs:boolean
+        deprecated: true
         description: initiate the command to setup networks for the network interface card of the specified host
 - name: /hosts/{host:id}/nics/{nic:id}/attach|rel=attach
   description: attach the network interface card to the specified host
@@ -2126,6 +2127,41 @@ actions:
   description: get a specific label of an interface
 - name: /hosts/{host:id}/nics/{nic:id}/labels/{label:id}|rel=delete
   description: delete the specified label of an interface
+- name: /hosts/{host:id}/setupnetworks|rel=setupnetworks
+  description: initiate the command to setup networks for the specified host
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - optionalArguments:
+          action.modified_network_attachments.network_attachment--COLLECTION:
+            network_attachment.id: xs:string
+            network_attachment.network.name|id: xs:string
+            network_attachment.host_nic.name|id: xs:string
+            network_attachment.ip_address_assignments.ip_address_assignment--COLLECTION:
+              ip_address_assignment.assignment_method: xs:string
+              ip_address_assignment.ip.address: xs:string
+              ip_address_assignment.ip.netmask: xs:string
+              ip_address_assignment.ip.gateawy: xs:string
+            network_attachment.properties.property--COLLECTION:
+              property.name: xs:string
+              property.value: xs:string
+          action.removed_network_attachments.network_attachment--COLLECTION:
+            network_attachment.id: xs:string
+          action.modified_bonds.host_nic--COLLECTION:
+            host_nic.name|id: xs:string
+            host_nic.bonding.options.option--COLLECTION:
+              option.name: xs:string
+              option.value: xs:string
+              option.type: xs:string
+            bonding.slaves.host_nic--COLLECTION:
+              host_nic.name|id: xs:string
+          action.removed_bonds.host_nic--COLLECTION:
+            host_nic.name|id: xs:string
+          action.synchronized_network_attachments.network_attachment--COLLECTION:
+            network_attachment.id: xs:string
+          action.check_connectivity: xs:boolean
+          action.connectivity_timeout: xs:int
 - name: /hosts/{host:id}/nics/{nic:id}/networkattachments|rel=get
   description: get the list of network attachments of the network interface
 - name: /hosts/{host:id}/nics/{nic:id}/networkattachments/{networkattachment:id}|rel=get

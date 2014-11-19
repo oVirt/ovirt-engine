@@ -4,6 +4,7 @@ import static org.ovirt.engine.api.restapi.resource.BackendHostsResource.SUB_COL
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
@@ -15,6 +16,7 @@ import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.FenceType;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.HostNIC;
 import org.ovirt.engine.api.model.IscsiDetails;
 import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.PowerManagement;
@@ -34,12 +36,14 @@ import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.externalhostproviders.KatelloErrataResource;
 import org.ovirt.engine.api.restapi.model.AuthenticationMethod;
 import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendHostKatelloErrataResource;
+import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
 import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
+import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
@@ -50,11 +54,15 @@ import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.ApproveVdsParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.action.hostdeploy.UpgradeHostParameters;
+import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
 import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
 import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
@@ -202,6 +210,119 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         return doAction(VdcActionType.ApproveVds,
                         params,
                         action);
+    }
+
+    @Override
+    public Response setupNetworks(Action action) {
+        HostSetupNetworksParameters parameters = toParameters(action);
+        return performAction(VdcActionType.HostSetupNetworks, parameters, action);
+    }
+
+    private HostSetupNetworksParameters toParameters(Action action) {
+        HostSetupNetworksParameters parameters = new HostSetupNetworksParameters(guid);
+        Map<Guid, NetworkAttachment> attachmentsById = getBackendNetworkAttachments();
+
+        if (action.isSetModifiedNetworkAttachments()) {
+            for (org.ovirt.engine.api.model.NetworkAttachment model : action.getModifiedNetworkAttachments()
+                    .getNetworkAttachments()) {
+                NetworkAttachment attachment = mapNetworkAttachment(attachmentsById, model);
+                parameters.getNetworkAttachments().add(attachment);
+            }
+        }
+
+        if (action.isSetSynchronizedNetworkAttachments()) {
+            Map<Guid, NetworkAttachment> networkAttachmentFromParams =
+                    Entities.businessEntitiesById(parameters.getNetworkAttachments());
+            for (org.ovirt.engine.api.model.NetworkAttachment model : action.getSynchronizedNetworkAttachments()
+                    .getNetworkAttachments()) {
+                if (model.isSetId()) {
+                    Guid networkAttachmentId = asGuid(model.getId());
+                    if (networkAttachmentFromParams.containsKey(networkAttachmentId)) {
+                        networkAttachmentFromParams.get(networkAttachmentId).setOverrideConfiguration(true);
+                    } else if (attachmentsById.containsKey(networkAttachmentId)) {
+                        NetworkAttachment networkAttachment = attachmentsById.get(networkAttachmentId);
+                        networkAttachment.setOverrideConfiguration(true);
+                        parameters.getNetworkAttachments().add(networkAttachment);
+                    } else {
+                        return handleError(new EntityNotFoundException("NetworkAttachment.id: " + model.getId()), true);
+                    }
+                }
+            }
+        }
+
+        if (action.isSetRemovedNetworkAttachments()) {
+            for (org.ovirt.engine.api.model.NetworkAttachment model : action.getRemovedNetworkAttachments()
+                    .getNetworkAttachments()) {
+                NetworkAttachment attachment = mapNetworkAttachment(attachmentsById, model);
+                parameters.getRemovedNetworkAttachments().add(attachment.getId());
+            }
+        }
+
+        BusinessEntityMap<Bond> bonds = getBackendHostBonds();
+        if (action.isSetModifiedBonds()) {
+            for (HostNIC bond : action.getModifiedBonds().getHostNics()) {
+                parameters.getBonds().add(mapBonds(bonds, bond));
+            }
+        }
+
+        if (action.isSetRemovedBonds()) {
+            for (HostNIC bond : action.getRemovedBonds().getHostNics()) {
+                parameters.getRemovedBonds().add(mapBonds(bonds, bond).getId());
+            }
+        }
+
+        if (action.isSetCheckConnectivity()) {
+            parameters.setRollbackOnFailure(action.isCheckConnectivity());
+        }
+
+        if (action.isSetConnectivityTimeout()) {
+            parameters.setConectivityTimeout(action.getConnectivityTimeout());
+        }
+
+        return parameters;
+    }
+
+    public Map<Guid, NetworkAttachment> getBackendNetworkAttachments() {
+        List<NetworkAttachment> backendAttachments =
+                getBackendCollection(NetworkAttachment.class,
+                        VdcQueryType.GetNetworkAttachmentsByHostId,
+                        new IdQueryParameters(guid));
+        return Entities.businessEntitiesById(backendAttachments);
+    }
+
+    public BusinessEntityMap<Bond> getBackendHostBonds() {
+        List<Bond> backendBonds =
+                getBackendCollection(Bond.class, VdcQueryType.GetHostBondsByHostId, new IdQueryParameters(guid));
+        return new BusinessEntityMap<Bond>(backendBonds);
+    }
+
+    public NetworkAttachment mapNetworkAttachment(Map<Guid, NetworkAttachment> attachmentsById,
+            org.ovirt.engine.api.model.NetworkAttachment model) {
+        Mapper<org.ovirt.engine.api.model.NetworkAttachment, NetworkAttachment> networkAttachmentMapper =
+                getMapper(org.ovirt.engine.api.model.NetworkAttachment.class, NetworkAttachment.class);
+        NetworkAttachment attachment;
+        if (model.isSetId()) {
+            Guid attachmentId = asGuid(model.getId());
+            attachment = networkAttachmentMapper.map(model, attachmentsById.get(attachmentId));
+        } else {
+            attachment = networkAttachmentMapper.map(model, null);
+        }
+
+        return attachment;
+    }
+
+    public Bond mapBonds(BusinessEntityMap<Bond> bonds, HostNIC model) {
+        Mapper<HostNIC, Bond> hostNicMapper = getMapper(HostNIC.class, Bond.class);
+        Bond bond;
+        if (model.isSetId()) {
+            Guid nicId = asGuid(model.getId());
+            bond = hostNicMapper.map(model, bonds.get(nicId));
+        } else {
+            Bond template = model.isSetName() ? bonds.get(model.getName()) : null;
+            bond = hostNicMapper.map(model, template);
+        }
+
+        return bond;
     }
 
     private Host setCluster(Host host, Cluster cluster) {
