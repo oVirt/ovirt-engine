@@ -210,6 +210,8 @@ select fn_db_add_config_value('GlusterBrickProvisioningEnabled', 'false', '3.2')
 select fn_db_add_config_value('GlusterBrickProvisioningEnabled', 'false', '3.3');
 select fn_db_add_config_value('GlusterBrickProvisioningEnabled', 'false', '3.4');
 select fn_db_add_config_value('GlusterBrickProvisioningEnabled', 'false', '3.5');
+select fn_db_add_config_value('GlusterStorageDeviceListMountPointsToIgore','/,/home,/boot','general');
+select fn_db_add_config_value('GlusterStorageDeviceListFileSystemTypesToIgore','swap','general');
 
 -- OpenStack related
 select fn_db_add_config_value('KeystoneAuthUrl', '', 'general');

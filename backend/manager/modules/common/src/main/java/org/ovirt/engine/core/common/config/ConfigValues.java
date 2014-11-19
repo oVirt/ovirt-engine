@@ -1464,6 +1464,14 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     GlusterBrickProvisioningEnabled,
 
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("/,/home,/boot")
+    GlusterStorageDeviceListMountPointsToIgore,
+
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("swap")
+    GlusterStorageDeviceListFileSystemTypesToIgore,
+
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("300")
     GlusterRefreshRateSnapshotDiscovery,
