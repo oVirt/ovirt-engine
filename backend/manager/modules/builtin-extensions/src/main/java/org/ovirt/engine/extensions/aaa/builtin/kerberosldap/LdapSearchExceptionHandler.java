@@ -24,6 +24,8 @@ public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchEx
             handleEngineDirectoryServiceException(response, e);
         } else if (e instanceof AuthenticationException) {
             handleAuthenticationException(response);
+        } else if (e instanceof NegativeArraySizeException) {
+                handleAuthenticationException(response);
         } else if (e instanceof CommunicationException) {
             handleCommunicationException(response, e);
         } else if (e instanceof InterruptedException) {

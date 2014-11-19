@@ -67,7 +67,8 @@ public enum AuthenticationResult {
     INTERNAL_KERBEROS_ERROR(
             "An internal error has ocurred in the Kerberos implementation of the Java virtual machine. This usually"
                     + " means that the LDAP server is configured with a minimum security strength factor (minssf)"
-                    + " of 0. Change it to 1 and try again.",
+                    + " of 0. Change it to 1 and try again. You can also try to change the SASL quality of protection to \"auth\" which will lower the protection level. "
+                    + " To change the SASL quality of protection to \"auth\" use engine-config -s SASL_QOP=auth and restart engine.",
             25);
 
     private String detailedMessage;
