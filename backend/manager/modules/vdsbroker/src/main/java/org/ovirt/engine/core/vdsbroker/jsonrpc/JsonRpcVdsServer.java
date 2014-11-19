@@ -28,6 +28,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotInfoReturnFo
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeTaskReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.StorageDeviceListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
@@ -1745,5 +1746,12 @@ public class JsonRpcVdsServer implements IVdsServer {
 
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
         return new StatusOnlyReturnForXmlRpc(response);
+    }
+
+    @Override
+    public StorageDeviceListReturnForXmlRpc getStorageDeviceList() {
+        JsonRpcRequest request = new RequestBuilder("GlusterHost.storageDevicesList").build();
+        Map<String, Object> response = new FutureMap(this.client, request).withResponseKey("deviceInfo");
+        return new StorageDeviceListReturnForXmlRpc(response);
     }
 }

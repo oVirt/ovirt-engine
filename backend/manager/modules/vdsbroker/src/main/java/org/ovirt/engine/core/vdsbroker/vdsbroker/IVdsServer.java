@@ -23,6 +23,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotInfoReturnFo
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeTaskReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.StorageDeviceListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
@@ -152,6 +153,8 @@ public interface IVdsServer {
     OneVGReturnForXmlRpc getVGInfo(String vgUUID);
 
     LUNListReturnForXmlRpc getDeviceList(int storageType);
+
+    StorageDeviceListReturnForXmlRpc getStorageDeviceList();
 
     DevicesVisibilityMapReturnForXmlRpc getDevicesVisibility(String[] devicesList);
 
