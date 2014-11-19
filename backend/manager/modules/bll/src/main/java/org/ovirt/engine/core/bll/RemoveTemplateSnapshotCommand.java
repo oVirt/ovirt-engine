@@ -16,6 +16,7 @@ import org.ovirt.engine.core.compat.Guid;
  * This command is responsible for removing a template image.
  */
 @InternalCommandAttribute
+@NonTransactiveCommandAttribute
 public class RemoveTemplateSnapshotCommand<T extends ImagesContainterParametersBase> extends BaseImagesCommand<T> {
     public RemoveTemplateSnapshotCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
