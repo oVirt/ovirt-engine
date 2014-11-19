@@ -24,6 +24,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotInfoReturnFo
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeTaskReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.StorageDeviceListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
@@ -1670,6 +1671,17 @@ public class VdsServerWrapper implements IVdsServer {
     public StatusOnlyReturnForXmlRpc glusterSnapshotConfigSet(String cfgName, String cfgValue) {
         try {
             return new StatusOnlyReturnForXmlRpc(vdsServer.glusterSnapshotConfigSet(cfgName, cfgValue));
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public StorageDeviceListReturnForXmlRpc getStorageDeviceList() {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterStorageDevicesList();
+            StorageDeviceListReturnForXmlRpc wrapper = new StorageDeviceListReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);
         }
