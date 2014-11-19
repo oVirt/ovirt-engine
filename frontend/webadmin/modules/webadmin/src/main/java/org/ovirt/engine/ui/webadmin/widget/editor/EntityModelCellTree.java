@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.widget.editor;
 
-import com.google.gwt.event.logical.shared.AttachEvent;
 import org.ovirt.engine.ui.common.uicommon.model.TreeNodeModel;
 import org.ovirt.engine.ui.common.widget.tree.ElementIdCellTree;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ModelListTreeViewModel;
@@ -23,14 +22,6 @@ public class EntityModelCellTree<T, M extends TreeNodeModel<T, M>> extends Eleme
 
     public EntityModelCellTree(CellTree.Resources res) {
         super(new ModelListTreeViewModel<T, M>(), null, res);
-        addAttachHandler(new AttachEvent.Handler() {
-            @Override
-            public void onAttachOrDetach(AttachEvent event) {
-                if (!event.isAttached()) {
-                    getTreeViewModel().removeHandlers();
-                }
-            }
-        });
     }
 
 }

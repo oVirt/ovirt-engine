@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
-import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -18,6 +17,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.RolePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundTreePopupView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ModelListTreeViewModel;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SimpleSelectionTreeNodeModel;
 import org.ovirt.engine.ui.webadmin.widget.editor.EntityModelCellTree;
@@ -37,7 +37,7 @@ import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.inject.Inject;
 
-public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implements RolePopupPresenterWidget.ViewDef {
+public class RolePopupView extends AbstractModelBoundTreePopupView<RoleModel> implements RolePopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<RoleModel, RolePopupView> {
     }
@@ -147,6 +147,11 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
 
     private void initTree() {
         tree = new EntityModelCellTree<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel>(res);
+    }
+
+    @Override
+    protected ModelListTreeViewModel<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel> getTreeViewModel() {
+        return tree.getTreeViewModel();
     }
 
     private void localize(ApplicationConstants constants) {

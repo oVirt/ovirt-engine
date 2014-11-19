@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
-import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
@@ -29,7 +28,7 @@ import com.google.gwt.user.cellview.client.TreeNode;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.inject.Inject;
 
-public class AssignTagsPopupView extends AbstractModelBoundPopupView<TagListModel>
+public class AssignTagsPopupView extends AbstractModelBoundTreePopupView<TagListModel>
         implements AssignTagsPopupPresenterWidget.ViewDef {
 
     interface Driver extends SimpleBeanEditorDriver<TagListModel, AssignTagsPopupView> {
@@ -84,6 +83,11 @@ public class AssignTagsPopupView extends AbstractModelBoundPopupView<TagListMode
                 }
             }
         });
+    }
+
+    @Override
+    protected ModelListTreeViewModel<SelectionTreeNodeModel, SimpleSelectionTreeNodeModel> getTreeViewModel() {
+        return tree.getTreeViewModel();
     }
 
     private void updateTree(TagListModel model) {
