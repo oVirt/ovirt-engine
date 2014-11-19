@@ -172,6 +172,8 @@ select fn_db_add_config_value('GlusterRefreshRateSnapshotDiscovery', '300', 'gen
 
 -- Gluster Disk Provisioning --
 select fn_db_add_config_value_for_versions_up_to('GlusterBrickProvisioningEnabled', 'false', '3.5');
+select fn_db_add_config_value('MountPointsToIgoreInGlusterStorageList','/,/home,/boot','general');
+select fn_db_add_config_value('FileSystemTypesToIgoreInGlusterStorageList','swap','general');
 
 -- OpenStack related
 select fn_db_add_config_value('KeystoneAuthUrl', '', 'general');
