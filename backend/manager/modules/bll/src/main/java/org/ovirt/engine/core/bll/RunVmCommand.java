@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
@@ -46,7 +45,6 @@ import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -57,6 +55,7 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
@@ -568,10 +567,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             } else if (isInternalExecution()) {
                 if (getSucceeded()) {
                     boolean isStateless = isStatelessSnapshotExistsForVm();
-                    boolean isVdsKnown = getVds() != null;
-                    if (isStateless && isVdsKnown) {
+                    if (isStateless) {
                         return AuditLogType.VDS_INITIATED_RUN_VM_AS_STATELESS;
-                    } else if (isStateless) {
+                    } else if (getFlow() == RunVmFlow.CREATE_STATELESS_IMAGES) {
                         return AuditLogType.VDS_INITIATED_RUN_AS_STATELESS_VM_NOT_YET_RUNNING;
                     } else {
                         return AuditLogType.VDS_INITIATED_RUN_VM;
