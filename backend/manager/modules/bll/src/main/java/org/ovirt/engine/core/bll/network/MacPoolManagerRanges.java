@@ -46,19 +46,25 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
             log.infoFormat("Start initializing " + getClass().getSimpleName());
 
             this.macsStorage = createMacsStorage(rangesString);
-            List<VmNic> interfaces = getVmNicInterfacesFromDb();
+            addMacsFromDbToPool();
 
-            for (VmNic iface : interfaces) {
-                if (iface.getMacAddress() != null) {
-                    forceAddMacWithoutLocking(iface.getMacAddress());
-                }
-            }
+            logWhenMacPoolIsEmpty();
             initialized = true;
             log.infoFormat("Finished initializing. Available MACs in pool: {0}", macsStorage.getAvailableMacsCount());
         } catch (Exception ex) {
             log.errorFormat("Error in initializing MAC Addresses pool manager.", ex);
         } finally {
             lockObj.writeLock().unlock();
+        }
+    }
+
+    private void addMacsFromDbToPool() {
+        List<VmNic> interfaces = getVmNicInterfacesFromDb();
+
+        for (VmNic iface : interfaces) {
+            if (iface.getMacAddress() != null) {
+                forceAddMacWithoutLocking(iface.getMacAddress());
+            }
         }
     }
 
@@ -69,11 +75,7 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
             macsStorage.addRange(range.getMinimumLong(), range.getMaximumLong());
         }
 
-        if (macsStorage.availableMacExist()) {
-            return macsStorage;
-        } else {
-            throw new VdcBLLException(VdcBllErrors.MAC_POOL_INITIALIZATION_FAILED);
-        }
+        return macsStorage;
     }
 
     private List<VmNic> getVmNicInterfacesFromDb() {
@@ -151,6 +153,7 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
         try {
             checkIfInitialized();
             forceAddMacWithoutLocking(mac);
+            logWhenMacPoolIsEmpty();
         } finally {
             lockObj.writeLock().unlock();
         }
@@ -158,7 +161,6 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
 
     private void forceAddMacWithoutLocking(String mac) {
         macsStorage.useMacNoDuplicityCheck(MacAddressRangeUtils.macToLong(mac));
-        logWhenMacPoolIsEmpty();
     }
 
     @Override
