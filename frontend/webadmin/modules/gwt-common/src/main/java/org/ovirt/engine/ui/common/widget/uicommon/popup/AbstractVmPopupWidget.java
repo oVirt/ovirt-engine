@@ -1,14 +1,30 @@
 
 package org.ovirt.engine.ui.common.widget.uicommon.popup;
 
-import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.text.shared.AbstractRenderer;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.client.ui.ButtonBase;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.ValueLabel;
+import com.google.gwt.user.client.ui.Widget;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -79,6 +95,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.SerialNumberPolicyWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmPopupVmInitWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
+import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -88,7 +105,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -96,30 +112,13 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.text.shared.AbstractRenderer;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
-import com.google.gwt.user.client.ui.ButtonBase;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.ValueLabel;
-import com.google.gwt.user.client.ui.Widget;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
 
 public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWidget<UnitVmModel>
     implements TabbedView {
@@ -1154,12 +1153,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                     }
 
                     private String getDisplayableTemplateVersionName(VmTemplate template) {
-                        String versionName = template.getTemplateVersionName();
-                        if (ConstantsManager.getInstance().getConstants().latestTemplateVersionName().equals(versionName)) {
+                        if (template instanceof LatestVmTemplate) {
                             return constants.latest();
                         }
 
-                        versionName = template.getId().equals(template.getBaseTemplateId()) ?
+                        String versionName = template.getId().equals(template.getBaseTemplateId()) ?
                                 constants.baseTemplate() : template.getTemplateVersionName();
 
                         return (versionName == null ? "" : versionName) //$NON-NLS-1$

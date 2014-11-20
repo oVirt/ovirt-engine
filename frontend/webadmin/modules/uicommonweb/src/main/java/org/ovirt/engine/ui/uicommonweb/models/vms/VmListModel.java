@@ -58,6 +58,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
+import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.TagsEqualityComparer;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
@@ -1964,7 +1965,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             final VM selectedItem = (VM) getSelectedItem();
             // explicitly pass non-editable field from the original VM
             getcurrentVm().setCreatedByUserId(selectedItem.getCreatedByUserId());
-            getcurrentVm().setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
+            getcurrentVm().setUseLatestVersion(model.getTemplate().getSelectedItem() instanceof LatestVmTemplate);
 
             if (selectedItem.isRunningOrPaused()) {
                 AsyncDataProvider.getInstance().getVmChangedFieldsForNextRun(editedVm, getcurrentVm(), getUpdateVmParameters(false), new AsyncQuery(this,
@@ -2082,7 +2083,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.startProgress(null);
 
         VM vm = getcurrentVm();
-        vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
+        vm.setUseLatestVersion(model.getTemplate().getSelectedItem() instanceof LatestVmTemplate);
 
         AddVmParameters parameters = new AddVmParameters(vm);
         parameters.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());

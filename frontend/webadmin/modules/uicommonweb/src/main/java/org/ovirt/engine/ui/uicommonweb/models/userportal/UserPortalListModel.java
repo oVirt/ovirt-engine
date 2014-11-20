@@ -38,6 +38,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
+import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
@@ -1082,7 +1083,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         else
         {
             final VM selectedItem = (VM) ((UserPortalItemModel) userPortalListModel.getSelectedItem()).getEntity();
-            gettempVm().setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
+            gettempVm().setUseLatestVersion(model.getTemplate().getSelectedItem() instanceof LatestVmTemplate);
 
             if (selectedItem.isRunningOrPaused()) {
                 AsyncDataProvider.getInstance().getVmChangedFieldsForNextRun(editedVm, gettempVm(), getUpdateVmParameters(false), new AsyncQuery(this,
@@ -1124,7 +1125,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         setstorageDomain(model.getStorageDomain().getSelectedItem());
 
         VM vm = gettempVm();
-        vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
+        vm.setUseLatestVersion(model.getTemplate().getSelectedItem() instanceof LatestVmTemplate);
 
         AddVmParameters parameters = new AddVmParameters(vm);
         parameters.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());

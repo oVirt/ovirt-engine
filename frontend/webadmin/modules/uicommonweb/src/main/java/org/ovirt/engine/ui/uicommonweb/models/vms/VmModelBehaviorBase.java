@@ -42,6 +42,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -241,23 +242,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
 
         for (List<VmTemplate> subversions : baseTemplateToSubTemplates.values()) {
-            subversions.add(0, createLatestTemplate(subversions.get(0)));
+            subversions.add(0, new LatestVmTemplate(subversions.get(0)));
         }
 
         return baseTemplates;
-    }
-
-    /**
-     *
-     * @param template - the template that the latest template should be based on
-     * @return template representing the latest template
-     */
-    private VmTemplate createLatestTemplate(VmTemplate template) {
-        VmTemplate latestTemplate = new VmTemplate(template);
-        latestTemplate.setTemplateVersionName(constants.latestTemplateVersionName());
-        latestTemplate.setDescription(constants.latestTemplateVersionDescription());
-
-        return latestTemplate;
     }
 
     protected void baseTemplateSelectedItemChanged() {
@@ -761,7 +749,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                 VmTemplate template = (VmTemplate) returnValue;
 
                                 if (useLatest) {
-                                    template = createLatestTemplate(template);
+                                    template = new LatestVmTemplate(template);
                                 }
 
                                 setupBaseTemplate(template.getBaseTemplateId());
