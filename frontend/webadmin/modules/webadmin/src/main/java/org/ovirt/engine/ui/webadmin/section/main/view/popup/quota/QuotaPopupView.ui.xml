@@ -9,8 +9,7 @@
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.QuotaPopupView.WidgetStyle">
 		.textBoxWidth {
-			width: 100;
-			margin-right: 3px;
+			width: 600px;
 		}
 		.topDecorator {
 			background-color: #D3D3D3;
