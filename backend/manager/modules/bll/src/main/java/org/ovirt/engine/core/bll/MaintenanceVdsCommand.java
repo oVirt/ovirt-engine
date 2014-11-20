@@ -8,6 +8,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.InternalMigrateVmParameters;
@@ -104,6 +105,20 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         return migrateAllVms(parentContext, false);
     }
 
+    private boolean canScheduleVm(VM vm) {
+        List<Guid> blacklist = new ArrayList<Guid>();
+        if (getVdsId() != null) {
+            blacklist.add(getVdsId());
+        }
+        return SchedulingManager.getInstance().canSchedule(
+                        getVdsGroup(),
+                        vm,
+                        blacklist, //blacklist only contains the host we're putting to maintenance
+                        Collections.<Guid> emptyList(), //no whitelist
+                        vm.getDedicatedVmForVds(),
+                        new ArrayList<String>()
+                        );
+    }
     /**
      * Note: you must call {@link #orderListOfRunningVmsOnVds(Guid)} before calling this method
      */
@@ -113,8 +128,12 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
 
         for (VM vm : vms) {
             if (vm.isHostedEngine()) {
-                // The Hosted Engine vm is migrated by the HA agent
-                continue;
+                // check if there is host which can be used for HE
+                if (!canScheduleVm(vm)) {
+                    succeeded = false;
+                    appendCustomValue("failedVms", vm.getName(), ",");
+                    log.error("ResourceManager::vdsMaintenance - There is not host capable of running the hosted engine VM");
+                }
             }
             // if HAOnly is true check that vm is HA (auto_startup should be true)
             if (vm.getStatus() != VMStatus.MigratingFrom && (!HAOnly || (HAOnly && vm.isAutoStartup()))) {
