@@ -19,14 +19,11 @@
 """Reconfigure env plugin."""
 
 
-import os
-import datetime
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
 from otopi import util
-from otopi import common
 from otopi import plugin
 from otopi import constants as otopicons
 
