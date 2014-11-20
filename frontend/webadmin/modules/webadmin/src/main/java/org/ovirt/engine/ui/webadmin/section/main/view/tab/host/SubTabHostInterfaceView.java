@@ -38,7 +38,7 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
     /**
      * An empty column, used to render Host NIC table header.
      */
-    private class EmptyColumn extends TextColumn<HostInterfaceLineModel> {
+    private static class EmptyColumn extends TextColumn<HostInterfaceLineModel> {
         @Override
         public String getValue(HostInterfaceLineModel object) {
             return null;
