@@ -656,7 +656,4 @@ public class FixturesTool {
 
     public static final Guid CPU_PROFILE_1 = new Guid("fd81f1e1-785b-4579-ab75-1419ebb87052");
     public static final Guid CPU_PROFILE_2 = new Guid("fd81f1e1-785b-4579-ab75-1419ebb87053");
-
-    public static final Guid COMMAND_ID = new Guid("340fd52b-3400-4cdd-8d3f-c9d03704b0a1");
-    public static final Guid ROOT_COMMAND_ID = new Guid("440fd52b-3400-4cdd-8d3f-c9d03704b0aa");
 }
