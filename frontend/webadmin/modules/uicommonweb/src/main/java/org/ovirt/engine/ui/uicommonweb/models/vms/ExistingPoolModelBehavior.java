@@ -45,6 +45,8 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
 
         instanceTypeManager = new ExistingPoolInstanceTypeManager(getModel(), pool);
         instanceTypeManager.setAlwaysEnabledFieldUpdate(true);
+        getModel().getCustomProperties().setIsChangable(false);
+        getModel().getCustomPropertySheet().setIsChangable(false);
     }
 
     @Override
