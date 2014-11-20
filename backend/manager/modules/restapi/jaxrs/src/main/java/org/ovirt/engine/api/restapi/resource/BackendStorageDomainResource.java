@@ -337,4 +337,9 @@ public class BackendStorageDomainResource extends
         return inject(new BackendAssignedDiskProfilesResource(id));
     }
 
+    @Override
+    protected StorageDomain addParents(StorageDomain model) {
+        StorageDomainHelper.addAttachedDataCenterReferences(this, model);
+        return model;
+    }
 }

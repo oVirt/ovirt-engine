@@ -2679,7 +2679,17 @@
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>
+          <!-- This is used to link to the Data Center that the Storage Domain
+               is attached to. It is preserved for backwards compatibility, as
+               the Storage Domain may be attached to multiple Data Centers (if
+               it is an ISO domain). Use the "data_centers" element
+               instead. -->
           <xs:element ref="data_center" minOccurs="0"/>
+
+          <!-- This is a set of links to the data centers that the Storage
+               Domain is attached to. -->
+          <xs:element ref="data_centers" minOccurs="0" maxOccurs="1"/>
+
           <xs:element name="type" type="xs:string" minOccurs="0"/>
           <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
           <xs:element name="master" type="xs:boolean" minOccurs="0"/>

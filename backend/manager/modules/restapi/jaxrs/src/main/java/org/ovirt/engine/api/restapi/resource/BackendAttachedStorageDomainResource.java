@@ -8,6 +8,7 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AttachedStorageDomainResource;
 import org.ovirt.engine.api.resource.DisksResource;
+import org.ovirt.engine.api.restapi.util.StorageDomainHelper;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 
 import org.ovirt.engine.core.common.queries.StorageDomainAndPoolQueryParameters;
@@ -53,8 +54,13 @@ public class BackendAttachedStorageDomainResource
 
     @Override
     protected StorageDomain addParents(StorageDomain storageDomain) {
+        // This is for backwards compatibility and will be removed in the future:
         storageDomain.setDataCenter(new DataCenter());
         storageDomain.getDataCenter().setId(dataCenterId.toString());
+
+        // Find all the data centers that this storage domain is attached to and add references to them:
+        StorageDomainHelper.addAttachedDataCenterReferences(this, storageDomain);
+
         return storageDomain;
     }
 

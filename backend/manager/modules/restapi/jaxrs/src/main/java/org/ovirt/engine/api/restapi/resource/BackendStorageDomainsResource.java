@@ -466,4 +466,10 @@ public class BackendStorageDomainsResource
             org.ovirt.engine.core.common.businessentities.StorageDomain entity) {
         return model;
     }
+
+    @Override
+    protected StorageDomain addParents(StorageDomain model) {
+        StorageDomainHelper.addAttachedDataCenterReferences(this, model);
+        return model;
+    }
 }
