@@ -14,6 +14,7 @@ import javax.validation.constraints.Size;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
+import org.ovirt.engine.core.common.validation.annotation.Mask;
 import org.ovirt.engine.core.common.validation.annotation.ValidNetworkConfiguration;
 import org.ovirt.engine.core.common.validation.annotation.ValidNetworkLabelFormat;
 import org.ovirt.engine.core.compat.Guid;
@@ -35,7 +36,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_STATIC_IP_BAD_FORMAT")
     private String address;
 
-    @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_SUBNET_BAD_FORMAT")
+    @Mask
     private String subnet;
 
     @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_GATEWAY_BAD_FORMAT")
