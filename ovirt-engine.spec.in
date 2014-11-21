@@ -317,7 +317,7 @@ Requires:	openssl
 Requires:	ovirt-host-deploy-java >= 1.3.0
 Requires:	python-cheetah
 Requires:	spice-html5
-Requires:	vdsm-jsonrpc-java >= 1.0.10
+Requires:	vdsm-jsonrpc-java >= 1.0.11
 
 %if %{ovirt_install_systemd}
 Requires(post):		systemd
@@ -568,7 +568,7 @@ Requires:	%{name}-setup-plugin-ovirt-engine = %{version}-%{release}
 Requires:	openssh-server
 Requires:	ovirt-host-deploy >= 1.3.0
 Requires:	ovirt-host-deploy-offline >= 1.3.0
-Requires:	vdsm-jsonrpc-java >= 1.0.10
+Requires:	vdsm-jsonrpc-java >= 1.0.11
 
 %description setup-plugin-allinone
 All-in-one plugin for %{ovirt_product_name_short}'s setup
