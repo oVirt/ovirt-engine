@@ -45,8 +45,8 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         setVmTemplate(parameters.getVmTemplateData());
         setVmTemplateId(getVmTemplate().getId());
         setVdsGroupId(getVmTemplate().getVdsGroupId());
+        mOldTemplate = DbFacade.getInstance().getVmTemplateDao().get(getVmTemplate().getId());
         if (getVdsGroup() != null) {
-            mOldTemplate = DbFacade.getInstance().getVmTemplateDao().get(getVmTemplate().getId());
             setStoragePoolId(getVdsGroup().getStoragePoolId() != null ? getVdsGroup().getStoragePoolId()
                     : Guid.Empty);
             getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(getVdsGroup().getcompatibility_version(),
