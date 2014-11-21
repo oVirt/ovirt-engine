@@ -121,6 +121,7 @@ public class VmMapper {
         staticVm.setSpiceFileTransferEnabled(entity.isSpiceFileTransferEnabled());
         staticVm.setSpiceCopyPasteEnabled(entity.isSpiceCopyPasteEnabled());
         staticVm.setCpuProfileId(entity.getCpuProfileId());
+        staticVm.setCustomProperties(entity.getCustomProperties());
         return doMapVmBaseHwPartToVmStatic(entity, staticVm);
     }
 

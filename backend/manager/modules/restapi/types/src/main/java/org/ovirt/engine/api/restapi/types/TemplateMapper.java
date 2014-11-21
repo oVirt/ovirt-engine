@@ -10,6 +10,7 @@ import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.api.model.CpuTopology;
+import org.ovirt.engine.api.model.CustomProperties;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.Domain;
@@ -21,6 +22,7 @@ import org.ovirt.engine.api.model.TemplateVersion;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.UsbType;
 import org.ovirt.engine.api.model.VmType;
+import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.api.restapi.utils.UsbMapperUtils;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
@@ -198,6 +200,12 @@ public class TemplateMapper {
             entity.setCpuProfileId(GuidUtils.asGuid(model.getCpuProfile().getId()));
         }
 
+        if (!StringUtils.isEmpty(entity.getCustomProperties())) {
+            CustomProperties hooks = new CustomProperties();
+            hooks.getCustomProperty().addAll(CustomPropertiesParser.parse(entity.getCustomProperties(), false));
+            model.setCustomProperties(hooks);
+        }
+
         return entity;
     }
 
@@ -332,6 +340,9 @@ public class TemplateMapper {
             staticVm.setCpuProfileId(GuidUtils.asGuid(model.getCpuProfile().getId()));
         }
 
+        if (model.isSetCustomProperties()) {
+            staticVm.setCustomProperties(CustomPropertiesParser.parse(model.getCustomProperties().getCustomProperty()));
+        }
         return staticVm;
     }
 
@@ -444,6 +455,12 @@ public class TemplateMapper {
             CpuProfile cpuProfile = new CpuProfile();
             cpuProfile.setId(entity.getCpuProfileId().toString());
             model.setCpuProfile(cpuProfile);
+        }
+
+        if (!StringUtils.isEmpty(entity.getCustomProperties())) {
+            CustomProperties hooks = new CustomProperties();
+            hooks.getCustomProperty().addAll(CustomPropertiesParser.parse(entity.getCustomProperties(), false));
+            model.setCustomProperties(hooks);
         }
 
         return model;
