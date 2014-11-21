@@ -35,7 +35,6 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.ExportRepoImageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.CopyDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractDiskModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.MoveDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveDiskModel;
@@ -47,7 +46,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.inject.Inject;
 
-public class DiskListModel extends ListWithSimpleDetailsModel<Void, DiskImage> implements ISupportSystemTreeContext
+public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implements ISupportSystemTreeContext
 {
     private UICommand privateNewCommand;
 
@@ -238,7 +237,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, DiskImage> i
     }
 
     @Override
-    public void setItems(Collection<DiskImage> disks)
+    public void setItems(Collection<Disk> disks)
     {
         if (disks == null) {
             super.setItems(null);
@@ -301,7 +300,9 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, DiskImage> i
 
     private void move()
     {
-        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) getSelectedItems();
+
+
+        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) asImages(getSelectedItems());
 
         if (disks == null || getWindow() != null)
         {
@@ -340,7 +341,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, DiskImage> i
     private void export()
     {
         @SuppressWarnings("unchecked")
-        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) getSelectedItems();
+        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) asImages(getSelectedItems());
 
         if (disks == null || getWindow() != null)
         {
@@ -364,7 +365,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, DiskImage> i
 
     private void changeQuota()
     {
-        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) getSelectedItems();
+        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) asImages(getSelectedItems());
 
         if (disks == null || getWindow() != null)
         {
@@ -416,7 +417,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, DiskImage> i
 
     private void copy()
     {
-        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) getSelectedItems();
+        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) asImages(getSelectedItems());
 
         if (disks == null || getWindow() != null)
         {
@@ -442,33 +443,8 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, DiskImage> i
 
         RemoveDiskModel model = new RemoveDiskModel();
         setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().removeDisksTitle());
-        model.setHelpTag(HelpTag.remove_disk);
-        model.setHashName("remove_disk"); //$NON-NLS-1$
-
+        model.initialize(null, getSelectedItems(), this);
         model.getLatch().setIsAvailable(false);
-
-        ArrayList<DiskModel> items = new ArrayList<DiskModel>();
-        for (Object item : getSelectedItems())
-        {
-            Disk disk = (Disk) item;
-
-            DiskModel diskModel = new DiskModel();
-            diskModel.setDisk(disk);
-
-            items.add(diskModel);
-
-            // A shared disk can only be detached
-            if (disk.getNumberOfVms() > 1) {
-                model.getLatch().setIsChangable(false);
-            }
-        }
-        model.setItems(items);
-
-        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
-        model.getCommands().add(tempVar);
-        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
-        model.getCommands().add(tempVar2);
     }
 
     private void onRemove()
@@ -605,7 +581,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, DiskImage> i
     }
 
     private boolean isExportCommandAvailable() {
-        List<DiskImage> disks = getSelectedItems();
+        List<DiskImage> disks = asImages(getSelectedItems());
 
         if (disks == null || disks.isEmpty()) {
             return false;
@@ -668,7 +644,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, DiskImage> i
         {
             export();
         }
-        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
+        else if (RemoveDiskModel.CANCEL_REMOVE.equals(command.getName()) || "Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }
@@ -676,7 +652,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, DiskImage> i
         {
             cancelConfirm();
         }
-        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
+        else if (RemoveDiskModel.ON_REMOVE.equals(command.getName()))
         {
             onRemove();
         } else if (command == getChangeQuotaCommand()) {
@@ -684,6 +660,21 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, DiskImage> i
         } else if (command.getName().equals("onChangeQuota")) { //$NON-NLS-1$
             onChangeQuota();
         }
+    }
+
+    private List<DiskImage> asImages(List<Disk> disks) {
+        if (disks == null) {
+            return null;
+        }
+
+        List<DiskImage> res = new ArrayList<>();
+        for (Disk disk : disks) {
+            if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                res.add((DiskImage) disk);
+            }
+        }
+
+        return res;
     }
 
     @Override

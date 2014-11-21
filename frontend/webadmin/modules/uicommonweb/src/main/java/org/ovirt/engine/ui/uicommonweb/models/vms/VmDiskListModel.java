@@ -7,11 +7,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
-import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.common.action.GetDiskAlignmentParameters;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
-import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -381,61 +379,16 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
 
         RemoveDiskModel model = new RemoveDiskModel();
         setWindow(model);
-        model.setTitle(ConstantsManager.getInstance().getConstants().removeDisksTitle());
-        model.setHelpTag(HelpTag.remove_disk);
-        model.setHashName("remove_disk"); //$NON-NLS-1$
-
-        model.getLatch().setEntity(false);
-
-        ArrayList<DiskModel> items = new ArrayList<DiskModel>();
-        for (Disk disk : getSelectedItems()) {
-
-            DiskModel diskModel = new DiskModel();
-            diskModel.setDisk(disk);
-            diskModel.setVm(getEntity());
-
-            items.add(diskModel);
-
-            // A shared disk or a disk snapshot can only be detached
-            if (disk.getNumberOfVms() > 1) {
-                model.getLatch().setIsChangable(false);
-            }
-        }
-        model.setItems(items);
-
-        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
-        model.getCommands().add(tempVar);
-        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
-        model.getCommands().add(tempVar2);
+        model.initialize(getEntity(), getSelectedItems(), this);
     }
 
     private void onRemove() {
-        VM vm = getEntity();
         RemoveDiskModel model = (RemoveDiskModel) getWindow();
-        boolean removeDisk = model.getLatch().getEntity();
-        VdcActionType actionType = removeDisk ? VdcActionType.RemoveDisk : VdcActionType.DetachDiskFromVm;
-        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
-
-        for (Object item : getSelectedItems()) {
-            Disk disk = (Disk) item;
-            VdcActionParametersBase parameters = removeDisk ?
-                    new RemoveDiskParameters(disk.getId()) :
-                    new AttachDetachVmDiskParameters(vm.getId(), disk.getId());
-            paramerterList.add(parameters);
+        if (!model.validate()) {
+            return;
         }
 
-        model.startProgress(null);
-
-        Frontend.getInstance().runMultipleAction(actionType, paramerterList,
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        VmDiskListModel localModel = (VmDiskListModel) result.getState();
-                        localModel.stopProgress();
-                        cancel();
-                    }
-                },
-                this);
+        model.onRemove(this);
     }
 
     private void plug() {
@@ -770,7 +723,10 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         {
             cancel();
         }
-        else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
+        else if (RemoveDiskModel.CANCEL_REMOVE.equals(command.getName())) {
+            cancel();
+        }
+        else if (RemoveDiskModel.ON_REMOVE.equals(command.getName()))
         {
             onRemove();
         }
