@@ -119,8 +119,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
 
         getModel().getIsRngEnabled().setIsChangable(isRngDeviceSupported(getModel()));
-
-        getModel().getIsRngEnabled().setMessage(constants.rngNotSupportedByCluster());
+        if (!getModel().getIsRngEnabled().getIsChangable()) {
+            getModel().getIsRngEnabled().setChangeProhibitionReason(constants.rngNotSupportedByCluster());
+        }
         setRngAvailability();
 
         postDataCenterWithClusterSelectedItemChanged();
@@ -139,9 +140,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         model.getRngBytes().setIsChangable(!requiredRngSourcesEmpty);
 
         if (requiredRngSourcesEmpty) {
-            model.getIsRngEnabled().setMessage(constants.rngNotSupportedByCluster());
-            model.getRngPeriod().setMessage(constants.rngNotSupportedByCluster());
-            model.getRngBytes().setMessage(constants.rngNotSupportedByCluster());
+            model.getIsRngEnabled().setChangeProhibitionReason(constants.rngNotSupportedByCluster());
+            model.getRngPeriod().setChangeProhibitionReason(constants.rngNotSupportedByCluster());
+            model.getRngBytes().setChangeProhibitionReason(constants.rngNotSupportedByCluster());
         }
 
         model.getRngSourceRandom().setIsChangable(randomSourceAvailable);
