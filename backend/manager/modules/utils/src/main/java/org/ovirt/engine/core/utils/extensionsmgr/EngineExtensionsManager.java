@@ -248,7 +248,7 @@ public class EngineExtensionsManager extends ExtensionsManager {
                             )
                     );
                 }
-                if (nameValue[0].equals(domain)) {
+                if (nameValue[0].equalsIgnoreCase(domain)) {
                     result = nameValue[1];
                     break;
                 }
