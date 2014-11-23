@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -473,8 +472,14 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         return destinationVdsId != null ? destinationVdsId : super.getCurrentVdsId();
     }
 
+    // Duration: time that took for the actual migration
     public String getDuration() {
         return DurationFormatUtils.formatDurationWords(new Date().getTime() - getParameters().getStartTime().getTime(), true, true);
+    }
+
+    // TotalDuration: time that took migration including retries (can be identical to Duration)
+    public String getTotalDuration() {
+        return DurationFormatUtils.formatDurationWords(new Date().getTime() - getParameters().getTotalMigrationTime().getTime(), true, true);
     }
 
     @Override

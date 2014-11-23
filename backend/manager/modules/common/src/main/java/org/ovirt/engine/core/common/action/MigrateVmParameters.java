@@ -2,7 +2,6 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.ArrayList;
 import java.util.Date;
-
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -13,7 +12,10 @@ public class MigrateVmParameters extends VmOperationParameterBase {
     private static final long serialVersionUID = -7523728706659584319L;
     protected boolean forceMigrationForNonMigratableVm;
     ArrayList<Guid> initialHosts;
+    // time that took the actual migration (from Engine point of view)
     protected Date startTime;
+    // Total time for migration (including retries)
+    protected Date totalMigrationTime;
     private Guid targetVdsGroupId;
 
     public MigrateVmParameters() {
@@ -60,6 +62,13 @@ public class MigrateVmParameters extends VmOperationParameterBase {
 
     public void setStartTime(Date startTime) {
         this.startTime = startTime;
+        if (this.totalMigrationTime == null) {
+            this.totalMigrationTime = this.startTime;
+        }
+    }
+
+    public Date getTotalMigrationTime() {
+        return startTime;
     }
 
     public Guid getTargetVdsGroupId() {
