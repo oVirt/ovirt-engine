@@ -84,9 +84,12 @@ public class ProcessDownVmCommand<T extends IdParameters> extends CommandBase<T>
         List<DbUser> users = getDbUserDAO().getAllForVm(getVmId());
         // check if this VM is attached to a user
         if (users == null || users.isEmpty()) {
-            return false;
+            // if not, check if new version or need to restore stateless
+            runInternalActionWithTasksContext(VdcActionType.RestoreStatelessVm,
+                    new VmOperationParameterBase(getVmId()),
+                    getLock());
+            return true;
         }
-
         VmPool pool = getVmPoolDAO().get(getVm().getVmPoolId());
         if (pool != null && pool.getVmPoolType() == VmPoolType.Automatic) {
             // should be only one user in the collection
