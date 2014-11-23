@@ -270,7 +270,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     protected boolean validateCanUpdateReadOnly(DiskValidator diskValidator) {
         if (updateReadOnlyRequested()) {
             if(getVm().getStatus() != VMStatus.Down && vmDeviceForVm.getIsPlugged()) {
-                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
             }
             return validate(diskValidator.isReadOnlyPropertyCompatibleWithInterface());
         }
