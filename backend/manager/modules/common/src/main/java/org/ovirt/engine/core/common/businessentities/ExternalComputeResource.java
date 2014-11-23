@@ -51,8 +51,8 @@ public class ExternalComputeResource implements ExternalEntityBase {
 
     @Override
     public String getDescription() {
-        return "URL: " + url +
-                " | Provider: " + provider + "\n" +
-                " | User: " + user;
+        return "URL: " + (url != null ? url : "[N/A]") + "\n" +
+                " | Provider: " + (provider != null ? provider : "[N/A]") + "\n" +
+                " | User: " + (user != null ? user : "[N/A]");
     }
 }

@@ -95,7 +95,8 @@ public class NewHostModel extends HostModel {
         VDS vds = new VDS();
         if (dhost != null && dhg != null) {
             vds.setVdsName(dhost.getName());
-            vds.setHostName(dhost.getName() + "." + dhg.getDomainName()); //$NON-NLS-1$
+            vds.setHostName(dhost.getName() + "." + //$NON-NLS-1$
+                    (dhg.getDomainName() != null ? dhg.getDomainName() : constants.empty()));
         }
         updateModelFromVds(vds, null, false, null);
     }
@@ -105,7 +106,8 @@ public class NewHostModel extends HostModel {
         VDS vds = new VDS();
         if (dhg != null) {
             vds.setVdsName(getName().getEntity());
-            vds.setHostName(getName().getEntity() + "." + dhg.getDomainName()); //$NON-NLS-1$
+            vds.setHostName(getName().getEntity() + "." + //$NON-NLS-1$
+                    (dhg.getDomainName() != null ? dhg.getDomainName() : constants.empty()));
         }
         updateModelFromVds(vds, null, false, null);
     }

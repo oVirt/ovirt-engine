@@ -127,10 +127,10 @@ public class ExternalHostGroup implements ExternalEntityBase {
 
     @Override
     public String getDescription() {
-        return "OS: " + operatingsystemName + "\n" +
-                " | Subnet: " + subnetName + "\n" +
-                " | Domain: " + domainName + "\n" +
-                " | Arch: " + architectureName;
+        return "OS: " + (operatingsystemName != null ? operatingsystemName : "[N/A]") + "\n" +
+                " | Subnet: " + (subnetName != null ? subnetName : "[N/A]") + "\n" +
+                " | Domain: " + (domainName != null ? domainName : "[N/A]") + "\n" +
+                " | Arch: " + (architectureName != null ? architectureName : "[N/A]");
     }
 
     @Override

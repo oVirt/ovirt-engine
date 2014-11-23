@@ -778,7 +778,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
                                     base = constants.empty();
                                 }
                                 String generatedHostName = base + "." + //$NON-NLS-1$
-                                        dhg.getDomainName();
+                                        (dhg.getDomainName() != null ? dhg.getDomainName() : constants.empty());
                                 object.getHost().setEntity(generatedHostName);
                             }
                         }
