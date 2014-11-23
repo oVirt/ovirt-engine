@@ -162,20 +162,14 @@ public class UpdateVmDiskCommandTest {
     public void canDoActionFailedVMNotFound() throws Exception {
         initializeCommand(createParameters());
         mockNullVm();
-        assertFalse(command.canDoAction());
-        assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND.toString()));
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
     }
 
     @Test
     public void canDoActionFailedVMHasNotDisk() throws Exception {
         initializeCommand(createParameters());
         createNullDisk();
-        assertFalse(command.canDoAction());
-        assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_EXIST.toString()));
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
     }
 
     @Test
@@ -189,10 +183,7 @@ public class UpdateVmDiskCommandTest {
         when(storageDomainStaticDao.get(storage.getId())).thenReturn(storage.getStorageStaticData());
         initializeCommand(parameters);
 
-        assertFalse(command.canDoAction());
-        assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
-                .contains(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT.toString()));
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT);
     }
 
     @Test
@@ -252,8 +243,7 @@ public class UpdateVmDiskCommandTest {
         when(storageDomainStaticDao.get(storage.getId())).thenReturn(storage.getStorageStaticData());
         initializeCommand(parameters);
 
-        assertFalse(command.canDoAction());
-        assertTrue(command.getReturnValue().getCanDoActionMessages().contains(VdcBllMessages.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN.toString()));
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN);
     }
 
 
@@ -275,7 +265,7 @@ public class UpdateVmDiskCommandTest {
         mockVdsCommandSetVolumeDescription();
         mockInterfaceList();
 
-        assertTrue(command.canDoAction());
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
         command.executeVmCommand();
         assertTrue(oldDisk.getVmSnapshotId() == null);
     }
@@ -463,12 +453,7 @@ public class UpdateVmDiskCommandTest {
         when(diskValidator.isReadOnlyPropertyCompatibleWithInterface()).thenReturn(ValidationResult.VALID);
         when(diskValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
         when(command.getDiskValidator(parameters.getDiskInfo())).thenReturn(diskValidator);
-
-        command.executeVmCommand();
-        assertFalse(command.canDoAction());
-        assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED.toString()));
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED);
     }
 
     @Test
