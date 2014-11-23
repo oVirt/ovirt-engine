@@ -49,6 +49,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -515,6 +516,7 @@ public class AddVmCommandTest {
         if (storagePool == null) {
             storagePool = new StoragePool();
             storagePool.setId(STORAGE_POOL_ID);
+            storagePool.setStatus(StoragePoolStatus.Up);
         }
         return storagePool;
     }
