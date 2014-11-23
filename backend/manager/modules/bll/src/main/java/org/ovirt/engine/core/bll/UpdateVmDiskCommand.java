@@ -654,7 +654,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     protected boolean updateReadOnlyRequested() {
-        return !vmDeviceForVm.getIsReadOnly().equals(getNewDisk().getReadOnly());
+        Boolean readOnlyNewValue = getNewDisk().getReadOnly();
+        return readOnlyNewValue != null && !vmDeviceForVm.getIsReadOnly().equals(readOnlyNewValue);
     }
 
     protected boolean isAtLeastOneVmIsNotDown(List<VM> vmsDiskPluggedTo) {

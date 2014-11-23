@@ -855,7 +855,7 @@ public class UpdateVmDiskCommandTest {
                 null,
                 true,
                 true,
-                false,
+                null,
                 "",
                 null,
                 null,
