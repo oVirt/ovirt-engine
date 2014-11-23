@@ -197,14 +197,7 @@ public class UpdateVmDiskCommandTest {
 
     @Test
     public void canDoActionFailedUpdateReadOnly() {
-        VmDevice device = createVmDevice(diskImageGuid, vmId);
-        doReturn(device).when(vmDeviceDAO).get(device.getId());
-
-        // make sure that device is plugged
-        assertEquals(true, device.getIsPlugged());
-
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
-
         UpdateVmDiskParameters parameters = createParameters();
         parameters.getDiskInfo().setReadOnly(true);
         initializeCommand(parameters, Collections.singletonList(createVm(VMStatus.Up)));
@@ -221,9 +214,7 @@ public class UpdateVmDiskCommandTest {
         vm.setVmPoolId(Guid.newGuid());
         initializeCommand(parameters, Collections.singletonList(vm));
 
-        VmDevice vmDevice = createVmDevice(diskImageGuid, vmId); // Default RO is false
-        when(command.getVmDeviceForVm()).thenReturn(vmDevice);
-
+        VmDevice vmDevice = stubVmDevice(diskImageGuid, vmId); // Default RO is false
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
 
         vmDevice.setIsReadOnly(true);
@@ -419,17 +410,12 @@ public class UpdateVmDiskCommandTest {
                 return oldDisk;
             }
         });
-
         initializeCommand(parameters);
         mockVdsCommandSetVolumeDescription();
-
-        VmDevice device = createVmDevice(diskImageGuid, vmId);
-        doReturn(device).when(vmDeviceDAO).get(device.getId());
-
         command.executeVmCommand();
 
         // verify that device address was cleared exactly once
-        verify(vmDeviceDAO, times(1)).clearDeviceAddress(device.getDeviceId());
+        verify(vmDeviceDAO).clearDeviceAddress(diskImageGuid);
     }
 
     private void mockVdsCommandSetVolumeDescription() {
@@ -446,18 +432,15 @@ public class UpdateVmDiskCommandTest {
         parameters.getDiskInfo().setReadOnly(true);
 
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
-
-        VmDevice device = createVmDevice(diskImageGuid, vmId);
-        doReturn(device).when(vmDeviceDAO).get(device.getId());
-
         initializeCommand(parameters);
+        stubVmDevice(diskImageGuid, vmId);
         mockVdsCommandSetVolumeDescription();
         command.executeVmCommand();
 
-        device.setIsReadOnly(true);
-        verify(vmDeviceDAO, times(1)).update(device);
+        verify(command, atLeast(1)).updateReadOnlyRequested();
+        assertTrue(command.updateReadOnlyRequested());
+        verify(vmDeviceDAO).update(any(VmDevice.class));
     }
-
 
     @Test
     public void testUpdateDiskInterfaceUnsupported() {
@@ -481,9 +464,6 @@ public class UpdateVmDiskCommandTest {
         when(diskValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
         when(command.getDiskValidator(parameters.getDiskInfo())).thenReturn(diskValidator);
 
-        VmDevice device = createVmDevice(diskImageGuid, vmId);
-        doReturn(device).when(vmDeviceDAO).get(device.getId());
-
         command.executeVmCommand();
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
@@ -493,25 +473,16 @@ public class UpdateVmDiskCommandTest {
 
     @Test
     public void testDoNotUpdateDeviceWhenReadOnlyIsNotChanged() {
-        // New disk is a read write
         final UpdateVmDiskParameters parameters = createParameters();
         parameters.getDiskInfo().setReadOnly(false);
 
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
-
-        // Disk is already attached to VM as a read write
-        VmDevice device = createVmDevice(diskImageGuid, vmId);
-        doReturn(device).when(vmDeviceDAO).get(device.getId());
-
-        // To be sure that readOnly property is not changed
-        assertEquals(device.getIsReadOnly(), parameters.getDiskInfo().getReadOnly());
-
         initializeCommand(parameters);
         mockVdsCommandSetVolumeDescription();
         command.executeVmCommand();
 
-        assertFalse(command.updateReadOnlyRequested());
         verify(command, atLeast(1)).updateReadOnlyRequested();
+        assertFalse(command.updateReadOnlyRequested());
         verify(vmDeviceDAO, never()).update(any(VmDevice.class));
     }
 
@@ -594,9 +565,8 @@ public class UpdateVmDiskCommandTest {
         DiskImage oldDisk = createDiskImage();
         doReturn(oldDisk).when(command).getOldDisk();
 
-        VmDevice device = createVmDevice(diskImageGuid, vmId);
-        device.setIsReadOnly(true);
-        doReturn(device).when(command).getVmDeviceForVm();
+        VmDevice vmDevice = stubVmDevice(diskImageGuid, vmId);
+        vmDevice.setIsReadOnly(true);
 
         assertFalse(command.validateCanResizeDisk());
         CanDoActionTestUtils.assertCanDoActionMessages
@@ -666,11 +636,7 @@ public class UpdateVmDiskCommandTest {
     public void testDiskAliasAdnDescriptionMetaDataShouldNotBeUpdated() {
         // Disk should be updated as Read Only
         final UpdateVmDiskParameters parameters = createParameters();
-
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
-
-        VmDevice device = createVmDevice(diskImageGuid, vmId);
-        doReturn(device).when(vmDeviceDAO).get(device.getId());
 
         initializeCommand(parameters);
         mockVdsCommandSetVolumeDescription();
@@ -681,11 +647,7 @@ public class UpdateVmDiskCommandTest {
     public void testDiskAliasAdnDescriptionMetaDataShouldBeUpdated() {
         // Disk should be updated as Read Only
         final UpdateVmDiskParameters parameters = createParameters();
-
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
-
-        VmDevice device = createVmDevice(diskImageGuid, vmId);
-        doReturn(device).when(vmDeviceDAO).get(device.getId());
 
         parameters.getDiskInfo().setDiskAlias("New Disk Alias");
         parameters.getDiskInfo().setDiskDescription("New Disk Description");
@@ -700,11 +662,7 @@ public class UpdateVmDiskCommandTest {
     public void testOnlyDiskAliasChangedMetaDataShouldBeUpdated() {
         // Disk should be updated as Read Only
         final UpdateVmDiskParameters parameters = createParameters();
-
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
-
-        VmDevice device = createVmDevice(diskImageGuid, vmId);
-        doReturn(device).when(vmDeviceDAO).get(device.getId());
 
         parameters.getDiskInfo().setDiskAlias("New Disk Alias");
         initializeCommand(parameters);
@@ -720,9 +678,6 @@ public class UpdateVmDiskCommandTest {
         final UpdateVmDiskParameters parameters = createParameters();
 
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
-
-        VmDevice device = createVmDevice(diskImageGuid, vmId);
-        doReturn(device).when(vmDeviceDAO).get(device.getId());
 
         parameters.getDiskInfo().setDiskDescription("New Disk Description");
         initializeCommand(parameters);
@@ -898,5 +853,11 @@ public class UpdateVmDiskCommandTest {
                 null,
                 null,
                 null);
+    }
+
+    private VmDevice stubVmDevice(Guid diskId, Guid vmId) {
+        VmDevice vmDevice = createVmDevice(diskId, vmId);
+        doReturn(vmDevice).when(command).getVmDeviceForVm();
+        return vmDevice;
     }
 }
