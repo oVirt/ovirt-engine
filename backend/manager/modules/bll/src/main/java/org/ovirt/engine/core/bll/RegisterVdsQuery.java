@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.action.ApproveVdsParameters;
 import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
@@ -153,14 +154,16 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
     protected void executeRegisterVdsCommand() {
         synchronized (doubleRegistrationLock) {
-            // force to reload vdss by unique ID used later on
-            _vdssByUniqueId = null;
-            VDS vdsByUniqueId = getVdssByUniqueId().size() != 0 ? getVdssByUniqueId().get(0) : null;
-            VDS provisionedVds = DbFacade.getInstance().getVdsDao().getByName(getParameters().getVdsName());
+            List<VDS> hostsByHostName = DbFacade.getInstance().getVdsDao().getAllForHostname(getParameters().getVdsName());
+            VDS provisionedVds = hostsByHostName.size() != 0 ? hostsByHostName.get(0) : null;
             if (provisionedVds != null && provisionedVds.getStatus() != VDSStatus.InstallingOS) {
                 // if not in InstallingOS status, this host is not provisioned.
                 provisionedVds = null;
             }
+
+            // force to reload vdss by unique ID used later on
+            _vdssByUniqueId = null;
+            VDS vdsByUniqueId = getVdssByUniqueId().size() != 0 ? getVdssByUniqueId().get(0) : null;
 
             // in case oVirt host was added for the second time - perform approval
             if (vdsByUniqueId != null && vdsByUniqueId.getStatus() == VDSStatus.PendingApproval) {
@@ -188,6 +191,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                 vdsGroupId = getParameters().getVdsGroupId();
             }
             if (provisionedVds != null) {
+                // In provision don't set host on pending - isPending = false
                 getQueryReturnValue().setSucceeded(Register(provisionedVds, vdsGroupId, false));
             } else {
                 // TODO: always add in pending state, and if auto approve call
@@ -246,10 +250,10 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         return returnValue;
     }
 
-    private boolean updateExistingHost(VDS vdsByUniqueId, boolean IsPending) {
+    private boolean updateExistingHost(VDS vds, boolean IsPending) {
         boolean returnValue = true;
-        vdsByUniqueId.setHostName(getParameters().getVdsHostName());
-        vdsByUniqueId.setPort(getParameters().getVdsPort());
+        vds.setHostName(vds.getHostName());
+        vds.setPort(getParameters().getVdsPort());
         log.debugFormat(
                 "RegisterVdsQuery::Register - Will try now to update VDS with existing unique id; Name: {0}, Hostname: {1}, Unique: {2}, VdsPort: {3}, IsPending: {4} with force synchronize",
                 getParameters().getVdsHostName(),
@@ -258,7 +262,10 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                 getParameters().getVdsPort(),
                 IsPending);
 
-        UpdateVdsActionParameters p = new UpdateVdsActionParameters(vdsByUniqueId.getStaticData(), "", false);
+        UpdateVdsActionParameters p = new UpdateVdsActionParameters(vds.getStaticData(), "", false);
+        p.setInstallVds(!IsPending);
+        p.setIsReinstallOrUpgrade(!IsPending);
+        p.setAuthMethod(VdsOperationActionParameters.AuthenticationMethod.PublicKey);
         p.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
         VdcReturnValueBase rc = Backend.getInstance().runInternalAction(VdcActionType.UpdateVds, p);
 
@@ -280,7 +287,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                     getParameters().getVdsName(),
                     getParameters().getVdsHostName(),
                     getStrippedVdsUniqueId(),
-                    vdsByUniqueId.getStatus() == VDSStatus.PendingApproval ? "Pending " : "");
+                    vds.getStatus() == VDSStatus.PendingApproval ? "Pending " : "");
         }
         return returnValue;
     }

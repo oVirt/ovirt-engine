@@ -121,7 +121,8 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                             validateNetworkProviderProperties(getParameters().getNetworkProviderId(),
                                     getParameters().getNetworkMappings());
                 } else if (getParameters().getVdsStaticData().getProtocol() != _oldVds.getProtocol()
-                        && _oldVds.getStatus() != VDSStatus.Maintenance) {
+                        && _oldVds.getStatus() != VDSStatus.Maintenance &&
+                        _oldVds.getStatus() != VDSStatus.InstallingOS) {
                     addCanDoActionMessage(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE);
                 } else {
                     returnValue = true;
