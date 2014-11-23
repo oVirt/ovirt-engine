@@ -213,6 +213,44 @@ public class UpdateVmDiskCommandTest {
     }
 
     @Test
+    public void canDoActionFailedROVmAttachedToPool() {
+        when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
+        UpdateVmDiskParameters parameters = createParameters();
+        parameters.getDiskInfo().setReadOnly(true);
+        VM vm = createVm(VMStatus.Down);
+        vm.setVmPoolId(Guid.newGuid());
+        initializeCommand(parameters, Collections.singletonList(vm));
+
+        VmDevice vmDevice = createVmDevice(diskImageGuid, vmId); // Default RO is false
+        when(command.getVmDeviceForVm()).thenReturn(vmDevice);
+
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
+
+        vmDevice.setIsReadOnly(true);
+        parameters.getDiskInfo().setReadOnly(false);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
+    }
+
+    @Test
+    public void canDoActionFailedWipeVmAttachedToPool() {
+        Disk oldDisk = createDiskImage();
+        oldDisk.setWipeAfterDelete(true);
+        when(diskDao.get(diskImageGuid)).thenReturn(oldDisk);
+
+        UpdateVmDiskParameters parameters = createParameters();
+        parameters.getDiskInfo().setWipeAfterDelete(false);
+        VM vm = createVm(VMStatus.Down);
+        vm.setVmPoolId(Guid.newGuid());
+        initializeCommand(parameters, Collections.singletonList(vm));
+
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
+
+        oldDisk.setWipeAfterDelete(false);
+        parameters.getDiskInfo().setWipeAfterDelete(true);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
+    }
+
+    @Test
     public void canDoActionFailedShareableDiskOnGlusterDomain() throws Exception {
         UpdateVmDiskParameters parameters = createParameters();
         DiskImage disk = createShareableDisk(VolumeFormat.RAW);

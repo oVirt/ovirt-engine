@@ -178,6 +178,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
         DiskValidator diskValidator = getDiskValidator(getNewDisk());
         return validateCanUpdateShareable() && validateCanUpdateReadOnly(diskValidator) &&
+                validateVmPoolProperties() &&
                 validate(diskValidator.isVirtIoScsiValid(getVm())) &&
                 (getOldDisk().getDiskInterface() == getNewDisk().getDiskInterface()
                 || validate(diskValidator.isDiskInterfaceSupported(getVm()))) &&
@@ -291,6 +292,12 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             }
             return validate(diskValidator.isReadOnlyPropertyCompatibleWithInterface());
         }
+        return true;
+    }
+
+    protected boolean validateVmPoolProperties() {
+        if ((updateReadOnlyRequested() || updateWipeAfterDeleteRequested()) && getVm().getVmPoolId() != null)
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
         return true;
     }
 
@@ -655,7 +662,11 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     protected boolean updateReadOnlyRequested() {
         Boolean readOnlyNewValue = getNewDisk().getReadOnly();
-        return readOnlyNewValue != null && !vmDeviceForVm.getIsReadOnly().equals(readOnlyNewValue);
+        return readOnlyNewValue != null && !getVmDeviceForVm().getIsReadOnly().equals(readOnlyNewValue);
+    }
+
+    protected boolean updateWipeAfterDeleteRequested() {
+        return getNewDisk().isWipeAfterDelete() != getOldDisk().isWipeAfterDelete();
     }
 
     protected boolean isAtLeastOneVmIsNotDown(List<VM> vmsDiskPluggedTo) {
