@@ -364,4 +364,6 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc glusterSnapshotDeactivate(String snapshotName);
 
     StatusOnlyReturnForXmlRpc glusterSnapshotRestore(String snapshotName);
+
+    OneUuidReturnForXmlRpc glusterSnapshotCreate(String volumeName, String snapshotName, String description, boolean force);
 }
