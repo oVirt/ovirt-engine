@@ -1421,6 +1421,14 @@ public enum ConfigValues {
     @DefaultValueAttribute("300")
     GlusterRefreshRateGeoRepStatusInSecs,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    GlusterVolumeSnapshotSupported,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("300")
+    GlusterRefreshRateSnapshotDiscovery,
+
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("AttestationService/resources/PollHosts")
     PollUri,
