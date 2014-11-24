@@ -719,9 +719,20 @@ public abstract class AbstractDiskModel extends DiskModel
             return;
         }
 
-
-        getIsReadOnly().setIsChangable(isEditEnabled());
+        if (isVmAttachedToPool() && !getIsNew()) {
+            getIsReadOnly().setIsChangable(false);
+        } else {
+            getIsReadOnly().setIsChangable(isEditEnabled());
+        }
         getIsReadOnly().setEntity(getIsNew() ? Boolean.FALSE : getDisk().getReadOnly());
+    }
+
+    protected void updateWipeAfterDeleteChangeability() {
+        if (isVmAttachedToPool()) {
+            getIsWipeAfterDelete().setIsChangable(false);
+        } else {
+            getIsWipeAfterDelete().setIsChangable(isEditEnabled());
+        }
     }
 
     private void updatePlugChangeability() {
@@ -752,6 +763,10 @@ public abstract class AbstractDiskModel extends DiskModel
 
     private boolean canDiskBePlugged(VM vm) {
         return vm.getStatus() == VMStatus.Up || vm.getStatus() == VMStatus.Down || vm.getStatus() == VMStatus.Paused;
+    }
+
+    private boolean isVmAttachedToPool() {
+        return getVm() != null && getVm().getVmPoolId() != null;
     }
 
     private void datacenter_SelectedItemChanged() {
