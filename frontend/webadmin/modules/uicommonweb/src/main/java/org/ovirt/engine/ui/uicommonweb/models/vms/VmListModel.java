@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
@@ -116,6 +115,9 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTreeContext {
 
     public static final String CMD_CONFIGURE_VMS_TO_IMPORT = "ConfigureVmsToImport"; //$NON-NLS-1$
@@ -490,9 +492,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     public VmListModel(final VmGeneralModel vmGeneralModel, final VmInterfaceListModel vmInterfaceListModel,
             final VmDiskListModel vmDiskListModel, final VmSnapshotListModel vmSnapshotListModel,
             final VmEventListModel vmEventListModel, final VmAppListModel vmAppListModel,
-            final PermissionListModel permissionListModel, final VmAffinityGroupListModel vmAffinityGroupListModel,
+            final PermissionListModel<VmListModel> permissionListModel, final VmAffinityGroupListModel vmAffinityGroupListModel,
             final VmSessionsModel vmSessionsModel, final Provider<ImportVmsModel> importVmsModelProvider) {
-        this.importVmsModelProvider = importVmsModelProvider;
         setDetailList(vmGeneralModel, vmInterfaceListModel, vmDiskListModel, vmSnapshotListModel, vmEventListModel,
                 vmAppListModel, permissionListModel, vmAffinityGroupListModel, vmSessionsModel);
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
@@ -555,7 +556,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     private void setDetailList(final VmGeneralModel vmGeneralModel, final VmInterfaceListModel vmInterfaceListModel,
             final VmDiskListModel vmDiskListModel, final VmSnapshotListModel vmSnapshotListModel,
             final VmEventListModel vmEventListModel, final VmAppListModel vmAppListModel,
-            final PermissionListModel permissionListModel, final VmAffinityGroupListModel vmAffinityGroupListModel,
+            final PermissionListModel<VmListModel> permissionListModel, final VmAffinityGroupListModel vmAffinityGroupListModel,
             final VmSessionsModel vmSessionsModel) {
         List<EntityModel> list = new ArrayList<EntityModel>();
         list.add(vmGeneralModel);
@@ -2856,7 +2857,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                         vmListModel.setWindow(null);
                         vmListModel.clearCachedAssignedVmNames();
                         List<VdcReturnValueBase> retVals =
-                                (List<VdcReturnValueBase>) result.getReturnValue();
+                                result.getReturnValue();
                         if (retVals != null
                                 && vmListModel.getSelectedItems().size() == retVals
                                         .size()) {

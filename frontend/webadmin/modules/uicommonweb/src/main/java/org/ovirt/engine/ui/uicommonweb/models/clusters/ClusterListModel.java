@@ -189,7 +189,7 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
             final ClusterAffinityGroupListModel clusterAffinityGroupListModel,
             final CpuProfileListModel cpuProfileListModel, final ClusterGeneralModel clusterGeneralModel,
             final ClusterNetworkListModel clusterNetworkListModel, final ClusterHostListModel clusterHostListModel,
-            final PermissionListModel permissionListModel) {
+            final PermissionListModel<ClusterListModel> permissionListModel) {
         this.clusterVmListModel = clusterVmListModel;
         this.clusterServiceModel = clusterServiceModel;
         this.clusterGlusterHookListModel = clusterGlusterHookListModel;
@@ -249,7 +249,7 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
 
     private void setDetailList(final ClusterGeneralModel clusterGeneralModel,
             final ClusterNetworkListModel clusterNetworkListModel, final ClusterHostListModel clusterHostListModel,
-            final PermissionListModel permissionListModel) {
+            final PermissionListModel<ClusterListModel> permissionListModel) {
         List<EntityModel> list = new ArrayList<EntityModel>();
         list.add(clusterGeneralModel);
         list.add(clusterNetworkListModel);

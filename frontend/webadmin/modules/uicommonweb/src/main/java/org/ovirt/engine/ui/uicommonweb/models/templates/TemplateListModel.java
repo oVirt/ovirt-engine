@@ -118,7 +118,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
             final TemplateVmListModel templateVmListModel, final TemplateInterfaceListModel templateInterfaceListModel,
             final TemplateStorageListModel templateStorageListModel,
             final TemplateDiskListModel templateDiskListModel, final TemplateEventListModel templateEventListModel,
-            final PermissionListModel permissionListModel) {
+            final PermissionListModel<TemplateListModel> permissionListModel) {
         this(templateGeneralModel, templateVmListModel, templateInterfaceListModel, templateStorageListModel,
                 templateDiskListModel, templateEventListModel, permissionListModel, 3);
     }
@@ -127,7 +127,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
             final TemplateVmListModel templateVmListModel, final TemplateInterfaceListModel templateInterfaceListModel,
             final TemplateStorageListModel templateStorageListModel,
             final TemplateDiskListModel templateDiskListModel, final TemplateEventListModel templateEventListModel,
-            final PermissionListModel permissionListModel, int customPosition) {
+            final PermissionListModel<TemplateListModel> permissionListModel, int customPosition) {
         List<EntityModel> list = new ArrayList<EntityModel>();
         setDetailList(list, templateGeneralModel, templateVmListModel, templateInterfaceListModel,
                 templateStorageListModel);
@@ -387,7 +387,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
     protected void addCustomModelsDetailModelList(final List<EntityModel> list, int customPosition,
             final TemplateDiskListModel templateDiskListModel, final TemplateEventListModel templateEventListModel,
-            final PermissionListModel permissionListModel) {
+            final PermissionListModel<TemplateListModel> permissionListModel) {
         templateDiskListModel.setSystemTreeContext(this);
         list.add(customPosition, templateDiskListModel);
         list.add(templateEventListModel);

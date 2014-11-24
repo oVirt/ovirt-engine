@@ -48,7 +48,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
     public VnicProfileListModel(final Provider<CommonModel> commonModelProvider,
             final VnicProfileVmListModel vNicProfileVmListModel,
             final VnicProfileTemplateListModel vNicProfileTemplateListModel,
-            final PermissionListModel permissionListModel) {
+            final PermissionListModel<VnicProfileListModel> permissionListModel) {
         this.commonModelProvider = commonModelProvider;
         setDetailList(vNicProfileVmListModel, vNicProfileTemplateListModel, permissionListModel);
         setTitle(ConstantsManager.getInstance().getConstants().vnicProfilesTitle());
@@ -75,7 +75,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
 
     private void setDetailList(final VnicProfileVmListModel vNicProfileVmListModel,
             final VnicProfileTemplateListModel vNicProfileTemplateListModel,
-            final PermissionListModel permissionListModel) {
+            final PermissionListModel<VnicProfileListModel> permissionListModel) {
         List<EntityModel> list = new ArrayList<EntityModel>();
 
         list.add(vNicProfileVmListModel);

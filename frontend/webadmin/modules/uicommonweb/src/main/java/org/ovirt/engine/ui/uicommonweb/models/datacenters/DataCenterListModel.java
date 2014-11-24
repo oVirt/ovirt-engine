@@ -198,7 +198,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
             final DataCenterHostNetworkQosListModel dataCenterHostNetworkQosListModel,
             final DataCenterStorageQosListModel dataCenterStorageQosListModel,
             final DataCenterCpuQosListModel dataCenterCpuQosListModel,
-            final PermissionListModel permissionListModel,
+            final PermissionListModel<DataCenterListModel> permissionListModel,
             final DataCenterEventListModel dataCenterEventListModel) {
         this.commonModelProvider = commonModelProvider;
         iscsiBondListModel = dataCenterIscsiBondListModel;
@@ -267,7 +267,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
             final DataCenterHostNetworkQosListModel dataCenterHostNetworkQosListModel,
             final DataCenterStorageQosListModel dataCenterStorageQosListModel,
             final DataCenterCpuQosListModel dataCenterCpuQosListModel,
-            final PermissionListModel permissionListModel,
+            final PermissionListModel<DataCenterListModel> permissionListModel,
             final DataCenterEventListModel dataCenterEventListModel) {
         List<EntityModel> list = new ArrayList<EntityModel>();
         list.add(dataCenterStorageListModel);

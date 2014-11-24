@@ -40,7 +40,7 @@ public class ClusterHostListModel extends HostListModel {
             final HostVmListModel hostVmListModel, final HostEventListModel hostEventListModel,
             final HostInterfaceListModel hostInterfaceListModel,
             final HostHardwareGeneralModel hostHardwareGeneralModel, final HostHooksListModel hostHooksListModel,
-            final PermissionListModel permissionListModel) {
+            final PermissionListModel<HostListModel> permissionListModel) {
         super(hostGeneralModel, hostGlusterSwiftListModel, hostBricksListModel, hostVmListModel, hostEventListModel,
                 hostInterfaceListModel, hostHardwareGeneralModel, hostHooksListModel, permissionListModel);
         setUpdateMomPolicyCommand(new UICommand("updateMomPolicyCommand", this)); //$NON-NLS-1$

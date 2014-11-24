@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -33,10 +34,10 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
     private UICommand editCommand;
     private UICommand removeCommand;
     private Map<Guid, Q> qosMap;
-    final PermissionListModel permissionListModel;
+    final PermissionListModel<? extends SearchableListModel> permissionListModel;
 
     @Inject
-    public ProfileListModel(final PermissionListModel permissionListModel) {
+    public ProfileListModel(final PermissionListModel<? extends SearchableListModel> permissionListModel) {
         this.permissionListModel = permissionListModel;
         setDetailList();
         setTitle(ConstantsManager.getInstance().getConstants().diskProfilesTitle());
@@ -246,7 +247,7 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
         return qosMap.get(qosId);
     }
 
-    public PermissionListModel getPermissionListModel() {
+    public PermissionListModel<? extends SearchableListModel> getPermissionListModel() {
         return permissionListModel;
     }
 }

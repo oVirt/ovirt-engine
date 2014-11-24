@@ -29,7 +29,7 @@ public class ClusterVmListModel extends VmListModel {
             VmSnapshotListModel vmSnapshotListModel,
             VmEventListModel vmEventListModel,
             VmAppListModel vmAppListModel,
-            PermissionListModel permissionListModel,
+            PermissionListModel<VmListModel> permissionListModel,
             VmAffinityGroupListModel vmAffinityGroupListModel,
             VmSessionsModel vmSessionsModel,
             Provider<ImportVmsModel> importVmsModelProvider) {

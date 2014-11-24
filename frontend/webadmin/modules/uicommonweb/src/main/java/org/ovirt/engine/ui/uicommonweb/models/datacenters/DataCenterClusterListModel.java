@@ -26,7 +26,7 @@ public class DataCenterClusterListModel extends ClusterListModel
             ClusterGeneralModel clusterGeneralModel,
             ClusterNetworkListModel clusterNetworkListModel,
             ClusterHostListModel clusterHostListModel,
-            PermissionListModel permissionListModel) {
+            PermissionListModel<ClusterListModel> permissionListModel) {
         super(clusterVmListModel,
                 clusterServiceModel,
                 clusterGlusterHookListModel,

@@ -60,7 +60,8 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
             final NetworkGeneralModel networkGeneralModel, final NetworkProfileListModel networkProfileListModel,
             final NetworkClusterListModel networkClusterListModel,
             final NetworkHostListModel networkHostListModel, final NetworkVmListModel networkVmListModel,
-            final NetworkTemplateListModel networkTemplateListModel, final PermissionListModel permissionListModel) {
+            final NetworkTemplateListModel networkTemplateListModel,
+            final PermissionListModel<NetworkListModel> permissionListModel) {
         this.networkExternalSubnetListModel = networkExternalSubnetListModel;
         this.importNetworkModelProvider = importNetworkModelProvider;
         setDetailList(networkGeneralModel, networkProfileListModel, networkClusterListModel, networkHostListModel,
@@ -90,7 +91,8 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
             final NetworkProfileListModel networkProfileListModel,
             final NetworkClusterListModel networkClusterListModel,
             final NetworkHostListModel networkHostListModel, final NetworkVmListModel networkVmListModel,
-            final NetworkTemplateListModel networkTemplateListModel, final PermissionListModel permissionListModel) {
+            final NetworkTemplateListModel networkTemplateListModel,
+            final PermissionListModel<NetworkListModel> permissionListModel) {
         List<EntityModel> list = new ArrayList<EntityModel>();
 
         list.add(networkGeneralModel);

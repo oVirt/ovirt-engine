@@ -382,7 +382,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
             final HostVmListModel hostVmListModel, final HostEventListModel hostEventListModel,
             final HostInterfaceListModel hostInterfaceListModel,
             final HostHardwareGeneralModel hostHardwareGeneralModel, final HostHooksListModel hostHooksListModel,
-            final PermissionListModel permissionListModel) {
+            final PermissionListModel<HostListModel> permissionListModel) {
         this.generalModel = hostGeneralModel;
         this.glusterSwiftModel = hostGlusterSwiftListModel;
         this.hostBricksListModel = hostBricksListModel;
@@ -427,7 +427,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
 
     private void setDetailList(final HostInterfaceListModel hostInterfaceListModel,
             final HostHardwareGeneralModel hostHardwareGeneralModel, final HostHooksListModel hostHooksListModel,
-            final PermissionListModel permissionListModel) {
+            final PermissionListModel<HostListModel> permissionListModel) {
         generalModel.getRequestEditEvent().addListener(this);
         generalModel.getRequestGOToEventsTabEvent().addListener(this);
 

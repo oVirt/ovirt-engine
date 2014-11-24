@@ -46,7 +46,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.inject.Inject;
 
-@SuppressWarnings("unused")
 public class DiskListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
 {
     private UICommand privateNewCommand;
@@ -176,7 +175,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
     @Inject
     public DiskListModel(final DiskVmListModel diskVmListModel, final DiskTemplateListModel diskTemplateListModel,
             final DiskStorageListModel diskStorageListModel, final DiskGeneralModel diskGeneralModel,
-            final PermissionListModel permissionListModel) {
+            final PermissionListModel<DiskListModel> permissionListModel) {
         this.diskVmListModel = diskVmListModel;
         this.diskTemplateListModel = diskTemplateListModel;
         this.diskStorageListModel = diskStorageListModel;
@@ -208,7 +207,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
     }
 
     private void setDetailList(final DiskGeneralModel diskGeneralModel,
-            final PermissionListModel permissionListModel) {
+            final PermissionListModel<DiskListModel> permissionListModel) {
         diskVmListModel.setIsAvailable(false);
         diskTemplateListModel.setIsAvailable(false);
         diskStorageListModel.setIsAvailable(false);

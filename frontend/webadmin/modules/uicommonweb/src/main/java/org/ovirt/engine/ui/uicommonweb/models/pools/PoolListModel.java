@@ -135,7 +135,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
 
     @Inject
     public PoolListModel(final PoolGeneralModel poolGeneralModel, final PoolVmListModel poolVmListModel,
-            final PermissionListModel permissionListModel) {
+            final PermissionListModel<PoolListModel> permissionListModel) {
         setDetailList(poolGeneralModel, poolVmListModel, permissionListModel);
         setTitle(ConstantsManager.getInstance().getConstants().poolsTitle());
         setApplicationPlace(WebAdminApplicationPlaces.poolMainTabPlace);
@@ -156,7 +156,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
     }
 
     private void setDetailList(final PoolGeneralModel poolGeneralModel, final PoolVmListModel poolVmListModel,
-            final PermissionListModel permissionListModel) {
+            final PermissionListModel<PoolListModel> permissionListModel) {
         List<EntityModel> list = new ArrayList<EntityModel>();
         list.add(poolGeneralModel);
         list.add(poolVmListModel);

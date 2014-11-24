@@ -194,7 +194,8 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
     @Inject
     public VolumeListModel(final VolumeBrickListModel volumeBrickListModel, final VolumeGeneralModel volumeGeneralModel,
-            final VolumeParameterListModel volumeParameterListModel, final PermissionListModel permissionListModel,
+            final VolumeParameterListModel volumeParameterListModel,
+            final PermissionListModel<VolumeListModel> permissionListModel,
             final VolumeEventListModel volumeEventListModel, final VolumeGeoRepListModel geoRepListModel) {
         this.brickListModel = volumeBrickListModel;
         this.geoRepListModel = geoRepListModel;
@@ -233,7 +234,8 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     }
 
     private void setDetailList(final VolumeGeneralModel volumeGeneralModel,
-            final VolumeParameterListModel volumeParameterListModel, final PermissionListModel permissionListModel,
+            final VolumeParameterListModel volumeParameterListModel,
+            final PermissionListModel<VolumeListModel> permissionListModel,
             final VolumeEventListModel volumeEventListModel) {
 
         List<EntityModel> list = new ArrayList<EntityModel>();

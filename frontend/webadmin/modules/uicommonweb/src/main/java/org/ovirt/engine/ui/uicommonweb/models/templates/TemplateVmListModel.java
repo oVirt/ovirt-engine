@@ -29,8 +29,9 @@ public class TemplateVmListModel extends VmListModel {
     public TemplateVmListModel(final VmGeneralModel vmGeneralModel, final VmInterfaceListModel vmInterfaceListModel,
             final VmDiskListModel vmDiskListModel, final VmSnapshotListModel vmSnapshotListModel,
             final VmEventListModel vmEventListModel, final VmAppListModel vmAppListModel,
-            final PermissionListModel permissionListModel, final VmAffinityGroupListModel vmAffinityGroupListModel,
-            final VmSessionsModel vmSessionsModel, Provider<ImportVmsModel> importVmsModelProvider) {
+            final PermissionListModel<VmListModel> permissionListModel,
+            final VmAffinityGroupListModel vmAffinityGroupListModel, final VmSessionsModel vmSessionsModel,
+            Provider<ImportVmsModel> importVmsModelProvider) {
         super(vmGeneralModel, vmInterfaceListModel, vmDiskListModel, vmSnapshotListModel, vmEventListModel,
                 vmAppListModel, permissionListModel, vmAffinityGroupListModel, vmSessionsModel, importVmsModelProvider);
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());

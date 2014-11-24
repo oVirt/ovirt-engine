@@ -71,9 +71,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.inject.Inject;
 
-@SuppressWarnings("unused")
-public class StorageListModel extends ListWithDetailsAndReportsModel implements ITaskTarget, ISupportSystemTreeContext
-{
+public class StorageListModel extends ListWithDetailsAndReportsModel implements ITaskTarget, ISupportSystemTreeContext {
 
     private UICommand privateNewDomainCommand;
 
@@ -175,7 +173,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
             final StorageVmListModel storageVmListModel, final StorageTemplateListModel storageTemplateListModel,
             final StorageIsoListModel storageIsoListModel, final StorageDiskListModel storageDiskListModel,
             final StorageSnapshotListModel storageSnapshotListModel, final DiskProfileListModel diskProfileListModel,
-            final StorageEventListModel storageEventListModel, final PermissionListModel permissionListModel) {
+            final StorageEventListModel storageEventListModel,
+            final PermissionListModel<StorageListModel> permissionListModel) {
         generalModel = storageGeneralModel;
         dcListModel = storageDataCenterListModel;
         vmBackupModel = storageVmBackupModel;
@@ -211,7 +210,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
     }
 
     private void setDetailList(final StorageEventListModel storageEventListModel,
-            final PermissionListModel permissionListModel) {
+            final PermissionListModel<StorageListModel> permissionListModel) {
         generalModel.setIsAvailable(false);
         dcListModel.setIsAvailable(false);
         this.vmBackupModel.setIsAvailable(false);

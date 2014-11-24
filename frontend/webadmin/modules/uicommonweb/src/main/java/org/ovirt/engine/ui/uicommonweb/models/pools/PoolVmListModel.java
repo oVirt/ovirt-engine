@@ -54,7 +54,7 @@ public class PoolVmListModel extends VmListModel {
     public PoolVmListModel(final VmGeneralModel vmGeneralModel, final VmInterfaceListModel vmInterfaceListModel,
             final VmDiskListModel vmDiskListModel, final VmSnapshotListModel vmSnapshotListModel,
             final VmEventListModel vmEventListModel, final VmAppListModel vmAppListModel,
-            final PermissionListModel permissionListModel, final VmAffinityGroupListModel vmAffinityGroupListModel,
+            final PermissionListModel<VmListModel> permissionListModel, final VmAffinityGroupListModel vmAffinityGroupListModel,
             final VmSessionsModel vmSessionsModel, final Provider<ImportVmsModel> importVmsModelProvider) {
         super(vmGeneralModel, vmInterfaceListModel, vmDiskListModel, vmSnapshotListModel, vmEventListModel,
                 vmAppListModel, permissionListModel, vmAffinityGroupListModel, vmSessionsModel, importVmsModelProvider);
