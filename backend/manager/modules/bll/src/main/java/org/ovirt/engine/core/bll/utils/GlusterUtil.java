@@ -259,4 +259,11 @@ public class GlusterUtil {
         List<VdsNetworkInterface> interfaces = DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(vdsId);
         return (interfaces == null) ? new ArrayList<VdsNetworkInterface>() : interfaces;
     }
+
+    public boolean isVolumeThinlyProvisioned(GlusterVolumeEntity volume) {
+        // TODO: As part of disk provisioning feature in oVirt for gluster, a flag would be maintained
+        // as part Gluster Volume Entity which depicts if the volume bricks are thinly provisioned or not.
+        // The same flag would be used here to decide accordingly later.
+        return true;
+    }
 }
