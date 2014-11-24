@@ -73,7 +73,7 @@ public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionMan
         DefaultValueMap con = new DefaultValueMap();
         con.put("id", connection.getid(), Guid.Empty.toString());
         con.put("connection", connection.getconnection(), "");
-        con.put("tpgt", connection.getportal(), "");
+        con.putIfNotEmpty("tpgt", connection.getportal());
         con.put("port", connection.getport(), "");
         con.put("iqn", connection.getiqn(), "");
         con.put("user", connection.getuser_name(), "");
