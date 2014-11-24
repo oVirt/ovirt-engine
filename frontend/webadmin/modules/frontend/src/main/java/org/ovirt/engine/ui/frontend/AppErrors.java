@@ -3041,6 +3041,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Remove brick operation is running on the volume ${volumeName} in cluster ${vdsGroup}.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_CANNOT_STOP_REMOVE_BRICK_IN_PROGRESS();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Snapshot ${snapname} already exists.")
+    String ACTION_TYPE_FAILED_SNAPSHOT_ALREADY_EXISTS();
+
     @DefaultStringValue("Cannot ${action} ${type}. The Network Interface ${IfaceName} has an invalid MAC address ${MacAddress}. MAC address must be in format \"HH:HH:HH:HH:HH:HH\" where H is a hexadecimal character (either a digit or A-F, case is insignificant).")
     String ACTION_TYPE_FAILED_NETWORK_INTERFACE_MAC_INVALID();
 

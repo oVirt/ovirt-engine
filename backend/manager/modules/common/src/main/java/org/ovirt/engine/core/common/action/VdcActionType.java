@@ -323,6 +323,7 @@ public enum VdcActionType {
     RestoreGlusterVolumeSnapshot(1438, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     UpdateGlusterVolumeSnapshotConfig(1439, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     SyncStorageDevices(1440, ActionGroup.MANIPULATE_HOST, QuotaDependency.NONE),
+    CreateGlusterVolumeSnapshot(1441, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
 
     // Scheduling Policy
     AddClusterPolicy(1450, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),
