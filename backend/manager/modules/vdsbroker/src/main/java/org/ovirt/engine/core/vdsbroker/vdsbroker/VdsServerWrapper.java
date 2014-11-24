@@ -1593,6 +1593,15 @@ public class VdsServerWrapper implements IVdsServer {
             GlusterVolumeSnapshotConfigReturnForXmlRpc wrapper =
                     new GlusterVolumeSnapshotConfigReturnForXmlRpc(clusterId, xmlRpcReturnValue);
             return wrapper;
+        }  catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public OneUuidReturnForXmlRpc glusterSnapshotCreate(String volumeName, String snapshotName, String description, boolean force) {
+        try {
+            return new OneUuidReturnForXmlRpc(vdsServer.glusterSnapshotCreate(volumeName, snapshotName, description, force));
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);
         }

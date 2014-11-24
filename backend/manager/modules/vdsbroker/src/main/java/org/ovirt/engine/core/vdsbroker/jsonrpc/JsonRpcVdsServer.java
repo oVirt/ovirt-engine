@@ -1684,4 +1684,17 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }
+
+    @Override
+    public OneUuidReturnForXmlRpc glusterSnapshotCreate(String volumeName, String snapshotName, String description, boolean force) {
+        JsonRpcRequest request =
+                new RequestBuilder("GlusterVolume.snapshotCreate").withParameter("volumeName", volumeName)
+                        .withParameter("snapName", snapshotName)
+                        .withOptionalParameter("description", description)
+                        .withParameter("force", force)
+                        .build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request).withIgnoreResponseKey();
+        return new OneUuidReturnForXmlRpc(response);
+    }
 }

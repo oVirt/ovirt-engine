@@ -866,4 +866,7 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Failed to restore the gluster volume snapshot")
     String GlusterSnapshotRestoreFailedException();
+
+    @DefaultStringValue("Failed to create snapshot for gluster volume")
+    String GlusterSnapshotCreateFailedException();
 }
