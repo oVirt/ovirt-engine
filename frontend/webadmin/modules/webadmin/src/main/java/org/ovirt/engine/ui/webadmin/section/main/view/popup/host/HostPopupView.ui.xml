@@ -232,13 +232,27 @@
         }
 
         .policyOverrideLabel {
-            max-width: 80%;
+            max-width: 55%;
             line-height: 1.2em;
             display: inline-block;
         }
+
+        .bar {
+            width: 175px;
+        }
+
+        .externalHostProviderEnabledEditor {
+            width: 270px;
+        }
+
+        .externalHostProviderEnabledEditorContent {
+            width: 270px;
+            padding: 0px !important;
+            border-width: 0px !important;
+        }
     </ui:style>
 
-    <d:SimpleDialogPanel width="700px" height="715px">
+    <d:SimpleDialogPanel width="740px" height="715px">
         <d:content>
             <t:DialogTabPanel ui:field="tabPanel" height="100%">
                 <t:tab>
@@ -249,7 +263,7 @@
                                     <e:ListModelListBoxEditor ui:field="dataCenterEditor"/>
                                     <e:ListModelListBoxEditor ui:field="clusterEditor"/>
                                     <g:HorizontalPanel width="100%">
-                                      <ge:EntityModelCheckBoxEditor ui:field="externalHostProviderEnabledEditor"/>
+                                      <ge:EntityModelCheckBoxEditor ui:field="externalHostProviderEnabledEditor" addStyleNames="{style.externalHostProviderEnabledEditor}"/>
                                       <e:ListModelListBoxEditor ui:field="providersEditor"/>
                                     </g:HorizontalPanel>
                                     <g:FlowPanel>

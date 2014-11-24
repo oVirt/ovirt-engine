@@ -516,7 +516,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     private void addStyles() {
         overrideIpTablesEditor.addContentWidgetStyleName(style.overrideIpStyle());
         protocolEditor.addContentWidgetStyleName(style.protocolStyle());
-        externalHostProviderEnabledEditor.addContentWidgetStyleName(style.checkBox());
+        externalHostProviderEnabledEditor.addContentWidgetStyleName(style.externalHostProviderEnabledEditorContent());
         providerSearchFilterEditor.addContentWidgetStyleName(style.searchFilter());
         providerSearchFilterEditor.setStyleName(style.searchFilterLabel());
         providerSearchFilterEditor.setLabelStyleName(style.emptyEditor());
@@ -525,6 +525,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         fetchSshFingerprint.addContentWidgetStyleName(style.fingerprintEditor());
         expanderContent.setStyleName(style.expanderContent());
         publicKeyEditor.setCustomStyle(style.pkStyle());
+        tabPanel.addBarStyle(style.bar());
     }
 
     private void initEditors() {
@@ -1125,6 +1126,10 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         String pkStyle();
 
         String fetchResultErrorLabel();
+
+        String bar();
+
+        String externalHostProviderEnabledEditorContent();
     }
 
     public void setPkPasswordSectionVisiblity(boolean visible) {
