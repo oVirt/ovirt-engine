@@ -872,6 +872,15 @@ public class DbFacade {
     }
 
     /**
+     * Returns the singleton instance of {@link GlusterVolumeSnapshotDao}
+     *
+     * @return the dao
+     */
+    public GlusterVolumeSnapshotDao getGlusterVolumeSnapshotDao() {
+        return getDao(GlusterVolumeSnapshotDao.class);
+    }
+
+    /**
      * Returns the singleton instance of {@link GlusterVolumeDao}.
      *
      * @return the dao

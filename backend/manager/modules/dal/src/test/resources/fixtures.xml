@@ -6536,6 +6536,28 @@
         </row>
     </table>
 
+    <table name="gluster_volume_snapshots">
+        <column>snapshot_id</column>
+        <column>volume_id</column>
+        <column>snapshot_name</column>
+        <column>description</column>
+        <column>status</column>
+        <row>
+            <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea6</value>
+            <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
+            <value>test-vol-distribute-1-snap1</value>
+            <value></value>
+            <value>STARTED</value>
+        </row>
+        <row>
+            <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea7</value>
+            <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
+            <value>test-vol-distribute-1-snap2</value>
+            <value></value>
+            <value>STARTED</value>
+        </row>
+    </table>
+
     <table name="gluster_volume_bricks">
         <column>id</column>
         <column>volume_id</column>
