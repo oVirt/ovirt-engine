@@ -1449,6 +1449,14 @@ public enum ConfigValues {
     @DefaultValueAttribute("10")
     GlusterTaskMinWaitForCleanupInMins,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    GlusterVolumeSnapshotSupported,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("300")
+    GlusterRefreshRateSnapshotDiscovery,
+
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("AttestationService/resources/PollHosts")
     PollUri,
