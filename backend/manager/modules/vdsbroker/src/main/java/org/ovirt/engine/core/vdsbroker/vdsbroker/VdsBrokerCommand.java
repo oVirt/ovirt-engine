@@ -13,10 +13,15 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
 
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+
 public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> extends BrokerCommandBase<P> {
     private final IVdsServer mVdsBroker;
     private VdsStatic vdsStatic;
     private VDS vds;
+    @Inject
+    Event<VDSNetworkException> networkError;
     /**
      * Construct the command using the parameters and the {@link VDS} which is loaded from the DB.
      *
@@ -100,6 +105,7 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
         } catch (XmlRpcRunTimeException ex) {
             VDSNetworkException networkException = createNetworkException(ex);
             printReturnValue();
+            networkError.fire(networkException);
             throw networkException;
         }
 
@@ -130,7 +136,9 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
             networkException = new VDSNetworkException(ex);
             message = ex.getMessage();
         }
-        networkException.setVdsError(new VDSError(VdcBllErrors.VDS_NETWORK_ERROR, message));
+        VDSError value = new VDSError(VdcBllErrors.VDS_NETWORK_ERROR, message);
+        value.setVdsId(getVds().getId());
+        networkException.setVdsError(value);
         return networkException;
     }
 

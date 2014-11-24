@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.errors;
 
+import org.ovirt.engine.core.compat.Guid;
+
 import java.util.ArrayList;
 
 public class VDSError {
@@ -7,6 +9,7 @@ public class VDSError {
     private String message;
     private VdcBllErrors code;
     private ArrayList<Object> args;
+    private Guid vdsId;
 
     public VDSError(VdcBllErrors code, String message) {
         this.code = code;
@@ -40,5 +43,13 @@ public class VDSError {
 
     public VDSError() {
         code = VdcBllErrors.forValue(0);
+    }
+
+    public Guid getVdsId() {
+        return vdsId;
+    }
+
+    public void setVdsId(Guid vdsId) {
+        this.vdsId = vdsId;
     }
 }

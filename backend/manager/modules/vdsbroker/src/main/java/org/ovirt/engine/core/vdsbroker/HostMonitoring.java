@@ -43,7 +43,6 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSRecoveringException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 import org.slf4j.Logger;
@@ -398,7 +397,7 @@ public class HostMonitoring {
     }
 
     protected IVdsEventListener getVdsEventListener() {
-        return ResourceManager.getInstance().getEventListener();
+        return getResourceManager().getEventListener();
     }
 
     public void afterRefreshTreatment() {
@@ -472,20 +471,8 @@ public class HostMonitoring {
         getVdsEventListener().updateSchedulingStats(vds);
         if (!statsReturnValue.getSucceeded()
                 && statsReturnValue.getExceptionObject() != null) {
-            VDSNetworkException ex =
-                    (VDSNetworkException) ((statsReturnValue.getExceptionObject() instanceof VDSNetworkException)
-                            ? statsReturnValue.getExceptionObject()
-                            : null);
-            if (ex != null) {
-                if (vdsManager.handleNetworkException(ex, vds)) {
-                    saveVdsDynamic = true;
-                }
-                log.error("vds::refreshVdsStats Failed getVdsStats,  vds='{}'({}): {}",
-                        vds.getName(), vds.getId(), ex.getMessage());
-            } else {
-                log.error("vds::refreshVdsStats Failed getVdsStats,  vds='{}'({}): {}",
-                        vds.getName(), vds.getId(), statsReturnValue.getExceptionString());
-            }
+            log.error(" Failed getting vds stats,  vds='{}'({}): {}",
+                    vds.getName(), vds.getId(), statsReturnValue.getExceptionString());
             throw statsReturnValue.getExceptionObject();
         }
         // save also dynamic because vm_count data and image_check getting with

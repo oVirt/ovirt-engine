@@ -53,7 +53,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.GetCapabilitiesVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkTopologyPersister;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkTopologyPersisterImpl;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IVdsServer;
@@ -596,10 +595,10 @@ public class VdsManager {
     public VDSStatus refreshCapabilities(AtomicBoolean processHardwareCapsNeeded, VDS vds) {
         log.debug("monitoring: refresh '{}' capabilities", vds);
         VDS oldVDS = vds.clone();
-        GetCapabilitiesVDSCommand<VdsIdAndVdsVDSCommandParametersBase> vdsBrokerCommand =
-                new GetCapabilitiesVDSCommand<VdsIdAndVdsVDSCommandParametersBase>(new VdsIdAndVdsVDSCommandParametersBase(vds));
-        vdsBrokerCommand.execute();
-        if (vdsBrokerCommand.getVDSReturnValue().getSucceeded()) {
+        VDSReturnValue caps = ResourceManager.getInstance().runVdsCommand(
+                VDSCommandType.GetCapabilities,
+                new VdsIdAndVdsVDSCommandParametersBase(vds));
+        if (caps.getSucceeded()) {
             // Verify version capabilities
             HashSet<Version> hostVersions = null;
             Version clusterCompatibility = vds.getVdsGroupCompatibilityVersion();
@@ -662,19 +661,11 @@ public class VdsManager {
             processHardwareCapsNeeded.set(monitoringStrategy.processHardwareCapabilitiesNeeded(oldVDS, vds));
 
             return returnStatus;
-        } else if (vdsBrokerCommand.getVDSReturnValue().getExceptionObject() != null) {
-            // if exception is VDSNetworkException then call to
-            // handleNetworkException
-            if (vdsBrokerCommand.getVDSReturnValue().getExceptionObject() instanceof VDSNetworkException
-                    && handleNetworkException((VDSNetworkException) vdsBrokerCommand.getVDSReturnValue()
-                            .getExceptionObject(), vds)) {
-                updateDynamicData(vds.getDynamicData());
-                updateStatisticsData(vds.getStatisticsData());
-            }
-            throw vdsBrokerCommand.getVDSReturnValue().getExceptionObject();
+        } else if (caps.getExceptionObject() != null) {
+            throw caps.getExceptionObject();
         } else {
             log.error("refreshCapabilities:GetCapabilitiesVDSCommand failed with no exception!");
-            throw new RuntimeException(vdsBrokerCommand.getVDSReturnValue().getExceptionString());
+            throw new RuntimeException(caps.getExceptionString());
         }
     }
 
@@ -698,56 +689,76 @@ public class VdsManager {
     }
 
     /**
-     * Handle network exception, return true if save vdsDynamic to DB is needed.
+     * Handle network exception
      *
-     * @param ex
+     * @param ex exception to handle
      * @return
      */
-    public boolean handleNetworkException(VDSNetworkException ex, VDS vds) {
-        if (vds.getStatus() != VDSStatus.Down) {
-            long timeoutToFence = calcTimeoutToFence(vds.getVmCount(), vds.getSpmStatus());
-            log.warn("Host '{}' is not responding. It will stay in Connecting state for a grace period " +
-                    "of {} seconds and after that an attempt to fence the host will be issued.",
-                vds.getName(),
-                TimeUnit.MILLISECONDS.toSeconds(timeoutToFence));
-            AuditLogableBase logable = new AuditLogableBase();
-            logable.setVdsId(vds.getId());
-            logable.addCustomValue("Seconds", Long.toString(TimeUnit.MILLISECONDS.toSeconds(timeoutToFence)));
-            AuditLogDirector.log(logable, AuditLogType.VDS_HOST_NOT_RESPONDING_CONNECTING);
-            if (mUnrespondedAttempts.get() < Config.<Integer> getValue(ConfigValues.VDSAttemptsToResetCount)
-                    || (lastUpdate + timeoutToFence) > System.currentTimeMillis()) {
-                boolean result = false;
-                if (vds.getStatus() != VDSStatus.Connecting && vds.getStatus() != VDSStatus.PreparingForMaintenance
-                        && vds.getStatus() != VDSStatus.NonResponsive) {
-                    setStatus(VDSStatus.Connecting, vds);
-                    result = true;
+    public void handleNetworkException(VDSNetworkException ex) {
+        boolean saveToDb = true;
+        if (cachedVds.getStatus() != VDSStatus.Down) {
+            long timeoutToFence = calcTimeoutToFence(cachedVds.getVmCount(), cachedVds.getSpmStatus());
+            logHostNonResponding(timeoutToFence);
+            if (inGracePeriod(timeoutToFence)) {
+                if (cachedVds.getStatus() != VDSStatus.Connecting
+                        && cachedVds.getStatus() != VDSStatus.PreparingForMaintenance
+                        && cachedVds.getStatus() != VDSStatus.NonResponsive) {
+                    setStatus(VDSStatus.Connecting, cachedVds);
+                } else {
+                    saveToDb = false;
                 }
                 mUnrespondedAttempts.incrementAndGet();
-                return result;
+            } else {
+                if (cachedVds.getStatus() == VDSStatus.Maintenance) {
+                    saveToDb = false;
+                } else {
+                    if (cachedVds.getStatus() != VDSStatus.NonResponsive) {
+                        setStatus(VDSStatus.NonResponsive, cachedVds);
+                        moveVMsToUnknown();
+                        logHostFailToResponde(ex, timeoutToFence);
+                        ResourceManager.getInstance().getEventListener().vdsNotResponding(
+                                cachedVds,
+                                !sshSoftFencingExecuted.getAndSet(true),
+                                lastUpdate);
+                    } else {
+                        setStatus(VDSStatus.NonResponsive, cachedVds);
+                    }
+                }
             }
-
-            if (vds.getStatus() == VDSStatus.NonResponsive || vds.getStatus() == VDSStatus.Maintenance) {
-                setStatus(VDSStatus.NonResponsive, vds);
-                return true;
-            }
-            setStatus(VDSStatus.NonResponsive, vds);
-            moveVMsToUnknown();
-            log.info(
-                    "Server failed to respond, vds_id='{}', vds_name='{}', vm_count={}, " +
-                    "spm_status='{}', non-responsive_timeout (seconds)={}, error: {}",
-                    vds.getId(), vds.getName(), vds.getVmCount(), vds.getSpmStatus(),
-                    TimeUnit.MILLISECONDS.toSeconds(timeoutToFence), ex.getMessage());
-
-            logable = new AuditLogableBase(vds.getId());
-            logable.updateCallStackFromThrowable(ex);
-            AuditLogDirector.log(logable, AuditLogType.VDS_FAILURE);
-            boolean executeSshSoftFencing = false;
-            if (!sshSoftFencingExecuted.getAndSet(true)) {
-                executeSshSoftFencing = true;
-            }
-            ResourceManager.getInstance().getEventListener().vdsNotResponding(vds, executeSshSoftFencing, lastUpdate);
         }
-        return true;
+        if (saveToDb) {
+            updateDynamicData(cachedVds.getDynamicData());
+            updateStatisticsData(cachedVds.getStatisticsData());
+        }
+    }
+
+    private boolean inGracePeriod(long timeoutToFence) {
+        return mUnrespondedAttempts.get() < Config.<Integer>getValue(ConfigValues.VDSAttemptsToResetCount)
+                || (lastUpdate + timeoutToFence) > System.currentTimeMillis();
+    }
+
+    private void logHostFailToResponde(VDSNetworkException ex, long timeoutToFence) {
+        log.info(
+                "Server failed to respond, vds_id='{}', vds_name='{}', vm_count={}, " +
+                        "spm_status='{}', non-responsive_timeout (seconds)={}, error: {}",
+                cachedVds.getId(), cachedVds.getName(), cachedVds.getVmCount(), cachedVds.getSpmStatus(),
+                TimeUnit.MILLISECONDS.toSeconds(timeoutToFence), ex.getMessage());
+
+        AuditLogableBase logable;
+        logable = new AuditLogableBase(cachedVds.getId());
+        logable.updateCallStackFromThrowable(ex);
+        AuditLogDirector.log(logable, AuditLogType.VDS_FAILURE);
+    }
+
+    private void logHostNonResponding(long timeoutToFence) {
+        log.warn("Host '{}' is not responding. It will stay in Connecting state for a grace period " +
+                        "of {} seconds and after that an attempt to fence the host will be issued.",
+                cachedVds.getName(),
+                TimeUnit.MILLISECONDS.toSeconds(timeoutToFence));
+        AuditLogableBase logable = new AuditLogableBase();
+        logable.setVdsId(cachedVds.getId());
+        logable.addCustomValue("Seconds", Long.toString(TimeUnit.MILLISECONDS.toSeconds(timeoutToFence)));
+        AuditLogDirector.log(logable, AuditLogType.VDS_HOST_NOT_RESPONDING_CONNECTING);
     }
 
     public void dispose() {

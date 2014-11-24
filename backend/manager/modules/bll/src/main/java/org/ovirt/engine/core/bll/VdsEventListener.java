@@ -8,11 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import javax.ejb.DependsOn;
-import javax.ejb.Local;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -78,14 +77,16 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.MonitoringStrategyFactory;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Stateless(name = "VdsEventListener")
-@TransactionAttribute(TransactionAttributeType.SUPPORTS)
-@Local(IVdsEventListener.class)
-@DependsOn("Backend")
+@Singleton
 public class VdsEventListener implements IVdsEventListener {
+
+    @Inject
+    Instance<ResourceManager> resourceManagerProvider;
+
     private static final Logger log = LoggerFactory.getLogger(VdsEventListener.class);
 
     @Override
@@ -96,7 +97,6 @@ public class VdsEventListener implements IVdsEventListener {
             ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintenanceVds, true);
         }
     }
-
 
     private void processStorageOnVdsInactive(final VDS vds) {
 
@@ -492,4 +492,12 @@ public class VdsEventListener implements IVdsEventListener {
         });
     }
 
+    public void onError(@Observes final VDSNetworkException vdsException) {
+        ThreadPoolUtil.execute(new Runnable() {
+            @Override public void run() {
+                resourceManagerProvider.get().GetVdsManager(
+                        vdsException.getVdsError().getVdsId()).handleNetworkException(vdsException);
+            }
+        });
+    }
 }

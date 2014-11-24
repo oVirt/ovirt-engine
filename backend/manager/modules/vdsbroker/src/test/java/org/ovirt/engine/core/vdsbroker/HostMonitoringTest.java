@@ -1,5 +1,11 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -27,13 +33,6 @@ import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
-
-import java.util.Collections;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 /**
  Host and Vms Monitoring now split to 2 classes - all VMs related tests have been move to {@link org.ovirt.engine.core.vdsbroker.VmsMonitoringTest}
@@ -114,24 +113,18 @@ public class HostMonitoringTest {
     }
 
     /**
-     * test that a network error is handled correctly and is triggering a state
-     * change and a save to the DB
+     * not an integration test - just test a Network exceptionn doesn't throw and exception
      */
-    @Test
+    @Test(expected = VDSNetworkException.class)
     public void testErrorHandling() {
         VDSReturnValue value = new VDSReturnValue();
         value.setSucceeded(false);
         value.setExceptionObject(new VDSNetworkException("unknown host"));
-        when(resourceManager.getEventListener()).thenReturn(vdsEventlistener);
+        when(updater.getResourceManager()).thenReturn(resourceManager);
+        when(updater.getVdsEventListener()).thenReturn(vdsEventlistener);
         when(resourceManager.runVdsCommand(any(VDSCommandType.class),
                 any(VDSParametersBase.class))).thenReturn(value);
-        when(updater.getResourceManager()).thenReturn(resourceManager);
-        try {
-            updater.refreshVdsStats();
-        } catch (Exception e) {
-            verify(vdsManager).handleNetworkException(any(VDSNetworkException.class), vds);
-            verify(vdsManager).updateDynamicData(vds.getDynamicData());
-        }
 
+        updater.refreshVdsStats();
     }
 }

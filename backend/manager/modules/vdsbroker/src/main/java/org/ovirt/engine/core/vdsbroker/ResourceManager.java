@@ -10,6 +10,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.event.Observes;
+import javax.enterprise.inject.spi.Bean;
+import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.InjectionTarget;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
@@ -39,20 +47,18 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
-import org.ovirt.engine.core.utils.ejb.BeanProxyType;
-import org.ovirt.engine.core.utils.ejb.BeanType;
-import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FutureVDSCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.event.Observes;
-import javax.inject.Singleton;
-
 @Singleton
 public class ResourceManager {
+
+    @Inject
+    private BeanManager beanManager;
+    //We can't inject event listener due to Jboss 7.1 bug. using programatic lookup instead.
+    private volatile IVdsEventListener eventListener;
 
     private static ResourceManager instance;
     private final Map<Guid, HashSet<Guid>> vdsAndVmsList = new ConcurrentHashMap<>();
@@ -192,7 +198,13 @@ public class ResourceManager {
     }
 
     public IVdsEventListener getEventListener() {
-        return EjbUtils.findBean(BeanType.VDS_EVENT_LISTENER, BeanProxyType.LOCAL);
+        if (eventListener == null) {
+            Bean<?> bean = beanManager.getBeans(IVdsEventListener.class).iterator().next();
+            eventListener = (IVdsEventListener) beanManager.getReference(
+                    bean,
+                    bean.getBeanClass(), beanManager.createCreationalContext(bean));
+        }
+        return eventListener;
     }
 
     public void reestablishConnection(Guid vdsId) {
@@ -394,7 +406,11 @@ public class ResourceManager {
                     ReflectionUtils.findConstructor(type, parameters.getClass());
 
             if (constructor != null) {
-                return constructor.newInstance(new Object[] { parameters });
+                VDSCommandBase<P> cmd = constructor.newInstance(new Object[] { parameters });
+                InjectionTarget injectionTarget =
+                        beanManager.createInjectionTarget(beanManager.createAnnotatedType(cmd.getClass()));
+                injectionTarget.inject(cmd, beanManager.createCreationalContext(null));
+                return cmd;
             }
         } catch (Exception e) {
             if (e.getCause() != null) {
