@@ -135,3 +135,91 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION InsertGlusterVolumeSnapshotConfig(v_cluster_id UUID,
+                                                v_volume_id UUID,
+                                                v_param_name VARCHAR(128),
+                                                v_param_value VARCHAR(128))
+    RETURNS VOID
+    AS $procedure$
+BEGIN
+    INSERT INTO gluster_volume_snapshot_config (cluster_id, volume_id, param_name, param_value)
+    VALUES (v_cluster_id, v_volume_id, v_param_name, v_param_value);
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetGlusterVolumeSnapshotConfigByClusterId(v_cluster_id UUID)
+    RETURNS SETOF gluster_volume_snapshot_config STABLE
+    AS $procedure$
+BEGIN
+    RETURN QUERY SELECT *
+    FROM  gluster_volume_snapshot_config
+    WHERE cluster_id = v_cluster_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION GetGlusterVolumeSnapshotConfigByVolumeId(v_cluster_id UUID, v_volume_id UUID)
+RETURNS SETOF gluster_volume_snapshot_config STABLE
+AS $procedure$
+BEGIN
+    RETURN QUERY SELECT *
+    FROM  gluster_volume_snapshot_config
+    WHERE cluster_id = v_cluster_id and volume_id = v_volume_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetGlusterVolumeSnapshotConfigByClusterIdAndName(v_cluster_id UUID,
+                                            v_param_name VARCHAR(128))
+RETURNS SETOF gluster_volume_snapshot_config STABLE
+    AS $procedure$
+BEGIN
+    RETURN QUERY SELECT *
+    FROM gluster_volume_snapshot_config
+    WHERE cluster_id = v_cluster_id and volume_id IS NULL and param_name = v_param_name;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetGlusterVolumeSnapshotConfigByVolumeIdAndName(v_cluster_id UUID,
+                                            v_volume_id UUID,
+                                            v_param_name VARCHAR(128))
+RETURNS SETOF gluster_volume_snapshot_config STABLE
+    AS $procedure$
+BEGIN
+    RETURN QUERY SELECT *
+    FROM gluster_volume_snapshot_config
+    WHERE cluster_id = v_cluster_id and volume_id = v_volume_id and param_name = v_param_name;
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION UpdateConfigByClusterIdAndName(v_cluster_id UUID,
+                                            v_param_name VARCHAR(128),
+                                            v_param_value VARCHAR(128))
+    RETURNS VOID
+    AS $procedure$
+BEGIN
+    UPDATE  gluster_volume_snapshot_config
+    SET     param_value = v_param_value,
+            _update_date = LOCALTIMESTAMP
+    WHERE   cluster_id = v_cluster_id
+    AND     volume_id IS NULL
+    AND     param_name = v_param_name;
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION UpdateConfigByVolumeIdIdAndName(v_cluster_id UUID,
+                                            v_volume_id UUID,
+                                            v_param_name VARCHAR(128),
+                                            v_param_value VARCHAR(128))
+    RETURNS VOID
+    AS $procedure$
+BEGIN
+    UPDATE  gluster_volume_snapshot_config
+    SET     param_value = v_param_value,
+            _update_date = LOCALTIMESTAMP
+    WHERE   cluster_id = v_cluster_id
+    AND     volume_id = v_volume_id
+    AND     param_name = v_param_name;
+END; $procedure$
+LANGUAGE plpgsql;

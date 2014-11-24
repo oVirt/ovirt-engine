@@ -6558,6 +6558,31 @@
         </row>
     </table>
 
+    <table name="gluster_volume_snapshot_config">
+        <column>cluster_id</column>
+        <column>volume_id</column>
+        <column>param_name</column>
+        <column>param_value</column>
+        <row>
+            <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
+            <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
+            <value>param1</value>
+            <value>value1</value>
+        </row>
+        <row>
+            <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
+            <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
+            <value>param2</value>
+            <value>value2</value>
+        </row>
+        <row>
+            <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
+            <null/>
+            <value>param3</value>
+            <value>value3</value>
+        </row>
+    </table>
+
     <table name="gluster_volume_bricks">
         <column>id</column>
         <column>volume_id</column>
