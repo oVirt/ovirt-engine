@@ -13,6 +13,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.ejb.TransactionRolledbackLocalException;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
@@ -24,6 +26,7 @@ import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.context.DefaultCompensationContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
+import org.ovirt.engine.core.bll.interfaces.BackendCommandObjectsHandler;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -40,7 +43,6 @@ import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.Command;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
-import org.ovirt.engine.core.bll.utils.BackendUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -89,10 +91,10 @@ import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
 import org.ovirt.engine.core.dao.GenericDao;
 import org.ovirt.engine.core.dao.StatusAwareDao;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDAO;
+import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.Deserializer;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
-import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
@@ -105,6 +107,9 @@ import org.springframework.dao.DataAccessException;
 
 public abstract class CommandBase<T extends VdcActionParametersBase> extends AuditLogableBase implements
         RollbackHandler, TransactionMethod<Object>, Command<T> {
+
+    @Inject
+    private Instance<BackendCommandObjectsHandler> commandObjectsHandlerProvider;
 
     /* Multiplier used to convert GB to bytes or vice versa. */
     protected static final long BYTES_IN_GB = 1024 * 1024 * 1024;
@@ -153,7 +158,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected VdcReturnValueBase executeChildCommand(Guid idInCommandsMap) {
         CommandBase<?> command = childCommandsMap.get(idInCommandsMap);
-        return BackendUtils.getBackendCommandObjectsHandler(log).runAction(command, getExecutionContext());
+        return commandObjectsHandlerProvider.get().runAction(command, getExecutionContext());
     }
 
 
@@ -1380,7 +1385,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                         buildChildCommandInfos();
                         for (Map.Entry<Guid, Pair<VdcActionType, VdcActionParametersBase>> entry : childCommandInfoMap.entrySet()) {
                             CommandBase<?> command =
-                                    BackendUtils.getBackendCommandObjectsHandler(log).createAction(entry.getValue().getFirst(),
+                                    commandObjectsHandlerProvider.get().createAction(entry.getValue()
+                                                    .getFirst(),
                                             entry.getValue().getSecond(),
                                             context);
                             log.info("Command '{}' persisting async task placeholder for child command '{}'",
