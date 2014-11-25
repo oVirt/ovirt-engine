@@ -260,6 +260,7 @@ class Const(object):
     REMOTE_ENGINE_SETUP_STYLE_AUTO_SSH = 'auto_ssh'
     REMOTE_ENGINE_SETUP_STYLE_MANUAL_FILES = 'manual_files'
     REMOTE_ENGINE_SETUP_STYLE_MANUAL_INLINE = 'manual_inline'
+    EXIT_CODE_REMOVE_WITHOUT_SETUP = 11
 
 
 @util.export

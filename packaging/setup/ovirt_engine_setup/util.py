@@ -25,6 +25,8 @@ import pwd
 import re
 
 from otopi import util
+from otopi import plugin
+from otopi import constants as otopicons
 
 
 def _(m):
@@ -209,5 +211,16 @@ def parsePort(port):
         )
     return port
 
+
+@util.export
+def addExitCode(environment, code, priority=plugin.Stages.PRIORITY_DEFAULT):
+    environment[
+        otopicons.BaseEnv.EXIT_CODE
+    ].append(
+        {
+            'code': code,
+            'priority': priority,
+        }
+    )
 
 # vim: expandtab tabstop=4 shiftwidth=4

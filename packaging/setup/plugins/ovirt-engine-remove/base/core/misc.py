@@ -28,6 +28,7 @@ from otopi import plugin, util
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import dialog
+from ovirt_engine_setup import util as osetuputil
 
 
 def _(m):
@@ -92,6 +93,10 @@ class Plugin(plugin.PluginBase):
                     'Please use the cleanup utility only after a setup '
                     'or after an upgrade from an older installation.'
                 )
+            )
+            osetuputil.addExitCode(
+                environment=self.environment,
+                code=osetupcons.Const.EXIT_CODE_REMOVE_WITHOUT_SETUP
             )
             raise RuntimeError(
                 _('Could not detect product setup')
