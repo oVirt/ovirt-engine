@@ -180,7 +180,7 @@ public final class VdcActionUtils {
                 VMStatus.Paused,
                 EnumSet.of(VdcActionType.RemoveVm, VdcActionType.HibernateVm, VdcActionType.CloneVm,
                         VdcActionType.AddVmTemplate, VdcActionType.RunVmOnce, VdcActionType.ExportVm,
-                        VdcActionType.MoveVm, VdcActionType.ImportVm,
+                        VdcActionType.MoveVm, VdcActionType.ImportVm, VdcActionType.ExtendImageSize,
                         VdcActionType.AddVmInterface, VdcActionType.UpdateVmInterface,
                         VdcActionType.RemoveVmInterface, VdcActionType.CancelMigrateVm, VdcActionType.RebootVm));
         vmMatrix.put(
