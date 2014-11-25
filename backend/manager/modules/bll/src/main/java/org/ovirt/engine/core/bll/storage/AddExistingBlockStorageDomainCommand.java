@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.GetVGInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -43,6 +44,9 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
 
     @Override
     protected boolean canAddDomain() {
+        if (getStorageDomainStaticDAO().get(getStorageDomain().getId()) != null) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
+        }
         return true;
     }
 
