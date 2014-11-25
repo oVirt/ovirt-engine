@@ -128,8 +128,6 @@ public final class Cloner
         vm.setConsoleCurrentUserName(instance.getConsoleCurentUserName());
         vm.setGuestCurrentUserName(instance.getGuestCurentUserName());
         vm.setConsoleUserId(instance.getConsoleUserId());
-        vm.setGuestLastLoginTime(instance.getGuestLastLoginTime());
-        vm.setGuestLastLogoutTime(instance.getGuestLastLogoutTime());
         vm.setGuestOs(instance.getGuestOs());
         vm.setGuestRequestedMemory(instance.getGuestRequestedMemory());
         // TODO: Object, should be "cloned" (probably easiest via new Version(instance.GuestAgentVersion.ToString())

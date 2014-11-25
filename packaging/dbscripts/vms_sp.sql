@@ -236,8 +236,6 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION InsertVmDynamic(v_app_list text ,
 	v_guest_cur_user_name VARCHAR(255) ,
 	v_console_cur_user_name VARCHAR(255) ,
-	v_guest_last_login_time TIMESTAMP WITH TIME ZONE ,
-	v_guest_last_logout_time TIMESTAMP WITH TIME ZONE ,
         v_console_user_id UUID,
 	v_guest_os VARCHAR(255) ,
 	v_migrating_to_vds UUID ,
@@ -280,7 +278,7 @@ v_guest_agent_status INTEGER
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO vm_dynamic(app_list, guest_cur_user_name, console_cur_user_name, guest_last_login_time, guest_last_logout_time, console_user_id, guest_os, migrating_to_vds, RUN_ON_VDS, status, vm_guid, vm_host, vm_ip, last_start_time, last_stop_time, vm_pid, acpi_enable, session, kvm_enable, boot_sequence, utc_diff, last_vds_run_on, client_ip, guest_requested_memory, exit_status,pause_status,exit_message, guest_agent_nics_hash, last_watchdog_event, last_watchdog_action, is_run_once, vm_fqdn, cpu_name, emulated_machine, current_cd, exit_reason, guest_cpu_count,
+INSERT INTO vm_dynamic(app_list, guest_cur_user_name, console_cur_user_name, console_user_id, guest_os, migrating_to_vds, RUN_ON_VDS, status, vm_guid, vm_host, vm_ip, last_start_time, last_stop_time, vm_pid, acpi_enable, session, kvm_enable, boot_sequence, utc_diff, last_vds_run_on, client_ip, guest_requested_memory, exit_status,pause_status,exit_message, guest_agent_nics_hash, last_watchdog_event, last_watchdog_action, is_run_once, vm_fqdn, cpu_name, emulated_machine, current_cd, exit_reason, guest_cpu_count,
 spice_port,
 spice_tls_port,
 spice_ip,
@@ -288,7 +286,7 @@ vnc_port,
 vnc_ip,
 guest_agent_status
 )
-	VALUES(v_app_list, v_guest_cur_user_name, v_console_cur_user_name, v_guest_last_login_time, v_guest_last_logout_time, v_console_user_id, v_guest_os, v_migrating_to_vds, v_run_on_vds, v_status, v_vm_guid, v_vm_host, v_vm_ip, v_last_start_time, v_last_stop_time, v_vm_pid, v_acpi_enable, v_session, v_kvm_enable, v_boot_sequence, v_utc_diff, v_last_vds_run_on, v_client_ip, v_guest_requested_memory, v_exit_status, v_pause_status, v_exit_message, v_guest_agent_nics_hash, v_last_watchdog_event, v_last_watchdog_action, v_is_run_once, v_vm_fqdn, v_cpu_name, v_emulated_machine, v_current_cd, v_exit_reason,
+	VALUES(v_app_list, v_guest_cur_user_name, v_console_cur_user_name, v_console_user_id, v_guest_os, v_migrating_to_vds, v_run_on_vds, v_status, v_vm_guid, v_vm_host, v_vm_ip, v_last_start_time, v_last_stop_time, v_vm_pid, v_acpi_enable, v_session, v_kvm_enable, v_boot_sequence, v_utc_diff, v_last_vds_run_on, v_client_ip, v_guest_requested_memory, v_exit_status, v_pause_status, v_exit_message, v_guest_agent_nics_hash, v_last_watchdog_event, v_last_watchdog_action, v_is_run_once, v_vm_fqdn, v_cpu_name, v_emulated_machine, v_current_cd, v_exit_reason,
          v_guest_cpu_count,
 v_spice_port,
 v_spice_tls_port,
@@ -305,8 +303,6 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION UpdateVmDynamic(v_app_list text ,
 	v_guest_cur_user_name VARCHAR(255) ,
 	v_console_cur_user_name VARCHAR(255) ,
-	v_guest_last_login_time TIMESTAMP WITH TIME ZONE ,
-	v_guest_last_logout_time TIMESTAMP WITH TIME ZONE ,
         v_console_user_id UUID,
 	v_guest_os VARCHAR(255) ,
 	v_migrating_to_vds UUID ,
@@ -356,8 +352,6 @@ BEGIN
       UPDATE vm_dynamic
       SET app_list = v_app_list,guest_cur_user_name = v_guest_cur_user_name,
       console_cur_user_name = v_console_cur_user_name,
-      guest_last_login_time = v_guest_last_login_time,
-      guest_last_logout_time = v_guest_last_logout_time,
       console_user_id = v_console_user_id,
       guest_os = v_guest_os,migrating_to_vds = v_migrating_to_vds,RUN_ON_VDS = v_run_on_vds,
       status = v_status,vm_host = v_vm_host,vm_ip = v_vm_ip,vm_fqdn = v_vm_fqdn,

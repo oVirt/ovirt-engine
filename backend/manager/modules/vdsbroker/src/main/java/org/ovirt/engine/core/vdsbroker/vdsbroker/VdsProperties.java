@@ -246,8 +246,6 @@ public final class VdsProperties {
     public static final String displayIp = "displayIp";
     public static final String vm_pid = "pid";
     public static final String vm_type = "vmType";
-    public static final String guest_last_login_time = "lastLogin";
-    public static final String guest_last_logout_time = "lastLogout";
     public static final String launch_paused_param = "launchPaused";
     public static final String session = "session";
     public static final String spiceSslCipherSuite = "spiceSslCipherSuite";

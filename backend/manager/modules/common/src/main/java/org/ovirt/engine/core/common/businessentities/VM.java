@@ -557,28 +557,12 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         this.vmDynamic.setGuestCurrentUserName(value);
     }
 
-    public Date getGuestLastLoginTime() {
-        return this.vmDynamic.getGuestLastLoginTime();
-    }
-
-    public void setGuestLastLoginTime(Date value) {
-        this.vmDynamic.setGuestLastLoginTime(value);
-    }
-
     public Guid getConsoleUserId() {
         return this.vmDynamic.getConsoleUserId();
     }
 
     public void setConsoleUserId(Guid value) {
         this.vmDynamic.setConsoleUserId(value);
-    }
-
-    public Date getGuestLastLogoutTime() {
-        return this.vmDynamic.getGuestLastLogoutTime();
-    }
-
-    public void setGuestLastLogoutTime(Date value) {
-        this.vmDynamic.setGuestLastLogoutTime(value);
     }
 
     public String getGuestOs() {
@@ -1121,17 +1105,6 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
     // ignores the final fields
     private String cdPath;
     private String floppyPath;
-
-    /**
-     * Guest last logout time treatment. If vm stoped without logging out - set last logout time now
-     */
-    public void guestLogoutTimeTreatmentAfterDestroy() {
-        if (getGuestLastLoginTime() != null
-                && (getGuestLastLogoutTime() == null || getGuestLastLoginTime().compareTo(
-                        getGuestLastLogoutTime()) > 0)) {
-            setGuestLastLogoutTime(new Date());
-        }
-    }
 
     public InitializationType getInitializationType() {
         return initializationType;

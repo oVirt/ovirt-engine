@@ -97,10 +97,6 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 .addValue("guest_cur_user_name", vm.getGuestCurrentUserName())
                 .addValue("console_cur_user_name", vm.getConsoleCurrentUserName())
                 .addValue("console_user_id", vm.getConsoleUserId())
-                .addValue("guest_last_login_time",
-                        vm.getGuestLastLoginTime())
-                .addValue("guest_last_logout_time",
-                        vm.getGuestLastLogoutTime())
                 .addValue("guest_os", vm.getGuestOs())
                 .addValue("migrating_to_vds", vm.getMigratingToVds())
                 .addValue("run_on_vds", vm.getRunOnVds())
@@ -156,8 +152,6 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
             entity.setGuestCurrentUserName(rs.getString("guest_cur_user_name"));
             entity.setConsoleCurrentUserName(rs.getString("console_cur_user_name"));
             entity.setConsoleUserId(getGuid(rs, "console_user_id"));
-            entity.setGuestLastLoginTime(DbFacadeUtils.fromDate(rs.getTimestamp("guest_last_login_time")));
-            entity.setGuestLastLogoutTime(DbFacadeUtils.fromDate(rs.getTimestamp("guest_last_logout_time")));
             entity.setGuestOs(rs.getString("guest_os"));
             entity.setMigratingToVds(getGuid(rs, "migrating_to_vds"));
             entity.setRunOnVds(getGuid(rs, "run_on_vds"));

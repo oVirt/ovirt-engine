@@ -47,7 +47,6 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                 @Override
                 public Void runInTransaction() {
 
-                    curVm.guestLogoutTimeTreatmentAfterDestroy();
                     curVm.setStopReason(getParameters().getReason());
                     vmManager.update(curVm.getDynamicData());
                     vmManager.update(curVm.getStatisticsData());

@@ -28,8 +28,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private String consoleCurrentUserName;
     @UnchangeableByVdsm
     private Guid consoleUserId;
-    private Date guestLastLoginTime;
-    private Date guestLastLogoutTime;
     private String guestOs;
     @UnchangeableByVdsm
     private Guid migratingToVds;
@@ -89,8 +87,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         result = prime * result + ((consoleCurrentUserName == null) ? 0 : consoleCurrentUserName.hashCode());
         result = prime * result + ((guestCurUserName == null) ? 0 : guestCurUserName.hashCode());
         result = prime * result + ((consoleUserId == null) ? 0 : consoleUserId.hashCode());
-        result = prime * result + ((guestLastLoginTime == null) ? 0 : guestLastLoginTime.hashCode());
-        result = prime * result + ((guestLastLogoutTime == null) ? 0 : guestLastLogoutTime.hashCode());
         result = prime * result + ((guestOs == null) ? 0 : guestOs.hashCode());
         result = prime * result + ((guestRequestedMemory == null) ? 0 : guestRequestedMemory.hashCode());
         result = prime * result + ((kvmEnable == null) ? 0 : kvmEnable.hashCode());
@@ -145,8 +141,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && ObjectUtils.objectsEqual(consoleCurrentUserName, other.consoleCurrentUserName)
                 && ObjectUtils.objectsEqual(guestCurUserName, other.guestCurUserName)
                 && ObjectUtils.objectsEqual(consoleUserId, other.consoleUserId)
-                && ObjectUtils.objectsEqual(guestLastLoginTime, other.guestLastLoginTime)
-                && ObjectUtils.objectsEqual(guestLastLogoutTime, other.guestLastLogoutTime)
                 && ObjectUtils.objectsEqual(guestOs, other.guestOs)
                 && ObjectUtils.objectsEqual(guestRequestedMemory, other.guestRequestedMemory)
                 && ObjectUtils.objectsEqual(kvmEnable, other.kvmEnable)
@@ -280,22 +274,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setGuestOs(String value) {
         this.guestOs = value;
-    }
-
-    public Date getGuestLastLoginTime() {
-        return this.guestLastLoginTime;
-    }
-
-    public void setGuestLastLoginTime(Date value) {
-        this.guestLastLoginTime = value;
-    }
-
-    public Date getGuestLastLogoutTime() {
-        return this.guestLastLogoutTime;
-    }
-
-    public void setGuestLastLogoutTime(Date value) {
-        this.guestLastLogoutTime = value;
     }
 
     public Guid getMigratingToVds() {
