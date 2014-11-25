@@ -142,6 +142,8 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
                 return AuditLogType.EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER_LEVEL;
         case RNG_SOURCES_INCOMPATIBLE_WITH_CLUSTER:
             return AuditLogType.RNG_SOURCES_INCOMPATIBLE_WITH_CLUSTER;
+        case MIXING_RHEL_VERSIONS_IN_CLUSTER:
+            return AuditLogType.MIXING_RHEL_VERSIONS_IN_CLUSTER;
         case UNTRUSTED:
             return AuditLogType.VDS_UNTRUSTED;
         default:
