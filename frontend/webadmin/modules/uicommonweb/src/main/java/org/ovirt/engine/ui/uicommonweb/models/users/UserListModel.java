@@ -34,6 +34,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -103,8 +104,8 @@ public class UserListModel extends ListWithDetailsModel
         this.userGroupListModel = userGroupListModel;
         this.userEventNotifierListModel = userEventNotifierListModel;
         setDetailList(userGeneralModel, userQuotaListModel, userPermissionListModel, userEventListModel);
-
         setTitle(ConstantsManager.getInstance().getConstants().usersTitle());
+        setApplicationPlace(WebAdminApplicationPlaces.userMainTabPlace);
 
         setDefaultSearchString("Users:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());

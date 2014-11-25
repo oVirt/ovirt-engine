@@ -8,8 +8,8 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VnicProfileSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -28,7 +28,7 @@ public class SubTabVnicProfilePermissionPresenter extends AbstractSubTabPresente
     SubTabVnicProfilePermissionPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.vnicProfilePermissionSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.vnicProfilePermissionSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabVnicProfilePermissionPresenter> {
     }
 
@@ -53,7 +53,7 @@ public class SubTabVnicProfilePermissionPresenter extends AbstractSubTabPresente
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.vnicProfileMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.vnicProfileMainTabPlace);
     }
 
     @ProxyEvent

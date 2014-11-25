@@ -27,8 +27,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
  *            Proxy type.
  */
 public abstract class AbstractMainTabPresenter<T, M extends SearchableListModel, V extends View,
-    P extends TabContentProxyPlace<?>> extends AbstractTabPresenter<V, P>
-    implements MainModelSelectionChangeEvent.MainModelSelectionChangeHandler {
+    P extends TabContentProxyPlace<?>> extends AbstractTabPresenter<V, P> {
 
     protected final PlaceManager placeManager;
     protected final MainModelProvider<T, M> modelProvider;
@@ -75,24 +74,6 @@ public abstract class AbstractMainTabPresenter<T, M extends SearchableListModel,
 
     protected M getModel() {
         return modelProvider.getModel();
-    }
-
-    @Override
-    protected void onBind() {
-        super.onBind();
-        registerHandler(getEventBus().addHandler(MainModelSelectionChangeEvent.getType(), this));
-    }
-
-    @Override
-    public void onMainModelSelectionChange(MainModelSelectionChangeEvent event) {
-        if (event.getMainModel() == getModel()) {
-            if (event.getMainModel().getIsAvailable()) {
-                // Reveal main tab place when the corresponding model is selected
-                placeManager.revealPlace(getMainTabRequest());
-            } else {
-                revealActiveMainModelPresenter();
-            }
-        }
     }
 
     void revealActiveMainModelPresenter() {

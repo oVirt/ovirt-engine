@@ -6,6 +6,8 @@ import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent.UserLoginChangeHandler;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
+import org.ovirt.engine.ui.uicommonweb.models.MainModelSelectionChangeEvent;
+import org.ovirt.engine.ui.uicommonweb.models.MainModelSelectionChangeEvent.MainModelSelectionChangeHandler;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -20,7 +22,7 @@ import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 /**
  * Place manager that handles transitions between different places in the application.
  */
-public abstract class ApplicationPlaceManager extends PlaceManagerImpl implements UserLoginChangeHandler {
+public abstract class ApplicationPlaceManager extends PlaceManagerImpl implements UserLoginChangeHandler, MainModelSelectionChangeHandler {
 
     private static final Logger logger = Logger.getLogger(ApplicationPlaceManager.class.getName());
 
@@ -35,9 +37,11 @@ public abstract class ApplicationPlaceManager extends PlaceManagerImpl implement
             PlaceRequest defaultLoginSectionRequest) {
         super(eventBus, tokenFormatter);
         this.user = user;
-        this.clientAgentType = clientAgentType;
         this.defaultLoginSectionRequest = defaultLoginSectionRequest;
+        this.clientAgentType = clientAgentType;
+
         eventBus.addHandler(UserLoginChangeEvent.getType(), this);
+        eventBus.addHandler(MainModelSelectionChangeEvent.getType(), this);
     }
 
     /**
@@ -118,6 +122,20 @@ public abstract class ApplicationPlaceManager extends PlaceManagerImpl implement
         } else {
             revealDefaultPlace();
         }
+    }
+
+    @Override
+    public void onMainModelSelectionChange(MainModelSelectionChangeEvent event) {
+        String nameToken = event.getMainModel().getApplicationPlace();
+        PlaceRequest placeRequest;
+
+        if (nameToken != null && event.getMainModel().getIsAvailable()) {
+            placeRequest = PlaceRequestFactory.get(nameToken);
+        } else {
+            placeRequest = getDefaultPlace();
+        }
+
+        revealPlace(placeRequest);
     }
 
 }

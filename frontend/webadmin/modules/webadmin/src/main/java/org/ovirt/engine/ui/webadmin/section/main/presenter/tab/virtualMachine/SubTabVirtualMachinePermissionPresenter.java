@@ -8,8 +8,8 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VirtualMachineSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -28,7 +28,7 @@ public class SubTabVirtualMachinePermissionPresenter extends AbstractSubTabPrese
     SubTabVirtualMachinePermissionPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.virtualMachinePermissionSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.virtualMachinePermissionSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabVirtualMachinePermissionPresenter> {
     }
 
@@ -51,7 +51,7 @@ public class SubTabVirtualMachinePermissionPresenter extends AbstractSubTabPrese
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.virtualMachineMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.virtualMachineMainTabPlace);
     }
 
     @ProxyEvent

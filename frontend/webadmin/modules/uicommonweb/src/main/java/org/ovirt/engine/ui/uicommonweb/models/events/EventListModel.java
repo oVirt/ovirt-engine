@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
@@ -91,6 +92,7 @@ public class EventListModel extends ListWithDetailsModel
     {
         setTitle(ConstantsManager.getInstance().getConstants().eventsTitle());
         setHelpTag(HelpTag.events);
+        setApplicationPlace(WebAdminApplicationPlaces.eventMainTabPlace);
         setHashName("events"); //$NON-NLS-1$
 
         setRefreshCommand(new UICommand("Refresh", this)); //$NON-NLS-1$

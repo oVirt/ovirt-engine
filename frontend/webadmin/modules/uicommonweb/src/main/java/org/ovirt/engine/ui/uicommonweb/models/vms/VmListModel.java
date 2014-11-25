@@ -88,6 +88,7 @@ import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.VmBaseListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.AttachCdModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -465,6 +466,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 vmAppListModel, permissionListModel, vmAffinityGroupListModel, vmSessionsModel);
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
         setHelpTag(HelpTag.virtual_machines);
+        setApplicationPlace(WebAdminApplicationPlaces.virtualMachineMainTabPlace);
         setHashName("virtual_machines"); //$NON-NLS-1$
 
         setDefaultSearchString("Vms:"); //$NON-NLS-1$

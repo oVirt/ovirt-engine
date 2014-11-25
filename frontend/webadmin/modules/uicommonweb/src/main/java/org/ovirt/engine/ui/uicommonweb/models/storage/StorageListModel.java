@@ -50,6 +50,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.DiskProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.models.reports.ReportModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
@@ -189,8 +190,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         this.diskProfileListModel = diskProfileListModel;
 
         setDetailList(storageEventListModel, permissionListModel);
-
         setTitle(ConstantsManager.getInstance().getConstants().storageTitle());
+        setApplicationPlace(WebAdminApplicationPlaces.storageMainTabPlace);
 
         setDefaultSearchString("Storage:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());

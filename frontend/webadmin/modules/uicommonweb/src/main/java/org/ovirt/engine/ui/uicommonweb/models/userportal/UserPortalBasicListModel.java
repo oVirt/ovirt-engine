@@ -23,6 +23,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConsoleModelsCache;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
+import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -111,6 +112,7 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
     public UserPortalBasicListModel(final VmBasicDiskListModel vmBasicDiskListModel) {
         this.vmBasicDiskListModel = vmBasicDiskListModel;
         setDetailList();
+        setApplicationPlace(UserPortalApplicationPlaces.basicMainTabPlace);
         setSearchCompletedEvent(new Event<EventArgs>(searchCompletedEventDefinition));
 
         setSelectedItemDefinedMemory(new EntityModel<String>());

@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 import com.google.inject.Inject;
@@ -38,13 +39,13 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
 
     @Inject
     public ProviderListModel(final ProviderGeneralModel providerGeneralModel,
-            final ProviderNetworkListModel providerNetworkListModel) {
-
+            ProviderNetworkListModel providerNetworkListModel) {
         this.providerNetworkListModel = providerNetworkListModel;
         setModelList(providerGeneralModel, providerNetworkListModel);
 
         setTitle(ConstantsManager.getInstance().getConstants().providersTitle());
         setHelpTag(HelpTag.providers);
+        setApplicationPlace(WebAdminApplicationPlaces.providerMainTabPlace);
         setHashName("providers"); //$NON-NLS-1$
 
         setDefaultSearchString("Provider:"); //$NON-NLS-1$
@@ -60,7 +61,6 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
-
     }
 
     private void setModelList(final ProviderGeneralModel providerGeneralModel,

@@ -5,7 +5,7 @@ import java.util.List;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.widget.table.HasActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
-import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
+import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabExtendedPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableTableModelProvider;
 
@@ -119,7 +119,7 @@ public abstract class AbstractSideTabWithDetailsPresenter<T, M extends ListWithD
 
     protected String createRequestToken() {
         String subTabName = modelProvider.getModel().getActiveDetailModel().getHashName();
-        String requestToken = getSideTabRequest().getNameToken() + ApplicationPlaces.SUB_TAB_PREFIX + subTabName;
+        String requestToken = getSideTabRequest().getNameToken() + UserPortalApplicationPlaces.SUB_TAB_PREFIX + subTabName;
         return requestToken;
     }
 

@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 
 @SuppressWarnings("unused")
 public class ResourcesModel extends SearchableListModel
@@ -194,8 +195,9 @@ public class ResourcesModel extends SearchableListModel
         privateUsedQuotaPercentage = value;
     }
 
-    public ResourcesModel()
-    {
+    public ResourcesModel() {
+        setApplicationPlace(UserPortalApplicationPlaces.extendedResourceSideTabPlace);
+
         setDefinedVMs(new EntityModel());
         setRunningVMs(new EntityModel());
         setRunningVMsPercentage(new EntityModel());

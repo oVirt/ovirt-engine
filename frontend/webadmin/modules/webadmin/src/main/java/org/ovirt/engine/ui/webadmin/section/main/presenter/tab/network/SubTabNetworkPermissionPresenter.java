@@ -8,8 +8,8 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.NetworkSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -28,7 +28,7 @@ public class SubTabNetworkPermissionPresenter extends AbstractSubTabPresenter<Ne
     SubTabNetworkPermissionPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.networkPermissionSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.networkPermissionSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabNetworkPermissionPresenter> {
     }
 
@@ -53,7 +53,7 @@ public class SubTabNetworkPermissionPresenter extends AbstractSubTabPresenter<Ne
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.networkMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.networkMainTabPlace);
     }
 
     @ProxyEvent

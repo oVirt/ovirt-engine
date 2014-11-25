@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
+import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDetailModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
@@ -22,7 +22,7 @@ public class SubTabExtendedPoolGeneralPresenter
         extends AbstractSubTabExtendedVmPresenter<PoolGeneralModel, SubTabExtendedPoolGeneralPresenter.ViewDef, SubTabExtendedPoolGeneralPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.extendedPoolGeneralSubTabPlace)
+    @NameToken(UserPortalApplicationPlaces.extendedPoolGeneralSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabExtendedPoolGeneralPresenter> {
     }
 

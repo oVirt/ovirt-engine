@@ -8,13 +8,13 @@ import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.ClusterSelectionChangeEvent;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -39,7 +39,7 @@ public class SubTabClusterGeneralPresenter extends AbstractSubTabPresenter<VDSGr
     private final ApplicationConstants constants;
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.clusterGeneralSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.clusterGeneralSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabClusterGeneralPresenter> {
     }
 
@@ -190,7 +190,7 @@ public class SubTabClusterGeneralPresenter extends AbstractSubTabPresenter<VDSGr
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.clusterMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.clusterMainTabPlace);
     }
 
     @ProxyEvent

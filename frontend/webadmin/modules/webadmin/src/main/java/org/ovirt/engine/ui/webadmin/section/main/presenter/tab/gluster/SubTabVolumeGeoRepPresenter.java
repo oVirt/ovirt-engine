@@ -8,8 +8,8 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeoRepListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VolumeSelectionChangeEvent;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -34,7 +34,7 @@ public class SubTabVolumeGeoRepPresenter extends AbstractSubTabPresenter<Gluster
     }
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.volumeGeoRepSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.volumeGeoRepSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabVolumeGeoRepPresenter> {
     }
 
@@ -43,7 +43,7 @@ public class SubTabVolumeGeoRepPresenter extends AbstractSubTabPresenter<Gluster
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.volumeMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.volumeMainTabPlace);
     }
 
     @ProxyEvent

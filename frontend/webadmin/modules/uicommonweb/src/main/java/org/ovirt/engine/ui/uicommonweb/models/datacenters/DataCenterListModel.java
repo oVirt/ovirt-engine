@@ -55,6 +55,7 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterHostNetw
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterStorageQosListModel;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.NewSharedMacPoolModel;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.SharedMacPoolModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -206,6 +207,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
                 dataCenterNetworkQoSListModel, dataCenterHostNetworkQosListModel, dataCenterStorageQosListModel,
                 dataCenterCpuQosListModel, permissionListModel, dataCenterEventListModel);
         setTitle(ConstantsManager.getInstance().getConstants().dataCentersTitle());
+        setApplicationPlace(WebAdminApplicationPlaces.dataCenterMainTabPlace);
 
         setDefaultSearchString("DataCenter:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());

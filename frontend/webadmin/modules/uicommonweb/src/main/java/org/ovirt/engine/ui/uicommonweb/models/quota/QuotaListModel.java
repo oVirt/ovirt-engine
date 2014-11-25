@@ -33,6 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -86,6 +87,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         setDetailList(quotaClusterListModel, quotaStorageListModel, quotaVmListModel, quotaTemplateListModel,
                 quotaUserListModel, quotaPermissionListModel, quotaEventListModel);
         setTitle(ConstantsManager.getInstance().getConstants().quotaTitle());
+        setApplicationPlace(WebAdminApplicationPlaces.quotaMainTabPlace);
 
         setDefaultSearchString("Quota:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());

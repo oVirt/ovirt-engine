@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
 
@@ -33,7 +33,7 @@ public class MainTabVnicProfilePresenter extends AbstractMainTabWithDetailsPrese
     }
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.vnicProfileMainTabPlace)
+    @NameToken(WebAdminApplicationPlaces.vnicProfileMainTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<MainTabVnicProfilePresenter> {
     }
 
@@ -60,7 +60,7 @@ public class MainTabVnicProfilePresenter extends AbstractMainTabWithDetailsPrese
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.vnicProfileMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.vnicProfileMainTabPlace);
     }
-}
 
+}

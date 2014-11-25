@@ -5,8 +5,8 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.uicommonweb.models.resources.ResourcesModel;
+import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.section.main.presenter.AbstractModelActivationPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabExtendedPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDataBoundModelProvider;
@@ -23,13 +23,12 @@ import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SideTabExtendedResourcePresenter extends AbstractModelActivationPresenter<VM, ResourcesModel,
-    SideTabExtendedResourcePresenter.ViewDef, SideTabExtendedResourcePresenter.ProxyDef>
-    implements DataChangeListener<VM> {
+    SideTabExtendedResourcePresenter.ViewDef, SideTabExtendedResourcePresenter.ProxyDef> implements DataChangeListener<VM> {
 
     private final UserPortalDataBoundModelProvider<VM, ResourcesModel> modelProvider;
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.extendedResourceSideTabPlace)
+    @NameToken(UserPortalApplicationPlaces.extendedResourceSideTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SideTabExtendedResourcePresenter> {
     }
 

@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
@@ -37,7 +37,7 @@ public class MainTabNetworkPresenter extends AbstractMainTabWithDetailsPresenter
     }
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.networkMainTabPlace)
+    @NameToken(WebAdminApplicationPlaces.networkMainTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<MainTabNetworkPresenter> {
     }
 
@@ -58,7 +58,6 @@ public class MainTabNetworkPresenter extends AbstractMainTabWithDetailsPresenter
             PlaceManager placeManager,
             MainModelProvider<NetworkView, NetworkListModel> modelProvider,
             SystemTreeModelProvider systemTreeModelProvider) {
-
         super(eventBus, view, proxy, placeManager, modelProvider);
         this.systemTreeModelProvider = systemTreeModelProvider;
     }
@@ -70,18 +69,18 @@ public class MainTabNetworkPresenter extends AbstractMainTabWithDetailsPresenter
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.networkMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.networkMainTabPlace);
     }
 
     @Override
     protected void onBind() {
         super.onBind();
         getView().setProviderClickHandler(new FieldUpdater<NetworkView, String> () {
-
             @Override
             public void update(int index, NetworkView network, String value) {
                 systemTreeModelProvider.setSelectedItem(network.getProvidedBy().getProviderId());
             }
         });
     }
+
 }

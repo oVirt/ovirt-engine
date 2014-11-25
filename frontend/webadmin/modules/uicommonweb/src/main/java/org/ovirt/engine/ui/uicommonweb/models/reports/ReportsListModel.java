@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListWithReportsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.ReportParser.Dashboard;
 
@@ -41,6 +42,8 @@ public class ReportsListModel extends SearchableListWithReportsModel {
 
         String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName();
         htmlParams.setParameter("userLocale", (currentLocale.equals("default") ? "en_US" : currentLocale)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+
+        setApplicationPlace(WebAdminApplicationPlaces.reportsMainTabPlace);
 
         setDefaultSearchString("Reports:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());

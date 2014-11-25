@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.ActionTable;
 import org.ovirt.engine.ui.common.widget.table.HasActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -97,8 +97,7 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
 
     PlaceRequest getSubTabRequest() {
         String subTabName = modelProvider.getModel().getActiveDetailModel().getHashName();
-        String requestToken = getMainTabRequest().getNameToken() + ApplicationPlaces.SUB_TAB_PREFIX + subTabName;
-
+        String requestToken = getMainTabRequest().getNameToken() + WebAdminApplicationPlaces.SUB_TAB_PREFIX + subTabName;
         return PlaceRequestFactory.get(requestToken);
     }
 

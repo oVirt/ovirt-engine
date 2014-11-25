@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
+import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDetailModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
@@ -23,7 +23,7 @@ public class SubTabExtendedVmSessionsPresenter
 {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.extendedVirtualMachineSessionsSubTabPlace)
+    @NameToken(UserPortalApplicationPlaces.extendedVirtualMachineSessionsSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabExtendedVmSessionsPresenter> {
 
     }

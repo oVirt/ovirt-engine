@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
+import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.userportal.section.main.presenter.AbstractSideTabWithDetailsPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabExtendedPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.UserPortalTemplateListProvider;
@@ -36,7 +36,7 @@ public class SideTabExtendedTemplatePresenter extends AbstractSideTabWithDetails
     }
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.extendedTemplateSideTabPlace)
+    @NameToken(UserPortalApplicationPlaces.extendedTemplateSideTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SideTabExtendedTemplatePresenter> {
     }
 
@@ -64,7 +64,7 @@ public class SideTabExtendedTemplatePresenter extends AbstractSideTabWithDetails
 
     @Override
     protected PlaceRequest getSideTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.extendedTemplateSideTabPlace);
+        return PlaceRequestFactory.get(UserPortalApplicationPlaces.extendedTemplateSideTabPlace);
     }
 
 }

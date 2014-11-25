@@ -1,9 +1,9 @@
-package org.ovirt.engine.ui.userportal.place;
+package org.ovirt.engine.ui.uicommonweb.place;
 
 /**
  * The central location of all application places.
  */
-public class ApplicationPlaces {
+public class UserPortalApplicationPlaces {
 
     // Login section
 

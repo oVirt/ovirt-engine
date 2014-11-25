@@ -8,8 +8,8 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageSnapshotListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.StorageSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -26,7 +26,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabStorageSnapshotPresenter extends AbstractSubTabPresenter<StorageDomain, StorageListModel, StorageSnapshotListModel, SubTabStorageSnapshotPresenter.ViewDef, SubTabStorageSnapshotPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.storageSnapshotSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.storageSnapshotSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabStorageSnapshotPresenter> {
     }
 
@@ -49,7 +49,7 @@ public class SubTabStorageSnapshotPresenter extends AbstractSubTabPresenter<Stor
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.storageMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.storageMainTabPlace);
     }
 
     @ProxyEvent

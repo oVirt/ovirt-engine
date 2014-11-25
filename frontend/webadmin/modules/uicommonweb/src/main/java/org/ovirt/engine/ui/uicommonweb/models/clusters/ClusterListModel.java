@@ -49,6 +49,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostDetailModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MultipleHostsModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.CpuProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -198,6 +199,7 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
 
         setTitle(ConstantsManager.getInstance().getConstants().clustersTitle());
         setHelpTag(HelpTag.clusters);
+        setApplicationPlace(WebAdminApplicationPlaces.clusterMainTabPlace);
         setHashName("clusters"); //$NON-NLS-1$
 
         setDefaultSearchString("Cluster:"); //$NON-NLS-1$

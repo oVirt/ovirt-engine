@@ -8,8 +8,8 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileVmListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VnicProfileSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -26,7 +26,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabVnicProfileVmPresenter extends AbstractSubTabPresenter<VnicProfileView, VnicProfileListModel, VnicProfileVmListModel, SubTabVnicProfileVmPresenter.ViewDef, SubTabVnicProfileVmPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.vnicProfileVmSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.vnicProfileVmSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabVnicProfileVmPresenter> {
     }
 
@@ -48,7 +48,7 @@ public class SubTabVnicProfileVmPresenter extends AbstractSubTabPresenter<VnicPr
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.virtualMachineMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.virtualMachineMainTabPlace);
     }
 
     @ProxyEvent

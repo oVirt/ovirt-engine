@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
 
@@ -34,7 +34,7 @@ public class MainTabReportsPresenter extends AbstractMainTabPresenter<Void, Repo
     private static boolean reportsWebappDeployed = false;
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.reportsMainTabPlace)
+    @NameToken(WebAdminApplicationPlaces.reportsMainTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<MainTabReportsPresenter> {
     }
 
@@ -108,7 +108,7 @@ public class MainTabReportsPresenter extends AbstractMainTabPresenter<Void, Repo
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.reportsMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.reportsMainTabPlace);
     }
 
 }

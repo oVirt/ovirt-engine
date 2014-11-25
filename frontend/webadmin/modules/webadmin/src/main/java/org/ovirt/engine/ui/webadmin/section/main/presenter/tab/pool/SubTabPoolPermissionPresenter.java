@@ -8,8 +8,8 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.PoolSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -27,7 +27,7 @@ public class SubTabPoolPermissionPresenter extends AbstractSubTabPresenter<VmPoo
     PermissionListModel<PoolListModel>, SubTabPoolPermissionPresenter.ViewDef, SubTabPoolPermissionPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.poolPermissionSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.poolPermissionSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabPoolPermissionPresenter> {
     }
 
@@ -52,7 +52,7 @@ public class SubTabPoolPermissionPresenter extends AbstractSubTabPresenter<VmPoo
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.poolMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.poolMainTabPlace);
     }
 
     @ProxyEvent

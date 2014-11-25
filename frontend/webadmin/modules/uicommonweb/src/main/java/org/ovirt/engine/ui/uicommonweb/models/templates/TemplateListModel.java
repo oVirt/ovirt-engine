@@ -46,6 +46,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ExportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TemplateVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -133,6 +134,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         addCustomModelsDetailModelList(list, customPosition, templateDiskListModel, templateEventListModel, permissionListModel);
         setDetailModels(list);
         setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
+        setApplicationPlace(WebAdminApplicationPlaces.templateMainTabPlace);
 
         setDefaultSearchString("Template:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());

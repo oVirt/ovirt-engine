@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderNetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.ProviderSelectionChangeEvent;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
 
@@ -30,7 +30,7 @@ public class SubTabProviderNetworkPresenter extends AbstractSubTabPresenter<Prov
     private SystemTreeModelProvider systemTreeModelProvider;
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.providerNetworkSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.providerNetworkSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabProviderNetworkPresenter> {
     }
 
@@ -55,7 +55,7 @@ public class SubTabProviderNetworkPresenter extends AbstractSubTabPresenter<Prov
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.providerMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.providerMainTabPlace);
     }
 
     @ProxyEvent

@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.userportal.section.main.presenter.tab;
 
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
+import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent.UserPortalModelInitHandler;
@@ -43,7 +43,7 @@ public class MainTabExtendedPresenter extends TabContainerPresenter<MainTabExten
     @ContentSlot
     public static final Type<RevealContentHandler<?>> TYPE_SetTabContent = new Type<RevealContentHandler<?>>();
 
-    @TabInfo(container = MainTabPanelPresenter.class, nameToken = ApplicationPlaces.extendedVirtualMachineSideTabPlace)
+    @TabInfo(container = MainTabPanelPresenter.class, nameToken = UserPortalApplicationPlaces.extendedVirtualMachineSideTabPlace)
     static TabData getTabData(ApplicationConstants applicationConstants) {
         return new TabDataBasic(applicationConstants.extendedMainTabLabel(), 1);
     }

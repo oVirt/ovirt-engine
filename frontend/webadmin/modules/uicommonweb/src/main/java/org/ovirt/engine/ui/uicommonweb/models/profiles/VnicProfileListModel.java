@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveVnicProfileModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 import com.google.inject.Inject;
@@ -52,6 +53,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
         setDetailList(vNicProfileVmListModel, vNicProfileTemplateListModel, permissionListModel);
         setTitle(ConstantsManager.getInstance().getConstants().vnicProfilesTitle());
         setHelpTag(HelpTag.vnicProfiles);
+        setApplicationPlace(WebAdminApplicationPlaces.vnicProfileMainTabPlace);
         setHashName("vnicProfiles"); //$NON-NLS-1$)
 
         setDefaultSearchString("VnicProfile:"); //$NON-NLS-1$

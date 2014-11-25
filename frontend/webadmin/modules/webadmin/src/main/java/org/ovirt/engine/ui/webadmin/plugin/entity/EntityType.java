@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.plugin.entity;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.ClusterSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.DataCenterSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.DiskSubTabPanelPresenter;
@@ -31,109 +31,109 @@ import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
  */
 public enum EntityType {
 
-    DataCenter(ApplicationPlaces.dataCenterMainTabPlace,
+    DataCenter(WebAdminApplicationPlaces.dataCenterMainTabPlace,
             DataCenterSubTabPanelPresenter.TYPE_RequestTabs,
             DataCenterSubTabPanelPresenter.TYPE_ChangeTab,
             DataCenterSubTabPanelPresenter.TYPE_SetTabContent) {
         @Override
         protected void initSubTabHistoryTokens(Map<EntityType, String> map) {
-            map.put(Event, ApplicationPlaces.dataCenterEventSubTabPlace);
+            map.put(Event, WebAdminApplicationPlaces.dataCenterEventSubTabPlace);
         }
     },
-    Cluster(ApplicationPlaces.clusterMainTabPlace,
+    Cluster(WebAdminApplicationPlaces.clusterMainTabPlace,
             ClusterSubTabPanelPresenter.TYPE_RequestTabs,
             ClusterSubTabPanelPresenter.TYPE_ChangeTab,
             ClusterSubTabPanelPresenter.TYPE_SetTabContent) {
     },
-    Host(ApplicationPlaces.hostMainTabPlace,
+    Host(WebAdminApplicationPlaces.hostMainTabPlace,
             HostSubTabPanelPresenter.TYPE_RequestTabs,
             HostSubTabPanelPresenter.TYPE_ChangeTab,
             HostSubTabPanelPresenter.TYPE_SetTabContent) {
         @Override
         protected void initSubTabHistoryTokens(Map<EntityType, String> map) {
-            map.put(Event, ApplicationPlaces.hostEventSubTabPlace);
+            map.put(Event, WebAdminApplicationPlaces.hostEventSubTabPlace);
         }
     },
-    Network(ApplicationPlaces.networkMainTabPlace,
+    Network(WebAdminApplicationPlaces.networkMainTabPlace,
             NetworkSubTabPanelPresenter.TYPE_RequestTabs,
             NetworkSubTabPanelPresenter.TYPE_ChangeTab,
             NetworkSubTabPanelPresenter.TYPE_SetTabContent) {
     },
-    VnicProfile(ApplicationPlaces.vnicProfileMainTabPlace,
+    VnicProfile(WebAdminApplicationPlaces.vnicProfileMainTabPlace,
             VnicProfileSubTabPanelPresenter.TYPE_RequestTabs,
             VnicProfileSubTabPanelPresenter.TYPE_ChangeTab,
             VnicProfileSubTabPanelPresenter.TYPE_SetTabContent) {
     },
-    Storage(ApplicationPlaces.storageMainTabPlace,
+    Storage(WebAdminApplicationPlaces.storageMainTabPlace,
             StorageSubTabPanelPresenter.TYPE_RequestTabs,
             StorageSubTabPanelPresenter.TYPE_ChangeTab,
             StorageSubTabPanelPresenter.TYPE_SetTabContent) {
         @Override
         protected void initSubTabHistoryTokens(Map<EntityType, String> map) {
-            map.put(Event, ApplicationPlaces.storageEventSubTabPlace);
+            map.put(Event, WebAdminApplicationPlaces.storageEventSubTabPlace);
         }
     },
-    Disk(ApplicationPlaces.diskMainTabPlace,
+    Disk(WebAdminApplicationPlaces.diskMainTabPlace,
             DiskSubTabPanelPresenter.TYPE_RequestTabs,
             DiskSubTabPanelPresenter.TYPE_ChangeTab,
             DiskSubTabPanelPresenter.TYPE_SetTabContent) {
     },
-    VirtualMachine(ApplicationPlaces.virtualMachineMainTabPlace,
+    VirtualMachine(WebAdminApplicationPlaces.virtualMachineMainTabPlace,
             VirtualMachineSubTabPanelPresenter.TYPE_RequestTabs,
             VirtualMachineSubTabPanelPresenter.TYPE_ChangeTab,
             VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent) {
         @Override
         protected void initSubTabHistoryTokens(Map<EntityType, String> map) {
-            map.put(Event, ApplicationPlaces.virtualMachineEventSubTabPlace);
+            map.put(Event, WebAdminApplicationPlaces.virtualMachineEventSubTabPlace);
         }
     },
-    Pool(ApplicationPlaces.poolMainTabPlace,
+    Pool(WebAdminApplicationPlaces.poolMainTabPlace,
             PoolSubTabPanelPresenter.TYPE_RequestTabs,
             PoolSubTabPanelPresenter.TYPE_ChangeTab,
             PoolSubTabPanelPresenter.TYPE_SetTabContent) {
     },
-    Template(ApplicationPlaces.templateMainTabPlace,
+    Template(WebAdminApplicationPlaces.templateMainTabPlace,
             TemplateSubTabPanelPresenter.TYPE_RequestTabs,
             TemplateSubTabPanelPresenter.TYPE_ChangeTab,
             TemplateSubTabPanelPresenter.TYPE_SetTabContent) {
         @Override
         protected void initSubTabHistoryTokens(Map<EntityType, String> map) {
-            map.put(Event, ApplicationPlaces.templateEventSubTabPlace);
+            map.put(Event, WebAdminApplicationPlaces.templateEventSubTabPlace);
         }
     },
-    GlusterVolume(ApplicationPlaces.volumeMainTabPlace,
+    GlusterVolume(WebAdminApplicationPlaces.volumeMainTabPlace,
             VolumeSubTabPanelPresenter.TYPE_RequestTabs,
             VolumeSubTabPanelPresenter.TYPE_ChangeTab,
             VolumeSubTabPanelPresenter.TYPE_SetTabContent) {
         @Override
         protected void initSubTabHistoryTokens(Map<EntityType, String> map) {
-            map.put(Event, ApplicationPlaces.volumeEventSubTabPlace);
+            map.put(Event, WebAdminApplicationPlaces.volumeEventSubTabPlace);
         }
     },
-    Provider(ApplicationPlaces.providerMainTabPlace,
+    Provider(WebAdminApplicationPlaces.providerMainTabPlace,
             ProviderSubTabPanelPresenter.TYPE_RequestTabs,
             ProviderSubTabPanelPresenter.TYPE_ChangeTab,
             ProviderSubTabPanelPresenter.TYPE_SetTabContent) {
     },
-    User(ApplicationPlaces.userMainTabPlace,
+    User(WebAdminApplicationPlaces.userMainTabPlace,
             UserSubTabPanelPresenter.TYPE_RequestTabs,
             UserSubTabPanelPresenter.TYPE_ChangeTab,
             UserSubTabPanelPresenter.TYPE_SetTabContent) {
         @Override
         protected void initSubTabHistoryTokens(Map<EntityType, String> map) {
-            map.put(Event, ApplicationPlaces.userEventSubTabPlace);
+            map.put(Event, WebAdminApplicationPlaces.userEventSubTabPlace);
         }
     },
-    Quota(ApplicationPlaces.quotaMainTabPlace,
+    Quota(WebAdminApplicationPlaces.quotaMainTabPlace,
             QuotaSubTabPanelPresenter.TYPE_RequestTabs,
             QuotaSubTabPanelPresenter.TYPE_ChangeTab,
             QuotaSubTabPanelPresenter.TYPE_SetTabContent) {
         @Override
         protected void initSubTabHistoryTokens(Map<EntityType, String> map) {
-            map.put(Event, ApplicationPlaces.quotaEventSubTabPlace);
+            map.put(Event, WebAdminApplicationPlaces.quotaEventSubTabPlace);
         }
     },
-    Event(ApplicationPlaces.eventMainTabPlace),
+    Event(WebAdminApplicationPlaces.eventMainTabPlace),
 
     Undefined; // Null object
 

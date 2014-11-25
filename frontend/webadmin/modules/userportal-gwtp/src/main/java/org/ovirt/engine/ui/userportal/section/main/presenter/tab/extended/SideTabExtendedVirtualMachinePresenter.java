@@ -9,8 +9,8 @@ import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
+import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.section.main.presenter.AbstractSideTabWithDetailsPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabExtendedPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.UserPortalListProvider;
@@ -40,7 +40,7 @@ public class SideTabExtendedVirtualMachinePresenter extends AbstractSideTabWithD
     }
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.extendedVirtualMachineSideTabPlace)
+    @NameToken(UserPortalApplicationPlaces.extendedVirtualMachineSideTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SideTabExtendedVirtualMachinePresenter> {
     }
 
@@ -68,7 +68,7 @@ public class SideTabExtendedVirtualMachinePresenter extends AbstractSideTabWithD
 
     @Override
     protected PlaceRequest getSideTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.extendedVirtualMachineSideTabPlace);
+        return PlaceRequestFactory.get(UserPortalApplicationPlaces.extendedVirtualMachineSideTabPlace);
     }
 
     /**
@@ -82,8 +82,9 @@ public class SideTabExtendedVirtualMachinePresenter extends AbstractSideTabWithD
                 model instanceof PoolInterfaceListModel ||
                 model instanceof PoolDiskListModel
         ) {
-            requestToken += ApplicationPlaces.POOL_SUFFIX;
+            requestToken += UserPortalApplicationPlaces.POOL_SUFFIX;
         }
         return requestToken;
     }
+
 }

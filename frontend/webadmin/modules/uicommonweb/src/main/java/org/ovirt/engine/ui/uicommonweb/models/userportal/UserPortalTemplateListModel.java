@@ -22,8 +22,10 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.TemplateVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalTemplateVmModelBehavior;
 
 import com.google.inject.Inject;
+import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 
 public class UserPortalTemplateListModel extends TemplateListModel {
+
     @Inject
     public UserPortalTemplateListModel(TemplateGeneralModel templateGeneralModel,
             TemplateVmListModel templateVmListModel,
@@ -39,6 +41,7 @@ public class UserPortalTemplateListModel extends TemplateListModel {
                 templateDiskListModel,
                 templateEventListModel,
                 permissionListModel, 2);
+        setApplicationPlace(UserPortalApplicationPlaces.extendedTemplateSideTabPlace);
     }
 
     @Override

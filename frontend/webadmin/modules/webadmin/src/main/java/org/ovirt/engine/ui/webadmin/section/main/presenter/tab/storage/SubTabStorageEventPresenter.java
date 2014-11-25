@@ -9,8 +9,8 @@ import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.StorageSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -27,7 +27,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabStorageEventPresenter extends AbstractSubTabPresenter<StorageDomain, StorageListModel, StorageEventListModel, SubTabStorageEventPresenter.ViewDef, SubTabStorageEventPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.storageEventSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.storageEventSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabStorageEventPresenter> {
     }
 
@@ -50,7 +50,7 @@ public class SubTabStorageEventPresenter extends AbstractSubTabPresenter<Storage
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.storageMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.storageMainTabPlace);
     }
 
     @ProxyEvent
