@@ -78,7 +78,8 @@ public class LexoNumericComparator implements Comparator<String>, Serializable {
             return -1;
         }
 
-        return 0;
+        // if the comparison is case-insensitive, differentiate between the strings unless they're truly identical
+        return Integer.signum(str1.compareTo(str2));
     }
 
     private static int compareSequence(String seq1, String seq2, boolean digitSequence, boolean caseSensitive) {
