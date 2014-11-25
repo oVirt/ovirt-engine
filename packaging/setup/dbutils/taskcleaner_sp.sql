@@ -29,33 +29,17 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteAsyncTaskZombiesByCommandId(v_command_id UUID) RETURNS VOID
    AS $procedure$
-DECLARE
-deleted_rows int;
 BEGIN
     IF EXISTS (SELECT 1 FROM GetAsyncTasksZombies() WHERE command_id = v_command_id) THEN
         DELETE FROM async_tasks WHERE command_id = v_command_id;
-    END IF;
-    DELETE FROM command_entities where command_id = v_command_id;
-    GET DIAGNOSTICS deleted_rows = ROW_COUNT;
-    IF deleted_rows > 0 THEN
-        DELETE FROM command_entities C WHERE command_id = root_command_id_of_deleted_cmds AND NOT EXISTS (SELECT * from COMMAND_ENTITIES WHERE root_command_id = C.command_id);
     END IF;
 END; $procedure$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION DeleteAsyncTaskByCommandId(v_command_id UUID) RETURNS VOID
    AS $procedure$
-DECLARE
-deleted_rows int;
-root_command_id_of_deleted_cmds UUID;
 BEGIN
         DELETE FROM async_tasks WHERE command_id = v_command_id;
-        SELECT root_command_id  into root_command_id_of_deleted_cmds FROM COMMAND_entities WHERE command_id = v_command_id;
-        DELETE FROM command_entities where command_id = v_command_id;
-        GET DIAGNOSTICS deleted_rows = ROW_COUNT;
-        IF deleted_rows > 0 THEN
-                DELETE FROM command_entities C WHERE command_id = root_command_id_of_deleted_cmds AND NOT EXISTS (SELECT * from COMMAND_ENTITIES WHERE root_command_id = C.command_id);
-        END IF;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -132,49 +116,5 @@ CREATE OR REPLACE FUNCTION DeleteAllEntitySnapshot() RETURNS VOID
    AS $procedure$
 BEGIN
     DELETE FROM business_entity_snapshot;
-END; $procedure$
-LANGUAGE plpgsql;
-
-Create or replace FUNCTION GetAllCommandsWithRunningTasks() RETURNS SETOF COMMAND_ENTITIES STABLE
-   AS $procedure$
-BEGIN
-   RETURN QUERY SELECT *
-   FROM COMMAND_ENTITIES C
-   WHERE EXISTS (SELECT * FROM ASYNC_TASKS A WHERE A.COMMAND_ID = C.COMMAND_ID);
-END; $procedure$
-LANGUAGE plpgsql;
-
-Create or replace FUNCTION  GetAllCommands()
-RETURNS SETOF COMMAND_ENTITIES STABLE
-   AS $procedure$
-BEGIN
-   RETURN QUERY SELECT *
-   FROM COMMAND_ENTITIES;
-END; $procedure$
-LANGUAGE plpgsql;
-
-Create or replace FUNCTION DeleteAllCommands()
-RETURNS integer
-   AS $procedure$
-DECLARE
-deleted_rows int;
-BEGIN
-   DELETE FROM COMMAND_ENTITIES;
-   GET DIAGNOSTICS deleted_rows = ROW_COUNT;
-   RETURN deleted_rows;
-
-END; $procedure$
-LANGUAGE plpgsql;
-
-Create or replace FUNCTION DeleteAllCommandsWithRunningTasks()
-RETURNS integer
-   AS $procedure$
-DECLARE
-deleted_rows int;
-BEGIN
-   DELETE FROM COMMAND_ENTITIES C WHERE EXISTS (SELECT * FROM ASYNC_TASKS A WHERE A.COMMAND_ID = C.COMMAND_ID);
-   GET DIAGNOSTICS deleted_rows = ROW_COUNT;
-   RETURN deleted_rows;
-
 END; $procedure$
 LANGUAGE plpgsql;
