@@ -111,6 +111,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     @Inject
     private Instance<BackendCommandObjectsHandler> commandObjectsHandlerProvider;
 
+    @Inject
+    private BackendInternal backend;
+
     /* Multiplier used to convert GB to bytes or vice versa. */
     protected static final long BYTES_IN_GB = 1024 * 1024 * 1024;
     private static final String DEFAULT_TASK_KEY = "DEFAULT_TASK_KEY";
@@ -243,7 +246,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected BackendInternal getBackend() {
-        return Backend.getInstance();
+        return backend;
     }
 
     /**
