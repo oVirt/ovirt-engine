@@ -5,8 +5,8 @@ import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.PoolDiskListModelProvider;
+import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -21,7 +21,7 @@ public class SubTabExtendedPoolVirtualDiskPresenter
         extends AbstractSubTabExtendedVmPresenter<PoolDiskListModel, SubTabExtendedPoolVirtualDiskPresenter.ViewDef, SubTabExtendedPoolVirtualDiskPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.extendedVirtualPoolDiskSubTabPlace)
+    @NameToken(UserPortalApplicationPlaces.extendedVirtualPoolDiskSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabExtendedPoolVirtualDiskPresenter> {
     }
 

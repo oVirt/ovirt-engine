@@ -4,8 +4,8 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.uicommonweb.models.templates.UserPortalTemplateDiskListModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateDiskListModelProvider;
+import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -21,7 +21,7 @@ public class SubTabExtendedTemplateVirtualDisksPresenter
         extends AbstractSubTabExtendedTemplatePresenter<UserPortalTemplateDiskListModel, SubTabExtendedTemplateVirtualDisksPresenter.ViewDef, SubTabExtendedTemplateVirtualDisksPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.extendedTempplateVirtualDisksSubTabPlace)
+    @NameToken(UserPortalApplicationPlaces.extendedTempplateVirtualDisksSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabExtendedTemplateVirtualDisksPresenter> {
     }
 

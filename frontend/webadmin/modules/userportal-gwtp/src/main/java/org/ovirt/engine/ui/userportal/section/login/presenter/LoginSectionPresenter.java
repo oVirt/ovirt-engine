@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.userportal.section.login.presenter;
 
 import org.ovirt.engine.ui.common.auth.CurrentUser;
-import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
+import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
@@ -19,7 +19,7 @@ import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 public class LoginSectionPresenter extends Presenter<LoginSectionPresenter.ViewDef, LoginSectionPresenter.ProxyDef> {
 
     @ProxyStandard
-    @NameToken(ApplicationPlaces.loginPlace)
+    @NameToken(UserPortalApplicationPlaces.loginPlace)
     @NoGatekeeper
     public interface ProxyDef extends ProxyPlace<LoginSectionPresenter> {
     }

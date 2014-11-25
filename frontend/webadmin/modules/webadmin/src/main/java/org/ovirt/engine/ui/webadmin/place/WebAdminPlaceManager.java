@@ -13,6 +13,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 
 public class WebAdminPlaceManager extends ApplicationPlaceManager {
 
@@ -38,7 +39,7 @@ public class WebAdminPlaceManager extends ApplicationPlaceManager {
     PlaceRequest resolveMainSectionPlace(ApplicationMode uiMode) {
         switch (uiMode) {
         case GlusterOnly:
-            return PlaceRequestFactory.get(ApplicationPlaces.volumeMainTabPlace);
+            return PlaceRequestFactory.get(WebAdminApplicationPlaces.volumeMainTabPlace);
         case VirtOnly:
         case AllModes:
         default:

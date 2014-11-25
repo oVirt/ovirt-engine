@@ -8,8 +8,8 @@ import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.TemplateSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -26,7 +26,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabTemplateDiskPresenter extends AbstractSubTabPresenter<VmTemplate, TemplateListModel, TemplateDiskListModel, SubTabTemplateDiskPresenter.ViewDef, SubTabTemplateDiskPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.templateDiskSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.templateDiskSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabTemplateDiskPresenter> {
     }
 
@@ -49,7 +49,7 @@ public class SubTabTemplateDiskPresenter extends AbstractSubTabPresenter<VmTempl
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.templateMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.templateMainTabPlace);
     }
 
     @ProxyEvent

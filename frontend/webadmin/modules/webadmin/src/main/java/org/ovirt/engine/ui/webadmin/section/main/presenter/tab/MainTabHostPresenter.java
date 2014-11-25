@@ -7,8 +7,8 @@ import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
 
@@ -33,7 +33,7 @@ public class MainTabHostPresenter extends AbstractMainTabWithDetailsPresenter<VD
     }
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.hostMainTabPlace)
+    @NameToken(WebAdminApplicationPlaces.hostMainTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<MainTabHostPresenter> {
     }
 
@@ -59,7 +59,7 @@ public class MainTabHostPresenter extends AbstractMainTabWithDetailsPresenter<VD
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.hostMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.hostMainTabPlace);
     }
 
 }

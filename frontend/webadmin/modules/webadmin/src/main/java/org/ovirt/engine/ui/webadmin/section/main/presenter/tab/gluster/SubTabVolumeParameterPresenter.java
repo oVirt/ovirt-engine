@@ -8,8 +8,8 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeParameterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VolumeSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -40,7 +40,7 @@ public class SubTabVolumeParameterPresenter extends AbstractSubTabPresenter<Glus
     }
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.volumeParameterSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.volumeParameterSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabVolumeParameterPresenter> {
     }
 
@@ -49,7 +49,7 @@ public class SubTabVolumeParameterPresenter extends AbstractSubTabPresenter<Glus
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.volumeMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.volumeMainTabPlace);
     }
 
     @ProxyEvent

@@ -30,6 +30,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveVnicProfileModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 
@@ -45,6 +46,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
         setTitle(ConstantsManager.getInstance().getConstants().vnicProfilesTitle());
         setHelpTag(HelpTag.vnicProfiles);
         setHashName("vnicProfiles"); //$NON-NLS-1$
+        setApplicationPlace(WebAdminApplicationPlaces.vnicProfileMainTabPlace);
 
         setDefaultSearchString("VnicProfile:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
@@ -93,7 +95,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
 
     private StoragePool getSelectedDc() {
         SystemTreeItemModel treeSelectedItem =
-                (SystemTreeItemModel) CommonModel.getInstance().getSystemTree().getSelectedItem();
+                CommonModel.getInstance().getSystemTree().getSelectedItem();
         SystemTreeItemModel treeSelectedDc = SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, treeSelectedItem);
         return (StoragePool) treeSelectedDc.getEntity();
     }
@@ -110,7 +112,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
 
     private void initNetworkList(final VnicProfileModel profileModel) {
         SystemTreeItemModel treeSelectedItem =
-                (SystemTreeItemModel) CommonModel.getInstance().getSystemTree().getSelectedItem();
+                CommonModel.getInstance().getSystemTree().getSelectedItem();
 
         SystemTreeItemModel treeSelectedNetwork =
                 treeSelectedItem.getType() == SystemTreeItemType.Network ? treeSelectedItem : null;
@@ -193,7 +195,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
         // super.syncSearch(VdcQueryType.Search, tempVar);
 
         SystemTreeItemModel treeSelectedItem =
-                (SystemTreeItemModel) CommonModel.getInstance().getSystemTree().getSelectedItem();
+                CommonModel.getInstance().getSystemTree().getSelectedItem();
 
         if (treeSelectedItem == null) {
             return;

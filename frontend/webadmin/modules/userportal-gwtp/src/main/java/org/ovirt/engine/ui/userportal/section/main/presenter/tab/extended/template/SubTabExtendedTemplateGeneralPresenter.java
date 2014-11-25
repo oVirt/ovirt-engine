@@ -4,8 +4,8 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateGeneralModelProvider;
+import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -21,7 +21,7 @@ public class SubTabExtendedTemplateGeneralPresenter
         extends AbstractSubTabExtendedTemplatePresenter<TemplateGeneralModel, SubTabExtendedTemplateGeneralPresenter.ViewDef, SubTabExtendedTemplateGeneralPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.extendedTempplateGeneralSubTabPlace)
+    @NameToken(UserPortalApplicationPlaces.extendedTempplateGeneralSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabExtendedTemplateGeneralPresenter> {
     }
 

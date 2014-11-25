@@ -50,6 +50,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterCpuQosListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterStorageQosListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -172,6 +173,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
     public DataCenterListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().dataCentersTitle());
+        setApplicationPlace(WebAdminApplicationPlaces.dataCenterMainTabPlace);
 
         setDefaultSearchString("DataCenter:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());

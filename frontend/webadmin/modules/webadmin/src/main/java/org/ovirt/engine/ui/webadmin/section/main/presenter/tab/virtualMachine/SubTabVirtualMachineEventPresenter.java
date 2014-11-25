@@ -9,8 +9,8 @@ import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VirtualMachineSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -27,7 +27,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabVirtualMachineEventPresenter extends AbstractSubTabPresenter<VM, VmListModel, VmEventListModel, SubTabVirtualMachineEventPresenter.ViewDef, SubTabVirtualMachineEventPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.virtualMachineEventSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.virtualMachineEventSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabVirtualMachineEventPresenter> {
     }
 
@@ -50,7 +50,7 @@ public class SubTabVirtualMachineEventPresenter extends AbstractSubTabPresenter<
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.virtualMachineMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.virtualMachineMainTabPlace);
     }
 
     @ProxyEvent

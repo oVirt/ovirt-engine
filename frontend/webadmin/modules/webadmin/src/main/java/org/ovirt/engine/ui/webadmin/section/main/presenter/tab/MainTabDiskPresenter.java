@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
 
@@ -37,7 +37,7 @@ public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<Di
     }
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.diskMainTabPlace)
+    @NameToken(WebAdminApplicationPlaces.diskMainTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<MainTabDiskPresenter> {
     }
 
@@ -75,7 +75,7 @@ public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<Di
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.diskMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.diskMainTabPlace);
     }
 
     @Override
@@ -100,4 +100,5 @@ public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<Di
                 CommonModel.getInstance().getSystemTree().getSelectedItemChangedEvent();
         systemTreeSelectedItemChangedEvent.removeListener(systemTreeListener);
     }
+
 }

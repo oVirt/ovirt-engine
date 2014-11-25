@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.TemplateSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -26,7 +26,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabTemplateInterfacePresenter extends AbstractSubTabPresenter<VmTemplate, TemplateListModel, TemplateInterfaceListModel, SubTabTemplateInterfacePresenter.ViewDef, SubTabTemplateInterfacePresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.templateInterfaceSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.templateInterfaceSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabTemplateInterfacePresenter> {
     }
 
@@ -51,7 +51,7 @@ public class SubTabTemplateInterfacePresenter extends AbstractSubTabPresenter<Vm
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.templateMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.templateMainTabPlace);
     }
 
     @ProxyEvent

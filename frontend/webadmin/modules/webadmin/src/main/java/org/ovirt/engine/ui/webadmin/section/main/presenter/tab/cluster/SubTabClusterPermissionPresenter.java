@@ -8,8 +8,8 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.ClusterSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -26,7 +26,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabClusterPermissionPresenter extends AbstractSubTabPresenter<VDSGroup, ClusterListModel, PermissionListModel, SubTabClusterPermissionPresenter.ViewDef, SubTabClusterPermissionPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.clusterPermissionSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.clusterPermissionSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabClusterPermissionPresenter> {
     }
 
@@ -49,7 +49,7 @@ public class SubTabClusterPermissionPresenter extends AbstractSubTabPresenter<VD
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.clusterMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.clusterMainTabPlace);
     }
 
     @ProxyEvent

@@ -8,8 +8,8 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.HostSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -26,7 +26,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabHostVmPresenter extends AbstractSubTabPresenter<VDS, HostListModel, HostVmListModel, SubTabHostVmPresenter.ViewDef, SubTabHostVmPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.hostVmSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.hostVmSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabHostVmPresenter> {
     }
 
@@ -48,7 +48,7 @@ public class SubTabHostVmPresenter extends AbstractSubTabPresenter<VDS, HostList
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.hostMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.hostMainTabPlace);
     }
 
     @ProxyEvent

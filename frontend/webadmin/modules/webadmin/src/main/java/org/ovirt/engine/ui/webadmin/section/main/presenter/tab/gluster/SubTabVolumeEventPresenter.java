@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VolumeSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -27,7 +27,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabVolumeEventPresenter extends AbstractSubTabPresenter<GlusterVolumeEntity, VolumeListModel, VolumeEventListModel, SubTabVolumeEventPresenter.ViewDef, SubTabVolumeEventPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.volumeEventSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.volumeEventSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabVolumeEventPresenter> {
     }
 
@@ -50,7 +50,7 @@ public class SubTabVolumeEventPresenter extends AbstractSubTabPresenter<GlusterV
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.volumeMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.volumeMainTabPlace);
     }
 
     @ProxyEvent

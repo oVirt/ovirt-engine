@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
-import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
+import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.ExtendedTemplateSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -26,7 +26,7 @@ public abstract class AbstractSubTabExtendedTemplatePresenter<D extends EntityMo
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.extendedTemplateSideTabPlace);
+        return PlaceRequestFactory.get(UserPortalApplicationPlaces.extendedTemplateSideTabPlace);
     }
 
     @ProxyEvent

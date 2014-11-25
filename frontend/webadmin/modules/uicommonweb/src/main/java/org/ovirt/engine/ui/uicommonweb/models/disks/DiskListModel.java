@@ -40,6 +40,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.MoveDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveDiskModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
@@ -176,6 +177,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
     public DiskListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().disksTitle());
+        setApplicationPlace(WebAdminApplicationPlaces.diskMainTabPlace);
 
         setDefaultSearchString("Disks: disk_type = image"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());

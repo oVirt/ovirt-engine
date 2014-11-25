@@ -192,6 +192,20 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         return helpTag;
     }
 
+    private String applicationPlace;
+
+    /**
+     * Returns the logical application place associated with this model or {@code null} if this model
+     * has no such place associated.
+     */
+    public String getApplicationPlace() {
+        return applicationPlace;
+    }
+
+    protected void setApplicationPlace(String applicationPlace) {
+        this.applicationPlace = applicationPlace;
+    }
+
     /**
      * Gets or sets the title of this model. There is no specific purpose for this property, use it on your convenience.
      */

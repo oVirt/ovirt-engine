@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkHostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.NetworkSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -28,7 +28,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabNetworkHostPresenter extends AbstractSubTabPresenter<NetworkView, NetworkListModel, NetworkHostListModel, SubTabNetworkHostPresenter.ViewDef, SubTabNetworkHostPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.networkHostSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.networkHostSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabNetworkHostPresenter> {
     }
 
@@ -51,7 +51,7 @@ public class SubTabNetworkHostPresenter extends AbstractSubTabPresenter<NetworkV
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.networkMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.networkMainTabPlace);
     }
 
     @ProxyEvent

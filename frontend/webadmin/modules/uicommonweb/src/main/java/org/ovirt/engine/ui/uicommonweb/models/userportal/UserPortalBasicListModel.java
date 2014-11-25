@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
@@ -23,6 +24,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
+import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -114,6 +116,7 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
 
     public UserPortalBasicListModel() {
         setSearchCompletedEvent(new Event(searchCompletedEventDefinition));
+        setApplicationPlace(UserPortalApplicationPlaces.basicMainTabPlace);
 
         setSelectedItemDefinedMemory(new EntityModel());
         setSelectedItemNumOfCpuCores(new EntityModel());

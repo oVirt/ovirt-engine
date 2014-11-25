@@ -54,6 +54,7 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeParameterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeProfileStatisticsModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeRebalanceStatusModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -185,6 +186,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
     public VolumeListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().volumesTitle());
+        setApplicationPlace(WebAdminApplicationPlaces.volumeMainTabPlace);
 
         setDefaultSearchString("Volumes:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());

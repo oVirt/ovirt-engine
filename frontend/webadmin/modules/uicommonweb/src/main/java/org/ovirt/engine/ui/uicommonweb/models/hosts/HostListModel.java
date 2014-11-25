@@ -81,6 +81,7 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.NumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -395,6 +396,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
     {
         setTitle(ConstantsManager.getInstance().getConstants().hostsTitle());
         setHelpTag(HelpTag.hosts);
+        setApplicationPlace(WebAdminApplicationPlaces.hostMainTabPlace);
         setHashName("hosts"); //$NON-NLS-1$
 
         setDefaultSearchString("Host:"); //$NON-NLS-1$

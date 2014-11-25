@@ -49,6 +49,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExistingPoolModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewPoolModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -132,6 +133,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
     public PoolListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().poolsTitle());
+        setApplicationPlace(WebAdminApplicationPlaces.poolMainTabPlace);
 
         setDefaultSearchString("Pools:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());

@@ -80,6 +80,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmMonitorModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmNextRunConfigurationModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
+import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -292,6 +293,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     public UserPortalListModel()
     {
         setSearchCompletedEvent(new Event(searchCompletedEventDefinition));
+        setApplicationPlace(UserPortalApplicationPlaces.extendedVirtualMachineSideTabPlace);
 
         setNewVmCommand(new UICommand("NewVm", this)); //$NON-NLS-1$
         setCloneVmCommand(new UICommand("CloneVm", this)); //$NON-NLS-1$

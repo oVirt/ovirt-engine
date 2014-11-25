@@ -8,8 +8,8 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterCpuQosListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DataCenterSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -28,7 +28,7 @@ public class SubTabDataCenterCpuQosPresenter extends AbstractSubTabPresenter<Sto
         SubTabDataCenterCpuQosPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.dataCenterCpuQosSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.dataCenterCpuQosSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabDataCenterCpuQosPresenter> {
     }
 
@@ -51,7 +51,7 @@ public class SubTabDataCenterCpuQosPresenter extends AbstractSubTabPresenter<Sto
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.dataCenterMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.dataCenterMainTabPlace);
     }
 
     @ProxyEvent

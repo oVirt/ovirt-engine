@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.ClusterAffinityGroupListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.ClusterSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -26,7 +26,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabClusterAffinityGroupPresenter extends AbstractSubTabPresenter<VDSGroup, ClusterListModel, ClusterAffinityGroupListModel, SubTabClusterAffinityGroupPresenter.ViewDef, SubTabClusterAffinityGroupPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.clusterAffinityGroupsSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.clusterAffinityGroupsSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabClusterAffinityGroupPresenter> {
     }
 
@@ -49,7 +49,7 @@ public class SubTabClusterAffinityGroupPresenter extends AbstractSubTabPresenter
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.clusterMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.clusterMainTabPlace);
     }
 
     @ProxyEvent

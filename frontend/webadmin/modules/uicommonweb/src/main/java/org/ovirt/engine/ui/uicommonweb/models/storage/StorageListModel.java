@@ -52,6 +52,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.DiskProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.models.reports.ReportModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
@@ -169,6 +170,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
     public StorageListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().storageTitle());
+        setApplicationPlace(WebAdminApplicationPlaces.storageMainTabPlace);
 
         setDefaultSearchString("Storage:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
@@ -443,7 +445,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
                 model.getTimeout().setEntity(connection.getNfsTimeo());
                 model.getMountOptions().setEntity(connection.getMountOptions());
                 for (EntityModel<NfsVersion> item : model.getVersion().getItems()) {
-                    EntityModel itemModel = (EntityModel) item;
+                    EntityModel itemModel = item;
                     boolean noNfsVersion = itemModel.getEntity() == null && connection.getNfsVersion() == null;
                     boolean foundNfsVersion = itemModel.getEntity() != null &&
                             itemModel.getEntity().equals(connection.getNfsVersion());
@@ -590,7 +592,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         StorageDomain storage = (StorageDomain) getSelectedItem();
         model.setStorageDomain(storage);
 
-        VDS host = (VDS) storageModel.getHost().getSelectedItem();
+        VDS host = storageModel.getHost().getSelectedItem();
         Guid hostId = host != null && isStorageActive ? host.getId() : null;
 
         AsyncDataProvider.getLunsByVgId(new AsyncQuery(model, new INewAsyncCallback() {
@@ -649,7 +651,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         }
         model.startProgress(ConstantsManager.getInstance().getConstants().importingStorageDomainProgress());
 
-        VDS host = (VDS) model.getHost().getSelectedItem();
+        VDS host = model.getHost().getSelectedItem();
 
         // Save changes.
         if (model.getSelectedItem() instanceof NfsStorageModel) {
@@ -818,11 +820,11 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
                 return;
             }
 
-            VDS host = (VDS) model.getHostList().getSelectedItem();
+            VDS host = model.getHostList().getSelectedItem();
 
             RemoveStorageDomainParameters tempVar = new RemoveStorageDomainParameters(storage.getId());
             tempVar.setVdsId(host.getId());
-            tempVar.setDoFormat((Boolean) model.getFormat().getEntity());
+            tempVar.setDoFormat(model.getFormat().getEntity());
 
             Frontend.getInstance().runAction(VdcActionType.RemoveStorageDomain, tempVar, null, this);
         }
@@ -1219,7 +1221,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         boolean isNew = model.getStorage() == null;
         storageModel = model.getSelectedItem();
         PosixStorageModel posixModel = (PosixStorageModel) storageModel;
-        path = (String) posixModel.getPath().getEntity();
+        path = posixModel.getPath().getEntity();
 
         storageDomain = isNew ? new StorageDomainStatic() : (StorageDomainStatic) Cloner.clone(selectedItem.getStorageStaticData());
         storageDomain.setStorageType(isNew ? storageModel.getType() : storageDomain.getStorageType());
@@ -1227,7 +1229,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         storageDomain.setStorageName(model.getName().getEntity());
         storageDomain.setDescription(model.getDescription().getEntity());
         storageDomain.setComment(model.getComment().getEntity());
-        storageDomain.setStorageFormat((StorageFormatType) model.getFormat().getSelectedItem());
+        storageDomain.setStorageFormat(model.getFormat().getSelectedItem());
 
         if (isNew) {
             AsyncDataProvider.getStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
@@ -1269,15 +1271,15 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
 
         StorageModel model = (StorageModel) getWindow();
         PosixStorageModel posixModel = (PosixStorageModel) model.getSelectedItem();
-        VDS host = (VDS) model.getHost().getSelectedItem();
+        VDS host = model.getHost().getSelectedItem();
         hostId = host.getId();
 
         // Create storage connection.
         StorageServerConnections connection = new StorageServerConnections();
         connection.setconnection(path);
         connection.setstorage_type(posixModel.getType());
-        connection.setVfsType((String) posixModel.getVfsType().getEntity());
-        connection.setMountOptions((String) posixModel.getMountOptions().getEntity());
+        connection.setVfsType(posixModel.getVfsType().getEntity());
+        connection.setMountOptions(posixModel.getMountOptions().getEntity());
         this.connection = connection;
 
         ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
@@ -1349,13 +1351,13 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         boolean isNew = model.getStorage() == null;
         storageModel = model.getSelectedItem();
         GlusterStorageModel glusterModel = (GlusterStorageModel) storageModel;
-        path = (String) glusterModel.getPath().getEntity();
+        path = glusterModel.getPath().getEntity();
 
         storageDomain = isNew ? new StorageDomainStatic() : (StorageDomainStatic) Cloner.clone(selectedItem.getStorageStaticData());
         storageDomain.setStorageType(isNew ? storageModel.getType() : storageDomain.getStorageType());
         storageDomain.setStorageDomainType(isNew ? storageModel.getRole() : storageDomain.getStorageDomainType());
         storageDomain.setStorageName(model.getName().getEntity());
-        storageDomain.setStorageFormat((StorageFormatType) model.getFormat().getSelectedItem());
+        storageDomain.setStorageFormat(model.getFormat().getSelectedItem());
 
         if (isNew) {
             AsyncDataProvider.getStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
@@ -1382,15 +1384,15 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
 
         StorageModel model = (StorageModel) getWindow();
         GlusterStorageModel glusterModel = (GlusterStorageModel) model.getSelectedItem();
-        VDS host = (VDS) model.getHost().getSelectedItem();
+        VDS host = model.getHost().getSelectedItem();
         hostId = host.getId();
 
         // Create storage connection.
         StorageServerConnections connection = new StorageServerConnections();
         connection.setconnection(path);
         connection.setstorage_type(glusterModel.getType());
-        connection.setVfsType((String) glusterModel.getVfsType().getEntity());
-        connection.setMountOptions((String) glusterModel.getMountOptions().getEntity());
+        connection.setVfsType(glusterModel.getVfsType().getEntity());
+        connection.setMountOptions(glusterModel.getMountOptions().getEntity());
         this.connection = connection;
 
         ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
@@ -1462,7 +1464,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         boolean isNew = model.getStorage() == null;
         storageModel = model.getSelectedItem();
         NfsStorageModel nfsModel = (NfsStorageModel) storageModel;
-        path = (String) nfsModel.getPath().getEntity();
+        path = nfsModel.getPath().getEntity();
 
         storageDomain =
                 isNew ? new StorageDomainStatic()
@@ -1475,7 +1477,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         storageDomain.setStorageName(model.getName().getEntity());
         storageDomain.setDescription(model.getDescription().getEntity());
         storageDomain.setComment(model.getComment().getEntity());
-        storageDomain.setStorageFormat((StorageFormatType) model.getFormat().getSelectedItem());
+        storageDomain.setStorageFormat(model.getFormat().getSelectedItem());
 
         if (isNew)
         {
@@ -1508,7 +1510,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
 
     private void updatePath() {
         StorageModel model = (StorageModel) getWindow();
-        VDS host = (VDS) model.getHost().getSelectedItem();
+        VDS host = model.getHost().getSelectedItem();
 
         Guid hostId = Guid.Empty;
         if (host != null) {
@@ -1542,7 +1544,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
 
     private void updateNFSProperties(IStorageModel storageModel) {
         NfsStorageModel nfsModel = (NfsStorageModel) storageModel;
-        if ((Boolean) nfsModel.getOverride().getEntity()) {
+        if (nfsModel.getOverride().getEntity()) {
             connection.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
             connection.setNfsRetrans(nfsModel.getRetransmissions().asConvertible().nullableShort());
             connection.setNfsTimeo(nfsModel.getTimeout().asConvertible().nullableShort());
@@ -1564,18 +1566,18 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
     {
         StorageModel model = (StorageModel) getWindow();
         NfsStorageModel nfsModel = (NfsStorageModel) model.getSelectedItem();
-        VDS host = (VDS) model.getHost().getSelectedItem();
+        VDS host = model.getHost().getSelectedItem();
         hostId = host.getId();
 
         // Create storage connection.
         StorageServerConnections tempVar = new StorageServerConnections();
         tempVar.setconnection(path);
         tempVar.setstorage_type(nfsModel.getType());
-        if ((Boolean) nfsModel.getOverride().getEntity()) {
+        if (nfsModel.getOverride().getEntity()) {
             tempVar.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
             tempVar.setNfsRetrans(nfsModel.getRetransmissions().asConvertible().nullableShort());
             tempVar.setNfsTimeo(nfsModel.getTimeout().asConvertible().nullableShort());
-            tempVar.setMountOptions((String) nfsModel.getMountOptions().getEntity());
+            tempVar.setMountOptions(nfsModel.getMountOptions().getEntity());
         }
         connection = tempVar;
 
@@ -1653,7 +1655,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
     {
         StorageModel model = (StorageModel) getWindow();
         SanStorageModel sanModel = (SanStorageModel) model.getSelectedItem();
-        VDS host = (VDS) model.getHost().getSelectedItem();
+        VDS host = model.getHost().getSelectedItem();
         boolean force = sanModel.isForce();
 
         ArrayList<String> lunIds = new ArrayList<String>();
@@ -1696,11 +1698,11 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
 
         StorageDomain selectedItem = (StorageDomain) getSelectedItem();
         StorageModel model = (StorageModel) getWindow();
-        VDS host = (VDS) model.getHost().getSelectedItem();
+        VDS host = model.getHost().getSelectedItem();
         boolean isNew = model.getStorage() == null;
         storageModel = model.getSelectedItem();
         LocalStorageModel localModel = (LocalStorageModel) storageModel;
-        path = (String) localModel.getPath().getEntity();
+        path = localModel.getPath().getEntity();
 
         storageDomain =
                 isNew ? new StorageDomainStatic()
@@ -1756,7 +1758,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
     {
         StorageModel model = (StorageModel) getWindow();
         LocalStorageModel localModel = (LocalStorageModel) model.getSelectedItem();
-        VDS host = (VDS) model.getHost().getSelectedItem();
+        VDS host = model.getHost().getSelectedItem();
         hostId = host.getId();
 
         // Create storage connection.
@@ -2022,7 +2024,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
                     tempVar.setstorage_type(storageListModel.storageType);
                     if (storageModel instanceof NfsStorageModel) {
                         NfsStorageModel nfsModel = (NfsStorageModel) storageModel;
-                        if ((Boolean) nfsModel.getOverride().getEntity()) {
+                        if (nfsModel.getOverride().getEntity()) {
                             tempVar.setNfsVersion((NfsVersion) ((EntityModel) nfsModel.getVersion().getSelectedItem()).getEntity());
                             tempVar.setNfsRetrans(nfsModel.getRetransmissions().asConvertible().nullableShort());
                             tempVar.setNfsTimeo(nfsModel.getTimeout().asConvertible().nullableShort());
@@ -2030,8 +2032,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
                     }
                     if (storageModel instanceof PosixStorageModel) {
                         PosixStorageModel posixModel = (PosixStorageModel) storageModel;
-                        tempVar.setVfsType((String) posixModel.getVfsType().getEntity());
-                        tempVar.setMountOptions((String) posixModel.getMountOptions().getEntity());
+                        tempVar.setVfsType(posixModel.getVfsType().getEntity());
+                        tempVar.setMountOptions(posixModel.getMountOptions().getEntity());
                     }
                     if (storageModel instanceof GlusterStorageModel) {
                         GlusterStorageModel glusterModel = (GlusterStorageModel) storageModel;

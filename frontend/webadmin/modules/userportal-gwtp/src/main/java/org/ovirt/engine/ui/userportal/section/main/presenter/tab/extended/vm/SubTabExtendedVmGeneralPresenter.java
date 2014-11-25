@@ -5,8 +5,8 @@ import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmGeneralModelProvider;
+import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -21,7 +21,7 @@ public class SubTabExtendedVmGeneralPresenter
         extends AbstractSubTabExtendedVmPresenter<VmGeneralModel, SubTabExtendedVmGeneralPresenter.ViewDef, SubTabExtendedVmGeneralPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.extendedVirtualMachineGeneralSubTabPlace)
+    @NameToken(UserPortalApplicationPlaces.extendedVirtualMachineGeneralSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabExtendedVmGeneralPresenter> {
     }
 

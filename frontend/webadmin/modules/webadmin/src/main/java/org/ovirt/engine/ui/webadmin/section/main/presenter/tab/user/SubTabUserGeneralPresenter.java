@@ -7,8 +7,8 @@ import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.UserSelectionChangeEvent;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.user.SubTabUserGeneralView;
 
@@ -26,7 +26,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabUserGeneralPresenter extends AbstractSubTabPresenter<DbUser, UserListModel, UserGeneralModel, SubTabUserGeneralView, SubTabUserGeneralPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.userGeneralSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.userGeneralSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabUserGeneralPresenter> {
     }
 
@@ -48,7 +48,7 @@ public class SubTabUserGeneralPresenter extends AbstractSubTabPresenter<DbUser, 
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.userMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.userMainTabPlace);
     }
 
     @ProxyEvent

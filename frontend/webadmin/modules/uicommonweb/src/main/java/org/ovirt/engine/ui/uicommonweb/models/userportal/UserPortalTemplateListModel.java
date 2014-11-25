@@ -56,6 +56,7 @@ public class UserPortalTemplateListModel extends TemplateListModel
         }
     }
 
+    @Override
     protected String getEditTemplateAdvancedModelKey() {
         return "up_template_dialog"; //$NON-NLS-1$
     }

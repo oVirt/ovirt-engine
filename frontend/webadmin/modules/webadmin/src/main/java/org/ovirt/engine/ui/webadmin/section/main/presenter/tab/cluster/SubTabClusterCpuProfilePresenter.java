@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.CpuProfileListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.ClusterSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -27,7 +27,7 @@ public class SubTabClusterCpuProfilePresenter extends
         AbstractSubTabPresenter<VDSGroup, ClusterListModel, CpuProfileListModel, SubTabClusterCpuProfilePresenter.ViewDef, SubTabClusterCpuProfilePresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.clusterCpuProfileSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.clusterCpuProfileSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabClusterCpuProfilePresenter> {
     }
 
@@ -50,7 +50,7 @@ public class SubTabClusterCpuProfilePresenter extends
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.clusterMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.clusterMainTabPlace);
     }
 
     @ProxyEvent

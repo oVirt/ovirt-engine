@@ -8,8 +8,8 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DataCenterSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -26,7 +26,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabDataCenterClusterPresenter extends AbstractSubTabPresenter<StoragePool, DataCenterListModel, DataCenterClusterListModel, SubTabDataCenterClusterPresenter.ViewDef, SubTabDataCenterClusterPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.dataCenterClusterSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.dataCenterClusterSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabDataCenterClusterPresenter> {
     }
 
@@ -49,7 +49,7 @@ public class SubTabDataCenterClusterPresenter extends AbstractSubTabPresenter<St
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.dataCenterMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.dataCenterMainTabPlace);
     }
 
     @ProxyEvent

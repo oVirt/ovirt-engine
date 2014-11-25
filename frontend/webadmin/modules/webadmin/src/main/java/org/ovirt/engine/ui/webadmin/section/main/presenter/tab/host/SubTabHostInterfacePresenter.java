@@ -12,8 +12,8 @@ import org.ovirt.engine.ui.uicommonweb.models.GridTimerStateChangeEvent.GridTime
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.HostSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -31,7 +31,7 @@ public class SubTabHostInterfacePresenter extends AbstractSubTabPresenter<VDS, H
         SubTabHostInterfacePresenter.ViewDef, SubTabHostInterfacePresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.hostInterfaceSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.hostInterfaceSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabHostInterfacePresenter> {
     }
 
@@ -57,7 +57,7 @@ public class SubTabHostInterfacePresenter extends AbstractSubTabPresenter<VDS, H
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.hostMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.hostMainTabPlace);
     }
 
     @Override

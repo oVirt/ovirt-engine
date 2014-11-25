@@ -32,6 +32,7 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.EditNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NewNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.RemoveNetworksModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.UIConstants;
@@ -53,6 +54,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
     public NetworkListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().networksTitle());
         setHelpTag(HelpTag.networks);
+        setApplicationPlace(WebAdminApplicationPlaces.networkMainTabPlace);
         setHashName("networks"); //$NON-NLS-1$
 
         setDefaultSearchString("Network:"); //$NON-NLS-1$

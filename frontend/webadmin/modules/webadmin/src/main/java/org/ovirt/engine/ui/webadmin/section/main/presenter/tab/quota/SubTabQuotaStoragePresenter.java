@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaStorageListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.QuotaSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -26,7 +26,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabQuotaStoragePresenter extends AbstractSubTabPresenter<Quota, QuotaListModel, QuotaStorageListModel, SubTabQuotaStoragePresenter.ViewDef, SubTabQuotaStoragePresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.quotaStorageSubTabPlace)
+    @NameToken(WebAdminApplicationPlaces.quotaStorageSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabQuotaStoragePresenter> {
     }
 
@@ -49,7 +49,7 @@ public class SubTabQuotaStoragePresenter extends AbstractSubTabPresenter<Quota, 
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.quotaMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.quotaMainTabPlace);
     }
 
     @ProxyEvent

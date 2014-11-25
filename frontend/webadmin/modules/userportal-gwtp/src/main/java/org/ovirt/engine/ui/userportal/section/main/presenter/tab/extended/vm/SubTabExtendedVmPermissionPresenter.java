@@ -4,7 +4,7 @@ import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.uicommonweb.models.configure.UserPortalPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
+import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmPermissionListModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
@@ -21,7 +21,7 @@ public class SubTabExtendedVmPermissionPresenter
         extends AbstractSubTabExtendedVmPresenter<UserPortalPermissionListModel, SubTabExtendedVmPermissionPresenter.ViewDef, SubTabExtendedVmPermissionPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.extendedVirtualMachinePermissionSubTabPlace)
+    @NameToken(UserPortalApplicationPlaces.extendedVirtualMachinePermissionSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabExtendedVmPermissionPresenter> {
     }
 

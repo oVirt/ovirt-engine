@@ -4,8 +4,8 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.uicommonweb.models.templates.UserPortalTemplateEventListModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateEventListModelProvider;
+import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -21,7 +21,7 @@ public class SubTabExtendedTemplateEventsPresenter
         extends AbstractSubTabExtendedTemplatePresenter<UserPortalTemplateEventListModel, SubTabExtendedTemplateEventsPresenter.ViewDef, SubTabExtendedTemplateEventsPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.extendedTempplateEventsSubTabPlace)
+    @NameToken(UserPortalApplicationPlaces.extendedTempplateEventsSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabExtendedTemplateEventsPresenter> {
     }
 

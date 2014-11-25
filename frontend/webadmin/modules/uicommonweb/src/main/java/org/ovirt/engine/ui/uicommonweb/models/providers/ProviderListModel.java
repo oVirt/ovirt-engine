@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 
@@ -37,6 +38,7 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
     public ProviderListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().providersTitle());
         setHelpTag(HelpTag.providers);
+        setApplicationPlace(WebAdminApplicationPlaces.providerMainTabPlace);
         setHashName("providers"); //$NON-NLS-1$
 
         setDefaultSearchString("Provider:"); //$NON-NLS-1$
@@ -62,6 +64,7 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
         addCommand = value;
     }
 
+    @Override
     public UICommand getEditCommand() {
         return editCommand;
     }
