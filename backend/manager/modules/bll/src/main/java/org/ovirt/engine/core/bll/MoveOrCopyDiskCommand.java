@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -153,8 +154,17 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     protected boolean validateDestStorage() {
         StorageDomainValidator validator = new StorageDomainValidator(getStorageDomain());
-        return validate(validator.isDomainExistAndActive())
-                && validate(validator.domainIsValidDestination());
+        if (!validate(validator.isDomainExistAndActive()) || !validate(validator.domainIsValidDestination())) {
+            return false;
+        }
+
+        // Validate shareable disks moving
+        if (getParameters().getOperation() == ImageOperation.Move && getImage().isShareable() && getStorageDomain().getStorageType() == StorageType.GLUSTERFS ) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANT_MOVE_SHAREABLE_DISK_TO_GLUSTERFS,
+                    String.format("$%1$s %2$s", "diskAlias", getImage().getDiskAlias()));
+        }
+
+        return true;
     }
 
     /**
