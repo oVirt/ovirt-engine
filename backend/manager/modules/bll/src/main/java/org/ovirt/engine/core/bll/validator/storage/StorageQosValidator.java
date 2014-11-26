@@ -33,7 +33,7 @@ public class StorageQosValidator extends QosValidator<StorageQos> {
                 || missingCategoryValues(getQos().getMaxIops(),
                         getQos().getMaxReadIops(),
                         getQos().getMaxWriteIops())) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_QOS_MISSING_VALUES);
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_QOS_ILLEGAL_VALUES);
         }
         return ValidationResult.VALID;
     }

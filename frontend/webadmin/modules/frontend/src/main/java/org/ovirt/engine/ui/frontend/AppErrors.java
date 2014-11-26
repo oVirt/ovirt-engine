@@ -3164,6 +3164,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("QoS name length must be under 50 characters.")
     String QOS_NAME_TOO_LONG();
 
+    @DefaultStringValue("Cannot ${action} ${type}.\nQoS have non-zero total value with non-zero read/write for either throughput or IOps or both.")
+    String ACTION_TYPE_FAILED_STORAGE_QOS_ILLEGAL_VALUES();
+
     @DefaultStringValue("Cannot ${action} ${type}. QoS element has missing values.")
     String ACTION_TYPE_FAILED_QOS_MISSING_VALUES();
 
