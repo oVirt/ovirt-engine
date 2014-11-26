@@ -106,11 +106,18 @@ class Plugin(plugin.PluginBase):
                     hostname=self._dwh_host,
                 )
             )
-            self._update_DisconnectDwh('1')
-            retries = self.RETRIES
-            while self._remote_dwh_is_up() and retries > 0:
-                retries -= 1
-                time.sleep(self.DELAY)
+            try:
+                self._update_DisconnectDwh('1')
+                retries = self.RETRIES
+                while self._remote_dwh_is_up() and retries > 0:
+                    retries -= 1
+                    self.logger.debug(
+                        'Waiting for remote dwh to die, %s retries left' %
+                        retries
+                    )
+                    time.sleep(self.DELAY)
+            finally:
+                self._update_DisconnectDwh('0')
             if self._remote_dwh_is_up():
                 self.logger.error(
                     _(
@@ -122,7 +129,6 @@ class Plugin(plugin.PluginBase):
                     )
                 )
                 raise RuntimeError(_('dwhd is currently running'))
-            self._update_DisconnectDwh('0')
             self.logger.info(_('Stopped DWH'))
             self._remote_dwh_stopped = True
 
