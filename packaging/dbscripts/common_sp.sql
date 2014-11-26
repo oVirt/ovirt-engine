@@ -607,13 +607,13 @@ create or replace FUNCTION  fn_db_add_config_value_for_versions_up_to(v_option_n
 returns void
 AS $procedure$
 declare
-    m   varchar;
+    i   int;
     arr varchar[] := array['3.0', '3.1', '3.2', '3.3', '3.4', '3.5', '3.6'];
 begin
-    FOREACH m IN ARRAY arr
+    FOR i IN array_lower(arr, 1) .. array_upper(arr, 1)
     LOOP
-        perform fn_db_add_config_value(v_option_name, v_val, m);
-        EXIT WHEN  m = v_version;
+        PERFORM fn_db_add_config_value(v_option_name, v_val, arr[i]);
+        EXIT WHEN  arr[i] = v_version;
     END LOOP;
 END; $procedure$
 LANGUAGE plpgsql;
