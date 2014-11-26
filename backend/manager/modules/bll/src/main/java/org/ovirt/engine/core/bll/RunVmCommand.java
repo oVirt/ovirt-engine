@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.architecture.HasMaximumNumberOfDisks;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
@@ -80,6 +81,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -995,6 +997,18 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return failCanDoAction(EngineMessage.ACTION_TYPE_FAILED_RNG_SOURCE_NOT_SUPPORTED);
         }
 
+        boolean isWindowsOs = osRepository.isWindows(getVm().getVmOsId());
+
+        boolean isCloudInitEnabled = (!getVm().isInitialized() && hasVmInit() && !isWindowsOs) ||
+                (getParameters().getInitializationType() == InitializationType.CloudInit);
+
+        boolean hasCdromPayload = getParameters().getVmPayload() != null &&
+                getParameters().getVmPayload().getDeviceType() == VmDeviceType.CDROM;
+
+        if ((hasCdromPayload || isCloudInitEnabled) && hasMaximumNumberOfDisks()) {
+            return failCanDoAction(EngineMessage.VMPAYLOAD_CDROM_OR_CLOUD_INIT_MAXIMUM_DEVICES);
+        }
+
         // Note: that we are setting the payload from database in the ctor.
         //
         // Checking if the user sent Payload and Sysprep/Cloud-init at the same media -
@@ -1021,6 +1035,15 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return true;
     }
 
+    protected boolean hasVmInit() {
+        VmHandler.updateVmInitFromDB(getVm().getStaticData(), false);
+
+        return getVm().getVmInit() != null;
+    }
+
+    protected boolean hasMaximumNumberOfDisks() {
+        return ArchStrategyFactory.getStrategy(getVm().getClusterArch()).run(new HasMaximumNumberOfDisks(getVm().getId())).returnValue();
+    }
 
     /**
      * Checks whether rng device of vm is required by cluster, which is requirement for running vm.

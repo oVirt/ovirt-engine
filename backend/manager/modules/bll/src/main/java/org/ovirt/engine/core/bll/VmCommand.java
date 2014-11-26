@@ -123,7 +123,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     // The maximum number of sPAPR VSCSI disks that
     // can be detected by the Linux kernel of PPC64 guests
-    public final static int MAX_SPAPR_SCSI_DISKS = 8;
+    public final static int MAX_SPAPR_SCSI_DISKS = 7;
 
     private List<VmNic> interfaces;
 

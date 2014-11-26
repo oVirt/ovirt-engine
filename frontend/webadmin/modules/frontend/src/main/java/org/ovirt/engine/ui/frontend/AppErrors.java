@@ -2839,6 +2839,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Payload cdrom deivce cannot be used with Cloud-Init via cdrom device.")
     String VMPAYLOAD_CDROM_WITH_CLOUD_INIT();
 
+    @DefaultStringValue("CD-ROM Payload or Cloud-init is being used while there are too many devices using the IDE or the sPAPR VSCSI bus.")
+    String VMPAYLOAD_CDROM_OR_CLOUD_INIT_MAXIMUM_DEVICES();
+
     // Gluster Messages
     @DefaultStringValue("Cannot ${action} ${type}. Cluster ID is not valid.")
     String ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID();
