@@ -57,6 +57,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     private static final int Kb = 1024;
 
     protected final OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+    private Boolean skipCommandExecution;
 
     public VmCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -94,6 +95,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     @Override
     protected void executeCommand() {
+        if (shouldSkipCommandExecutionCached()) {
+            setSucceeded(true);
+            return;
+        }
         executeVmCommand();
     }
 
@@ -554,5 +559,26 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     protected MultipleStorageDomainsValidator createMultipleStorageDomainsValidator(List<DiskImage> disksList) {
         return new MultipleStorageDomainsValidator(getVm().getStoragePoolId(),
                 ImagesHandler.getAllStorageIdsForImageIds(disksList));
+    }
+
+    /**
+     * use this method to get the result of shouldSkipCommandExecution
+     * as it is also allow to cache the result for multiple calls
+     */
+    protected final boolean shouldSkipCommandExecutionCached() {
+        if (skipCommandExecution == null) {
+            skipCommandExecution = shouldSkipCommandExecution();
+        }
+        return skipCommandExecution;
+    }
+
+    /**
+     * check for special conditions that will cause the command to skip its canDoAction and execution
+     * this method should be overridden with specific logic for each command
+     * using the result should be done with shouldSkipCommandExecutionCached method that cache the result in the command
+     * @return true if the command should not execute any logic and should not return errors to the user
+     */
+    protected boolean shouldSkipCommandExecution() {
+        return false;
     }
 }
