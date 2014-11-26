@@ -1,12 +1,14 @@
 package org.ovirt.engine.core.bll.tasks;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CountDownLatch;
@@ -786,6 +788,16 @@ public final class AsyncTaskManager {
             }
         }
         return false;
+    }
+
+    public Collection<Guid> getUserIdsForVdsmTaskIds(List<Guid> vdsmTaskIds) {
+        Set<Guid> users = new TreeSet<>();
+        for (Guid id : vdsmTaskIds) {
+            if (_tasks.containsKey(id)) {
+                users.add(_tasks.get(id).getParameters().getDbAsyncTask().getUserId());
+            }
+        }
+        return users;
     }
 
 }
