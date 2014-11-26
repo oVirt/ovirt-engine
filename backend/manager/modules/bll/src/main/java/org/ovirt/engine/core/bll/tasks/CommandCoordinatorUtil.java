@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.tasks;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -109,6 +110,10 @@ public class CommandCoordinatorUtil {
 
     public static void logAndFailTaskOfCommandWithEmptyVdsmId(AsyncTask task, String message) {
         getAsyncTaskManager().logAndFailTaskOfCommandWithEmptyVdsmId(task, message);
+    }
+
+    public static Collection<Guid> getUserIdsForVdsmTaskIds(ArrayList<Guid> tasksIDs) {
+        return getAsyncTaskManager().getUserIdsForVdsmTaskIds(tasksIDs);
     }
 
     public static void removeTaskFromDbByTaskId(Guid taskId) {
