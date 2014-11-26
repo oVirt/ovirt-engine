@@ -355,7 +355,7 @@ SELECT
                           WHEN status_table.is_multi_domain THEN NULL
                           WHEN status_table.status IS NULL THEN 2 -- in case domain is unattached
                           ELSE status_table.status END as status,
-                null::uuid as storage_pool_id,
+                status_table.storage_pool_ids[1] as storage_pool_id,
                 status_table.pool_names AS storage_pool_name,
                 storage_domain_dynamic.available_disk_size as available_disk_size,
                 storage_domain_dynamic.used_disk_size as used_disk_size,
@@ -372,7 +372,8 @@ LEFT OUTER JOIN
                 (SELECT storage_id,
                         count(storage_id) > 1 AS is_multi_domain,
                         max(storage_pool_iso_map.status) AS status,
-                        array_to_string(array_agg(storage_pool.name), ',') AS pool_names
+                        array_to_string(array_agg(storage_pool.name), ',') AS pool_names,
+                        CASE WHEN COUNT(distinct storage_pool.id) = 1 THEN array_agg(storage_pool.id) ELSE NULL END as storage_pool_ids
                  FROM storage_pool_iso_map
                  JOIN storage_pool ON storage_pool_iso_map.storage_pool_id = storage_pool.id
                  GROUP BY storage_id) AS status_table ON storage_domain_static.id=status_table.storage_id
