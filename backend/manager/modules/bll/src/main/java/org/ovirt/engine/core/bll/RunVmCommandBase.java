@@ -245,6 +245,9 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     @Override
     public final void reportCompleted() {
         try {
+            // decrease pending resources if they were not decreased already
+            decreasePendingVms();
+            // end the execution job if needed
             ExecutionContext executionContext = getExecutionContext();
             if (executionContext != null && executionContext.isMonitored()
                     && !executionContext.isCompleted()) {
