@@ -62,7 +62,7 @@ import org.ovirt.engine.core.uutils.ssh.SSHClient;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<T> {
 
-    private AuditLogType errorType = AuditLogType.USER_FAILED_ADD_VDS;
+    private final AuditLogType errorType = AuditLogType.USER_FAILED_ADD_VDS;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -350,7 +350,9 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             return false;
         }
 
-        if (isGlusterSupportEnabled() && clusterHasServers()) {
+        if (isGlusterSupportEnabled() && clusterHasNonInitializingServers()) {
+            // allow simultaneous installation of hosts, but if a host has completed install, only
+            // allow addition of another host if it can be peer probed to cluster.
             VDS upServer = getClusterUtils().getUpServer(getVdsGroupId());
             if (upServer == null) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE);
@@ -366,6 +368,18 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
     private boolean clusterHasServers() {
         return getClusterUtils().hasServers(getVdsGroupId());
+    }
+
+    private boolean clusterHasNonInitializingServers() {
+        for (VDS vds : getVdsDAO().getAllForVdsGroup(getVdsGroupId())) {
+            if (vds.getStatus() != VDSStatus.Installing &&
+                    vds.getStatus() != VDSStatus.InstallingOS &&
+                    vds.getStatus() != VDSStatus.PendingApproval &&
+                    vds.getStatus() != VDSStatus.Initializing &&
+                    vds.getStatus() != VDSStatus.InstallFailed)
+                return true;
+        }
+        return false;
     }
 
     protected ClusterUtils getClusterUtils() {

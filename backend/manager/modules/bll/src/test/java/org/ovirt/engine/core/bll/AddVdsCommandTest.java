@@ -10,7 +10,9 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -27,6 +29,7 @@ import org.ovirt.engine.core.common.action.VdsOperationActionParameters.Authenti
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
@@ -151,9 +154,19 @@ public class AddVdsCommandTest {
         when(commandMock.getGlusterDBUtils()).thenReturn(glusterDBUtils);
 
         when(clusterUtils.hasServers(any(Guid.class))).thenReturn(clusterHasServers);
+        when(vdsDaoMock.getAllForVdsGroup(any(Guid.class))).thenReturn(mockVdsInDb(clusterHasServers ? VDSStatus.Maintenance
+                : VDSStatus.Initializing));
         when(clusterUtils.getUpServer(any(Guid.class))).thenReturn(upServer);
 
         commandMock.log = this.log;
+    }
+
+    private List<VDS> mockVdsInDb(VDSStatus status) {
+        List<VDS> vdsList = new ArrayList<>();
+        VDS vds = new VDS();
+        vds.setStatus(status);
+        vdsList.add(vds);
+        return vdsList;
     }
 
     @Test
