@@ -1143,6 +1143,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      */
     @Override
     public void onPowerringUp() {
-        decreasePendingVms(getVmStaticDAO().get(getVmId()));
+        decreasePendingVm(getVmStaticDAO().get(getVmId()));
     }
 }

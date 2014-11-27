@@ -739,11 +739,11 @@ public class VmHandler {
         return validationResult;
     }
 
-    public static void decreasePendingVms(VmStatic vm, Guid vdsId) {
-        decreasePendingVms(vdsId, vm.getNumOfCpus(), vm.getMinAllocatedMem(), vm.getName());
+    public static void decreasePendingVm(VmStatic vm, Guid vdsId) {
+        decreasePendingResources(vdsId, vm.getNumOfCpus(), vm.getMinAllocatedMem(), vm.getName());
     }
 
-    public static void decreasePendingVms(Guid vdsId, int numOfCpus, int minAllocatedMem, String vmName) {
+    private static void decreasePendingResources(Guid vdsId, int numOfCpus, int minAllocatedMem, String vmName) {
         getVdsDynamicDao().updatePartialVdsDynamicCalc(vdsId, 0, -numOfCpus, -minAllocatedMem, 0, 0);
 
         log.debug("Decreasing vds '{}' pending vcpu count by {} and vmem size by {} (Vm '{}')",

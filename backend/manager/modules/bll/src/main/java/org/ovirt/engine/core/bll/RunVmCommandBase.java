@@ -86,7 +86,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     @Override
     public void rerun() {
-        decreasePendingVms();
+        decreasePendingVm();
 
         setSucceeded(false);
         setVm(null);
@@ -138,7 +138,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     protected void runningFailed() {
         try {
-            decreasePendingVms();
+            decreasePendingVm();
             Backend.getInstance().getResourceManager().RemoveAsyncRunningCommand(getVmId());
             setCommandShouldBeLogged(false);
             _isRerun = false;
@@ -172,7 +172,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     @Override
     public void runningSucceded() {
         try {
-            decreasePendingVms();
+            decreasePendingVm();
             setSucceeded(true);
             setActionReturnValue(VMStatus.Up);
             log();
@@ -246,7 +246,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     public final void reportCompleted() {
         try {
             // decrease pending resources if they were not decreased already
-            decreasePendingVms();
+            decreasePendingVm();
             // end the execution job if needed
             ExecutionContext executionContext = getExecutionContext();
             if (executionContext != null && executionContext.isMonitored()
@@ -305,11 +305,11 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         return true;
     }
 
-    private void decreasePendingVms() {
-        decreasePendingVms(getVm().getStaticData());
+    private void decreasePendingVm() {
+        decreasePendingVm(getVm().getStaticData());
     }
 
-    protected final void decreasePendingVms(VmStatic vm) {
+    protected final void decreasePendingVm(VmStatic vm) {
         Guid vdsId = getCurrentVdsId();
         if (vdsId == null || vdsId.equals(lastDecreasedVds)) {
             log.debug("PendingVms for the guest '{}' running on host '{}' was already released, not releasing again",
@@ -319,7 +319,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         }
 
         lastDecreasedVds = vdsId;
-        VmHandler.decreasePendingVms(vm, vdsId);
+        VmHandler.decreasePendingVm(vm, vdsId);
 
         getBlockingQueue(vdsId).offer(Boolean.TRUE);
     }
