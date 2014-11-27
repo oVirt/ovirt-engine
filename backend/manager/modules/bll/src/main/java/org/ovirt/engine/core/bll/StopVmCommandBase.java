@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
-import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
@@ -81,9 +80,6 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
     }
 
     protected void destroyVm() {
-        boolean wasPaused = (getVm().getStatus() == VMStatus.Paused
-                            && getVm().getVmPauseStatus() == VmPauseStatus.NOERR);
-
         if (getVm().getStatus() == VMStatus.MigratingFrom && getVm().getMigratingToVds() != null) {
             Backend.getInstance()
                     .getResourceManager()
@@ -98,10 +94,6 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.DestroyVm,
         new DestroyVmVDSCommandParameters(getVdsId(), getVmId(), getParameters().getStopReason(), false, false, 0)).getReturnValue());
-
-        if (wasPaused) {
-            VmHandler.decreasePendingVm(getVm().getStaticData(), getVdsId());
-        }
     }
 
     @Override
