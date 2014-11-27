@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
@@ -56,11 +57,13 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
 
     private void initVmTemplate() {
         OvfHelper ovfHelper = new OvfHelper();
-        ovfEntityData =
+        List<OvfEntityData> ovfEntityList =
                 getUnregisteredOVFDataDao().getByEntityIdAndStorageDomain(getParameters().getContainerId(),
                         getParameters().getStorageDomainId());
-        if (ovfEntityData != null) {
+        if (!ovfEntityList.isEmpty()) {
             try {
+                // We should get only one entity, since we fetched the entity with a specific Storage Domain
+                ovfEntityData = ovfEntityList.get(0);
                 vmTemplateFromConfiguration = ovfHelper.readVmTemplateFromOvf(ovfEntityData.getOvfData());
                 vmTemplateFromConfiguration.setVdsGroupId(getParameters().getVdsGroupId());
                 setVmTemplate(vmTemplateFromConfiguration);

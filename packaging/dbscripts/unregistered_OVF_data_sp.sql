@@ -53,6 +53,6 @@ BEGIN
         RETURN QUERY SELECT *
         FROM unregistered_ovf_of_entities
         WHERE entity_guid = v_entity_guid
-          AND storage_domain_id = v_storage_domain_id;
+          AND (storage_domain_id = v_storage_domain_id OR v_storage_domain_id IS NULL);
 END; $procedure$
 LANGUAGE plpgsql;

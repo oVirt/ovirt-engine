@@ -23,8 +23,8 @@ public class UnregisteredOVFDataDAODbFacadeImpl extends BaseDAODbFacade implemen
     }
 
     @Override
-    public OvfEntityData getByEntityIdAndStorageDomain(Guid entityId, Guid storageDomainId) {
-        return getCallsHandler().executeRead("GetOVFDataByEntityIdAndStorageDomain",
+    public List<OvfEntityData> getByEntityIdAndStorageDomain(Guid entityId, Guid storageDomainId) {
+        return getCallsHandler().executeReadList("GetOVFDataByEntityIdAndStorageDomain",
                 OvfEntityDataRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("entity_guid", entityId)

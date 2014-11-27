@@ -4117,6 +4117,16 @@
             <value>null</value>
             <value>null</value>
         </row>
+        <row>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b94</value>
+            <value>UnregisteredTemplate</value>
+            <value>TEMPLATE</value>
+            <value>1</value>
+            <value>3.4</value>
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa41</value>
+            <value>null</value>
+            <value>null</value>
+        </row>
     </table>
 
     <table name="storage_pool_iso_map">

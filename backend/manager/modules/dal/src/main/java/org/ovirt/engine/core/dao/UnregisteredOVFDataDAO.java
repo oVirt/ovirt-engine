@@ -9,7 +9,8 @@ import org.ovirt.engine.core.compat.Guid;
 public interface UnregisteredOVFDataDAO extends DAO {
 
     /**
-     * Retrieves the entity with the given Entity id.
+     * Retrieves the entity with the given entityId and storage domain id.<BR/>
+     * If the Storage Domain id is null, then return all the unregistered entities with the entityId.
      *
      * @param entityId
      *            The Entity Id.
@@ -17,7 +18,7 @@ public interface UnregisteredOVFDataDAO extends DAO {
      *            The Storage Domain Id.
      * @return The entity instance, or <code>null</code> if not found.
      */
-    public OvfEntityData getByEntityIdAndStorageDomain(Guid entityId, Guid storageDomainId);
+    public List<OvfEntityData> getByEntityIdAndStorageDomain(Guid entityId, Guid storageDomainId);
 
     /**
      * Retrieves all the entities of the given type related to the storage Domain Id.
