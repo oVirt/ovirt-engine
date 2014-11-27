@@ -739,7 +739,7 @@ public class VmHandler {
         return validationResult;
     }
 
-    public static void decreasePendingVms(VM vm, Guid vdsId) {
+    public static void decreasePendingVms(VmStatic vm, Guid vdsId) {
         decreasePendingVms(vdsId, vm.getNumOfCpus(), vm.getMinAllocatedMem(), vm.getName());
     }
 

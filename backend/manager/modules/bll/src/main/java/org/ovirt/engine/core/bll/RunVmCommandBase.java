@@ -28,8 +28,8 @@ import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -306,8 +306,11 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     }
 
     private void decreasePendingVms() {
+        decreasePendingVms(getVm().getStaticData());
+    }
+
+    protected final void decreasePendingVms(VmStatic vm) {
         Guid vdsId = getCurrentVdsId();
-        VM vm = getVm();
         if (vdsId == null || vdsId.equals(lastDecreasedVds)) {
             log.debug("PendingVms for the guest '{}' running on host '{}' was already released, not releasing again",
                     vm.getName(), vdsId);

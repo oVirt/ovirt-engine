@@ -100,7 +100,7 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
         new DestroyVmVDSCommandParameters(getVdsId(), getVmId(), getParameters().getStopReason(), false, false, 0)).getReturnValue());
 
         if (wasPaused) {
-            VmHandler.decreasePendingVms(getVm(), getVdsId());
+            VmHandler.decreasePendingVms(getVm().getStaticData(), getVdsId());
         }
     }
 

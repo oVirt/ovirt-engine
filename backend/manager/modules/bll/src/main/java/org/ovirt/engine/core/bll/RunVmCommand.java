@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
@@ -55,7 +56,6 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
@@ -1143,8 +1143,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      */
     @Override
     public void onPowerringUp() {
-        VmStatic vmStatic = getVmStaticDAO().get(getVmId());
-        VmHandler.decreasePendingVms(getCurrentVdsId(), vmStatic.getNumOfCpus(),
-                vmStatic.getMinAllocatedMem(), vmStatic.getName());
+        decreasePendingVms(getVmStaticDAO().get(getVmId()));
     }
 }
