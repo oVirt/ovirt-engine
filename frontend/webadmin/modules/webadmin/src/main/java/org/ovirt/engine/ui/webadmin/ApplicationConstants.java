@@ -1321,6 +1321,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Data Center")
     String networkPopupDataCenterLabel();
 
+    @DefaultStringValue("Out-of-sync")
+    String hostOutOfSync();
+
     // Quota Storage
     @DefaultStringValue("Name")
     String nameQuotaStorage();

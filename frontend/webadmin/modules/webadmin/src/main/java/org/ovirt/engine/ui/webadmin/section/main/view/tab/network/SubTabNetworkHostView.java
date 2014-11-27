@@ -1,10 +1,13 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.network;
 
-import java.util.Arrays;
-import java.util.Comparator;
-
-import javax.inject.Inject;
-
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.user.client.ui.RadioButton;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
@@ -33,14 +36,9 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.host.InterfaceStatusImage;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.RadioButton;
+import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel>
         implements SubTabNetworkHostPresenter.ViewDef {
@@ -50,7 +48,6 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
     }
 
     private final ViewRadioGroup<NetworkHostFilter> viewRadioGroup;
-
     private final SafeHtml labelImage;
 
     private final static ApplicationTemplates templates = AssetProvider.getTemplates();
@@ -121,6 +118,18 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
             return null;
         }
     };
+
+    private final AbstractImageResourceColumn<PairQueryable<VdsNetworkInterface, VDS>> hostOutOfSync =
+            new AbstractImageResourceColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
+
+                @Override
+                public ImageResource getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
+                    return (object.getFirst() == null || object.getFirst().getNetworkImplementationDetails().isInSync()) ? null
+                            : resources.networkNotSyncImage();
+                }
+
+            };
+
 
     private final AbstractSafeHtmlColumn<PairQueryable<VdsNetworkInterface, VDS>> nicColumn =
             new AbstractSafeHtmlColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
@@ -220,6 +229,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         getTable().ensureColumnPresent(clusterColumn, constants.clusterHost(), true, "200px"); //$NON-NLS-1$
         getTable().ensureColumnPresent(dcColumn, constants.dcHost(), true, "200px"); //$NON-NLS-1$
         getTable().ensureColumnPresent(nicStatusColumn, constants.statusNetworkHost(), attached, "140px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(hostOutOfSync, constants.hostOutOfSync(), attached, "75px"); //$NON-NLS-1$
         getTable().ensureColumnPresent(nicColumn, constants.nicNetworkHost(), attached, "100px"); //$NON-NLS-1$
         getTable().ensureColumnPresent(speedColumn,
                 templates.sub(constants.speedNetworkHost(), constants.mbps()).asString(),
@@ -260,6 +270,20 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
     private void initSorting() {
         hostStatus.makeSortable();
         nameColumn.makeSortable();
+        hostOutOfSync.makeSortable((new Comparator<PairQueryable<VdsNetworkInterface, VDS>>() {
+
+            @Override
+            public int compare(PairQueryable<VdsNetworkInterface, VDS> o1,
+                    PairQueryable<VdsNetworkInterface, VDS> o2) {
+                boolean syncStatus1 =
+                        (o1.getFirst() == null) ? false : o1.getFirst().getNetworkImplementationDetails().isInSync();
+                boolean syncStatus2 =
+                        (o2.getFirst() == null) ? false : o2.getFirst().getNetworkImplementationDetails().isInSync();
+                return Boolean.compare(syncStatus1, syncStatus2);
+            }
+
+        }));
+
         clusterColumn.makeSortable();
         dcColumn.makeSortable();
         nicStatusColumn.makeSortable(new SimpleStatusColumnComparator<PairQueryable<VdsNetworkInterface, VDS>>(nicStatusColumn));
@@ -281,3 +305,4 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         totalTxColumn.makeSortable();
     }
 }
+
