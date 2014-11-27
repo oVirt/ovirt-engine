@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 
@@ -74,13 +74,27 @@ public class StorageQosMetricParametersModel extends Model {
         validateValue(getRead(), (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(maxRead));
         validateValue(getWrite(), (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(maxWrite));
 
+        if (getTotal().getEntity() != null && (getRead().getEntity() != null || getWrite().getEntity() != null)) {
+            setErrorMsg(getTotal());
+            setErrorMsg(getRead());
+            setErrorMsg(getWrite());
+        }
+
         setIsValid(getTotal().getIsValid() && getRead().getIsValid() && getWrite().getIsValid());
         return getIsValid();
     }
 
+    private void setErrorMsg(EntityModel<Integer> entityModel) {
+        if (entityModel.getEntity() != null) {
+            entityModel.setIsValid(false);
+            entityModel.getInvalidityReasons().add(ConstantsManager.getInstance()
+                    .getConstants()
+                    .eitherTotalOrReadWriteCanHaveValues());
+        }
+    }
+
     private void validateValue(EntityModel<Integer> entity, Integer maxValue) {
         entity.validateEntity(new IValidation[] {
-                new NotEmptyValidation(),
                 new IntegerValidation(0, maxValue) });
     }
 
