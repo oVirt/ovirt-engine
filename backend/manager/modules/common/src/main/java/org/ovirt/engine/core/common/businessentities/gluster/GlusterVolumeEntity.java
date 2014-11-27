@@ -68,6 +68,10 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
     @Valid
     private List<GlusterBrickEntity> bricks;
 
+    private Integer snapshotsCount;
+
+    private Integer snapMaxLimit;
+
     private GlusterStatus status;
 
     // Gluster and NFS are enabled by default
@@ -299,6 +303,22 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         this.bricks = bricks;
     }
 
+    public Integer getSnapshotsCount() {
+        return this.snapshotsCount;
+    }
+
+    public void setSnapshotsCount(Integer value) {
+        this.snapshotsCount = value;
+    }
+
+    public Integer getSnapMaxLimit() {
+        return this.snapMaxLimit;
+    }
+
+    public void setSnapMaxLimit(Integer limit) {
+        this.snapMaxLimit = limit;
+    }
+
     public void removeBrick(GlusterBrickEntity GlusterBrick) {
         bricks.remove(GlusterBrick);
     }
@@ -378,6 +398,8 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         result = prime * result + ((bricks == null) ? 0 : bricks.hashCode());
         result = prime * result + ((asyncTask == null) ? 0 : asyncTask.hashCode());
         result = prime * result + ((advancedDetails == null) ? 0 : advancedDetails.hashCode());
+        result = prime * result + ((snapshotsCount == null) ? 0 : snapshotsCount.hashCode());
+        result = prime * result + ((snapMaxLimit == null) ? 0 : snapMaxLimit.hashCode());
         return result;
     }
 
@@ -422,6 +444,14 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         }
 
         if (!ObjectUtils.objectsEqual(getAdvancedDetails(), volume.getAdvancedDetails())) {
+            return false;
+        }
+
+        if (!ObjectUtils.objectsEqual(snapshotsCount, volume.getSnapshotsCount())) {
+            return false;
+        }
+
+        if (!ObjectUtils.objectsEqual(snapMaxLimit, volume.getSnapMaxLimit())) {
             return false;
         }
 

@@ -41,4 +41,5 @@ public class GlusterConstants {
     public static final String JOB_STATUS = "status";
     public static final String JOB_INFO = "info";
     public static final String NO_SERVER = "NO SERVER";
+    public static final String VOLUME_SNAPSHOT_MAX_HARD_LIMIT = "snap-max-hard-limit";
 }

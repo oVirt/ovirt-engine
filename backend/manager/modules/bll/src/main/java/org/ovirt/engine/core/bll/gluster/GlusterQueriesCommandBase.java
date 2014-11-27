@@ -19,6 +19,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotDao;
 
 public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
     protected GlusterQueriesCommandBase(P parameters) {
@@ -60,6 +61,10 @@ public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase
 
     protected GlusterGeoRepDao getGeoRepDao() {
         return DbFacade.getInstance().getGlusterGeoRepDao();
+    }
+
+    protected GlusterVolumeSnapshotDao getGlusterVolumeSnapshotDao() {
+        return DbFacade.getInstance().getGlusterVolumeSnapshotDao();
     }
 
     protected Guid getUpServerId(Guid clusterId) {

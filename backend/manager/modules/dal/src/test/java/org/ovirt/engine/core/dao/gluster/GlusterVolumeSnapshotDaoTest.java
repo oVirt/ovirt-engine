@@ -7,10 +7,12 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterSnapshotStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDAOTestCase;
@@ -23,6 +25,7 @@ public class GlusterVolumeSnapshotDaoTest extends BaseDAOTestCase {
     private static final String EXISTING_SNAPSHOT_NAME_1 = "test-vol-distribute-1-snap2";
     private static final String NEW_SNAPSHOT_NAME = "test-vol-distribute-1-snap3";
     private GlusterVolumeSnapshotDao dao;
+    private GlusterVolumeDao volumeDao;
     private GlusterVolumeSnapshotEntity existingSnapshot;
     private GlusterVolumeSnapshotEntity existingSnapshot1;
     private GlusterVolumeSnapshotEntity newSnapshot;
@@ -31,6 +34,7 @@ public class GlusterVolumeSnapshotDaoTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
         dao = dbFacade.getGlusterVolumeSnapshotDao();
+        volumeDao = dbFacade.getGlusterVolumeDao();
         existingSnapshot = dao.getById(EXISTING_SNAPSHOT_ID);
         existingSnapshot1 = dao.getById(EXISTING_SNAPSHOT_ID_1);
     }
@@ -85,11 +89,17 @@ public class GlusterVolumeSnapshotDaoTest extends BaseDAOTestCase {
 
     @Test
     public void testRemove() {
+        GlusterVolumeEntity volume = volumeDao.getById(VOLUME_ID);
+        assertEquals(volume.getSnapshotsCount().intValue(), 2);
+
         dao.remove(EXISTING_SNAPSHOT_ID);
         List<GlusterVolumeSnapshotEntity> snapshots = dao.getAllByVolumeId(VOLUME_ID);
 
         assertTrue(snapshots.size() == 1);
         assertFalse(snapshots.contains(existingSnapshot));
+
+        GlusterVolumeEntity volume1 = volumeDao.getById(VOLUME_ID);
+        assertEquals(volume1.getSnapshotsCount().intValue(), 1);
     }
 
     @Test
@@ -98,27 +108,44 @@ public class GlusterVolumeSnapshotDaoTest extends BaseDAOTestCase {
         idsToRemove.add(EXISTING_SNAPSHOT_ID);
         idsToRemove.add(EXISTING_SNAPSHOT_ID_1);
 
+        GlusterVolumeEntity volume = volumeDao.getById(VOLUME_ID);
+        assertEquals(volume.getSnapshotsCount().intValue(), 2);
+
         dao.removeAll(idsToRemove);
         List<GlusterVolumeSnapshotEntity> snapshots = dao.getAllByVolumeId(VOLUME_ID);
-
         assertTrue(snapshots.isEmpty());
+
+        GlusterVolumeEntity volume1 = volumeDao.getById(VOLUME_ID);
+        assertEquals(volume1.getSnapshotsCount().intValue(), 0);
     }
 
     @Test
     public void testRemoveByName() {
+        GlusterVolumeEntity volume = volumeDao.getById(VOLUME_ID);
+        assertEquals(volume.getSnapshotsCount().intValue(), 2);
+
         dao.removeByName(VOLUME_ID, EXISTING_SNAPSHOT_NAME_1);
         List<GlusterVolumeSnapshotEntity> snapshots = dao.getAllByVolumeId(VOLUME_ID);
 
         assertTrue(snapshots.size() == 1);
         assertTrue(snapshots.contains(existingSnapshot));
         assertFalse(snapshots.contains(existingSnapshot1));
+
+        GlusterVolumeEntity volume1 = volumeDao.getById(VOLUME_ID);
+        assertEquals(volume1.getSnapshotsCount().intValue(), 1);
     }
 
     @Test
     public void testRemoveAllByVolumeId() {
+        GlusterVolumeEntity volume = volumeDao.getById(VOLUME_ID);
+        assertEquals(volume.getSnapshotsCount().intValue(), 2);
+
         dao.removeAllByVolumeId(VOLUME_ID);
         List<GlusterVolumeSnapshotEntity> snapshots = dao.getAllByVolumeId(VOLUME_ID);
         assertTrue(snapshots.isEmpty());
+
+        GlusterVolumeEntity volume1 = volumeDao.getById(VOLUME_ID);
+        assertEquals(volume1.getSnapshotsCount().intValue(), 0);
     }
 
     @Test
@@ -178,6 +205,7 @@ public class GlusterVolumeSnapshotDaoTest extends BaseDAOTestCase {
         snapshot.setVolumeId(VOLUME_ID);
         snapshot.setDescription("test-description");
         snapshot.setStatus(GlusterSnapshotStatus.STARTED);
+        snapshot.setCreatedAt(new Date());
 
         dao.save(snapshot);
         return snapshot;
