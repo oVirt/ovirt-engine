@@ -349,8 +349,8 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
             parameters.setParentParameters(getParameters().getParentParameters());
             parameters.setParentCommand(getParameters().getParentCommand());
             parameters.setSkipDomainChecks(getParameters().isSkipDomainChecks());
-            VdcReturnValueBase returnValueBase = runInternalAction(VdcActionType.CreateOvfStoresForStorageDomain,
-                    parameters, cloneContextAndDetachFromParent());
+            VdcReturnValueBase returnValueBase = runInternalActionWithTasksContext(VdcActionType.CreateOvfStoresForStorageDomain,
+                    parameters);
             if (hasParentCommand()) {
                 getReturnValue().getInternalVdsmTaskIdList().addAll(returnValueBase.getInternalVdsmTaskIdList());
             } else {

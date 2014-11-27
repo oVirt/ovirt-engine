@@ -494,9 +494,13 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
     }
 
+    protected void startFinalizingStep() {
+        ExecutionHandler.startFinalizingStep(getExecutionContext());
+    }
+
     public VdcReturnValueBase endAction() {
         if (!hasTaskHandlers() || getExecutionIndex() == getTaskHandlers().size() - 1) {
-            ExecutionHandler.startFinalizingStep(getExecutionContext());
+            startFinalizingStep();
         }
 
         try {
