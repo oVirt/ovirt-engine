@@ -54,6 +54,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -546,9 +547,16 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         Snapshot activeSnapshot = getDbFacade().getSnapshotDao().get(
                 getDbFacade().getSnapshotDao().getId(vm.getId(), SnapshotType.ACTIVE));
         vm.setSnapshots(Arrays.asList(activeSnapshot));
-        updateCopyVmInSpm(getVm().getStoragePoolId(),
-                vm, getParameters()
-                        .getStorageDomainId());
+
+        try {
+            updateCopyVmInSpm(getVm().getStoragePoolId(),
+                    vm, getParameters()
+                            .getStorageDomainId());
+        }
+        catch (VdcBLLException e) {
+            log.error("Updating VM OVF in export domain failed.", e);
+            AuditLogDirector.log(this, AuditLogType.IMPORTEXPORT_IMPORT_VM_FAILED_UPDATING_OVF);
+        }
     }
 
     private void updateSnapshotOvf(VM vm) {
