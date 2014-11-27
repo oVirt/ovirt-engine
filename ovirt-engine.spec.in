@@ -764,8 +764,13 @@ org/tukaani/xz/main/xz.jar
 %endif
 %endif
 %if 0%{?rhel}
+%if %{rhel} >= 7
+org/apache/avalon/framework/main/avalon-framework-api.jar
+org/apache/avalon/framework/main/avalon-framework-impl.jar
+%else
 org/apache/avalon/framework/main/avalon-framework-api.jar avalon-framework.jar
 org/apache/avalon/framework/main/avalon-framework-impl.jar avalon-framework.jar
+%endif
 %endif
 __EOF__
 
