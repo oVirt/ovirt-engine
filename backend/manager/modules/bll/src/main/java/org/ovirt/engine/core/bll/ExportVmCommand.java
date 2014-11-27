@@ -180,7 +180,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         return true;
     }
 
-    protected boolean handleDestStorageDomain(List<DiskImage> disksList) {
+    private boolean handleDestStorageDomain(List<DiskImage> disksList) {
         ensureDomainMap(disksList, getStorageDomainId());
         List<DiskImage> dummiesDisksList = createDiskDummiesForSpaceValidations(disksList);
         dummiesDisksList.addAll(getMemoryVolumes());
@@ -255,7 +255,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         return !getDisksBasedOnImage().isEmpty();
     }
 
-    public boolean updateCopyVmInSpm(Guid storagePoolId, VM vm, Guid storageDomainId) {
+    private boolean updateCopyVmInSpm(Guid storagePoolId, VM vm, Guid storageDomainId) {
         HashMap<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndMetaDictionary =
                 new HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>();
         OvfManager ovfManager = new OvfManager();
@@ -295,8 +295,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         String vmMeta = ovfManager.ExportVm(vm, AllVmImages, ClusterUtils.getCompatibilityVersion(vm));
 
-        vmsAndMetaDictionary
-                    .put(vm.getId(), new KeyValuePairCompat<String, List<Guid>>(vmMeta, imageGroupIds));
+        vmsAndMetaDictionary.put(vm.getId(), new KeyValuePairCompat<String, List<Guid>>(vmMeta, imageGroupIds));
         UpdateVMVDSCommandParameters tempVar = new UpdateVMVDSCommandParameters(storagePoolId, vmsAndMetaDictionary);
         tempVar.setStorageDomainId(storageDomainId);
         return runVdsCommand(VDSCommandType.UpdateVM, tempVar)
@@ -318,7 +317,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         return disksImages;
     }
 
-    protected void copyAllMemoryImages(Guid containerID) {
+    private void copyAllMemoryImages(Guid containerID) {
         for (Snapshot snapshot : snapshotsWithMemory) {
             List<Guid> guids = GuidUtils.getGuidListFromString(snapshot.getMemoryVolume());
 
@@ -510,7 +509,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         return super.getAuditLogTypeValue();
     }
 
-    protected boolean updateVmInSpm() {
+    private boolean updateVmInSpm() {
         Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary =
                 new HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>();
         OvfDataUpdater.getInstance().loadVmData(getVm());
