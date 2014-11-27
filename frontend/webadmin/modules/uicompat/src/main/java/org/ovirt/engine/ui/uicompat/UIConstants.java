@@ -2404,5 +2404,8 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Insufficient parameters to test connectivity")
     String testFailedInsufficientParams();
+
+    @DefaultStringValue("Either Total or Read/Write can have values.")
+    String eitherTotalOrReadWriteCanHaveValues();
 }
 

@@ -40,7 +40,8 @@ public abstract class QosModel<T extends QosBase, P extends QosParametersModel<T
     public boolean validate() {
         getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new AsciiNameValidation() });
         getDescription().validateEntity(new IValidation[] { new AsciiOrNoneValidation() });
-        setIsValid(getIsValid() && getName().getIsValid() && getDescription().getIsValid());
+        getQosParametersModel().validate();
+        setIsValid(getName().getIsValid() && getDescription().getIsValid() && getQosParametersModel().getIsValid());
         return getIsValid();
     }
 

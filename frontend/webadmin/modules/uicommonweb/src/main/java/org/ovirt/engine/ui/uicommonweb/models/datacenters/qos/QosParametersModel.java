@@ -9,4 +9,6 @@ public abstract class QosParametersModel<T extends QosBase> extends Model {
 
     public abstract void flush(T qos);
 
+    public abstract boolean validate();
+
 }
