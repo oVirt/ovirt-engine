@@ -365,6 +365,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     protected void executeVmCommand() {
         getParameters().getDiskInfo().setId(Guid.newGuid());
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.Disk, getParameters().getDiskInfo().getId()));
+        ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
         if (DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
             createDiskBasedOnImage();
         } else {
@@ -624,14 +625,5 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     protected StorageDomainValidator createStorageDomainValidator() {
         return new StorageDomainValidator(getStorageDomain());
-    }
-
-    @Override
-    public Map<String, String> getJobMessageProperties() {
-        if (jobProperties == null) {
-            ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
-            jobProperties = super.getJobMessageProperties();
-        }
-        return jobProperties;
     }
 }
