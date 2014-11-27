@@ -62,6 +62,8 @@ public class GetUnregisteredVmsQueryTest extends AbstractQueryTest<IdQueryParame
                         storageDomainId,
                         ovfData,
                         null);
+        List<OvfEntityData> expectedResultQuery1 = new ArrayList<>();
+        expectedResultQuery1.add(ovfEntityData);
         List<OvfEntityData> expectedResult = new ArrayList<>();
         expectedResult.add(ovfEntityData);
         VM vmReturnForOvf2 = new VM();
@@ -78,13 +80,15 @@ public class GetUnregisteredVmsQueryTest extends AbstractQueryTest<IdQueryParame
                         ovfData2,
                         null);
         expectedResult.add(ovfEntityData2);
+        List<OvfEntityData> expectedResultQuery2 = new ArrayList<>();
+        expectedResultQuery2.add(ovfEntityData);
 
         // Mock the DAOs
         UnregisteredOVFDataDAO unregisteredOVFDataDAOMock = mock(UnregisteredOVFDataDAO.class);
         when(getDbFacadeMockInstance().getUnregisteredOVFDataDao()).thenReturn(unregisteredOVFDataDAOMock);
         when(unregisteredOVFDataDAOMock.getAllForStorageDomainByEntityType(storageDomainId, entityType)).thenReturn(expectedResult);
-        when(unregisteredOVFDataDAOMock.getByEntityIdAndStorageDomain(newVmGuid2, storageDomainId)).thenReturn(ovfEntityData2);
-        when(unregisteredOVFDataDAOMock.getByEntityIdAndStorageDomain(newVmGuid, storageDomainId)).thenReturn(ovfEntityData);
+        when(unregisteredOVFDataDAOMock.getByEntityIdAndStorageDomain(newVmGuid2, storageDomainId)).thenReturn(expectedResultQuery2);
+        when(unregisteredOVFDataDAOMock.getByEntityIdAndStorageDomain(newVmGuid, storageDomainId)).thenReturn(expectedResultQuery1);
 
         // Mock OVF
         OvfHelper ovfHelperMock = mock(OvfHelper.class);

@@ -87,11 +87,13 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
 
     private void initUnregisteredVM() {
         OvfHelper ovfHelper = new OvfHelper();
-        ovfEntityData =
+        List<OvfEntityData> ovfEntityDataList =
                 getUnregisteredOVFDataDao().getByEntityIdAndStorageDomain(getParameters().getContainerId(),
                         getParameters().getStorageDomainId());
-        if (ovfEntityData != null) {
+        if (!ovfEntityDataList.isEmpty()) {
             try {
+                // We should get only one entity, since we fetched the entity with a specific Storage Domain
+                ovfEntityData = ovfEntityDataList.get(0);
                 vmFromConfiguration = ovfHelper.readVmFromOvf(ovfEntityData.getOvfData());
                 vmFromConfiguration.setVdsGroupId(getParameters().getVdsGroupId());
                 getParameters().setVm(vmFromConfiguration);

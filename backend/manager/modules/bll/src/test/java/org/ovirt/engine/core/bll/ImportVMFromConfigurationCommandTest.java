@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -153,7 +154,9 @@ public class ImportVMFromConfigurationCommandTest {
         OvfEntityData ovfEntity = getOvfEntityData();
         ovfEntity.setOvfData("This is not a valid XML");
         initCommand(ovfEntity);
-        when(unregisteredOVFDataDao.getByEntityIdAndStorageDomain(vmId, storageDomainId)).thenReturn(ovfEntity);
+        List<OvfEntityData> ovfEntityDataList = new ArrayList<>();
+        ovfEntityDataList.add(ovfEntity);
+        when(unregisteredOVFDataDao.getByEntityIdAndStorageDomain(vmId, storageDomainId)).thenReturn(ovfEntityDataList);
         when(validator.validateUnregisteredEntity(any(IVdcQueryable.class), any(OvfEntityData.class), anyList())).thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED));
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
                 VdcBllMessages.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
@@ -195,7 +198,11 @@ public class ImportVMFromConfigurationCommandTest {
     }
 
     private void initUnregisteredOVFData(OvfEntityData resultOvfEntityData) {
-        when(unregisteredOVFDataDao.getByEntityIdAndStorageDomain(vmId, storageDomainId)).thenReturn(resultOvfEntityData);
+        List<OvfEntityData> ovfEntityDataList = new ArrayList<>();
+        if (resultOvfEntityData != null) {
+            ovfEntityDataList.add(resultOvfEntityData);
+        }
+        when(unregisteredOVFDataDao.getByEntityIdAndStorageDomain(vmId, storageDomainId)).thenReturn(ovfEntityDataList);
     }
 
     private OvfEntityData getOvfEntityData() {

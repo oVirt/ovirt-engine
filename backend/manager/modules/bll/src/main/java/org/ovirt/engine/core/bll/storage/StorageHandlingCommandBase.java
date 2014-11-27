@@ -226,8 +226,9 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     private void removeEntityLeftOver(Guid entityId, String entityName, Guid storageDomainId) {
-        OvfEntityData ovfEntityData = getUnregisteredOVFDataDao().getByEntityIdAndStorageDomain(entityId, storageDomainId);
-        if (ovfEntityData != null) {
+        List<OvfEntityData> ovfEntityList =
+                getUnregisteredOVFDataDao().getByEntityIdAndStorageDomain(entityId, storageDomainId);
+        if (!ovfEntityList.isEmpty()) {
             log.info("Entity '{}' with id '{}', already exists as unregistered entity. override it with the new entity from the engine",
                     entityName,
                     entityId);
