@@ -1,13 +1,18 @@
 package org.ovirt.engine.core.aaa;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtKey;
@@ -25,6 +30,8 @@ public class AuthzUtils {
     private static interface QueryResultHandler {
         public boolean handle(Collection<ExtMap> queryResults);
     }
+
+    private static final Logger log = LoggerFactory.getLogger(AuthzUtils.class);
 
     private static final int QUERIES_RESULTS_LIMIT = 1000;
     private static final int PAGE_SIZE = 500;
@@ -101,7 +108,8 @@ public class AuthzUtils {
         }
         // After the groups are fetched, the "group membership" tree for the principals should be modified accordingly.
         for (ExtMap principal : principals) {
-            constructGroupsMembershipTree(principal, PrincipalRecord.GROUPS, groupsCache);
+            Deque<String> loopPrevention = new ArrayDeque<>();
+            constructGroupsMembershipTree(principal, PrincipalRecord.GROUPS, groupsCache, loopPrevention);
         }
         return principals;
     }
@@ -110,16 +118,27 @@ public class AuthzUtils {
         MultiValueMapUtils.addToMapOfSets(memberOf.<String>get(GroupRecord.NAMESPACE), memberOf.<String> get(GroupRecord.ID), idsToFetchPerNamespace);
     }
 
-    private static ExtMap constructGroupsMembershipTree(ExtMap entity, ExtKey key, Map<String, ExtMap> groupsCache) {
+    private static ExtMap constructGroupsMembershipTree(ExtMap entity, ExtKey key, Map<String, ExtMap> groupsCache, Deque<String> loopPrevention) {
         List<ExtMap> groups = new ArrayList<>();
         for (ExtMap memberOf : entity.get(key, Collections.<ExtMap> emptyList())) {
-            groups.add(
-                constructGroupsMembershipTree(
-                    groupsCache.get(memberOf.get(GroupRecord.ID)).clone(),
-                    GroupRecord.GROUPS,
-                    groupsCache
-                )
-            );
+            if (loopPrevention.contains(memberOf.get(GroupRecord.ID))) {
+                log.error(
+                    "Group recursion detected for group '{}' stack is {}",
+                    memberOf.get(GroupRecord.NAME),
+                    loopPrevention
+                );
+            } else {
+                loopPrevention.push(memberOf.<String>get(GroupRecord.ID));
+                groups.add(
+                    constructGroupsMembershipTree(
+                        groupsCache.get(memberOf.get(GroupRecord.ID)).clone(),
+                        GroupRecord.GROUPS,
+                        groupsCache,
+                        loopPrevention
+                    )
+                );
+                loopPrevention.pop();
+            }
         }
         entity.put(key, groups);
         return entity;
