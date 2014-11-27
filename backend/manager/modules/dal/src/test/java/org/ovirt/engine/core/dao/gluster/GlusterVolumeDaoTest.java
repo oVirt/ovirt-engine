@@ -471,6 +471,8 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
         brick.setStatus(GlusterStatus.UP);
         brick.setBrickOrder(0);
         volume.addBrick(brick);
+        volume.setSnapshotsCount(0);
+        volume.setSnapMaxLimit(0);
 
         dao.save(volume);
         return volume;

@@ -16,8 +16,10 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvanc
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSizeInfo;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
+import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.utils.EnumUtils;
@@ -330,7 +332,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
             }
             List<GlusterBrickEntity> bricks = dbFacade.getGlusterBrickDao().getBricksOfVolume(volume.getId());
             if (volume.getAsyncTask() != null && volume.getAsyncTask().getTaskId() != null) {
-                for (GlusterBrickEntity brick: bricks) {
+                for (GlusterBrickEntity brick : bricks) {
                     if (brick.getAsyncTask() != null && brick.getAsyncTask().getTaskId() != null &&
                             brick.getAsyncTask().getTaskId().equals(volume.getAsyncTask().getTaskId())) {
                         brick.setAsyncTask(volume.getAsyncTask());
@@ -338,6 +340,18 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
                 }
             }
             volume.setBricks(bricks);
+            GlusterVolumeSnapshotConfig config =
+                    dbFacade.getGlusterVolumeSnapshotConfigDao()
+                            .getConfigByVolumeIdAndName(volume.getClusterId(),
+                                    volume.getId(),
+                                    GlusterConstants.VOLUME_SNAPSHOT_MAX_HARD_LIMIT);
+            if (config == null || StringUtils.isEmpty(config.getParamValue())) {
+                config =
+                        dbFacade.getGlusterVolumeSnapshotConfigDao()
+                                .getConfigByClusterIdAndName(volume.getClusterId(),
+                                        GlusterConstants.VOLUME_SNAPSHOT_MAX_HARD_LIMIT);
+            }
+            volume.setSnapMaxLimit(config != null ? Integer.valueOf(config.getParamValue()) : 0);
         }
     }
 
@@ -348,6 +362,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
                 createVolumeIdParams(volumeId));
         return glusterVolumeAdvancedDetails;
     }
+
     private static final class GlusterVolumeRowMapper implements RowMapper<GlusterVolumeEntity> {
         @Override
         public GlusterVolumeEntity mapRow(ResultSet rs, int rowNum)
@@ -361,6 +376,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
             entity.setStatus(GlusterStatus.valueOf(rs.getString("status")));
             entity.setReplicaCount(rs.getInt("replica_count"));
             entity.setStripeCount(rs.getInt("stripe_count"));
+            entity.setSnapshotsCount(rs.getInt("snapshot_count"));
             return entity;
         }
     }
@@ -380,23 +396,24 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
             return TransportType.valueOf(rs.getString("transport_type"));
         }
     }
+
     private static final class GlusterAsyncTaskRowMapper implements RowMapper<GlusterAsyncTask> {
         @Override
         public GlusterAsyncTask mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
             GlusterAsyncTask asyncTask = new GlusterAsyncTask();
             asyncTask.setTaskId(getGuid(rs, "external_id"));
-            String jobStatus =rs.getString("job_status");
+            String jobStatus = rs.getString("job_status");
             if (asyncTask.getTaskId() != null || JobExecutionStatus.STARTED.name().equalsIgnoreCase(jobStatus)) {
                 asyncTask.setJobId(getGuid(rs, "job_job_id"));
                 asyncTask.setJobStatus(JobExecutionStatus.valueOf(jobStatus));
             }
-            String stepStatus =rs.getString("status");
+            String stepStatus = rs.getString("status");
             String stepType = rs.getString("step_type");
-            if(stepType != null && !stepType.isEmpty()){
+            if (stepType != null && !stepType.isEmpty()) {
                 asyncTask.setType(GlusterTaskType.forValue(StepEnum.valueOf(stepType)));
             }
-            if(stepStatus != null && !stepStatus.isEmpty()){
+            if (stepStatus != null && !stepStatus.isEmpty()) {
                 asyncTask.setStatus(JobExecutionStatus.valueOf(stepStatus));
             }
             return asyncTask;

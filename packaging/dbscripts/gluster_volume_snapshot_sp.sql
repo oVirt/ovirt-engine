@@ -17,6 +17,8 @@ BEGIN
         description, status)
     VALUES (v_snapshot_id,  v_snapshot_name, v_volume_id,
         v_description, v_status);
+
+    PERFORM UpdateSnapshotCountInc(v_volume_id, 1);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -69,9 +71,15 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION DeleteGlusterVolumeSnapshotByGuid(v_snapshot_id UUID)
     RETURNS VOID
     AS $procedure$
+DECLARE
+ref_volume_id UUID;
 BEGIN
+    SELECT volume_id INTO ref_volume_id FROM gluster_volume_snapshots WHERE snapshot_id = v_snapshot_id;
+
     DELETE FROM gluster_volume_snapshots
     WHERE snapshot_id = v_snapshot_id;
+
+    PERFORM UpdateSnapshotCountDec(ref_volume_id, 1);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -82,6 +90,10 @@ Create or replace FUNCTION DeleteGlusterVolumeSnapshotsByVolumeId(v_volume_id UU
 BEGIN
     DELETE FROM gluster_volume_snapshots
     WHERE volume_id = v_volume_id;
+
+    UPDATE gluster_volumes
+    SET snapshot_count = 0
+    WHERE id = v_volume_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -94,6 +106,8 @@ BEGIN
     DELETE FROM gluster_volume_snapshots
     WHERE volume_id = v_volume_id
     AND   snapshot_name = v_snapshot_name;
+
+    PERFORM UpdateSnapshotCountDec(v_volume_id, 1);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -101,9 +115,22 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION DeleteGlusterVolumesSnapshotByIds(v_snapshot_ids VARCHAR(5000))
     RETURNS VOID
     AS $procedure$
+DECLARE
+v_volume_id UUID;
+v_snapshot_count integer;
+v_cur CURSOR FOR SELECT volume_id, count(volume_id) FROM gluster_volume_snapshots
+WHERE snapshot_id IN (SELECT * FROM fnSplitterUuid(v_snapshot_ids)) GROUP BY volume_id;
 BEGIN
-DELETE FROM gluster_volume_snapshots
-WHERE snapshot_id in (select * from fnSplitterUuid(v_snapshot_ids));
+    OPEN v_cur;
+    LOOP
+        FETCH v_cur INTO v_volume_id, v_snapshot_count;
+        EXIT WHEN NOT FOUND;
+        PERFORM UpdateSnapshotCountDec(v_volume_id, v_snapshot_count);
+    END LOOP;
+    CLOSE v_cur;
+
+    DELETE FROM gluster_volume_snapshots
+    WHERE snapshot_id in (select * from fnSplitterUuid(v_snapshot_ids));
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -221,5 +248,27 @@ BEGIN
     WHERE   cluster_id = v_cluster_id
     AND     volume_id = v_volume_id
     AND     param_name = v_param_name;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION UpdateSnapshotCountInc(v_volume_id UUID, v_num int)
+    RETURNS VOID
+    AS $procedure$
+BEGIN
+    UPDATE gluster_volumes
+    SET snapshot_count = snapshot_count + v_num
+    WHERE id = v_volume_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION UpdateSnapshotCountDec(v_volume_id UUID, v_num int)
+    RETURNS VOID
+    AS $procedure$
+BEGIN
+    UPDATE gluster_volumes
+    SET snapshot_count = snapshot_count - v_num
+    WHERE id = v_volume_id;
 END; $procedure$
 LANGUAGE plpgsql;
