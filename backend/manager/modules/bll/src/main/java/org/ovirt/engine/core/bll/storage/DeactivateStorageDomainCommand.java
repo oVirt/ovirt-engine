@@ -315,7 +315,11 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 return null;
             }
         });
-        notifyAsyncTasks();
+
+        if (!getParameters().isSkipChecks()) {
+            notifyAsyncTasks();
+        }
+
         setSucceeded(true);
     }
 

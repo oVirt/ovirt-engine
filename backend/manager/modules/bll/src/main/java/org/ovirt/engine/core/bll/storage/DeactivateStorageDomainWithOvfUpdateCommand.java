@@ -8,6 +8,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.CreateOvfStoresForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -127,7 +128,7 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
                 parameters.setParentParameters(getParameters());
                 parameters.setParentCommand(getActionType());
                 parameters.setSkipDomainChecks(true);
-                VdcReturnValueBase vdsReturnValue = getBackend().endAction(VdcActionType.CreateOvfStoresForStorageDomain, parameters, null);
+                VdcReturnValueBase vdsReturnValue = getBackend().endAction(VdcActionType.CreateOvfStoresForStorageDomain, parameters, getContext());
                 createdTasks.addAll(vdsReturnValue.getInternalVdsmTaskIdList());
                 break;
             }
@@ -140,13 +141,22 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
             return;
         }
 
+        super.startFinalizingStep();
+
         deactivateStorageDomainAfterTaskExecution();
+    }
+
+    protected void startFinalizingStep() {}
+
+    public AuditLogType getAuditLogTypeValue() {
+        return AuditLogType.UNASSIGNED;
     }
 
     private boolean executeDeactivateCommnad(boolean passContext) {
         final StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase(getStorageDomainId(), getStoragePoolId());
         params.setSkipChecks(true);
         params.setSkipLock(true);
+        params.setShouldBeLogged(true);
         CommandContext context = passContext ? cloneContext() : null;
         return getBackend().runInternalAction(VdcActionType.DeactivateStorageDomain, params, context).getSucceeded();
     }

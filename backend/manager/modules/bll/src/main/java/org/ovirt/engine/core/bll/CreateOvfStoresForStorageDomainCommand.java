@@ -50,6 +50,8 @@ public class CreateOvfStoresForStorageDomainCommand<T extends CreateOvfStoresFor
         return null;
     }
 
+    protected void startFinalizingStep() {}
+
     @Override
     protected void endSuccessfully() {
         endCommandOperations();
@@ -94,7 +96,7 @@ public class CreateOvfStoresForStorageDomainCommand<T extends CreateOvfStoresFor
             // if we'd have the possibility to know whether we failed because of failure to acquire locks as there's an
             // update in progress, we could
             // try again (avoid setSucceeded(true) in that scenario).
-            VdcReturnValueBase returnValue = getBackend().runInternalAction(VdcActionType.ProcessOvfUpdateForStorageDomain, createProcessOvfUpdateForDomainParams());
+            VdcReturnValueBase returnValue = runInternalActionWithTasksContext(VdcActionType.ProcessOvfUpdateForStorageDomain, createProcessOvfUpdateForDomainParams(), null);
             getReturnValue().getInternalVdsmTaskIdList().addAll(returnValue.getInternalVdsmTaskIdList());
         }
 
