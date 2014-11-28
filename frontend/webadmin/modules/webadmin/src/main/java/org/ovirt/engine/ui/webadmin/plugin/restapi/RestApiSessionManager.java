@@ -67,10 +67,13 @@ public class RestApiSessionManager {
 
     private static final Logger logger = Logger.getLogger(RestApiSessionManager.class.getName());
 
+    private static final String PREFER_HEADER = "Prefer"; //$NON-NLS-1$
     private static final String SESSION_ID_HEADER = "JSESSIONID"; //$NON-NLS-1$
+    private static final String CSRF_HEADER = "JSESSIONID"; //$NON-NLS-1$
+    private static final String ENGINE_AUTH_TOKEN_HEADER = "OVIRT-INTERNAL-ENGINE-AUTH-TOKEN"; //$NON-NLS-1$
+
     private static final String SESSION_ID_KEY = "RestApiSessionId"; //$NON-NLS-1$
     private static final String DEFAULT_SESSION_TIMEOUT = "30"; //$NON-NLS-1$
-    private static final String ENGINE_AUTH_TOKEN_HEADER = "OVIRT-INTERNAL-ENGINE-AUTH-TOKEN"; //$NON-NLS-1$
 
     // Heartbeat (delay) between REST API keep-alive requests
     private static final int SESSION_HEARTBEAT_MS = 1000 * 60; // 1 minute
@@ -96,34 +99,37 @@ public class RestApiSessionManager {
     }
 
     /**
-     * Build HTTP request to acquire new or keep-alive existing REST API session.
-     * <p>
-     * The {@code engineAuthToken} is required only when creating new session. Once the session
-     * is created, {@code Prefer:persistent-auth} ensures that client receives the JSESSIONID
-     * cookie used to associate any subsequent requests with that session.
+     * Build HTTP request to keep-alive existing REST API session.
      */
-    RequestBuilder createRequest(String engineAuthToken) {
+    RequestBuilder createRequest() {
         RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, restApiBaseUrl);
 
         // Control REST API session timeout
         builder.setHeader("Session-TTL", restApiSessionTimeout); //$NON-NLS-1$
 
         // Express additional preferences for serving this request
-        String preferValue = "persistent-auth, csrf-protection"; //$NON-NLS-1$
-        if (engineAuthToken != null) {
-            // Enforce expiry of existing session when acquiring new session
-            preferValue += ", new-auth"; //$NON-NLS-1$
-
-            // Map this (physical) REST API session to current user's (logical) Engine session
-            builder.setHeader(ENGINE_AUTH_TOKEN_HEADER, engineAuthToken);
-        }
-        builder.setHeader("Prefer", preferValue); //$NON-NLS-1$
+        builder.setHeader(PREFER_HEADER, "persistent-auth, csrf-protection"); //$NON-NLS-1$
 
         // Add CSRF token, this is needed due to Prefer:csrf-protection
-        String sessionId = getSessionId();
-        if (sessionId != null) {
-            builder.setHeader(SESSION_ID_HEADER, sessionId);
+        if (restApiSessionId != null) {
+            builder.setHeader(CSRF_HEADER, restApiSessionId);
         }
+
+        return builder;
+    }
+
+    /**
+     * Build HTTP request to acquire new REST API session.
+     */
+    RequestBuilder createRequest(String engineAuthToken) {
+        RequestBuilder builder = createRequest();
+
+        // Enforce expiry of existing session when acquiring new session
+        String preferValue = builder.getHeader(PREFER_HEADER);
+        builder.setHeader(PREFER_HEADER, preferValue + ", new-auth"); //$NON-NLS-1$
+
+        // Map this (physical) REST API session to current user's (logical) Engine session
+        builder.setHeader(ENGINE_AUTH_TOKEN_HEADER, engineAuthToken);
 
         return builder;
     }
@@ -140,11 +146,9 @@ public class RestApiSessionManager {
         Scheduler.get().scheduleFixedDelay(new RepeatingCommand() {
             @Override
             public boolean execute() {
-                String sessionId = getSessionId();
-
-                if (sessionId != null) {
+                if (restApiSessionId != null) {
                     // The browser takes care of sending JSESSIONID cookie for this request automatically
-                    sendRequest(createRequest(null), new RestApiRequestCallback());
+                    sendRequest(createRequest(), new RestApiRequestCallback());
 
                     // The session is still in use, proceed with the heartbeat
                     return true;
@@ -168,7 +172,7 @@ public class RestApiSessionManager {
                 String sessionIdFromHeader = HttpUtils.getHeader(response, SESSION_ID_HEADER);
 
                 if (sessionIdFromHeader != null) {
-                    setSessionId(sessionIdFromHeader);
+                    setSessionId(sessionIdFromHeader, true);
                 }
 
                 reuseSession();
@@ -183,14 +187,14 @@ public class RestApiSessionManager {
         // If reuseSession is called right after setSessionId, then getSessionId() without the callback will not
         // be null. If it is null then reuseSession was called from an automatic login (as restApiSessionId is null
         // can we can utilize the async call to retrieve it from the backend.
-        if (getSessionId() != null) {
-            processSessionId(getSessionId());
+        if (restApiSessionId != null) {
+            processSessionId(restApiSessionId);
         } else {
-            getSessionId(new StorageCallback() {
+            getSessionIdFromHttpSession(new StorageCallback() {
                 @Override
                 public void onSuccess(String result) {
                     if (result != null) {
-                        restApiSessionId = result;
+                        setSessionId(result, false);
                         processSessionId(result);
                     } else {
                         processSessionIdException();
@@ -223,20 +227,18 @@ public class RestApiSessionManager {
      * logical session is dead.
      */
     public void releaseSession() {
-        setSessionId(null);
+        setSessionId(null, true);
     }
 
-    String getSessionId() {
-        return restApiSessionId;
-    }
-
-    void getSessionId(StorageCallback callback) {
+    void getSessionIdFromHttpSession(StorageCallback callback) {
         Frontend.getInstance().retrieveFromHttpSession(SESSION_ID_KEY, callback);
     }
 
-    void setSessionId(String sessionId) {
-        Frontend.getInstance().storeInHttpSession(SESSION_ID_KEY, sessionId);
-        restApiSessionId = sessionId;
+    void setSessionId(String sessionId, boolean storeInHttpSession) {
+        if (storeInHttpSession) {
+            Frontend.getInstance().storeInHttpSession(SESSION_ID_KEY, sessionId);
+        }
+        this.restApiSessionId = sessionId;
     }
 
 }
