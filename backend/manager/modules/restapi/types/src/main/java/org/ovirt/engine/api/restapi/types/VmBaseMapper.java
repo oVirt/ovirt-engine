@@ -8,7 +8,6 @@ import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.api.model.CpuTopology;
 import org.ovirt.engine.api.model.CustomProperties;
-import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.HighAvailability;
 import org.ovirt.engine.api.model.Usb;
@@ -88,10 +87,7 @@ public class VmBaseMapper {
         }
         if (model.isSetDisplay()) {
             if (model.getDisplay().isSetType()) {
-                DisplayType displayType = DisplayType.fromValue(model.getDisplay().getType());
-                if (displayType != null) {
-                    entity.setDefaultDisplayType(VmMapper.map(displayType, null));
-                }
+                entity.setDefaultDisplayType(null); // let backend decide which video device to use
             }
             if (model.getDisplay().isSetMonitors()) {
                 entity.setNumOfMonitors(model.getDisplay().getMonitors());

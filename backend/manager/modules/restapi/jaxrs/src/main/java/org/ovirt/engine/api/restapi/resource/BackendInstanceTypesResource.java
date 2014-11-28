@@ -7,6 +7,7 @@ import org.ovirt.engine.api.model.VirtIOSCSI;
 import org.ovirt.engine.api.resource.InstanceTypeResource;
 import org.ovirt.engine.api.resource.InstanceTypesResource;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
+import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -22,8 +23,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-import javax.ws.rs.core.Response;
 import java.util.List;
+import javax.ws.rs.core.Response;
 
 public class BackendInstanceTypesResource
     extends AbstractBackendCollectionResource<InstanceType, org.ovirt.engine.core.common.businessentities.InstanceType>
@@ -99,7 +100,9 @@ public class BackendInstanceTypesResource
     protected InstanceTypes mapCollection(List<org.ovirt.engine.core.common.businessentities.InstanceType> entities) {
         InstanceTypes collection = new InstanceTypes();
         for (org.ovirt.engine.core.common.businessentities.InstanceType entity : entities) {
-            collection.getInstanceTypes().add(addLinks(populate(map(entity), entity)));
+            InstanceType instanceType = map(entity);
+            DisplayHelper.adjustDisplayData(this, instanceType);
+            collection.getInstanceTypes().add(addLinks(populate(instanceType, entity)));
         }
         return collection;
     }

@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 
+import java.util.Arrays;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
@@ -8,6 +9,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -18,6 +20,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
 import java.util.List;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
+
 
 import static org.easymock.EasyMock.expect;
 
@@ -31,6 +35,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
     @Test
     public void testRemove() throws Exception {
         setUpGetEntityExpectations(0);
+        setUpGetGraphicsExpectations(1);
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplate,
                 VmTemplateParametersBase.class,
                 new String[] { "VmTemplateId" },
@@ -69,6 +74,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
 
     protected void doTestBadRemove(boolean canDo, boolean success, String detail) throws Exception {
         setUpGetEntityExpectations(0);
+        setUpGetGraphicsExpectations(1);
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveVmTemplate,
                 VmTemplateParametersBase.class,
                 new String[] { "VmTemplateId" },
@@ -161,6 +167,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
             setUpGetRngDeviceExpectations(new int[] {0, 1, 2});
         }
 
+        setUpGetGraphicsExpectations(3);
         setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);
         verifyCollection(getCollection());
@@ -204,6 +211,16 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
                 new String[] { "Id" },
                 new Object[] { GUIDS[index] },
                 getEntity(index));
+    }
+
+    protected void setUpGetGraphicsExpectations(int times) throws Exception {
+        for (int i = 0; i < times; i++) {
+            setUpGetEntityExpectations(VdcQueryType.GetGraphicsDevices,
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { GUIDS[i] },
+                    Arrays.asList(new GraphicsDevice(VmDeviceType.SPICE)));
+        }
     }
 
     protected abstract Response doAdd(R model);

@@ -23,6 +23,8 @@ import org.ovirt.engine.api.model.VmDeviceType;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
+import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -60,7 +62,7 @@ public class VmMapperTest extends
         VmDynamic dynamic = new VmDynamic();
         dynamic.setStatus(VMStatus.Up);
         dynamic.setBootSequence(to.getDefaultBootSequence());
-        dynamic.setDisplayType(to.getDefaultDisplayType());
+        dynamic.getGraphicsInfos().put(GraphicsType.SPICE, new GraphicsInfo());
         org.ovirt.engine.core.common.businessentities.VM ret =
                 new org.ovirt.engine.core.common.businessentities.VM(to,
                         dynamic,
@@ -97,6 +99,7 @@ public class VmMapperTest extends
         for (GuestNicConfiguration guestNic : from.getInitialization().getNicConfigurations().getNicConfigurations()) {
             guestNic.setBootProtocol(MappingTestHelper.shuffle(BootProtocol.class).value());
         }
+        from.getDisplay().setType("spice");
         from.getSerialNumber().setPolicy(SerialNumberPolicy.CUSTOM.value());
         from.getDisplay().setFileTransferEnabled(true);
         from.getDisplay().setCopyPasteEnabled(true);
@@ -234,13 +237,15 @@ public class VmMapperTest extends
         org.ovirt.engine.core.common.businessentities.VM entity =
                 new org.ovirt.engine.core.common.businessentities.VM();
         entity.setStatus(VMStatus.Up);
-        entity.setDisplay(5900);
-        entity.setDisplaySecurePort(9999);
+        entity.getGraphicsInfos().put(GraphicsType.SPICE, new GraphicsInfo());
+        entity.getGraphicsInfos().get(GraphicsType.SPICE)
+                .setPort(5900)
+                .setTlsPort(9999);
         VM model = VmMapper.map(entity, (VM) null);
-        assertTrue(model.getDisplay().getPort() == 5900);
-        assertTrue(model.getDisplay().getSecurePort() == 9999);
-        entity.setDisplay(-1);
-        entity.setDisplaySecurePort(-1);
+        entity.getGraphicsInfos().put(GraphicsType.SPICE, new GraphicsInfo());
+        entity.getGraphicsInfos().get(GraphicsType.SPICE)
+                .setPort(null)
+                .setTlsPort(null);
         model = VmMapper.map(entity, (VM) null);
         assertNull(model.getDisplay().getPort());
         assertNull(model.getDisplay().getSecurePort());

@@ -1,10 +1,12 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.Arrays;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.resource.UpdatableResource;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -12,6 +14,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import javax.ws.rs.WebApplicationException;
 import java.util.ArrayList;
 import java.util.List;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
+
 
 import static org.easymock.EasyMock.expect;
 
@@ -52,6 +56,7 @@ public abstract class BackendTemplateBasedResourceTest<
     @Test
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
+        setUpGetGraphicsExpectations(1);
         setUpGetEntityExpectations(1);
         control.replay();
 
@@ -95,6 +100,7 @@ public abstract class BackendTemplateBasedResourceTest<
             setUpGetSoundcardExpectations(new int[]{0});
             setUpGetRngDeviceExpectations(new int [] {0});
         }
+        setUpGetGraphicsExpectations(1);
         control.replay();
 
         R response = resource.get();
@@ -200,4 +206,14 @@ public abstract class BackendTemplateBasedResourceTest<
     }
 
     protected abstract R getRestModel(int index);
+
+    protected void setUpGetGraphicsExpectations(int times) throws Exception {
+        for (int i = 0; i < times; i++) {
+            setUpGetEntityExpectations(VdcQueryType.GetGraphicsDevices,
+                    IdQueryParameters.class,
+                    new String[]{"Id"},
+                    new Object[]{GUIDS[i]},
+                    Arrays.asList(new GraphicsDevice(VmDeviceType.SPICE)));
+        }
+    }
 }

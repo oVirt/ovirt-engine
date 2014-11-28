@@ -24,6 +24,7 @@ import org.ovirt.engine.api.resource.TemplateResource;
 import org.ovirt.engine.api.resource.WatchdogsResource;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
+import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
@@ -43,7 +44,7 @@ public class BackendTemplateResource
     extends AbstractBackendActionableResource<Template, VmTemplate>
     implements TemplateResource {
 
-    static final String[] SUB_COLLECTIONS = { "disks", "nics", "cdroms", "tags", "permissions", "watchdogs" };
+    static final String[] SUB_COLLECTIONS = {"disks", "nics", "cdroms", "tags", "permissions", "watchdogs"};
 
     public BackendTemplateResource(String id) {
         super(id, Template.class, VmTemplate.class, SUB_COLLECTIONS);
@@ -51,16 +52,18 @@ public class BackendTemplateResource
 
     @Override
     public Template get() {
-        return performGet(VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(guid));
+        Template template = performGet(VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(guid));
+        DisplayHelper.adjustDisplayData(this, template);
+        return template;
     }
 
     @Override
     public Template update(Template incoming) {
         validateEnums(Template.class, incoming);
         return performUpdate(incoming,
-                             new QueryIdResolver<Guid>(VdcQueryType.GetVmTemplate, GetVmTemplateParameters.class),
-                             VdcActionType.UpdateVmTemplate,
-                             new UpdateParametersProvider());
+                new QueryIdResolver<Guid>(VdcQueryType.GetVmTemplate, GetVmTemplateParameters.class),
+                VdcActionType.UpdateVmTemplate,
+                new UpdateParametersProvider());
     }
 
     @Override
@@ -79,17 +82,17 @@ public class BackendTemplateResource
     @Override
     public ReadOnlyDevicesResource<CdRom, CdRoms> getCdRomsResource() {
         return inject(new BackendReadOnlyCdRomsResource<VmTemplate>
-                                        (VmTemplate.class,
-                                         guid,
-                                         VdcQueryType.GetVmTemplate,
-                                         new GetVmTemplateParameters(guid)));
+                (VmTemplate.class,
+                        guid,
+                        VdcQueryType.GetVmTemplate,
+                        new GetVmTemplateParameters(guid)));
     }
 
     @Override
     public TemplateDisksResource getDisksResource() {
         return inject(new BackendTemplateDisksResource(guid,
-                                                       VdcQueryType.GetVmTemplatesDisks,
-                                                       new IdQueryParameters(guid)));
+                VdcQueryType.GetVmTemplatesDisks,
+                new IdQueryParameters(guid)));
     }
 
     @Override
@@ -105,10 +108,10 @@ public class BackendTemplateResource
     @Override
     public AssignedPermissionsResource getPermissionsResource() {
         return inject(new BackendAssignedPermissionsResource(guid,
-                                                             VdcQueryType.GetPermissionsForObject,
-                                                             new GetPermissionsForObjectParameters(guid),
-                                                             Template.class,
-                                                             VdcObjectType.VmTemplate));
+                VdcQueryType.GetPermissionsForObject,
+                new GetPermissionsForObjectParameters(guid),
+                Template.class,
+                VdcObjectType.VmTemplate));
     }
 
     @Override
@@ -135,6 +138,9 @@ public class BackendTemplateResource
             if(incoming.isSetSoundcardEnabled()) {
                 params.setSoundDeviceEnabled(incoming.isSoundcardEnabled());
             }
+
+            DisplayHelper.setGraphicsToParams(incoming.getDisplay(), params);
+
             return getMapper(modelType, UpdateVmTemplateParameters.class).map(incoming, params);
         }
     }
@@ -160,9 +166,9 @@ public class BackendTemplateResource
 
     private void setRngDevice(Template model) {
         List<VmRngDevice> rngDevices = getEntity(List.class,
-            VdcQueryType.GetRngDevice,
-            new IdQueryParameters(Guid.createGuidFromString(model.getId())),
-            "GetRngDevice", true);
+                VdcQueryType.GetRngDevice,
+                new IdQueryParameters(Guid.createGuidFromString(model.getId())),
+                "GetRngDevice", true);
 
         if (rngDevices != null && !rngDevices.isEmpty()) {
             model.setRngDevice(RngDeviceMapper.map(rngDevices.get(0), null));
@@ -185,3 +191,4 @@ public class BackendTemplateResource
     }
 
 }
+

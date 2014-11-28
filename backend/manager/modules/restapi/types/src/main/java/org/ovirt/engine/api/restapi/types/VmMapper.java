@@ -21,7 +21,6 @@ import org.ovirt.engine.api.model.CpuTune;
 import org.ovirt.engine.api.model.CustomProperties;
 import org.ovirt.engine.api.model.CustomProperty;
 import org.ovirt.engine.api.model.Display;
-import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.model.Files;
@@ -58,6 +57,8 @@ import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
@@ -260,7 +261,7 @@ public class VmMapper extends VmBaseMapper {
         return null;
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.VM.class, to = org.ovirt.engine.api.model.VM.class)
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.VM.class, to = VM.class)
     public static VM map(org.ovirt.engine.core.common.businessentities.VM entity, VM template) {
         return map(entity, template, true);
     }
@@ -318,26 +319,21 @@ public class VmMapper extends VmBaseMapper {
             model.setVmPool(pool);
         }
 
+        model.setDisplay(new Display());
+
         // some fields (like boot-order,display..) have static value (= the permanent config)
         // and dynamic value (current/last run value, that can be different in case of run-once or edit while running)
         if (showDynamicInfo && entity.getDynamicData() != null && entity.getStatus().isRunningOrPaused()) {
-           if (model.getOs() != null && entity.getBootSequence() != null) {
-               for (Boot boot : map(entity.getBootSequence(), null)) {
-                   model.getOs().getBoot().add(boot);
-               }
-           }
-
-            model.setDisplay(new Display());
-            model.getDisplay().setType(map(entity.getDisplayType(), null));
+            if (model.getOs() != null && entity.getBootSequence() != null) {
+                for (Boot boot : map(entity.getBootSequence(), null)) {
+                    model.getOs().getBoot().add(boot);
+                }
+            }
         } else {
             if (model.getOs() != null) {
                 for (Boot boot : map(entity.getDefaultBootSequence(), null)) {
                     model.getOs().getBoot().add(boot);
                 }
-            }
-            if (entity.getDefaultDisplayType() != null) {
-                model.setDisplay(new Display());
-                model.getDisplay().setType(map(entity.getDefaultDisplayType(), null));
             }
         }
 
@@ -375,27 +371,29 @@ public class VmMapper extends VmBaseMapper {
             }
 
             model.setRunOnce(entity.isRunOnce());
-            model.getDisplay().setAddress(entity.getDisplayIp());
-            Integer displayPort = entity.getDisplay();
-            model.getDisplay().setPort(displayPort==null || displayPort==-1 ? null : displayPort);
-            Integer displaySecurePort = entity.getDisplaySecurePort();
-            model.getDisplay().setSecurePort(displaySecurePort==null || displaySecurePort==-1 ? null : displaySecurePort);
-            model.getDisplay().setMonitors(entity.getNumOfMonitors());
-            model.getDisplay().setSingleQxlPci(entity.getSingleQxlPci());
+            GraphicsType graphicsType = deriveGraphicsType(entity.getGraphicsInfos());
+            if (graphicsType != null) {
+                model.getDisplay().setType(DisplayMapper.map(graphicsType, null).value());
+
+                GraphicsInfo graphicsInfo = entity.getGraphicsInfos().get(graphicsType);
+                model.getDisplay().setAddress(graphicsInfo == null ? null : graphicsInfo.getIp());
+                Integer displayPort = graphicsInfo == null ? null : graphicsInfo.getPort();
+                model.getDisplay().setPort(displayPort == null || displayPort.equals(-1) ? null : displayPort);
+                Integer displaySecurePort = graphicsInfo == null ? null : graphicsInfo.getTlsPort();
+                model.getDisplay().setSecurePort(displaySecurePort==null || displaySecurePort.equals(-1) ? null : displaySecurePort);
+            }
         }
         if (entity.getLastStopTime() != null) {
             model.setStopTime(DateMapper.map(entity.getLastStopTime(), null));
         }
-        if (model.getDisplay() != null) {
-            model.getDisplay().setMonitors(entity.getNumOfMonitors());
-            model.getDisplay().setSingleQxlPci(entity.getSingleQxlPci());
-            model.getDisplay().setAllowOverride(entity.getAllowConsoleReconnect());
-            model.getDisplay().setSmartcardEnabled(entity.isSmartcardEnabled());
-            model.getDisplay().setKeyboardLayout(entity.getDefaultVncKeyboardLayout());
-            model.getDisplay().setFileTransferEnabled(entity.isSpiceFileTransferEnabled());
-            model.getDisplay().setCopyPasteEnabled(entity.isSpiceCopyPasteEnabled());
-            model.getDisplay().setProxy(getEffectiveSpiceProxy(entity));
-        }
+        model.getDisplay().setMonitors(entity.getNumOfMonitors());
+        model.getDisplay().setSingleQxlPci(entity.getSingleQxlPci());
+        model.getDisplay().setAllowOverride(entity.getAllowConsoleReconnect());
+        model.getDisplay().setSmartcardEnabled(entity.isSmartcardEnabled());
+        model.getDisplay().setKeyboardLayout(entity.getDefaultVncKeyboardLayout());
+        model.getDisplay().setFileTransferEnabled(entity.isSpiceFileTransferEnabled());
+        model.getDisplay().setCopyPasteEnabled(entity.isSpiceCopyPasteEnabled());
+        model.getDisplay().setProxy(getEffectiveSpiceProxy(entity));
         model.setStateless(entity.isStateless());
         model.setDeleteProtected(entity.isDeleteProtected());
         model.setSso(SsoMapper.map(entity.getSsoMethod(), null));
@@ -448,6 +446,21 @@ public class VmMapper extends VmBaseMapper {
         return null;
     }
 
+    // for backwards compatibility
+    // returns graphics type of a running vm (can be different than static graphics in vm device due to run once)
+    // if vm has multiple graphics, returns SPICE
+    private static GraphicsType deriveGraphicsType(Map<GraphicsType, GraphicsInfo> graphicsInfos) {
+        if (graphicsInfos != null) {
+            if (graphicsInfos.containsKey(GraphicsType.SPICE)) {
+                return GraphicsType.SPICE;
+            }
+            if (graphicsInfos.containsKey(GraphicsType.VNC)) {
+                return GraphicsType.VNC;
+            }
+        }
+        return null;
+    }
+
     @Mapping(from = VM.class, to = RunVmOnceParams.class)
     public static RunVmOnceParams map(VM vm, RunVmOnceParams template) {
         RunVmOnceParams params = template != null ? template : new RunVmOnceParams();
@@ -455,11 +468,12 @@ public class VmMapper extends VmBaseMapper {
             params.setRunAsStateless(true);
         }
         if (vm.isSetDisplay()) {
-            // todo rest api follow up
             if (vm.getDisplay().isSetKeyboardLayout()) {
                 String vncKeyboardLayout = vm.getDisplay().getKeyboardLayout();
                 params.setVncKeyboardLayout(vncKeyboardLayout);
             }
+
+            DisplayMapper.fillDisplayInParams(vm, params);
         }
         if (vm.isSetOs() && vm.getOs().getBoot().size() > 0) {
             params.setBootSequence(map(vm.getOs().getBoot(), null));
@@ -584,25 +598,13 @@ public class VmMapper extends VmBaseMapper {
         }
     }
 
-    @Mapping(from = DisplayType.class, to = org.ovirt.engine.core.common.businessentities.DisplayType.class)
-    public static org.ovirt.engine.core.common.businessentities.DisplayType map(DisplayType type, org.ovirt.engine.core.common.businessentities.DisplayType incoming) {
-        switch(type) {
-        case VNC:
-            return org.ovirt.engine.core.common.businessentities.DisplayType.cirrus; // todo restapi follow up
-        case SPICE:
-            return org.ovirt.engine.core.common.businessentities.DisplayType.qxl;
-        default:
-            return null;
-        }
-    }
-
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.DisplayType.class, to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.DisplayType type, String incoming) {
-        switch(type) {
-        case cirrus: // todo restapi follow up
-            return DisplayType.VNC.value();
-        case qxl:
-            return DisplayType.SPICE.value();
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.VmType.class, to = String.class)
+    public static String map(org.ovirt.engine.core.common.businessentities.VmType type, String incoming) {
+        switch (type) {
+        case Desktop:
+            return VmType.DESKTOP.value();
+        case Server:
+            return VmType.SERVER.value();
         default:
             return null;
         }

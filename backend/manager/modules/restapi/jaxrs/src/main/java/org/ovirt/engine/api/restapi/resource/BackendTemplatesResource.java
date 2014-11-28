@@ -19,6 +19,7 @@ import org.ovirt.engine.api.resource.TemplateResource;
 import org.ovirt.engine.api.resource.TemplatesResource;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
+import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -33,8 +34,8 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmByVmNameForDataCenterParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
-import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.IdsQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -109,6 +110,8 @@ public class BackendTemplatesResource
             params.setUpdateRngDevice(true);
             params.setRngDevice(RngDeviceMapper.map(template.getRngDevice(), null));
         }
+
+        DisplayHelper.setGraphicsToParams(template.getDisplay(), params);
 
         boolean isDomainSet = false;
         if (template.isSetStorageDomain() && template.getStorageDomain().isSetId()) {
@@ -185,7 +188,9 @@ public class BackendTemplatesResource
         Templates collection = new Templates();
         if (includeData) {
             for (VmTemplate entity : entities) {
-                collection.getTemplates().add(addLinks(populate(map(entity), entity)));
+                Template template = map(entity);
+                collection.getTemplates().add(addLinks(populate(template, entity)));
+                DisplayHelper.adjustDisplayData(this, template);
             }
         }
         if (includeSize) {

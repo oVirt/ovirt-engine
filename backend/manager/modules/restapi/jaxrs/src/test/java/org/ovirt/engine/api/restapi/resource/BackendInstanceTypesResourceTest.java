@@ -86,4 +86,16 @@ public class BackendInstanceTypesResourceTest
         assertEquals(4, model.getCpu().getTopology().getCores().intValue());
         assertEquals(2, model.getCpu().getTopology().getSockets().intValue());
     }
+
+    @Override
+    public void testQuery() throws Exception {
+        setUpGetGraphicsExpectations(3);
+        super.testQuery();
+    }
+
+    @Override
+    public void testList() throws Exception {
+        setUpGetGraphicsExpectations(3);
+        super.testList();
+    }
 }

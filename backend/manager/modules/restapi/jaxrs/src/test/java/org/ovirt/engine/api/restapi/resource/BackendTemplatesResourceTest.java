@@ -180,6 +180,20 @@ public class BackendTemplatesResourceTest
     }
 
     @Override
+    @Test
+    public void testQuery() throws Exception {
+        setUpGetGraphicsExpectations(3);
+        super.testQuery();
+    }
+
+    @Override
+    @Test
+    public void testList() throws Exception {
+        setUpGetGraphicsExpectations(3);
+        super.testList();
+    }
+
+    @Override
     protected Response doAdd(Template model) {
         return collection.add(model);
     }

@@ -6,10 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
-
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Certificate;
@@ -37,6 +35,7 @@ import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
+import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
@@ -133,10 +132,6 @@ public class BackendVmsResource extends
 
                 if (Guid.Empty.equals(templateId) && !vm.isSetOs()) {
                     staticVm.setOsId(OsRepository.AUTO_SELECT_OS);
-                }
-
-                if (Guid.Empty.equals(templateId) && !vm.isSetDisplay()) {
-                    staticVm.setDefaultDisplayType(null);
                 }
 
                 staticVm.setUsbPolicy(VmMapper.getUsbPolicyOnCreate(vm.getUsb(),
@@ -323,6 +318,8 @@ public class BackendVmsResource extends
             params.setRngDevice(RngDeviceMapper.map(vm.getRngDevice(), null));
         }
 
+        DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
+
         return performCreate(VdcActionType.AddVmFromSnapshot,
                                 params,
                                 new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
@@ -337,6 +334,8 @@ public class BackendVmsResource extends
 
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         setupCloneTemplatePermissions(vm, params);
+        DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
+
         return performCreate(VdcActionType.AddVmFromTemplate,
                 params,
                 new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
@@ -453,6 +452,7 @@ public class BackendVmsResource extends
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         setupCloneTemplatePermissions(vm, params);
         addDevicesToParams(params, vm, template, instanceType, staticVm.getOsId(), cluster);
+        DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
 
         return performCreate(VdcActionType.AddVm,
                                params,
@@ -472,6 +472,7 @@ public class BackendVmsResource extends
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         params.setStorageDomainId(storageDomainId);
         addDevicesToParams(params, vm, null, instanceType, staticVm.getOsId(), cluster);
+        DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
 
         return performCreate(VdcActionType.AddVmFromScratch,
                                params,
@@ -572,6 +573,7 @@ public class BackendVmsResource extends
         if (includeData) {
             for (org.ovirt.engine.core.common.businessentities.VM entity : entities) {
                 VM vm = map(entity);
+                DisplayHelper.adjustDisplayData(this, vm);
                 // Filtered users are not allowed to view host related information
                 if (isFiltered) {
                     removeRestrictedInfoFromVM(vm);

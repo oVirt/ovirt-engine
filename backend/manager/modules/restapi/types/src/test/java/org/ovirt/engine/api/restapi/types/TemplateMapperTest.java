@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
-import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.InheritableBoolean;
 import org.ovirt.engine.api.model.SerialNumberPolicy;
 import org.ovirt.engine.api.model.Template;
@@ -28,7 +27,6 @@ public class TemplateMapperTest
     protected Template postPopulate(Template from) {
         from.setType(MappingTestHelper.shuffle(VmType.class).value());
         from.setOrigin(OriginType.VMWARE.name().toLowerCase());
-        from.getDisplay().setType(MappingTestHelper.shuffle(DisplayType.class).value());
         for (Boot boot : from.getOs().getBoot()) {
             boot.setDev(MappingTestHelper.shuffle(BootDevice.class).value());
         }
@@ -75,7 +73,6 @@ public class TemplateMapperTest
         assertEquals(model.getOs().getInitrd(), transform.getOs().getInitrd());
         assertEquals(model.getOs().getCmdline(), transform.getOs().getCmdline());
         assertNotNull(model.getDisplay());
-        assertEquals(model.getDisplay().getType(), transform.getDisplay().getType());
         assertEquals(model.getDisplay().getMonitors(), transform.getDisplay().getMonitors());
         assertEquals(model.getDisplay().isSingleQxlPci(), transform.getDisplay().isSingleQxlPci());
         assertEquals(model.getDisplay().isAllowOverride(), transform.getDisplay().isAllowOverride());

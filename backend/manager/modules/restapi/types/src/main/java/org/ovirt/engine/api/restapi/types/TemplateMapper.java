@@ -4,7 +4,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Architecture;
 import org.ovirt.engine.api.model.Boot;
-import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.TemplateStatus;
@@ -95,20 +94,10 @@ public class TemplateMapper extends VmBaseMapper {
             os.setCmdline(entity.getKernelParams());
             model.setOs(os);
         }
-        if (entity.getDefaultDisplayType() != null) {
-            model.setDisplay(new Display());
-            model.getDisplay().setType(VmMapper.map(entity.getDefaultDisplayType(), null));
-            model.getDisplay().setMonitors(entity.getNumOfMonitors());
-            model.getDisplay().setSingleQxlPci(entity.getSingleQxlPci());
-            model.getDisplay().setAllowOverride(entity.isAllowConsoleReconnect());
-            model.getDisplay().setSmartcardEnabled(entity.isSmartcardEnabled());
-            model.getDisplay().setKeyboardLayout(entity.getVncKeyboardLayout());
-            model.getDisplay().setFileTransferEnabled(entity.isSpiceFileTransferEnabled());
-            model.getDisplay().setCopyPasteEnabled(entity.isSpiceCopyPasteEnabled());
-        }
         if (entity.getClusterArch() != null) {
             model.getCpu().setArchitecture(CPUMapper.map(entity.getClusterArch(), null));
         }
+        model.setDisplay(DisplayMapper.map(entity, null));
         // if this is not a base template, that means this is a template version
         // so need to populate template version properties
         if (!entity.isBaseTemplate()) {

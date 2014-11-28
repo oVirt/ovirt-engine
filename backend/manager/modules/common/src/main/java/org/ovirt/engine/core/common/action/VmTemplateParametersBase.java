@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmTemplateParametersBase extends VdcActionParametersBase implements Serializable {
+public class VmTemplateParametersBase extends VdcActionParametersBase implements Serializable, HasGraphicsDevices {
     private static final long serialVersionUID = -8930994274659598061L;
     private boolean removeTemplateFromDb;
     private Guid vmTemplateId;
@@ -147,6 +147,7 @@ public class VmTemplateParametersBase extends VdcActionParametersBase implements
         this.cpuProfileId = cpuProfileId;
     }
 
+    @Override
     public Map<GraphicsType, GraphicsDevice> getGraphicsDevices() {
         return graphicsDevices;
     }

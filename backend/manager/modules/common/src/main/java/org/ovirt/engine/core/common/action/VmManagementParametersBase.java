@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmManagementParametersBase extends VmOperationParameterBase {
+public class VmManagementParametersBase extends VmOperationParameterBase implements HasGraphicsDevices {
 
     private static final long serialVersionUID = -7695630335738521510L;
 
@@ -267,6 +267,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
         this.updateNuma = updateNuma;
     }
 
+    @Override
     public Map<GraphicsType, GraphicsDevice> getGraphicsDevices() {
         return graphicsDevices;
     }

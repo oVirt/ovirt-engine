@@ -8,6 +8,8 @@ import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.verif
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -26,6 +28,8 @@ import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CreationStatus;
+import org.ovirt.engine.api.model.Display;
+import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.model.Floppies;
 import org.ovirt.engine.api.model.Floppy;
@@ -61,6 +65,8 @@ import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -129,6 +135,7 @@ public class BackendVmResourceTest
         setUpGetEntityExpectations(1);
         setUpGetPayloadExpectations(0, 1);
         setUpGetBallooningExpectations();
+        setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations();
         control.replay();
         VM response = resource.get();
@@ -142,6 +149,7 @@ public class BackendVmResourceTest
         setUpGetEntityNextRunExpectations();
         setUpGetPayloadExpectations(0, 1);
         setUpGetBallooningExpectations();
+        setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations();
         control.replay();
         VM response = resource.get();
@@ -157,6 +165,7 @@ public class BackendVmResourceTest
             setUpGetEntityExpectations(1);
             setUpGetPayloadExpectations(0, 1);
             setUpGetBallooningExpectations();
+            setUpGetGraphicsExpectations(1);
             control.replay();
 
             VM vm = resource.get();
@@ -192,6 +201,7 @@ public class BackendVmResourceTest
         setUpGetEntityExpectations(1);
         setUpGetPayloadExpectations(0, 1);
         setUpGetBallooningExpectations();
+        setUpGetGraphicsExpectations(1);
         setUpGetCertuficateExpectations();
         control.replay();
         VM response = resource.get();
@@ -228,17 +238,18 @@ public class BackendVmResourceTest
         setUpGetPayloadExpectations(0, 2);
         setUpGetBallooningExpectations();
         setUpGetBallooningExpectations();
+        setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(new int[]{0});
         setUpGetVmOvfExpectations(new int[]{0});
         setUpGetVirtioScsiExpectations(new int[] {0});
         setUpGetSoundcardExpectations(new int[] {0});
         setUpGetRngDeviceExpectations(new int[]{0});
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
-                                           VmManagementParametersBase.class,
-                                           new String[] {},
-                                           new Object[] {},
-                                           true,
-                                           true));
+                VmManagementParametersBase.class,
+                new String[]{},
+                new Object[]{},
+                true,
+                true));
 
         verifyModel(resource.update(getModel(0)), 0);
     }
@@ -248,8 +259,8 @@ public class BackendVmResourceTest
         setUpGetEntityExpectations(3);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
                 IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[2] },
+                new String[]{"Id"},
+                new Object[]{GUIDS[2]},
                 getVdsGroupEntity());
 
         setUpGetPayloadExpectations(0, 1);
@@ -257,6 +268,7 @@ public class BackendVmResourceTest
 
         setUpGetBallooningExpectations();
         setUpGetBallooningExpectations();
+        setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(new int[]{0});
         setUpGetVmOvfExpectations(new int[]{0});
         setUpGetVirtioScsiExpectations(new int[] {0});
@@ -301,6 +313,7 @@ public class BackendVmResourceTest
         setUpGetPayloadExpectations(0, 2);
         setUpGetBallooningExpectations();
         setUpGetBallooningExpectations();
+        setUpGetGraphicsExpectations(1);
         setUpGetConsoleExpectations(new int[]{0});
         setUpGetVmOvfExpectations(new int[]{0});
         setUpGetVirtioScsiExpectations(new int[] {0});
@@ -348,20 +361,21 @@ public class BackendVmResourceTest
         setUpGetVirtioScsiExpectations(0);
         setUpGetSoundcardExpectations(0);
         setUpGetRngDeviceExpectations(0);
+        setUpGetGraphicsExpectations(1);
         setUriInfo(setUpActionExpectations(VdcActionType.ChangeVMCluster,
-                                           ChangeVMClusterParameters.class,
-                                           new String[] {"ClusterId", "VmId"},
-                                           new Object[] {GUIDS[1], GUIDS[0]},
-                                           true,
-                                           true,
-                                           false));
+                ChangeVMClusterParameters.class,
+                new String[]{"ClusterId", "VmId"},
+                new Object[]{GUIDS[1], GUIDS[0]},
+                true,
+                true,
+                false));
 
         setUpActionExpectations(VdcActionType.UpdateVm,
-                                VmManagementParametersBase.class,
-                                new String[] {},
-                                new Object[] {},
-                                true,
-                                true);
+                VmManagementParametersBase.class,
+                new String[]{},
+                new Object[]{},
+                true,
+                true);
 
         VM model = getModel(0);
         model.setId(GUIDS[0].toString());
@@ -390,6 +404,7 @@ public class BackendVmResourceTest
 
         setUpGetPayloadExpectations(0, 1);
         setUpGetBallooningExpectations();
+        setUpGetGraphicsExpectations(1);
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
                                            VmManagementParametersBase.class,
                                            new String[] {},
@@ -411,6 +426,7 @@ public class BackendVmResourceTest
 
         setUpGetPayloadExpectations(0, 1);
         setUpGetBallooningExpectations();
+        setUpGetGraphicsExpectations(1);
 
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
@@ -428,9 +444,9 @@ public class BackendVmResourceTest
     @Test
     public void testStart() throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.RunVm,
-                                           RunVmParams.class,
-                                           new String[] { "VmId" },
-                                           new Object[] { GUIDS[0] }));
+                RunVmParams.class,
+                new String[]{"VmId"},
+                new Object[]{GUIDS[0]}));
 
         Response response = resource.start(new Action());
         verifyActionResponse(response);
@@ -442,9 +458,9 @@ public class BackendVmResourceTest
         setUpWindowsGetEntityExpectations(1, false);
 
         setUriInfo(setUpActionExpectations(VdcActionType.RunVmOnce,
-                                           RunVmOnceParams.class,
-                                           new String[] { "VmId" },
-                                           new Object[] { GUIDS[0] }));
+                RunVmOnceParams.class,
+                new String[]{"VmId"},
+                new Object[]{GUIDS[0]}));
 
         Action action = new Action();
         action.setVm(new VM());
@@ -469,22 +485,33 @@ public class BackendVmResourceTest
         verifyActionResponse(resource.start(action));
     }
 
-    // todo  restapi follow up
-//    @Test
-//    public void testStartWithVnc() throws Exception {
-//        setUpWindowsGetEntityExpectations(1, false);
-//        setUriInfo(setUpActionExpectations(VdcActionType.RunVmOnce,
-//                                           RunVmOnceParams.class,
-//                                           new String[] { "VmId", "UseVnc" },
-//                                           new Object[] { GUIDS[0], Boolean.TRUE }));
-//
-//        Action action = new Action();
-//        action.setVm(new VM());
-//        action.getVm().setDisplay(new Display());
-//        action.getVm().getDisplay().setType(DisplayType.VNC.value());
-//
-//        verifyActionResponse(resource.start(action));
-//    }
+    @Test
+    public void testStartWithSpice() throws Exception {
+        testStartWithModifiedGraphics(GraphicsType.SPICE);
+    }
+
+    @Test
+    public void testStartWithVnc() throws Exception {
+        testStartWithModifiedGraphics(GraphicsType.VNC);
+    }
+
+    private void testStartWithModifiedGraphics(GraphicsType graphicsType) throws Exception {
+        setUpWindowsGetEntityExpectations(1, false);
+        setUriInfo(setUpActionExpectations(VdcActionType.RunVmOnce,
+                                           RunVmOnceParams.class,
+                                           new String[] { "VmId", "RunOnceGraphics" },
+                                           new Object[] { GUIDS[0], Collections.singleton(graphicsType) }));
+
+        Action action = new Action();
+        action.setVm(new VM());
+        action.getVm().setDisplay(new Display());
+        DisplayType display = (graphicsType == GraphicsType.VNC)
+                ? DisplayType.VNC
+                : DisplayType.SPICE;
+        action.getVm().getDisplay().setType(display.value());
+
+        verifyActionResponse(resource.start(action));
+    }
 
     @Test
     public void testStartWithBootDev() throws Exception {
@@ -906,9 +933,9 @@ public class BackendVmResourceTest
 
     protected void doTestMove(StorageDomain storageDomain) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.MoveVm,
-                       MoveVmParameters.class,
-                       new String[] { "ContainerId", "StorageDomainId" },
-                       new Object[] { GUIDS[0], GUIDS[2] }));
+                MoveVmParameters.class,
+                new String[]{"ContainerId", "StorageDomainId"},
+                new Object[]{GUIDS[0], GUIDS[2]}));
 
         Action action = new Action();
         action.setStorageDomain(storageDomain);
@@ -955,9 +982,9 @@ public class BackendVmResourceTest
         assertSame(entity, query.resolve(GUIDS[0]));
         List<Statistic> statistics = query.getStatistics(entity);
         verifyStatistics(statistics,
-                         new String[] {"memory.installed", "memory.used", "cpu.current.guest",
-                                       "cpu.current.hypervisor", "cpu.current.total", "migration.progress"},
-                         new BigDecimal[] {asDec(10*Mb), asDec(2*Mb), asDec(30), asDec(40), asDec(70), asDec(50)});
+                new String[]{"memory.installed", "memory.used", "cpu.current.guest",
+                        "cpu.current.hypervisor", "cpu.current.total", "migration.progress"},
+                new BigDecimal[]{asDec(10 * Mb), asDec(2 * Mb), asDec(30), asDec(40), asDec(70), asDec(50)});
         Statistic adopted = query.adopt(new Statistic());
         assertTrue(adopted.isSetVm());
         assertEquals(GUIDS[0].toString(), adopted.getVm().getId());
@@ -966,10 +993,10 @@ public class BackendVmResourceTest
     protected void setUpGetHostIdExpectations(int idx) throws Exception {
         VDS host = BackendHostsResourceTest.setUpEntityExpectations(control.createMock(VDS.class), idx);
         setUpGetEntityExpectations(VdcQueryType.GetVdsByName,
-                                   NameQueryParameters.class,
-                                   new String[] { "Name" },
-                                   new Object[] { NAMES[idx] },
-                                   host);
+                NameQueryParameters.class,
+                new String[]{"Name"},
+                new Object[]{NAMES[idx]},
+                host);
     }
 
     protected void setUpGetEntityExpectations(int times) throws Exception {
@@ -1107,6 +1134,16 @@ public class BackendVmResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[0] },
                 true);
+    }
+
+    protected void setUpGetGraphicsExpectations(int times) throws Exception {
+        for (int i = 0; i < times; i++) {
+            setUpGetEntityExpectations(VdcQueryType.GetGraphicsDevices,
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { GUIDS[i] },
+                    Arrays.asList(new GraphicsDevice(VmDeviceType.SPICE)));
+        }
     }
 
     private void setUpGetCertuficateExpectations() throws Exception {

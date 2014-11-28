@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 
+import java.util.List;
 import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.NIC;
@@ -12,6 +13,7 @@ import org.ovirt.engine.api.resource.InstanceTypeResource;
 import org.ovirt.engine.api.resource.WatchdogsResource;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
+import org.ovirt.engine.api.restapi.util.DisplayHelper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -23,8 +25,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-
-import java.util.List;
 
 public class BackendInstanceTypeResource
     extends AbstractBackendActionableResource<InstanceType, org.ovirt.engine.core.common.businessentities.InstanceType>
@@ -38,7 +38,9 @@ public class BackendInstanceTypeResource
 
     @Override
     public InstanceType get() {
-        return performGet(VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(guid));
+        InstanceType instanceType = performGet(VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(guid));
+        DisplayHelper.adjustDisplayData(this, instanceType);
+        return instanceType;
     }
 
     @Override
@@ -113,6 +115,8 @@ public class BackendInstanceTypeResource
             if(incoming.isSetSoundcardEnabled()) {
                 updateParams.setSoundDeviceEnabled(incoming.isSoundcardEnabled());
             }
+
+            DisplayHelper.setGraphicsToParams(incoming.getDisplay(), updateParams);
 
             return getMapper(modelType, UpdateVmTemplateParameters.class).map(incoming, updateParams);
         }
