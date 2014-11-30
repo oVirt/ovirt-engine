@@ -27,7 +27,7 @@ public class UICommand extends Model implements ICommand
     /*
      * Call this method after adding execute prohibition reasons.
      */
-    public void setIsExecutionAllowed(boolean value)
+    public UICommand setIsExecutionAllowed(boolean value)
     {
         if (isExecutionAllowed != value)
         {
@@ -39,6 +39,8 @@ public class UICommand extends Model implements ICommand
 
             onPropertyChanged(new PropertyChangedEventArgs("IsExecutionAllowed")); //$NON-NLS-1$
         }
+
+        return this;
     }
 
     private List<String> privateExecuteProhibitionReasons;
