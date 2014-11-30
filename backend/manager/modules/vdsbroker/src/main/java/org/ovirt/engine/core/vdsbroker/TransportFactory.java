@@ -28,8 +28,10 @@ public class TransportFactory {
         } else if (VdsProtocol.XML == vdsProtocol){
             Pair<IrsServerConnector, HttpClient> returnValue =
                     XmlRpcUtils.getConnection(hostname, port, clientTimeOut, connectionTimeOut,
-                            clientRetries, IrsServerConnector.class,
-                            Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication));
+                            clientRetries,
+                            Config.<Integer> getValue(ConfigValues.IrsMaxConnectionsPerHost),
+                            Config.<Integer> getValue(ConfigValues.MaxTotalConnections),
+                            IrsServerConnector.class, Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication));
             irsServer = new IrsServerWrapper(returnValue.getFirst(), returnValue.getSecond());
         }
         return irsServer;
@@ -40,7 +42,10 @@ public class TransportFactory {
         IVdsServer vdsServer = null;
         Pair<VdsServerConnector, HttpClient> returnValue =
                 XmlRpcUtils.getConnection(hostname, port, clientTimeOut, connectionTimeOut,
-                        clientRetries, VdsServerConnector.class,
+                        clientRetries,
+                        Config.<Integer> getValue(ConfigValues.VdsMaxConnectionsPerHost),
+                        Config.<Integer> getValue(ConfigValues.MaxTotalConnections),
+                        VdsServerConnector.class,
                         Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication));
 
         if (VdsProtocol.STOMP == vdsProtocol) {

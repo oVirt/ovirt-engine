@@ -65,6 +65,31 @@ public enum ConfigValues {
     vdsConnectionTimeout,
 
     /**
+     * Maximum concurrent http(s) connections to hosts. A small number of connections should suffice for most
+     * environments. When a lot of storage actions are performed, this value can be increased for more VDS command
+     * throughput.
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("2")
+    VdsMaxConnectionsPerHost,
+
+    /**
+     * Maximum concurrent http(s) connections to hosts. A small number of connections should suffice for most
+     * environments. When a lot of storage actions are performed, this value can be increased for more SPM command
+     * throughput.
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("2")
+    IrsMaxConnectionsPerHost,
+
+    /**
+     * Maximum number of connections allowed.
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("20")
+    MaxTotalConnections,
+
+    /**
      * The number of time to retry connection during protocol fallback.
      */
     @TypeConverterAttribute(Integer.class)
