@@ -22,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
+import org.ovirt.engine.core.CommandMocks;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -87,7 +88,7 @@ public class AttachStorageDomainToPoolCommandTest {
         AttachStorageDomainToPoolCommand<AttachStorageDomainToPoolParameters> cmd =
                 spy(new AttachStorageDomainToPoolCommand<AttachStorageDomainToPoolParameters>(params));
 
-        doReturn(dbFacade).when(cmd).getDbFacade();
+        CommandMocks.mockDbFacade(cmd, dbFacade);
         doNothing().when(cmd).attemptToActivateDomain();
         doReturn(Collections.emptyList()).when(cmd).connectHostsInUpToDomainStorageServer();
         when(dbFacade.getStoragePoolIsoMapDao()).thenReturn(isoMapDAO);

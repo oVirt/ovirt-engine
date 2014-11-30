@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.CommandMocks;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
@@ -90,7 +91,7 @@ public class DeactivateStorageDomainCommandTest {
 
     @Before
     public void setup() {
-        doReturn(dbFacade).when(cmd).getDbFacade();
+        CommandMocks.mockDbFacade(cmd, dbFacade);
         when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDAO);
         when(dbFacade.getStorageDomainDao()).thenReturn(storageDomainDAO);
     }

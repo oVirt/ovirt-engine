@@ -716,7 +716,7 @@ public class AuditLogableBase extends TimeoutBase {
         return getDbFacade().getCpuProfileDao();
     }
 
-    protected DbFacade getDbFacade() {
+    public DbFacade getDbFacade() {
         return DbFacade.getInstance();
     }
 

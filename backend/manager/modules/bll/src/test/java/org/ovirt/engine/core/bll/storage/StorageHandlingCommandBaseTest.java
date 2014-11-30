@@ -331,7 +331,7 @@ public class StorageHandlingCommandBaseTest {
         }
 
         @Override
-        protected DbFacade getDbFacade() {
+        public DbFacade getDbFacade() {
             return facade;
         }
 

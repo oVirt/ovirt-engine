@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.CommandMocks;
 import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -73,7 +74,7 @@ public class AddExistingFileStorageDomainCommandTest {
 
         command.setStoragePool(getStoragePool());
 
-        doReturn(dbFacade).when(command).getDbFacade();
+        CommandMocks.mockDbFacade(command, dbFacade);
         doReturn(vdsDAO).when(command).getVdsDAO();
         doReturn(storagePoolDAO).when(command).getStoragePoolDAO();
         doReturn(storageDomainStaticDAO).when(command).getStorageDomainStaticDAO();

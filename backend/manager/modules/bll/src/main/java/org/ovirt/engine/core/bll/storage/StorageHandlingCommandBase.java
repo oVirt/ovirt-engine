@@ -611,11 +611,6 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return super.getBackend();
     }
 
-    @Override
-    protected DbFacade getDbFacade() {
-        return super.getDbFacade();
-    }
-
     protected StoragePoolIsoMapDAO getStoragePoolIsoMapDAO() {
         return getDbFacade().getStoragePoolIsoMapDao();
     }
