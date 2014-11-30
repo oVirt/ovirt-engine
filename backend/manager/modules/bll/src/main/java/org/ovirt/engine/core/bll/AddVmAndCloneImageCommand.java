@@ -72,12 +72,14 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
             DiskImage diskImage,
             Guid srcStorageDomainId,
             Guid destStorageDomainId,
+            Guid diskProfileId,
             VdcActionType parentCommandType) {
         DiskImage newDiskImage = cloneDiskImage(getVmId(),
                 destStorageDomainId,
                 Guid.newGuid(),
                 Guid.newGuid(),
-                diskImage);
+                diskImage,
+                diskProfileId);
         ImagesHandler.setDiskAlias(newDiskImage, getVm());
         MoveOrCopyImageGroupParameters parameters = createCopyParameters(newDiskImage,
                 srcStorageDomainId,
@@ -182,7 +184,8 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
                                        Guid storageDomainId,
                                        Guid newImageGroupId,
                                        Guid newImageGuid,
-                                       DiskImage srcDiskImage) {
+                                       DiskImage srcDiskImage,
+                                       Guid diskProfileId) {
 
         DiskImage clonedDiskImage = DiskImage.copyOf(srcDiskImage);
         clonedDiskImage.setImageId(newImageGuid);
@@ -196,6 +199,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
         ArrayList<Guid> storageIds = new ArrayList<Guid>();
         storageIds.add(storageDomainId);
         clonedDiskImage.setStorageIds(storageIds);
+        clonedDiskImage.setDiskProfileId(diskProfileId);
 
         // If volume information was changed at client , use its volume information.
         // If volume information was not changed at client - use the volume information of the ancestral image
@@ -415,6 +419,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
                         copyDiskImage(diskImage,
                                 diskImage.getStorageIds().get(0),
                                 diskInfoDestinationMap.get(diskImage.getId()).getStorageIds().get(0),
+                                diskInfoDestinationMap.get(diskImage.getId()).getDiskProfileId(),
                                 getActionType());
                         numberOfStartedCopyTasks++;
                     }
