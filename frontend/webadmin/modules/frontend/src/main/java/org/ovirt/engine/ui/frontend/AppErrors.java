@@ -3123,6 +3123,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Profile is in use.")
     String ACTION_TYPE_FAILED_PROFILE_IN_USE();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Disk Profile is empty.")
+    String ACTION_TYPE_DISK_PROFILE_EMPTY();
+
     @DefaultStringValue("Cannot ${action} ${type}. Disk Profile wasn't found.")
     String ACTION_TYPE_FAILED_DISK_PROFILE_NOT_FOUND();
 
