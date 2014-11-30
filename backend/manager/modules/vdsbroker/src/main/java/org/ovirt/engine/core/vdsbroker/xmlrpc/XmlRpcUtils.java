@@ -92,13 +92,19 @@ public class XmlRpcUtils {
      * @return an instance of the given type.
      */
     public static <T> Pair<T, HttpClient> getConnection(String hostName, int port, int clientTimeOut,
-            int connectionTimeOut, int clientRetries, Class<T> type, boolean isSecure) {
+            int connectionTimeOut, int clientRetries, int maxConnectionsPerHost, int maxTotalConnections, Class<T> type, boolean isSecure) {
         Pair<String, URL> urlInfo = getConnectionUrl(hostName, port, null, isSecure);
         if (urlInfo == null) {
             return null;
         }
 
-        return getHttpConnection(urlInfo.getSecond(), clientTimeOut, connectionTimeOut, clientRetries, type);
+        return getHttpConnection(urlInfo.getSecond(),
+                clientTimeOut,
+                connectionTimeOut,
+                clientRetries,
+                maxConnectionsPerHost,
+                maxTotalConnections,
+                type);
     }
 
     public static Pair<String, URL> getConnectionUrl(String hostName, int port, String path, boolean isSecure) {
@@ -129,7 +135,7 @@ public class XmlRpcUtils {
 
     @SuppressWarnings("unchecked")
     private static <T> Pair<T, HttpClient> getHttpConnection(URL serverUrl, int clientTimeOut,
-            int connectionTimeOut, int clientRetries, Class<T> type) {
+            int connectionTimeOut, int clientRetries, int maxConnectionsPerHost, int maxTotalConnections, Class<T> type) {
         XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
         config.setServerURL(serverUrl);
         config.setConnectionTimeout(connectionTimeOut);
@@ -138,7 +144,7 @@ public class XmlRpcUtils {
         xmlRpcClient.setConfig(config);
 
         XmlRpcCommonsTransportFactory transportFactory = new CustomXmlRpcCommonsTransportFactory(xmlRpcClient);
-        HttpClient httpclient = createHttpClient(clientRetries, connectionTimeOut);
+        HttpClient httpclient = createHttpClient(clientRetries, connectionTimeOut, maxConnectionsPerHost, maxTotalConnections);
         transportFactory.setHttpClient(httpclient);
         xmlRpcClient.setTransportFactory(transportFactory);
 
@@ -152,9 +158,11 @@ public class XmlRpcUtils {
         return returnValue;
     }
 
-    private static HttpClient createHttpClient(int clientRetries, int connectionTimeout) {
+    private static HttpClient createHttpClient(int clientRetries, int connectionTimeout, int maxConnectionsPerHost, int maxTotalConnections) {
         HttpConnectionManagerParams params = new HttpConnectionManagerParams();
         params.setConnectionTimeout(connectionTimeout);
+        params.setDefaultMaxConnectionsPerHost(maxConnectionsPerHost);
+        params.setMaxTotalConnections(maxTotalConnections);
         MultiThreadedHttpConnectionManager httpConnectionManager = new MultiThreadedHttpConnectionManager();
         httpConnectionManager.setParams(params);
         // Create the client:
