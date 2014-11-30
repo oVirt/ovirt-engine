@@ -118,11 +118,11 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
 
         if (DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
-            if (!setAndValidateDiskProfiles()) {
+            if (!checkIfImageDiskCanBeAdded(vm, diskValidator)) {
                 return false;
             }
 
-            return checkIfImageDiskCanBeAdded(vm, diskValidator);
+            return setAndValidateDiskProfiles();
         }
 
         if (DiskStorageType.LUN == getParameters().getDiskInfo().getDiskStorageType()) {
