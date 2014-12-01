@@ -6,16 +6,19 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.vdscommands.MergeSnapshotsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.springframework.util.CollectionUtils;
 
 @InternalCommandAttribute
-public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParametersBase> extends RemoveSnapshotSingleDiskCommandBase {
+public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParametersBase> extends RemoveSnapshotSingleDiskCommandBase<T> {
 
     public RemoveSnapshotSingleDiskCommand(T parameters) {
         super(parameters);
@@ -84,5 +87,23 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
         }
 
         setSucceeded(true);
+    }
+
+    @Override
+    public void rollback() {
+        super.rollback();
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
+            @Override
+            public Object runInTransaction() {
+                if (!getParameters().isLeaveLocked()) {
+                    DiskImage diskImage = getDestinationDiskImage();
+                    if (diskImage != null) {
+                        getImageDao().updateStatus(diskImage.getImage().getId(), ImageStatus.OK);
+                    }
+                    unLockImage();
+                }
+                return null;
+            }
+        });
     }
 }
