@@ -494,20 +494,28 @@ public class DataCenterStorageListModel extends SearchableListModel
         model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantDetachFollowingStoragesMsg());
 
         ArrayList<String> list = new ArrayList<String>();
-        for (StorageDomain item : Linq.<StorageDomain> cast(getSelectedItems()))
-        {
+        boolean shouldAddressWarnning = false;
+        for (StorageDomain item : Linq.<StorageDomain> cast(getSelectedItems())) {
             list.add(item.getStorageName());
+            if (item.getStorageDomainType().isDataDomain()) {
+                shouldAddressWarnning = true;
+                break;
+            }
         }
         model.setItems(list);
 
         if (containsLocalStorage(model))
         {
+            shouldAddressWarnning = false;
             model.getLatch().setIsAvailable(true);
             model.getLatch().setIsChangable(true);
 
             model.setNote(ConstantsManager.getInstance().getMessages().detachNote(getLocalStoragesFormattedString()));
         }
 
+        if (shouldAddressWarnning) {
+            model.setNote(ConstantsManager.getInstance().getConstants().detachWarnningNote());
+        }
         UICommand tempVar = new UICommand("OnDetach", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);

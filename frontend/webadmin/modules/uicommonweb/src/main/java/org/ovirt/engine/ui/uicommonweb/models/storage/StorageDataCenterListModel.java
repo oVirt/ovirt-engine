@@ -429,10 +429,15 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantDetachStorageFromDcsMsg());
 
         ArrayList<String> items = new ArrayList<String>();
+        boolean shouldAddressWarnning = false;
         for (Object item : getSelectedItems())
         {
             StorageDomain a = (StorageDomain) item;
             items.add(a.getStoragePoolName());
+            if (a.getStorageDomainType().isDataDomain()) {
+                shouldAddressWarnning = true;
+                break;
+            }
         }
         model.setItems(items);
 
@@ -440,8 +445,11 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         {
             model.getLatch().setIsAvailable(true);
             model.getLatch().setIsChangable(true);
-
+            shouldAddressWarnning = false;
             model.setNote(ConstantsManager.getInstance().getMessages().detachNote(getLocalStoragesFormattedString()));
+        }
+        if (shouldAddressWarnning) {
+            model.setNote(ConstantsManager.getInstance().getConstants().detachWarnningNote());
         }
 
         UICommand tempVar = new UICommand("OnDetach", this); //$NON-NLS-1$
