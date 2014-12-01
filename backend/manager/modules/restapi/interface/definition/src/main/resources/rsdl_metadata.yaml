@@ -1157,8 +1157,11 @@ actions:
     body:
       parameterType: Action
       signatures:
-      - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+      - mandatoryArguments:
+          action.storage_domain.id|name: xs:string
+        optionalArguments:
+          action.async: xs:boolean
+          action.grace_period.expiry: xs:long
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -1170,8 +1173,11 @@ actions:
     body:
       parameterType: Action
       signatures:
-      - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+      - mandatoryArguments:
+          action.storage_domain.id|name: xs:string
+        optionalArguments:
+          action.async: xs:boolean
+          action.grace_period.expiry: xs:long
         description: move a disk to a different storage domain
     urlparams: {}
     headers:
@@ -1184,8 +1190,11 @@ actions:
     body:
       parameterType: Action
       signatures:
-      - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+      - mandatoryArguments:
+          action.storage_domain.id|name: xs:string
+        optionalArguments:
+          action.async: xs:boolean
+          action.grace_period.expiry: xs:long
         description: copy a disk to a different storage domain
     urlparams: {}
     headers:
