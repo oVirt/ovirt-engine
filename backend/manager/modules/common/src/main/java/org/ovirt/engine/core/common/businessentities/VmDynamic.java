@@ -71,6 +71,9 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private VmExitReason exitReason;
     private int guestCpuCount;
     private Map<GraphicsType, GraphicsInfo> graphicsInfos;
+    private Long guestMemoryCached;
+    private Long guestMemoryBuffered;
+    private Long guestMemoryFree;
 
     public static final String APPLICATIONS_LIST_FIELD_NAME = "appList";
     public static final String STATUS_FIELD_NAME = "status";
@@ -118,6 +121,9 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         result = prime * result + exitReason.hashCode();
         result = prime * result + (emulatedMachine == null ? 0 : emulatedMachine.hashCode());
         result = prime * result + graphicsInfos.hashCode();
+        result = prime * result + (guestMemoryFree == null ? 0 : guestMemoryFree.hashCode());
+        result = prime * result + (guestMemoryBuffered == null ? 0 : guestMemoryBuffered.hashCode());
+        result = prime * result + (guestMemoryCached == null ? 0 : guestMemoryCached.hashCode());
         return result;
     }
 
@@ -171,7 +177,10 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && ObjectUtils.objectsEqual(stopReason, other.stopReason)
                 && exitReason == other.exitReason
                 && ObjectUtils.objectsEqual(emulatedMachine, other.emulatedMachine))
-                && ObjectUtils.objectsEqual(graphicsInfos, other.getGraphicsInfos());
+                && ObjectUtils.objectsEqual(graphicsInfos, other.getGraphicsInfos())
+                && ObjectUtils.objectsEqual(guestMemoryBuffered, other.guestMemoryBuffered)
+                && ObjectUtils.objectsEqual(guestMemoryCached, other.guestMemoryCached)
+                && ObjectUtils.objectsEqual(guestMemoryFree, other.guestMemoryFree);
     }
 
     public String getExitMessage() {
@@ -533,5 +542,29 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setEmulatedMachine(String emulatedMachine) {
         this.emulatedMachine = emulatedMachine;
+    }
+
+    public Long getGuestMemoryCached() {
+        return guestMemoryCached;
+    }
+
+    public void setGuestMemoryCached(Long guestMemoryCached) {
+        this.guestMemoryCached = guestMemoryCached;
+    }
+
+    public Long getGuestMemoryBuffered() {
+        return guestMemoryBuffered;
+    }
+
+    public void setGuestMemoryBuffered(Long guestMemoryBuffered) {
+        this.guestMemoryBuffered = guestMemoryBuffered;
+    }
+
+    public Long getGuestMemoryFree() {
+        return guestMemoryFree;
+    }
+
+    public void setGuestMemoryFree(Long guestMemoryFree) {
+        this.guestMemoryFree = guestMemoryFree;
     }
 }

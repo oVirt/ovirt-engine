@@ -97,6 +97,7 @@ public class FeaturesHelper {
             addOpenStackImageProvidersFeature(features);
             addErrataForHostsFeature(features);
             addCumulativeNetworkUsageFeature(features);
+            addGuestMemoryBufferedCached(features);
         }
         return features;
     }
@@ -550,6 +551,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Cumulative Network Usage Statistics");
         feature.setDescription("Reporting of cumulative RX/TX statistics for host and VM network interfaces.");
+        features.getFeature().add(feature);
+    }
+
+    private void addGuestMemoryBufferedCached(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Guest Memory Cached/Buffered");
+        feature.setDescription("Report of used cached and buffered memory in the guest OS");
         features.getFeature().add(feature);
     }
 }

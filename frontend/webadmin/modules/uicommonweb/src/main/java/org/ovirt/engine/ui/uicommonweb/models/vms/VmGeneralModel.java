@@ -107,6 +107,22 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
         }
     }
 
+    private String guestFreeCachedBufferedMemInfo;
+
+    public String getGuestFreeCachedBufferedMemInfo()
+    {
+        return guestFreeCachedBufferedMemInfo;
+    }
+
+    public void setGuestFreeCachedBufferedMemInfo(String value)
+    {
+        if (!ObjectUtils.objectsEqual(guestFreeCachedBufferedMemInfo, value))
+        {
+            guestFreeCachedBufferedMemInfo = value;
+            onPropertyChanged(new PropertyChangedEventArgs("GuestFreeCachedBufferedMemInfo")); //$NON-NLS-1$
+        }
+    }
+
     private String minAllocatedMemory;
 
     public String getMinAllocatedMemory()
@@ -558,6 +574,15 @@ public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
         setDefinedMemory(vm.getVmMemSizeMb() + " MB"); //$NON-NLS-1$
         setMinAllocatedMemory(vm.getMinAllocatedMem() + " MB"); //$NON-NLS-1$
+
+        if(vm.isRunningOrPaused() && vm.getGuestMemoryBuffered() != null && vm.getGuestMemoryCached() != null  && vm.getGuestMemoryFree() != null) {
+            setGuestFreeCachedBufferedMemInfo((vm.getGuestMemoryFree() / 1024L) + " / " // $NON-NLS-1$
+                                            + (vm.getGuestMemoryBuffered() / 1024L)  + " / " // $NON-NLS-1$
+                                            + (vm.getGuestMemoryCached() / 1024L) + " MB"); //$NON-NLS-1$
+        }
+        else {
+            setGuestFreeCachedBufferedMemInfo(null); // Handled in form
+        }
 
         setOS(AsyncDataProvider.getInstance().getOsName(vm.getVmOsId()));
 

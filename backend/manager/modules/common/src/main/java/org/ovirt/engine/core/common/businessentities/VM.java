@@ -1306,6 +1306,9 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         setLastWatchdogEvent(vm.getLastWatchdogEvent());
         setGuestCpuCount(vm.getGuestCpuCount());
         getGraphicsInfos().putAll(vm.getGraphicsInfos());
+        getDynamicData().setGuestMemoryBuffered(vm.getGuestMemoryBuffered());
+        getDynamicData().setGuestMemoryCached(vm.getGuestMemoryCached());
+        getDynamicData().setGuestMemoryFree(vm.getGuestMemoryFree());
         // TODO: check what to do with update disk data
         // updateDisksData(vm);
 
@@ -1851,5 +1854,29 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
 
     public void setLockInfo(LockInfo lockInfo) {
         this.lockInfo = lockInfo;
+    }
+
+    public Long getGuestMemoryCached() {
+        return vmDynamic.getGuestMemoryCached();
+    }
+
+    public void setGuestMemoryCached(Long guestMemoryCached) {
+        vmDynamic.setGuestMemoryCached(guestMemoryCached);
+    }
+
+    public Long getGuestMemoryBuffered() {
+        return vmDynamic.getGuestMemoryBuffered();
+    }
+
+    public void setGuestMemoryBuffered(Long guestMemoryBuffered) {
+        vmDynamic.setGuestMemoryBuffered(guestMemoryBuffered);
+    }
+
+    public Long getGuestMemoryFree() {
+        return vmDynamic.getGuestMemoryFree();
+    }
+
+    public void setGuestMemoryFree(Long guestMemoryFree) {
+        vmDynamic.setGuestMemoryFree(guestMemoryFree);
     }
 }

@@ -268,12 +268,15 @@ Create or replace FUNCTION InsertVmDynamic(v_app_list text ,
   v_current_cd VARCHAR(4000),
   v_exit_reason INTEGER,
   v_guest_cpu_count INTEGER,
-v_spice_port INTEGER,
-v_spice_tls_port INTEGER,
-v_spice_ip varchar(32),
-v_vnc_port INTEGER,
-v_vnc_ip varchar(32),
-v_guest_agent_status INTEGER
+  v_spice_port INTEGER,
+  v_spice_tls_port INTEGER,
+  v_spice_ip varchar(32),
+  v_vnc_port INTEGER,
+  v_vnc_ip varchar(32),
+  v_guest_agent_status INTEGER,
+  v_guest_mem_free INTEGER,
+  v_guest_mem_buffered INTEGER,
+  v_guest_mem_cached INTEGER
 )
 RETURNS VOID
    AS $procedure$
@@ -284,7 +287,10 @@ spice_tls_port,
 spice_ip,
 vnc_port,
 vnc_ip,
-guest_agent_status
+guest_agent_status,
+guest_mem_buffered,
+guest_mem_cached,
+guest_mem_free
 )
 	VALUES(v_app_list, v_guest_cur_user_name, v_console_cur_user_name, v_console_user_id, v_guest_os, v_migrating_to_vds, v_run_on_vds, v_status, v_vm_guid, v_vm_host, v_vm_ip, v_last_start_time, v_last_stop_time, v_vm_pid, v_acpi_enable, v_session, v_kvm_enable, v_boot_sequence, v_utc_diff, v_last_vds_run_on, v_client_ip, v_guest_requested_memory, v_exit_status, v_pause_status, v_exit_message, v_guest_agent_nics_hash, v_last_watchdog_event, v_last_watchdog_action, v_is_run_once, v_vm_fqdn, v_cpu_name, v_emulated_machine, v_current_cd, v_exit_reason,
          v_guest_cpu_count,
@@ -293,7 +299,10 @@ v_spice_tls_port,
 v_spice_ip,
 v_vnc_port,
 v_vnc_ip,
-v_guest_agent_status
+v_guest_agent_status,
+v_guest_mem_buffered,
+v_guest_mem_cached,
+v_guest_mem_free
          );
 END; $procedure$
 LANGUAGE plpgsql;
@@ -342,8 +351,11 @@ Create or replace FUNCTION UpdateVmDynamic(v_app_list text ,
   v_spice_ip varchar(32),
   v_vnc_port INTEGER,
   v_vnc_ip varchar(32),
-  v_guest_agent_status INTEGER
-  )
+  v_guest_agent_status INTEGER,
+  v_guest_mem_buffered INTEGER,
+  v_guest_mem_free INTEGER,
+  v_guest_mem_cached INTEGER
+)
 RETURNS VOID
 
 	--The [vm_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -373,7 +385,10 @@ BEGIN
       spice_ip = v_spice_ip,
       vnc_port = v_vnc_port,
       vnc_ip = v_vnc_ip,
-      guest_agent_status = v_guest_agent_status
+      guest_agent_status = v_guest_agent_status,
+      guest_mem_buffered = v_guest_mem_buffered,
+      guest_mem_free = v_guest_mem_free,
+      guest_mem_cached = v_guest_mem_cached
 WHERE vm_guid = v_vm_guid;
 END; $procedure$
 LANGUAGE plpgsql;

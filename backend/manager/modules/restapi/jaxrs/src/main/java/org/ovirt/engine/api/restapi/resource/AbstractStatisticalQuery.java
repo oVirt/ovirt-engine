@@ -18,7 +18,8 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public abstract class AbstractStatisticalQuery<R extends BaseResource, E> {
 
-    protected static final long Mb = 1024 * 1024L;
+    protected static final long Kb = 1024L;
+    protected static final long Mb = 1024 * Kb;
     protected static final BigDecimal CENT = new BigDecimal(100);
     protected static final StatisticType GAUGE = StatisticType.GAUGE;
     protected static final StatisticType COUNTER = StatisticType.COUNTER;

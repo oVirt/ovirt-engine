@@ -338,6 +338,29 @@ public class VdsBrokerObjectsBuilder {
             }
         }
 
+        if(xmlRpcStruct.containsKey(VdsProperties.vm_guest_mem_stats)) {
+            Map<String, Object> sub = (Map<String, Object>)xmlRpcStruct.get(VdsProperties.vm_guest_mem_stats);
+            if(sub.containsKey(VdsProperties.vm_guest_mem_buffered)) {
+                vm.setGuestMemoryBuffered(Long.parseLong(sub.get(VdsProperties.vm_guest_mem_buffered).toString()));
+            } else {
+                vm.setGuestMemoryBuffered(null);
+            }
+            if(sub.containsKey(VdsProperties.vm_guest_mem_cached)) {
+                vm.setGuestMemoryCached(Long.parseLong(sub.get(VdsProperties.vm_guest_mem_cached).toString()));
+            } else {
+                vm.setGuestMemoryCached(null);
+            }
+            if(sub.containsKey(VdsProperties.vm_guest_mem_free)) {
+                vm.setGuestMemoryFree(Long.parseLong(sub.get(VdsProperties.vm_guest_mem_free).toString()));
+            } else {
+                vm.setGuestMemoryFree(null);
+            }
+        } else {
+            vm.setGuestMemoryBuffered(null);
+            vm.setGuestMemoryCached(null);
+            vm.setGuestMemoryFree(null);
+        }
+
         if (xmlRpcStruct.containsKey(VdsProperties.exit_code)) {
             String exitCodeStr = xmlRpcStruct.get(VdsProperties.exit_code).toString();
             vm.setExitStatus(VmExitStatus.forValue(Integer.parseInt(exitCodeStr)));

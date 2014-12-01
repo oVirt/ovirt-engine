@@ -23,7 +23,8 @@ public abstract class AbstractBackendSubResourceTest<R extends BaseResource, Q /
     protected static final String IMMUTABLE_REASON_SERVER_LOCALE = "Scheiterte Unveranderlichkeit Einschrankung";
     protected static final String IMMUTABLE_ID_DETAIL_SERVER_LOCALE = "Versuchte Anderung der unveranderlichen Eigenschaft: id";
     protected static int CONFLICT = 409;
-    protected static long Mb = 1024*1024L;
+    protected static long Kb = 1024L;
+    protected static long Mb = 1024*Kb;
 
     protected S resource;
 

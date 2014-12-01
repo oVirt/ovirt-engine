@@ -1374,6 +1374,9 @@ public class BackendVmsResourceTest
         statistics.setcpu_sys(40.0);
         statistics.setusage_cpu_percent(50);
         entity.setMigrationProgressPercent(50);
+        entity.setGuestMemoryFree(5120L);
+        entity.setGuestMemoryBuffered(2048L);
+        entity.setGuestMemoryCached(1024L);
         return entity;
     }
 

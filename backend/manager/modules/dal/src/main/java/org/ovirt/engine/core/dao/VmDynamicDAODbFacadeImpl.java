@@ -135,7 +135,10 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 .addValue("spice_tls_port", spice != null ? spice.getTlsPort() : null)
                 .addValue("spice_ip", spice != null ? spice.getIp() : null)
                 .addValue("vnc_port", vnc != null ? vnc.getPort() : null)
-                .addValue("vnc_ip", vnc != null ? vnc.getIp() : null);
+                .addValue("vnc_ip", vnc != null ? vnc.getIp() : null)
+                .addValue("guest_mem_buffered", vm.getGuestMemoryBuffered())
+                .addValue("guest_mem_cached", vm.getGuestMemoryCached())
+                .addValue("guest_mem_free", vm.getGuestMemoryFree());
     }
 
     @Override
@@ -190,6 +193,9 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
             entity.setGuestCpuCount(rs.getInt("guest_cpu_count"));
             entity.setEmulatedMachine(rs.getString("emulated_machine"));
             setGraphicsToEntity(rs, entity);
+            entity.setGuestMemoryBuffered(getLong(rs, "guest_mem_buffered"));
+            entity.setGuestMemoryCached(getLong(rs, "guest_mem_cached"));
+            entity.setGuestMemoryFree(getLong(rs, "guest_mem_free"));
             return entity;
         }
     }

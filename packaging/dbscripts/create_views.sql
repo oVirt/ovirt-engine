@@ -1084,7 +1084,10 @@ SELECT
     vm_dynamic.spice_ip AS spice_ip,
     vm_dynamic.vnc_port AS vnc_port,
     vm_dynamic.vnc_ip AS vnc_ip,
-    vm_dynamic.guest_agent_status AS guest_agent_status
+    vm_dynamic.guest_agent_status AS guest_agent_status,
+    vm_dynamic.guest_mem_buffered as guest_mem_buffered,
+	vm_dynamic.guest_mem_cached as guest_mem_cached,
+	vm_dynamic.guest_mem_free as guest_mem_free
 FROM
     vm_static
 INNER JOIN vm_dynamic ON vm_static.vm_guid = vm_dynamic.vm_guid
@@ -1237,7 +1240,10 @@ SELECT
     vms.spice_ip,
     vms.vnc_port,
     vms.vnc_ip,
-    vms.guest_agent_status
+    vms.guest_agent_status,
+    vms.guest_mem_buffered as guest_mem_buffered,
+    vms.guest_mem_cached as guest_mem_cached,
+    vms.guest_mem_free as guest_mem_free
 FROM
     vms
 LEFT

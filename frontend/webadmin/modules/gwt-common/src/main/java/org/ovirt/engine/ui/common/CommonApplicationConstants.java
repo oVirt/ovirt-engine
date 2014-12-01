@@ -471,6 +471,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Physical Memory Guaranteed")
     String physMemGauranteedVm();
 
+    @DefaultStringValue("Guest OS Memory Free/Cached/Buffered")
+    String guestFreeCachedBufferedMemInfo();
+
     @DefaultStringValue("Number of CPU Cores")
     String numOfCpuCoresVm();
 
