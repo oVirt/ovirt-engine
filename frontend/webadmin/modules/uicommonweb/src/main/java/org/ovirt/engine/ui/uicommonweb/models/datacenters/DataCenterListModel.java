@@ -357,6 +357,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
             return;
         }
 
+        boolean shouldAddressWarnning = false;
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeDataCenterTitle());
@@ -367,6 +368,11 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
         for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems()))
         {
             list.add(a.getName());
+
+            // If one of the Data Centers contain Storage Domain, show the warnning.
+            if (a.getStatus() != StoragePoolStatus.Uninitialized) {
+                shouldAddressWarnning = true;
+            }
         }
         model.setItems(list);
 
@@ -378,6 +384,9 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
         tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
+        if (shouldAddressWarnning) {
+            model.setNote(ConstantsManager.getInstance().getConstants().removeDataCenterWarnningNote());
+        }
     }
 
     public void forceRemove()
