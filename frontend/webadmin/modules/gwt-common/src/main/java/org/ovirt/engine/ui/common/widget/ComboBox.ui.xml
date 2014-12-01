@@ -23,7 +23,8 @@
 		}
 		
 		.textBoxWidget {
-			width: 212px;
+			width: 216px;
+            margin-top: 1px;
 		}
 		
 		.textBoxInput {
