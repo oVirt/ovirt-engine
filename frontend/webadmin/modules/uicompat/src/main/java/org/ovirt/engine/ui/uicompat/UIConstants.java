@@ -2482,4 +2482,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("The detach operation will move the entities residing on the storage domain(s) to an unregistered state. For further information please consult documentation.")
     String detachWarnningNote();
+
+    @DefaultStringValue("Remove the Data Center(s) will move the entities residing on the storage domain(s) to an unregistered state. For further information please consult documentation.")
+    String removeDataCenterWarnningNote();
 }
