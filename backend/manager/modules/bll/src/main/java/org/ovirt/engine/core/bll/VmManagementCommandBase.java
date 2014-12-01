@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +23,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 
 public class VmManagementCommandBase<T extends VmManagementParametersBase> extends VmCommand<T> {
 
@@ -163,25 +161,6 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
             if (currPcpus.size() == 0) {
                 // definition of pcpus is no cpu, e.g 0#1,^1
                 return failCanDoAction(VdcBllMessages.VM_PINNING_PINNED_TO_NO_CPU);
-            }
-
-            // check only from cluster version 3.2
-            if (dedicatedVds.getVdsGroupCompatibilityVersion() != null &&
-                    dedicatedVds.getVdsGroupCompatibilityVersion().compareTo(Version.v3_2) >= 0) {
-
-                if (dedicatedVds.getOnlineCpus() != null) {
-                    for (Integer pCPU : currPcpus) {
-                        if (!onlinePcpus.contains(pCPU)) {
-                            // ERROR maps to a non existent or offline pcpu
-                            return failCanDoAction(VdcBllMessages.VM_PINNING_PCPU_DOES_NOT_EXIST);
-                        }
-                    }
-                } else if (dedicatedVds.getCpuThreads() != null) {
-                    if (Collections.max(currPcpus) >= dedicatedVds.getCpuThreads()) {
-                        // ERROR maps to a non existent pcpu
-                        return failCanDoAction(VdcBllMessages.VM_PINNING_PCPU_DOES_NOT_EXIST);
-                    }
-                }
             }
         }
 
