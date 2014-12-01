@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -25,6 +26,8 @@ public class TemplateGeneralModel extends EntityModel {
         }
         if (super.getEntity() instanceof VmTemplate) {
             return (VmTemplate) super.getEntity();
+        } else if (super.getEntity() instanceof ImportTemplateData) {
+            return ((ImportTemplateData) super.getEntity()).getTemplate();
         } else {
             Map.Entry<VmTemplate, ArrayList<DiskImage>> pair =
                     (Map.Entry<VmTemplate, ArrayList<DiskImage>>) super.getEntity();

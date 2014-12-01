@@ -23,28 +23,30 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportInterfaceListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+
+import com.google.inject.Inject;
 
 public class ImportTemplateModel extends ImportVmFromExportDomainModel {
 
     private final TemplateImportDiskListModel templateImportDiskListModel;
 
+    @Inject
     public ImportTemplateModel(final VmImportDiskListModel vmImportDiskListModel,
             final StorageDiskListModel storageDomain, final ClusterListModel cluster, final QuotaListModel clusterQuota,
-            final VmGeneralModel vmGeneralModel, final VmImportInterfaceListModel vmImportInterfaceListModel,
+            final TemplateGeneralModel templateGeneralModel, final VmImportInterfaceListModel vmImportInterfaceListModel,
             final VmAppListModel vmAppListModel, final TemplateImportDiskListModel templateImportDiskListModel,
             final TemplateImportInterfaceListModel templateImportInterfaceListModel) {
-        super(vmImportDiskListModel, storageDomain, cluster, clusterQuota, vmGeneralModel, vmImportInterfaceListModel,
+        super(vmImportDiskListModel, storageDomain, cluster, clusterQuota, null, vmImportInterfaceListModel,
                 vmAppListModel);
         this.templateImportDiskListModel = templateImportDiskListModel;
         disksToConvert = null;
-        setDetailList(vmGeneralModel, templateImportInterfaceListModel);
+        setDetailList(templateGeneralModel, templateImportInterfaceListModel);
     }
 
-    private void setDetailList(final VmGeneralModel vmGeneralModel,
+    private void setDetailList(final TemplateGeneralModel vmGeneralModel,
             final TemplateImportInterfaceListModel templateImportInterfaceListModel) {
         List<EntityModel> list = new ArrayList<EntityModel>();
         list.add(vmGeneralModel);

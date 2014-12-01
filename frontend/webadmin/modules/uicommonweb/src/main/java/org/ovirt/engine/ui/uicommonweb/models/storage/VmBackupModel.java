@@ -67,7 +67,7 @@ public class VmBackupModel extends ManageBackupModel {
     protected Map<Guid, Object> cloneObjectMap;
     protected ImportVmFromExportDomainModel importModel;
 
-    protected Provider<ImportVmFromExportDomainModel> importModelProvider;
+    protected Provider<? extends ImportVmFromExportDomainModel> importModelProvider;
 
     public VmAppListModel getAppListModel() {
         return privateAppListModel;
@@ -77,9 +77,14 @@ public class VmBackupModel extends ManageBackupModel {
         privateAppListModel = value;
     }
 
-    @Inject
-    protected void setModelProvider(Provider<ImportVmFromExportDomainModel> importModelProvider) {
+    protected void setModelProvider(Provider<? extends ImportVmFromExportDomainModel> importModelProvider) {
         this.importModelProvider = importModelProvider;
+    }
+
+    @Inject
+    public VmBackupModel(Provider<ImportVmFromExportDomainModel> importModelProvider) {
+        this();
+        setModelProvider(importModelProvider);
     }
 
     public VmBackupModel() {

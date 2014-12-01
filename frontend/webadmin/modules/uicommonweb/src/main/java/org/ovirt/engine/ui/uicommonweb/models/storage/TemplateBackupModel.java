@@ -44,11 +44,16 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+
 public class TemplateBackupModel extends VmBackupModel
 {
     private ArrayList<Map.Entry<VmTemplate, List<DiskImage>>> extendedItems;
 
-    public TemplateBackupModel() {
+    @Inject
+    public TemplateBackupModel(Provider<ImportTemplateModel> importModelProvider) {
+        setModelProvider(importModelProvider);
         setTitle(ConstantsManager.getInstance().getConstants().templateImportTitle());
         setHelpTag(HelpTag.template_import);
         setHashName("template_import"); //$NON-NLS-1$
@@ -372,4 +377,5 @@ public class TemplateBackupModel extends VmBackupModel
     protected String getImportConflictTitle() {
         return ConstantsManager.getInstance().getConstants().importTemplateConflictTitle();
     }
+
 }
