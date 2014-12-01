@@ -2407,5 +2407,8 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Either Total or Read/Write can have values.")
     String eitherTotalOrReadWriteCanHaveValues();
+
+    @DefaultStringValue("The detach operation will move the entities residing on the storage domain(s) to an unregistered state. For further information please consult documentation.")
+    String detachWarnningNote();
 }
 
