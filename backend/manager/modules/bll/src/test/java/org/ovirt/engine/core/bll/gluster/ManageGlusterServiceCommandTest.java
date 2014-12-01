@@ -103,7 +103,7 @@ public class ManageGlusterServiceCommandTest {
     }
 
     private void mockBackend(boolean succeeded, VdcBllErrors errorCode, GlusterServiceStatus status) {
-        when(cmd.getBackend()).thenReturn(backend);
+        doReturn(backend).when(cmd).getBackend();
         when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
 
         VDSReturnValue vdsReturnValue = new VDSReturnValue();

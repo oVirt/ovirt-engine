@@ -43,6 +43,7 @@ import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.Command;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
+import org.ovirt.engine.core.bll.utils.Injector;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -110,9 +111,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     @Inject
     private Instance<BackendCommandObjectsHandler> commandObjectsHandlerProvider;
-
-    @Inject
-    private BackendInternal backend;
 
     /* Multiplier used to convert GB to bytes or vice versa. */
     protected static final long BYTES_IN_GB = 1024 * 1024 * 1024;
@@ -246,7 +244,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected BackendInternal getBackend() {
-        return backend;
+        return Injector.get(BackendInternal.class);
     }
 
     /**

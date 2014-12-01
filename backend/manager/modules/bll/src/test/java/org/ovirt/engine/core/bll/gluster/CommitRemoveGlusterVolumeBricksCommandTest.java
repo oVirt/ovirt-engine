@@ -97,7 +97,7 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
 
     @SuppressWarnings("unchecked")
     private void mockBackend(boolean succeeded, VdcBllErrors errorCode) {
-        when(cmd.getBackend()).thenReturn(backend);
+        doReturn(backend).when(cmd).getBackend();
         when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
         doNothing().when(cmd).endStepJobCommitted();
         doNothing().when(cmd).releaseVolumeLock();

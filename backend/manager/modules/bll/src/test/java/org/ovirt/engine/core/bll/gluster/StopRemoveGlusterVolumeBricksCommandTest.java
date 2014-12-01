@@ -83,7 +83,7 @@ public class StopRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGlus
     }
 
     private void mockBackend(boolean succeeded, VdcBllErrors errorCode) {
-        when(cmd.getBackend()).thenReturn(backend);
+        doReturn(backend).when(cmd).getBackend();
         when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
         doNothing().when(cmd).endStepJobAborted(any(String.class));
         doNothing().when(cmd).releaseVolumeLock();

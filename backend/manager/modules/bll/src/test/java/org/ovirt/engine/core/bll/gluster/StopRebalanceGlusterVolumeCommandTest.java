@@ -144,7 +144,7 @@ public class StopRebalanceGlusterVolumeCommandTest {
             JobExecutionStatus rebalanceStopStatus,
             boolean isRebalancegTaskCompleted,
             VdcBllErrors errorCode) {
-        when(cmd.getBackend()).thenReturn(backend);
+        doReturn(backend).when(cmd).getBackend();
         when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
         doReturn("TestVDS").when(cmd).getVdsGroupName();
         doReturn("TestVolume").when(cmd).getGlusterVolumeName();

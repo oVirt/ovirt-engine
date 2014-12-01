@@ -73,7 +73,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
     }
 
     private void mockBackend(boolean succeeded, VdcBllErrors errorCode) {
-        when(cmd.getBackend()).thenReturn(backend);
+        doReturn(backend).when(cmd).getBackend();
         when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
 
         VDSReturnValue vdsReturnValue = new VDSReturnValue();

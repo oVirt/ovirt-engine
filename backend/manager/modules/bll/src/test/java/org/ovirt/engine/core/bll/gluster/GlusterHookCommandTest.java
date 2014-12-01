@@ -90,7 +90,7 @@ public class GlusterHookCommandTest<T extends GlusterHookCommandBase<? extends G
     }
 
     protected void mockBackendStatusChange(T cmd, boolean succeeded, VdcBllErrors errorCode) {
-        when(cmd.getBackend()).thenReturn(backend);
+        doReturn(backend).when(cmd).getBackend();
 
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
         vdsReturnValue.setReturnValue(succeeded);

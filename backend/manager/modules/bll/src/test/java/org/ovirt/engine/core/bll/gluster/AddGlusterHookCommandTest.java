@@ -83,7 +83,7 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
     }
 
     private void mockBackend(boolean succeeded, VdcBllErrors errorCode) {
-        when(cmd.getBackend()).thenReturn(backend);
+        doReturn(backend).when(cmd).getBackend();
         when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
 
         VDSReturnValue vdsReturnValue = new VDSReturnValue();
@@ -91,8 +91,9 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
         if (!succeeded) {
             vdsReturnValue.setVdsError(new VDSError(errorCode, ""));
         }
-        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.AddGlusterHook), argThat(anyHookVDS()))).thenReturn(vdsReturnValue);
-     }
+        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.AddGlusterHook), argThat(anyHookVDS()))).thenReturn(
+                vdsReturnValue);
+    }
 
     private ArgumentMatcher<VDSParametersBase> anyHookVDS() {
         return new ArgumentMatcher<VDSParametersBase>() {
