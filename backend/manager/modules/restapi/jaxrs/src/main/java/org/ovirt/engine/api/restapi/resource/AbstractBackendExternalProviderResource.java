@@ -17,12 +17,12 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
+import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.ExternalProvider;
 import org.ovirt.engine.api.resource.ExternalProviderCertificatesResource;
 import org.ovirt.engine.api.resource.ExternalProviderResource;
-import org.ovirt.engine.core.common.action.ImportProviderCertificateParameters;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -32,8 +32,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-import javax.ws.rs.core.Response;
 
 public abstract class AbstractBackendExternalProviderResource<R extends ExternalProvider>
         extends AbstractBackendActionableResource<R, Provider>
@@ -86,8 +84,9 @@ public abstract class AbstractBackendExternalProviderResource<R extends External
         if (entities.size() == 0) {
             return null;
         }
-        return performAction(VdcActionType.ImportProviderCertificate,
-                new ImportProviderCertificateParameters(provider, entities.get(0).getPayload()));
+//        return performAction(VdcActionType.ImportProviderCertificate,
+//                new ImportProviderCertificateParameters(provider, entities.get(0).getPayload()));
+        return null;
     }
 
     @Override

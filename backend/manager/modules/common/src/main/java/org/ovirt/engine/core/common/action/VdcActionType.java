@@ -313,7 +313,7 @@ public enum VdcActionType {
     UpdateProvider(1601, false, QuotaDependency.NONE),
     RemoveProvider(1602, false, QuotaDependency.NONE),
     TestProviderConnectivity(1603, false, QuotaDependency.NONE),
-    ImportProviderCertificate(1604, false, QuotaDependency.NONE),
+    //ImportProviderCertificate(1604, false, QuotaDependency.NONE),
     AddNetworkOnProvider(1605, ActionGroup.CREATE_STORAGE_POOL_NETWORK, false, QuotaDependency.NONE),
     AddSubnetToProvider(1606, false, QuotaDependency.NONE),
     RemoveSubnetFromProvider(1607, false, QuotaDependency.NONE),
