@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import javax.inject.Named;
+
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ActionVersionMap;
@@ -18,6 +20,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  *
  * The initial implementation came from  {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
  */
+@Named
 public class ActionGroupDAODbFacadeImpl extends BaseDAODbFacade implements ActionGroupDAO {
 
     private static final ConcurrentMap<VdcActionType, ActionVersionMap> cache =

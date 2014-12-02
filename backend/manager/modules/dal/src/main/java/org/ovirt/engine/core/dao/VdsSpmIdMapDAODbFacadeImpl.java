@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.compat.Guid;
@@ -14,6 +16,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * <code>VdsSpmIdMapDAODbFacadeImpl</code> provides an implementation of {@link VdsSpmIdMapDAO} that uses previously written code from
  * {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
  */
+@Named
 public class VdsSpmIdMapDAODbFacadeImpl extends BaseDAODbFacade implements VdsSpmIdMapDAO{
 
 

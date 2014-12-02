@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Named;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -22,6 +24,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 /**
  * <code>VmTemplateDAODbFacadeImpl</code> provides a concrete implementation of {@link VmTemplateDAO}.
  */
+
+@Named
 public class VmTemplateDAODbFacadeImpl extends VmBaseDaoDbFacade<VmTemplate> implements VmTemplateDAO {
 
     public VmTemplateDAODbFacadeImpl() {

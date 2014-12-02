@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
@@ -19,6 +21,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * <code>StoragePoolDAODbFacadeImpl</code> provides a concrete implementation of {@link StoragePoolDAO} based on code
  * from {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
  */
+@Named
 @SuppressWarnings("synthetic-access")
 public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements StoragePoolDAO {
 

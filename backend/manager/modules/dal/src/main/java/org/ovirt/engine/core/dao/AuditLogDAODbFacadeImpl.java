@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Named;
+
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
@@ -22,6 +24,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
  * <code>AuditLogDAODbFacadeImpl</code> provides a concrete implementation of {@link AuditLogDAO}. It uses code
  * refactored from {@link DbFacade}.
  */
+@Named
 public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLogDAO {
 
     @SuppressWarnings("synthetic-access")

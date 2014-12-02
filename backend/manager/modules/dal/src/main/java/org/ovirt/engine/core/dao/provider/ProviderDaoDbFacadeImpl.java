@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.inject.Named;
+
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.AgentConfiguration;
@@ -19,6 +21,7 @@ import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
+@Named
 public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider<?>, Guid> implements ProviderDao {
 
     public ProviderDaoDbFacadeImpl() {

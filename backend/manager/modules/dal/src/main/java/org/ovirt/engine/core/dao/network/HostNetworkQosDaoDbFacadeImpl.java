@@ -3,12 +3,15 @@ package org.ovirt.engine.core.dao.network;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.inject.Named;
+
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.dao.qos.QosBaseDaoFacadeImpl;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+@Named
 public class HostNetworkQosDaoDbFacadeImpl extends QosBaseDaoFacadeImpl<HostNetworkQos> implements HostNetworkQosDao {
 
     private static final String OUT_AVERAGE_LINKSHARE = "out_average_linkshare";

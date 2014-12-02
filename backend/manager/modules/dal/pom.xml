@@ -58,8 +58,26 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib</artifactId>
+      <version>3.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>asm</groupId>
+      <artifactId>asm</artifactId>
+      <version>3.3.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-orm</artifactId>
+      <version>${spring.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>javax.transaction</groupId>
@@ -208,4 +226,10 @@
         </build>
     </profile>
   </profiles>
+  <repositories>
+    <repository>
+    <id>sonatype-releases</id>
+    <url>https://oss.sonatype.org/content/repositories/releases/</url>
+    </repository>
+  </repositories>
 </project>

@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
@@ -16,6 +18,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
  * {@link org.ovirt.engine.core.dal.dbbroker.DbFacade.DbFacade} code.
  *
  */
+@Named
 public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO {
     private static class DbUserRowMapper implements RowMapper<DbUser> {
         public static final DbUserRowMapper instance = new DbUserRowMapper();

@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Named;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.springframework.jdbc.core.RowMapper;
@@ -23,6 +25,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
  *
  *
  */
+@Named
 public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade implements
         StorageServerConnectionDAO {
 

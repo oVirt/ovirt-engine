@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Named;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -12,6 +14,7 @@ import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+@Named
 public class GlusterOptionDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<GlusterVolumeOptionEntity, Guid> implements GlusterOptionDao {
     private static final RowMapper<GlusterVolumeOptionEntity> optionRowMapper = new VolumeOptionRowMapper();
 

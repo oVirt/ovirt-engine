@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Named;
+
 import org.ovirt.engine.core.common.businessentities.comparators.InterfaceComparerByMAC;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
@@ -14,6 +16,7 @@ import org.ovirt.engine.core.dao.network.VmNicDaoDbFacadeImpl.VmNicRowMapperBase
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+@Named
 public class VmNetworkInterfaceDaoDbFacadeImpl extends DefaultReadDaoDbFacade<VmNetworkInterface, Guid> implements VmNetworkInterfaceDao {
 
     public VmNetworkInterfaceDaoDbFacadeImpl() {

@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.inject.Named;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
@@ -31,6 +33,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 /**
  * Implementation of the DB Facade for Gluster Volumes.
  */
+@Named
 public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<GlusterVolumeEntity, Guid> implements
         GlusterVolumeDao {
 

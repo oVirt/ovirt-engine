@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
@@ -13,6 +15,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * Provides a concrete implementation of {@link DbGroupDAO} based on code from
  * {@link DbFacade}.
  */
+@Named
 public class DbGroupDAODbFacadeImpl extends BaseDAODbFacade implements DbGroupDAO {
 
     @Override

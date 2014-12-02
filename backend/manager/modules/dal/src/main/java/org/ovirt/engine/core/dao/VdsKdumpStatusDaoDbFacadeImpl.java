@@ -4,11 +4,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+
 import org.ovirt.engine.core.common.businessentities.KdumpFlowStatus;
 import org.ovirt.engine.core.common.businessentities.VdsKdumpStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 
+@Named
 public class VdsKdumpStatusDaoDbFacadeImpl  extends BaseDAODbFacade implements VdsKdumpStatusDao {
     private static class VdsKdumpStatusMapper implements RowMapper<VdsKdumpStatus> {
         private static final VdsKdumpStatusMapper instance = new VdsKdumpStatusMapper();

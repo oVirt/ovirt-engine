@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -19,6 +21,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
  *
  */
+
+@Named
 public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO {
     @Override
     public void removeVmFromVmPool(Guid id) {

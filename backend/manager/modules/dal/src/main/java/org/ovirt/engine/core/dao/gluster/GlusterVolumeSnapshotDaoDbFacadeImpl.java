@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Named;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterSnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
@@ -15,6 +17,7 @@ import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+@Named
 public class GlusterVolumeSnapshotDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<GlusterVolumeSnapshotEntity, Guid> implements GlusterVolumeSnapshotDao {
     private static final RowMapper<GlusterVolumeSnapshotEntity> snapshotRowMapper =
             new GlusterVolumeSnapshotRowMapper();

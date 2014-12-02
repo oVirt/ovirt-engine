@@ -3,12 +3,15 @@ package org.ovirt.engine.core.dao.gluster;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.inject.Named;
+
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DefaultGenericDaoDbFacade;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+@Named
 public class GlusterServerDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<GlusterServer, Guid> implements GlusterServerDao {
 
     private static final RowMapper<GlusterServer> glusterServerRowMapper = new GlusterServerRowMapper();

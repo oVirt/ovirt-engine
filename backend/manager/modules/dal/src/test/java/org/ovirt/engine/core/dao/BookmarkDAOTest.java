@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -134,5 +135,16 @@ public class BookmarkDAOTest extends BaseDAOTestCase {
         Bookmark result = dao.get(existing_bookmark.getbookmark_id());
 
         assertNull(result);
+    }
+
+    /**
+     * Make sure that we work with detached entities in our code
+     */
+    @Test
+    public void testDetachedEntityGet() {
+        Bookmark result = dao.get(existing_bookmark.getbookmark_id());
+        result.setbookmark_name("a test");
+        Bookmark result2 = dao.get(existing_bookmark.getbookmark_id());
+        assertNotEquals(result.getbookmark_name(), result2.getbookmark_name());
     }
 }

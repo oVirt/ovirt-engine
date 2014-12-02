@@ -3,12 +3,15 @@ package org.ovirt.engine.core.dao.network;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.inject.Named;
+
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.dao.qos.QosBaseDaoFacadeImpl;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
+@Named
 public class NetworkQoSDaoFacadeImpl extends QosBaseDaoFacadeImpl<NetworkQoS> implements NetworkQoSDao {
 
     protected final RowMapper<NetworkQoS> mapper = createEntityRowMapper();

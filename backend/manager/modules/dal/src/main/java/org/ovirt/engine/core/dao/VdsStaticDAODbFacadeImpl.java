@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.inject.Named;
+
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
@@ -17,6 +19,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
  * <code>VdsDAODbFacadeImpl</code> provides an implementation of {@link VdsDAO} that uses previously written code from
  * {@code DbFacade}.
  */
+@Named
 public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStaticDAO {
 
     @Override

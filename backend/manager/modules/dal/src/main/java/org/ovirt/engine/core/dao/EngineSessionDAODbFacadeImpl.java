@@ -14,10 +14,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 
+import javax.inject.Named;
+
 /**
  * <code>EngineSessionDAODbFacadeImpl</code> provides an implementation of {@link org.ovirt.engine.core.dao.EngineSessionDAO} using code refactored from
  * {@code DbFacade}.
  */
+@Named
 public class EngineSessionDAODbFacadeImpl extends BaseDAODbFacade implements EngineSessionDAO {
     private static final Logger log = LoggerFactory.getLogger(EngineSessionDAODbFacadeImpl.class);
 

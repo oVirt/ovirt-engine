@@ -6,6 +6,9 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+
+import javax.inject.Named;
+
 import org.apache.commons.collections.KeyValue;
 import org.apache.commons.collections.keyvalue.DefaultKeyValue;
 import org.springframework.jdbc.core.RowMapper;
@@ -18,6 +21,7 @@ import org.ovirt.engine.core.compat.Guid;
  * JDBC-Template DAO for business entity snapshots
  *
  */
+@Named
 public class BusinessEntitySnapshotDAODbFacadeImpl extends BaseDAODbFacade implements BusinessEntitySnapshotDAO {
 
     private static class BusinessEntitySnapshotMapper implements RowMapper<BusinessEntitySnapshot> {
