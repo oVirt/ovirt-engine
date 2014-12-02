@@ -16,15 +16,20 @@
 
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.List;
+
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.ExternalProvider;
 import org.ovirt.engine.api.resource.ExternalProviderCertificatesResource;
 import org.ovirt.engine.api.resource.ExternalProviderResource;
+import org.ovirt.engine.core.common.action.ImportProviderCertificateParameters;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.CertificateInfo;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -74,8 +79,15 @@ public abstract class AbstractBackendExternalProviderResource<R extends External
     @Override
     public Response importCertificates(Action action) {
         Provider provider = BackendExternalProviderHelper.getProvider(this, id);
-        ProviderParameters parameters = new ProviderParameters(provider);
-        return performAction(VdcActionType.ImportProviderCertificateChain, parameters);
+        List<CertificateInfo> entities = getBackendCollection(
+            CertificateInfo.class,
+                VdcQueryType.GetProviderCertificateChain, new ProviderQueryParameters(provider)
+        );
+        if (entities.size() == 0) {
+            return null;
+        }
+        return performAction(VdcActionType.ImportProviderCertificate,
+                new ImportProviderCertificateParameters(provider, entities.get(0).getPayload()));
     }
 
     @Override

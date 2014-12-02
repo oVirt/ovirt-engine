@@ -48,7 +48,6 @@ public enum VdcQueryType implements Serializable {
     GetHostGroupsFromExternalProvider(),
     GetComputeResourceFromExternalProvider(),
     GetDiscoveredHostListFromExternalProvider(),
-    GetProviderCertificateChainText,
     GetProviderCertificateChain,
     GetHostsForStorageOperation,
     GetServerSSHPublicKey,

@@ -16,33 +16,15 @@
 
 package org.ovirt.engine.api.restapi.types;
 
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.X509Certificate;
-
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.StringUtils;
 import org.ovirt.engine.api.model.Certificate;
+import org.ovirt.engine.core.common.businessentities.CertificateInfo;
 
 public class CertificateMapper {
-    @Mapping(from = java.security.cert.Certificate.class, to = Certificate.class)
-    public static Certificate map(java.security.cert.Certificate entity, Certificate template) {
-        try {
-            Certificate model = template != null? template: new Certificate();
-            X509Certificate x509 = (X509Certificate) entity;
-            try {
-                byte[] content = x509.getEncoded();
-                byte[] encoded = Base64.encodeBase64(content, false);
-                String text = StringUtils.newStringUtf8(encoded);
-                model.setContent(text);
-            }
-            catch (CertificateEncodingException exception) {
-                throw new IllegalArgumentException("Can't encode X.509 certificate", exception);
-            }
-            model.setSubject(x509.getSubjectDN().toString());
-            return model;
-        }
-        catch (ClassCastException exception) {
-            throw new IllegalArgumentException("Only X.509 certificates are supported", exception);
-        }
+    @Mapping(from = CertificateInfo.class, to = Certificate.class)
+    public static Certificate map(CertificateInfo entity, Certificate template) {
+        Certificate model = template != null ? template : new Certificate();
+        model.setContent(entity.getPayload());
+        model.setSubject(entity.getSubject());
+        return model;
     }
 }

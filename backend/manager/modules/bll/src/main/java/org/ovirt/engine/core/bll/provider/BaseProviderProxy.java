@@ -58,7 +58,13 @@ public abstract class BaseProviderProxy implements ProviderProxy {
                     }
                     afterReadResponse();
                 } catch (Exception ex) {
-                    log.error("Exception is ", ex);
+                    log.error("Exception is {} ", ex.getMessage());
+                    log.debug("Exception: ", ex);
+                    if (ex instanceof VdcBLLException) {
+                        throw (VdcBLLException) ex;
+                    } else {
+                        throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, ex.getMessage());
+                    }
                 }
                 response = bytesOs.toByteArray();
             }

@@ -23,12 +23,13 @@ import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.Certificates;
 import org.ovirt.engine.api.resource.ExternalProviderCertificateResource;
 import org.ovirt.engine.api.resource.ExternalProviderCertificatesResource;
+import org.ovirt.engine.core.common.businessentities.CertificateInfo;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendExternalProviderCertificatesResource
-        extends AbstractBackendCollectionResource<Certificate, java.security.cert.Certificate>
+        extends AbstractBackendCollectionResource<Certificate, CertificateInfo>
         implements ExternalProviderCertificatesResource {
     /**
      * The identifier of the provider.
@@ -36,7 +37,7 @@ public class BackendExternalProviderCertificatesResource
     private String providerId;
 
     public BackendExternalProviderCertificatesResource(String providerId) {
-        super(Certificate.class, java.security.cert.Certificate.class);
+        super(Certificate.class, CertificateInfo.class);
         this.providerId = providerId;
     }
 
@@ -49,15 +50,15 @@ public class BackendExternalProviderCertificatesResource
     }
 
     @Override
-    protected Certificate doPopulate(Certificate model, java.security.cert.Certificate entity) {
+    protected Certificate doPopulate(Certificate model, CertificateInfo entity) {
         return model;
     }
 
-    protected Certificates mapCollection(List<java.security.cert.Certificate> entities) {
+    protected Certificates mapCollection(List<CertificateInfo> entities) {
         Certificates collection = new Certificates();
         if (entities != null) {
             for (int i = 0; i < entities.size(); i++) {
-                java.security.cert.Certificate entity = entities.get(i);
+                CertificateInfo entity = entities.get(i);
                 Certificate model = populate(map(entity), entity);
                 model.setId(String.valueOf(i));
                 collection.getCertificates().add(model);

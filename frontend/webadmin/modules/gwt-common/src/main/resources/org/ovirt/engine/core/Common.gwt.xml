@@ -48,6 +48,7 @@
 		<include name="common/businessentities/InitializationType.java" />
 		<include name="common/businessentities/Nameable.java" />
 		<include name="common/businessentities/Provider.java" />
+		<include name="common/businessentities/CertificateInfo.java" />
 		<include name="common/businessentities/ProviderType.java" />
 		<include name="common/businessentities/ScsiGenericIO.java" />
 		<include name="common/businessentities/TenantProviderProperties.java" />

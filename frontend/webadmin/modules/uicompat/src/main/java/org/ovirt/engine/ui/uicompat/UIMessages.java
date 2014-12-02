@@ -409,4 +409,10 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("{0} ({1})")
     String threadsAsCoresPerSocket(int cores, int threads);
+
+    @DefaultMessage("Do you approve trusting certificate subject {0} issued by {1}, SHA-1 fingerprint {2}?")
+    String approveCertificateTrust(String subject, String issuer, String sha1Fingerprint);
+
+    @DefaultMessage("Do you approve trusting self signed certificate subject {0}, SHA-1 fingerprint {1}?")
+    String approveRootCertificateTrust(String subject, String sha1Fingerprint);
 }

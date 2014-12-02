@@ -20,19 +20,20 @@ import java.util.List;
 
 import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.resource.ExternalProviderCertificateResource;
+import org.ovirt.engine.core.common.businessentities.CertificateInfo;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendExternalProviderCertificateResource
-        extends AbstractBackendActionableResource<Certificate, java.security.cert.Certificate>
+        extends AbstractBackendActionableResource<Certificate, CertificateInfo>
         implements ExternalProviderCertificateResource {
 
     private String providerId;
 
     protected BackendExternalProviderCertificateResource(String id, String providerId) {
-        super(id, Certificate.class, java.security.cert.Certificate.class);
+        super(id, Certificate.class, CertificateInfo.class);
         this.providerId = providerId;
     }
 
@@ -52,12 +53,12 @@ public class BackendExternalProviderCertificateResource
         Provider provider = BackendExternalProviderHelper.getProvider(this, providerId);
         ProviderQueryParameters parameters = new ProviderQueryParameters();
         parameters.setProvider(provider);
-        List<java.security.cert.Certificate> entities = getBackendCollection(
-            java.security.cert.Certificate.class,
+        List<CertificateInfo> entities = getBackendCollection(
+            CertificateInfo.class,
             VdcQueryType.GetProviderCertificateChain, parameters
         );
         if (entities != null && i >= 0 && i < entities.size()) {
-            java.security.cert.Certificate entity = entities.get(i);
+            CertificateInfo entity = entities.get(i);
             Certificate model = populate(map(entity), entity);
             model.setId(id);
             return model;
@@ -68,7 +69,7 @@ public class BackendExternalProviderCertificateResource
     }
 
     @Override
-    protected Certificate doPopulate(Certificate model, java.security.cert.Certificate entity) {
+    protected Certificate doPopulate(Certificate model, CertificateInfo entity) {
         return model;
     }
 

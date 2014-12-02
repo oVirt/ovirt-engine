@@ -5,14 +5,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.ImportProviderCertificateParameters;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.CertificateInfo;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.TenantProviderProperties;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -44,7 +45,7 @@ public class ProviderModel extends Model {
     private static final String CMD_SAVE = "OnSave"; //$NON-NLS-1$
     private static final String CMD_TEST = "OnTest"; //$NON-NLS-1$
     private static final String CMD_CANCEL = "Cancel"; //$NON-NLS-1$
-    private static final String CMD_IMPORT_CHAIN = "ImportChain"; //$NON-NLS-1$
+    private static final String CMD_IMPORT_CERTIFICATE = "ImportCertificate"; //$NON-NLS-1$
     private static final String CMD_CANCEL_IMPORT = "CancelImport"; //$NON-NLS-1$
     private static final String EMPTY_ERROR_MESSAGE = ""; //$NON-NLS-1$
 
@@ -67,6 +68,7 @@ public class ProviderModel extends Model {
     private EntityModel<String> testResult = new EntityModel<String>();
 
     private NeutronAgentModel neutronAgentModel = new NeutronAgentModel();
+    private String certificate;
 
     public EntityModel<String> getName() {
         return name;
@@ -321,89 +323,94 @@ public class ProviderModel extends Model {
 
         flush();
         startProgress(null);
+        if (provider.getUrl().startsWith(Uri.SCHEME_HTTPS)) {
+            AsyncDataProvider.getInstance().getProviderCertificateChain(new AsyncQuery(this, new INewAsyncCallback() {
+
+                @Override
+                public void onSuccess(Object model, Object returnValue) {
+                    boolean ok = false;
+                    certificate = null;
+                    if (returnValue != null) {
+                        List<CertificateInfo> certs = (List<CertificateInfo>) returnValue;
+                        if (!certs.isEmpty()) {
+                            certificate = certs.get(certs.size() - 1).getPayload();
+                            ConfirmationModel confirmationModel =
+                                    getImportCertificateConfirmationModel(certs.get(0));
+                            sourceListModel.setConfirmWindow(confirmationModel);
+                            ok = true;
+                        }
+                    }
+                    if (!ok) {
+                        stopProgress();
+                        getTestResult().setEntity(ConstantsManager.getInstance()
+                                .getConstants()
+                                .testFailedUnknownErrorMsg());
+                    }
+                }
+
+            }),
+                    provider);
+        } else {
+            testProviderConnectivity();
+        }
+    }
+
+    private void testProviderConnectivity() {
         Frontend.getInstance().runAction(VdcActionType.TestProviderConnectivity,
                 new ProviderParameters(provider),
                 new IFrontendActionAsyncCallback() {
 
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                VdcReturnValueBase res = result.getReturnValue();
-                // If the connection failed on SSL issues, we try to fetch the provider certificate chain, and import it to the engine
-                if (isFailedOnSSL(res)) {
-                    AsyncQuery getCertChainQuery = new AsyncQuery();
-                    getCertChainQuery.asyncCallback = new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object model, Object result)
-                        {
-                            if (result != null) {
-                                ConfirmationModel confirmationModel = getImportChainConfirmationModel((String) result);
-                                sourceListModel.setConfirmWindow(confirmationModel);
-                            } else {
-                                stopProgress();
-                                getTestResult().setEntity(ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg());
-                            }
-                        }
-                    };
-                    AsyncDataProvider.getInstance().getProviderCertificateChain(getCertChainQuery, provider);
-                } else {
-                    stopProgress();
-                    setTestResultValue(res);
-                }
-            }
-        }, null, false);
+                    @Override
+                    public void executed(FrontendActionAsyncResult result) {
+                        VdcReturnValueBase res = result.getReturnValue();
+                        // If the connection failed on SSL issues, we try to fetch the provider
+                        // certificate chain, and import it to the engine
+                        stopProgress();
+                        setTestResultValue(res);
+                    }
+                }, null, false);
     }
 
-    private boolean isFailedOnSSL(VdcReturnValueBase res) {
-        return res != null && !res.getSucceeded() && res.getFault() != null && VdcBllErrors.PROVIDER_SSL_FAILURE.equals(res.getFault().getError());
+    private ImportProviderCertificateParameters importCertificateParams() {
+        return new ImportProviderCertificateParameters(provider, certificate);
     }
 
-    private ConfirmationModel getImportChainConfirmationModel(String certChainString) {
+    private ConfirmationModel getImportCertificateConfirmationModel(CertificateInfo certInfo) {
         ConfirmationModel confirmationModel = new ConfirmationModel();
-        confirmationModel.setMessage(ConstantsManager.getInstance().getConstants().theProviderHasTheFollowingCertificates()
-                + certChainString
-                + ConstantsManager.getInstance().getConstants().doYouApproveImportingTheseCertificates());
-        confirmationModel.setTitle(ConstantsManager.getInstance().getConstants().importProviderCertificatesTitle());
-        confirmationModel.setHelpTag(HelpTag.import_provider_certificates);
-        confirmationModel.setHashName("import_provider_certificates"); //$NON-NLS-1$
-        UICommand importChainCommand = new UICommand(CMD_IMPORT_CHAIN, this);
-        importChainCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        importChainCommand.setIsDefault(false);
-        confirmationModel.getCommands().add(importChainCommand);
+        if (certInfo.getSelfSigned()) {
+            confirmationModel.setMessage(
+                    ConstantsManager.getInstance().getMessages().approveRootCertificateTrust(
+                        certInfo.getSubject(), certInfo.getSHA1Fingerprint()));
+        } else {
+            confirmationModel.setMessage(
+                    ConstantsManager.getInstance().getMessages().approveCertificateTrust(
+                        certInfo.getSubject(), certInfo.getIssuer(), certInfo.getSHA1Fingerprint()));
+        }
+        confirmationModel.setTitle(ConstantsManager.getInstance().getConstants().importProviderCertificateTitle());
+        confirmationModel.setHelpTag(HelpTag.import_provider_certificate);
+        confirmationModel.setHashName("import_provider_certificate"); //$NON-NLS-1$
+        UICommand importCertificateCommand = new UICommand(CMD_IMPORT_CERTIFICATE, this);
+        importCertificateCommand.setTitle(ConstantsManager.getInstance().getConstants().yes());
+        importCertificateCommand.setIsDefault(false);
+        confirmationModel.getCommands().add(importCertificateCommand);
         UICommand cancelImport = new UICommand(CMD_CANCEL_IMPORT, this);
-        cancelImport.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        cancelImport.setTitle(ConstantsManager.getInstance().getConstants().no());
         cancelImport.setIsCancel(true);
         cancelImport.setIsDefault(true);
         confirmationModel.getCommands().add(cancelImport);
         return confirmationModel;
     }
 
-    private void importChain() {
-        Frontend.getInstance().runAction(VdcActionType.ImportProviderCertificateChain,
-                new ProviderParameters(provider),
+    private void importCertificate() {
+        Frontend.getInstance().runAction(VdcActionType.ImportProviderCertificate,
+                importCertificateParams(),
                 new IFrontendActionAsyncCallback() {
 
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                VdcReturnValueBase res = result.getReturnValue();
-
-                if (res != null && res.getSucceeded()) {
-                    Frontend.getInstance().runAction(VdcActionType.TestProviderConnectivity,
-                            new ProviderParameters(provider),
-                            new IFrontendActionAsyncCallback() {
-
-                        @Override
-                        public void executed(FrontendActionAsyncResult result) {
-                            VdcReturnValueBase res = result.getReturnValue();
-                            setTestResultValue(res);
-                            stopProgress();
-                        }
-                    }, null, false);
-                } else {
-                    setTestResultValue(res);
-                    stopProgress();
-                }
-            }
-        });
+                    @Override
+                    public void executed(FrontendActionAsyncResult result) {
+                        testProviderConnectivity();
+                    }
+                }, null, false);
         sourceListModel.setConfirmWindow(null);
     }
 
@@ -422,8 +429,8 @@ public class ProviderModel extends Model {
             onTest();
         } else if (CMD_CANCEL.equals(command.getName())) {
             cancel();
-        } else if (CMD_IMPORT_CHAIN.equals(command.getName())) {
-            importChain();
+        } else if (CMD_IMPORT_CERTIFICATE.equals(command.getName())) {
+            importCertificate();
         } else if (CMD_CANCEL_IMPORT.equals(command.getName())) {
             cancelImport();
         }
