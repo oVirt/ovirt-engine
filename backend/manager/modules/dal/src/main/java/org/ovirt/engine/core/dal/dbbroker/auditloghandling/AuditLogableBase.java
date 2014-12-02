@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.transaction.Transaction;
 
 import org.apache.commons.lang.StringUtils;
@@ -29,13 +28,16 @@ import org.ovirt.engine.core.dao.DbUserDAO;
 import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.dao.RoleDAO;
 import org.ovirt.engine.core.dao.RoleGroupMapDAO;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
+import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VmAndTemplatesGenerationsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
@@ -596,6 +598,18 @@ public class AuditLogableBase extends TimeoutBase {
         return getDbFacade().getVmStaticDao();
     }
 
+    public SnapshotDao getSnapshotDAO() {
+        return getDbFacade().getSnapshotDao();
+    }
+
+    public VmAndTemplatesGenerationsDAO getVmAndTemplatesGenerationsDAO() {
+        return DbFacade.getInstance().getVmAndTemplatesGenerationsDao();
+    }
+
+    public StorageDomainOvfInfoDao getStorageDomainOvfInfoDAO() {
+        return DbFacade.getInstance().getStorageDomainOvfInfoDao();
+    }
+
     public VmDynamicDAO getVmDynamicDAO() {
         return getDbFacade().getVmDynamicDao();
     }
@@ -633,7 +647,7 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     public VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
-        return getDbFacade().getVmNetworkInterfaceDao();
+        return DbFacade.getInstance().getVmNetworkInterfaceDao();
     }
 
     protected VmNicDao getVmNicDao() {
