@@ -270,25 +270,14 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                 );
     }
 
-
-    protected ConnectionWrapper createWrapper(HttpURLConnection result) {
-        return new ConnectionWrapper(result) {
-
-            @Override
-            public void beforeReadResponse() throws Exception {
-
-            }
-
-            @Override
-            public void afterReadResponse() throws Exception {
-                if (connection.getResponseCode() != HttpURLConnection.HTTP_OK
-                        && connection.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP) {
-                    ForemanErrorWrapper ferr = objectMapper.readValue(response, ForemanErrorWrapper.class);
-                    String err = StringUtils.join(ferr.getForemanError().getFull_messages(), ", ");
-                    throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, err);
-                }
-            }
-        };
+    @Override
+    protected void afterReadResponse(HttpURLConnection connection, byte[] response) throws Exception {
+        if (connection.getResponseCode() != HttpURLConnection.HTTP_OK
+                && connection.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP) {
+            ForemanErrorWrapper ferr = objectMapper.readValue(response, ForemanErrorWrapper.class);
+            String err = StringUtils.join(ferr.getForemanError().getFull_messages(), ", ");
+            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, err);
+        }
     }
 
     @Override
