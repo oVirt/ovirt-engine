@@ -751,8 +751,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type provider")
     String VAR__TYPE__PROVIDER();
 
-    @DefaultStringValue("$type provider certificate chain")
-    String VAR__TYPE__PROVIDER_CERTIFICATE_CHAIN();
+    @DefaultStringValue("$type provider certificate")
+    String VAR__TYPE__PROVIDER_CERTIFICATE();
 
     @DefaultStringValue("$type VM")
     String VAR__TYPE__VM();
