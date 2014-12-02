@@ -394,6 +394,7 @@ public class VdsManager {
      */
     public void updateDynamicData(VdsDynamic dynamicData) {
         DbFacade.getInstance().getVdsDynamicDao().updateIfNeeded(dynamicData);
+        cachedVds.setDynamicData(dynamicData);
     }
 
     /**
@@ -403,6 +404,7 @@ public class VdsManager {
      */
     public void updateStatisticsData(VdsStatistics statisticsData) {
         DbFacade.getInstance().getVdsStatisticsDao().update(statisticsData);
+        cachedVds.setStatisticsData(statisticsData);
     }
 
     /**
