@@ -33,63 +33,8 @@ public abstract class BaseProviderProxy implements ProviderProxy {
         void handle(final HttpURLConnection connection) throws IOException;
     }
 
-    public static class ConnectionWrapper {
-
-        protected HttpURLConnection connection;
-        protected byte[] response;
-
-        public ConnectionWrapper(final HttpURLConnection connection) {
-            this.connection = connection;
-        }
-
-        public byte[] getResponse() throws IOException {
-            if (response == null) {
-                ByteArrayOutputStream bytesOs = new ByteArrayOutputStream();
-                try (BufferedInputStream bis = new BufferedInputStream(connection.getInputStream())) {
-                    beforeReadResponse();
-                    byte[] buff = new byte[8196];
-                    while (true) {
-                        int read = bis.read(buff, 0, 8196);
-                        if (read > 0) {
-                            bytesOs.write(buff, 0, read);
-                        } else {
-                            break;
-                        }
-                    }
-                    afterReadResponse();
-                } catch (Exception ex) {
-                    log.error("Exception is {} ", ex.getMessage());
-                    log.debug("Exception: ", ex);
-                    if (ex instanceof VdcBLLException) {
-                        throw (VdcBLLException) ex;
-                    } else {
-                        throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, ex.getMessage());
-                    }
-                }
-                response = bytesOs.toByteArray();
-            }
-            return response;
-        }
-
-        protected void beforeReadResponse() throws Exception {
-            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK
-                    && connection.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP) {
-                throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE);
-            }
-        }
-
-        protected void afterReadResponse() throws Exception {
-        }
-
-        public HttpURLConnection getConnection() {
-            return connection;
-        }
-
-    }
-
     private URL url;
     private Provider<?> hostProvider;
-    private byte[] response;
 
     protected static enum HttpMethodType {
         GET,
@@ -130,7 +75,17 @@ public abstract class BaseProviderProxy implements ProviderProxy {
         throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e.getMessage());
     }
 
-    protected ConnectionWrapper createConnection(String relativePath) {
+    protected void afterReadResponse(HttpURLConnection connection, byte[] response) throws Exception {
+    }
+
+    protected void beforeReadResponse(HttpURLConnection connection) throws Exception {
+        if (connection.getResponseCode() != HttpURLConnection.HTTP_OK
+                && connection.getResponseCode() != HttpURLConnection.HTTP_MOVED_TEMP) {
+            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE);
+        }
+    }
+
+    protected HttpURLConnection createConnection(String relativePath) {
 
         URL hostUrl = getUrl();
         HttpURLConnectionBuilder builder = null;
@@ -151,11 +106,36 @@ public abstract class BaseProviderProxy implements ProviderProxy {
             throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE);
         }
 
-        return createWrapper(result);
+        return result;
+
     }
 
-    protected ConnectionWrapper createWrapper(HttpURLConnection result) {
-        return new ConnectionWrapper(result);
+    public byte[] getResponse(HttpURLConnection connection) throws IOException {
+        byte[] response = null;
+        ByteArrayOutputStream bytesOs = new ByteArrayOutputStream();
+        try (BufferedInputStream bis = new BufferedInputStream(connection.getInputStream())) {
+            beforeReadResponse(connection);
+            byte[] buff = new byte[8196];
+            while (true) {
+                int read = bis.read(buff, 0, 8196);
+                if (read > 0) {
+                    bytesOs.write(buff, 0, read);
+                } else {
+                    break;
+                }
+            }
+            response = bytesOs.toByteArray();
+            afterReadResponse(connection, response);
+        } catch (Exception ex) {
+            log.error("Exception is {} ", ex.getMessage());
+            log.debug("Exception: ", ex);
+            if (ex instanceof VdcBLLException) {
+                throw (VdcBLLException) ex;
+            } else {
+                throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, ex.getMessage());
+            }
+        }
+        return response;
     }
 
 
@@ -176,38 +156,36 @@ public abstract class BaseProviderProxy implements ProviderProxy {
             String contentType,
             String relativeUrl,
             String body) {
-        ConnectionWrapper wrapper = createConnection(relativeUrl);
-        return runHttpMethod(httpMethod, contentType, relativeUrl, body, wrapper);
+        return runHttpMethod(httpMethod, contentType, relativeUrl, body, createConnection(relativeUrl));
     }
 
     protected byte[] runHttpMethod(HttpMethodType httpMethod,
             String contentType,
             String relativeUrl,
-            String body, ConnectionWrapper wrapper) {
+            String body, HttpURLConnection connection) {
         byte[] result = null;
         try {
-            response = null;
-            wrapper.getConnection().setRequestProperty("Content-Type", contentType);
-            wrapper.getConnection().setDoInput(true);
-            wrapper.getConnection().setDoOutput(httpMethod != HttpMethodType.GET);
-            wrapper.getConnection().setRequestMethod(httpMethod.toString());
+            connection.setRequestProperty("Content-Type", contentType);
+            connection.setDoInput(true);
+            connection.setDoOutput(httpMethod != HttpMethodType.GET);
+            connection.setRequestMethod(httpMethod.toString());
             if (body != null) {
                 byte[] bytes = body.getBytes(Charset.forName("UTF-8"));
-                wrapper.getConnection().setRequestProperty("Content-Length",
+                connection.setRequestProperty("Content-Length",
                         new StringBuilder().append(bytes.length).toString());
 
-                try (OutputStream outputStream = wrapper.getConnection().getOutputStream()) {
+                try (OutputStream outputStream = connection.getOutputStream()) {
                     outputStream.write(bytes);
                 }
             }
-            result = wrapper.getResponse();
+            result = getResponse(connection);
         } catch (SSLException e) {
             throw new VdcBLLException(VdcBllErrors.PROVIDER_SSL_FAILURE, e.getMessage());
         } catch (IOException e) {
             handleException(e);
         } finally {
-            if (wrapper != null) {
-                wrapper.getConnection().disconnect();
+            if (connection != null) {
+                connection.disconnect();
             }
         }
         return result;
