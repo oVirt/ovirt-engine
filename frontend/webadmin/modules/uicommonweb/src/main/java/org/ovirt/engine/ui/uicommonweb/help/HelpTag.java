@@ -216,7 +216,7 @@ public enum HelpTag {
 
     import_pre_configured_domain("import_pre_configured_domain", HelpTagType.WEBADMIN), //$NON-NLS-1$
 
-    import_provider_certificates("import_provider_certificates", HelpTagType.WEBADMIN, "Provider main tab -> Add/Edit Provider dialog -> confirmation dialog on importing a provider certificate chain:"), //$NON-NLS-1$ //$NON-NLS-2$
+    import_provider_certificate("import_provider_certificate", HelpTagType.WEBADMIN, "Provider main tab -> Add/Edit Provider dialog -> confirmation dialog on importing a provider certificate:"), //$NON-NLS-1$ //$NON-NLS-2$
 
     import_template("import_template", HelpTagType.WEBADMIN, "Storage Tab > Import Template > Import Template(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 

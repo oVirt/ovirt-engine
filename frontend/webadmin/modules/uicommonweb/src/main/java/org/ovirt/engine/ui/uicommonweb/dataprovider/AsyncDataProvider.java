@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksQueriesParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.CertificateInfo;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
@@ -3002,10 +3003,15 @@ public final class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
+                if (source == null) {
+                    return Collections.<CertificateInfo> emptyList();
+                }
                 return source;
             }
         };
-        Frontend.getInstance().runQuery(VdcQueryType.GetProviderCertificateChain, new ProviderQueryParameters(provider), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetProviderCertificateChain,
+                new ProviderQueryParameters(provider),
+                aQuery);
     }
 
     private static void getAllChildVlanInterfaces(Guid vdsID,

@@ -800,14 +800,8 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Export Domain is not attached to any Data Center. Data can be retrieved only when the Domain is attached to a Data Center and is active")
     String ExportDomainIsNotAttachedToAnyDcMsg();
 
-    @DefaultStringValue("The provider has the following certificates:\n")
-    String theProviderHasTheFollowingCertificates();
-
-    @DefaultStringValue("Do you approve importing this chain as trusted? (In case the chain consists of only an end certificate, it will be imported as trusted. Otherwise, all certificates will be trusted except the end certificate).")
-    String doYouApproveImportingTheseCertificates();
-
-    @DefaultStringValue("Import provider certificates")
-    String importProviderCertificatesTitle();
+    @DefaultStringValue("Import provider certificate")
+    String importProviderCertificateTitle();
 
     @DefaultStringValue("There are no networks available. Please add additional networks.")
     String thereAreNoNetworksAvailablePleaseAddAdditionalNetworksMsg();
