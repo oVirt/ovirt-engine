@@ -182,7 +182,7 @@ public class FixturesTool {
     public static final String VM_RHEL5_POOL_50_NAME = "rhel5-pool-50";
 
     /**
-     * Predefined VM for testing with the following properties :
+     * Predefined VM with no attached disks for testing with the following properties :
      * <ul>
      * <li>VM name: rhel5-pool-51</li>
      * <li>Vds group: rhel6.iscsi (b399944a-81ab-4ec5-8266-e19ba7c3c9d1)</li>
@@ -240,7 +240,7 @@ public class FixturesTool {
     public static final Guid VM_TEMPLATE_RHEL5 = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
 
     /**
-     * Predefined template for testing with the following properties :
+     * Predefined template with no attached disks for testing with the following properties :
      * <ul>
      * <li>Vds group: rhel6.iscsi (b399944a-81ab-4ec5-8266-e19ba7c3c9d1)</li>
      * </ul>
@@ -283,6 +283,11 @@ public class FixturesTool {
      * Predefined unregistered VM related to Storage Domain STORAGE_DOAMIN_NFS2_1 (d9ede37f-e6c3-4bf9-a984-19174070aa31)
      */
     public static final Guid UNREGISTERED_VM = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4359");
+
+    /**
+     * Predefined VM with no attached disks
+     */
+    public static final Guid VM_WITH_NO_ATTACHED_DISKS = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4357");
 
     /**
      * Predefined vm job for testing with the following properties :
