@@ -13,14 +13,11 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainSectionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabBarOffsetUiHandlers;
-import org.ovirt.engine.ui.webadmin.uicommon.model.AlertFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
-import org.ovirt.engine.ui.webadmin.uicommon.model.EventFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
-import org.ovirt.engine.ui.webadmin.uicommon.model.TaskFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.bookmark.BookmarkList;
 import org.ovirt.engine.ui.webadmin.widget.footer.AlertsEventsFooterView;
@@ -96,11 +93,8 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
             BookmarkModelProvider bookmarkModelProvider,
             TagModelProvider tagModelProvider,
             AlertModelProvider alertModelProvider,
-            AlertFirstRowModelProvider alertFirstRowModelProvider,
             EventModelProvider eventModelProvider,
-            EventFirstRowModelProvider eventFirstRowModelProvider,
             TaskModelProvider taskModelProvider,
-            TaskFirstRowModelProvider taskFirstRowModelProvider,
             ApplicationConstants constants,
             ApplicationResources resources,
             ApplicationTemplates templates,
@@ -118,11 +112,8 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
         addContentToWestPanel(treeModelProvider, bookmarkModelProvider, tagModelProvider, westStackPanel, constants);
 
         initAlertEventFooterPanel(alertModelProvider,
-                alertFirstRowModelProvider,
                 eventModelProvider,
-                eventFirstRowModelProvider,
                 taskModelProvider,
-                taskFirstRowModelProvider,
                 resources,
                 templates,
                 eventBus,
@@ -202,19 +193,13 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
     }
 
     void initAlertEventFooterPanel(AlertModelProvider alertModelProvider,
-            AlertFirstRowModelProvider alertFirstRowModelProvider,
             EventModelProvider eventModelProvider,
-            EventFirstRowModelProvider eventFirstRowModelProvider,
             TaskModelProvider taskModelProvider,
-            TaskFirstRowModelProvider taskFirstRowModelProvider,
             ApplicationResources resources,
             ApplicationTemplates templates,
             EventBus eventBus,
             ClientStorage clientStorage, ApplicationConstants constants) {
-        alertEventFooterPanel.add(new AlertsEventsFooterView(
-                alertModelProvider, alertFirstRowModelProvider,
-                eventModelProvider, eventFirstRowModelProvider,
-                taskModelProvider, taskFirstRowModelProvider,
+        alertEventFooterPanel.add(new AlertsEventsFooterView(alertModelProvider, eventModelProvider, taskModelProvider,
                 resources, templates, eventBus, clientStorage, constants));
     }
 

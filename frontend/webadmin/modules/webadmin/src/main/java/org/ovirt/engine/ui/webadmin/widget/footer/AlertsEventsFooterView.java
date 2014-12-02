@@ -3,9 +3,8 @@ package org.ovirt.engine.ui.webadmin.widget.footer;
 import java.util.Date;
 import java.util.List;
 
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.view.client.SelectionChangeEvent;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTabModelProvider;
@@ -21,13 +20,9 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
-import org.ovirt.engine.ui.webadmin.uicommon.model.AlertFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider.AlertCountChangeHandler;
-import org.ovirt.engine.ui.webadmin.uicommon.model.EventFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
-import org.ovirt.engine.ui.webadmin.uicommon.model.TaskFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider.TaskHandler;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -46,6 +41,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
@@ -55,6 +51,7 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.ToggleButton;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class AlertsEventsFooterView extends Composite implements AlertCountChangeHandler, TaskHandler {
 
@@ -114,14 +111,11 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
     private final ApplicationConstants constants;
     private final SafeHtml alertImage;
 
-    private TaskModelProvider taskModelProvider;
+    private final TaskModelProvider taskModelProvider;
 
     public AlertsEventsFooterView(AlertModelProvider alertModelProvider,
-            AlertFirstRowModelProvider alertFirstRowModelProvider,
             EventModelProvider eventModelProvider,
-            EventFirstRowModelProvider eventFirstRowModelProvider,
             TaskModelProvider taskModelProvider,
-            TaskFirstRowModelProvider taskFirstRowModelProvider,
             ApplicationResources resources,
             ApplicationTemplates templates,
             EventBus eventBus,
@@ -136,31 +130,28 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         alertModelProvider.setAlertCountChangeHandler(this);
         taskModelProvider.setTaskHandler(this);
 
-        alertsTable = createActionTable(alertModelProvider);
+        alertsTable = createActionTable(alertModelProvider, eventBus, clientStorage);
         alertsTable.setBarStyle(style.barStyle());
         initAlertTable(alertsTable, alertModelProvider);
 
-        _alertsTable = createActionTable(alertFirstRowModelProvider);
-        _alertsTable.setBarStyle(style.barStyle());
-        _alertsTable.getElement().getStyle().setOverflowY(Overflow.HIDDEN);
+        _alertsTable = createActionTable(alertModelProvider, eventBus, clientStorage);
+        makeSingleRowTable(_alertsTable);
         initTable(_alertsTable);
 
-        eventsTable = createActionTable(eventModelProvider);
+        eventsTable = createActionTable(eventModelProvider, eventBus, clientStorage);
         eventsTable.setBarStyle(style.barStyle());
         initTable(eventsTable);
 
-        _eventsTable = createActionTable(eventFirstRowModelProvider);
-        _eventsTable.setBarStyle(style.barStyle());
-        _eventsTable.getElement().getStyle().setOverflowY(Overflow.HIDDEN);
+        _eventsTable = createActionTable(eventModelProvider, eventBus, clientStorage);
+        makeSingleRowTable(_eventsTable);
         initTable(_eventsTable);
 
         tasksTree = new TasksTree(resources, constants, templates);
         tasksTree.updateTree(taskModelProvider.getModel());
 
         _tasksTable =
-                new SimpleActionTable<Job>(taskFirstRowModelProvider, getTableResources(), eventBus, clientStorage);
-        _tasksTable.setBarStyle(style.barStyle());
-        _tasksTable.getElement().getStyle().setOverflowY(Overflow.HIDDEN);
+                new SimpleActionTable<Job>(taskModelProvider, getTableResources(), eventBus, clientStorage);
+        makeSingleRowTable(_tasksTable);
         initTaskTable(_tasksTable);
 
         taskButton.setValue(false);
@@ -190,10 +181,19 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         setAlertCount(0);
     }
 
-    SimpleActionTable<AuditLog> createActionTable(SearchableTabModelProvider<AuditLog, ?> modelProvider) {
-        return new SimpleActionTable<AuditLog>(modelProvider, getTableResources(),
-                ClientGinjectorProvider.getEventBus(),
-                ClientGinjectorProvider.getClientStorage());
+    /**
+     * Set style/visible rows/overflow for collapsed version of the table.
+     * @param table The table to configure
+     */
+    private void makeSingleRowTable(SimpleActionTable<? extends IVdcQueryable> table) {
+        table.setVisibleRange(0,  1);
+        table.setBarStyle(style.barStyle());
+        table.getElement().getStyle().setOverflowY(Overflow.HIDDEN);
+    }
+
+    SimpleActionTable<AuditLog> createActionTable(SearchableTabModelProvider<AuditLog, ?> modelProvider,
+            EventBus eventBus, ClientStorage clientStorage) {
+        return new SimpleActionTable<AuditLog>(modelProvider, getTableResources(), eventBus, clientStorage);
     }
 
     AlertsEventsFooterResources getTableResources() {

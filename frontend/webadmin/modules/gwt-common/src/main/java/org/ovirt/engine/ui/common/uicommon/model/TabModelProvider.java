@@ -25,6 +25,7 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
 
     private final EventBus eventBus;
     private final ModelBoundPopupHandler<M> popupHandler;
+    private boolean modelInitialized = false;
 
     protected Provider<M> modelProvider;
 
@@ -40,8 +41,8 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
     @Override
     public M getModel() {
         M model = modelProvider.get();
-        if (!model.isInitialized()) {
-            model.initialize();
+        if (!modelInitialized) {
+            modelInitialized = true;
             initializeModelHandlers(model);
         }
         return model;
@@ -76,15 +77,6 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
                 }
             }
         });
-    }
-
-    /**
-     * Override this and return true if your model provider uses the same model as another model provider.
-     * This way this model provider will not try to initialize the model again.
-     * @return {@code true if the provider re-uses a model}, {@code false otherwise}
-     */
-    protected boolean reusesModel() {
-        return false;
     }
 
     @SuppressWarnings("unchecked")

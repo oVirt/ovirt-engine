@@ -36,14 +36,12 @@ import org.ovirt.engine.ui.webadmin.gin.uicommon.VirtualMachineModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.VnicProfileModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.VolumeModule;
 import org.ovirt.engine.ui.webadmin.uicommon.WebAdminConfigurator;
-import org.ovirt.engine.ui.webadmin.uicommon.model.AlertFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ClusterPolicyClusterModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ClusterPolicyModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.CpuProfilePermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DiskProfilePermissionModelProvider;
-import org.ovirt.engine.ui.webadmin.uicommon.model.EventFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.InstanceTypeModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RoleModelProvider;
@@ -51,7 +49,6 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.RolePermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemPermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
-import org.ovirt.engine.ui.webadmin.uicommon.model.TaskFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider;
 
 import com.google.inject.Singleton;
@@ -101,16 +98,13 @@ public class UiCommonModule extends BaseUiCommonModule {
         bind(TagModelProvider.class).asEagerSingleton();
 
         // AlertListModel
-        bind(AlertModelProvider.class).asEagerSingleton();
-        bind(AlertFirstRowModelProvider.class).asEagerSingleton();
+        bind(AlertModelProvider.class).in(Singleton.class);
 
         // TaskListModel
-        bind(TaskModelProvider.class).asEagerSingleton();
-        bind(TaskFirstRowModelProvider.class).asEagerSingleton();
+        bind(TaskModelProvider.class).in(Singleton.class);
 
         // EventListModel
         bind(EventModelProvider.class).in(Singleton.class);
-        bind(EventFirstRowModelProvider.class).in(Singleton.class);
 
         // RoleListModel
         bind(RoleModelProvider.class).in(Singleton.class);

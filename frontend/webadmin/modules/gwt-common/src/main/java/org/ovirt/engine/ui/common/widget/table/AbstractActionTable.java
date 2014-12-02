@@ -280,6 +280,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
 
         });
     }
+
     private void addScrollListener() {
         if (scrollHandlerRegistration != null) {
             scrollHandlerRegistration.removeHandler();
@@ -722,5 +723,9 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         if (tableContainer.getMaximumVerticalScrollPosition() > 0) {
             scrollOffset = tableContainer.getVerticalScrollPosition();
         }
+    }
+
+    public void setVisibleRange(int start, int length) {
+        this.table.setVisibleRange(start, length);
     }
 }
