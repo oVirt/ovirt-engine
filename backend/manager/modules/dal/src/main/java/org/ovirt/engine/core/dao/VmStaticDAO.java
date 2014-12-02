@@ -94,6 +94,12 @@ public interface VmStaticDAO extends GenericDao<VmStatic, Guid> {
     public void remove(Guid id, boolean removePermissions);
 
     /**
+     * Retrieves all the ids of the vms and templates that have no attached disks matching the provided criteria.
+     * @param shareableDisks  check for attached shareable disks
+     */
+    public List<Guid> getVmAndTemplatesIdsWithoutAttachedImageDisks(boolean shareableDisks);
+
+    /**
      * update vm_static.cpu_profile_id for cluster
      *
      * @param clusterId

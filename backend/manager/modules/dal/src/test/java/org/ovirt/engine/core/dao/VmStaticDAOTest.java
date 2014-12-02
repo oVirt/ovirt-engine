@@ -17,9 +17,13 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -202,6 +206,38 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
         assertNull(result);
 
         assertEquals("vm permissions changed during remove although shouldnt have.", numberOfPermissionsBeforeRemove, permissionsDao.getAllForEntity(EXISTING_VM_ID).size());
+    }
+
+
+    @Test
+    public void getVmAndTemplatesIdsWithoutAttachedImageDiכsks() {
+        // attaching shareable and snapshots disk to a diskless vm
+        addVmDevice(FixturesTool.VM_WITH_NO_ATTACHED_DISKS, FixturesTool.IMAGE_GROUP_ID_2, null);
+        addVmDevice(FixturesTool.VM_WITH_NO_ATTACHED_DISKS, FixturesTool.DISK_ID, FixturesTool.EXISTING_SNAPSHOT_ID);
+
+        List<Guid> ids =
+                dao.getVmAndTemplatesIdsWithoutAttachedImageDisks(false);
+        assertTrue(ids.contains(FixturesTool.VM_RHEL5_POOL_51));
+        assertTrue(ids.contains(FixturesTool.VM_TEMPLATE_RHEL5_2));
+        assertTrue(ids.contains(FixturesTool.VM_WITH_NO_ATTACHED_DISKS));
+        assertFalse(ids.contains(FixturesTool.VM_TEMPLATE_RHEL5));
+    }
+
+    private void addVmDevice(Guid vmId, Guid diskId, Guid snapshotId) {
+        VmDevice device = new VmDevice(new VmDeviceId(diskId, vmId),
+                VmDeviceGeneralType.DISK,
+                VmDeviceType.DISK.getName(),
+                "",
+                0,
+                null,
+                true,
+                false,
+                false,
+                "",
+                null,
+                snapshotId,
+                null);
+        dbFacade.getVmDeviceDao().save(device);
     }
 
     @Test

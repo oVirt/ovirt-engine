@@ -57,6 +57,14 @@ public class VmStaticDAODbFacadeImpl extends VmBaseDaoDbFacade<VmStatic> impleme
                         .addValue("remove_permissions", removePermissions));
     }
 
+
+    public List<Guid> getVmAndTemplatesIdsWithoutAttachedImageDisks(boolean shareableDisks) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("shareable", shareableDisks);
+        return getCallsHandler().executeReadList("GetVmsAndTemplatesIdsWithoutAttachedImageDisks",
+                createGuidMapper(), parameterSource);
+    }
+
     @Override
     protected MapSqlParameterSource createIdParameterMapper(Guid id) {
         return getCustomMapSqlParameterSource().addValue("vm_guid", id);

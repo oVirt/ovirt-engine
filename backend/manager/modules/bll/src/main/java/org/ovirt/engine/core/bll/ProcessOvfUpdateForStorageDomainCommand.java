@@ -221,6 +221,8 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
                         false,
                         false);
 
+        vmAndTemplatesIds.addAll(getVmStaticDAO().getVmAndTemplatesIdsWithoutAttachedImageDisks(false));
+
         byte[] bytes = buildOvfInfoFileByteArray(vmAndTemplatesIds);
 
         Pair<StorageDomainOvfInfo, DiskImage> lastOvfStoreForUpdate = domainOvfStoresInfoForUpdate.getLast();

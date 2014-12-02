@@ -599,6 +599,26 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetVmsAndTemplatesIdsWithoutAttachedImageDisks(v_shareable BOOLEAN)
+RETURNS SETOF UUID STABLE
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT vs.vm_guid
+      FROM vm_static vs
+      WHERE vs.vm_guid NOT IN (SELECT DISTINCT vd.vm_id
+                               FROM vm_device vd
+                               INNER JOIN base_disks i
+                               ON i.disk_id = vd.device_id
+                               AND vd.snapshot_id IS NULL
+                               WHERE i.shareable = v_shareable);
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
+
 Create or replace FUNCTION UpdateVmStatic(v_description VARCHAR(4000) ,
  v_free_text_comment text,
  v_mem_size_mb INTEGER,

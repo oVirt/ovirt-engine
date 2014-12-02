@@ -47,6 +47,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
     private HashSet<Guid> proccessedDomains;
     private List<Guid> removedOvfIdsInfo;
     private OvfUpdateProcessHelper ovfUpdateProcessHelper;
+    private List<Guid> activeDataDomainsIds;
 
     public ProcessOvfUpdateForStoragePoolCommand(T parameters) {
         this(parameters, null);
@@ -56,6 +57,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
         super(parameters, commandContext);
         setStoragePoolId(parameters.getStoragePoolId());
         ovfUpdateProcessHelper = new OvfUpdateProcessHelper();
+        activeDataDomainsIds = new LinkedList<>();
     }
 
     protected OvfUpdateProcessHelper getOvfUpdateProcessHelper() {
@@ -123,6 +125,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
                 continue;
             }
 
+            activeDataDomainsIds.add(domain.getId());
             Integer ovfStoresCountForDomain = Config.<Integer> getValue(ConfigValues.StorageDomainOvfStoreCount);
             List<StorageDomainOvfInfo> storageDomainOvfInfos = getStorageDomainOvfInfoDAO().getAllForDomain(domain.getId());
 
@@ -339,6 +342,11 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
     }
 
     protected void proccessDisksDomains(List<DiskImage> disks) {
+        if (disks.isEmpty()) {
+            proccessedDomains.addAll(activeDataDomainsIds);
+            return;
+        }
+
         for (DiskImage disk : disks) {
             proccessedDomains.addAll(disk.getStorageIds());
         }
