@@ -510,14 +510,15 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         return super.getAuditLogTypeValue();
     }
 
-    private boolean updateVmInSpm() {
+    protected boolean updateVmInSpm() {
+        OvfUpdateProcessHelper ovfHelper = new OvfUpdateProcessHelper();
         Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary =
                 new HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>();
-        OvfDataUpdater.getInstance().loadVmData(getVm());
-        OvfDataUpdater.getInstance().buildMetadataDictionaryForVm(getVm(),
+        ovfHelper.loadVmData(getVm());
+        ovfHelper.buildMetadataDictionaryForVm(getVm(),
                 metaDictionary,
-                OvfDataUpdater.getInstance().getVmImagesFromDb(getVm()));
-        return OvfDataUpdater.getInstance().executeUpdateVmInSpmCommand(getVm().getStoragePoolId(),
+                ovfHelper.getVmImagesFromDb(getVm()));
+        return ovfHelper.executeUpdateVmInSpmCommand(getVm().getStoragePoolId(),
                 metaDictionary, getParameters().getStorageDomainId());
     }
 

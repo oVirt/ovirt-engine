@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmPoolDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,10 +105,6 @@ public class ProcessDownVmCommand<T extends IdParameters> extends CommandBase<T>
 
     private VmPoolDAO getVmPoolDAO() {
         return DbFacade.getInstance().getVmPoolDao();
-    }
-
-    private SnapshotDao getSnapshotDAO() {
-        return DbFacade.getInstance().getSnapshotDao();
     }
 
     @Override
