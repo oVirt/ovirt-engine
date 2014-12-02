@@ -402,16 +402,16 @@ public class ProviderModel extends Model {
     }
 
     private void importCertificate() {
-//        Frontend.getInstance().runAction(VdcActionType.ImportProviderCertificate,
-//                importCertificateParams(),
-//                new IFrontendActionAsyncCallback() {
-//
-//                    @Override
-//                    public void executed(FrontendActionAsyncResult result) {
-//                        testProviderConnectivity();
-//                    }
-//                }, null, false);
-//        sourceListModel.setConfirmWindow(null);
+        Frontend.getInstance().runAction(VdcActionType.ImportProviderCertificate,
+                importCertificateParams(),
+                new IFrontendActionAsyncCallback() {
+
+                    @Override
+                    public void executed(FrontendActionAsyncResult result) {
+                        testProviderConnectivity();
+                    }
+                }, null, false);
+        sourceListModel.setConfirmWindow(null);
     }
 
     private void cancelImport() {

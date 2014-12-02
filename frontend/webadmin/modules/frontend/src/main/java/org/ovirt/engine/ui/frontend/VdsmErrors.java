@@ -655,7 +655,7 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     String FAILED_UPDATE_RUNNING_VM();
 
-    String PROVIDER_IMPORT_CERTIFICATE_CHAIN_ERROR();
+    String PROVIDER_IMPORT_CERTIFICATE_ERROR();
 
     String VM_NOT_QUALIFIED_FOR_SNAPSHOT_MERGE();
 
