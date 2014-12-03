@@ -31,6 +31,7 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.AlignmentScanReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.DevicesVisibilityMapReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FenceStatusReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.HostDevListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IQNListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IVdsServer;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.ImageSizeReturnForXmlRpc;
@@ -253,6 +254,14 @@ public class JsonRpcVdsServer implements IVdsServer {
                 new FutureMap(this.client, request).withResponseKey("statsList")
                         .withResponseType(Object[].class);
         return new VMInfoListReturnForXmlRpc(response);
+    }
+
+    @Override
+    public HostDevListReturnForXmlRpc hostDevListByCaps() {
+        JsonRpcRequest request = new RequestBuilder("Host.hostdevListByCaps").build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request).withResponseKey("deviceList");
+        return new HostDevListReturnForXmlRpc(response);
     }
 
     @Override

@@ -406,7 +406,10 @@ public enum VdcActionType {
     // Mac Pool
     AddMacPool(3100, ActionGroup.CREATE_MAC_POOL, false, QuotaDependency.NONE),
     UpdateMacPool(3101, ActionGroup.EDIT_MAC_POOL, false, QuotaDependency.NONE),
-    RemoveMacPool(3102, ActionGroup.DELETE_MAC_POOL, false, QuotaDependency.NONE);
+    RemoveMacPool(3102, ActionGroup.DELETE_MAC_POOL, false, QuotaDependency.NONE),
+
+    // Host Devices
+    RefreshHostDevices(4000, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE);
 
     private int intValue;
     private ActionGroup actionGroup;

@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DwhHistoryTimekeeping;
 import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
+import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.Image;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.MacPool;
@@ -79,6 +80,7 @@ import org.ovirt.engine.core.dao.EventDAO;
 import org.ovirt.engine.core.dao.ExternalVariableDao;
 import org.ovirt.engine.core.dao.FenceAgentDAO;
 import org.ovirt.engine.core.dao.GenericDao;
+import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.IscsiBondDao;
@@ -213,6 +215,7 @@ public class DbFacade {
             put(DiskProfile.class, DiskProfileDao.class);
             put(FenceAgent.class, FenceAgentDAO.class);
             put(EngineSession.class, EngineSessionDAO.class);
+            put(HostDevice.class, HostDeviceDao.class);
         }
     };
 
@@ -1194,5 +1197,14 @@ public class DbFacade {
 
     public FenceAgentDAO getFenceAgentDao() {
         return getDao(FenceAgentDAO.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link HostDeviceDao}.
+     *
+     * @return the dao instance
+     */
+    public HostDeviceDao getHostDeviceDao() {
+        return getDao(HostDeviceDao.class);
     }
 }

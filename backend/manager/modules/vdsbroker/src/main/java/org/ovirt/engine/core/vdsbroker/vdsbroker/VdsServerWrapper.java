@@ -233,6 +233,16 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public HostDevListReturnForXmlRpc hostDevListByCaps() {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.hostdevListByCaps();
+            return new HostDevListReturnForXmlRpc(xmlRpcReturnValue);
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
     public StatusOnlyReturnForXmlRpc migrate(Map<String, String> migrationInfo) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.migrate(migrationInfo);

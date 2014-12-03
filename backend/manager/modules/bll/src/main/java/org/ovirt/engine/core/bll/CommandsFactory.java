@@ -48,7 +48,8 @@ public final class CommandsFactory {
         "org.ovirt.engine.core.bll.qos",
         "org.ovirt.engine.core.bll.scheduling.commands",
         "org.ovirt.engine.core.bll.scheduling.queries",
-        "org.ovirt.engine.core.bll.profiles"
+        "org.ovirt.engine.core.bll.profiles",
+        "org.ovirt.engine.core.bll.hostdev"
         };
 
     private static ConcurrentMap<String, Class<CommandBase<? extends VdcActionParametersBase>>> commandsCache =

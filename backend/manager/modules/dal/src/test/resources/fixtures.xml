@@ -119,8 +119,7 @@
         <column>root_command_id</column>
         <column>created_at</column>
         <column>command_parameters</column>
-        <column>status</column>
-        <row>
+        <column>status</column><row>
             <value>340fd52b-3400-4cdd-8d3f-c9d03704b0a1</value>
             <value>230</value>
             <null/>
@@ -7594,5 +7593,524 @@
             <value>44f645f6-3fe9-4b35-a30c-11111a835ea8</value>
             <value>NOTSTARTED</value>
         </row>
+     </table>
+
+     <table name="host_device">
+         <column>host_id</column>
+         <column>device_name</column>
+         <column>parent_device_name</column>
+         <column>capability</column>
+         <column>iommu_group</column>
+         <column>product_name</column>
+         <column>product_id</column>
+         <column>vendor_name</column>
+         <column>vendor_id</column>
+         <column>physfn</column>
+         <column>total_vfs</column>
+         <column>vm_id</column>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>computer</value>
+             <value>computer</value>
+             <value>system</value>
+             <value>-1</value>
+             <value>ProLiant DL160 G6</value>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_00_1d_2</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>9</value>
+             <value>82801JI (ICH10 Family) USB UHCI Controller #3</value>
+             <value>0x3a36</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_00_1d_1</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>9</value>
+             <value>82801JI (ICH10 Family) USB UHCI Controller #2</value>
+             <value>0x3a35</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_00_1d_0</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>9</value>
+             <value>82801JI (ICH10 Family) USB UHCI Controller #1</value>
+             <value>0x3a34</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_00_1d_7</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>9</value>
+             <value>82801JI (ICH10 Family) USB2 EHCI Controller #1</value>
+             <value>0x3a3a</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_fe_06_3</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>21</value>
+             <value>Xeon 5600 Series Integrated Memory Controller Channel 2 Thermal Control</value>
+             <value>0x2db3</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_fe_06_2</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>21</value>
+             <value>Xeon 5600 Series Integrated Memory Controller Channel 2 Rank</value>
+             <value>0x2db2</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_fe_06_1</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>21</value>
+             <value>Xeon 5600 Series Integrated Memory Controller Channel 2 Address</value>
+             <value>0x2db1</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_fe_06_0</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>21</value>
+             <value>Xeon 5600 Series Integrated Memory Controller Channel 2 Control</value>
+             <value>0x2db0</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>scsi_1_0_0_0</value>
+             <value>computer</value>
+             <value>scsi</value>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>block_sdb_Hitachi_HUA722010CLA330_JPW9K0N02PG82L</value>
+             <value>scsi_1_0_0_0</value>
+             <value>storage</value>
+             <null/>
+             <null/>
+             <null/>
+             <value>ATA</value>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_00_1f_0</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>11</value>
+             <value>82801JIR (ICH10R) LPC Interface Controller</value>
+             <value>0x3a16</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_00_1f_2</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>11</value>
+             <value>82801JI (ICH10 Family) SATA AHCI Controller</value>
+             <value>0x3a22</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_00_1e_0</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>10</value>
+             <value>82801 PCI Bridge</value>
+             <value>0x244e</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_00_1a_7</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>7</value>
+             <value>82801JI (ICH10 Family) USB2 EHCI Controller #2</value>
+             <value>0x3a3c</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_00_1a_0</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>7</value>
+             <value>82801JI (ICH10 Family) USB UHCI Controller #4</value>
+             <value>0x3a37</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_00_1c_0</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>8</value>
+             <value>82801JI (ICH10 Family) PCI Express Root Port 1</value>
+             <value>0x3a40</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_00_1c_4</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>8</value>
+             <value>82801JI (ICH10 Family) PCI Express Root Port 5</value>
+             <value>0x3a48</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_fe_04_0</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>19</value>
+             <value>Xeon 5600 Series Integrated Memory Controller Channel 0 Control</value>
+             <value>0x2da0</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_fe_04_3</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>19</value>
+             <value>Xeon 5600 Series Integrated Memory Controller Channel 0 Thermal Control</value>
+             <value>0x2da3</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_fe_04_2</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>19</value>
+             <value>Xeon 5600 Series Integrated Memory Controller Channel 0 Rank</value>
+             <value>0x2da2</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>usb_usb1</value>
+             <value>computer</value>
+             <value>usb</value>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>usb_1_0_1_0</value>
+             <value>usb_usb1</value>
+             <value>usb</value>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>net_enp5s16f4_3e_fa_b0_f6_48_a3</value>
+             <value>pci_0000_fe_04_2</value>
+             <value>net</value>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_fe_02_2</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>17</value>
+             <value>Xeon 5600 Series Mirror Port Link 0</value>
+             <value>0x2d92</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_fe_02_1</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>17</value>
+             <value>Xeon 5600 Series QPI Physical 0</value>
+             <value>0x2d91</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_fe_02_0</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>17</value>
+             <value>Xeon 5600 Series QPI Link 0</value>
+             <value>0x2d90</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_fe_02_5</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>17</value>
+             <value>Xeon 5600 Series QPI Physical 1</value>
+             <value>0x2d95</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_fe_02_4</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>17</value>
+             <value>Xeon 5600 Series QPI Link 1</value>
+             <value>0x2d94</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>usb_5_0_1_0</value>
+             <value>usb_usb1</value>
+             <value>usb</value>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>scsi_host4</value>
+             <value>pci_0000_00_1f_2</value>
+             <value>scsi_host</value>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_00_01_0</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>1</value>
+             <value>5520/5500/X58 I/O Hub PCI Express Root Port 1</value>
+             <value>0x3408</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_fe_02_3</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>17</value>
+             <value>Xeon 5600 Series Mirror Port Link 1</value>
+             <value>0x2d93</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>usb_2_0_1_0</value>
+             <value>usb_usb1</value>
+             <value>usb</value>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_00_0a_0</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>5</value>
+             <value>7500/5520/5500/X58 I/O Hub PCI Express Root Port 10</value>
+             <value>0x3411</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
+         <row>
+             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+             <value>pci_0000_00_14_2</value>
+             <value>computer</value>
+             <value>pci</value>
+             <value>6</value>
+             <value>7500/5520/5500/X58 I/O Hub Control Status and RAS Registers</value>
+             <value>0x3423</value>
+             <value>Intel Corporation</value>
+             <value>0x8086</value>
+             <null/>
+             <null/>
+             <null/>
+         </row>
      </table>
 </dataset>

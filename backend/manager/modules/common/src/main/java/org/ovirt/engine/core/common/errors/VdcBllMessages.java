@@ -30,6 +30,7 @@ public enum VdcBllMessages {
     VAR__TYPE__VM_TICKET,
     VAR__TYPE__PERMISSION,
     VAR__TYPE__HOST_CAPABILITIES,
+    VAR__TYPE__HOST_DEVICES,
     VAR__TYPE__NETWORK_QOS,
     VAR__TYPE__QOS,
     VAR__TYPE__SPM,

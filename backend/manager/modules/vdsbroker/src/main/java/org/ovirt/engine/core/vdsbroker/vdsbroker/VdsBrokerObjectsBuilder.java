@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
@@ -1893,5 +1894,80 @@ public class VdsBrokerObjectsBuilder {
             list.add((Integer) item);
         }
         return list;
+    }
+
+    /**
+     * Parse Host Device Information in the form of
+     *
+     * {
+     *   'computer': {
+     *      'params': {'capability': 'system', 'product': 'ProLiant DL160 G6  '}
+     *   },
+     *   'pci_0000_00_1d_2': {
+     *      'params': {
+     *        'capability': 'pci',
+     *        'iommu_group': '9',
+     *        'parent': 'computer',
+     *        'product': '82801JI (ICH10 Family) USB UHCI Controller #3',
+     *        'product_id': '0x3a36',
+     *        'vendor': 'Intel Corporation',
+     *        'vendor_id': '0x8086'
+     *      }
+     *   },
+     *   'pci_0000_00_1d_1': {
+     *       ...
+     *   }
+     * }
+     */
+    public static List<HostDevice> buildHostDevices(Map<String, Map<String, Map<String, Object>>> deviceList) {
+        List<HostDevice> devices = new ArrayList<>();
+
+        for (Entry<String, Map<String, Map<String, Object>>> entry : deviceList.entrySet()) {
+
+            Map<String, Object> params = entry.getValue().get(VdsProperties.PARAMS);
+            String deviceName = entry.getKey();
+
+            HostDevice device = new HostDevice();
+            device.setDeviceName(entry.getKey());
+            device.setCapability(params.get(VdsProperties.CAPABILITY).toString());
+
+            // special case for root device "computer"
+            if (VdsProperties.ROOT_HOST_DEVICE.equals(deviceName)) {
+                device.setParentDeviceName(VdsProperties.ROOT_HOST_DEVICE);  // set parent to self, for DB integrity
+            } else {
+                device.setParentDeviceName(params.get(VdsProperties.PARENT_NAME).toString());
+            }
+
+            if (params.containsKey(VdsProperties.IOMMU_GROUP)) {
+                device.setIommuGroup(Integer.parseInt(params.get(VdsProperties.IOMMU_GROUP).toString()));
+            }
+            if (params.containsKey(VdsProperties.PRODUCT_ID)) {
+                device.setProductId(params.get(VdsProperties.PRODUCT_ID).toString());
+            }
+            if (params.containsKey(VdsProperties.PRODUCT_NAME)) {
+                device.setProductName(params.get(VdsProperties.PRODUCT_NAME).toString());
+            }
+            if (params.containsKey(VdsProperties.VENDOR_NAME)) {
+                device.setVendorName(params.get(VdsProperties.VENDOR_NAME).toString());
+            }
+            if (params.containsKey(VdsProperties.VENDOR_ID)) {
+                device.setVendorId(params.get(VdsProperties.VENDOR_ID).toString());
+            }
+            if (params.containsKey(VdsProperties.PHYSICAL_FUNCTION)) {
+                device.setParentPhysicalFunction(params.get(VdsProperties.PHYSICAL_FUNCTION).toString());
+            }
+            if (params.containsKey(VdsProperties.TOTAL_VFS)) {
+                device.setTotalVirtualFunctions(Integer.parseInt(params.get(VdsProperties.TOTAL_VFS).toString()));
+            }
+
+            // if the device is attached to running VM, the `vmId` property will be set
+            if (entry.getValue().containsKey(VdsProperties.VM_ID)) {
+                device.setVmId(new Guid(entry.getValue().get(VdsProperties.VM_ID).toString()));
+            }
+
+            devices.add(device);
+        }
+
+        return devices;
     }
 }

@@ -69,6 +69,7 @@ public abstract class MassOperationsGenericDaoDbFacade<T extends BusinessEntity<
         }
     }
 
+
     /**
      * Enables to send remove procedure name as a parameter that overrides the default one. In case this parameter is
      * null, default procedure is used.
@@ -81,6 +82,7 @@ public abstract class MassOperationsGenericDaoDbFacade<T extends BusinessEntity<
 
     @Override
     public void removeAllInBatch(Collection<T> entities) {
+        // TODO: batch remove all should probably use only IDs (and id parameter source) as its non-batch counterpart
         removeAllInBatch(getProcedureNameForRemove(), entities, getBatchMapper());
     }
 
@@ -89,6 +91,11 @@ public abstract class MassOperationsGenericDaoDbFacade<T extends BusinessEntity<
         for (T entity : entities) {
             save(entity);
         }
+    }
+
+    @Override
+    public void saveAllInBatch(Collection<T> entities) {
+        getCallsHandler().executeStoredProcAsBatch(getProcedureNameForSave(), entities, getBatchMapper());
     }
 
     @Override

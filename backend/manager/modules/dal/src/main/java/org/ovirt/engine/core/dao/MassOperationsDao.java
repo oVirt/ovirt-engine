@@ -50,12 +50,19 @@ public interface MassOperationsDao<T extends BusinessEntity<?>, ID extends Seria
     void removeAllInBatch(Collection<T> entities);
 
     /**
-     * Calls an update stored procedure multiple timse in a batch
+     * Calls an update stored procedure multiple times in a batch
      *
      * @param procedureName
      * @param entities
      */
     void updateAllInBatch(Collection<T> entities);
+
+    /**
+     * Calls an insert stored procedure multiple times
+     *
+     * @param entities
+     */
+    void saveAll(Collection<T> entities);
 
     /**
      * Saves the given entities using a more efficient method to save all of them at once, rather than each at a time.
@@ -64,5 +71,5 @@ public interface MassOperationsDao<T extends BusinessEntity<?>, ID extends Seria
      * @param entities
      *            The entities to insert
      */
-    void saveAll(Collection<T> entities);
+    void saveAllInBatch(Collection<T> entities);
 }

@@ -40,6 +40,8 @@ public interface VdsServerConnector {
 
     public Map<String, Object> getAllVmStats();
 
+    public Map<String, Object> hostdevListByCaps();
+
     public Map<String, Object> migrate(Map<String, String> migrationInfo);
 
     public Map<String, Object> migrateStatus(String vmId);

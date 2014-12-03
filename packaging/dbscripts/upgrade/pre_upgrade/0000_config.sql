@@ -243,6 +243,8 @@ select fn_db_add_config_value_for_versions_up_to('AutoConvergenceSupported','fal
 
 select fn_db_add_config_value_for_versions_up_to('MigrationCompressionSupported','false','3.5');
 
+select fn_db_add_config_value_for_versions_up_to('HostDevicePassthroughSupported','false','3.5');
+
 -- by default use no proxy
 select fn_db_add_config_value('SpiceProxyDefault','','general');
 

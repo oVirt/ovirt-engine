@@ -471,4 +471,12 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.GraphicsDeviceEnabled, version);
     }
 
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if pass through of host devices is supported for the given version
+     */
+    public static boolean hostDevicePassthrough(Version version) {
+        return supportedInConfig(ConfigValues.HostDevicePassthroughSupported, version);
+    }
 }

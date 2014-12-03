@@ -2035,6 +2035,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     GraphicsDeviceEnabled,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    HostDevicePassthroughSupported,
+
     Invalid
 
 }

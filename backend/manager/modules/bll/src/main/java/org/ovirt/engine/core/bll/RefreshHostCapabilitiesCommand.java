@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
-import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -15,7 +14,7 @@ import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 @NonTransactiveCommandAttribute
-public class RefreshHostCapabilitiesCommand<T extends VdsActionParameters> extends VdsCommand<T> {
+public class RefreshHostCapabilitiesCommand<T extends VdsActionParameters> extends RefreshHostInfoCommandBase<T> {
 
     public RefreshHostCapabilitiesCommand(T parameters) {
         super(parameters);
@@ -34,25 +33,6 @@ public class RefreshHostCapabilitiesCommand<T extends VdsActionParameters> exten
         }
 
         logMonitorLockReleased("Refresh host capabilities");
-    }
-
-    @Override
-    protected boolean canDoAction() {
-        return validate(hostExists()) && validate(hostStatusValid());
-    }
-
-    private ValidationResult hostExists() {
-        return getVds() == null ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NOT_EXIST) : ValidationResult.VALID;
-    }
-
-    private ValidationResult hostStatusValid() {
-        VDSStatus hostStatus = getVds().getStatus();
-        if (hostStatus != VDSStatus.Maintenance && hostStatus != VDSStatus.Up && hostStatus != VDSStatus.NonOperational) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL,
-                    VdcBllMessages.VAR__HOST_STATUS__UP_MAINTENANCE_OR_NON_OPERATIONAL.name());
-        }
-
-        return ValidationResult.VALID;
     }
 
     @Override
