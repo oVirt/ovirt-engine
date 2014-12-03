@@ -115,8 +115,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
                             getVm().setStatus(VMStatus.PreparingForHibernate);
 
                             runVdsCommand(VDSCommandType.UpdateVmDynamicData,
-                                            new UpdateVmDynamicDataVDSCommandParameters(getVdsId(),
-                                                    getVm().getDynamicData()));
+                                            new UpdateVmDynamicDataVDSCommandParameters(getVm().getDynamicData()));
                             getCompensationContext().stateChanged();
                             return null;
                         }
@@ -194,8 +193,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
             // end of temp code
 
             runVdsCommand(VDSCommandType.UpdateVmDynamicData,
-                            new UpdateVmDynamicDataVDSCommandParameters(getVdsId(),
-                                    getVm().getDynamicData()));
+                            new UpdateVmDynamicDataVDSCommandParameters(getVm().getDynamicData()));
 
             getParameters().setVdsmTaskIds(new ArrayList<Guid>(getReturnValue().getVdsmTaskIdList()));
 
@@ -353,8 +351,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
                 runVdsCommand(
                                 VDSCommandType.UpdateVmDynamicData,
-                                new UpdateVmDynamicDataVDSCommandParameters(
-                                        new Guid(getVm().getRunOnVds().toString()), getVm().getDynamicData()));
+                                new UpdateVmDynamicDataVDSCommandParameters(getVm().getDynamicData()));
 
                 setSucceeded(true);
             }

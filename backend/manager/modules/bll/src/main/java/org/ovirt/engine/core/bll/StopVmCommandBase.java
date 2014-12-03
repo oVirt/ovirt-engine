@@ -188,8 +188,7 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
             Backend.getInstance()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.UpdateVmDynamicData,
-                            new UpdateVmDynamicDataVDSCommandParameters(getVm().getRunOnVds(),
-                                    vmDynamicData));
+                            new UpdateVmDynamicDataVDSCommandParameters(vmDynamicData));
         } else {
             getVmDynamicDao().update(vmDynamicData);
         }

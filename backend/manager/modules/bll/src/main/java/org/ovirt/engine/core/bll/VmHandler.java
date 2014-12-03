@@ -760,7 +760,7 @@ public class VmHandler {
         Backend.getInstance()
                .getResourceManager()
                .RunVdsCommand(VDSCommandType.UpdateVmDynamicData,
-                       new UpdateVmDynamicDataVDSCommandParameters(vdsId, vmDynamic));
+                       new UpdateVmDynamicDataVDSCommandParameters(vmDynamic));
     }
 
     public static void updateDefaultTimeZone(VmBase vmBase) {

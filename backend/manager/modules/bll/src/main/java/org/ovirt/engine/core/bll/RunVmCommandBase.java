@@ -197,7 +197,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                 Backend.getInstance()
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.UpdateVmDynamicData,
-                        new UpdateVmDynamicDataVDSCommandParameters(getCurrentVdsId(), getVm().getDynamicData()));
+                        new UpdateVmDynamicDataVDSCommandParameters(getVm().getDynamicData()));
             }
         }
         finally {

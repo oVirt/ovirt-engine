@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
-import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -178,10 +177,6 @@ public class VdsManager {
                 connectionTimeOut,
                 clientRetries,
                 heartbeat);
-    }
-
-    public void updateVmDynamic(VmDynamic vmDynamic) {
-        DbFacade.getInstance().getVmDynamicDao().update(vmDynamic);
     }
 
     @OnTimerMethodAnnotation("onTimer")

@@ -1,9 +1,8 @@
 package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
-import org.ovirt.engine.core.compat.Guid;
 
-public class UpdateVmDynamicDataVDSCommandParameters extends VdsIdVDSCommandParametersBase {
+public class UpdateVmDynamicDataVDSCommandParameters extends VdsAndVmIDVDSParametersBase{
     private VmDynamic privateVmDynamic;
 
     public VmDynamic getVmDynamic() {
@@ -14,8 +13,7 @@ public class UpdateVmDynamicDataVDSCommandParameters extends VdsIdVDSCommandPara
         privateVmDynamic = value;
     }
 
-    public UpdateVmDynamicDataVDSCommandParameters(Guid vdsId, VmDynamic vmDynamic) {
-        super(vdsId);
+    public UpdateVmDynamicDataVDSCommandParameters(VmDynamic vmDynamic) {
         setVmDynamic(vmDynamic);
     }
 
