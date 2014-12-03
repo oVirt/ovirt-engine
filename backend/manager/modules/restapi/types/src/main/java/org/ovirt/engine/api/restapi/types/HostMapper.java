@@ -18,6 +18,7 @@ import org.ovirt.engine.api.model.HardwareInformation;
 import org.ovirt.engine.api.model.Hook;
 import org.ovirt.engine.api.model.Hooks;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.HostProtocol;
 import org.ovirt.engine.api.model.HostStatus;
 import org.ovirt.engine.api.model.HostType;
 import org.ovirt.engine.api.model.HostedEngine;
@@ -84,7 +85,7 @@ public class HostMapper {
             entity.setPort(DEFAULT_VDSM_PORT);
         }
         if (model.isSetProtocol()) {
-            entity.setProtocol(VdsProtocol.fromValue(model.getProtocol()));
+            map(model.getProtocol(), entity);
         }
         if (model.isSetSsh()) {
             map(model.getSsh(), entity);
@@ -355,7 +356,8 @@ public class HostMapper {
         if (entity.getPort() > 0) {
             model.setPort(entity.getPort());
         }
-        model.setProtocol(map(entity.getProtocol(), (String) null));
+        HostProtocol protocol = map(entity.getProtocol(), null);
+        model.setProtocol(protocol != null ? protocol.value() : null);
         HostStatus status = map(entity.getStatus(), null);
         model.setStatus(StatusUtils.create(status));
         if (status==HostStatus.NON_OPERATIONAL) {
@@ -823,24 +825,45 @@ public class HostMapper {
         return result;
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.VdsProtocol.class, to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.VdsProtocol protocol, String template) {
-        String result = null;
+    @Mapping(from = VdsProtocol.class, to = HostProtocol.class)
+    public static HostProtocol map(VdsProtocol protocol, HostProtocol template) {
+        HostProtocol result = null;
         if (protocol != null) {
             switch (protocol) {
                 case STOMP:
-                    result = VdsProtocol.STOMP.value();
+                    result =  HostProtocol.STOMP;
                     break;
                 case AMQP:
-                    result = VdsProtocol.AMQP.value();
+                    result = HostProtocol.AMQP;
                     break;
                 case XML:
                 default:
-                    result = VdsProtocol.XML.value();
+                    result = HostProtocol.XML;
                     break;
             }
         }
         return result;
+    }
+
+    @Mapping(from = String.class, to = VdsStatic.class)
+    public static VdsStatic map(String protocol, VdsStatic template) {
+        VdsStatic entity = template != null ? template : new VdsStatic();
+        HostProtocol hostProtocol = HostProtocol.fromValue(protocol);
+        VdsProtocol result = null;
+        switch (hostProtocol) {
+            case STOMP:
+                result =  VdsProtocol.STOMP;
+                break;
+            case AMQP:
+                result = VdsProtocol.AMQP;
+                break;
+            case XML:
+            default:
+                result = VdsProtocol.XML;
+                break;
+        }
+        entity.setProtocol(result);
+        return entity;
     }
 
     @Mapping(from = VdsSpmStatus.class, to = SpmState.class)

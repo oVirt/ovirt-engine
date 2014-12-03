@@ -5,6 +5,7 @@ import static org.ovirt.engine.api.common.util.EnumValidator.validateEnum;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.PmProxy;
 import org.ovirt.engine.api.model.PmProxyType;
+import org.ovirt.engine.api.model.HostProtocol;
 
 @ValidatedClass(clazz = Host.class)
 public class HostValidator implements Validator<Host> {
@@ -21,6 +22,9 @@ public class HostValidator implements Validator<Host> {
         }
         if (host.isSetSsh()) {
             sshValidator.validateEnums(host.getSsh());
+        }
+        if (host.isSetProtocol()) {
+            validateEnum(HostProtocol.class, host.getProtocol(), true);
         }
     }
 }
