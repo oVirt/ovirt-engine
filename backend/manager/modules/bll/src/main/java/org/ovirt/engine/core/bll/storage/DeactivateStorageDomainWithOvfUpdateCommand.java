@@ -186,7 +186,6 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
                         executeDeactivateCommnad(false);
                         ctx.resetCompensation();
                     } catch (Exception e) {
-                        setSucceeded(false);
                         log.errorFormat("Error when attempting to deactivate storage domain {0}", getStorageDomainId(), e);
                         compensate();
                     }
