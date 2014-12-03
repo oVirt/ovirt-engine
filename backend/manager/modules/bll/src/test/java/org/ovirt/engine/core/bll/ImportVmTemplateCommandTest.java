@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
@@ -128,7 +129,12 @@ public class ImportVmTemplateCommandTest {
             VolumeFormat volumeFormat,
             VolumeType volumeType,
             StorageType storageType) {
-        ImportVmTemplateCommand command = spy(new ImportVmTemplateCommand(createParameters()));
+        ImportVmTemplateCommand command = spy(new ImportVmTemplateCommand(createParameters()){
+            @Override
+            public VDSGroup getVdsGroup() {
+                return null;
+            }
+        });
 
         Backend backend = mock(Backend.class);
         doReturn(backend).when(command).getBackend();
@@ -254,7 +260,12 @@ public class ImportVmTemplateCommandTest {
         parameters.getVmTemplate().setName(name);
         parameters.setImportAsNewEntity(isImportAsNewEntity);
         ImportVmTemplateCommand command =
-                spy(new ImportVmTemplateCommand(parameters));
+                spy(new ImportVmTemplateCommand(parameters) {
+                    @Override
+                    public VDSGroup getVdsGroup() {
+                        return null;
+                    }
+                });
         Set<ConstraintViolation<ImportVmTemplateParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
@@ -273,13 +284,23 @@ public class ImportVmTemplateCommandTest {
         assertFalse(BusinessEntitiesDefinitions.GENERAL_DOMAIN_SIZE > string100.length());
         parameters.setImportAsNewEntity(true);
         ImportVmTemplateCommand command =
-                spy(new ImportVmTemplateCommand(parameters));
+                spy(new ImportVmTemplateCommand(parameters) {
+                    @Override
+                    public VDSGroup getVdsGroup() {
+                        return null;
+                    }
+                });
         Set<ConstraintViolation<ImportVmTemplateParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
         Assert.isTrue(validate.isEmpty());
         parameters.setImportAsNewEntity(false);
-        command = spy(new ImportVmTemplateCommand(parameters));
+        command = spy(new ImportVmTemplateCommand(parameters) {
+                    @Override
+                    public VDSGroup getVdsGroup() {
+                        return null;
+                    }
+                });
         validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
@@ -292,7 +313,12 @@ public class ImportVmTemplateCommandTest {
     @Test
     public void testManagedDeviceSyncWithNewDiskId() {
         ImportVmTemplateParameters parameters = createParameters();
-        ImportVmTemplateCommand command = spy(new ImportVmTemplateCommand(parameters));
+        ImportVmTemplateCommand command = spy(new ImportVmTemplateCommand(parameters){
+                    @Override
+                    public VDSGroup getVdsGroup() {
+                        return null;
+                    }
+                });
         DiskImage disk = new DiskImage();
         disk.setStorageIds(new ArrayList<Guid>());
         Map<Guid, VmDevice> managedDevices = new HashMap<>();

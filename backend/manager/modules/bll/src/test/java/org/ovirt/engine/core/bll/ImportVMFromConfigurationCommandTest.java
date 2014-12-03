@@ -59,6 +59,7 @@ public class ImportVMFromConfigurationCommandTest {
     private Guid clusterId;
     private static final String VM_OVF_XML_DATA = "src/test/resources/vmOvfData.xml";
     private String xmlOvfData;
+    @Mock
     private VDSGroup vdsGroup;
     private StoragePool storagePool;
 
@@ -229,10 +230,11 @@ public class ImportVMFromConfigurationCommandTest {
     }
 
     private void mockVdsGroup() {
-        vdsGroup = new VDSGroup();
-        vdsGroup.setId(clusterId);
-        vdsGroup.setStoragePoolId(storagePoolId);
-        vdsGroup.setArchitecture(ArchitectureType.x86_64);
+        vdsGroup = mock(VDSGroup.class);
+        doReturn(clusterId).when(vdsGroup).getId();
+        doReturn(storagePoolId).when(vdsGroup).getStoragePoolId();
+        doReturn(ArchitectureType.x86_64).when(vdsGroup).getArchitecture();
+        doReturn(null).when(vdsGroup).getcompatibility_version();
     }
 
     private void mockStoragePool() {

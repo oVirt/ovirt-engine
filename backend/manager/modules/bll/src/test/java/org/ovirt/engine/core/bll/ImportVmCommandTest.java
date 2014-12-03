@@ -176,6 +176,11 @@ public class ImportVmCommandTest {
             protected ImportValidator getImportValidator() {
                 return validator;
             }
+
+            @Override
+            public VDSGroup getVdsGroup() {
+                return null;
+            }
         });
         parameters.setCopyCollapse(true);
         doReturn(true).when(cmd).validateNoDuplicateVm();
@@ -291,7 +296,12 @@ public class ImportVmCommandTest {
         ImportVmParameters parameters = createParameters();
         parameters.getVm().setName(name);
         parameters.setImportAsNewEntity(isImportAsNewEntity);
-        ImportVmCommand<ImportVmParameters> command = new ImportVmCommand<>(parameters);
+        ImportVmCommand<ImportVmParameters> command = new ImportVmCommand<ImportVmParameters>(parameters) {
+            @Override
+            public VDSGroup getVdsGroup() {
+                return null;
+            }
+        };
         Set<ConstraintViolation<ImportVmParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
@@ -310,14 +320,24 @@ public class ImportVmCommandTest {
                 RandomUtils.instance().nextPropertyString(BusinessEntitiesDefinitions.GENERAL_MAX_SIZE + 1);
         parameters.getVm().setUserDefinedProperties(tooLongString);
         parameters.setImportAsNewEntity(true);
-        ImportVmCommand<ImportVmParameters> command = new ImportVmCommand<>(parameters);
+        ImportVmCommand<ImportVmParameters> command = new ImportVmCommand<ImportVmParameters>(parameters) {
+            @Override
+            public VDSGroup getVdsGroup() {
+                return null;
+            }
+        };
         Set<ConstraintViolation<ImportVmParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
         assertTrue(validate.isEmpty());
         parameters.getVm().setUserDefinedProperties(tooLongString);
         parameters.setImportAsNewEntity(false);
-        command = new ImportVmCommand<>(parameters);
+        command = new ImportVmCommand<ImportVmParameters>(parameters){
+            @Override
+            public VDSGroup getVdsGroup() {
+                return null;
+            }
+        };
         validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
@@ -330,7 +350,12 @@ public class ImportVmCommandTest {
     @Test
     public void testManagedDeviceSyncWithNewDiskId() {
         ImportVmParameters parameters = createParameters();
-        ImportVmCommand<ImportVmParameters> command = new ImportVmCommand<>(parameters);
+        ImportVmCommand<ImportVmParameters> command = new ImportVmCommand<ImportVmParameters>(parameters){
+            @Override
+            public VDSGroup getVdsGroup() {
+                return null;
+            }
+        };
         List<DiskImage> diskList = new ArrayList<>();
         DiskImage diskImage = new DiskImage();
         diskImage.setStorageIds(new ArrayList<Guid>());
@@ -356,7 +381,12 @@ public class ImportVmCommandTest {
     public void testAliasGenerationByAddVmImagesAndSnapshotsWithCollapse() {
         ImportVmParameters params = createParameters();
         params.setCopyCollapse(true);
-        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(params));
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(params){
+            @Override
+            public VDSGroup getVdsGroup() {
+                return null;
+            }
+        });
 
         DiskImage collapsedDisk = params.getVm().getImages().get(1);
 
@@ -376,7 +406,12 @@ public class ImportVmCommandTest {
         params.setCopyCollapse(Boolean.TRUE);
         DiskImage diskImage = params.getVm().getImages().get(0);
         diskImage.setVmSnapshotId(Guid.Empty);
-        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(params));
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(params){
+            @Override
+            public VDSGroup getVdsGroup() {
+                return null;
+            }
+        });
         doReturn(true).when(cmd).validateNoDuplicateVm();
         doReturn(true).when(cmd).validateVdsCluster();
         doReturn(true).when(cmd).validateUsbPolicy();
@@ -402,7 +437,12 @@ public class ImportVmCommandTest {
     public void testAliasGenerationByAddVmImagesAndSnapshotsWithoutCollapse() {
         ImportVmParameters params = createParameters();
         params.setCopyCollapse(false);
-        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(params));
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(params){
+            @Override
+            public VDSGroup getVdsGroup() {
+                return null;
+            }
+        });
 
         for (DiskImage image : params.getVm().getImages()) {
             doNothing().when(cmd).saveImage(image);

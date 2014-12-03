@@ -9,4 +9,5 @@ public final class OvfHardware {
     public static final String DiskImage = "17";
     public static final String Monitor = "20";
     public static final String USB = "23";
+    public static final String Graphics = "26";
 }

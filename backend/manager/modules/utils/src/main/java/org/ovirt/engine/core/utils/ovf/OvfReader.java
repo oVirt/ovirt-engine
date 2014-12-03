@@ -356,6 +356,10 @@ public abstract class OvfReader implements IOvfBuilder {
                 readMonitorItem(node);
                 break;
 
+            case OvfHardware.Graphics:
+                readManagedVmDevice(node, Guid.newGuid()); // so far graphics doesn't contain anything special
+                break;
+
             case OvfHardware.CD:
                 readCdItem(node);
                 break;

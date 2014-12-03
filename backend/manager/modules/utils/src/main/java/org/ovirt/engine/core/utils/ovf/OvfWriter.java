@@ -464,6 +464,26 @@ public abstract class OvfWriter implements IOvfBuilder {
         }
     }
 
+    protected void writeGraphics(VmBase vmBase) {
+        Collection<VmDevice> devices = vmBase.getManagedDeviceMap().values();
+        for (VmDevice vmDevice : devices) {
+            if (vmDevice.getType() == VmDeviceGeneralType.GRAPHICS) {
+                _writer.WriteStartElement("Item");
+                _writer.WriteStartElement(RASD_URI, "Caption");
+                _writer.WriteRaw("Graphical Framebuffer");
+                _writer.WriteEndElement();
+                _writer.WriteStartElement(RASD_URI, "InstanceId");
+                _writer.WriteRaw(vmDevice.getId().getDeviceId().toString());
+                _writer.WriteEndElement();
+                _writer.WriteStartElement(RASD_URI, "ResourceType");
+                _writer.WriteRaw(OvfHardware.Graphics);
+                _writer.WriteEndElement();
+                writeVmDeviceInfo(vmDevice);
+                _writer.WriteEndElement(); // item
+            }
+        }
+    }
+
     protected void writeCd(VmBase vmBase) {
         Collection<VmDevice> devices = vmBase.getManagedDeviceMap().values();
         for (VmDevice vmDevice : devices) {

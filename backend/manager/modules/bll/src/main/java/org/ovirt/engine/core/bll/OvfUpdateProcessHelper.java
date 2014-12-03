@@ -81,7 +81,7 @@ public class OvfUpdateProcessHelper {
      * Loads additional need vm data for it's ovf
      */
     protected void loadVmData(VM vm) {
-        setManagedVideoDevices(vm.getStaticData());
+        setGraphicsAndVideoDevices(vm.getStaticData());
         if (vm.getInterfaces().isEmpty()) {
             vm.setInterfaces(getVmNetworkInterfaceDao().getAllForVm(vm.getId()));
         }
@@ -95,15 +95,20 @@ public class OvfUpdateProcessHelper {
         }
     }
 
-    private void setManagedVideoDevices(VmBase vmBase) {
+    private void setGraphicsAndVideoDevices(VmBase vmBase) {
+        setManagedDevices(vmBase, VmDeviceGeneralType.VIDEO);
+        setManagedDevices(vmBase, VmDeviceGeneralType.GRAPHICS);
+    }
+
+    private void setManagedDevices(VmBase vmBase, VmDeviceGeneralType type) {
         Map<Guid, VmDevice> managedDeviceMap = vmBase.getManagedDeviceMap();
         if (managedDeviceMap == null) {
-            managedDeviceMap = new HashMap<Guid, VmDevice>();
+            managedDeviceMap = new HashMap<>();
         }
         List<VmDevice> devices =
                 DbFacade.getInstance()
                         .getVmDeviceDao()
-                        .getVmDeviceByVmIdAndType(vmBase.getId(), VmDeviceGeneralType.VIDEO);
+                        .getVmDeviceByVmIdAndType(vmBase.getId(), type);
         for (VmDevice device : devices) {
             managedDeviceMap.put(device.getDeviceId(), device);
         }
@@ -128,7 +133,7 @@ public class OvfUpdateProcessHelper {
      * Loads additional need template data for it's ovf
      */
     protected void loadTemplateData(VmTemplate template) {
-        setManagedVideoDevices(template);
+        setGraphicsAndVideoDevices(template);
         if (template.getInterfaces() == null || template.getInterfaces().isEmpty()) {
             template.setInterfaces(getVmNetworkInterfaceDao()
                     .getAllForTemplate(template.getId()));

@@ -50,6 +50,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -68,6 +69,11 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         setStoragePoolId(parameters.getStoragePoolId());
         setVdsGroupId(parameters.getVdsGroupId());
         setStorageDomainId(parameters.getStorageDomainId());
+
+        Version clusterVersion = getVdsGroup() == null
+                ? null
+                : getVdsGroup().getcompatibility_version();
+        ImportUtils.updateGraphicsDevices(getVmTemplate(), clusterVersion);
     }
 
     protected ImportVmTemplateCommand(Guid commandId) {

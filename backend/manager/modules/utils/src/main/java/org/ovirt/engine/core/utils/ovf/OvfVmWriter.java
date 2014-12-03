@@ -336,6 +336,8 @@ public class OvfVmWriter extends OvfWriter {
 
         // monitors
         writeMonitors(vmBase);
+        // graphics
+        writeGraphics(vmBase);
         // CD
         writeCd(vmBase);
         // ummanged devices

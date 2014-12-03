@@ -89,6 +89,7 @@ import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.GuidUtils;
@@ -137,6 +138,27 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             }
         }
         ensureDomainMap(imageList, parameters.getDestDomainId());
+
+        Version clusterVersion = getVdsGroup() == null
+                ? null
+                : getVdsGroup().getcompatibility_version();
+        VmStatic staticData = getVm() == null
+                ? null
+                : getVm().getStaticData();
+        ImportUtils.updateGraphicsDevices(staticData, clusterVersion);
+    }
+
+    private List<VmDevice> getDevicesOfType(VmDeviceGeneralType type) {
+        List<VmDevice> devices = new ArrayList<>();
+
+        if (getVm() != null && getVm().getStaticData() != null && getVm().getStaticData().getManagedDeviceMap() != null) {
+            for (VmDevice vmDevice : getVm().getStaticData().getManagedDeviceMap().values()) {
+                if (vmDevice.getType() == type) {
+                    devices.add(vmDevice);
+                }
+            }
+        }
+        return devices;
     }
 
     @Override
@@ -491,10 +513,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     Set<GraphicsType> getGraphicsTypesForVm() {
         Set<GraphicsType> graphicsTypes = new HashSet<>();
 
-        for (VmDevice vmDevice : getVm().getManagedVmDeviceMap().values()) {
-            if (VmDeviceGeneralType.GRAPHICS == vmDevice.getType()) {
-                graphicsTypes.add(GraphicsType.fromVmDeviceType(VmDeviceType.valueOf(vmDevice.getDevice())));
-            }
+        for (VmDevice graphics : getDevicesOfType(VmDeviceGeneralType.GRAPHICS)) {
+            graphicsTypes.add(GraphicsType.fromVmDeviceType(VmDeviceType.getByName(graphics.getDevice())));
         }
 
         return graphicsTypes;
