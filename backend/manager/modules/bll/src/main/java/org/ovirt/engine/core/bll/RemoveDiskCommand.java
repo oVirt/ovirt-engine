@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
+import org.ovirt.engine.core.bll.validator.DiskValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -83,7 +84,9 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
         }
 
-        return validateAllVmsForDiskAreDown() &&
+        DiskValidator oldDiskValidator = new DiskValidator(getDisk());
+
+        return validate(oldDiskValidator.validateNotHostedEngineDisk()) && validateAllVmsForDiskAreDown() &&
                 canRemoveDiskBasedOnStorageTypeCheck();
     }
 

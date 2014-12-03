@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -182,5 +183,13 @@ public class DiskValidator {
 
     private static OsRepository getOsRepository() {
         return SimpleDependecyInjector.getInstance().get(OsRepository.class);
+    }
+
+
+    public ValidationResult validateNotHostedEngineDisk() {
+        boolean isHostedEngineDisk = disk.getDiskStorageType() == DiskStorageType.LUN &&
+                StorageConstants.HOSTED_ENGINE_LUN_DISK_ALIAS.equals(disk.getDiskAlias());
+        return isHostedEngineDisk ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_HOSTED_ENGINE_DISK) :
+                ValidationResult.VALID;
     }
 }
