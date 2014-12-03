@@ -51,7 +51,9 @@ begin
 		v_sql := 'ALTER TABLE ' || v_table || ' ALTER COLUMN ' || v_column || ' TYPE ' || v_new_type;
 		EXECUTE v_sql;
             end;
-        else
+            --- ignore operation if requested type is already there
+        elsif (not exists (select 1 from information_schema.columns where table_name ilike v_table and column_name ilike v_column and
+                (udt_name ilike v_new_type or data_type ilike v_new_type))) then
             RAISE EXCEPTION 'Table % or Column % does not exist.', v_table, v_column;
 	end if;
 END; $procedure$
