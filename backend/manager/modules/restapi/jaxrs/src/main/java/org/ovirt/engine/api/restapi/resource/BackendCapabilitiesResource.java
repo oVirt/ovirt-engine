@@ -44,6 +44,8 @@ import org.ovirt.engine.api.model.HookStates;
 import org.ovirt.engine.api.model.HookStatus;
 import org.ovirt.engine.api.model.HostNICStates;
 import org.ovirt.engine.api.model.HostNonOperationalDetails;
+import org.ovirt.engine.api.model.HostProtocol;
+import org.ovirt.engine.api.model.HostProtocols;
 import org.ovirt.engine.api.model.HostStates;
 import org.ovirt.engine.api.model.HostStatus;
 import org.ovirt.engine.api.model.IpVersions;
@@ -246,6 +248,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addStorageDomaintStates(version, StorageDomainStatus.values());
         addPowerManagementStateses(version, PowerManagementStatus.values());
         addHostStates(version, HostStatus.values());
+        addHostProtocols(version, HostProtocol.values());
         addHostNonOperationalDetails(version, NonOperationalReason.values());
         addNetworkStates(version, NetworkStatus.values());
         addTemplateStates(version, TemplateStatus.values());
@@ -739,6 +742,13 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         version.setHostStates(new HostStates());
         for (HostStatus status : values) {
             version.getHostStates().getHostStates().add(status.value());
+        }
+    }
+
+    private void addHostProtocols(VersionCaps version, HostProtocol[] values) {
+        version.setHostProtocols(new HostProtocols());
+        for (HostProtocol protocol: values) {
+            version.getHostProtocols().getHostProtocols().add(protocol.value());
         }
     }
 

@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.Agents;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.HostProtocol;
 import org.ovirt.engine.api.model.HostedEngine;
 import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.SSH;
@@ -26,6 +27,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         while (from.getPort() == 0) {
             from.setPort(MappingTestHelper.rand(65535));
         }
+        from.setProtocol(MappingTestHelper.shuffle(HostProtocol.class).value());
         from.getSpm().setPriority(3);
         return from;
     }

@@ -613,6 +613,7 @@
           <xs:element ref="creation_states" minOccurs="0"/>
           <xs:element ref="power_management_states" minOccurs="0"/>
           <xs:element ref="host_states" minOccurs="0"/>
+          <xs:element ref="host_protocols" minOccurs="0"/>
           <xs:element ref="host_non_operational_details" minOccurs="0"/>
           <xs:element ref="network_states" minOccurs="0"/>
           <xs:element ref="storage_domain_states" minOccurs="0"/>
@@ -1813,6 +1814,20 @@
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="HostStates"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="host_protocols" type="HostProtocols"/>
+
+  <xs:complexType name="HostProtocols">
+    <xs:sequence>
+      <xs:element name="host_protocol" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="HostProtocols"/>
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
