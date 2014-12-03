@@ -19,7 +19,6 @@
 """database plugin."""
 
 
-import urlparse
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -35,7 +34,6 @@ from ovirt_engine_setup.engine_common \
     import constants as oengcommcons
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import database
-from ovirt_engine_setup.engine import vdcoption
 from ovirt_engine_setup import domains
 
 
@@ -153,35 +151,6 @@ class Plugin(plugin.PluginBase):
                 ),
             )
             raise RuntimeError(_('Cannot rename host hosting Storage Domains'))
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_MISC,
-        after=(
-            oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
-        ),
-    )
-    def _misc(self):
-        option = 'RedirectServletReportsPage'
-        vdc = vdcoption.VdcOption(
-            statement=self.environment[
-                oenginecons.EngineDBEnv.STATEMENT
-            ]
-        )
-        value = vdc.getVdcOption(name=option)
-
-        if value:
-            newfqdn = self.environment[osetupcons.RenameEnv.FQDN]
-            u = urlparse.urlparse(value)
-            ulist = list(u)
-            ulist[1] = newfqdn + ":" + str(u.port)
-            vdc.updateVdcOptions(
-                options=(
-                    {
-                        'name': option,
-                        'value': urlparse.urlunparse(ulist),
-                    },
-                )
-            )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
