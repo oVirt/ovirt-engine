@@ -425,7 +425,7 @@ public class UpdateVmDiskCommandTest {
 
         when(diskValidator.isReadOnlyPropertyCompatibleWithInterface()).thenReturn(ValidationResult.VALID);
         when(diskValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
-        when(command.getDiskValidator(any(Disk.class))).thenReturn(diskValidator);
+        when(command.getDiskValidator(parameters.getDiskInfo())).thenReturn(diskValidator);
 
         VmDevice device = createVmDevice(diskImageGuid, vmId);
         doReturn(device).when(vmDeviceDAO).get(device.getId());

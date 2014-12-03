@@ -135,6 +135,12 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             return false;
         }
 
+        DiskValidator oldDiskValidator = getDiskValidator(getOldDisk());
+        ValidationResult isHostedEngineDisk = oldDiskValidator.validateNotHostedEngineDisk();
+        if (!isHostedEngineDisk.isValid()) {
+            return validate(isHostedEngineDisk);
+        }
+
         if (!checkDiskUsedAsOvfStore(getOldDisk())) {
             return false;
         }
