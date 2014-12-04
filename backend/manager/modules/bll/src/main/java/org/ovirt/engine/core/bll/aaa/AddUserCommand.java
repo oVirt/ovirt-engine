@@ -39,8 +39,6 @@ public class AddUserCommand<T extends AddUserParameters> extends CommandBase<T> 
     @Override
     protected void executeCommand() {
         DbUser user = getParameters().getUserToAdd();
-        DbUser syncResult = SyncUsers.sync(user);
-        user = syncResult != null ? syncResult : user;
         DbUser userFromDb =
                 DbFacade.getInstance().getDbUserDao().getByExternalId(user.getDomain(), user.getExternalId());
         if (userFromDb == null) {

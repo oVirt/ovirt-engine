@@ -653,7 +653,7 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
-    public static void getDbGroupsByUserId(AsyncQuery aQuery, Guid userId) {
+    public static void getAuthzGroupsByUserId(AsyncQuery aQuery, Guid userId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -661,7 +661,7 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.getInstance().runQuery(VdcQueryType.GetDbGroupsByUserId, new IdQueryParameters(userId), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAuthzGroupsByUserId, new IdQueryParameters(userId), aQuery);
     }
 
     public static void getPoolById(AsyncQuery aQuery, Guid poolId) {

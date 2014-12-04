@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.users;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
+import org.ovirt.engine.core.common.businessentities.aaa.AuthzGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -42,12 +42,12 @@ public class UserGroupListModel extends SearchableListModel
         if (getEntity() != null)
         {
             final ArrayList<UserGroup> items = new ArrayList<UserGroup>();
-            AsyncDataProvider.getDbGroupsByUserId(new AsyncQuery(new INewAsyncCallback() {
+            AsyncDataProvider.getAuthzGroupsByUserId(new AsyncQuery(new INewAsyncCallback() {
 
                 @Override
                 public void onSuccess(Object model, Object returnValue) {
-                    for (DbGroup grp : (Collection<DbGroup>) returnValue) {
-                        items.add(createUserGroup(grp.getName(), grp.getNamespace(), grp.getDomain()));
+                    for (AuthzGroup grp : (Collection<AuthzGroup>) returnValue) {
+                        items.add(createUserGroup(grp.getName(), grp.getNamespace(), grp.getAuthz()));
                     }
                     setItems(items);
                 }
