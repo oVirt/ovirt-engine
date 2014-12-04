@@ -274,7 +274,6 @@ public class DbUser extends IVdcQueryable {
                 && ObjectUtils.objectsEqual(namespace, other.namespace)
                 && ObjectUtils.objectsEqual(email, other.email)
                 && ObjectUtils.objectsEqual(groupNames, other.groupNames)
-                && isAdmin == other.isAdmin
                 && ObjectUtils.objectsEqual(firstName, other.firstName)
                 && ObjectUtils.objectsEqual(note, other.note)
                 && ObjectUtils.objectsEqual(role, other.role)
