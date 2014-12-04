@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
 import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -45,7 +44,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -54,6 +52,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.NumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.VmNumaSupportModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
@@ -370,6 +369,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void doChangeDefautlHost(Guid hostGuid) {
+        getModel().getIsAutoAssign().setEntity(true);
         if (hostGuid != null)
         {
             Guid vdsId = hostGuid;
@@ -377,12 +377,11 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             {
                 getModel().getDefaultHost().setSelectedItem(Linq.firstOrDefault(getModel().getDefaultHost().getItems(),
                         new Linq.HostPredicate(vdsId)));
+                if (getModel().getDefaultHost().getSelectedItem() != null &&
+                        getModel().getDefaultHost().getSelectedItem().getId().equals(vdsId)) {
+                    getModel().getIsAutoAssign().setEntity(false);
+                }
             }
-            getModel().getIsAutoAssign().setEntity(false);
-        }
-        else
-        {
-            getModel().getIsAutoAssign().setEntity(true);
         }
     }
 
