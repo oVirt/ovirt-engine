@@ -47,7 +47,7 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
 
         private LinkedList<Guid> convertToGuidList(String str, char delimiter) {
             LinkedList<Guid> results = new LinkedList<>();
-            if (str != null) {
+            if (StringUtils.isNotEmpty(str)) {
                 for (String id : str.split(String.format(" *%s *", delimiter))) {
                     results.add(Guid.createGuidFromString(id));
                 }
