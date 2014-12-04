@@ -942,11 +942,11 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         // TODO: remove setIsChangable when configured ssh username is enabled
         getUserName().setIsChangable(false);
         setFetchSshFingerprint(new EntityModel<String>());
-        getFetchSshFingerprint().setEntity(constants.empty());
+        getFetchSshFingerprint().setEntity(""); //$NON-NLS-1$
         setUserPassword(new EntityModel<String>());
-        getUserPassword().setEntity(constants.empty());
+        getUserPassword().setEntity(""); //$NON-NLS-1$
         setPublicKey(new EntityModel<String>());
-        getPublicKey().setEntity(constants.empty());
+        getPublicKey().setEntity(""); //$NON-NLS-1$
         setDataCenter(new ListModel<StoragePool>());
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
         getDataCenter().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
@@ -1116,8 +1116,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs
 
     private void fetchSSHFingerprint() {
         // Cleaning up fields for initialization
-        getFetchSshFingerprint().setEntity(ConstantsManager.getInstance().getConstants().empty());
-        getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().empty());
+        getFetchSshFingerprint().setEntity(""); //$NON-NLS-1$
+        getFetchResult().setEntity(""); //$NON-NLS-1$
 
         AsyncQuery aQuery = new AsyncQuery();
         aQuery.setModel(this);
@@ -1734,7 +1734,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs
     }
 
     private boolean isEntityModelEmpty(EntityModel<String> model) {
-        return !(model.getEntity() != null && !model.getEntity().equals(""));
+        return !(model.getEntity() != null && !model.getEntity().equals("")); //$NON-NLS-1$
     }
 
     public void updateModelFromVds(VDS vds,
@@ -1852,12 +1852,12 @@ public abstract class HostModel extends Model implements HasValidatedTabs
     }
 
     public void cleanHostParametersFields() {
-        getName().setEntity(constants.empty());
-        getComment().setEntity(constants.empty());
+        getName().setEntity(""); //$NON-NLS-1$
+        getComment().setEntity(""); //$NON-NLS-1$
         getAuthSshPort().setEntity(Integer.parseInt(constants.defaultHostSSHPort()));
-        getHost().setEntity(constants.empty());
-        getUserPassword().setEntity(constants.empty());
-        getFetchSshFingerprint().setEntity(constants.empty());
+        getHost().setEntity(""); //$NON-NLS-1$
+        getUserPassword().setEntity(""); //$NON-NLS-1$
+        getFetchSshFingerprint().setEntity(""); //$NON-NLS-1$
     }
 
     protected abstract boolean showInstallationProperties();

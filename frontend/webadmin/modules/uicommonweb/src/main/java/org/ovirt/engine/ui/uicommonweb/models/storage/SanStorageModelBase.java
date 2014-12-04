@@ -577,6 +577,6 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     }
 
     public String getLoginButtonLabel() {
-        return ConstantsManager.getInstance().getConstants().empty();
+        return ""; //$NON-NLS-1$
     }
 }

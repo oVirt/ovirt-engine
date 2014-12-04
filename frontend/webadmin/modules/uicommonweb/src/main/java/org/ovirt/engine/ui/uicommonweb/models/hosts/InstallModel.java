@@ -156,7 +156,7 @@ public class InstallModel extends Model {
         // TODO: remove setIsChangable when configured ssh username is enabled
         getUserName().setIsChangable(false);
         setPublicKey(new EntityModel<String>());
-        getPublicKey().setEntity(constants.empty());
+        getPublicKey().setEntity(""); //$NON-NLS-1$
         setValidationFailed(new EntityModel<Boolean>());
         fetchPublicKey();
 
