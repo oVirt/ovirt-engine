@@ -128,7 +128,7 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
                 parameters.setParentParameters(getParameters());
                 parameters.setParentCommand(getActionType());
                 parameters.setSkipDomainChecks(true);
-                VdcReturnValueBase vdsReturnValue = getBackend().endAction(VdcActionType.CreateOvfStoresForStorageDomain, parameters, getContext());
+                VdcReturnValueBase vdsReturnValue = getBackend().endAction(VdcActionType.CreateOvfStoresForStorageDomain, parameters, cloneContext().withoutLock());
                 createdTasks.addAll(vdsReturnValue.getInternalVdsmTaskIdList());
                 break;
             }
@@ -136,6 +136,8 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
         }
 
         if (!createdTasks.isEmpty()) {
+            // if there are created tasks, avoid release the memory lock.
+            setLock(null);
             setSucceeded(true);
             startPollingAsyncTasks(createdTasks);
             return;
