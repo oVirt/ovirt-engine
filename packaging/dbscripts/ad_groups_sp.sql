@@ -86,19 +86,6 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetGroupsByUserId(v_id UUID) RETURNS SETOF ad_groups STABLE
-   AS $procedure$
-BEGIN
-      RETURN QUERY SELECT *
-      FROM ad_groups
-      WHERE id in (SELECT fnsplitteruuid(users.group_ids) from users where user_id = v_id);
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
-
 Create or replace FUNCTION GetGroupByExternalId(v_domain VARCHAR(100), v_external_id TEXT) RETURNS SETOF ad_groups STABLE
    AS $procedure$
 BEGIN

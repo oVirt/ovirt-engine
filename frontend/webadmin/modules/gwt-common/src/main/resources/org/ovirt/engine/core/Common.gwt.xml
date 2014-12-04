@@ -14,6 +14,7 @@
 		<include name="common/businessentities/BusinessEntity.java" />
 		<include name="common/businessentities/BusinessEntityWithStatus.java" />
 		<include name="common/businessentities/BusinessEntitiesDefinitions.java" />
+		<include name="common/businessentities/aaa/AuthzGroup.java" />
 		<include name="common/businessentities/aaa/DbGroup.java" />
 		<include name="common/businessentities/aaa/DbUser.java" />
 		<include name="common/businessentities/aaa/LdapGroup.java" />

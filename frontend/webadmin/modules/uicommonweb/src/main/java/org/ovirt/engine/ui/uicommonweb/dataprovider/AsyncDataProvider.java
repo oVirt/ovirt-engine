@@ -67,6 +67,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.aaa.AuthzGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
@@ -654,15 +655,15 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    public void getDbGroupsByUserId(AsyncQuery aQuery, Guid userId) {
-        aQuery.converterCallback = new IAsyncConverter<List<DbGroup>>() {
+    public void getAuthzGroupsByUserId(AsyncQuery aQuery, Guid userId) {
+        aQuery.converterCallback = new IAsyncConverter<List<AuthzGroup>>() {
             @Override
-            public List<DbGroup> Convert(Object source, AsyncQuery _asyncQuery)
+            public List<AuthzGroup> Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return (List<DbGroup>) source;
+                return (List<AuthzGroup>) source;
             }
         };
-        Frontend.getInstance().runQuery(VdcQueryType.GetDbGroupsByUserId, new IdQueryParameters(userId), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAuthzGroupsByUserId, new IdQueryParameters(userId), aQuery);
     }
 
     public void getPoolById(AsyncQuery aQuery, Guid poolId) {

@@ -8,7 +8,6 @@ import javax.ejb.DependsOn;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
-import org.ovirt.engine.core.bll.aaa.DbUserCacheManager;
 import org.ovirt.engine.core.bll.dwh.DwhHeartBeat;
 import org.ovirt.engine.core.bll.gluster.GlusterJobsManager;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -59,9 +58,6 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             // recover from engine failure
             PmHealthCheckManager.getInstance().recover(hosts);
 
-            // Create authentication profiles for all the domains that exist in the database:
-            // TODO: remove this later, and rely only on the custom and built in extensions directories configuration
-            DbUserCacheManager.getInstance().init();
             CommandCoordinatorUtil.initAsyncTaskManager();
             Injector.get(ResourceManager.class);
             OvfDataUpdater.getInstance().initOvfDataUpdater();
