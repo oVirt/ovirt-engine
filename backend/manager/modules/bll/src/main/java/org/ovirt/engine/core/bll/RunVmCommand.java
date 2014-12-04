@@ -232,15 +232,16 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     ExecutionHandler.setAsyncJob(getExecutionContext(), true);
                 }
             } catch(VdcBLLException e) {
-                VdcBllErrors errorCode = e.getErrorCode();
-
                 // if the returned exception is such that shoudn't trigger the re-run process,
                 // re-throw it. otherwise, continue (the vm will be down and a re-run will be triggered)
-                switch (errorCode) {
+                switch (e.getErrorCode()) {
                 case Done: // should never get here with errorCode = 'Done' though
                 case exist:
+                    reportCompleted();
+                    throw e;
                 case VDS_NETWORK_ERROR: // probably wrong xml format sent.
                 case PROVIDER_FAILURE:
+                    runningFailed();
                     throw e;
                 default:
                     log.warn("Failed to run VM '{}': {}", getVmName(), e.getMessage());
