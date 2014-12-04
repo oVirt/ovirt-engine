@@ -30,53 +30,59 @@
 	</ui:style>
 
 	<g:FlowPanel ui:field="mainPanel" >
-		<e:EntityModelCheckBoxEditor addStyleNames="{style.labelStyle}" ui:field="throughputEnabled"/>
+	    <g:Label text="{constants.throughputLabelQosPopup}" addStyleNames="{style.textBoxLabelStyle}" />
 		<g:HorizontalPanel>
+            <g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
+                <e:EntityModelRadioButtonEditor label="{constants.noneStorageQosPopup}" ui:field="throughputNoneRadioButton" />
+            </g:VerticalPanel>
 			<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
-				<g:Label addStyleNames="{style.textBoxLabelStyle}" text="{constants.totalStorageQosPopup}"/>
-				<g:VerticalPanel>
+                <g:VerticalPanel>
+                    <e:EntityModelRadioButtonEditor label="{constants.totalStorageQosPopup}" ui:field="throughputTotalRadioButton" />
 					<e:IntegerEntityModelTextBoxOnlyEditor ui:field="throughputTotalEditor" />
 					<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbpsLabelStorageQosPopup}"/>
 				</g:VerticalPanel>
 			</g:VerticalPanel>
 			<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
-				<g:Label addStyleNames="{style.textBoxLabelStyle}" text="{constants.readStorageQosPopup}"/>
-				<g:VerticalPanel>
-					<e:IntegerEntityModelTextBoxOnlyEditor ui:field="throughputReadEditor" />
-					<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbpsLabelStorageQosPopup}"/>
-				</g:VerticalPanel>
-			</g:VerticalPanel>
-			<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
-				<g:Label addStyleNames="{style.textBoxLabelStyle}" text="{constants.writeStorageQosPopup}"/>
-				<g:VerticalPanel>
-					<e:IntegerEntityModelTextBoxOnlyEditor ui:field="throughputWriteEditor" />
-					<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbpsLabelStorageQosPopup}"/>
-				</g:VerticalPanel>
+                <e:EntityModelRadioButtonEditor label="{constants.readWriteStorageQosPopup}" ui:field="throughputReadWriteRadioButton" />
+                <g:HorizontalPanel>
+                    <g:VerticalPanel>
+                        <e:IntegerEntityModelTextBoxOnlyEditor ui:field="throughputReadEditor" />
+                        <g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbpsLabelStorageQosPopup}"/>
+                    </g:VerticalPanel>
+                    <g:Label addStyleNames="{style.textBoxLabelStyle}" text="/"/>
+                    <g:VerticalPanel>
+                        <e:IntegerEntityModelTextBoxOnlyEditor ui:field="throughputWriteEditor" />
+                        <g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbpsLabelStorageQosPopup}"/>
+                    </g:VerticalPanel>
+                </g:HorizontalPanel>
 			</g:VerticalPanel>
 		</g:HorizontalPanel>
-		<e:EntityModelCheckBoxEditor addStyleNames="{style.labelStyle}" ui:field="iopsEnabled"/>
+		<g:Label text="{constants.iopsLabelQosPopup}" addStyleNames="{style.textBoxLabelStyle}"/>
 		<g:HorizontalPanel>
-			<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
-				<g:Label addStyleNames="{style.textBoxLabelStyle}" text="{constants.totalStorageQosPopup}"/>
-				<g:VerticalPanel>
-					<e:IntegerEntityModelTextBoxOnlyEditor ui:field="iopsTotalEditor" />
-					<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.iopsCountLabelQosPopup}"/>
-				</g:VerticalPanel>
-			</g:VerticalPanel>
-			<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
-				<g:Label addStyleNames="{style.textBoxLabelStyle}" text="{constants.readStorageQosPopup}"/>
-				<g:VerticalPanel>
-					<e:IntegerEntityModelTextBoxOnlyEditor ui:field="iopsReadEditor" />
-					<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.iopsCountLabelQosPopup}"/>
-				</g:VerticalPanel>
-			</g:VerticalPanel>
-			<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
-				<g:Label addStyleNames="{style.textBoxLabelStyle}" text="{constants.writeStorageQosPopup}"/>
-				<g:VerticalPanel>
-					<e:IntegerEntityModelTextBoxOnlyEditor ui:field="iopsWriteEditor" />
-					<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.iopsCountLabelQosPopup}"/>
-				</g:VerticalPanel>
-			</g:VerticalPanel>
+            <g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
+                <e:EntityModelRadioButtonEditor label="{constants.noneStorageQosPopup}" ui:field="iopsNoneRadioButton" />
+            </g:VerticalPanel>
+            <g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
+                <g:VerticalPanel>
+                    <e:EntityModelRadioButtonEditor label="{constants.totalStorageQosPopup}" ui:field="iopsTotalRadioButton" />
+                    <e:IntegerEntityModelTextBoxOnlyEditor ui:field="iopsTotalEditor" />
+                    <g:Label addStyleNames="{style.mbpsLabel}" text="{constants.iopsCountLabelQosPopup}"/>
+                </g:VerticalPanel>
+            </g:VerticalPanel>
+            <g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
+                <e:EntityModelRadioButtonEditor label="{constants.readWriteStorageQosPopup}" ui:field="iopsReadWriteRadioButton" />
+                <g:HorizontalPanel>
+                    <g:VerticalPanel>
+                    <e:IntegerEntityModelTextBoxOnlyEditor ui:field="iopsReadEditor" />
+                        <g:Label addStyleNames="{style.mbpsLabel}" text="{constants.iopsCountLabelQosPopup}"/>
+                    </g:VerticalPanel>
+                    <g:Label addStyleNames="{style.textBoxLabelStyle}" text="/"/>
+                    <g:VerticalPanel>
+                        <e:IntegerEntityModelTextBoxOnlyEditor ui:field="iopsWriteEditor" />
+                        <g:Label addStyleNames="{style.mbpsLabel}" text="{constants.iopsCountLabelQosPopup}"/>
+                    </g:VerticalPanel>
+                </g:HorizontalPanel>
+            </g:VerticalPanel>
 		</g:HorizontalPanel>
 	</g:FlowPanel>
 

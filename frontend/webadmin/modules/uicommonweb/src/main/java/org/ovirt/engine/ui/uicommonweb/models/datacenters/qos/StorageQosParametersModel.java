@@ -34,49 +34,58 @@ public class StorageQosParametersModel extends QosParametersModel<StorageQos> {
 
     @Override
     public void init(StorageQos qos) {
-        if (qos.getMaxThroughput() == null
-                && qos.getMaxReadThroughput() == null
-                && qos.getMaxWriteThroughput() == null) {
-            getThroughput().getEnabled().setEntity(false);
+        initStorageParameterModel(qos.getMaxThroughput(),
+                qos.getMaxReadThroughput(),
+                qos.getMaxWriteThroughput(),
+                getThroughput());
+        initStorageParameterModel(qos.getMaxIops(), qos.getMaxReadIops(), qos.getMaxWriteIops(), getIops());
+    }
+
+    private void initStorageParameterModel(Integer max,
+            Integer maxRead,
+            Integer maxWrite,
+            StorageQosMetricParametersModel parameterModel) {
+        boolean noneSelected = false, totalSelected = false, readWriteSelected = false;
+        if (!(max == null &&
+                maxRead == null && maxWrite == null)) {
+            if (max != null) {
+                totalSelected = true;
+            } else {
+                readWriteSelected = true;
+            }
+            parameterModel.getTotal().setEntity(max);
+            parameterModel.getRead().setEntity(maxRead);
+            parameterModel.getWrite().setEntity(maxWrite);
         } else {
-            getThroughput().getTotal().setEntity(qos.getMaxThroughput());
-            getThroughput().getRead().setEntity(qos.getMaxReadThroughput());
-            getThroughput().getWrite().setEntity(qos.getMaxWriteThroughput());
-            getThroughput().getEnabled().setEntity(true);
+            noneSelected = true;
         }
 
-        if (qos.getMaxIops() == null
-                && qos.getMaxReadIops() == null
-                && qos.getMaxWriteIops() == null) {
-            getIops().getEnabled().setEntity(false);
-        } else {
-            getIops().getTotal().setEntity(qos.getMaxIops());
-            getIops().getRead().setEntity(qos.getMaxReadIops());
-            getIops().getWrite().setEntity(qos.getMaxWriteIops());
-            getIops().getEnabled().setEntity(true);
-        }
+        parameterModel.getChoiceGroupNone().setEntity(noneSelected);
+        parameterModel.getChoiceGroupTotal().setEntity(totalSelected);
+        parameterModel.getChoiceGroupReadWrite().setEntity(readWriteSelected);
     }
 
     @Override
     public void flush(StorageQos storageQos) {
-        if (getThroughput().getEnabled().getEntity()) {
+        storageQos.setMaxThroughput(null);
+        storageQos.setMaxReadThroughput(null);
+        storageQos.setMaxWriteThroughput(null);
+        if (getThroughput().getChoiceGroupTotal().getEntity()) {
             storageQos.setMaxThroughput(getThroughput().getTotal().getEntity());
+        } else if (getThroughput().getChoiceGroupReadWrite().getEntity()) {
             storageQos.setMaxReadThroughput(getThroughput().getRead().getEntity());
             storageQos.setMaxWriteThroughput(getThroughput().getWrite().getEntity());
-        } else {
-            storageQos.setMaxThroughput(null);
-            storageQos.setMaxReadThroughput(null);
-            storageQos.setMaxWriteThroughput(null);
         }
 
-        if (getIops().getEnabled().getEntity()) {
+        storageQos.setMaxIops(null);
+        storageQos.setMaxReadIops(null);
+        storageQos.setMaxWriteIops(null);
+        if (getIops().getChoiceGroupTotal().getEntity()) {
             storageQos.setMaxIops(getIops().getTotal().getEntity());
+        }
+        else if (getIops().getChoiceGroupReadWrite().getEntity()) {
             storageQos.setMaxReadIops(getIops().getRead().getEntity());
             storageQos.setMaxWriteIops(getIops().getWrite().getEntity());
-        } else {
-            storageQos.setMaxIops(null);
-            storageQos.setMaxReadIops(null);
-            storageQos.setMaxWriteIops(null);
         }
     }
 

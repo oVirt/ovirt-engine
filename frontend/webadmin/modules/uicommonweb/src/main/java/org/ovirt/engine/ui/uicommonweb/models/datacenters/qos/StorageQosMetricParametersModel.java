@@ -14,7 +14,10 @@ public class StorageQosMetricParametersModel extends Model {
     private EntityModel<Integer> total;
     private EntityModel<Integer> read;
     private EntityModel<Integer> write;
-    private EntityModel<Boolean> enabled;
+    private EntityModel<Boolean> choiceGroupNone;
+    private EntityModel<Boolean> choiceGroupTotal;
+    private EntityModel<Boolean> choiceGroupReadWrite;
+
     private final ConfigurationValues maxTotal;
     private final ConfigurationValues maxRead;
     private final ConfigurationValues maxWrite;
@@ -28,9 +31,14 @@ public class StorageQosMetricParametersModel extends Model {
         setTotal(new EntityModel<Integer>());
         setRead(new EntityModel<Integer>());
         setWrite(new EntityModel<Integer>());
-        setEnabled(new EntityModel<Boolean>());
-        getEnabled().getPropertyChangedEvent().addListener(this);
-        getPropertyChangedEvent().addListener(this);
+        setChoiceGroupNone(new EntityModel<Boolean>());
+        setChoiceGroupTotal(new EntityModel<Boolean>());
+        setChoiceGroupReadWrite(new EntityModel<Boolean>());
+
+        getChoiceGroupNone().getEntityChangedEvent().addListener(this);
+        getChoiceGroupTotal().getEntityChangedEvent().addListener(this);
+        getChoiceGroupReadWrite().getEntityChangedEvent().addListener(this);
+
     }
 
     public EntityModel<Integer> getTotal() {
@@ -57,16 +65,33 @@ public class StorageQosMetricParametersModel extends Model {
         this.write = write;
     }
 
-    public EntityModel<Boolean> getEnabled() {
-        return enabled;
+    public EntityModel<Boolean> getChoiceGroupNone() {
+        return choiceGroupNone;
     }
 
-    public void setEnabled(EntityModel<Boolean> enabled) {
-        this.enabled = enabled;
+    public EntityModel<Boolean> getChoiceGroupTotal() {
+        return choiceGroupTotal;
+    }
+
+    public EntityModel<Boolean> getChoiceGroupReadWrite() {
+        return choiceGroupReadWrite;
+    }
+
+
+    public void setChoiceGroupNone(EntityModel<Boolean> choice_group_none) {
+        this.choiceGroupNone = choice_group_none;
+    }
+
+    public void setChoiceGroupTotal(EntityModel<Boolean> choice_group_total) {
+        this.choiceGroupTotal = choice_group_total;
+    }
+
+    public void setChoiceGroupReadWrite(EntityModel<Boolean> choice_group_read_write) {
+        this.choiceGroupReadWrite = choice_group_read_write;
     }
 
     public boolean validate() {
-        if (!getEnabled().getEntity()) {
+        if(getChoiceGroupNone().getEntity()) {
             return true;
         }
 
@@ -102,17 +127,47 @@ public class StorageQosMetricParametersModel extends Model {
     public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
-        if (getEnabled().equals(sender)) {
+        if (this.equals(sender)) {
+            getChoiceGroupNone().setIsChangable(getIsChangable());
+            getChoiceGroupTotal().setIsChangable(getIsChangable());
+            getChoiceGroupReadWrite().setIsChangable(getIsChangable());
+        }
+    else if ((sender instanceof EntityModel) && (Boolean.TRUE.equals(((EntityModel) sender).getEntity()))) {
+            if (!getChoiceGroupNone().equals(sender)) {
+                getChoiceGroupNone().setEntity(false);
+            }
+
+            if (!getChoiceGroupTotal().equals(sender)) {
+                getChoiceGroupTotal().setEntity(false);
+                getTotal().setEntity(null);
+            }
+
+            if (!getChoiceGroupReadWrite().equals(sender))
+            {
+                getChoiceGroupReadWrite().setEntity(false);
+                getRead().setEntity(null);
+                getWrite().setEntity(null);
+            }
+
             updateChangeability();
-        } else if (this.equals(sender)) {
-            getEnabled().setIsChangable(getIsChangable());
         }
     }
 
-    private void updateChangeability() {
-        boolean enabled = getIsChangable() && getEnabled().getEntity();
-        getTotal().setIsChangable(enabled);
-        getRead().setIsChangable(enabled);
-        getWrite().setIsChangable(enabled);
+    private void updateChangeability()
+    {
+        //Suppress update of changeability when entities weren't constructed yet.
+        if(getChoiceGroupNone() == null || getChoiceGroupNone().getEntity() == null ||
+           getChoiceGroupTotal() == null || getChoiceGroupTotal().getEntity() == null ||
+           getChoiceGroupReadWrite() == null || getChoiceGroupReadWrite().getEntity() == null)
+        {
+            return;
+        }
+
+        boolean total_available = getIsChangable() && getChoiceGroupTotal().getEntity();
+        boolean read_write_available = getIsChangable() && getChoiceGroupReadWrite().getEntity();
+
+        getTotal().setIsChangable(total_available);
+        getRead().setIsChangable(read_write_available);
+        getWrite().setIsChangable(read_write_available);
     }
 }

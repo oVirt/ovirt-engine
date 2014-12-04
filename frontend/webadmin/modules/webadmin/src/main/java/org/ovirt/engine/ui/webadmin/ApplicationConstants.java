@@ -3938,6 +3938,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Read")
     String readStorageQosPopup();
 
+    @DefaultStringValue("None")
+    String noneStorageQosPopup();
+
+    @DefaultStringValue("Read / Write")
+    String readWriteStorageQosPopup();
+
     @DefaultStringValue("Total")
     String totalStorageQosPopup();
 
@@ -3947,7 +3953,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("MB/s")
     String mbpsLabelStorageQosPopup();
 
-    @DefaultStringValue("Count")
+    @DefaultStringValue("IOps")
     String iopsCountLabelQosPopup();
 
     @DefaultStringValue("QoS")

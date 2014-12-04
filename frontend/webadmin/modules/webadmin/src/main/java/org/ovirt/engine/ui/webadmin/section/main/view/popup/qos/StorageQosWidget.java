@@ -3,8 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.qos;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
-import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.StorageQosParametersModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -37,14 +36,35 @@ public class StorageQosWidget extends QosWidget<StorageQos, StorageQosParameters
     WidgetStyle style;
 
     @UiField(provided = true)
-    @Path(value = "throughput.enabled.entity")
+    @Path(value = "throughput.choiceGroupTotal.entity")
     @WithElementId
-    EntityModelCheckBoxEditor throughputEnabled;
+    EntityModelRadioButtonEditor throughputTotalRadioButton;
 
     @UiField(provided = true)
-    @Path(value = "iops.enabled.entity")
+    @Path(value = "throughput.choiceGroupNone.entity")
     @WithElementId
-    EntityModelCheckBoxEditor iopsEnabled;
+    EntityModelRadioButtonEditor throughputNoneRadioButton;
+
+    @UiField(provided = true)
+    @Path(value = "throughput.choiceGroupReadWrite.entity")
+    @WithElementId
+    EntityModelRadioButtonEditor throughputReadWriteRadioButton;
+
+    @UiField(provided = true)
+    @Path(value = "iops.choiceGroupTotal.entity")
+    @WithElementId
+    EntityModelRadioButtonEditor iopsTotalRadioButton;
+
+    @UiField(provided = true)
+    @Path(value = "iops.choiceGroupNone.entity")
+    @WithElementId
+    EntityModelRadioButtonEditor iopsNoneRadioButton;
+
+    @UiField(provided = true)
+    @Path(value = "iops.choiceGroupReadWrite.entity")
+    @WithElementId
+    EntityModelRadioButtonEditor iopsReadWriteRadioButton;
+
 
     @UiField
     @Path(value = "throughput.total.entity")
@@ -77,8 +97,14 @@ public class StorageQosWidget extends QosWidget<StorageQos, StorageQosParameters
     IntegerEntityModelTextBoxOnlyEditor iopsWriteEditor;
 
     public StorageQosWidget(ApplicationConstants constants) {
-        throughputEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);
-        iopsEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);
+        throughputTotalRadioButton = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
+        throughputNoneRadioButton = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
+        throughputReadWriteRadioButton = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
+
+        iopsTotalRadioButton = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
+        iopsNoneRadioButton = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
+        iopsReadWriteRadioButton = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
+
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
@@ -99,8 +125,6 @@ public class StorageQosWidget extends QosWidget<StorageQos, StorageQosParameters
     }
 
     private void localize(ApplicationConstants constants) {
-        throughputEnabled.setLabel(constants.throughputLabelQosPopup());
-        iopsEnabled.setLabel(constants.iopsLabelQosPopup());
         throughputTotalEditor.setTitle(constants.totalStorageQosPopup() + constants.mbpsLabelStorageQosPopup());
         throughputReadEditor.setTitle(constants.readStorageQosPopup() + constants.mbpsLabelStorageQosPopup());
         throughputWriteEditor.setTitle(constants.writeStorageQosPopup() + constants.mbpsLabelStorageQosPopup());
