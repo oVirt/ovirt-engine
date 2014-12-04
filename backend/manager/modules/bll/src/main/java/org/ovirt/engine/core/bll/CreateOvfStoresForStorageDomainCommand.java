@@ -63,11 +63,9 @@ public class CreateOvfStoresForStorageDomainCommand<T extends CreateOvfStoresFor
     }
 
     private void endCommandOperations() {
-        boolean atleastOneSucceeded = false;
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             Guid diskId = ((AddImageFromScratchParameters) p).getDiskInfo().getId();
             if (p.getTaskGroupSuccess()) {
-                atleastOneSucceeded = true;
 
                 StorageDomainOvfInfo storageDomainOvfInfoDb =
                         getStorageDomainOvfInfoDao()
@@ -92,13 +90,11 @@ public class CreateOvfStoresForStorageDomainCommand<T extends CreateOvfStoresFor
             }
         }
 
-        if (atleastOneSucceeded) {
-            // if we'd have the possibility to know whether we failed because of failure to acquire locks as there's an
-            // update in progress, we could
-            // try again (avoid setSucceeded(true) in that scenario).
-            VdcReturnValueBase returnValue = runInternalActionWithTasksContext(VdcActionType.ProcessOvfUpdateForStorageDomain, createProcessOvfUpdateForDomainParams(), null);
-            getReturnValue().getInternalVdsmTaskIdList().addAll(returnValue.getInternalVdsmTaskIdList());
-        }
+        // if we'd have the possibility to know whether we failed because of failure to acquire locks as there's an
+        // update in progress, we could
+        // try again (avoid setSucceeded(true) in that scenario).
+        VdcReturnValueBase returnValue = runInternalActionWithTasksContext(VdcActionType.ProcessOvfUpdateForStorageDomain, createProcessOvfUpdateForDomainParams(), null);
+        getReturnValue().getInternalVdsmTaskIdList().addAll(returnValue.getInternalVdsmTaskIdList());
 
         setSucceeded(true);
     }
