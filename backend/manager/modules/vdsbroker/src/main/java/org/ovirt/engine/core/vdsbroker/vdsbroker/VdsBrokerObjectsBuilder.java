@@ -84,6 +84,8 @@ import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.utils.network.predicate.InterfaceByAddressPredicate;
 import org.ovirt.engine.core.vdsbroker.NetworkStatisticsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -804,8 +806,8 @@ public class VdsBrokerObjectsBuilder {
         vds.setSoftwareVersion(AssignStringValue(xmlRpcStruct, VdsProperties.software_version));
         vds.setBuildName(AssignStringValue(xmlRpcStruct, VdsProperties.build_name));
         if (xmlRpcStruct.containsKey(VdsProperties.host_os)) {
-            vds.setHostOs(GetPackageVersionFormated(
-                    (Map<String, Object>) xmlRpcStruct.get(VdsProperties.host_os), true));
+            vds.setHostOs(GetPackageVersionFormated((Map<String, Object>) xmlRpcStruct.get(VdsProperties.host_os),
+                    true));
         }
         if (xmlRpcStruct.containsKey(VdsProperties.packages)) {
             // packages is an array of xmlRpcStruct (that each is a name, ver,
@@ -1510,8 +1512,6 @@ public class VdsBrokerObjectsBuilder {
      *            A nested map contains network interfaces data
      */
     public static void updateNetworkData(VDS vds, Map<String, Object> xmlRpcStruct) {
-        vds.setActiveNic(AssignStringValue(xmlRpcStruct, VdsProperties.NETWORK_LAST_CLIENT_INTERFACE));
-
         List<VdsNetworkInterface> oldInterfaces =
                 DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(vds.getId());
         vds.getInterfaces().clear();
@@ -1533,19 +1533,37 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    private static void addHostNetworksAndUpdateInterfaces(VDS vds,
-            Map<String, Object> xmlRpcStruct) {
+    /***
+     * resolve the the host's interface that is being used to communicate with engine.
+     *
+     * @param host
+     * @return host's interface that being used to communicate with engine, null otherwise
+     */
+    private static VdsNetworkInterface resolveActiveNic(VDS host, String hostIp) {
+        if (hostIp == null) {
+            return null;
+        }
+        final String managementAddress = hostIp;
+        VdsNetworkInterface activeIface =
+                LinqUtils.firstOrNull(host.getInterfaces(), new InterfaceByAddressPredicate(managementAddress));
+        return activeIface;
+    }
+
+    private static void addHostNetworksAndUpdateInterfaces(VDS host, Map<String, Object> xmlRpcStruct) {
+
+        Map<String, Map<String, Object>> bridges =
+                (Map<String, Map<String, Object>>) xmlRpcStruct.get(VdsProperties.NETWORK_BRIDGES);
+
+        final String hostActiveNicName = findActiveNicName(host, bridges);
+        host.setActiveNic(hostActiveNicName);
 
         // Networks collection (name point to list of nics or bonds)
         Map<String, Map<String, Object>> networks =
                 (Map<String, Map<String, Object>>) xmlRpcStruct.get(VdsProperties.NETWORKS);
-        Map<String, Map<String, Object>> bridges =
-                (Map<String, Map<String, Object>>) xmlRpcStruct.get(VdsProperties.NETWORK_BRIDGES);
-        Map<String, VdsNetworkInterface> vdsInterfaces = Entities.entitiesByName(vds.getInterfaces());
-        boolean bridgesReported = FeatureSupported.bridgesReportByVdsm(vds.getVdsGroupCompatibilityVersion());
-
+        Map<String, VdsNetworkInterface> vdsInterfaces = Entities.entitiesByName(host.getInterfaces());
+        boolean bridgesReported = FeatureSupported.bridgesReportByVdsm(host.getVdsGroupCompatibilityVersion());
         if (networks != null) {
-            vds.getNetworkNames().clear();
+            host.getNetworkNames().clear();
             for (Entry<String, Map<String, Object>> entry : networks.entrySet()) {
                 Map<String, Object> networkProperties = entry.getValue();
                 String networkName = entry.getKey();
@@ -1578,22 +1596,59 @@ public class VdsBrokerObjectsBuilder {
                         iface.setQos(qos);
 
                         // set the management ip
-                        if (getManagementNetworkUtil().isManagementNetwork(iface.getNetworkName(), vds.getVdsGroupId())) {
+                        if (getManagementNetworkUtil().isManagementNetwork(iface.getNetworkName(), host.getVdsGroupId())) {
                             iface.setType(iface.getType() | VdsInterfaceType.MANAGEMENT.getValue());
                         }
 
-                        setGatewayIfNecessary(iface, vds, gateway);
+                        setGatewayIfNecessary(iface, host, gateway);
 
                         if (bridgedNetwork) {
-                            addBootProtocol(effectiveProperties, vds, iface);
+                            addBootProtocol(effectiveProperties, host, iface);
                         }
                     }
 
-                    vds.getNetworkNames().add(networkName);
-                    reportInvalidInterfacesForNetwork(interfaces, networkName, vds);
+                    host.getNetworkNames().add(networkName);
+                    reportInvalidInterfacesForNetwork(interfaces, networkName, host);
                 }
             }
         }
+    }
+
+    private static String findActiveNicName(VDS vds, Map<String, Map<String, Object>> bridges) {
+        final String hostIp = NetworkUtils.getHostByIp(vds);
+        final String activeBridge = findActiveBridge(hostIp, bridges);
+        if (activeBridge != null) {
+            return activeBridge;
+        }
+        // by now, if the host is communicating with engine over a valid interface,
+        // the interface will have the host's engine IP
+        final VdsNetworkInterface activeIface = resolveActiveNic(vds, hostIp);
+        String hostActiveNic = (activeIface == null) ? null : activeIface.getName();
+        return hostActiveNic;
+    }
+
+    /***
+     *
+     * @param ipAddress
+     * @param bridges
+     * @return the name of the bridge obtaining ipAddress, null in case no such exist
+     */
+    private static String findActiveBridge(String ipAddress, Map<String, Map<String, Object>> bridges) {
+        String activeBridge = null;
+        if (bridges != null) {
+            for (Entry<String, Map<String, Object>> entry : bridges.entrySet()) {
+                Map<String, Object> bridgeProperties = entry.getValue();
+                String bridgeName = entry.getKey();
+                if (bridgeProperties != null) {
+                    String bridgeAddress = (String) bridgeProperties.get("addr");
+                    // in case host is communicating with engine over a bridge
+                    if (bridgeAddress != null && bridgeAddress.equals(ipAddress)) {
+                        activeBridge = bridgeName;
+                    }
+                }
+            }
+        }
+        return activeBridge;
     }
 
     /**

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -32,10 +31,14 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.di.Injector;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.utils.network.predicate.InterfaceByNetworkNamePredicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.utils.NetworkUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 public class NetworkConfigurator {
 
@@ -54,15 +57,14 @@ public class NetworkConfigurator {
     }
 
     public void createManagementNetworkIfRequired() {
-
         if (host == null) {
             return;
         }
 
-        final ManagementNetworkUtil managementNetworkUtil = getManagementNetworkUtil();
-        final Network managementNetwork = managementNetworkUtil.getManagementNetwork(host.getVdsGroupId());
-        final String managementNetworkName = managementNetwork.getName();
-        if (managementNetworkName.equals(host.getActiveNic())) {
+        final String managementNetworkName = resolveManagementNetworkName();
+        final String hostManagementNetworkAddress = resolveHostManagementNetworkAddress(managementNetworkName);
+        final String hostIp = NetworkUtils.getHostByIp(host);
+        if (hostManagementNetworkAddress != null && hostManagementNetworkAddress.equals(hostIp)) {
             log.info("The management network '{}' is already configured on host '{}'",
                     managementNetworkName,
                     host.getName());
@@ -91,6 +93,21 @@ public class NetworkConfigurator {
                     NETWORK_CONFIG_LOG_ERR);
             throw new NetworkConfiguratorException(MANAGEMENET_NETWORK_CONFIG_ERR);
         }
+    }
+
+    private String resolveManagementNetworkName() {
+        final ManagementNetworkUtil managementNetworkUtil = getManagementNetworkUtil();
+        final Network managementNetwork = managementNetworkUtil.getManagementNetwork(host.getVdsGroupId());
+        return managementNetwork.getName();
+    }
+
+    private String resolveHostManagementNetworkAddress(String managementNetworkName) {
+        if (managementNetworkName == null) {
+            return null;
+        }
+        VdsNetworkInterface iface = LinqUtils.firstOrNull(host.getInterfaces(),
+                new InterfaceByNetworkNamePredicate(managementNetworkName));
+        return (iface != null) ? iface.getAddress() : null;
     }
 
     private ManagementNetworkUtil getManagementNetworkUtil() {
@@ -161,22 +178,15 @@ public class NetworkConfigurator {
 
     private VdsNetworkInterface findNicToSetupManagementNetwork() {
 
-        if (StringUtils.isEmpty(host.getActiveNic())) {
-            log.warn("No interface was reported as lastClientInterface by host '{}' capabilities. "
-                    + "There will be no attempt to create the management network on the host.", host.getName());
-            return null;
-        }
-
         VdsNetworkInterface nic = Entities.entitiesByName(host.getInterfaces()).get(host.getActiveNic());
 
         if (nic == null) {
-            log.warn("The lastClientInterface '{}' of host '{}' is not a valid interface for the management network."
-                    + " If the interface is a bridge, it should be torn-down manually.",
-                    host.getActiveNic(),
-                    host.getName());
+            log.warn("Failed to find a valid interface for the management network of host {}."
+                            + " If the interface {} is a bridge, it should be torn-down manually.",
+                    host.getName(),
+                    host.getActiveNic());
             throw new NetworkConfiguratorException(
-                    String.format("lastClientIface %s is not a valid interface for management network",
-                    host.getActiveNic()));
+                    String.format("Interface %s is invalid for management network", host.getActiveNic()));
         }
 
         final Network managementNetwork = getManagementNetworkUtil().getManagementNetwork(host.getVdsGroupId());

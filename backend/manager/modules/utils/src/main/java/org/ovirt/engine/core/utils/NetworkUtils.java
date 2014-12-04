@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.utils;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,10 +20,12 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class NetworkUtils {
     public static final String OS_REFERENCE_TO_MACHINE_NAME = "HOSTNAME";
-
+    private static final Logger log = LoggerFactory.getLogger(NetworkUtils.class);
     public static Integer getDefaultMtu() {
         return Config.<Integer> getValue(ConfigValues.DefaultMTU);
     }
@@ -273,5 +277,24 @@ public final class NetworkUtils {
      */
     public static String getUniqueHostName(VDS host) {
         return host.getHostName() + "-" + DigestUtils.md5Hex(host.getId().toByteArray()).substring(0, 6);
+    }
+
+    /**
+     * resolve the host ip address
+     *
+     * @param host
+     *            the host which it's address is about to be resolved
+     * @return if succeeded, string representing the host ip in IPv4 format, null otherwise
+     */
+    public static String getHostByIp(VDS host) {
+        try {
+            final InetAddress address = InetAddress.getByName(host.getHostName());
+            return address.getHostAddress().trim();
+        } catch (UnknownHostException ex) {
+            final String msg = "Failed to resolve host ip by name '{}'";
+            log.warn(msg, " Details: '{}' ", host.getHostName(), ex.getCause());
+            log.debug(msg, host.getHostName(), ex);
+            return null;
+        }
     }
 }
