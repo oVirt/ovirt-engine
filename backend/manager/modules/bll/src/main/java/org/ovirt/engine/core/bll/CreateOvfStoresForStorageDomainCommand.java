@@ -28,6 +28,7 @@ public class CreateOvfStoresForStorageDomainCommand<T extends CreateOvfStoresFor
 
     public CreateOvfStoresForStorageDomainCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
+        setStorageDomainId(getParameters().getStorageDomainId());
     }
 
     @Override
