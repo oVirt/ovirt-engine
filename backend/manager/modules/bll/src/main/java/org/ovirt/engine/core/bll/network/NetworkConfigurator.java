@@ -204,6 +204,10 @@ public class NetworkConfigurator {
         return nicVlanId == mgmtVlanId;
     }
 
+    /**
+     * filters out bonds with less than two slaves.
+     * @return all non-bonds and bonds with two or more slaves.
+     */
     public List<VdsNetworkInterface> filterBondsWithoutSlaves(List<VdsNetworkInterface> interfaces) {
         List<VdsNetworkInterface> filteredList = new ArrayList<>();
         Map<String, Integer> bonds = new HashMap<>();

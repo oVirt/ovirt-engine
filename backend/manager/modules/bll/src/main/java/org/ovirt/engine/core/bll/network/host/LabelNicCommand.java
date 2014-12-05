@@ -1,26 +1,22 @@
 package org.ovirt.engine.core.bll.network.host;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.network.AddNetworksByLabelParametersBuilder;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.HostInterfaceValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LabelNicParameters;
+import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T> {
 
@@ -35,11 +31,10 @@ public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T
 
     @Override
     protected void executeCommand() {
-        VdcReturnValueBase result =
-                runInternalAction(VdcActionType.PersistentSetupNetworks,
-                        new AddNetworksByLabelParametersBuilder(getContext()).buildParameters(getNic(),
-                                getLabel(),
-                                getClusterNetworksByLabel()), cloneContextAndDetachFromParent());
+        VdcReturnValueBase result = runInternalAction(VdcActionType.PersistentSetupNetworks,
+                createPersistentSetupNetworksParameters(),
+                cloneContextAndDetachFromParent());
+
         if (result.getSucceeded()) {
             getReturnValue().setActionReturnValue(getLabel());
         } else {
@@ -47,6 +42,11 @@ public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T
         }
 
         setSucceeded(result.getSucceeded());
+    }
+
+    private PersistentSetupNetworksParameters createPersistentSetupNetworksParameters() {
+        return new AddNetworksByLabelParametersBuilder(getContext())
+                .buildParameters(getNic(), getLabel(), getClusterNetworksWithLabel(getLabel()));
     }
 
     @Override
@@ -57,48 +57,16 @@ public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T
 
     @Override
     protected boolean canDoAction() {
-        if (getNic() == null) {
-            return failCanDoAction(VdcBllMessages.HOST_NETWORK_INTERFACE_NOT_EXIST);
-        }
+        HostInterfaceValidator validator = new HostInterfaceValidator(getNic());
 
-        if (NetworkUtils.isLabeled(getNic()) && getNic().getLabels().contains(getLabel())) {
-            return failCanDoAction(VdcBllMessages.INTERFACE_ALREADY_LABELED);
-        }
-
-        if (!ValidationUtils.validateInputs(getValidationGroups(), getNic()).isEmpty()) {
-            return failCanDoAction(VdcBllMessages.IMPROPER_INTERFACE_IS_LABELED);
-        }
-
-        if (Boolean.TRUE.equals(getNic().getBonded())) {
-            int slavesCount = 0;
-            for (VdsNetworkInterface nic : getHostInterfaces()) {
-                if (StringUtils.equals(getNic().getName(), nic.getBondName())) {
-                    slavesCount++;
-                    if (slavesCount == 2) {
-                        break;
-                    }
-                }
-            }
-
-            if (slavesCount < 2) {
-                return failCanDoAction(VdcBllMessages.IMPROPER_BOND_IS_LABELED);
-            }
-        }
-
-        for (VdsNetworkInterface nic : getHostInterfaces()) {
-            if (!StringUtils.equals(nic.getName(), getNicName()) && NetworkUtils.isLabeled(nic)
-                    && nic.getLabels().contains(getLabel())) {
-                return failCanDoAction(VdcBllMessages.OTHER_INTERFACE_ALREADY_LABELED, "$LabeledNic " + nic.getName());
-            }
-        }
-
-        List<String> assignedNetworks = validateNetworksNotAssignedToIncorrectNics();
-        if (!assignedNetworks.isEmpty()) {
-            return failCanDoAction(VdcBllMessages.LABELED_NETWORK_ATTACHED_TO_WRONG_INTERFACE, "$AssignedNetworks "
-                    + StringUtils.join(assignedNetworks, ", "));
-        }
-
-        return true;
+        return
+            validate(validator.interfaceExists()) &&
+            validate(validator.interfaceAlreadyLabeledWith(getLabel())) &&
+            validate(validator.labeledValidBond(getHostInterfaces())) &&
+            validate(validator.addLabelToNicAndValidate(getLabel(), getValidationGroups())) &&
+            validate(validator.anotherInterfaceAlreadyLabeledWithThisLabel(getLabel(), getHostInterfaces())) &&
+            validate(validator.networksAreAttachedToThisInterface(getHostInterfaces(),
+                    getClusterNetworksWithLabel(getLabel())));
     }
 
     private List<VdsNetworkInterface> getHostInterfaces() {
@@ -109,24 +77,9 @@ public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T
         return hostNics;
     }
 
-    public List<String> validateNetworksNotAssignedToIncorrectNics() {
-        Map<String, VdsNetworkInterface> nicsByNetworkName = Entities.hostInterfacesByNetworkName(getHostInterfaces());
-        List<String> badlyAssignedNetworks = new ArrayList<>();
-        for (Network network : getClusterNetworksByLabel()) {
-            if (nicsByNetworkName.containsKey(network.getName())) {
-                VdsNetworkInterface assignedNic = nicsByNetworkName.get(network.getName());
-                if (!StringUtils.equals(getNicName(), NetworkUtils.stripVlan(assignedNic))) {
-                    badlyAssignedNetworks.add(network.getName());
-                }
-            }
-        }
-
-        return badlyAssignedNetworks;
-    }
-
-    private List<Network> getClusterNetworksByLabel() {
+    private List<Network> getClusterNetworksWithLabel(String label) {
         if (labeledNetworks == null) {
-            labeledNetworks = getNetworkDAO().getAllByLabelForCluster(getLabel(), getVds().getVdsGroupId());
+            labeledNetworks = getNetworkDAO().getAllByLabelForCluster(label, getVds().getVdsGroupId());
         }
 
         return labeledNetworks;
@@ -143,10 +96,6 @@ public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T
         }
 
         return nic;
-    }
-
-    public String getNicName() {
-        return getNic().getName();
     }
 
     public String getLabel() {
