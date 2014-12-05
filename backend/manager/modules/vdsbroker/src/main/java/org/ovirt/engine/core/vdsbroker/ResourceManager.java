@@ -65,7 +65,7 @@ public class ResourceManager {
     private final Map<Guid, VdsManager> vdsManagersDict = new ConcurrentHashMap<>();
     private final Set<Guid> asyncRunningVms =
             Collections.newSetFromMap(new ConcurrentHashMap<Guid, Boolean>());
-    private ConcurrentHashMap<Guid, VmManager> vmManagers = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Guid, VmManager> vmManagers = new ConcurrentHashMap<>();
 
     private static final String VDSCommandPrefix = "VDSCommand";
 
@@ -84,10 +84,14 @@ public class ResourceManager {
         return instance;
     }
 
+    private static void setInstance(ResourceManager manager) {
+        instance = manager;
+    }
+
     @PostConstruct
     private void init() {
         // init the singleton. TODO remove once all code is using CDI
-        instance = this;
+        setInstance(this);
         log.info("Start initializing {}", getClass().getSimpleName());
         List<VDS> allVdsList = DbFacade.getInstance().getVdsDao().getAll();
         HashSet<Guid> nonResponsiveVdss = new HashSet<Guid>();
