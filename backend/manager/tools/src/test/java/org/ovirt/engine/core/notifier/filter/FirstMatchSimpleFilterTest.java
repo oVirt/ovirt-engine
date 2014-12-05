@@ -41,9 +41,7 @@ public class FirstMatchSimpleFilterTest {
 
         private String t;
 
-        private List<AuditLogEvent> events = new ArrayList<>();
-
-        private List<String> names = new ArrayList<>();
+        private List<String> events = new ArrayList<>();
 
         public T(String t) {
             this.t = t;
@@ -51,16 +49,11 @@ public class FirstMatchSimpleFilterTest {
 
         @Override
         public void dispatchEvent(AuditLogEvent event, String address) {
-            events.add(event);
-            names.add(address);
+            events.add(event.getName() + "-->" + address);
         }
 
-        public List<AuditLogEvent> getEvents() {
+        public List<String> getEvents() {
             return events;
-        }
-
-        public List<String> getNames() {
-            return names;
         }
 
         @Override
@@ -116,7 +109,6 @@ public class FirstMatchSimpleFilterTest {
         filter.processEvent(new E("message0"));
         filter.processEvent(new E("message1"));
         Assert.assertTrue(snmp.getEvents().isEmpty());
-        Assert.assertTrue(snmp.getNames().isEmpty());
     }
 
     @Test
@@ -128,10 +120,7 @@ public class FirstMatchSimpleFilterTest {
                 );
         filter.processEvent(new E("message0"));
         filter.processEvent(new E("message1"));
-        AuditLogEvent event = smtp.getEvents().get(0);
-        String address = smtp.getNames().get(0);
-        Assert.assertTrue(event.getName().equals("message0"));
-        Assert.assertTrue(address.equals("dbtest1@redhat.com"));
+        Assert.assertTrue(smtp.getEvents().contains("message0-->dbtest1@redhat.com"));
     }
 
     @Test
@@ -143,10 +132,7 @@ public class FirstMatchSimpleFilterTest {
                 );
         filter.processEvent(new E("message0"));
         filter.processEvent(new E("message1"));
-        AuditLogEvent event = smtp.getEvents().get(0);
-        String address = smtp.getNames().get(0);
-        Assert.assertTrue(event.getName().equals("message0"));
-        Assert.assertTrue(address.equals("dbtest1@redhat.com"));
+        Assert.assertTrue(smtp.getEvents().contains("message0-->dbtest1@redhat.com"));
     }
 
     @Test
@@ -157,10 +143,7 @@ public class FirstMatchSimpleFilterTest {
                         "exclude:*")
                 );
         filter.processEvent(new E("VDC_STOP"));
-        AuditLogEvent event = snmp.getEvents().get(0);
-        String address = snmp.getNames().get(0);
-        Assert.assertTrue(event.getName().equals("VDC_STOP"));
-        Assert.assertTrue(address.equals(""));
+        Assert.assertTrue(snmp.getEvents().contains("VDC_STOP-->"));
     }
 
     @Test
@@ -179,14 +162,8 @@ public class FirstMatchSimpleFilterTest {
         filter.processEvent(new E("message1"));
         filter.processEvent(new E("message2"));
         filter.processEvent(new E("message3"));
-        AuditLogEvent event = smtp.getEvents().get(0);
-        String name = smtp.getNames().get(0);
-        Assert.assertEquals("message1", event.getName());
-        Assert.assertEquals(expected, name);
-        event = smtp.getEvents().get(1);
-        name = smtp.getNames().get(1);
-        Assert.assertEquals("message2", event.getName());
-        Assert.assertEquals(expected, name);
+        Assert.assertTrue(smtp.getEvents().contains("message1-->" + expected));
+        Assert.assertTrue(smtp.getEvents().contains("message2-->" + expected));
         Assert.assertEquals(2, smtp.getEvents().size());
     }
 
@@ -205,14 +182,8 @@ public class FirstMatchSimpleFilterTest {
                                 "include:*"
                         ));
         filter.processEvent(new E("message1"));
-        AuditLogEvent event = snmp.getEvents().get(0);
-        String name = snmp.getNames().get(0);
-        Assert.assertEquals("message1", event.getName());
-        Assert.assertEquals("pupu", name);
-        event = smtp.getEvents().get(0);
-        name = smtp.getNames().get(0);
-        Assert.assertEquals("message1", event.getName());
-        Assert.assertEquals("pupu", name);
+        Assert.assertTrue(snmp.getEvents().contains("message1-->pupu"));
+        Assert.assertTrue(smtp.getEvents().contains("message1-->pupu"));
     }
 
     @Test
@@ -241,39 +212,17 @@ public class FirstMatchSimpleFilterTest {
         filter.processEvent(new E("message1"));
         filter.processEvent(new E("message2"));
 
-        AuditLogEvent event = snmp.getEvents().get(0);
-        String name = snmp.getNames().get(0);
-        Assert.assertEquals("message0", event.getName());
-        Assert.assertEquals("profile1", name);
-        event = snmp.getEvents().get(1);
-        name = snmp.getNames().get(1);
-        Assert.assertEquals("message0", event.getName());
-        Assert.assertEquals("profile2", name);
-        event = snmp.getEvents().get(2);
-        name = snmp.getNames().get(2);
-        Assert.assertEquals("message1", event.getName());
-        Assert.assertEquals("profile2", name);
-        event = snmp.getEvents().get(3);
-        name = snmp.getNames().get(3);
-        Assert.assertEquals("message2", event.getName());
-        Assert.assertEquals("profile2", name);
+        Assert.assertTrue(snmp.getEvents().contains("message0-->profile1"));
+        Assert.assertTrue(snmp.getEvents().contains("message0-->profile2"));
+        Assert.assertTrue(snmp.getEvents().contains("message1-->profile2"));
+        Assert.assertTrue(snmp.getEvents().contains("message2-->profile2"));
+        Assert.assertEquals(4, snmp.getEvents().size());
 
-        event = smtp.getEvents().get(0);
-        name = smtp.getNames().get(0);
-        Assert.assertEquals("message1", event.getName());
-        Assert.assertEquals("alonbl@gentoo.org", name);
-        event = smtp.getEvents().get(1);
-        name = smtp.getNames().get(1);
-        Assert.assertEquals("message1", event.getName());
-        Assert.assertEquals("alonbl@redhat.com", name);
-        event = smtp.getEvents().get(2);
-        name = smtp.getNames().get(2);
-        Assert.assertEquals("message2", event.getName());
-        Assert.assertEquals("alon.barlev@gmail.com", name);
-        event = smtp.getEvents().get(3);
-        name = smtp.getNames().get(3);
-        Assert.assertEquals("message2", event.getName());
-        Assert.assertEquals("alonbl@redhat.com", name);
+        Assert.assertTrue(smtp.getEvents().contains("message1-->alonbl@gentoo.org"));
+        Assert.assertTrue(smtp.getEvents().contains("message1-->alonbl@redhat.com"));
+        Assert.assertTrue(smtp.getEvents().contains("message2-->alon.barlev@gmail.com"));
+        Assert.assertTrue(smtp.getEvents().contains("message2-->alonbl@redhat.com"));
+        Assert.assertEquals(4, smtp.getEvents().size());
     }
 
     @Test()
