@@ -10,6 +10,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
@@ -25,6 +27,8 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author yzaslavs
@@ -35,7 +39,7 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
     private static final Guid VDS_STATIC_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
     private static final Guid VDS_GROUP_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     private static final Guid QUOTA_ID = new Guid("88296e00-0cad-4e5a-9291-008a7b7f4399");
-
+    protected Logger log = LoggerFactory.getLogger(getClass());
     private static final String STATIC_VM_NAME = "rhel5-pool-50";
     private static final int NUM_OF_VM_STATIC_IN_FIXTURES = 3;
 
@@ -208,19 +212,51 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
         assertEquals("vm permissions changed during remove although shouldnt have.", numberOfPermissionsBeforeRemove, permissionsDao.getAllForEntity(EXISTING_VM_ID).size());
     }
 
+    private void checkDisks(Guid id, boolean hasDisks) {
+        assertEquals(hasDisks, !dbFacade.getDiskDao().getAllForVm(id).isEmpty());
+    }
+
+    private void checkVmsDcAndDisks(List<Guid> vmIds, Guid storagePoolId, boolean hasDisks) {
+        for (Guid vmId : vmIds) {
+            assertEquals(storagePoolId, dbFacade.getVmDao().get(vmId).getStoragePoolId());
+            checkDisks(vmId, hasDisks);
+        }
+    }
+
+    private void checkTemplatesDcAndDisks(List<Guid> templateIds, Guid storagePoolId, boolean hasDisks) {
+        for (Guid templateId : templateIds) {
+            assertEquals(storagePoolId, dbFacade.getVmTemplateDao().get(templateId).getStoragePoolId());
+            checkDisks(templateId, hasDisks);
+        }
+    }
 
     @Test
     public void getVmAndTemplatesIdsWithoutAttachedImageDisks() {
+        List<Guid> disklessVms = Arrays.asList(FixturesTool.VM_WITH_NO_ATTACHED_DISKS, FixturesTool.VM_RHEL5_POOL_51);
+        List<Guid> disklessTemplates = Arrays.asList(FixturesTool.VM_TEMPLATE_RHEL5_2);
+        List<Guid> diskVms = Arrays.asList(FixturesTool.VM_RHEL5_POOL_57);
+        List<Guid> diskTemplates = Arrays.asList(FixturesTool.VM_TEMPLATE_RHEL5);
+
+        Guid dataCenterId = FixturesTool.DATA_CENTER;
+
+        checkTemplatesDcAndDisks(disklessTemplates, dataCenterId, false);
+        checkVmsDcAndDisks(disklessVms, dataCenterId, false);
+        checkTemplatesDcAndDisks(diskTemplates, dataCenterId, true);
+        checkVmsDcAndDisks(diskVms, dataCenterId, true);
+
         // attaching shareable and snapshots disk to a diskless vm
-        addVmDevice(FixturesTool.VM_WITH_NO_ATTACHED_DISKS, FixturesTool.IMAGE_GROUP_ID_2, null);
-        addVmDevice(FixturesTool.VM_WITH_NO_ATTACHED_DISKS, FixturesTool.DISK_ID, FixturesTool.EXISTING_SNAPSHOT_ID);
+        addVmDevice(disklessVms.get(0), FixturesTool.IMAGE_GROUP_ID_2, null);
+        addVmDevice(disklessVms.get(0), FixturesTool.DISK_ID, FixturesTool.EXISTING_SNAPSHOT_ID);
 
         List<Guid> ids =
-                dao.getVmAndTemplatesIdsWithoutAttachedImageDisks(false);
-        assertTrue(ids.contains(FixturesTool.VM_RHEL5_POOL_51));
-        assertTrue(ids.contains(FixturesTool.VM_TEMPLATE_RHEL5_2));
-        assertTrue(ids.contains(FixturesTool.VM_WITH_NO_ATTACHED_DISKS));
-        assertFalse(ids.contains(FixturesTool.VM_TEMPLATE_RHEL5));
+                dao.getVmAndTemplatesIdsWithoutAttachedImageDisks(dataCenterId, false);
+
+        assertTrue(ids.containsAll(disklessVms));
+        assertTrue(ids.containsAll(disklessTemplates));
+        assertTrue(Collections.disjoint(ids, diskVms));
+        assertTrue(Collections.disjoint(ids, diskTemplates));
+
+        assertTrue(dao.getVmAndTemplatesIdsWithoutAttachedImageDisks(Guid.newGuid(), false).isEmpty());
     }
 
     private void addVmDevice(Guid vmId, Guid diskId, Guid snapshotId) {

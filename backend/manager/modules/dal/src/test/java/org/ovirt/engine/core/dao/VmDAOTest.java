@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmDAOTest extends BaseDAOTestCase {
-    private static final int VM_COUNT = 7;
+    private static final int VM_COUNT = 8;
     private VmDAO dao;
     private VM existingVm;
     private VmStatic newVmStatic;

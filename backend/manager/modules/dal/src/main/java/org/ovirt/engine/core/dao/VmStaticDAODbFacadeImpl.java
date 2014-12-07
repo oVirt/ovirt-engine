@@ -58,8 +58,9 @@ public class VmStaticDAODbFacadeImpl extends VmBaseDaoDbFacade<VmStatic> impleme
     }
 
 
-    public List<Guid> getVmAndTemplatesIdsWithoutAttachedImageDisks(boolean shareableDisks) {
+    public List<Guid> getVmAndTemplatesIdsWithoutAttachedImageDisks(Guid storagePoolId, boolean shareableDisks) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("storage_pool_id", storagePoolId)
                 .addValue("shareable", shareableDisks);
         return getCallsHandler().executeReadList("GetVmsAndTemplatesIdsWithoutAttachedImageDisks",
                 createGuidMapper(), parameterSource);
