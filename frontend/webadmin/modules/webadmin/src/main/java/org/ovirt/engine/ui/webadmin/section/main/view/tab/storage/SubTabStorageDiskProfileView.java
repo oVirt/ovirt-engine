@@ -42,4 +42,9 @@ public class SubTabStorageDiskProfileView extends AbstractSubTabTableWidgetView<
         initTable(constants);
         initWidget(getModelBoundTableWidget());
     }
+
+    @Override
+    public void addModelListeners() {
+        getModelBoundTableWidget().addModelListeners();
+    }
 }

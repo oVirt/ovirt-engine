@@ -32,6 +32,8 @@ public class SubTabStorageDiskProfilePresenter extends
     }
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<StorageDomain> {
+
+        void addModelListeners();
     }
 
     @TabInfo(container = StorageSubTabPanelPresenter.class)
@@ -58,4 +60,10 @@ public class SubTabStorageDiskProfilePresenter extends
         updateMainTabSelection(event.getSelectedItems());
     }
 
+    @Override
+    public void initializeHandlers() {
+        super.initializeHandlers();
+
+        getView().addModelListeners();
+    }
 }
