@@ -327,6 +327,9 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetOrderedVmGuidsForRunMultipleActionsByMigrationSupport() {
         List<VmStatic> vmStatics = dao.getAllByName(STATIC_VM_NAME);
+        if (vmStatics.size() > 3) { // migration support has only 3 possible values
+            vmStatics = vmStatics.subList(0, 3);
+        }
         VmStatic[] vmStaticArrayInDescOrder = initVmStaticsOrderedByMigrationSupport(vmStatics);
 
         // execute
