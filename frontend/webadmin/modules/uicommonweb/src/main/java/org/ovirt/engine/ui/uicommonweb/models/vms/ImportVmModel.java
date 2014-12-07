@@ -136,11 +136,12 @@ public class ImportVmModel extends ListWithDetailsModel {
         return closeCommand;
     }
 
-    private final IEventListener quotaClusterListener = new IEventListener() {
+    private final IEventListener clusterChangedListener = new IEventListener() {
 
         @Override
         public void eventRaised(Event ev, Object sender, EventArgs args) {
-            Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForVdsGroup,
+            if (hasQuota) {
+                Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForVdsGroup,
                     new IdQueryParameters(((VDSGroup) getCluster().getSelectedItem()).getId()),
                     new AsyncQuery(ImportVmModel.this,
                             new INewAsyncCallback() {
@@ -164,6 +165,8 @@ public class ImportVmModel extends ListWithDetailsModel {
                                     }
                                 }
                             }));
+            }
+            fetchCpuProfiles(((VDSGroup) getCluster().getSelectedItem()).getId());
         }
     };
 
@@ -204,8 +207,8 @@ public class ImportVmModel extends ListWithDetailsModel {
                }
                if (hasQuota) {
                    getClusterQuota().setIsAvailable(true);
-                   getCluster().getSelectedItemChangedEvent().addListener(quotaClusterListener);
                }
+               getCluster().getSelectedItemChangedEvent().addListener(clusterChangedListener);
                // get cluster
                if (dataCenter != null) {
                    AsyncDataProvider.getClusterByServiceList(new AsyncQuery(ImportVmModel.this, new INewAsyncCallback() {
@@ -253,23 +256,7 @@ public class ImportVmModel extends ListWithDetailsModel {
 
                                    }),
                                    getStoragePool().getId());
-
-                           fetchCpuProfiles(cluster.getId());
                        }
-
-                    private void fetchCpuProfiles(Guid clusterId) {
-                        Frontend.getInstance().runQuery(VdcQueryType.GetCpuProfilesByClusterId,
-                                new IdQueryParameters(clusterId),
-                                new AsyncQuery(new INewAsyncCallback() {
-
-                                    @Override
-                                    public void onSuccess(Object model, Object returnValue) {
-                                        List<CpuProfile> cpuProfiles =
-                                                (List<CpuProfile>) ((VdcQueryReturnValue) returnValue).getReturnValue();
-                                        getCpuProfiles().setItems(cpuProfiles);
-                                    }
-                                }));
-                    }
 
                    }),
                            dataCenter.getId(), true, false);
@@ -277,6 +264,20 @@ public class ImportVmModel extends ListWithDetailsModel {
            }
        }),
                storageDomainId);
+    }
+
+    private void fetchCpuProfiles(Guid clusterId) {
+        Frontend.getInstance().runQuery(VdcQueryType.GetCpuProfilesByClusterId,
+                new IdQueryParameters(clusterId),
+                new AsyncQuery(new INewAsyncCallback() {
+
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        List<CpuProfile> cpuProfiles =
+                                (List<CpuProfile>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        getCpuProfiles().setItems(cpuProfiles);
+                    }
+                }));
     }
 
     private void initQuotaForStorageDomains() {
