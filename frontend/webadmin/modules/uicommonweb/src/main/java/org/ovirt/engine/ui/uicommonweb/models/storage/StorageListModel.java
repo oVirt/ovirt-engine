@@ -2136,6 +2136,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
 
                 } else {
                     postImportFileStorage(storageListModel.context, false, storageListModel.storageModel, ""); //$NON-NLS-1$
+                    cleanConnection(fileConnection, hostId);
                 }
             }
         }, new Object[] {this, sdToAdd});
