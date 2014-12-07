@@ -269,6 +269,18 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     @Override
     protected void endSuccessfully() {
         endCommandActions();
+        incrementDbGenerationForRelatedEntities();
+    }
+
+    private void incrementDbGenerationForRelatedEntities() {
+        if (getParameters().getOperation() == ImageOperation.Copy) {
+            getVmStaticDAO().incrementDbGeneration(getVmTemplateId());
+        } else {
+            List<Pair<VM, VmDevice>> vmsForDisk = getVmsWithVmDeviceInfoForDiskId();
+            for (Pair<VM, VmDevice> pair : vmsForDisk) {
+                getVmStaticDAO().incrementDbGeneration(pair.getFirst().getId());
+            }
+        }
     }
 
     @Override
