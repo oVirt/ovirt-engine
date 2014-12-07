@@ -144,7 +144,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             _isRerun = false;
             setSucceeded(false);
             log();
-            processVmPoolOnStopVm();
+            processVmOnDown();
             ExecutionHandler.setAsyncJob(getExecutionContext(), false);
             ExecutionHandler.endJob(getExecutionContext(), false);
         }
@@ -153,7 +153,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         }
     }
 
-    protected void processVmPoolOnStopVm() {
+    protected void processVmOnDown() {
         ThreadPoolUtil.execute(new Runnable() {
             @Override
             public void run() {
