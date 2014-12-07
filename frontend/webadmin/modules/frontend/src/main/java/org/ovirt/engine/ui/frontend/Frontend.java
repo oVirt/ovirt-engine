@@ -149,7 +149,7 @@ public class Frontend implements HasHandlers {
     /**
      * The context the current operation is run against.
      */
-    private String currentContext;
+    private Object currentContext;
 
     /**
      * The currently logged in user.
@@ -346,12 +346,12 @@ public class Frontend implements HasHandlers {
      * @param queryTypeList A list of {@code VdcQueryType}s.
      * @param queryParamsList A list of parameters associated with each query.
      * @param callback The callback to call when the query completes.
-     * @param context The context to run the queries in.
+     * @param state The state object.
      */
     public void runMultipleQueries(final List<VdcQueryType> queryTypeList,
             final List<VdcQueryParametersBase> queryParamsList,
             final IFrontendMultipleQueryAsyncCallback callback,
-            final String context) {
+            final Object state) {
         VdcOperationCallbackList<VdcOperation<VdcQueryType, VdcQueryParametersBase>,
             List<VdcQueryReturnValue>> multiCallback = new VdcOperationCallbackList<VdcOperation<VdcQueryType,
             VdcQueryParametersBase>, List<VdcQueryReturnValue>>() {
@@ -362,7 +362,7 @@ public class Frontend implements HasHandlers {
                 FrontendMultipleQueryAsyncResult f =
                         new FrontendMultipleQueryAsyncResult(queryTypeList, queryParamsList, resultObject);
                 callback.executed(f);
-                raiseQueryCompleteEvent(queryTypeList, context);
+                raiseQueryCompleteEvent(queryTypeList, state);
             }
 
             @Override
@@ -378,7 +378,7 @@ public class Frontend implements HasHandlers {
                     failureEventHandler(caught);
                     callback.executed(f);
                 } finally {
-                    raiseQueryCompleteEvent(queryTypeList, context);
+                    raiseQueryCompleteEvent(queryTypeList, state);
                 }
             }
         };
@@ -392,7 +392,7 @@ public class Frontend implements HasHandlers {
                     parameters, true, multiCallback));
         }
 
-        raiseQueryStartedEvent(queryTypeList, context);
+        raiseQueryStartedEvent(queryTypeList, state);
         getOperationManager().addOperationList(operationList);
     }
 
@@ -976,7 +976,7 @@ public class Frontend implements HasHandlers {
      * Get the current context.
      * @return The current context
      */
-    public String getCurrentContext() {
+    public Object getCurrentContext() {
         return currentContext;
     }
 
@@ -991,7 +991,7 @@ public class Frontend implements HasHandlers {
      * @param queryType The query type of the event.
      * @param context The context.
      */
-    private void raiseQueryEvent(final Event queryEvent, final VdcQueryType queryType, final String context) {
+    private void raiseQueryEvent(final Event queryEvent, final VdcQueryType queryType, final Object context) {
         if (context != null && subscribedQueryTypes != null) {
             for (VdcQueryType vdcQueryType : subscribedQueryTypes) {
                 if (queryType.equals(vdcQueryType)) {
@@ -1007,7 +1007,7 @@ public class Frontend implements HasHandlers {
      * @param queryType The type of query.
      * @param context The context in which the query is executed.
      */
-    private void raiseQueryStartedEvent(final VdcQueryType queryType, final String context) {
+    private void raiseQueryStartedEvent(final VdcQueryType queryType, final Object context) {
         raiseQueryEvent(getQueryStartedEvent(), queryType, context);
     }
 
@@ -1016,7 +1016,7 @@ public class Frontend implements HasHandlers {
      * @param queryTypeList A list of query types.
      * @param context The context in which the query is executed.
      */
-    private void raiseQueryStartedEvent(final List<VdcQueryType> queryTypeList, final String context) {
+    private void raiseQueryStartedEvent(final List<VdcQueryType> queryTypeList, final Object context) {
         for (VdcQueryType queryType : queryTypeList) {
             raiseQueryStartedEvent(queryType, context);
         }
@@ -1027,7 +1027,7 @@ public class Frontend implements HasHandlers {
      * @param queryType The type of query.
      * @param context The context in which the query was completed.
      */
-    private void raiseQueryCompleteEvent(final VdcQueryType queryType, final String context) {
+    private void raiseQueryCompleteEvent(final VdcQueryType queryType, final Object context) {
         raiseQueryEvent(getQueryCompleteEvent(), queryType, context);
     }
 
@@ -1036,7 +1036,7 @@ public class Frontend implements HasHandlers {
      * @param queryTypeList A list of query types.
      * @param context The context in which the query was completed.
      */
-    private void raiseQueryCompleteEvent(final List<VdcQueryType> queryTypeList, final String context) {
+    private void raiseQueryCompleteEvent(final List<VdcQueryType> queryTypeList, final Object context) {
         for (VdcQueryType queryType : queryTypeList) {
             raiseQueryCompleteEvent(queryType, context);
         }
