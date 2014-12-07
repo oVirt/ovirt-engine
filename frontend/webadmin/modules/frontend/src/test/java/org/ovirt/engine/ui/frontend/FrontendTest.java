@@ -29,6 +29,8 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.ui.frontend.communication.AsyncOperationCompleteEvent;
+import org.ovirt.engine.ui.frontend.communication.AsyncOperationStartedEvent;
 import org.ovirt.engine.ui.frontend.communication.CommunicationProvider;
 import org.ovirt.engine.ui.frontend.communication.GWTRPCCommunicationProvider;
 import org.ovirt.engine.ui.frontend.communication.OperationProcessor;
@@ -52,6 +54,7 @@ import com.google.gwt.user.client.rpc.XsrfTokenServiceAsync;
 public class FrontendTest {
 
     private static final int RETRY_COUNT = 5;
+    private static final String ASYNC_OPERATION_TARGET = "test"; //$NON-NLS-1$
 
     /**
      * Instance of the class under test.
@@ -120,6 +123,7 @@ public class FrontendTest {
         frontend.subscribe(new VdcQueryType[] {VdcQueryType.Search});
         frontend.setEventsHandler(mockEventsHandler);
         frontend.setConstants(mockConstants);
+        when(mockAsyncQuery.getModel()).thenReturn(ASYNC_OPERATION_TARGET);
         when(mockAsyncQuery.getContext()).thenReturn("test"); //$NON-NLS-1$
         when(mockAsyncQuery.getDel()).thenReturn(mockAsyncCallback);
     }
@@ -128,6 +132,8 @@ public class FrontendTest {
     public void tearDown() throws Exception {
         // Make sure that the query start and end have been called at least once.
         // Some of the tests might call it more than once.
+        verify(mockEventBus, atLeastOnce()).fireEvent(new AsyncOperationStartedEvent(mockAsyncQuery.getModel()));
+        verify(mockEventBus, atLeastOnce()).fireEvent(new AsyncOperationCompleteEvent(mockAsyncQuery.getModel()));
         verify(queryStartEvent, atLeastOnce()).raise(Frontend.class, EventArgs.EMPTY);
         verify(queryCompleteEvent, atLeastOnce()).raise(Frontend.class, EventArgs.EMPTY);
 

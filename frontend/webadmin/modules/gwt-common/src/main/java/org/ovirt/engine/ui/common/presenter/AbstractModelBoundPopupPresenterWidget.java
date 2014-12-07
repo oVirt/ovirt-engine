@@ -8,6 +8,10 @@ import org.ovirt.engine.ui.common.uicommon.model.ModelBoundPopupResolver;
 import org.ovirt.engine.ui.common.utils.WebUtils;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
+import org.ovirt.engine.ui.frontend.communication.AsyncOperationCompleteEvent;
+import org.ovirt.engine.ui.frontend.communication.AsyncOperationCompleteEvent.AsyncOperationCompleteHandler;
+import org.ovirt.engine.ui.frontend.communication.AsyncOperationStartedEvent;
+import org.ovirt.engine.ui.frontend.communication.AsyncOperationStartedEvent.AsyncOperationStartedHandler;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -66,6 +70,8 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
 
     private T model;
     private DeferredModelCommandInvoker modelCommandInvoker;
+
+    private int asyncOperationCounter;
 
     public AbstractModelBoundPopupPresenterWidget(EventBus eventBus, V view) {
         super(eventBus, view);
@@ -127,6 +133,35 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
      */
     public void init(final T model) {
         this.model = model;
+
+        // Set up async operation listeners to automatically display/hide progress bar
+        asyncOperationCounter = 0;
+        addRegisteredHandler(AsyncOperationStartedEvent.getType(), new AsyncOperationStartedHandler() {
+            @Override
+            public void onAsyncOperationStarted(AsyncOperationStartedEvent event) {
+                if (event.getTarget() != getModel() || (getModel().getProgress() != null && asyncOperationCounter == 0)) {
+                    return;
+                }
+
+                if (asyncOperationCounter == 0) {
+                    getModel().startProgress(null);
+                }
+                asyncOperationCounter++;
+            }
+        });
+        addRegisteredHandler(AsyncOperationCompleteEvent.getType(), new AsyncOperationCompleteHandler() {
+            @Override
+            public void onAsyncOperationComplete(AsyncOperationCompleteEvent event) {
+                if (event.getTarget() != getModel() || asyncOperationCounter == 0) {
+                    return;
+                }
+
+                asyncOperationCounter--;
+                if (asyncOperationCounter == 0) {
+                    getModel().stopProgress();
+                }
+            }
+        });
 
         // Set up model command invoker
         this.modelCommandInvoker = new DeferredModelCommandInvoker(model) {

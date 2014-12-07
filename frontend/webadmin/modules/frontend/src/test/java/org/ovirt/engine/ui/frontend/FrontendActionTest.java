@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -30,6 +31,8 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.communication.AsyncOperationCompleteEvent;
+import org.ovirt.engine.ui.frontend.communication.AsyncOperationStartedEvent;
 import org.ovirt.engine.ui.frontend.communication.CommunicationProvider;
 import org.ovirt.engine.ui.frontend.communication.GWTRPCCommunicationProvider;
 import org.ovirt.engine.ui.frontend.communication.OperationProcessor;
@@ -106,6 +109,8 @@ public class FrontendActionTest {
 
     private static String NO_MESSAGE = "No Message"; //$NON-NLS-1$
 
+    private Object testState = new Object();
+
     @Before
     public void setUp() throws Exception {
         mockService = mock(GenericApiGWTServiceAsync.class, withSettings().extraInterfaces(ServiceDefTarget.class));
@@ -127,6 +132,20 @@ public class FrontendActionTest {
         when(mockConstants.noCanDoActionMessage()).thenReturn(NO_MESSAGE);
     }
 
+    private void verifyAsyncActionStarted() {
+        verify(mockEventBus, atLeastOnce()).fireEvent(new AsyncOperationStartedEvent(testState));
+    }
+
+    private void verifyAsyncActionStartedAndCompleted() {
+        verifyAsyncActionStarted();
+        verify(mockEventBus, atLeastOnce()).fireEvent(new AsyncOperationCompleteEvent(testState));
+    }
+
+    private void verifyAsyncActionStartedButNotCompleted() {
+        verifyAsyncActionStarted();
+        verify(mockEventBus, never()).fireEvent(new AsyncOperationCompleteEvent(testState));
+    }
+
     /**
      * Run the following test case.
      * <ol>
@@ -139,6 +158,7 @@ public class FrontendActionTest {
     public void testrunMultipleActions_ignored_failure_multiple() {
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
         parameters.add(new VdcActionParametersBase());
+        testState = null;
         frontend.runMultipleAction(VdcActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
                 null);
         verify(mockService).runMultipleActions(eq(VdcActionType.AddLocalStorageDomain), eq(parameters), eq(false),
@@ -147,6 +167,7 @@ public class FrontendActionTest {
         callbackMultipleActions.getValue().onFailure(exception);
         verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (FrontendFailureEventArgs) any());
         verify(mockMultipleActionCallback, never()).executed(callbackMultipleParam.capture());
+        verifyAsyncActionStartedButNotCompleted();
     }
 
     /**
@@ -162,7 +183,6 @@ public class FrontendActionTest {
     public void testrunMultipleActions_404_failure_multiple() {
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
         parameters.add(new VdcActionParametersBase());
-        Object testState = new Object();
         frontend.runMultipleAction(VdcActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
                 testState);
         verify(mockService).runMultipleActions(eq(VdcActionType.AddLocalStorageDomain), eq(parameters), eq(false),
@@ -178,6 +198,7 @@ public class FrontendActionTest {
                 callbackMultipleParam.getValue().getParameters());
         assertNull("There should be no result", callbackMultipleParam.getValue().getReturnValue()); //$NON-NLS-1$
         assertEquals("States should match", testState, callbackMultipleParam.getValue().getState()); //$NON-NLS-1$
+        verifyAsyncActionStartedAndCompleted();
     }
 
     /**
@@ -196,7 +217,6 @@ public class FrontendActionTest {
         parameters.add(new VdcActionParametersBase());
         parameters.get(0).setCommandId(Guid.Empty);
         parameters.add(new VdcActionParametersBase());
-        Object testState = new Object();
         frontend.runMultipleAction(VdcActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
                 testState);
         verify(mockService).runMultipleActions(eq(VdcActionType.AddLocalStorageDomain), eq(parameters), eq(false),
@@ -214,6 +234,7 @@ public class FrontendActionTest {
         assertEquals("Result should match", returnValues, //$NON-NLS-1$
                 callbackMultipleParam.getValue().getReturnValue());
         assertEquals("States should match", testState, callbackMultipleParam.getValue().getState()); //$NON-NLS-1$
+        verifyAsyncActionStartedAndCompleted();
     }
 
     /**
@@ -233,7 +254,6 @@ public class FrontendActionTest {
         parameters.add(new VdcActionParametersBase());
         parameters.add(new VdcActionParametersBase());
         parameters.get(0).setCommandId(Guid.Empty);
-        Object testState = new Object();
         frontend.runMultipleAction(VdcActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
                 testState);
         verify(mockService).runMultipleActions(eq(VdcActionType.AddLocalStorageDomain), eq(parameters), eq(false),
@@ -257,6 +277,7 @@ public class FrontendActionTest {
         assertEquals("Result should match", returnValues, //$NON-NLS-1$
                 callbackMultipleParam.getValue().getReturnValue());
         assertEquals("States should match", testState, callbackMultipleParam.getValue().getState()); //$NON-NLS-1$
+        verifyAsyncActionStartedAndCompleted();
     }
 
     /**
@@ -280,7 +301,6 @@ public class FrontendActionTest {
         parameters.get(0).setCommandId(Guid.Empty);
         parameters.get(1).setCommandId(Guid.EVERYONE);
         parameters.get(2).setCommandId(Guid.SYSTEM);
-        Object testState = new Object();
         frontend.runMultipleAction(VdcActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
                 testState);
         verify(mockService).runMultipleActions(eq(VdcActionType.AddLocalStorageDomain), eq(parameters), eq(false),
@@ -309,6 +329,7 @@ public class FrontendActionTest {
         assertEquals("Result should match", returnValues, //$NON-NLS-1$
                 callbackMultipleParam.getValue().getReturnValue());
         assertEquals("States should match", testState, callbackMultipleParam.getValue().getState()); //$NON-NLS-1$
+        verifyAsyncActionStartedAndCompleted();
     }
 
     /**
@@ -322,7 +343,6 @@ public class FrontendActionTest {
      */
     @Test
     public void testrunActionImpl_ignored_failure() {
-        Object testState = new Object();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         frontend.runAction(VdcActionType.AddDisk, testParameters, mockActionCallback, testState, false);
         verify(mockService).runAction(eq(VdcActionType.AddDisk), eq(testParameters), callbackAction.capture());
@@ -330,6 +350,7 @@ public class FrontendActionTest {
         callbackAction.getValue().onFailure(exception);
         verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (FrontendFailureEventArgs) any());
         verify(mockActionCallback, never()).executed(any(FrontendActionAsyncResult.class));
+        verifyAsyncActionStartedButNotCompleted();
     }
 
     /**
@@ -343,7 +364,6 @@ public class FrontendActionTest {
      */
     @Test
     public void testrunActionImpl_404_failure() {
-        Object testState = new Object();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         frontend.runAction(VdcActionType.AddDisk, testParameters, mockActionCallback, testState, false);
         verify(mockService).runAction(eq(VdcActionType.AddDisk), eq(testParameters), callbackAction.capture());
@@ -357,6 +377,7 @@ public class FrontendActionTest {
         assertEquals("States should match", testState, callbackParam.getValue().getState()); //$NON-NLS-1$
         assertEquals("Action type should match", VdcActionType.AddDisk, //$NON-NLS-1$
                 callbackParam.getValue().getActionType());
+        verifyAsyncActionStartedAndCompleted();
     }
 
     /**
@@ -369,7 +390,6 @@ public class FrontendActionTest {
      */
     @Test
     public void testrunActionImpl_success() {
-        Object testState = new Object();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         frontend.runAction(VdcActionType.AddDisk, testParameters, mockActionCallback, testState, false);
         verify(mockService).runAction(eq(VdcActionType.AddDisk), eq(testParameters), callbackAction.capture());
@@ -381,6 +401,7 @@ public class FrontendActionTest {
         assertEquals("States should match", testState, callbackParam.getValue().getState()); //$NON-NLS-1$
         assertEquals("Action type should match", VdcActionType.AddDisk, //$NON-NLS-1$
                 callbackParam.getValue().getActionType());
+        verifyAsyncActionStartedAndCompleted();
     }
 
     /**
@@ -395,7 +416,6 @@ public class FrontendActionTest {
      */
     @Test
     public void testHandleActionResult() {
-        Object testState = new Object();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setCanDoAction(false); // Yes this is the default, but to make sure.
@@ -424,7 +444,6 @@ public class FrontendActionTest {
      */
     @Test
     public void testHandleActionResult_SucceededFalse() {
-        Object testState = new Object();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setCanDoAction(true);
@@ -458,7 +477,6 @@ public class FrontendActionTest {
     public void testHandleActionResult_isRaiseErrorModalPanel_actionMessageSize_1_or_less() {
         VdcFault testFault = new VdcFault();
         when(mockEventsHandler.isRaiseErrorModalPanel(VdcActionType.AddDisk, testFault)).thenReturn(true);
-        Object testState = new Object();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setFault(testFault);
@@ -498,7 +516,6 @@ public class FrontendActionTest {
         ArrayList<String> translatedErrors = new ArrayList<String>(Arrays.asList("Translated Message 1")); //$NON-NLS-1$
         when(mockEventsHandler.isRaiseErrorModalPanel(VdcActionType.AddDisk, testFault)).thenReturn(true);
         when(mockCanDoActionErrorsTranslator.translateErrorText(any(ArrayList.class))).thenReturn(translatedErrors);
-        Object testState = new Object();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setFault(testFault);
@@ -540,7 +557,6 @@ public class FrontendActionTest {
                 "Translated Message 1", "Translated Message 2")); //$NON-NLS-1$ //$NON-NLS-2$
         when(mockEventsHandler.isRaiseErrorModalPanel(VdcActionType.AddDisk, testFault)).thenReturn(true);
         when(mockCanDoActionErrorsTranslator.translateErrorText(any(ArrayList.class))).thenReturn(translatedErrors);
-        Object testState = new Object();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setFault(testFault);
@@ -580,7 +596,6 @@ public class FrontendActionTest {
         testParameters.add(new VdcActionParametersBase());
         List<IFrontendActionAsyncCallback> callbacks = new ArrayList<IFrontendActionAsyncCallback>();
         callbacks.add(mockActionCallback);
-        Object testState = new Object();
         frontend.runMultipleActions(actionTypes, testParameters, callbacks, mockActionFailureCallback, testState);
         verify(mockService).runAction(eq(VdcActionType.AddDisk), eq(testParameters.get(0)), callbackAction.capture());
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
@@ -592,6 +607,7 @@ public class FrontendActionTest {
         assertEquals("List size should be 0", 0, actionTypes.size()); //$NON-NLS-1$
         assertEquals("List size should be 0", 0, testParameters.size()); //$NON-NLS-1$
         assertEquals("List size should be 0", 0, callbacks.size()); //$NON-NLS-1$
+        verifyAsyncActionStartedAndCompleted();
     }
 
     /**
@@ -612,7 +628,6 @@ public class FrontendActionTest {
         List<IFrontendActionAsyncCallback> callbacks = new ArrayList<IFrontendActionAsyncCallback>();
         callbacks.add(mockActionCallback);
         callbacks.add(mockActionCallback);
-        Object testState = new Object();
         frontend.runMultipleActions(actionTypes, testParameters, callbacks, mockActionFailureCallback, testState);
         verify(mockService).runAction(eq(VdcActionType.AddDisk), eq(testParameters.get(0)), callbackAction.capture());
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
@@ -630,6 +645,7 @@ public class FrontendActionTest {
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockActionCallback, times(2)).executed(callbackParam.capture());
         assertEquals(callbackParam.getValue().getReturnValue(), returnValue);
+        verifyAsyncActionStartedAndCompleted();
     }
 
     /**
@@ -651,7 +667,6 @@ public class FrontendActionTest {
         List<IFrontendActionAsyncCallback> callbacks = new ArrayList<IFrontendActionAsyncCallback>();
         callbacks.add(mockActionCallback);
         callbacks.add(mockActionCallback);
-        Object testState = new Object();
         frontend.runMultipleActions(actionTypes, testParameters, callbacks, mockActionFailureCallback, testState);
         verify(mockService).runAction(eq(VdcActionType.AddDisk), eq(testParameters.get(0)), callbackAction.capture());
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
@@ -669,6 +684,7 @@ public class FrontendActionTest {
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockActionFailureCallback).executed(callbackParam.capture());
         assertEquals(callbackParam.getValue().getReturnValue(), returnValue);
+        verifyAsyncActionStartedAndCompleted();
     }
 
     /**
@@ -690,7 +706,6 @@ public class FrontendActionTest {
         List<IFrontendActionAsyncCallback> callbacks = new ArrayList<IFrontendActionAsyncCallback>();
         callbacks.add(mockActionCallback);
         callbacks.add(mockActionCallback);
-        Object testState = new Object();
         frontend.runMultipleActions(actionTypes, testParameters, callbacks, mockActionFailureCallback, testState);
         verify(mockService).runAction(eq(VdcActionType.AddDisk), eq(testParameters.get(0)), callbackAction.capture());
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
@@ -702,6 +717,7 @@ public class FrontendActionTest {
         // Second call to runAction, the size of the parameters should have decreased
         verify(mockService, never()).runAction(eq(VdcActionType.AddBricksToGlusterVolume), eq(testParameters.get(0)),
                 callbackAction.capture());
+        verifyAsyncActionStartedAndCompleted();
     }
 
     /**
