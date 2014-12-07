@@ -269,6 +269,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
         } else {
             log.warn("There are no OVF_STORE disks on storage domain id {}",
                     getParameters().getStorageDomainId());
+            AuditLogDirector.log(this, AuditLogType.OVF_STORE_DOES_NOT_EXISTS);
         }
         return Collections.emptyList();
     }
