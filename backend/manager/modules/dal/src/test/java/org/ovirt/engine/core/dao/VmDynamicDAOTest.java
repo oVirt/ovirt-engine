@@ -19,8 +19,6 @@ public class VmDynamicDAOTest extends BaseDAOTestCase {
     private static final int DYNAMIC_RUNNING_COUNT = 3;
     private VmDynamicDAO dao;
     private VmDynamic existingVm;
-    private Guid existingStaticGuidVm =  new Guid("77296e00-0cad-4e5a-9299-008a7b6f4357");
-    private VmDynamic newVmDynamic;
 
     @Override
     public void setUp() throws Exception {
@@ -28,8 +26,6 @@ public class VmDynamicDAOTest extends BaseDAOTestCase {
         dao = dbFacade.getVmDynamicDao();
         existingVm = dao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355"));
         existingVm.setStatus(VMStatus.Up);
-
-        newVmDynamic = new VmDynamic();
     }
 
     /**
@@ -76,12 +72,12 @@ public class VmDynamicDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testSave() {
-        newVmDynamic.setId(existingStaticGuidVm);
-        dao.save(newVmDynamic);
-        VmDynamic vmdynamic = dao.get(newVmDynamic.getId());
+        dao.remove(existingVm.getId());
+        dao.save(existingVm);
+        VmDynamic vmdynamic = dao.get(existingVm.getId());
 
         assertNotNull(vmdynamic);
-        assertEquals(vmdynamic, newVmDynamic);
+        assertEquals(vmdynamic, existingVm);
     }
 
     /**

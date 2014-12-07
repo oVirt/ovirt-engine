@@ -586,7 +586,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmsAndTemplatesIdsWithoutAttachedImageDisks(v_shareable BOOLEAN)
+Create or replace FUNCTION GetVmsAndTemplatesIdsWithoutAttachedImageDisks(v_storage_pool_id UUID, v_shareable BOOLEAN)
 RETURNS SETOF UUID STABLE
    AS $procedure$
 BEGIN
@@ -597,7 +597,10 @@ BEGIN
                                INNER JOIN base_disks i
                                ON i.disk_id = vd.device_id
                                AND vd.snapshot_id IS NULL
-                               WHERE i.shareable = v_shareable);
+                               WHERE i.shareable = v_shareable)
+      AND vs.vds_group_id IN (SELECT vg.vds_group_id
+                              FROM vds_groups vg, storage_pool sp
+                              WHERE vg.storage_pool_id = v_storage_pool_id);
 END; $procedure$
 LANGUAGE plpgsql;
 

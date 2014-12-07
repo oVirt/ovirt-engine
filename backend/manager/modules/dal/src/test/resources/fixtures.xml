@@ -3526,6 +3526,47 @@
             <value>1</value>
         </row>
         <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4357</value>
+            <value>0</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null /> <!-- console_user_id -->
+            <null />
+            <null />
+            <null />
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value></value>
+            <value>5900</value>
+            <value>1</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>1</value>
+            <value>-1</value>
+            <value>0</value>
+            <null />
+            <value></value>
+            <null />
+            <value>42058975-3d5e-484a-80c1-01c31207f578</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <null />
+            <null/>
+            <null/>
+            <null/>
+            <null/>
+            <value>-1</value>
+            <value>1</value>
+        </row>
+        <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
             <value>5</value>
             <null />
@@ -3784,6 +3825,20 @@
             <value>17</value>
             <value>60</value>
             <null />
+        </row>
+        <row>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4357</value>
+            <value>17</value>
+            <value>0</value>
+            <value>267308</value>
+            <value>0</value>
+            <value>0</value>
+            <value>17</value>
+            <value>60</value>
+            <null />
+            <value>1,2,3</value>
+            <value>1,2,3</value>
+            <value>1,2,3</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
