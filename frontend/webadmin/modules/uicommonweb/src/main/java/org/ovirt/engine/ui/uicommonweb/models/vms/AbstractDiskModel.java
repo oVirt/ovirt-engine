@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -31,7 +30,6 @@ import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -81,9 +79,7 @@ public abstract class AbstractDiskModel extends DiskModel
     private boolean previousIsQuotaAvailable;
 
     private SystemTreeItemModel systemTreeSelectedItem;
-    private String hash;
     private UICommand cancelCommand;
-    private int queryCounter;
 
     public EntityModel<Boolean> getIsWipeAfterDelete() {
         return isWipeAfterDelete;
@@ -222,14 +218,6 @@ public abstract class AbstractDiskModel extends DiskModel
         this.isVirtioScsiEnabled = virtioScsiEnabled;
     }
 
-    public String getHash() {
-        return hash;
-    }
-
-    public void setHash(String hash) {
-        this.hash = hash;
-    }
-
     @Override
     public UICommand getCancelCommand() {
         return cancelCommand;
@@ -320,17 +308,6 @@ public abstract class AbstractDiskModel extends DiskModel
     @Override
     public void initialize() {
         super.initialize();
-        setHash(getHashName() + new Date());
-
-        // Add progress listeners
-        Frontend.getInstance().getQueryStartedEvent().addListener(this);
-        Frontend.getInstance().getQueryCompleteEvent().addListener(this);
-        Frontend.getInstance().subscribeAdditionalQueries(new VdcQueryType[] { VdcQueryType.Search,
-                VdcQueryType.GetStoragePoolById, VdcQueryType.GetNextAvailableDiskAliasNameByVMId,
-                VdcQueryType.GetPermittedStorageDomainsByStoragePoolId, VdcQueryType.GetAllVdsByStoragePool,
-                VdcQueryType.GetAllAttachableDisks, VdcQueryType.GetAllDisksByVmId,
-                VdcQueryType.GetAllRelevantQuotasForStorage, VdcQueryType.OsRepository,
-                VdcQueryType.GetDiskProfilesByStorageDomainId });
 
         // Create and set commands
         UICommand onSaveCommand = new UICommand("OnSave", this); //$NON-NLS-1$
@@ -370,7 +347,7 @@ public abstract class AbstractDiskModel extends DiskModel
 
                 diskModel.setMessage(storage == null ? CONSTANTS.noActiveStorageDomainsInDC() : "");
             }
-        }, getHash()), datacenter.getId(), ActionGroup.CREATE_DISK);
+        }), datacenter.getId(), ActionGroup.CREATE_DISK);
     }
 
     private void updateHosts(StoragePool datacenter) {
@@ -389,7 +366,7 @@ public abstract class AbstractDiskModel extends DiskModel
 
                 diskModel.getHost().setItems(filteredHosts);
             }
-        }, getHash()), datacenter.getId());
+        }), datacenter.getId());
     }
 
     private void updateDatacenters() {
@@ -415,7 +392,7 @@ public abstract class AbstractDiskModel extends DiskModel
                         diskModel.setMessage(CONSTANTS.relevantDCnotActive());
                     }
                 }
-            }, getHash())), getVm().getStoragePoolId());
+            })), getVm().getStoragePoolId());
         }
         else {
             AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(this, new INewAsyncCallback() {
@@ -437,7 +414,7 @@ public abstract class AbstractDiskModel extends DiskModel
                         diskModel.setMessage(CONSTANTS.noActiveDataCenters());
                     }
                 }
-            }, getHash()));
+            }));
         }
     }
 
@@ -466,7 +443,7 @@ public abstract class AbstractDiskModel extends DiskModel
                     getIsBootable().setEntity(getDisk().isBoot());
                 }
             }
-        }, getHash()), getVm().getId());
+        }), getVm().getId());
     }
 
     private void updateShareableDiskEnabled(StoragePool datacenter) {
@@ -553,7 +530,7 @@ public abstract class AbstractDiskModel extends DiskModel
                                 AbstractDiskModel.this.setDiskProfilesList((List<DiskProfile>) ((VdcQueryReturnValue) value).getReturnValue());
                             }
 
-                        }, getHash()));
+                        }));
     }
 
     private void setDiskProfilesList(List<DiskProfile> diskProfiles) {
@@ -624,7 +601,7 @@ public abstract class AbstractDiskModel extends DiskModel
                             getQuota().setSelectedItem(quota);
                         }
                     }
-                }, getHash()));
+                }));
     }
 
     private boolean isHostAvailable(VDS host) {
@@ -942,30 +919,6 @@ public abstract class AbstractDiskModel extends DiskModel
             } else if (sender == getStorageDomain()) {
                 storageDomain_SelectedItemChanged();
             }
-        }
-        else if (ev.matchesDefinition(Frontend.getInstance().getQueryStartedEventDefinition())
-                && ObjectUtils.objectsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
-        {
-            frontend_QueryStarted();
-        }
-        else if (ev.matchesDefinition(Frontend.getInstance().getQueryCompleteEventDefinition())
-                && ObjectUtils.objectsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
-        {
-            frontend_QueryComplete();
-        }
-    }
-
-    public void frontend_QueryStarted() {
-        queryCounter++;
-        if (getProgress() == null) {
-            startProgress(null);
-        }
-    }
-
-    public void frontend_QueryComplete() {
-        queryCounter--;
-        if (queryCounter == 0) {
-            stopProgress();
         }
     }
 }

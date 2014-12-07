@@ -75,10 +75,6 @@ public class FrontendTest {
     @Mock
     ErrorTranslator mockCanDoActionErrorsTranslator;
     @Mock
-    Event<EventArgs> queryCompleteEvent;
-    @Mock
-    Event<EventArgs> queryStartEvent;
-    @Mock
     Event<EventArgs> mockFrontendNotLoggedInEvent;
     @Mock
     Event<FrontendFailureEventArgs> mockFrontendFailureEvent;
@@ -116,15 +112,11 @@ public class FrontendTest {
         operationsManager.setLoggedIn(true);
         frontend = new Frontend(operationsManager, mockCanDoActionErrorsTranslator, mockVdsmErrorsTranslator,
                 mockEventBus);
-        frontend.queryCompleteEvent = queryCompleteEvent;
-        frontend.queryStartedEvent = queryStartEvent;
         frontend.frontendFailureEvent = mockFrontendFailureEvent;
         frontend.frontendNotLoggedInEvent = mockFrontendNotLoggedInEvent;
-        frontend.subscribe(new VdcQueryType[] {VdcQueryType.Search});
         frontend.setEventsHandler(mockEventsHandler);
         frontend.setConstants(mockConstants);
         when(mockAsyncQuery.getModel()).thenReturn(ASYNC_OPERATION_TARGET);
-        when(mockAsyncQuery.getContext()).thenReturn("test"); //$NON-NLS-1$
         when(mockAsyncQuery.getDel()).thenReturn(mockAsyncCallback);
     }
 
@@ -134,11 +126,6 @@ public class FrontendTest {
         // Some of the tests might call it more than once.
         verify(mockEventBus, atLeastOnce()).fireEvent(new AsyncOperationStartedEvent(mockAsyncQuery.getModel()));
         verify(mockEventBus, atLeastOnce()).fireEvent(new AsyncOperationCompleteEvent(mockAsyncQuery.getModel()));
-        verify(queryStartEvent, atLeastOnce()).raise(Frontend.class, EventArgs.EMPTY);
-        verify(queryCompleteEvent, atLeastOnce()).raise(Frontend.class, EventArgs.EMPTY);
-
-        // Make sure the context is correct
-        assertEquals("Context should be 'test'", frontend.getCurrentContext(), "test"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -477,7 +464,7 @@ public class FrontendTest {
         queryTypeList.add(VdcQueryType.Search);
         ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<VdcQueryParametersBase>();
         queryParamsList.add(new SearchParameters("*win*", SearchType.VM)); //$NON-NLS-1$
-        frontend.runMultipleQueries(queryTypeList, queryParamsList, mockMultipleQueryCallback, "test"); //$NON-NLS-1$
+        frontend.runMultipleQueries(queryTypeList, queryParamsList, mockMultipleQueryCallback, ASYNC_OPERATION_TARGET); //$NON-NLS-1$
         StatusCodeException exception = new StatusCodeException(0, "0 status code"); //$NON-NLS-1$
         // Repeat 4 times, because of retries.
         for (int i = 1; i < RETRY_COUNT; i++) {
@@ -508,7 +495,7 @@ public class FrontendTest {
         ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<VdcQueryParametersBase>();
         queryParamsList.add(new SearchParameters("*win*", SearchType.VM)); //$NON-NLS-1$
         queryParamsList.add(new SearchParameters("*lin*", SearchType.VM)); //$NON-NLS-1$
-        frontend.runMultipleQueries(queryTypeList, queryParamsList, mockMultipleQueryCallback, "test"); //$NON-NLS-1$
+        frontend.runMultipleQueries(queryTypeList, queryParamsList, mockMultipleQueryCallback, ASYNC_OPERATION_TARGET); //$NON-NLS-1$
         StatusCodeException exception = new StatusCodeException(0, "0 status code"); //$NON-NLS-1$
         // Repeat 4 times, because of retries.
         for (int i = 1; i < RETRY_COUNT; i++) {
@@ -543,7 +530,7 @@ public class FrontendTest {
         ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<VdcQueryParametersBase>();
         queryParamsList.add(new SearchParameters("*win*", SearchType.VM)); //$NON-NLS-1$
         queryParamsList.add(new SearchParameters("*lin*", SearchType.VM)); //$NON-NLS-1$
-        frontend.runMultipleQueries(queryTypeList, queryParamsList, mockMultipleQueryCallback, "test"); //$NON-NLS-1$
+        frontend.runMultipleQueries(queryTypeList, queryParamsList, mockMultipleQueryCallback, ASYNC_OPERATION_TARGET); //$NON-NLS-1$
         StatusCodeException exception = new StatusCodeException(HttpServletResponse.SC_NOT_FOUND,
                 "404 status code"); //$NON-NLS-1$
         // Repeat 4 times, because of retries.
@@ -581,7 +568,7 @@ public class FrontendTest {
         ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<VdcQueryParametersBase>();
         queryParamsList.add(new SearchParameters("*win*", SearchType.VM)); //$NON-NLS-1$
         queryParamsList.add(new SearchParameters("*lin*", SearchType.VM)); //$NON-NLS-1$
-        frontend.runMultipleQueries(queryTypeList, queryParamsList, mockMultipleQueryCallback, "test"); //$NON-NLS-1$
+        frontend.runMultipleQueries(queryTypeList, queryParamsList, mockMultipleQueryCallback, ASYNC_OPERATION_TARGET); //$NON-NLS-1$
         verify(mockService).runMultipleQueries(eq(queryTypeList),
                 eq(queryParamsList),
                 callbackMultipleQueries.capture());
@@ -618,7 +605,7 @@ public class FrontendTest {
         ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<VdcQueryParametersBase>();
         queryParamsList.add(new SearchParameters("*win*", SearchType.VM)); //$NON-NLS-1$
         queryParamsList.add(new SearchParameters("*lin*", SearchType.VM)); //$NON-NLS-1$
-        frontend.runMultipleQueries(queryTypeList, queryParamsList, mockMultipleQueryCallback, "test"); //$NON-NLS-1$
+        frontend.runMultipleQueries(queryTypeList, queryParamsList, mockMultipleQueryCallback, ASYNC_OPERATION_TARGET); //$NON-NLS-1$
         verify(mockService).runMultipleQueries(eq(queryTypeList), eq(queryParamsList),
                 callbackMultipleQueries.capture());
         // Call the failure handler.

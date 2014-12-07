@@ -2268,8 +2268,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     public void cancel()
     {
-        Frontend.getInstance().unsubscribe();
-
         cancelConfirmation();
 
         setGuideContext(null);

@@ -49,10 +49,6 @@ public class AsyncIterator<T> {
     }
 
     public void iterate(AsyncIteratorFunc<T> func, AsyncIteratorPredicate<T> action) {
-        iterate(func, action, null);
-    }
-
-    public void iterate(AsyncIteratorFunc<T> func, AsyncIteratorPredicate<T> action, String frontendContext) {
 
         setCounter(0);
 
@@ -71,7 +67,7 @@ public class AsyncIterator<T> {
                 break;
             }
 
-            AsyncIteratorCallback<T> callback = new AsyncIteratorCallback<T>(frontendContext);
+            AsyncIteratorCallback<T> callback = new AsyncIteratorCallback<T>();
 
             callback.getNotifyEvent().addListener(
                     new IEventListener<ValueEventArgs<T>>() {

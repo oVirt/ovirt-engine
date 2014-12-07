@@ -1317,7 +1317,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                                                                                         cachedMaxPriority = (Integer) returnValue;
                                                                                         updatePriority((UnitVmModel) target);
                                                                                     }
-                                                                                }, model.getHash()));
+                                                                                }));
             } else {
                 updatePriority(model);
             }

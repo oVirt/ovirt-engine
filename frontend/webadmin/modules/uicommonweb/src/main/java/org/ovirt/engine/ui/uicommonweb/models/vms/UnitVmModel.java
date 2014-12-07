@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,14 +37,12 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -290,18 +287,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
             vmAttachedToPool = true;
         }
-    }
-
-    private String privateHash;
-
-    public String getHash()
-    {
-        return privateHash;
-    }
-
-    public void setHash(String value)
-    {
-        privateHash = value;
     }
 
     private boolean isBlankTemplate;
@@ -1470,24 +1455,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     public UnitVmModel(VmModelBehaviorBase behavior) {
-        Frontend.getInstance().getQueryStartedEvent().addListener(this);
-        Frontend.getInstance().getQueryCompleteEvent().addListener(this);
-
-        Frontend.getInstance().subscribe(new VdcQueryType[] { VdcQueryType.GetStorageDomainsByStoragePoolId,
-                VdcQueryType.GetImagesListByStoragePoolId,
-                VdcQueryType.GetDefaultTimeZone, VdcQueryType.GetStoragePoolsByClusterService,
-                VdcQueryType.GetAAAProfileList, VdcQueryType.GetConfigurationValue,
-                VdcQueryType.GetVdsGroupsByStoragePoolId, VdcQueryType.GetVmTemplatesByStoragePoolId,
-                VdcQueryType.GetVmTemplatesDisks, VdcQueryType.GetStorageDomainsByVmTemplateId,
-                VdcQueryType.GetStorageDomainById, VdcQueryType.GetDataCentersWithPermittedActionOnClusters,
-                VdcQueryType.GetClustersWithPermittedAction, VdcQueryType.GetVmTemplatesWithPermittedAction,
-                VdcQueryType.GetVdsGroupById, VdcQueryType.GetStoragePoolById, VdcQueryType.GetAllDisksByVmId,
-                VdcQueryType.GetVmTemplate, VdcQueryType.GetVmConfigurationBySnapshot, VdcQueryType.GetAllVdsGroups,
-                VdcQueryType.GetPermittedStorageDomainsByStoragePoolId, VdcQueryType.GetHostsByClusterId,
-                VdcQueryType.OsRepository,
-                VdcQueryType.Search,
-                VdcQueryType.GetSupportedCpuList});
-
         this.behavior = behavior;
         this.behavior.setModel(this);
 
@@ -1763,8 +1730,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     {
         super.initialize();
 
-        setHash(getHashName() + new Date());
-
         getMemSize().setEntity(256);
         getMinAllocatedMemory().setEntity(256);
         getIsStateless().setEntity(false);
@@ -1799,17 +1764,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(Frontend.getInstance().getQueryStartedEventDefinition())
-                && ObjectUtils.objectsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
-        {
-            frontend_QueryStarted();
-        }
-        else if (ev.matchesDefinition(Frontend.getInstance().getQueryCompleteEventDefinition())
-                && ObjectUtils.objectsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
-        {
-            frontend_QueryComplete();
-        }
-        else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition))
+        if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition))
         {
             if (sender == getVmType()) {
                 vmTypeChanged();
@@ -1970,26 +1925,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
     }
 
-    private int queryCounter;
-
-    private void frontend_QueryStarted()
-    {
-        queryCounter++;
-        if (getProgress() == null)
-        {
-            startProgress(null);
-        }
-    }
-
-    private void frontend_QueryComplete()
-    {
-        queryCounter--;
-        if (queryCounter == 0)
-        {
-            stopProgress();
-        }
-    }
-
     protected void initNumOfMonitors()
     {
         AsyncDataProvider.getInstance().getNumOfMonitorList(new AsyncQuery(this,
@@ -2009,8 +1944,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                                                                                    }
 
                                                                                }
-                                                                           }, getHash()
-        ));
+                                                                           }));
 
     }
 

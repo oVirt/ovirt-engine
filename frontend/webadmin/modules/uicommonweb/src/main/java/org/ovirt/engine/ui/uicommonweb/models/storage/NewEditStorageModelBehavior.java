@@ -17,53 +17,46 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-@SuppressWarnings("unused")
 public class NewEditStorageModelBehavior extends StorageModelBehavior
 {
     @Override
     public void updateItemsAvailability()
     {
-        super.updateItemsAvailability();
-
         StoragePool dataCenter = getModel().getDataCenter().getSelectedItem();
         if (dataCenter == null) {
             return;
         }
 
         // Allow Data storage type corresponding to the selected data-center type + ISO and Export that are NFS only:
-        for (IStorageModel item : Linq.<IStorageModel> cast(getModel().getItems()))
+        for (final IStorageModel item : Linq.<IStorageModel> cast(getModel().getItems()))
         {
-            Model model = (Model) item;
-
             if (item.getRole() == StorageDomainType.ISO)
             {
-                AsyncDataProvider.getInstance().getIsoDomainByDataCenterId(new AsyncQuery(new Object[] { this, item },
+                AsyncDataProvider.getInstance().getIsoDomainByDataCenterId(new AsyncQuery(getModel(),
                         new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object target, Object returnValue) {
 
-                                Object[] array = (Object[]) target;
-                                NewEditStorageModelBehavior behavior = (NewEditStorageModelBehavior) array[0];
-                                IStorageModel storageModelItem = (IStorageModel) array[1];
+                                NewEditStorageModelBehavior behavior = NewEditStorageModelBehavior.this;
+                                IStorageModel storageModelItem = item;
                                 behavior.postUpdateItemsAvailability(storageModelItem, returnValue == null);
 
                             }
-                        }, getHash()), dataCenter.getId());
+                        }), dataCenter.getId());
             }
             else if (item.getRole() == StorageDomainType.ImportExport)
             {
-                AsyncDataProvider.getInstance().getExportDomainByDataCenterId(new AsyncQuery(new Object[] { this, item },
+                AsyncDataProvider.getInstance().getExportDomainByDataCenterId(new AsyncQuery(getModel(),
                         new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object target, Object returnValue) {
 
-                                Object[] array = (Object[]) target;
-                                NewEditStorageModelBehavior behavior = (NewEditStorageModelBehavior) array[0];
-                                IStorageModel storageModelItem = (IStorageModel) array[1];
+                                NewEditStorageModelBehavior behavior = NewEditStorageModelBehavior.this;
+                                IStorageModel storageModelItem = item;
                                 behavior.postUpdateItemsAvailability(storageModelItem, returnValue == null);
 
                             }
-                        }, getHash()), dataCenter.getId());
+                        }), dataCenter.getId());
             }
             else
             {
@@ -147,7 +140,7 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
             } else {
                 IdQueryParameters params = new IdQueryParameters(dataCenter.getId());
                 Frontend.getInstance().runQuery(VdcQueryType.GetStorageTypesInPoolByPoolId, params,
-                                                new AsyncQuery(this, new INewAsyncCallback() {
+                                                new AsyncQuery(getModel(), new INewAsyncCallback() {
                                                     @Override
                                                     public void onSuccess(Object model, Object ReturnValue) {
                                                         List<StorageType> storageTypes = ((VdcQueryReturnValue) ReturnValue).getReturnValue();

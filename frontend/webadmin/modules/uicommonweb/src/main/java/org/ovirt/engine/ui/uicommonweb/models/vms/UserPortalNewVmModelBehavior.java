@@ -78,13 +78,13 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                                                     dataCenters,
                                                     clusters, null);
                                         }
-                                    }, getModel().getHash()),
+                                    }),
                                     actionGroup, true, false);
                         } else {
                             getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoUpDC());
                         }
                     }
-                }, getModel().getHash()), actionGroup, true, false);
+                }), actionGroup, true, false);
 
         instanceTypeManager = new NewVmInstanceTypeManager(getModel());
     }
@@ -106,7 +106,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                         getEntitiesWithPermittedActionParameters }));
 
         // Get clusters and templates
-        Frontend.getInstance().runMultipleQueries(queryTypeList, parametersList, this, getModel().getHash());
+        Frontend.getInstance().runMultipleQueries(queryTypeList, parametersList, this, getModel());
 
     }
 

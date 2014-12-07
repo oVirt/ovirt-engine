@@ -582,7 +582,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         }
     }
 
-    private void postPrepareSanStorageForEdit(SanStorageModel model, boolean isStorageActive)
+    private void postPrepareSanStorageForEdit(final SanStorageModel model, boolean isStorageActive)
     {
         StorageModel storageModel = (StorageModel) getWindow();
         StorageDomain storage = (StorageDomain) getSelectedItem();
@@ -591,14 +591,13 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         VDS host = storageModel.getHost().getSelectedItem();
         Guid hostId = host != null && isStorageActive ? host.getId() : null;
 
-        AsyncDataProvider.getInstance().getLunsByVgId(new AsyncQuery(model, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getLunsByVgId(new AsyncQuery(storageModel, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
-                SanStorageModel sanStorageModel = (SanStorageModel) target;
                 ArrayList<LUNs> lunList = (ArrayList<LUNs>) returnValue;
-                sanStorageModel.applyData(lunList, true);
+                model.applyData(lunList, true);
             }
-        }, storageModel.getHash()), storage.getStorage(), hostId);
+        }), storage.getStorage(), hostId);
     }
 
     private void importDomain()
@@ -1034,7 +1033,6 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
     private void cancel()
     {
         setWindow(null);
-        Frontend.getInstance().unsubscribe();
     }
 
     @Override

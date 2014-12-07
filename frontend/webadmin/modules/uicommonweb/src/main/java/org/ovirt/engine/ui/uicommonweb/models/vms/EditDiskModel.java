@@ -62,7 +62,7 @@ public class EditDiskModel extends AbstractDiskModel
                     StorageDomain storageDomain = (StorageDomain) returnValue;
                     diskModel.getStorageDomain().setSelectedItem(storageDomain);
                 }
-            }, getHash()), storageDomainId);
+            }), storageDomainId);
         } else {
             LunDisk lunDisk = (LunDisk) getDisk();
             getDiskStorageType().setEntity(DiskStorageType.LUN);

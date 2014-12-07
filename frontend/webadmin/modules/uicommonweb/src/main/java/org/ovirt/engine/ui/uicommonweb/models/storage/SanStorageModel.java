@@ -26,7 +26,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
-@SuppressWarnings("unused")
 public abstract class SanStorageModel extends SanStorageModelBase
 {
     private boolean isGrouppedByTarget;
@@ -151,7 +150,6 @@ public abstract class SanStorageModel extends SanStorageModelBase
                 }
             }
         }, true);
-        asyncQuery.setContext(getHash());
         Frontend.getInstance().runQuery(VdcQueryType.GetDeviceList,
                 new GetDeviceListQueryParameters(host.getId(), getType()),
                 asyncQuery);

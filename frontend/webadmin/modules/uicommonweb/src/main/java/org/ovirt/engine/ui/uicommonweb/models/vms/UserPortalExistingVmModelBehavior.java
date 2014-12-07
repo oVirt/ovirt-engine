@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -39,14 +38,13 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
     protected void initClusters(final List<StoragePool> dataCenters) {
         // Get clusters with permitted edit action
         ActionGroup actionGroup = getModel().isCreateInstanceOnly() ? ActionGroup.CREATE_INSTANCE : ActionGroup.CREATE_VM;
-        AsyncDataProvider.getInstance().getClustersWithPermittedAction(new AsyncQuery(new Object[]{this, getModel()},
+        AsyncDataProvider.getInstance().getClustersWithPermittedAction(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
 
-                        Object[] array = (Object[]) target;
-                        ExistingVmModelBehavior behavior = (ExistingVmModelBehavior) array[0];
-                        UnitVmModel model = (UnitVmModel) array[1];
+                        ExistingVmModelBehavior behavior = UserPortalExistingVmModelBehavior.this;
+                        UnitVmModel model = (UnitVmModel) target;
                         List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
 
                         // filter clusters by architecture
@@ -64,7 +62,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
                         behavior.initCdImage();
 
                     }
-                }, getModel().getHash()), actionGroup, true, false);
+                }), actionGroup, true, false);
 
     }
 
@@ -89,23 +87,21 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
 
     private void addVmCluster(final List<StoragePool> dataCenters, final List<VDSGroup> clusters)
     {
-        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(new Object[] { getModel(), clusters },
+        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
 
-                        Object[] array = (Object[]) target;
-                        UnitVmModel model = (UnitVmModel) array[0];
-                        ArrayList<VDSGroup> clusterList = (ArrayList<VDSGroup>) array[1];
+                        UnitVmModel model = (UnitVmModel) target;
                         VDSGroup cluster = (VDSGroup) returnValue;
                         if (cluster != null)
                         {
-                            clusterList.add(cluster);
+                            clusters.add(cluster);
                         }
-                        Collections.sort(clusterList, new NameableComparator());
+                        Collections.sort(clusters, new NameableComparator());
                         model.setDataCentersAndClusters(model, dataCenters, clusters, vm.getVdsGroupId());
                     }
-                }, getModel().getHash()), vm.getVdsGroupId());
+                }), vm.getVdsGroupId());
     }
 
     /**

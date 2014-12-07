@@ -59,7 +59,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         DisksAllocationModel disksAllocationModel = getModel().getDisksAllocationModel();
         disksAllocationModel.setIsAliasChangable(true);
 
-        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -95,7 +95,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                             initTemplate();
 
                                         }
-                                    }, getModel().getHash()),
+                                    }),
                                     true,
                                     false);
 
@@ -106,12 +106,11 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                         public void onSuccess(Object model, Object returnValue) {
                                             getModel().getIsSoundcardEnabled().setEntity((Boolean) returnValue);
                                         }
-                                    }, getModel().getHash()), vm.getId());
+                                    }), vm.getId());
                         }
 
                     }
-                },
-                getModel().getHash()),
+                }),
                 vm.getStoragePoolId());
     }
 
@@ -127,16 +126,14 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         // Filter according to system tree selection.
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage)
         {
-            StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
+            final StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
 
-            AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(new Object[] { this, storage },
+            AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(getModel(),
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target1, Object returnValue1) {
 
-                            Object[] array1 = (Object[]) target1;
-                            NewTemplateVmModelBehavior behavior1 = (NewTemplateVmModelBehavior) array1[0];
-                            StorageDomain storage1 = (StorageDomain) array1[1];
+                            NewTemplateVmModelBehavior behavior1 = NewTemplateVmModelBehavior.this;
                             AsyncDataProvider.getInstance().getTemplateListByStorage(new AsyncQuery(new Object[] { behavior1,
                                     returnValue1 },
                                     new INewAsyncCallback() {
@@ -164,20 +161,20 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
                                         }
                                     }),
-                                    storage1.getId());
+                                    storage.getId());
 
                         }
-                    }, getModel().getHash()),
+                    }),
                     dataCenter.getId());
         }
         else
         {
-            AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(this,
+            AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(getModel(),
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
 
-                            NewTemplateVmModelBehavior behavior = (NewTemplateVmModelBehavior) target;
+                            NewTemplateVmModelBehavior behavior = NewTemplateVmModelBehavior.this;
 
                             ArrayList<VmTemplate> templates = (ArrayList<VmTemplate>) returnValue;
 
@@ -185,7 +182,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                     dataCenterWithCluster.getCluster().getArchitecture()));
 
                         }
-                    }, getModel().getHash()), dataCenter.getId());
+                    }), dataCenter.getId());
         }
     }
 
@@ -208,12 +205,12 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         super.dataCenterWithClusterSelectedItemChanged();
 
         // If a VM has at least one disk, present its storage domain.
-        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
 
-                        NewTemplateVmModelBehavior behavior = (NewTemplateVmModelBehavior) target;
+                        NewTemplateVmModelBehavior behavior = NewTemplateVmModelBehavior.this;
                         ArrayList<Disk> imageDisks = new ArrayList<Disk>();
                         ArrayList<Disk> vmDisks = (ArrayList<Disk>) returnValue;
 
@@ -231,7 +228,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                 vmDisks,
                                 VmModelHelper.WarningType.VM_TEMPLATE);
                     }
-                }, getModel().getHash()),
+                }),
                 vm.getId(),
                 true);
     }
@@ -342,11 +339,11 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     @Override
     public void initStorageDomains()
     {
-        AsyncDataProvider.getInstance().getPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getPermittedStorageDomainsByStoragePoolId(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
-                        NewTemplateVmModelBehavior behavior = (NewTemplateVmModelBehavior) target;
+                        NewTemplateVmModelBehavior behavior = NewTemplateVmModelBehavior.this;
                         ArrayList<StorageDomain> activeStorageDomainList =
                                 new ArrayList<StorageDomain>();
 
@@ -417,8 +414,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                             }
                         }
                     }
-                },
-                getModel().getHash()),
+                }),
                 vm.getStoragePoolId(),
                 ActionGroup.CREATE_TEMPLATE);
     }

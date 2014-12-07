@@ -20,33 +20,31 @@ public class PriorityUtil {
         this.model = model;
     }
 
-    public void initPriority(int priority)
+    public void initPriority(final int priority)
     {
-        AsyncDataProvider.getInstance().getMaxVmPriority(new AsyncQuery(new Object[] {model, priority},
+        AsyncDataProvider.getInstance().getMaxVmPriority(new AsyncQuery(model,
                                                                         new INewAsyncCallback() {
                                                                             @Override
                                                                             public void onSuccess(Object target, Object returnValue) {
 
-                                                                                Object[] array = (Object[]) target;
-                                                                                UnitVmModel model = (UnitVmModel) array[0];
-                                                                                int vmPriority = (Integer) array[1];
+                                                                                UnitVmModel model = (UnitVmModel) target;
                                                                                 cachedMaxPriority = (Integer) returnValue;
 
-                                                                                int value = AsyncDataProvider.getInstance().getRoundedPriority(vmPriority, cachedMaxPriority);
+                                                                                int value = AsyncDataProvider.getInstance().getRoundedPriority(priority, cachedMaxPriority);
                                                                                 EntityModel tempVar = new EntityModel();
                                                                                 tempVar.setEntity(value);
                                                                                 model.getPriority().setSelectedItem(tempVar);
                                                                                 updatePriority();
 
                                                                             }
-                                                                        }, model.getHash()));
+                                                                        }));
     }
 
     private void updatePriority()
     {
         if (cachedMaxPriority == null)
         {
-            AsyncDataProvider.getInstance().getMaxVmPriority(new AsyncQuery(this,
+            AsyncDataProvider.getInstance().getMaxVmPriority(new AsyncQuery(model,
                                                                             new INewAsyncCallback() {
                                                                                 @Override
                                                                                 public void onSuccess(Object target, Object returnValue) {
@@ -54,7 +52,7 @@ public class PriorityUtil {
                                                                                     postUpdatePriority();
 
                                                                                 }
-                                                                            }, model.getHash()));
+                                                                            }));
         }
         else
         {

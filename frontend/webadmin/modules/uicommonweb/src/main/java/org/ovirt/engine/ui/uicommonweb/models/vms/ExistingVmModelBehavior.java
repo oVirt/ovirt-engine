@@ -120,8 +120,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                         }
 
                     }
-                },
-                getModel().getHash()),
+                }),
                 vm.getStoragePoolId());
     }
 
@@ -144,7 +143,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                         initTemplate();
                         initCdImage();
                     }
-                }, getModel().getHash()),
+                }),
                 true, false);
     }
 

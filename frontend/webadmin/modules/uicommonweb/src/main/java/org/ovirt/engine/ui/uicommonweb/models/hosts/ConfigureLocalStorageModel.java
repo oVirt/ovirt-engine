@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,14 +11,11 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ListUtils;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -38,7 +34,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 
-@SuppressWarnings("unused")
 public class ConfigureLocalStorageModel extends Model implements HasValidatedTabs {
 
     private LocalStorageModel privateStorage;
@@ -111,8 +106,6 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
         privateCommonName = value;
     }
 
-    private final String frontendHash = getHashName() + new Date();
-
     public ConfigureLocalStorageModel() {
 
         setStorage(new LocalStorageModel());
@@ -125,17 +118,6 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
         getCluster().setIsNew(true);
 
         setFormattedStorageName(new EntityModel<String>());
-
-        // Subscribe to the Frontend events.
-        Frontend.getInstance().getQueryStartedEvent().addListener(this);
-        Frontend.getInstance().getQueryCompleteEvent().addListener(this);
-        Frontend.getInstance().subscribe(new VdcQueryType[] {
-                VdcQueryType.Search,
-                VdcQueryType.GetVdsGroupsByStoragePoolId,
-                VdcQueryType.GetAllVdsGroups,
-                VdcQueryType.GetVdsGroupById,
-                VdcQueryType.GetStoragePoolById,
-        });
 
         // Set the storage type to be Local.
         for (Boolean bool : getDataCenter().getStoragePoolType().getItems()) {
@@ -154,12 +136,6 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
 
         if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getDataCenter().getVersion()) {
             dataCenterVersion_SelectedItemChanged();
-        } else if (ev.matchesDefinition(Frontend.getInstance().getQueryStartedEventDefinition())
-                && ObjectUtils.objectsEqual(Frontend.getInstance().getCurrentContext(), frontendHash)) {
-            frontend_QueryStarted();
-        } else if (ev.matchesDefinition(Frontend.getInstance().getQueryCompleteEventDefinition())
-                && ObjectUtils.objectsEqual(Frontend.getInstance().getCurrentContext(), frontendHash)) {
-            frontend_QueryComplete();
         }
     }
 
@@ -397,8 +373,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
                                                                                     context.storageList = (ArrayList<StorageDomain>) returnValue;
                                                                                     setDefaultNames8();
                                                                                 }
-                                                                            },
-                                                                            frontendHash));
+                                                                            }));
     }
 
     public void setDefaultNames6() {
@@ -433,9 +408,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
                         context.clusterListByDataCenterMap.put(item, (ArrayList<VDSGroup>) value);
                         return false;
                     }
-                },
-                frontendHash
-                );
+                });
     }
 
     public void setDefaultNames5() {
@@ -470,15 +443,13 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
                         context.localStorageHostByDataCenterMap.put(item, (VDS) value);
                         return false;
                     }
-                },
-                frontendHash
-                );
+                });
     }
 
     public void setDefaultNames4() {
 
         // Get data centers containing 'local' in name.
-        AsyncDataProvider.getInstance().getDataCenterListByName(new AsyncQuery(null,
+        AsyncDataProvider.getInstance().getDataCenterListByName(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -486,8 +457,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
                         context.dataCenterList = (ArrayList<StoragePool>) returnValue;
                         setDefaultNames5();
                     }
-                },
-                frontendHash),
+                }),
                 getCommonName() + "*"); //$NON-NLS-1$
     }
 
@@ -502,8 +472,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
                                                                               context.clusterList = (ArrayList<VDSGroup>) returnValue;
                                                                               setDefaultNames4();
                                                                           }
-                                                                      },
-                                                                      frontendHash));
+                                                                      }));
     }
 
     public void setDefaultNames2() {
@@ -520,8 +489,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
                             context.hostCluster = (VDSGroup) returnValue;
                             setDefaultNames3();
                         }
-                    },
-                    frontendHash),
+                    }),
                     host.getVdsGroupId());
         } else {
             setDefaultNames3();
@@ -542,8 +510,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
                             context.hostDataCenter = (StoragePool) returnValue;
                             setDefaultNames2();
                         }
-                    },
-                    frontendHash),
+                    }),
                     host.getStoragePoolId());
         } else {
             setDefaultNames2();
@@ -598,22 +565,6 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
         }
 
         return commonName;
-    }
-
-    private int queryCounter;
-
-    private void frontend_QueryStarted() {
-        queryCounter++;
-        if (getProgress() == null) {
-            startProgress(null);
-        }
-    }
-
-    private void frontend_QueryComplete() {
-        queryCounter--;
-        if (queryCounter == 0) {
-            stopProgress();
-        }
     }
 
     private final Context context = new Context();

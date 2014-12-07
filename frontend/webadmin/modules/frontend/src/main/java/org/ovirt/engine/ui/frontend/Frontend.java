@@ -3,10 +3,8 @@ package org.ovirt.engine.ui.frontend;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,7 +29,6 @@ import org.ovirt.engine.ui.frontend.communication.VdcOperationManager;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
@@ -113,32 +110,6 @@ public class Frontend implements HasHandlers {
     private FrontendLoginHandler loginHandler;
 
     /**
-     * The set of query types others are subscribed to.
-     */
-    private final Set<VdcQueryType> subscribedQueryTypes = new HashSet<VdcQueryType>();
-
-    /**
-     * The query start event definition.
-     */
-    private final EventDefinition queryStartedEventDefinition = new EventDefinition("QueryStarted", //$NON-NLS-1$
-            Frontend.class);
-
-    /**
-     * The query start event.
-     */
-    Event<EventArgs> queryStartedEvent = new Event<EventArgs>(queryStartedEventDefinition);
-
-    /**
-     * The query complete event definition.
-     */
-    private final EventDefinition queryCompleteEventDefinition = new EventDefinition("QueryComplete", //$NON-NLS-1$
-            Frontend.class);
-    /**
-     * The query complete event.
-     */
-    Event<EventArgs> queryCompleteEvent = new Event<EventArgs>(queryCompleteEventDefinition);
-
-    /**
      * The {@code frontendFailureEvent} event.
      */
     Event<FrontendFailureEventArgs> frontendFailureEvent = new Event<FrontendFailureEventArgs>("FrontendFailure", Frontend.class); //$NON-NLS-1$
@@ -147,11 +118,6 @@ public class Frontend implements HasHandlers {
      * The {@code frontendNotLoggedInEvent} event.
      */
     Event<EventArgs> frontendNotLoggedInEvent = new Event<EventArgs>("NotLoggedIn", Frontend.class); //$NON-NLS-1$
-
-    /**
-     * The context the current operation is run against.
-     */
-    private Object currentContext;
 
     /**
      * The currently logged in user.
@@ -288,7 +254,6 @@ public class Frontend implements HasHandlers {
                     }
                 } finally {
                     fireAsyncOperationCompleteEvent(callback.getModel());
-                    raiseQueryCompleteEvent(queryType, callback.getContext());
                 }
             }
 
@@ -307,13 +272,11 @@ public class Frontend implements HasHandlers {
                     }
                 } finally {
                     fireAsyncOperationCompleteEvent(callback.getModel());
-                    raiseQueryCompleteEvent(queryType, callback.getContext());
                 }
             }
         });
 
         // raise the query started event.
-        raiseQueryStartedEvent(queryType, callback.getContext());
         fireAsyncOperationStartedEvent(callback.getModel());
         if (isPublic) {
             getOperationManager().addPublicOperation(operation);
@@ -368,7 +331,6 @@ public class Frontend implements HasHandlers {
                         new FrontendMultipleQueryAsyncResult(queryTypeList, queryParamsList, resultObject);
                 callback.executed(f);
                 fireAsyncOperationCompleteEvent(state);
-                raiseQueryCompleteEvent(queryTypeList, state);
             }
 
             @Override
@@ -385,7 +347,6 @@ public class Frontend implements HasHandlers {
                     callback.executed(f);
                 } finally {
                     fireAsyncOperationCompleteEvent(state);
-                    raiseQueryCompleteEvent(queryTypeList, state);
                 }
             }
         };
@@ -399,7 +360,6 @@ public class Frontend implements HasHandlers {
                     parameters, true, multiCallback));
         }
 
-        raiseQueryStartedEvent(queryTypeList, state);
         fireAsyncOperationStartedEvent(state);
         getOperationManager().addOperationList(operationList);
     }
@@ -986,14 +946,6 @@ public class Frontend implements HasHandlers {
         }
     }
 
-    /**
-     * Get the current context.
-     * @return The current context
-     */
-    public Object getCurrentContext() {
-        return currentContext;
-    }
-
     @Override
     public void fireEvent(GwtEvent<?> event) {
         eventBus.fireEvent(event);
@@ -1005,63 +957,6 @@ public class Frontend implements HasHandlers {
 
     private void fireAsyncOperationCompleteEvent(Object target) {
         AsyncOperationCompleteEvent.fire(this, target);
-    }
-
-    /**
-     * Raise a query event.
-     * @param queryEvent The event to raise.
-     * @param queryType The query type of the event.
-     * @param context The context.
-     */
-    private void raiseQueryEvent(final Event queryEvent, final VdcQueryType queryType, final Object context) {
-        if (context != null && subscribedQueryTypes != null) {
-            for (VdcQueryType vdcQueryType : subscribedQueryTypes) {
-                if (queryType.equals(vdcQueryType)) {
-                    currentContext = context;
-                    queryEvent.raise(Frontend.class, EventArgs.EMPTY);
-                }
-            }
-        }
-    }
-
-    /**
-     * Raise the query started event.
-     * @param queryType The type of query.
-     * @param context The context in which the query is executed.
-     */
-    private void raiseQueryStartedEvent(final VdcQueryType queryType, final Object context) {
-        raiseQueryEvent(getQueryStartedEvent(), queryType, context);
-    }
-
-    /**
-     * Raise the query started event. for a list of events.
-     * @param queryTypeList A list of query types.
-     * @param context The context in which the query is executed.
-     */
-    private void raiseQueryStartedEvent(final List<VdcQueryType> queryTypeList, final Object context) {
-        for (VdcQueryType queryType : queryTypeList) {
-            raiseQueryStartedEvent(queryType, context);
-        }
-    }
-
-    /**
-     * Raise the query complete event.
-     * @param queryType The type of query.
-     * @param context The context in which the query was completed.
-     */
-    private void raiseQueryCompleteEvent(final VdcQueryType queryType, final Object context) {
-        raiseQueryEvent(getQueryCompleteEvent(), queryType, context);
-    }
-
-    /**
-     * Raise the query complete event for a list of events.
-     * @param queryTypeList A list of query types.
-     * @param context The context in which the query was completed.
-     */
-    private void raiseQueryCompleteEvent(final List<VdcQueryType> queryTypeList, final Object context) {
-        for (VdcQueryType queryType : queryTypeList) {
-            raiseQueryCompleteEvent(queryType, context);
-        }
     }
 
     /**
@@ -1091,50 +986,6 @@ public class Frontend implements HasHandlers {
     }
 
     /**
-     * Subscribed to query types. Clear any existing types.
-     * @param queryTypes An array of query types to subscribe to.
-     */
-    public void subscribe(final VdcQueryType[] queryTypes) {
-        subscribedQueryTypes.clear();
-        Collections.addAll(subscribedQueryTypes, queryTypes);
-    }
-
-    /**
-     * Subscribe to additional query types, keep existing types.
-     * @param queryTypes An array of query types to subscribe to.
-     */
-    public void subscribeAdditionalQueries(final VdcQueryType[] queryTypes) {
-        Collections.addAll(subscribedQueryTypes, queryTypes);
-    }
-
-    /**
-     * Un-subscribe all query types.
-     */
-    public void unsubscribe() {
-        subscribedQueryTypes.clear();
-        currentContext = null;
-
-        queryStartedEvent.getListeners().clear();
-        queryCompleteEvent.getListeners().clear();
-    }
-
-    /**
-     * Getter for the query started event.
-     * @return An {@code Event<EventArgs>} defining the query started event.
-     */
-    public Event<EventArgs> getQueryStartedEvent() {
-        return queryStartedEvent;
-    }
-
-    /**
-     * Getter for the query completed event.
-     * @return An {@code Event<EventArgs>} defining the query complete event.
-     */
-    public Event<EventArgs> getQueryCompleteEvent() {
-        return queryCompleteEvent;
-    }
-
-    /**
      * Check if we should ignore the passed in {@code Throwable}.
      * @param caught The {@code Throwable} to check.
      * @return {@code true} if the {@code Throwable} should be ignore, false otherwise.
@@ -1146,22 +997,6 @@ public class Frontend implements HasHandlers {
             return true;
         }
         return false;
-    }
-
-    /**
-     * Getter for queryStartedEventDefinition.
-     * @return an {@code EventDefinition} defining the query start event.
-     */
-    public EventDefinition getQueryStartedEventDefinition() {
-        return queryStartedEventDefinition;
-    }
-
-    /**
-     * Getter for queryCompleteEventDefinition.
-     * @return an {@code EventDefinition} defining the query complete event.
-     */
-    public EventDefinition getQueryCompleteEventDefinition() {
-        return queryCompleteEventDefinition;
     }
 
     /**

@@ -39,7 +39,7 @@ public class AsyncIteratorCallback<T> {
         notifyEventDefinition = new EventDefinition("Notify", AsyncIteratorCallback.class); //$NON-NLS-1$
     }
 
-    public AsyncIteratorCallback(String frontendContext) {
+    public AsyncIteratorCallback() {
 
         setNotifyEvent(new Event<ValueEventArgs<T>>(notifyEventDefinition));
 
@@ -50,7 +50,6 @@ public class AsyncIteratorCallback<T> {
                     public void onSuccess(Object target, Object returnValue) {
                         notifyEvent.raise(this, new ValueEventArgs<T>((T) returnValue));
                     }
-                },
-                frontendContext));
+                }));
     }
 }

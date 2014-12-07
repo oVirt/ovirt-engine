@@ -43,7 +43,7 @@ public class UserPortalNewTemplateVmModelBehavior extends NewTemplateVmModelBeha
                 new ArrayList<VdcQueryParametersBase>(Arrays.asList(new VdcQueryParametersBase[] {
                         getEntitiesWithPermittedActionParameters }));
 
-        Frontend.getInstance().runMultipleQueries(queryTypeList, parametersList, this, getModel().getHash());
+        Frontend.getInstance().runMultipleQueries(queryTypeList, parametersList, this, getModel());
     }
 
     @Override

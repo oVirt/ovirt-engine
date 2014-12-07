@@ -9,11 +9,10 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
-import org.ovirt.engine.ui.uicommonweb.junit.UiCommonSetup.Mocks;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.junit.UiCommonSetup.Mocks;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Enums;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
@@ -151,9 +150,6 @@ class Env {
         when(constantsManager.getConstants()).thenReturn(uiConstants);
         when(constantsManager.getMessages()).thenReturn(uiMessages);
         when(constantsManager.getEnums()).thenReturn(enums);
-
-        // Convenience mocks that can be replaced if needed
-        when(frontend.getQueryCompleteEvent()).thenReturn(mock(Event.class));
     }
 
     void update(boolean init) {

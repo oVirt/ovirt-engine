@@ -70,7 +70,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
 
             }
-        }, getModel().getHash()), true, false);
+        }), true, false);
 
         getModel().getSpiceProxyEnabled().setEntity(false);
         getModel().getSpiceProxy().setIsChangable(false);
@@ -98,7 +98,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                         initCdImage();
                         getPoolModelBehaviorInitializedEvent().raise(this, EventArgs.EMPTY);
                     }
-                }, getModel().getHash()),
+                }),
                 true, false);
     }
 

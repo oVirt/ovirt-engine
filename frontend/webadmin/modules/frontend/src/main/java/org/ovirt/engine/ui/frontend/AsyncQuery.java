@@ -20,7 +20,6 @@ public class AsyncQuery {
     private boolean handleFailure;
     public VdcQueryReturnValue originalReturnValue;
     public Object[] data;
-    private String context;
 
     public AsyncQuery() {
         this.asyncCallback = EMPTY_CALLBACK;
@@ -41,12 +40,6 @@ public class AsyncQuery {
         this.handleFailure = handleFailure;
     }
 
-    public AsyncQuery(Object target, INewAsyncCallback asyncCallback, String context) {
-        setModel(target);
-        this.asyncCallback = asyncCallback;
-        this.context = context;
-    }
-
     public Object[] getData() {
         return data;
     }
@@ -61,14 +54,6 @@ public class AsyncQuery {
 
     public void setOriginalReturnValue(VdcQueryReturnValue originalReturnValue) {
         this.originalReturnValue = originalReturnValue;
-    }
-
-    public String getContext() {
-        return context;
-    }
-
-    public void setContext(String context) {
-        this.context = context;
     }
 
     public boolean isHandleFailure() {

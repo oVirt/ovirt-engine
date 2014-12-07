@@ -55,7 +55,7 @@ public class AttachDiskModel extends NewDiskModel {
                 getAttachableDisksMap().get(DiskStorageType.IMAGE).setItems(Linq.toEntityModelList(
                         Linq.filterDisksByType(diskModels, Disk.DiskStorageType.IMAGE)));
             }
-        }, getHash()), getVm().getStoragePoolId(), getVm().getId());
+        }), getVm().getStoragePoolId(), getVm().getId());
 
         // Get external attachable disks
         AsyncDataProvider.getInstance().getAllAttachableDisks(new AsyncQuery(this, new INewAsyncCallback() {
@@ -68,7 +68,7 @@ public class AttachDiskModel extends NewDiskModel {
                 getAttachableDisksMap().get(DiskStorageType.LUN).setItems(Linq.toEntityModelList(
                         Linq.filterDisksByType(diskModels, Disk.DiskStorageType.LUN)));
             }
-        }, getHash()), null, getVm().getId());
+        }), null, getVm().getId());
     }
 
     @Override

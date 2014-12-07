@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
@@ -20,13 +19,10 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -170,18 +166,6 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
         privateAvailableStorageItems = value;
     }
 
-    private String privateHash;
-
-    public String getHash()
-    {
-        return privateHash;
-    }
-
-    public void setHash(String value)
-    {
-        privateHash = value;
-    }
-
     private EntityModel<Boolean> activateDomain;
 
     public EntityModel<Boolean> getActivateDomain() {
@@ -196,15 +180,6 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
     {
         this.behavior = behavior;
         this.behavior.setModel(this);
-
-        Frontend.getInstance().getQueryStartedEvent().addListener(this);
-        Frontend.getInstance().getQueryCompleteEvent().addListener(this);
-        Frontend.getInstance().subscribeAdditionalQueries(new VdcQueryType[] {VdcQueryType.Search,
-                VdcQueryType.GetConfigurationValue, VdcQueryType.GetStoragePoolsByStorageDomainId,
-                VdcQueryType.GetStorageDomainsByStoragePoolId, VdcQueryType.GetLunsByVgId,
-                VdcQueryType.GetAllVdsByStoragePool, VdcQueryType.DiscoverSendTargets, VdcQueryType.GetDeviceList,
-                VdcQueryType.GetExistingStorageDomainList, VdcQueryType.GetHostsForStorageOperation,
-                VdcQueryType.GetUnregisteredBlockStorageDomains });
 
         setName(new EntityModel<String>());
         setDescription(new EntityModel<String>());
@@ -228,8 +203,6 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
     {
         super.initialize();
 
-        setHash(getHashName() + new Date());
-        behavior.setHash(getHash());
         behavior.initialize();
 
         initDataCenter();
@@ -262,36 +235,6 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
         else if (ev.matchesDefinition(NfsStorageModel.pathChangedEventDefinition))
         {
             nfsStorageModel_PathChanged(sender, args);
-        }
-        else if (ev.matchesDefinition(Frontend.getInstance().getQueryStartedEventDefinition())
-                && ObjectUtils.objectsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
-        {
-            frontend_QueryStarted();
-        }
-        else if (ev.matchesDefinition(Frontend.getInstance().getQueryCompleteEventDefinition())
-                && ObjectUtils.objectsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
-        {
-            frontend_QueryComplete();
-        }
-    }
-
-    private int queryCounter;
-
-    public void frontend_QueryStarted()
-    {
-        queryCounter++;
-        if (getProgress() == null)
-        {
-            startProgress(null);
-        }
-    }
-
-    public void frontend_QueryComplete()
-    {
-        queryCounter--;
-        if (queryCounter == 0)
-        {
-            stopProgress();
         }
     }
 
@@ -357,7 +300,6 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
             if (getSelectedItem() instanceof SanStorageModelBase)
             {
                 SanStorageModelBase sanStorageModel = (SanStorageModelBase) getSelectedItem();
-                sanStorageModel.setHash(getHash());
 
                 if (getStorage() == null) {
                     sanStorageModel.setItems(null);
@@ -436,14 +378,13 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
             // -> fill DataCenters drop-down with all possible Data-Centers, choose the empty one:
             // [TODO: In case of an Unattached SD, choose only DCs of the same type]
             {
-                AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(new Object[] {this, behavior},
+                AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(this,
                                                                                  new INewAsyncCallback() {
                                                                                      @Override
                                                                                      public void onSuccess(Object target, Object returnValue) {
 
-                                                                                         Object[] array = (Object[]) target;
-                                                                                         StorageModel storageModel = (StorageModel) array[0];
-                                                                                         StorageModelBehavior storageModelBehavior = (StorageModelBehavior) array[1];
+                                                                                         StorageModel storageModel = (StorageModel) target;
+                                                                                         StorageModelBehavior storageModelBehavior = behavior;
                                                                                          List<StoragePool> dataCenters =
                                                                                                  (ArrayList<StoragePool>) returnValue;
                                                                                          dataCenters = storageModelBehavior.filterDataCenter(dataCenters);
@@ -462,7 +403,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
                                                                                          }
 
                                                                                      }
-                                                                                 }, getHash()));
+                                                                                 }));
             }
 
             else // "Edit Storage" mode:
@@ -489,8 +430,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
                                 storageModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters));
 
                             }
-                        },
-                        getHash()),
+                        }),
                         getStorage().getId());
             }
         }
@@ -528,7 +468,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
                 Collection<VDS> hosts = (Collection<VDS>) returnValue;
                 storageModel.postUpdateHost(hosts);
             }
-        }, getHash()), dataCenterId, localFsOnly);
+        }), dataCenterId, localFsOnly);
     }
 
     public void postUpdateHost(Collection<VDS> hosts)

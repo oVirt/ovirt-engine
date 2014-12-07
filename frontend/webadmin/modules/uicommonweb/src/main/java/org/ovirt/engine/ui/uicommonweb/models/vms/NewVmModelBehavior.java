@@ -65,13 +65,13 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
                                             initCdImage();
 
                                         }
-                                    }, getModel().getHash()),
+                                    }),
                                     true, false);
                         } else {
                             getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoUpDC());
                         }
                     }
-                }, getModel().getHash()),
+                }),
                 true,
                 false);
 
@@ -244,16 +244,14 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
         // Filter according to system tree selection.
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage)
         {
-            StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
+            final StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
 
-            AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(new Object[] { this, storage },
+            AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(getModel(),
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target1, Object returnValue1) {
 
-                            Object[] array1 = (Object[]) target1;
-                            NewVmModelBehavior behavior1 = (NewVmModelBehavior) array1[0];
-                            StorageDomain storage1 = (StorageDomain) array1[1];
+                            NewVmModelBehavior behavior1 = NewVmModelBehavior.this;
                             AsyncDataProvider.getInstance().getTemplateListByStorage(new AsyncQuery(new Object[] { behavior1,
                                     returnValue1 },
                                     new INewAsyncCallback() {
@@ -279,20 +277,20 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
 
                                         }
                                     }),
-                                    storage1.getId());
+                                    storage.getId());
 
                         }
-                    }, getModel().getHash()),
+                    }),
                     dataCenter.getId());
         }
         else
         {
-            AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(this,
+            AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(getModel(),
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
 
-                            NewVmModelBehavior behavior = (NewVmModelBehavior) target;
+                            NewVmModelBehavior behavior = NewVmModelBehavior.this;
 
                             List<VmTemplate> templates = (List<VmTemplate>) returnValue;
 
@@ -300,7 +298,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
                                     dataCenterWithCluster.getCluster().getArchitecture()));
 
                         }
-                    }, getModel().getHash()), dataCenter.getId());
+                    }), dataCenter.getId());
         }
     }
 

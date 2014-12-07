@@ -45,7 +45,6 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-@SuppressWarnings("unused")
 public class VmDiskListModel extends VmDiskListModelBase
 {
 
@@ -403,7 +402,6 @@ public class VmDiskListModel extends VmDiskListModelBase
             return;
         }
 
-        boolean hasSystemDiskWarning = false;
         RemoveDiskModel model = new RemoveDiskModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeDisksTitle());
@@ -586,7 +584,6 @@ public class VmDiskListModel extends VmDiskListModelBase
     private void cancel()
     {
         setWindow(null);
-        Frontend.getInstance().unsubscribe();
     }
 
     @Override

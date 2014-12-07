@@ -53,7 +53,7 @@ public abstract class ImportSanStorageModel extends SanStorageModel {
 
         Frontend.getInstance().runQuery(VdcQueryType.GetUnregisteredBlockStorageDomains,
                 new GetUnregisteredBlockStorageDomainsParameters(vds.getId(), getType(), connections),
-                new AsyncQuery(this, new INewAsyncCallback() {
+                new AsyncQuery(getContainer(), new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
                         VdcQueryReturnValue vdcQueryReturnValue = (VdcQueryReturnValue) returnValue;
@@ -71,7 +71,7 @@ public abstract class ImportSanStorageModel extends SanStorageModel {
 
                         postGetUnregisteredStorageDomains(storageDomains, connections);
                     }
-                }, getContainer().getHash()));
+                }));
     }
 
     @Override

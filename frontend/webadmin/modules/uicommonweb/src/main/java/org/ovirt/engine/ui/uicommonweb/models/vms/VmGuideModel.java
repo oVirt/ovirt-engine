@@ -5,7 +5,6 @@ import java.util.Collection;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -102,7 +101,6 @@ public class VmGuideModel extends GuideModel
     public void cancel()
     {
         setWindow(null);
-        Frontend.getInstance().unsubscribe();
     }
 
     @Override

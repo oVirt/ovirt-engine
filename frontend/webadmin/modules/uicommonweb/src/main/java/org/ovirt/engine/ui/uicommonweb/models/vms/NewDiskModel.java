@@ -60,7 +60,7 @@ public class NewDiskModel extends AbstractDiskModel
                 DiskModel diskModel = (DiskModel) model;
                 diskModel.getAlias().setEntity(suggestedDiskAlias);
             }
-        }, getHash()), getVm().getId());
+        }), getVm().getId());
     }
 
     @Override

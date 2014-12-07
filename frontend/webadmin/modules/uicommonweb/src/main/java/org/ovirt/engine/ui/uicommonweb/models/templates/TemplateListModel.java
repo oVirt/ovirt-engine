@@ -702,8 +702,6 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
     private void cancel()
     {
-        Frontend.getInstance().unsubscribe();
-
         cancelConfirmation();
 
         setWindow(null);

@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -103,7 +103,6 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel {
 
     protected void cancel()
     {
-        Frontend.getInstance().unsubscribe();
         setWindow(null);
         setConfirmWindow(null);
     }

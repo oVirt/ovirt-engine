@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
@@ -34,7 +33,6 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-@SuppressWarnings("unused")
 public abstract class SanStorageModelBase extends SearchableListModel implements IStorageModel
 {
 
@@ -247,28 +245,12 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         }
     }
 
-    private String privateHash;
-
-    public String getHash()
-    {
-        return privateHash;
-    }
-
-    public void setHash(String value)
-    {
-        privateHash = value;
-    }
-
     private ArrayList<SanTargetModel> targetsToConnect;
 
     protected SanStorageModelBase()
     {
-        Frontend.getInstance().getQueryStartedEvent().addListener(this);
-        Frontend.getInstance().getQueryCompleteEvent().addListener(this);
-
         setHelpTag(HelpTag.SanStorageModelBase);
         setHashName("SanStorageModelBase"); //$NON-NLS-1$
-        setHash(getHashName() + new Date());
 
         setUpdateCommand(new UICommand("Update", this)); //$NON-NLS-1$
         UICommand tempVar = new UICommand("Login", this); //$NON-NLS-1$
@@ -302,36 +284,6 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         else if (ev.matchesDefinition(entityChangedEventDefinition))
         {
             useUserAuth_EntityChanged(sender, args);
-        }
-        else if (ev.matchesDefinition(Frontend.getInstance().getQueryStartedEventDefinition())
-                && ObjectUtils.objectsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
-        {
-            frontend_QueryStarted();
-        }
-        else if (ev.matchesDefinition(Frontend.getInstance().getQueryCompleteEventDefinition())
-                && ObjectUtils.objectsEqual(Frontend.getInstance().getCurrentContext(), getHash()))
-        {
-            frontend_QueryComplete();
-        }
-    }
-
-    private int queryCounter;
-
-    private void frontend_QueryStarted()
-    {
-        queryCounter++;
-        if (getProgress() == null)
-        {
-            startProgress(null);
-        }
-    }
-
-    private void frontend_QueryComplete()
-    {
-        queryCounter--;
-        if (queryCounter == 0)
-        {
-            stopProgress();
         }
     }
 
@@ -451,7 +403,6 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
                         : new ArrayList<StorageServerConnections>());
             }
         }, true);
-        asyncQuery.setContext(getHash());
         Frontend.getInstance().runQuery(VdcQueryType.DiscoverSendTargets, parameters, asyncQuery);
     }
 

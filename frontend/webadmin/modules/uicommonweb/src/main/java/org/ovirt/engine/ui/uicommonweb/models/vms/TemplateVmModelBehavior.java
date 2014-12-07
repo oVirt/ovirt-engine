@@ -88,12 +88,11 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                                                         }
                                                     }), template.getId());
                                         }
-                                    }, getModel().getHash()),
+                                    }),
                                     true,
                                     false);
                         }
-                    },
-                    getModel().getHash()),
+                    }),
                     template.getStoragePoolId());
         }
 
