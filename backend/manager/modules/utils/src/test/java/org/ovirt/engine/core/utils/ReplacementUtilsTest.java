@@ -62,6 +62,69 @@ public class ReplacementUtilsTest {
         validateReplacementsDoNotContainUnexpectedItems(replacements, items);
     }
 
+    @Test
+    public void containLowerThanDefaultNumberOfElements() {
+        List<Object> items = createItems();
+        String separator = "sep";
+
+        // Less than the default number of elements to show.
+        int numOfElementsToShow = 3;
+        Collection<String> replacements = ReplacementUtils.replaceWith(PROPERTY_NAME, items, separator , numOfElementsToShow);
+        assertTrue(validateReplacementElementCount(replacements, separator,  numOfElementsToShow));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void separatorNotEmpty() {
+        List<Object> items = createItems();
+        String separator = "";
+        ReplacementUtils.replaceWith(PROPERTY_NAME, items, separator , 5);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void separatorNotNull() {
+        List<Object> items = createItems();
+        String separator = null;
+        ReplacementUtils.replaceWith(PROPERTY_NAME, items, separator, 5);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failZeroValuesToShow() {
+        List<Object> items = createItems();
+        String separator = ", ";
+        ReplacementUtils.replaceWith(PROPERTY_NAME, items, separator , 0);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void failNegativeNumOfValuesToShow() {
+        List<Object> items = createItems();
+        String separator = ", ";
+        ReplacementUtils.replaceWith(PROPERTY_NAME, items, separator , -5);
+    }
+
+    @Test
+    public void containBiggerThanDefaultNumberOfElements() {
+        List<Object> items = createItems();
+        String separator = "sep";
+
+        // More than the default number of elements to show.
+        int numOfElementsToShow = 8;
+        Collection<String> replacements = ReplacementUtils.replaceWith(PROPERTY_NAME, items, separator , numOfElementsToShow);
+        assertTrue(validateReplacementElementCount(replacements, separator,  numOfElementsToShow));
+    }
+
+    private boolean validateReplacementElementCount(Collection<String> replacements, String separator, int numOfElementsToShow) {
+        String replacement = replacements.iterator().next();
+        String[] values = replacement.split(separator);
+        int numOfElementsFound = 0;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i].contains( PROPERTY_NAME )) {
+                numOfElementsFound++;
+            }
+        }
+
+        return (numOfElementsFound == numOfElementsToShow);
+    }
+
     private <T> void validateReplacementsContainsExpectedProperties(Collection<String> replacements, List<T> items) {
         assertNotNull(replacements);
         assertEquals(2, replacements.size());
@@ -90,16 +153,16 @@ public class ReplacementUtilsTest {
         Iterator<String> iterator = replacements.iterator();
         while (iterator.hasNext()) {
             String replacement = iterator.next();
-            for (int i = ReplacementUtils.MAX_NUMBER_OF_PRINTED_ITEMS; i < items.size(); i++) {
+            for (int i = ReplacementUtils.DEFAULT_MAX_NUMBER_OF_PRINTED_ITEMS; i < items.size(); i++) {
                 assertFalse(replacement.contains(buildPropertyValue(i)));
             }
         }
     }
 
     private List<Object> createItems() {
-        List<Object> items = new ArrayList<Object>(ReplacementUtils.MAX_NUMBER_OF_PRINTED_ITEMS * 2);
+        List<Object> items = new ArrayList<Object>(ReplacementUtils.DEFAULT_MAX_NUMBER_OF_PRINTED_ITEMS* 2);
 
-        for (int i = 0; i < ReplacementUtils.MAX_NUMBER_OF_PRINTED_ITEMS * 2; i++) {
+        for (int i = 0; i < ReplacementUtils.DEFAULT_MAX_NUMBER_OF_PRINTED_ITEMS * 2; i++) {
             items.add(buildPropertyValue(i));
         }
 
