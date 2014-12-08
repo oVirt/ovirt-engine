@@ -53,6 +53,7 @@ public class HostSetupNetworksValidator {
     private List<VdsNetworkInterface> removedBondVdsNetworkInterface;
     private BusinessEntityMap<VdsNetworkInterface> removedBondVdsNetworkInterfaceMap;
     private List<NetworkAttachment> removedNetworkAttachments;
+    private final Map<Guid, NetworkAttachment> attachmentsById;
 
     public HostSetupNetworksValidator(VDS host,
         HostSetupNetworksParameters params,
@@ -77,6 +78,8 @@ public class HostSetupNetworksValidator {
             existingAttachments);
 
         setSupportedFeatures();
+
+        attachmentsById = Entities.businessEntitiesById(existingAttachments);
     }
 
     private void setSupportedFeatures() {
@@ -89,12 +92,11 @@ public class HostSetupNetworksValidator {
     }
 
     public ValidationResult validate() {
-        Map<Guid, NetworkAttachment> attachmentsById = Entities.businessEntitiesById(existingAttachments);
         Collection<NetworkAttachment> attachmentsToConfigure = getAttachmentsToConfigure();
 
         ValidationResult vr = ValidationResult.VALID;
-        vr = skipValidation(vr) ? vr : validNewOrModifiedNetworkAttachments(attachmentsById);
-        vr = skipValidation(vr) ? vr : validRemovedNetworkAttachments(attachmentsById);
+        vr = skipValidation(vr) ? vr : validNewOrModifiedNetworkAttachments();
+        vr = skipValidation(vr) ? vr : validRemovedNetworkAttachments();
         vr = skipValidation(vr) ? vr : validNewOrModifiedBonds();
         vr = skipValidation(vr) ? vr : validRemovedBonds();
         vr = skipValidation(vr) ? vr : attachmentsDontReferenceSameNetworkDuplicately(attachmentsToConfigure);
@@ -341,7 +343,7 @@ public class HostSetupNetworksValidator {
         return false;
     }
 
-    private ValidationResult validNewOrModifiedNetworkAttachments(Map<Guid, NetworkAttachment> attachmentsById) {
+    private ValidationResult validNewOrModifiedNetworkAttachments() {
         ValidationResult vr = ValidationResult.VALID;
 
         Iterator<NetworkAttachment> iterator = params.getNetworkAttachments().iterator();
@@ -384,9 +386,8 @@ public class HostSetupNetworksValidator {
         return new ValidationResult(VdcBllMessages.NETWORK_ATTACHMENT_NOT_EXISTS);
     }
 
-    private ValidationResult validRemovedNetworkAttachments(Map<Guid, NetworkAttachment> attachmentsById) {
-        List<Guid> invalidIds = Entities.idsNotReferencingExistingRecords(params.getRemovedNetworkAttachments(),
-            existingAttachments);
+    private ValidationResult validRemovedNetworkAttachments() {
+        List<Guid> invalidIds = Entities.idsNotReferencingExistingRecords(params.getRemovedNetworkAttachments(), existingAttachments);
         if (!invalidIds.isEmpty()) {
             return new ValidationResult(VdcBllMessages.NETWORK_ATTACHMENT_NOT_EXISTS, commaSeparated(invalidIds));
         }
