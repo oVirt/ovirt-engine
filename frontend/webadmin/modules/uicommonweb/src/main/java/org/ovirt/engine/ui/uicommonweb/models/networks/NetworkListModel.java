@@ -161,8 +161,6 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
     }
 
     private void initDcList(final NetworkModel networkModel) {
-        networkModel.startProgress(null);
-
         SystemTreeItemModel treeSelectedDc = SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, getSystemTreeSelectedItem());
         if (treeSelectedDc != null) {
             StoragePool dc = (StoragePool) treeSelectedDc.getEntity();
@@ -174,7 +172,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         }
 
         // Get all data centers
-        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(NetworkListModel.this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(networkModel, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
@@ -189,7 +187,6 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
                 } else {
                     networkModel.getDataCenters().setSelectedItem(Linq.firstOrDefault(dataCenters));
                 }
-                networkModel.stopProgress();
             }
         }));
     }

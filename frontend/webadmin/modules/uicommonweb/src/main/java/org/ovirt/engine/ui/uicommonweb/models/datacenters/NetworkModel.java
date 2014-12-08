@@ -224,18 +224,14 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
     }
 
     private void initExternalProviderList() {
-        startProgress(null);
-        AsyncQuery getProvidersQuery = new AsyncQuery();
-        getProvidersQuery.asyncCallback = new INewAsyncCallback() {
+        AsyncQuery getProvidersQuery = new AsyncQuery(this, new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 List<Provider> providers = (List<Provider>) result;
                 getExternalProviders().setItems(providers);
                 selectExternalProvider();
-                stopProgress();
             }
-        };
+        });
         AsyncDataProvider.getInstance().getAllNetworkProviders(getProvidersQuery);
     }
 
@@ -760,16 +756,14 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
     }
 
     private void updateDcLabels() {
-        startProgress(null);
         AsyncDataProvider.getInstance().getNetworkLabelsByDataCenterId(getSelectedDc().getId(),
-                new AsyncQuery(new INewAsyncCallback() {
+                new AsyncQuery(this, new INewAsyncCallback() {
 
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
                         String label = getNetworkLabel().getSelectedItem();
                         getNetworkLabel().setItems((Collection<String>) returnValue);
                         getNetworkLabel().setSelectedItem(label);
-                        stopProgress();
                         onExportChanged();
                     }
                 }));
