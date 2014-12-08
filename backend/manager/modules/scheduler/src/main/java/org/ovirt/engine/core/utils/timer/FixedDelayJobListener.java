@@ -61,22 +61,22 @@ public class FixedDelayJobListener implements JobListener {
 
         // This is being called for all our jobs, so first check if this is a fixed delay
         // job and if not just exit:
-        if (!data.containsKey(SchedulerUtilQuartzImpl.FIXED_DELAY_VALUE)) {
+        if (!data.containsKey(SchedulerUtilBaseImpl.FIXED_DELAY_VALUE)) {
             return;
         }
 
         // generate the new trigger time
-        String configValueName = data.getString(SchedulerUtilQuartzImpl.CONFIGURABLE_DELAY_KEY_NAME);
+        String configValueName = data.getString(SchedulerUtilBaseImpl.CONFIGURABLE_DELAY_KEY_NAME);
         long delay;
 
         if (StringUtils.isEmpty(configValueName)) {
-            delay = data.getLongValue(SchedulerUtilQuartzImpl.FIXED_DELAY_VALUE);
+            delay = data.getLongValue(SchedulerUtilBaseImpl.FIXED_DELAY_VALUE);
         } else {
             ConfigValues configDelay = ConfigValues.valueOf(configValueName);
             delay = Config.<Integer> getValue(configDelay).longValue();
         }
 
-        TimeUnit delayUnit = (TimeUnit) data.getWrappedMap().get(SchedulerUtilQuartzImpl.FIXED_DELAY_TIME_UNIT);
+        TimeUnit delayUnit = (TimeUnit) data.getWrappedMap().get(SchedulerUtilBaseImpl.FIXED_DELAY_TIME_UNIT);
         Date runTime = SchedulerUtilQuartzImpl.getFutureDate(delay, delayUnit);
 
         // generate the new trigger

@@ -191,6 +191,13 @@ ENGINE_DB_MIN_CONNECTIONS=1
 ENGINE_DB_MAX_CONNECTIONS=100
 
 #
+# Size of the database connection pool for non-JTA
+# datasource used by Quartz
+#
+ENGINE_NON_JTA_DB_MIN_CONNECTIONS=1
+ENGINE_NON_JTA_DB_MAX_CONNECTIONS=10
+
+#
 # Timeout value in milliseconds for stop checking if database
 # connectivity is available (5 minutes at the moment):
 #
