@@ -250,10 +250,12 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         OvfLogEventHandler<VmStatic> handler = new VMStaticOvfLogHandler(vmStaticFromOvf);
         Map<String, String> aliasesValuesMap = handler.getAliasesValuesMap();
 
-        for (Map.Entry<String, String> entry : aliasesValuesMap.entrySet()) {
-            String fieldName = entry.getKey();
-            String fieldValue = entry.getValue();
-            logField(vmStaticFromOvf, fieldName, fieldValue);
+        if (aliasesValuesMap != null) {
+            for (Map.Entry<String, String> entry : aliasesValuesMap.entrySet()) {
+                String fieldName = entry.getKey();
+                String fieldValue = entry.getValue();
+                logField(vmStaticFromOvf, fieldName, fieldValue);
+            }
         }
 
         handler.resetDefaults(vmStaticForDefaultValues);
