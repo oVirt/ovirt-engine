@@ -122,10 +122,22 @@ public class FrontendTest {
 
     @After
     public void tearDown() throws Exception {
-        // Make sure that the query start and end have been called at least once.
+        // Make sure that the query start has been called at least once.
         // Some of the tests might call it more than once.
+        // Make sure that the action start and end have not been called.
         verify(mockEventBus, atLeastOnce()).fireEvent(new AsyncOperationStartedEvent(mockAsyncQuery.getModel()));
-        verify(mockEventBus, atLeastOnce()).fireEvent(new AsyncOperationCompleteEvent(mockAsyncQuery.getModel()));
+        verify(mockEventBus, never()).fireEvent(new AsyncOperationCompleteEvent(mockAsyncQuery.getModel(), true, true));
+        verify(mockEventBus, never()).fireEvent(new AsyncOperationCompleteEvent(mockAsyncQuery.getModel(), true, false));
+    }
+
+    private void verifyAsyncQuerySucceeded() {
+        verify(mockEventBus, atLeastOnce()).fireEvent(new AsyncOperationCompleteEvent(mockAsyncQuery.getModel(), false, true));
+        verify(mockEventBus, never()).fireEvent(new AsyncOperationCompleteEvent(mockAsyncQuery.getModel(), false, false));
+    }
+
+    private void verifyAsyncQueryFailed() {
+        verify(mockEventBus, never()).fireEvent(new AsyncOperationCompleteEvent(mockAsyncQuery.getModel(), false, true));
+        verify(mockEventBus, atLeastOnce()).fireEvent(new AsyncOperationCompleteEvent(mockAsyncQuery.getModel(), false, false));
     }
 
     /**
@@ -148,6 +160,7 @@ public class FrontendTest {
             // Call the failure handler.
             callback.getValue().onFailure(exception);
         }
+        verifyAsyncQueryFailed();
     }
 
     /**
@@ -172,6 +185,7 @@ public class FrontendTest {
             callback.getValue().onFailure(exception);
         }
         verify(mockEventsHandler).runQueryFailed(null);
+        verifyAsyncQueryFailed();
     }
 
     /**
@@ -200,6 +214,7 @@ public class FrontendTest {
         }
         verify(mockAsyncCallback).onSuccess(mockModel, null);
         verify(mockEventsHandler).runQueryFailed(null);
+        verifyAsyncQueryFailed();
     }
 
     /**
@@ -229,6 +244,7 @@ public class FrontendTest {
             callback.getValue().onFailure(exception);
         }
         verify(mockEventsHandler, atLeastOnce()).runQueryFailed(null);
+        verifyAsyncQueryFailed();
     }
 
     /**
@@ -258,6 +274,7 @@ public class FrontendTest {
             callback.getValue().onFailure(exception);
         }
         verify(mockEventsHandler, atLeastOnce()).runQueryFailed(null);
+        verifyAsyncQueryFailed();
     }
 
     /**
@@ -289,6 +306,7 @@ public class FrontendTest {
             callback.getValue().onFailure(exception);
         }
         verify(mockEventsHandler, atLeastOnce()).runQueryFailed(null);
+        verifyAsyncQueryFailed();
     }
 
     /**
@@ -313,6 +331,7 @@ public class FrontendTest {
         callback.getValue().onSuccess(mockReturnValue);
         // Make sure the not logged in event is never called, as the failure is not a USER_IS_NOT_LOGGED_IN
         verify(mockFrontendNotLoggedInEvent, never()).raise(Frontend.class, EventArgs.EMPTY);
+        verifyAsyncQuerySucceeded();
     }
 
     /**
@@ -337,6 +356,7 @@ public class FrontendTest {
         callback.getValue().onSuccess(mockReturnValue);
         // Make sure the not logged in event is called
         verify(mockFrontendNotLoggedInEvent).raise(Frontend.class, EventArgs.EMPTY);
+        verifyAsyncQuerySucceeded();
     }
 
     /**
@@ -366,6 +386,7 @@ public class FrontendTest {
         // Make sure the not logged in event is called
         verify(mockFrontendNotLoggedInEvent).raise(Frontend.class, EventArgs.EMPTY);
         verify(mockAsyncCallback).onSuccess(mockModel, mockReturnValue);
+        verifyAsyncQuerySucceeded();
     }
 
     /**
@@ -389,6 +410,7 @@ public class FrontendTest {
         callback.getValue().onSuccess(mockReturnValue);
         verify(mockAsyncQuery).setOriginalReturnValue(mockReturnValue);
         verify(mockAsyncCallback).onSuccess(mockModel, mockReturnValue);
+        verifyAsyncQuerySucceeded();
     }
 
     /**
@@ -420,6 +442,7 @@ public class FrontendTest {
         callback.getValue().onSuccess(mockReturnValue);
         verify(mockAsyncQuery).setOriginalReturnValue(mockReturnValue);
         verify(mockAsyncCallback).onSuccess(mockModel, mockConvertedModel);
+        verifyAsyncQuerySucceeded();
     }
 
     /**
@@ -447,6 +470,7 @@ public class FrontendTest {
         mockReturnValue.setSucceeded(true);
         callback.getValue().onSuccess(mockReturnValue);
         verify(mockAsyncCallback).onSuccess(mockModel, mockReturnValue);
+        verifyAsyncQuerySucceeded();
     }
 
     /**
@@ -474,6 +498,7 @@ public class FrontendTest {
             callbackMultipleQueries.getValue().onFailure(exception);
         }
         verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), any(FrontendFailureEventArgs.class));
+        verifyAsyncQueryFailed();
     }
 
     /**
@@ -507,6 +532,7 @@ public class FrontendTest {
             callbackMultipleQueries.getValue().onFailure(exception);
         }
         verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), any(FrontendFailureEventArgs.class));
+        verifyAsyncQueryFailed();
     }
 
     /**
@@ -547,6 +573,7 @@ public class FrontendTest {
         assertEquals("Message text didn't match", //$NON-NLS-1$
                 "A Request to the Server failed with the following Status Code: 404", //$NON-NLS-1$
                 eventArgs.getValue().getMessages().get(0).getText());
+        verifyAsyncQueryFailed();
     }
 
     /**
@@ -584,6 +611,7 @@ public class FrontendTest {
         verify(mockMultipleQueryCallback).executed(multipleResultCaptor.capture());
         assertEquals("callback result much match", result, //$NON-NLS-1$
                 multipleResultCaptor.getValue().getReturnValues());
+        verifyAsyncQuerySucceeded();
     }
 
     /**
@@ -620,6 +648,7 @@ public class FrontendTest {
         verify(mockMultipleQueryCallback).executed(multipleResultCaptor.capture());
         assertEquals("callback result much match", result, //$NON-NLS-1$
                 multipleResultCaptor.getValue().getReturnValues());
+        verifyAsyncQuerySucceeded();
     }
 
 }

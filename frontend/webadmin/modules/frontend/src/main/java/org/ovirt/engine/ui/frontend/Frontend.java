@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationCompleteEvent;
+import org.ovirt.engine.ui.frontend.communication.AsyncOperationCompleteEvent.AsyncOperationCompleteHandler;
 import org.ovirt.engine.ui.frontend.communication.AsyncOperationStartedEvent;
 import org.ovirt.engine.ui.frontend.communication.RefreshActiveModelEvent;
 import org.ovirt.engine.ui.frontend.communication.StorageCallback;
@@ -174,6 +175,16 @@ public class Frontend implements HasHandlers {
         this.canDoActionErrorsTranslator = canDoActionErrorsTranslator;
         this.vdsmErrorsTranslator = vdsmErrorsTranslator;
         eventBus = gwtEventBus;
+
+        eventBus.addHandler(AsyncOperationCompleteEvent.getType(), new AsyncOperationCompleteHandler() {
+
+            @Override
+            public void onAsyncOperationComplete(AsyncOperationCompleteEvent event) {
+                if (event.isAction() && event.isSuccess()) {
+                    RefreshActiveModelEvent.fire(Frontend.this, true);
+                }
+            }
+        });
     }
 
     /**
@@ -253,7 +264,7 @@ public class Frontend implements HasHandlers {
                         }
                     }
                 } finally {
-                    fireAsyncOperationCompleteEvent(callback.getModel());
+                    fireAsyncQuerySucceededEvent(callback.getModel());
                 }
             }
 
@@ -271,7 +282,7 @@ public class Frontend implements HasHandlers {
                         callback.getDel().onSuccess(callback.getModel(), null);
                     }
                 } finally {
-                    fireAsyncOperationCompleteEvent(callback.getModel());
+                    fireAsyncQueryFailedEvent(callback.getModel());
                 }
             }
         });
@@ -330,7 +341,7 @@ public class Frontend implements HasHandlers {
                 FrontendMultipleQueryAsyncResult f =
                         new FrontendMultipleQueryAsyncResult(queryTypeList, queryParamsList, resultObject);
                 callback.executed(f);
-                fireAsyncOperationCompleteEvent(state);
+                fireAsyncQuerySucceededEvent(state);
             }
 
             @Override
@@ -346,7 +357,7 @@ public class Frontend implements HasHandlers {
                     failureEventHandler(caught);
                     callback.executed(f);
                 } finally {
-                    fireAsyncOperationCompleteEvent(state);
+                    fireAsyncQueryFailedEvent(state);
                 }
             }
         };
@@ -432,8 +443,7 @@ public class Frontend implements HasHandlers {
                 logger.finer("Frontend: sucessfully executed runAction, determining result!"); //$NON-NLS-1$
                 handleActionResult(actionType, parameters, result,
                         callback != null ? callback : NULLABLE_ASYNC_CALLBACK, state, showErrorDialog);
-                fireAsyncOperationCompleteEvent(state);
-                RefreshActiveModelEvent.fire(Frontend.this, true);
+                fireAsyncActionSucceededEvent(state);
             }
 
             @Override
@@ -448,7 +458,7 @@ public class Frontend implements HasHandlers {
                 if (callback != null) {
                     callback.executed(f);
                 }
-                fireAsyncOperationCompleteEvent(state);
+                fireAsyncActionFailedEvent(state);
             }
         });
 
@@ -529,8 +539,7 @@ public class Frontend implements HasHandlers {
                     callback.executed(new FrontendMultipleActionAsyncResult(actionType,
                             parameters, resultObject, state));
                 }
-                fireAsyncOperationCompleteEvent(state);
-                RefreshActiveModelEvent.fire(Frontend.this, true);
+                fireAsyncActionSucceededEvent(state);
             }
 
             @Override
@@ -546,7 +555,7 @@ public class Frontend implements HasHandlers {
                     callback.executed(new FrontendMultipleActionAsyncResult(actionType, parameters, null,
                             state));
                 }
-                fireAsyncOperationCompleteEvent(state);
+                fireAsyncActionFailedEvent(state);
             }
         };
 
@@ -955,8 +964,20 @@ public class Frontend implements HasHandlers {
         AsyncOperationStartedEvent.fire(this, target);
     }
 
-    private void fireAsyncOperationCompleteEvent(Object target) {
-        AsyncOperationCompleteEvent.fire(this, target);
+    private void fireAsyncQuerySucceededEvent(Object target) {
+        AsyncOperationCompleteEvent.fire(this, target, false, true);
+    }
+
+    private void fireAsyncQueryFailedEvent(Object target) {
+        AsyncOperationCompleteEvent.fire(this, target, false, false);
+    }
+
+    private void fireAsyncActionSucceededEvent(Object target) {
+        AsyncOperationCompleteEvent.fire(this, target, true, true);
+    }
+
+    private void fireAsyncActionFailedEvent(Object target) {
+        AsyncOperationCompleteEvent.fire(this, target, true, false);
     }
 
     /**

@@ -18,6 +18,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -132,18 +133,33 @@ public class FrontendActionTest {
         when(mockConstants.noCanDoActionMessage()).thenReturn(NO_MESSAGE);
     }
 
+    @After
+    public void tearDown() throws Exception {
+        // Make sure that the query start and end have not been called.
+        verify(mockEventBus, never()).fireEvent(new AsyncOperationCompleteEvent(testState, false, true));
+        verify(mockEventBus, never()).fireEvent(new AsyncOperationCompleteEvent(testState, false, false));
+    }
+
     private void verifyAsyncActionStarted() {
         verify(mockEventBus, atLeastOnce()).fireEvent(new AsyncOperationStartedEvent(testState));
     }
 
-    private void verifyAsyncActionStartedAndCompleted() {
+    private void verifyAsyncActionStartedAndSucceeded() {
         verifyAsyncActionStarted();
-        verify(mockEventBus, atLeastOnce()).fireEvent(new AsyncOperationCompleteEvent(testState));
+        verify(mockEventBus, atLeastOnce()).fireEvent(new AsyncOperationCompleteEvent(testState, true, true));
+        verify(mockEventBus, never()).fireEvent(new AsyncOperationCompleteEvent(testState, true, false));
+    }
+
+    private void verifyAsyncActionStartedAndFailed() {
+        verifyAsyncActionStarted();
+        verify(mockEventBus, never()).fireEvent(new AsyncOperationCompleteEvent(testState, true, true));
+        verify(mockEventBus, atLeastOnce()).fireEvent(new AsyncOperationCompleteEvent(testState, true, false));
     }
 
     private void verifyAsyncActionStartedButNotCompleted() {
         verifyAsyncActionStarted();
-        verify(mockEventBus, never()).fireEvent(new AsyncOperationCompleteEvent(testState));
+        verify(mockEventBus, never()).fireEvent(new AsyncOperationCompleteEvent(testState, true, true));
+        verify(mockEventBus, never()).fireEvent(new AsyncOperationCompleteEvent(testState, true, false));
     }
 
     /**
@@ -160,7 +176,7 @@ public class FrontendActionTest {
         parameters.add(new VdcActionParametersBase());
         testState = null;
         frontend.runMultipleAction(VdcActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
-                null);
+                testState);
         verify(mockService).runMultipleActions(eq(VdcActionType.AddLocalStorageDomain), eq(parameters), eq(false),
                 eq(false), callbackMultipleActions.capture());
         StatusCodeException exception = new StatusCodeException(0, "0 status code"); //$NON-NLS-1$
@@ -198,7 +214,7 @@ public class FrontendActionTest {
                 callbackMultipleParam.getValue().getParameters());
         assertNull("There should be no result", callbackMultipleParam.getValue().getReturnValue()); //$NON-NLS-1$
         assertEquals("States should match", testState, callbackMultipleParam.getValue().getState()); //$NON-NLS-1$
-        verifyAsyncActionStartedAndCompleted();
+        verifyAsyncActionStartedAndFailed();
     }
 
     /**
@@ -234,7 +250,7 @@ public class FrontendActionTest {
         assertEquals("Result should match", returnValues, //$NON-NLS-1$
                 callbackMultipleParam.getValue().getReturnValue());
         assertEquals("States should match", testState, callbackMultipleParam.getValue().getState()); //$NON-NLS-1$
-        verifyAsyncActionStartedAndCompleted();
+        verifyAsyncActionStartedAndSucceeded();
     }
 
     /**
@@ -277,7 +293,7 @@ public class FrontendActionTest {
         assertEquals("Result should match", returnValues, //$NON-NLS-1$
                 callbackMultipleParam.getValue().getReturnValue());
         assertEquals("States should match", testState, callbackMultipleParam.getValue().getState()); //$NON-NLS-1$
-        verifyAsyncActionStartedAndCompleted();
+        verifyAsyncActionStartedAndSucceeded();
     }
 
     /**
@@ -329,7 +345,7 @@ public class FrontendActionTest {
         assertEquals("Result should match", returnValues, //$NON-NLS-1$
                 callbackMultipleParam.getValue().getReturnValue());
         assertEquals("States should match", testState, callbackMultipleParam.getValue().getState()); //$NON-NLS-1$
-        verifyAsyncActionStartedAndCompleted();
+        verifyAsyncActionStartedAndSucceeded();
     }
 
     /**
@@ -377,7 +393,7 @@ public class FrontendActionTest {
         assertEquals("States should match", testState, callbackParam.getValue().getState()); //$NON-NLS-1$
         assertEquals("Action type should match", VdcActionType.AddDisk, //$NON-NLS-1$
                 callbackParam.getValue().getActionType());
-        verifyAsyncActionStartedAndCompleted();
+        verifyAsyncActionStartedAndFailed();
     }
 
     /**
@@ -401,7 +417,7 @@ public class FrontendActionTest {
         assertEquals("States should match", testState, callbackParam.getValue().getState()); //$NON-NLS-1$
         assertEquals("Action type should match", VdcActionType.AddDisk, //$NON-NLS-1$
                 callbackParam.getValue().getActionType());
-        verifyAsyncActionStartedAndCompleted();
+        verifyAsyncActionStartedAndSucceeded();
     }
 
     /**
@@ -607,7 +623,7 @@ public class FrontendActionTest {
         assertEquals("List size should be 0", 0, actionTypes.size()); //$NON-NLS-1$
         assertEquals("List size should be 0", 0, testParameters.size()); //$NON-NLS-1$
         assertEquals("List size should be 0", 0, callbacks.size()); //$NON-NLS-1$
-        verifyAsyncActionStartedAndCompleted();
+        verifyAsyncActionStartedAndSucceeded();
     }
 
     /**
@@ -645,7 +661,7 @@ public class FrontendActionTest {
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockActionCallback, times(2)).executed(callbackParam.capture());
         assertEquals(callbackParam.getValue().getReturnValue(), returnValue);
-        verifyAsyncActionStartedAndCompleted();
+        verifyAsyncActionStartedAndSucceeded();
     }
 
     /**
@@ -684,7 +700,7 @@ public class FrontendActionTest {
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockActionFailureCallback).executed(callbackParam.capture());
         assertEquals(callbackParam.getValue().getReturnValue(), returnValue);
-        verifyAsyncActionStartedAndCompleted();
+        verifyAsyncActionStartedAndSucceeded();
     }
 
     /**
@@ -717,7 +733,7 @@ public class FrontendActionTest {
         // Second call to runAction, the size of the parameters should have decreased
         verify(mockService, never()).runAction(eq(VdcActionType.AddBricksToGlusterVolume), eq(testParameters.get(0)),
                 callbackAction.capture());
-        verifyAsyncActionStartedAndCompleted();
+        verifyAsyncActionStartedAndSucceeded();
     }
 
     /**
