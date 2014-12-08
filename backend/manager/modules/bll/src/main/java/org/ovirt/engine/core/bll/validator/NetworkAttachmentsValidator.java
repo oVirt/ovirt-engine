@@ -26,6 +26,7 @@ import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
  */
 public class NetworkAttachmentsValidator {
 
+    public static final String VAR_NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK_LIST = "NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK_LIST";
     private final Collection<NetworkAttachment> attachmentsToConfigure;
     private final BusinessEntityMap<Network> networkBusinessEntityMap;
 
@@ -43,7 +44,8 @@ public class NetworkAttachmentsValidator {
             return ValidationResult.VALID;
         } else {
             return new ValidationResult(EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK,
-                violatedNics);
+                ReplacementUtils.replaceWith(VAR_NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK_LIST,
+                    violatedNics));
         }
     }
 

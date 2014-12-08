@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.network.host.HostSetupNetworksValidator;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -13,9 +14,19 @@ import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class HostInterfaceValidator {
 
+    public static final String VAR_LABELED_NIC = "LabeledNic ";
+    public static final String VAR_NETWORK_INTERFACE_IS_NOT_BOND_ENTITY = "NETWORK_INTERFACE_IS_NOT_BOND_ENTITY";
+    public static final String VAR_NIC_NOT_EXISTS_ON_HOST_ENTITY = "NIC_NOT_EXISTS_ON_HOST_ENTITY";
+    public static final String VAR_NIC_LABEL = "NicLabel";
+    public static final String VAR_BOND_NAME = "bondName";
+    public static final String VAR_INTERFACE_NAME = "interfaceName";
+    public static final String VAR_ASSIGNED_NETWORKS = "AssignedNetworks";
+    public static final String VAR_NETWORK_NAME = "networkName";
+    public static final String VAR_NIC_NAME = "nicName";
     private final VdsNetworkInterface iface;
 
     public HostInterfaceValidator(VdsNetworkInterface iface) {
@@ -23,25 +34,35 @@ public class HostInterfaceValidator {
     }
 
     public ValidationResult interfaceExists() {
+        //TODO MM: message is used on many places without host name mentioned. How to fix this?
         return ValidationResult.failWith(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST).when(iface == null);
     }
 
     public ValidationResult interfaceByNameExists() {
+        //TODO MM: message is used on many places without host name mentioned. How to fix this?
         return ValidationResult.failWith(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST)
                 .when(iface == null || iface.getName() == null);
     }
 
     public  ValidationResult interfaceAlreadyLabeledWith(String label) {
-        return ValidationResult.failWith(EngineMessage.INTERFACE_ALREADY_LABELED)
+        return ValidationResult.failWith(EngineMessage.INTERFACE_ALREADY_LABELED,
+            ReplacementUtils.createSetVariableString(VAR_LABELED_NIC, iface.getName()),
+            ReplacementUtils.createSetVariableString(VAR_NIC_LABEL, label))
+
                 .when(NetworkUtils.isLabeled(iface) && iface.getLabels().contains(label));
     }
 
     public ValidationResult interfaceInHost(Guid hostId) {
-        return ValidationResult.failWith(EngineMessage.NIC_NOT_EXISTS_ON_HOST).when(!iface.getVdsId().equals(hostId));
+        return ValidationResult.failWith(EngineMessage.NIC_NOT_EXISTS_ON_HOST,
+            ReplacementUtils.createSetVariableString(VAR_NIC_NOT_EXISTS_ON_HOST_ENTITY, hostId.toString()))
+            .when(!iface.getVdsId().equals(hostId));
     }
 
     public ValidationResult interfaceIsBondOrNull() {
-        return ValidationResult.failWith(EngineMessage.NETWORK_INTERFACE_IS_NOT_BOND)
+        String ifaceName = iface == null ? "null" : iface.getName();
+        return ValidationResult.failWith(EngineMessage.NETWORK_INTERFACE_IS_NOT_BOND,
+            ReplacementUtils.createSetVariableString(VAR_NETWORK_INTERFACE_IS_NOT_BOND_ENTITY, ifaceName))
+
             .when(iface != null && !iface.isBond());
     }
 
@@ -55,7 +76,10 @@ public class HostInterfaceValidator {
             return ValidationResult.VALID;
         }
 
-        return ValidationResult.failWith(EngineMessage.IMPROPER_BOND_IS_LABELED).when(getSlaveCount(nics, 2) < 2);
+        return ValidationResult.failWith(EngineMessage.IMPROPER_BOND_IS_LABELED,
+            ReplacementUtils.createSetVariableString(VAR_BOND_NAME, iface.getName()))
+            .when(getSlaveCount(nics, 2) < 2);
+
     }
 
     /**
@@ -68,13 +92,15 @@ public class HostInterfaceValidator {
      *
      * @param label label to add to NIC.
      * @param commandValidationGroups validationGroups of calling command.
-     * @return
      */
     public ValidationResult addLabelToNicAndValidate(String label, List<Class<?>> commandValidationGroups) {
         iface.getLabels().add(label);
         List<String> validationResult = ValidationUtils.validateInputs(commandValidationGroups, iface);
+        //TODO MM: message is used on many places without host name mentioned. How to fix this?
+
         return ValidationResult
-                .failWith(EngineMessage.IMPROPER_INTERFACE_IS_LABELED)
+            .failWith(EngineMessage.IMPROPER_INTERFACE_IS_LABELED)
+
                 .when(!validationResult.isEmpty());
     }
 
@@ -85,11 +111,15 @@ public class HostInterfaceValidator {
 
         int slavesCount = getSlaveCount(nics);
         return ValidationResult.failWith(EngineMessage.NETWORK_BONDS_INVALID_SLAVE_COUNT,
-                "$NETWORK_BONDS_INVALID_SLAVE_COUNT_LIST " + slavesCount).when(slavesCount < 2);
+            ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_BONDS_INVALID_SLAVE_COUNT_LIST,
+                iface.getName()))
+            .when(slavesCount < 2);
     }
 
     public ValidationResult interfaceIsValidSlave() {
-        return ValidationResult.failWith(EngineMessage.NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE)
+        return ValidationResult.failWith(EngineMessage.NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE,
+            ReplacementUtils.createSetVariableString(VAR_INTERFACE_NAME, iface.getName()))
+
             .when(NetworkUtils.isVlan(iface) || iface.isBond());
     }
 
@@ -102,7 +132,9 @@ public class HostInterfaceValidator {
 
             if (notTheSameNic) {
                 return ValidationResult.failWith(EngineMessage.OTHER_INTERFACE_ALREADY_LABELED,
-                        "$LabeledNic " + nic.getName())
+                    ReplacementUtils.createSetVariableString(VAR_LABELED_NIC, nic.getName()),
+                    ReplacementUtils.createSetVariableString(VAR_NIC_LABEL, label))
+
                         .when(NetworkUtils.isLabeled(nic) && nic.getLabels().contains(label));
             }
         }
@@ -121,7 +153,7 @@ public class HostInterfaceValidator {
                 clusterNetworksWithLabel);
 
         return ValidationResult.failWith(EngineMessage.LABELED_NETWORK_ATTACHED_TO_WRONG_INTERFACE,
-                "$AssignedNetworks " + StringUtils.join(assignedNetworks, ", "))
+            ReplacementUtils.replaceWith(VAR_ASSIGNED_NETWORKS, assignedNetworks))
                 .when(!assignedNetworks.isEmpty());
     }
 
@@ -167,8 +199,12 @@ public class HostInterfaceValidator {
         return slavesCount;
     }
 
-    public ValidationResult networkCanBeAttached() {
-        return ValidationResult.failWith(EngineMessage.CANNOT_ADD_NETWORK_ATTACHMENT_ON_SLAVE_OR_VLAN)
+    //TODO MM: seems to be unused.
+    public ValidationResult networkCanBeAttached(String networkName) {
+        return ValidationResult.failWith(EngineMessage.CANNOT_ADD_NETWORK_ATTACHMENT_ON_SLAVE_OR_VLAN,
+            ReplacementUtils.createSetVariableString(VAR_NETWORK_NAME, networkName),
+            ReplacementUtils.createSetVariableString(VAR_NIC_NAME, iface.getName()))
+
                 .when(NetworkUtils.isVlan(iface) || iface.isPartOfBond());
     }
 

@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class NetworkMtuValidatorTest {
 
@@ -35,7 +36,7 @@ public class NetworkMtuValidatorTest {
 
     @Test
     public void testNetworksOnNicMatchMtu() throws Exception {
-        List<Network> networks = Arrays.asList(createNetwork(1, false), createNetwork(1, false));
+        List<Network> networks = Collections.singletonList(createNetwork(1, false, "netA"));
 
         Map<String, List<Network>> networksOnNics = Collections.singletonMap("nicName", networks);
 
@@ -45,18 +46,19 @@ public class NetworkMtuValidatorTest {
 
     @Test
     public void testNetworksOnNicMatchMtuNetworkMtuDoesNotMatch() throws Exception {
-        Network networkA = createNetwork(1, false);
+        Network networkA = createNetwork(1, false, "netA");
         networkA.setVlanId(11);
 
-        Network networkB = createNetwork(2, false);
+        Network networkB = createNetwork(2, false, "netB");
 
         List<Network> networks = Arrays.asList(networkA, networkB);
-
         Map<String, List<Network>> networksOnNics = Collections.singletonMap("nicName", networks);
-
         NetworkMtuValidator networkMtuValidator = new NetworkMtuValidator(new BusinessEntityMap<>(networks));
 
-        assertThat(networkMtuValidator.validateMtu(networksOnNics), failsWith(EngineMessage.NETWORK_MTU_DIFFERENCES));
+        assertThat(networkMtuValidator.validateMtu(networksOnNics),
+            failsWith(EngineMessage.NETWORK_MTU_DIFFERENCES,
+                ReplacementUtils.replaceWith(NetworkMtuValidator.VAR_NETWORK_MTU_DIFFERENCES_LIST,
+                    Arrays.asList("netA(1)", "netB(2)"))));
     }
 
     /**
@@ -64,7 +66,7 @@ public class NetworkMtuValidatorTest {
      */
     @Test
     public void testNetworksOnNicMatchMtuIgnoreMtuDifferenceWhenBothNetworksAreVmNetworks() throws Exception {
-        List<Network> networks = Arrays.asList(createNetwork(1, true), createNetwork(2, true));
+        List<Network> networks = Arrays.asList(createNetwork(1, true, "netA"), createNetwork(2, true, "netB"));
 
         Map<String, List<Network>> networksOnNics = Collections.singletonMap("nicName", networks);
 
@@ -74,9 +76,9 @@ public class NetworkMtuValidatorTest {
 
     @Test
     public void testGetNetworksOnNics() throws Exception {
-        Network networkA = createNetwork(1, true);
-        Network networkB = createNetwork(2, true);
-        Network networkC = createNetwork(2, true);
+        Network networkA = createNetwork(1, true, "netA");
+        Network networkB = createNetwork(2, true, "netB");
+        Network networkC = createNetwork(2, true, "netC");
         List<Network> networks = Arrays.asList(networkA, networkB, networkC);
         NetworkMtuValidator networkMtuValidatorSpy = spy(new NetworkMtuValidator(new BusinessEntityMap<>(networks)));
 
@@ -108,9 +110,10 @@ public class NetworkMtuValidatorTest {
         return networkAttachmentA;
     }
 
-    private Network createNetwork(int mtu, boolean isVmNetwork) {
+    private Network createNetwork(int mtu, boolean isVmNetwork, String networkName) {
         Network network = new Network();
         network.setId(Guid.newGuid());
+        network.setName(networkName);
         network.setMtu(mtu);
         network.setVmNetwork(isVmNetwork);
         return network;

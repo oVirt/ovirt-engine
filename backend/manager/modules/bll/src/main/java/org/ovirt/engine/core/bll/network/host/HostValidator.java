@@ -7,9 +7,11 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.errors.EngineMessage;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class HostValidator {
 
+    public static final String VAR_HOST_STATUS = "$hostStatus";
     private final VDS host;
     private final boolean internalExecution;
 
@@ -21,6 +23,7 @@ public class HostValidator {
 
     private ValidationResult hostExist() {
         if (host == null) {
+            //TODO MM: message is used on many places without host name mentioned. How to fix this?
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_HOST_NOT_EXIST);
         }
 
@@ -35,12 +38,12 @@ public class HostValidator {
                 || host.getStatus() == VDSStatus.Installing && internalExecution;
 
         if (!hostStatusLegalForSetupNetworks) {
-            //            violations.addViolation(EngineMessage.VAR__HOST_STATUS__UP_MAINTENANCE_OR_NON_OPERATIONAL, host.getName());
-            //            violations.addViolation(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL, host.getName());
+            //TODO MM: what to do with this? First following line does not make any sense to me, one after it tried to add host name, while there's no variable for host and message is reused elsewhere. Variants: a) do add variable to message and everywhere, do to report host name in that message.
+            //            violations.addViolation(___EngineMessage.VAR__HOST_STATUS__UP_MAINTENANCE_OR_NON_OPERATIONAL, host.getName());
+            //            violations.addViolation(___EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL, host.getName());
 
             return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL,
-                host.getName(),
-                host.getStatus().name()); //TODO MM: fix message & replacements.
+                ReplacementUtils.createSetVariableString(VAR_HOST_STATUS, host.getStatus().name()));
         }
 
         return ValidationResult.VALID;

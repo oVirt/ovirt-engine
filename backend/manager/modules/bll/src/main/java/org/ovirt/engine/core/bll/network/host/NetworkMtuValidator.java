@@ -8,16 +8,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class NetworkMtuValidator {
 
+    public static final String VAR_NETWORK_MTU_DIFFERENCES_LIST = "NETWORK_MTU_DIFFERENCES_LIST";
     private final BusinessEntityMap<Network> networkBusinessEntityMap;
 
     public NetworkMtuValidator(BusinessEntityMap<Network> networkBusinessEntityMap) {
@@ -66,8 +67,10 @@ public class NetworkMtuValidator {
                 net.getName(),
                 net.getMtu() == 0 ? "default" : String.valueOf(net.getMtu())));
         }
-        String replacements = String.format("[%s]", commaSeparated(mtuDiffNetworks));
-        return new ValidationResult(EngineMessage.NETWORK_MTU_DIFFERENCES, replacements);
+        //TODO MM: formerly here was one-liner with all mtuDiffNetworks which clearly goes against unified list output.
+        //String replacements = String.format("[%s]", ValidatorUtils.commaSeparated(mtuDiffNetworks));
+        return new ValidationResult(EngineMessage.NETWORK_MTU_DIFFERENCES,
+            ReplacementUtils.replaceWith(VAR_NETWORK_MTU_DIFFERENCES_LIST, mtuDiffNetworks));
     }
 
     private boolean networksOnNicMatchMtu(List<Network> networksOnNic) {
@@ -89,7 +92,4 @@ public class NetworkMtuValidator {
         return true;
     }
 
-    private String commaSeparated(List<?> invalidBondIds) {
-        return StringUtils.join(invalidBondIds, ", ");
-    }
 }

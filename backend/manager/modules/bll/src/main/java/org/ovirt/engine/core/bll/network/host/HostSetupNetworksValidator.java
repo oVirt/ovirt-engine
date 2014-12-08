@@ -43,15 +43,31 @@ import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
+import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HostSetupNetworksValidator {
     private static final Logger log = LoggerFactory.getLogger(HostSetupNetworksValidator.class);
 
+    //TODO MM: here? EngineMessage? Elsewhere? (note: some of these are related to this file and it's test only, some even elsewhere
     static final String ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY = "ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY";
     public static final String NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME_ENTITY = "NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME_ENTITY";
+    public static final String VAR_NETWORKS_ALREADY_ATTACHED_TO_IFACES_LIST = "NETWORKS_ALREADY_ATTACHED_TO_IFACES_LIST";
+    public static final String VAR_NETWORK_BOND_RECORD_DOES_NOT_EXISTS_LIST = "NETWORK_BOND_RECORD_DOES_NOT_EXISTS_LIST";
+    public static final String VAR_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST = "NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST";
+    public static final String VAR_BOND_NAME = "BondName";
+    public static final String VAR_NETWORK_BOND_NAME_BAD_FORMAT_ENTITY = "NETWORK_BOND_NAME_BAD_FORMAT_ENTITY";
+    public static final String VAR_NETWORK_BONDS_INVALID_SLAVE_COUNT_LIST = "NETWORK_BONDS_INVALID_SLAVE_COUNT_LIST";
+    public static final String VAR_NETWORK_INTERFACE_ALREADY_IN_BOND_ENTITY = "NETWORK_INTERFACE_ALREADY_IN_BOND_ENTITY";
+    public static final String NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE_ENTITY = "NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE_ENTITY";
+    public static final String VAR_NETWORK_ATTACHMENT_NOT_EXISTS_ENTITY = "NETWORK_ATTACHMENT_NOT_EXISTS_ENTITY";
+    public static final String VAR_NETWORK_ATTACHMENTS_NOT_EXISTS_LIST = "NETWORK_ATTACHMENT_NOT_EXISTS_LIST";
+    public static final String VAR_ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC_LIST = "ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC_LIST";
+    public static final String VAR_ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED_LIST = "ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED_LIST";
+    public static final String VAR_ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT_LIST = "ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT_LIST";
     public static final String VAR_NETWORK_NAME = "networkName";
+    public static final String VAR_ATTACHMENT_IDS = "attachmentIds";
 
     private HostSetupNetworksParameters params;
     private VDS host;
@@ -156,7 +172,11 @@ public class HostSetupNetworksValidator {
         for (NetworkAttachment attachment : attachmentsToConfigure) {
             boolean alreadyUsedNetworkId = usedNetworkIds.contains(attachment.getNetworkId());
             if (alreadyUsedNetworkId) {
-                return new ValidationResult(EngineMessage.NETWORKS_ALREADY_ATTACHED_TO_IFACES);
+                Network network = existingNetworkRelatedToAttachment(attachment);
+                return new ValidationResult(EngineMessage.NETWORKS_ALREADY_ATTACHED_TO_IFACES,
+                    ReplacementUtils.createSetVariableString(VAR_NETWORKS_ALREADY_ATTACHED_TO_IFACES_LIST,
+                        network.getName()));
+
             } else {
                 usedNetworkIds.add(attachment.getNetworkId());
             }
@@ -176,7 +196,8 @@ public class HostSetupNetworksValidator {
             return ValidationResult.VALID;
         } else {
             return new ValidationResult(EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS,
-                commaSeparated(vmNames));
+                ReplacementUtils.replaceWith(VAR_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST, vmNames));
+
         }
     }
 
@@ -184,10 +205,13 @@ public class HostSetupNetworksValidator {
         List<Guid> invalidBondIds = Entities.idsNotReferencingExistingRecords(params.getRemovedBonds(),
             existingInterfacesMap.unmodifiableEntitiesByIdMap());
         if (!invalidBondIds.isEmpty()) {
-            return new ValidationResult(EngineMessage.NETWORK_BOND_NOT_EXISTS, commaSeparated(invalidBondIds));
+            return new ValidationResult(EngineMessage.NETWORK_BOND_RECORD_DOES_NOT_EXISTS,
+                ReplacementUtils.replaceWith(VAR_NETWORK_BOND_RECORD_DOES_NOT_EXISTS_LIST, invalidBondIds));
+
         }
 
-        Set<String> requiredInterfaceNames = getNetworkAttachmentInterfaceNames(attachmentsToConfigure);
+        Map<String, List<Guid>> nicNameToAttachedNetworkAttachmentIds =
+            getIdsOfNetworkAttachmentsRelatedToInterfaceNames(attachmentsToConfigure);
 
         for (VdsNetworkInterface removedBond : removedBondVdsNetworkInterface) {
             String bondName = removedBond.getName();
@@ -197,22 +221,33 @@ public class HostSetupNetworksValidator {
                 return interfaceIsBondOrNull;
             }
 
-            boolean cantRemoveRequiredInterface = requiredInterfaceNames.contains(bondName);
+            boolean cantRemoveRequiredInterface = nicNameToAttachedNetworkAttachmentIds.containsKey(bondName);
             if (cantRemoveRequiredInterface) {
-                return new ValidationResult(EngineMessage.BOND_USED_BY_NETWORK_ATTACHMENTS, bondName);
+                List<Guid> networkAttachmentsForNic = nicNameToAttachedNetworkAttachmentIds.get(bondName);
+
+                List<String> replacements = new ArrayList<>();
+                replacements.add(ReplacementUtils.createSetVariableString(VAR_BOND_NAME, bondName));
+                replacements.addAll(ReplacementUtils.replaceWith(VAR_ATTACHMENT_IDS, networkAttachmentsForNic));
+
+                return new ValidationResult(EngineMessage.BOND_USED_BY_NETWORK_ATTACHMENTS, replacements);
+
             }
         }
 
         return ValidationResult.VALID;
     }
 
-    private Set<String> getNetworkAttachmentInterfaceNames(Collection<NetworkAttachment> networkAttachments) {
-        Set<String> networkAttachmentNicNames = new HashSet<>();
+    private Map<String, List<Guid>> getIdsOfNetworkAttachmentsRelatedToInterfaceNames(Collection<NetworkAttachment> networkAttachments) {
+        Map<String, List<Guid>> map = new HashMap<>();
         for (NetworkAttachment attachment : networkAttachments) {
-            networkAttachmentNicNames.add(attachment.getNicName());
+            MultiValueMapUtils.addToMap(attachment.getNicName(),
+                attachment.getId(),
+                map,
+                new MultiValueMapUtils.ListCreator<Guid>());
+
         }
 
-        return networkAttachmentNicNames;
+        return map;
     }
 
     /**
@@ -267,7 +302,9 @@ public class HostSetupNetworksValidator {
             boolean validBondName = bondName != null && bondName.matches(BusinessEntitiesDefinitions.BOND_NAME_PATTERN);
 
             if (!validBondName) {
-                return new ValidationResult(EngineMessage.NETWORK_BOND_NAME_BAD_FORMAT, bondName);
+                return new ValidationResult(EngineMessage.NETWORK_BOND_NAME_BAD_FORMAT,
+                    ReplacementUtils.createSetVariableString(VAR_NETWORK_BOND_NAME_BAD_FORMAT_ENTITY, bondName));
+
             }
 
             //either it's newly create bond, thus non existing, or given name must reference existing bond.
@@ -278,7 +315,9 @@ public class HostSetupNetworksValidator {
 
             //count of bond slaves must be at least two.
             if (modifiedOrNewBond.getSlaves().size() < 2) {
-                return new ValidationResult(EngineMessage.NETWORK_BONDS_INVALID_SLAVE_COUNT, bondName);
+                return new ValidationResult(EngineMessage.NETWORK_BONDS_INVALID_SLAVE_COUNT,
+                    ReplacementUtils.createSetVariableString(VAR_NETWORK_BONDS_INVALID_SLAVE_COUNT_LIST, bondName));
+
             }
 
             ValidationResult validateModifiedBondSlaves = validateModifiedBondSlaves(modifiedOrNewBond);
@@ -323,7 +362,9 @@ public class HostSetupNetworksValidator {
 
                     //… or slave was removed from its former bond
                     && !bondIsUpdatedAndDoesNotContainCertainSlave(slaveName, currentSlavesBondName))) {
-                return new ValidationResult(EngineMessage.NETWORK_INTERFACE_ALREADY_IN_BOND, slaveName);
+                return new ValidationResult(EngineMessage.NETWORK_INTERFACE_ALREADY_IN_BOND,
+                    ReplacementUtils.createSetVariableString(VAR_NETWORK_INTERFACE_ALREADY_IN_BOND_ENTITY, slaveName));
+
             }
 
             boolean noNetworkOnInterfaceOrItsVlan =
@@ -331,7 +372,12 @@ public class HostSetupNetworksValidator {
                     potentialSlave);
 
             if (!noNetworkOnInterfaceOrItsVlan) {
-                return new ValidationResult(EngineMessage.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE);
+                return new ValidationResult(EngineMessage.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE,
+                    ReplacementUtils.createSetVariableString(
+                        NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE_ENTITY,
+                        potentialSlave.getName()),
+                    ReplacementUtils.createSetVariableString(VAR_NETWORK_NAME, potentialSlave.getNetworkName()));
+
             }
 
             ValidationResult networkCannotBeAttachedToSlaveValidationResult =
@@ -547,7 +593,7 @@ public class HostSetupNetworksValidator {
         Guid referringId,
         String referringName) {
         return new String[] {
-            String.format("$ENTITY_ID %s", violatingEntityId),
+            String.format("$referrerId %s", violatingEntityId),
             String.format("$referringId %s", referringId),
             String.format("$referringName %s", referringName)
         };
@@ -573,7 +619,10 @@ public class HostSetupNetworksValidator {
             }
         }
 
-        return new ValidationResult(EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS);
+        return new ValidationResult(EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS,
+            ReplacementUtils.createSetVariableString(VAR_NETWORK_ATTACHMENT_NOT_EXISTS_ENTITY,
+                networkAttachmentId.toString()));
+
     }
 
     private ValidationResult nicActuallyExistsOrReferencesNewBond(NetworkAttachment attachment) {
@@ -589,14 +638,18 @@ public class HostSetupNetworksValidator {
             return ValidationResult.VALID;
         }
 
+        //TODO MM: this message also exist in different code without interface id being mentioned. How to fix? Duplicate message / fix other code as well?
         return new ValidationResult(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST);
+
     }
 
     private ValidationResult validRemovedNetworkAttachments() {
         List<Guid> invalidIds = Entities.idsNotReferencingExistingRecords(params.getRemovedNetworkAttachments(),
             existingAttachments);
         if (!invalidIds.isEmpty()) {
-            return new ValidationResult(EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS, commaSeparated(invalidIds));
+            return new ValidationResult(EngineMessage.NETWORK_ATTACHMENT_NOT_EXISTS,
+                ReplacementUtils.replaceWith(VAR_NETWORK_ATTACHMENTS_NOT_EXISTS_LIST, invalidIds));
+
         }
 
         ValidationResult vr = ValidationResult.VALID;
@@ -650,7 +703,10 @@ public class HostSetupNetworksValidator {
         if (nic != null && !removedBondVdsNetworkInterfaceMap.containsKey(nic.getName())) {
             if (NetworkUtils.isLabeled(nic) && nic.getLabels().contains(removedNetwork.getLabel())) {
                 return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC,
-                    removedNetwork.getName());
+                    ReplacementUtils.createSetVariableString(
+                        VAR_ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC_LIST,
+                        removedNetwork.getName()));
+
             }
         }
 
@@ -697,7 +753,10 @@ public class HostSetupNetworksValidator {
             if (attachment.hasProperties()) {
                 if (!networkCustomPropertiesSupported) {
                     return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED,
-                        network.getName());
+                        ReplacementUtils.createSetVariableString(
+                            VAR_ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED_LIST,
+                            network.getName()));
+
                 }
 
                 List<ValidationError> errors =
@@ -706,7 +765,10 @@ public class HostSetupNetworksValidator {
                 if (!errors.isEmpty()) {
                     handleCustomPropertiesError(util, errors);
                     return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT,
-                        network.getName());
+                        ReplacementUtils.createSetVariableString(
+                            VAR_ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT_LIST,
+                            network.getName()));
+
                 }
             }
         }
@@ -734,7 +796,4 @@ public class HostSetupNetworksValidator {
         return !validationResult.isValid();
     }
 
-    private String commaSeparated(List<?> invalidBondIds) {
-        return StringUtils.join(invalidBondIds, ", ");
-    }
 }

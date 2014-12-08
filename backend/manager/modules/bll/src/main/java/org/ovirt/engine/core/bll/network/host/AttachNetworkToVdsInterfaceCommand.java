@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsParameters> extends VdsNetworkCommand<T> {
 
@@ -123,6 +124,8 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
         // check if the parameters interface is part of a bond
         if (StringUtils.isNotEmpty(params.getInterface().getBondName())) {
             addCanDoActionMessage(EngineMessage.NETWORK_INTERFACE_ALREADY_IN_BOND);
+            addCanDoActionMessage(ReplacementUtils.createSetVariableString("NETWORK_INTERFACE_ALREADY_IN_BOND_ENTITY",
+                params.getInterface().getName()));
             return false;
         }
 

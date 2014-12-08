@@ -122,6 +122,7 @@ public class NetworkValidator {
      * @return An error iff the network isn't set.
      */
     public ValidationResult networkIsSet() {
+        //TODO MM: already used elsewhere, how to fix?
         return ValidationResult.failWith(EngineMessage.NETWORK_NOT_EXISTS)
                 .when(network == null);
     }
@@ -151,7 +152,7 @@ public class NetworkValidator {
 
     private ValidationResult getManagementNetworkValidationResult(final boolean isManagementNetwork) {
         return isManagementNetwork
-                                  ? new ValidationResult(EngineMessage.NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK,
+            ? new ValidationResult(EngineMessage.NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK,
                                           getNetworkNameReplacement())
                                   : ValidationResult.VALID;
     }
@@ -162,7 +163,7 @@ public class NetworkValidator {
 
     public ValidationResult notRemovingManagementNetwork() {
         return isManagementNetwork()
-                ? new ValidationResult(EngineMessage.NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK,
+            ? new ValidationResult(EngineMessage.NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK,
                         getNetworkNameReplacement())
                 : ValidationResult.VALID;
     }
@@ -210,14 +211,16 @@ public class NetworkValidator {
      */
     public ValidationResult networkNotUsedByHosts() {
         return networkNotUsed(getDbFacade().getVdsDao().getAllForNetwork(network.getId()),
-                EngineMessage.VAR__ENTITIES__HOSTS, EngineMessage.VAR__ENTITIES__HOST);
+            EngineMessage.VAR__ENTITIES__HOSTS, EngineMessage.VAR__ENTITIES__HOST);
     }
 
     /**
      * @return An error iff the network is in use by any templates.
      */
     public ValidationResult networkNotUsedByTemplates() {
-        return networkNotUsed(getTemplates(), EngineMessage.VAR__ENTITIES__VM_TEMPLATES, EngineMessage.VAR__ENTITIES__VM_TEMPLATE);
+        return networkNotUsed(getTemplates(),
+            EngineMessage.VAR__ENTITIES__VM_TEMPLATES,
+            EngineMessage.VAR__ENTITIES__VM_TEMPLATE);
     }
 
     /**

@@ -13,10 +13,12 @@ import java.util.List;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.network.host.HostSetupNetworksValidator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class HostInterfaceValidatorTest {
 
@@ -54,10 +56,17 @@ public class HostInterfaceValidatorTest {
 
     @Test
     public void testInterfaceAlreadyLabeledWithWhenInterfaceIsLabeledBySameLabel() throws Exception {
+        String labelA = "labelA";
         VdsNetworkInterface vdsNetworkInterface = createVdsNetworkInterfaceWithName();
-        vdsNetworkInterface.setLabels(Collections.singleton("labelA"));
-        assertThat(new HostInterfaceValidator(vdsNetworkInterface).interfaceAlreadyLabeledWith("labelA"),
-                failsWith(EngineMessage.INTERFACE_ALREADY_LABELED));
+        vdsNetworkInterface.setLabels(Collections.singleton(labelA));
+        Matcher<ValidationResult> matcher = failsWith(EngineMessage.INTERFACE_ALREADY_LABELED,
+            ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_LABELED_NIC,
+                vdsNetworkInterface.getName()),
+            ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_NIC_LABEL, labelA));
+
+        assertThat(new HostInterfaceValidator(vdsNetworkInterface).interfaceAlreadyLabeledWith(labelA),
+            matcher);
+
     }
 
     @Test
@@ -72,8 +81,12 @@ public class HostInterfaceValidatorTest {
     public void testInterfaceInHostWhenInDifferentHost() throws Exception {
         VdsNetworkInterface vdsNetworkInterface = createVdsNetworkInterfaceWithName();
         vdsNetworkInterface.setVdsId(Guid.newGuid());
-        assertThat(new HostInterfaceValidator(vdsNetworkInterface).interfaceInHost(Guid.newGuid()),
-                failsWith(EngineMessage.NIC_NOT_EXISTS_ON_HOST));
+        Guid hostId = Guid.newGuid();
+        Matcher<ValidationResult> matcher = failsWith(EngineMessage.NIC_NOT_EXISTS_ON_HOST,
+            ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_NIC_NOT_EXISTS_ON_HOST_ENTITY,
+                hostId.toString()));
+        assertThat(new HostInterfaceValidator(vdsNetworkInterface).interfaceInHost(hostId), matcher);
+
     }
 
     @Test
@@ -102,24 +115,30 @@ public class HostInterfaceValidatorTest {
         assertCorrectSlaveCountInLabeledValidBonds(
             2,
             "bonded interface with two or more slaves should be valid bond",
-            isValid());
+            isValid(),
+            "bondName");
     }
 
     private void assertCorrectSlaveCountInLabeledValidBondsWhenInsufficientBonds(int numberOfSlaves) {
+        String bondName = "bondName";
+        Matcher<ValidationResult> matcher = failsWith(EngineMessage.IMPROPER_BOND_IS_LABELED,
+            ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_BOND_NAME, bondName));
         assertCorrectSlaveCountInLabeledValidBonds(
             numberOfSlaves,
             String.format("bonded interface with only %1$d slaves is not valid bond", numberOfSlaves),
-            failsWith(EngineMessage.IMPROPER_BOND_IS_LABELED));
+            matcher,
+            bondName);
+
     }
 
     private void assertCorrectSlaveCountInLabeledValidBonds(int numberOfSlaves,
         String reason,
-        Matcher<ValidationResult> valid) {
-        String bondName = "bondName";
+        Matcher<ValidationResult> matcher,
+        String bondName) {
         VdsNetworkInterface vdsNetworkInterface = createVdsNetworkInterfaceWithName(bondName, true);
         List<VdsNetworkInterface> slaves = createGivenCountOfSlavesForBond(bondName, numberOfSlaves);
 
-        assertThat(reason, new HostInterfaceValidator(vdsNetworkInterface).labeledValidBond(slaves), valid);
+        assertThat(reason, new HostInterfaceValidator(vdsNetworkInterface).labeledValidBond(slaves), matcher);
     }
 
 
@@ -177,21 +196,28 @@ public class HostInterfaceValidatorTest {
     public void testValidBondWhenSufficientNumberOfSlaves() throws Exception {
         assertCorrectSlaveCountInValidBonds(2,
             "bonded interface with two or more slaves should be valid bond",
-            isValid());
+            isValid(),
+            "bondName");
     }
 
     private void assertCorrectSlaveCountInValidBondsWhenInsufficientBonds(int numberOfSlaves) {
+        String bondName = "bondName";
+        Matcher<ValidationResult> matcher = failsWith(EngineMessage.NETWORK_BONDS_INVALID_SLAVE_COUNT,
+            ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_BONDS_INVALID_SLAVE_COUNT_LIST,
+                bondName));
         assertCorrectSlaveCountInValidBonds(
             numberOfSlaves,
             String.format("bonded interface with only %1$d slaves is not valid bond", numberOfSlaves),
-            failsWith(EngineMessage.NETWORK_BONDS_INVALID_SLAVE_COUNT));
+            matcher,
+            bondName);
+
     }
 
     private void assertCorrectSlaveCountInValidBonds(int numberOfSlaves,
         String reason,
-        Matcher<ValidationResult> matcher) {
+        Matcher<ValidationResult> matcher,
+        String bondName) {
 
-        String bondName = "bondName";
         VdsNetworkInterface vdsNetworkInterface = createVdsNetworkInterfaceWithName(bondName, true);
         List<VdsNetworkInterface> slaves = createGivenCountOfSlavesForBond(bondName, numberOfSlaves);
 
@@ -223,7 +249,11 @@ public class HostInterfaceValidatorTest {
         List<VdsNetworkInterface> preexistingInterfaces = Collections.singletonList(preexistingVdsNetworkInterface);
         assertThat("different nics cannot have same label set.",
                 validator.anotherInterfaceAlreadyLabeledWithThisLabel(label, preexistingInterfaces),
-                failsWith(EngineMessage.OTHER_INTERFACE_ALREADY_LABELED));
+            failsWith(EngineMessage.OTHER_INTERFACE_ALREADY_LABELED,
+                ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_LABELED_NIC,
+                    preexistingVdsNetworkInterface.getName()),
+                ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_NIC_LABEL, label)));
+
     }
 
     @Test
@@ -260,7 +290,10 @@ public class HostInterfaceValidatorTest {
 
         HostInterfaceValidator validator = new HostInterfaceValidator(nicToWhichLabeledNetworkShouldBeAttached);
         assertThat(validator.networksAreAttachedToThisInterface(hostInterfaces, Collections.singletonList(network)),
-                failsWith(EngineMessage.LABELED_NETWORK_ATTACHED_TO_WRONG_INTERFACE));
+            failsWith(EngineMessage.LABELED_NETWORK_ATTACHED_TO_WRONG_INTERFACE,
+                ReplacementUtils.replaceWith(HostInterfaceValidator.VAR_ASSIGNED_NETWORKS,
+                    Collections.singletonList(networkName))));
+
     }
 
     @Test
@@ -287,8 +320,14 @@ public class HostInterfaceValidatorTest {
         VdsNetworkInterface vdsNetworkInterface = createVdsNetworkInterfaceWithName();
         vdsNetworkInterface.setVlanId(1);
 
-        assertThat(new HostInterfaceValidator(vdsNetworkInterface).networkCanBeAttached(),
-                failsWith(EngineMessage.CANNOT_ADD_NETWORK_ATTACHMENT_ON_SLAVE_OR_VLAN));
+        String networkName = "networkName";
+
+        assertThat(new HostInterfaceValidator(vdsNetworkInterface).networkCanBeAttached(networkName),
+            failsWith(EngineMessage.CANNOT_ADD_NETWORK_ATTACHMENT_ON_SLAVE_OR_VLAN,
+                ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_NETWORK_NAME, networkName),
+                ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_NIC_NAME,
+                    vdsNetworkInterface.getName())));
+
     }
 
     @Test
@@ -296,14 +335,21 @@ public class HostInterfaceValidatorTest {
         VdsNetworkInterface vdsNetworkInterface = createVdsNetworkInterfaceWithName();
         vdsNetworkInterface.setBondName("bondName");
 
-        assertThat(new HostInterfaceValidator(vdsNetworkInterface).networkCanBeAttached(),
-                failsWith(EngineMessage.CANNOT_ADD_NETWORK_ATTACHMENT_ON_SLAVE_OR_VLAN));
+        String networkName = "networkName";
+
+        assertThat(new HostInterfaceValidator(vdsNetworkInterface).networkCanBeAttached(networkName),
+            failsWith(EngineMessage.CANNOT_ADD_NETWORK_ATTACHMENT_ON_SLAVE_OR_VLAN,
+                ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_NETWORK_NAME, networkName),
+                ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_NIC_NAME,
+                    vdsNetworkInterface.getName())));
+
     }
 
     @Test
     public void testNetworkCanBeAttached() throws Exception {
         VdsNetworkInterface vdsNetworkInterface = createVdsNetworkInterfaceWithName();
-        assertThat(new HostInterfaceValidator(vdsNetworkInterface).networkCanBeAttached(), isValid());
+        String networkName = "networkName";
+        assertThat(new HostInterfaceValidator(vdsNetworkInterface).networkCanBeAttached(networkName), isValid());
     }
 
     @Test
@@ -314,13 +360,15 @@ public class HostInterfaceValidatorTest {
     @Test
     public void testInterfaceByNameExistsWhenInterfaceIsNull() throws Exception {
         assertThat(new HostInterfaceValidator(null).interfaceByNameExists(),
-                failsWith(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST));
+            failsWith(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST));
+
     }
 
     @Test
     public void testInterfaceByNameExistsWhenInterfacesNameIsNull() throws Exception {
         assertThat(new HostInterfaceValidator(createVdsNetworkInterfaceWithName(null)).interfaceByNameExists(),
-                failsWith(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST));
+            failsWith(EngineMessage.HOST_NETWORK_INTERFACE_NOT_EXIST));
+
     }
 
     @Test
@@ -339,8 +387,11 @@ public class HostInterfaceValidatorTest {
     public void testInterfaceIsBondWhenInterfaceIsNotBonded() throws Exception {
         VdsNetworkInterface iface = createVdsNetworkInterfaceWithName();
         iface.setBonded(false);
-        assertThat(new HostInterfaceValidator(iface).interfaceIsBondOrNull(),
-                failsWith(EngineMessage.NETWORK_INTERFACE_IS_NOT_BOND));
+        Matcher<ValidationResult> matcher = failsWith(EngineMessage.NETWORK_INTERFACE_IS_NOT_BOND,
+            ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_NETWORK_INTERFACE_IS_NOT_BOND_ENTITY,
+                iface.getName()));
+        assertThat(new HostInterfaceValidator(iface).interfaceIsBondOrNull(), matcher);
+
     }
 
     @Test
@@ -352,15 +403,21 @@ public class HostInterfaceValidatorTest {
     public void testInterfaceIsValidSlaveWhenInterfaceIsBond() throws Exception {
         VdsNetworkInterface vdsNetworkInterface = createVdsNetworkInterfaceWithName();
         vdsNetworkInterface.setBonded(true);
-        assertThat(new HostInterfaceValidator(vdsNetworkInterface).interfaceIsValidSlave(),
-                failsWith(EngineMessage.NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE));
+        Matcher<ValidationResult> matcher = failsWith(EngineMessage.NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE,
+            ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_INTERFACE_NAME,
+                vdsNetworkInterface.getName()));
+        assertThat(new HostInterfaceValidator(vdsNetworkInterface).interfaceIsValidSlave(), matcher);
+
     }
 
     @Test
     public void testInterfaceIsValidSlaveWhenInterfaceIsVlan() throws Exception {
         VdsNetworkInterface vdsNetworkInterface = createVdsNetworkInterfaceWithName();
         vdsNetworkInterface.setVlanId(1);
-        assertThat(new HostInterfaceValidator(vdsNetworkInterface).interfaceIsValidSlave(),
-                failsWith(EngineMessage.NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE));
+        Matcher<ValidationResult> matcher = failsWith(EngineMessage.NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE,
+            ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_INTERFACE_NAME,
+                vdsNetworkInterface.getName()));
+        assertThat(new HostInterfaceValidator(vdsNetworkInterface).interfaceIsValidSlave(), matcher);
+
     }
 }

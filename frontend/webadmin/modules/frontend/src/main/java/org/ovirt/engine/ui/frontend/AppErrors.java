@@ -1498,32 +1498,60 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Multiple network attachments (${ACTION_TYPE_FAILED_NETWORK_ATTACHMENTS_REFERENCES_SAME_NETWORK_DUPLICATELY_LIST}) references same network (${ACTION_TYPE_FAILED_NETWORK_ATTACHMENTS_REFERENCES_SAME_NETWORK_DUPLICATELY_ENTITY}).")
     String ACTION_TYPE_FAILED_NETWORK_ATTACHMENTS_REFERENCES_SAME_NETWORK_DUPLICATELY();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The given network interface does not exist on specified host.")
+    @DefaultStringValue("Cannot ${action} ${type}. The given network interface does not exist on specified host '${NIC_NOT_EXISTS_ON_HOST_ENTITY}'.")
     String NIC_NOT_EXISTS_ON_HOST();
 
     @DefaultStringValue("Cannot ${action} ${type}. Network Interface '${NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME_ENTITY}' cannot become slave, because you're also attaching network '${networkName}' to it.")
     String NETWORK_INTERFACE_ADDED_TO_BOND_AND_NETWORK_IS_ATTACHED_TO_IT_AT_THE_SAME_TIME();
 
-    @DefaultStringValue("Neither bond nor vlan can be slave.")
+    @DefaultStringValue("Cannot ${action} ${type}. Network Interface '$NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE_ENTITY' cannot become slave, there's network '${networkName}' attached to it.")
+    String NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Network Interface '${interfaceName}' cannot be slave: Neither bond nor vlan can be slave.")
     String NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE();
 
     @DefaultStringValue("Cannot ${action} ${type}. Network interface '${NETWORK_INTERFACE_REFERENCED_AS_A_SLAVE_MULTIPLE_TIMES_ENTITY}' is used multiple times in new or modified bonds in this request. Slave can be neither shared by multiple bonds nor used multiple times in one bond.")
     String NETWORK_INTERFACE_REFERENCED_AS_A_SLAVE_MULTIPLE_TIMES();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Cannot create Network Attachment directly on slave or vlan interface.")
+    @DefaultStringValue("Cannot ${action} ${type}. Cannot create Network Attachment directly on slave or vlan interface. Network name = '${networkName}', Network interface name = '${nicName}'.")
     String CANNOT_ADD_NETWORK_ATTACHMENT_ON_SLAVE_OR_VLAN();
 
     @DefaultStringValue("Cannot ${action} ${type}. Network attachment must be specified for this request.")
     String NETWORK_ATTACHMENT_NOT_SPECIFIED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. NetworkAttachment (id ${ENTITY_ID}}) does not reference nic coherently. Nic name and id references different nic: nicId ${referringId} nicName ${referringName}}.")
+    @DefaultStringValue("Cannot ${action} ${type}. When updating Network attachment non null ID has to be provided.")
+    String NETWORK_ATTACHMENT_WHEN_UPDATING_YOU_HAVE_TO_PROVIDE_ID();
+
+    @DefaultStringValue("Cannot ${action} ${type}. New Network attachment cannot be created with given ID. Please remove Network Attachment ID (id '${NETWORK_ATTACHMENT_CANNOT_BE_CREATED_WITH_SPECIFIC_ID_ENTITY}') from request.")
+    String NETWORK_ATTACHMENT_CANNOT_BE_CREATED_WITH_SPECIFIC_ID();
+
+    @DefaultStringValue("Cannot remove bond, because it's used by Network Attachments.")
+    String BOND_USED_BY_NETWORK_ATTACHMENTS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Given Network Attachment does not exist")
+    String NETWORK_ATTACHMENT_NOT_EXISTS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Following Network Attachments does not exist: ${NETWORK_ATTACHMENT_NOT_EXISTS_LIST}.")
+    String NETWORK_ATTACHMENTS_NOT_EXISTS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. NetworkAttachment (id ${$referrerId}) does not reference nic coherently. Nic name and id references different nic: nicId ${referringId} nicName ${referringName}}.")
     String NETWORK_ATTACHMENT_REFERENCES_NICS_INCOHERENTLY();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Bond (id ${ENTITY_ID}) does not reference nic coherently. Nic name and id references different nic: nicId ${referringId} nicName ${referringName}.")
+    @DefaultStringValue("Cannot ${action} ${type}. Bond (id ${referrerId}) does not reference nic coherently. Nic name and id references different nic: nicId ${referringId} nicName ${referringName}.")
     String BOND_REFERENCES_NICS_INCOHERENTLY();
 
-    @DefaultStringValue("Cannot ${action} ${type}. NetworkAttachment (id ${ENTITY_ID}}) does not reference network coherently. Network name and id references different network: networkId ${referringId} networkName ${referringName}}.")
+    @DefaultStringValue("Cannot ${action} ${type}. NetworkAttachment (id ${referrerId}) does not reference network coherently. Network name and id references different network: networkId ${referringId} networkName ${referringName}}.")
     String NETWORK_ATTACHMENT_REFERENCES_NETWORK_INCOHERENTLY();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Given network '${networkName}' is already attached to given host '${hostName}'.")
+    String NETWORK_ALREADY_ATTACHED_TO_HOST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Network of given Network Attachment (id ${networkAttachmentID}) cannot be updated.")
+    String CANNOT_CHANGE_ATTACHED_NETWORK();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Display network '${ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL_ENTITY}' hasn't boot protocol assigned.")
+    String ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL();
+
 
     @DefaultStringValue("Bond name must be formatted as <bondYYY>.")
     String NETWORK_INVALID_BOND_NAME();
@@ -1600,7 +1628,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The following networks are already attached to a different interface: ${AssignedNetworks}. Please remove the networks in order to label the interface.")
     String LABELED_NETWORK_ATTACHED_TO_WRONG_INTERFACE();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The label is already defined on other interface ${LabeledNic} on the host.")
+    @DefaultStringValue("Cannot ${action} ${type}. The label '${NicLabel}'is already defined on other interface ${LabeledNic} on the host.")
     String OTHER_INTERFACE_ALREADY_LABELED();
 
     @DefaultStringValue("Cannot ${action} ${type}. SR-IOV is not supported on the selected cluster version.")
@@ -2351,11 +2379,15 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. An improper network interface is labeled. Please verify labels are provided only to interfaces or to bonds (not to slaves nor vlans).")
     String IMPROPER_INTERFACE_IS_LABELED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. An improper bond is labeled. Please verify labels are provided only to bonds with at least two slaves.")
+    @DefaultStringValue("Cannot ${action} ${type}. An improper bond '${bondName}' is labeled. Please verify labels are provided only to bonds with at least two slaves.")
     String IMPROPER_BOND_IS_LABELED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The network interface is already labeled with the specified label.")
+
+    @DefaultStringValue("Cannot ${action} ${type}. The network interface '${LabeledNic}' is already labeled with the specified label '${NicLabel}'.")
     String INTERFACE_ALREADY_LABELED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The given network interface '${NETWORK_INTERFACE_IS_NOT_BOND_ENTITY}' is not a bond.")
+    String NETWORK_INTERFACE_IS_NOT_BOND();
 
     @DefaultStringValue("Cannot ${action} ${type}. The network interface is not labeled with the specified label.")
     String INTERFACE_NOT_LABELED();

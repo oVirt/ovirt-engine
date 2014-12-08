@@ -166,6 +166,10 @@ public final class ValidationResult {
         return new ValidationResultBuilder(expectedError, replacements);
     }
 
+    public static ValidationResultBuilder failWith(EngineMessage expectedError, Collection<String> replacements) {
+        return new ValidationResultBuilder(expectedError, replacements.toArray(new String[replacements.size()]));
+    }
+
     /**
      * Helper class to chain calls that produce a {@link ValidationResult}.
      */

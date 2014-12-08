@@ -13,6 +13,7 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.fails
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -127,6 +128,7 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
         String label = "label";
 
         Network labeledNetwork = new Network();
+        labeledNetwork.setName("networkName");
         labeledNetwork.setId(Guid.newGuid());
         labeledNetwork.setLabel(label);
 
@@ -144,7 +146,10 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
             new BusinessEntityMap<>(Collections.singletonList(labeledNetwork)));
 
         assertThat(validator.notRemovingLabeledNetworks(networkAttachment),
-            failsWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC));
+            failsWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC,
+                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC_LIST,
+                    labeledNetwork.getName())));
+
     }
 
     @Test
@@ -231,7 +236,10 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
             Collections.singletonList(notABond));
 
         assertThat(validator.validRemovedBonds(Collections.<NetworkAttachment> emptyList()),
-            failsWith(EngineMessage.NETWORK_INTERFACE_IS_NOT_BOND));
+            failsWith(EngineMessage.NETWORK_INTERFACE_IS_NOT_BOND,
+                ReplacementUtils.createSetVariableString(HostInterfaceValidator.VAR_NETWORK_INTERFACE_IS_NOT_BOND_ENTITY,
+                    notABond.getName())));
+
     }
 
     @Test
@@ -246,7 +254,11 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
             .build();
 
         assertThat(validator.validRemovedBonds(Collections.<NetworkAttachment> emptyList()),
-            failsWith(EngineMessage.NETWORK_BOND_NOT_EXISTS));     //TODO MM: fix variable replacements in translations patch.
+            failsWith(EngineMessage.NETWORK_BOND_RECORD_DOES_NOT_EXISTS,
+                ReplacementUtils.replaceWith(
+                    HostSetupNetworksValidator.VAR_NETWORK_BOND_RECORD_DOES_NOT_EXISTS_LIST,
+                    Collections.singletonList(idOfInexistingInterface))));
+
     }
 
     @Test
@@ -263,8 +275,16 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
         NetworkAttachment requiredNetworkAttachment = new NetworkAttachment();
         requiredNetworkAttachment.setNicName(nicName);
 
+        List<String> replacements = new ArrayList<>();
+        replacements.add(ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_BOND_NAME, nicName));
+        //null -- new network attachment with null id.
+        replacements.addAll(ReplacementUtils.replaceWith(HostSetupNetworksValidator.VAR_ATTACHMENT_IDS,
+            Collections.<Guid> singletonList(null)));
+
         assertThat(validator.validRemovedBonds(Collections.singletonList(requiredNetworkAttachment)),
-            failsWith(EngineMessage.BOND_USED_BY_NETWORK_ATTACHMENTS));
+            failsWith(EngineMessage.BOND_USED_BY_NETWORK_ATTACHMENTS,
+                replacements));
+
     }
 
     @Test
@@ -407,11 +427,16 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
         VmInterfaceManager vmInterfaceManagerMock = mock(VmInterfaceManager.class);
         doReturn(vmInterfaceManagerMock).when(validator).getVmInterfaceManager();
 
+        //for simplicity we pretend, that vm names are equal to network they're using.
+        List<String> vmNames = Arrays.asList(nameOfNetworkA, nameOfNetworkB);
         when(vmInterfaceManagerMock.findActiveVmsUsingNetworks(any(Guid.class), any(Collection.class)))
-            .thenReturn(Arrays.asList(nameOfNetworkA, nameOfNetworkB));
+            .thenReturn(vmNames);
 
         assertThat(validator.validateNotRemovingUsedNetworkByVms(),
-            failsWith(EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS));
+            failsWith(EngineMessage.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS,
+                ReplacementUtils.replaceWith(HostSetupNetworksValidator.VAR_NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS_LIST,
+                    vmNames)));
+
 
         ArgumentCaptor<Collection> collectionArgumentCaptor = ArgumentCaptor.forClass(Collection.class);
         verify(vmInterfaceManagerMock).findActiveVmsUsingNetworks(eq(host.getId()), collectionArgumentCaptor.capture());
@@ -473,7 +498,10 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
     @Test
     public void testNetworksUniquelyConfiguredOnHostWhenNotUniquelyConfigured() throws Exception {
         Guid id = Guid.newGuid();
+        String networkName = "networkName";
+
         Network networkA = new Network();
+        networkA.setName(networkName);
         networkA.setId(id);
 
         NetworkAttachment networkAttachment = createNetworkAttachment(networkA);
@@ -483,7 +511,10 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
 
         assertThat(validator.networksUniquelyConfiguredOnHost(Arrays.asList(networkAttachment,
                 networkAttachmentReferencingSameNetwork)),
-            failsWith(EngineMessage.NETWORKS_ALREADY_ATTACHED_TO_IFACES));
+            failsWith(EngineMessage.NETWORKS_ALREADY_ATTACHED_TO_IFACES,
+                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORKS_ALREADY_ATTACHED_TO_IFACES_LIST,
+                    networkName)));
+
     }
 
     @Test
@@ -498,10 +529,15 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
     @Test
     public void testValidModifiedBondsFailsWhenReferencingExistingNonBondInterface() throws Exception {
         Bond bond = createBond();
+        ValidationResult notABondValidationResult = new ValidationResult(EngineMessage.NETWORK_INTERFACE_IS_NOT_BOND,
+            HostInterfaceValidator.VAR_NETWORK_INTERFACE_IS_NOT_BOND_ENTITY,
+            bond.getName());
+
         doTestValidModifiedBonds(bond,
             ValidationResult.VALID,
-            new ValidationResult(EngineMessage.NETWORK_INTERFACE_IS_NOT_BOND),
-            new ValidationResult(EngineMessage.NETWORK_INTERFACE_IS_NOT_BOND),
+            notABondValidationResult,
+            notABondValidationResult,
+
             ValidationResult.VALID);
     }
 
@@ -511,12 +547,21 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
         doTestValidModifiedBonds(bond,
             ValidationResult.VALID,
             ValidationResult.VALID,
-            new ValidationResult(EngineMessage.NETWORK_BONDS_INVALID_SLAVE_COUNT),
+            new ValidationResult(EngineMessage.NETWORK_BONDS_INVALID_SLAVE_COUNT,
+                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_BONDS_INVALID_SLAVE_COUNT_LIST,
+                    bond.getName())),
+
             ValidationResult.VALID);
     }
 
     @Test
     public void testValidModifiedBondsFailsWhenSlavesValidationFails() throws Exception {
+        ValidationResult slavesValidationResult = new ValidationResult(EngineMessage.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE,
+            ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE_ENTITY,
+                "slaveA"),
+            ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME,
+                "networkName"));
+
         Bond bond = createBond();
         bond.setSlaves(Arrays.asList("slaveA", "slaveB"));
         doTestValidModifiedBonds(bond,
@@ -524,8 +569,9 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
             ValidationResult.VALID,
             /*this mocks validateModifiedBondSlaves to just verify, that caller method will behave ok, when
             validateModifiedBondSlaves return invalid result*/
-            new ValidationResult(EngineMessage.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE),
-            new ValidationResult(EngineMessage.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE));
+            slavesValidationResult,
+            slavesValidationResult);
+
     }
 
     @Test
@@ -560,7 +606,8 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
         if (expectedValidationResult.isValid()) {
             assertThat(validator.validNewOrModifiedBonds(), isValid());
         } else {
-            assertThat(validator.validNewOrModifiedBonds(), failsWith(expectedValidationResult.getMessage()));
+            assertThat(validator.validNewOrModifiedBonds(),
+                failsWith(expectedValidationResult.getMessage(), expectedValidationResult.getVariableReplacements()));
         }
 
         verify(hostInterfaceValidatorMock).interfaceByNameExists();
@@ -597,14 +644,18 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
         HostSetupNetworksParameters params = new HostSetupNetworksParameters(host.getId());
         params.setBonds(Collections.singletonList(bond));
 
+        ValidationResult cannotBeSlaveValidationResult = new ValidationResult(EngineMessage.NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE,
+            HostInterfaceValidator.VAR_INTERFACE_NAME,
+            bond.getName());
         doTestValidateModifiedBondSlaves(
             params,
             null,
             Collections.<NetworkAttachment> emptyList(),
             Collections.<Network> emptyList(),
             ValidationResult.VALID,
-            new ValidationResult(EngineMessage.NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE),
-            new ValidationResult(EngineMessage.NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE));
+            cannotBeSlaveValidationResult,
+            cannotBeSlaveValidationResult);
+
     }
 
     @Test
@@ -627,7 +678,10 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
             Collections.<Network> emptyList(),
             ValidationResult.VALID,
             ValidationResult.VALID,
-            new ValidationResult(EngineMessage.NETWORK_INTERFACE_ALREADY_IN_BOND));
+            new ValidationResult(EngineMessage.NETWORK_INTERFACE_ALREADY_IN_BOND,
+                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_INTERFACE_ALREADY_IN_BOND_ENTITY,
+                    slaveB.getName())));
+
     }
 
     @Test
@@ -712,7 +766,12 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
             Collections.singletonList(networkBeingRemoved),
             ValidationResult.VALID,
             ValidationResult.VALID,
-            new ValidationResult(EngineMessage.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE));
+            new ValidationResult(EngineMessage.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE,
+                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE_ENTITY,
+                    slaveA.getName()),
+                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_NETWORK_NAME,
+                    networkBeingRemoved.getName())));
+
     }
 
     @Test
@@ -768,7 +827,8 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
         if (expectedValidationResult.isValid()) {
             assertThat(validator.validNewOrModifiedBonds(), isValid());
         } else {
-            assertThat(validator.validNewOrModifiedBonds(), failsWith(expectedValidationResult.getMessage()));
+            assertThat(validator.validNewOrModifiedBonds(),
+                failsWith(expectedValidationResult.getMessage(), expectedValidationResult.getVariableReplacements()));
         }
     }
 
@@ -822,7 +882,10 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
         assertThat(validator.validateCustomProperties(null,
                 Collections.<String, String> emptyMap(),
                 Collections.<String, String> emptyMap()),
-            failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED));
+            failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED,
+                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED_LIST,
+                    networkA.getName())));
+
     }
 
     @Test
@@ -852,7 +915,10 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
         assertThat(validator.validateCustomProperties(SimpleCustomPropertiesUtil.getInstance(),
                 Collections.<String, String> emptyMap(),
                 Collections.<String, String> emptyMap()),
-            failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT));
+            failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT,
+                ReplacementUtils.createSetVariableString(HostSetupNetworksValidator.VAR_ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT_LIST,
+                    networkA.getName())));
+
     }
 
     @Test

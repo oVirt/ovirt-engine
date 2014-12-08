@@ -19,6 +19,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ReplacementUtils;
@@ -31,25 +32,31 @@ public class NetworkAttachmentsValidatorTest {
     private Network nonVmNetwork1;
     private Network nonVmNetwork2;
 
+    private VdsNetworkInterface nic;
+
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
     private BusinessEntityMap<Network> networkMap;
 
     @Before
     public void setUp() throws Exception {
-        vlanNetwork = createNetworkWithId();
+        nic = new VdsNetworkInterface();
+        nic.setId(Guid.newGuid());
+        nic.setName("nicName");
+
+        vlanNetwork = createNetworkWithIdAndName("vlanNetwork");
         vlanNetwork.setVlanId(1);
 
-        vmNetwork1 = createNetworkWithId();
+        vmNetwork1 = createNetworkWithIdAndName("Network1");
         vmNetwork1.setVmNetwork(true);
 
-        vmNetwork2 = createNetworkWithId();
+        vmNetwork2 = createNetworkWithIdAndName("Network2");
         vmNetwork2.setVmNetwork(true);
 
-        nonVmNetwork1 = createNetworkWithId();
+        nonVmNetwork1 = createNetworkWithIdAndName("nonVmNetwork1");
         nonVmNetwork1.setVmNetwork(false);
 
-        nonVmNetwork2 = createNetworkWithId();
+        nonVmNetwork2 = createNetworkWithIdAndName("nonVmNetwork2");
         nonVmNetwork2.setVmNetwork(false);
 
         networkMap = new BusinessEntityMap<>(
@@ -72,7 +79,7 @@ public class NetworkAttachmentsValidatorTest {
 
         List<NetworkAttachment> attachmentsToConfigure = new ArrayList<>(networks.length);
         for (Network network : networks) {
-            attachmentsToConfigure.add(createNetworkAttachment("a", network));
+            attachmentsToConfigure.add(createNetworkAttachment(nic.getName(), network));
         }
 
         NetworkAttachmentsValidator validator = new NetworkAttachmentsValidator(attachmentsToConfigure, networkMap);
@@ -94,7 +101,7 @@ public class NetworkAttachmentsValidatorTest {
     @Test
     public void testValidateNetworkExclusiveOnNicsAllAttachmentsMustHaveNicNameSet() throws Exception {
         NetworkAttachment networkAttachment = createNetworkAttachment(vmNetwork1);
-        List<NetworkAttachment> attachmentsToConfigure = Arrays.asList(networkAttachment);
+        List<NetworkAttachment> attachmentsToConfigure = Collections.singletonList(networkAttachment);
 
         expectedException.expect(IllegalArgumentException.class);
         new NetworkAttachmentsValidator(attachmentsToConfigure, networkMap).validateNetworkExclusiveOnNics();
@@ -109,22 +116,22 @@ public class NetworkAttachmentsValidatorTest {
     @Test
     public void testValidateNetworkExclusiveOnNicsTwoVmNetworksAttachedToInterface() throws Exception {
         checkVmNetworkIsSoleAssignedInterface(
-                failsWith(EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK),
-                vmNetwork1, vmNetwork2);
+            failsWithNetworkInterfacesNotExclusivelyUsedByNetwork(),
+            vmNetwork1, vmNetwork2);
     }
 
     @Test
     public void testValidateNetworkExclusiveOnNicsVmAndNonVmAttachedToInterface() throws Exception {
         checkVmNetworkIsSoleAssignedInterface(
-                failsWith(EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK),
-                vmNetwork1, nonVmNetwork1);
+            failsWithNetworkInterfacesNotExclusivelyUsedByNetwork(),
+            vmNetwork1, nonVmNetwork1);
     }
 
     @Test
     public void testValidateNetworkExclusiveOnNicsVmAndVlanAttachedToInterface() throws Exception {
         checkVmNetworkIsSoleAssignedInterface(
-                failsWith(EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK),
-                vmNetwork1, vlanNetwork);
+            failsWithNetworkInterfacesNotExclusivelyUsedByNetwork(),
+            vmNetwork1, vlanNetwork);
     }
 
     @Test
@@ -135,8 +142,14 @@ public class NetworkAttachmentsValidatorTest {
     @Test
     public void testValidateNetworkExclusiveOnNicAtMostOneNonVmNetworkViolated() throws Exception {
         checkVmNetworkIsSoleAssignedInterface(
-                failsWith(EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK)
-                , nonVmNetwork1, nonVmNetwork2);
+            failsWithNetworkInterfacesNotExclusivelyUsedByNetwork(),
+            nonVmNetwork1, nonVmNetwork2);
+    }
+
+    private Matcher<ValidationResult> failsWithNetworkInterfacesNotExclusivelyUsedByNetwork() {
+        return failsWith(EngineMessage.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK,
+            ReplacementUtils.replaceWith(NetworkAttachmentsValidator.VAR_NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK_LIST,
+                Collections.singletonList(nic.getName())));
     }
 
     @Test

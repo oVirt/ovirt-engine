@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
@@ -51,7 +52,9 @@ public class AddNetworkAttachmentCommand<T extends NetworkAttachmentParameters> 
         }
 
         if (networkAttachment.getId() != null) {
-            return failCanDoAction(EngineMessage.NETWORK_ATTACHMENT_CANNOT_BE_CREATED_WITH_SPECIFIC_ID);
+            return failCanDoAction(EngineMessage.NETWORK_ATTACHMENT_CANNOT_BE_CREATED_WITH_SPECIFIC_ID,
+                ReplacementUtils.createSetVariableString("NETWORK_ATTACHMENT_CANNOT_BE_CREATED_WITH_SPECIFIC_ID_ENTITY",
+                    networkAttachment.getId()));
         }
 
         return true;
