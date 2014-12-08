@@ -93,8 +93,8 @@ public interface HostResource extends UpdatableResource<Host>, MeasurableResourc
 
     @POST
     @Actionable
-    @Path("refreshcapabilities")
-    public Response refreshCapabilities(Action action);
+    @Path("refresh")
+    public Response refresh(Action action);
 
     @POST
     @Actionable
@@ -124,4 +124,7 @@ public interface HostResource extends UpdatableResource<Host>, MeasurableResourc
 
     @Path("katelloerrata")
     public KatelloErrataResource getKatelloErrataResource();
+
+    @Path("devices")
+    public HostDevicesResource getHostDevicesResource();
 }

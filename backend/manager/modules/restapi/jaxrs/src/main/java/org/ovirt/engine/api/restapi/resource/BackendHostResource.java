@@ -25,6 +25,7 @@ import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.FenceAgentsResource;
+import org.ovirt.engine.api.resource.HostDevicesResource;
 import org.ovirt.engine.api.resource.HostNicsResource;
 import org.ovirt.engine.api.resource.HostNumaNodesResource;
 import org.ovirt.engine.api.resource.HostResource;
@@ -84,10 +85,9 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     @Override
     public Host get() {
         // This logic shouldn't be part of the "get" method as it is an action. It will be replaced by
-        // the "refreshcapabilities" action and removed in the future.
+        // the "refresh" action and removed in the future.
         if (isForce()) {
-            performAction(VdcActionType.RefreshHostCapabilities,
-                    new VdsActionParameters(guid));
+            performAction(VdcActionType.RefreshHost, new VdsActionParameters(guid));
         }
 
         Host host = performGet(VdcQueryType.GetVdsByVdsId, new IdQueryParameters(guid));
@@ -441,8 +441,8 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     }
 
     @Override
-    public Response refreshCapabilities(Action action) {
-        return doAction(VdcActionType.RefreshHostCapabilities, new VdsActionParameters(guid), action);
+    public Response refresh(Action action) {
+        return doAction(VdcActionType.RefreshHost, new VdsActionParameters(guid), action);
     }
 
     @Override
@@ -484,6 +484,11 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     @Override
     public ActionResource getActionSubresource(String action, String ids) {
         return inject(new BackendActionResource(action, ids));
+    }
+
+    @Override
+    public HostDevicesResource getHostDevicesResource() {
+        return inject(new BackendHostDevicesResource(guid));
     }
 
     @Override

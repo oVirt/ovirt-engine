@@ -35,6 +35,7 @@ import org.ovirt.engine.api.resource.SnapshotsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.VmApplicationsResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
+import org.ovirt.engine.api.resource.VmHostDevicesResource;
 import org.ovirt.engine.api.resource.VmNicsResource;
 import org.ovirt.engine.api.resource.VmNumaNodesResource;
 import org.ovirt.engine.api.resource.VmReportedDevicesResource;
@@ -705,4 +706,8 @@ public class BackendVmResource extends
         return inject(new BackendVmKatelloErrataResource(id));
     }
 
+    @Override
+    public VmHostDevicesResource getVmHostDevicesResource() {
+        return inject(new BackendVmHostDevicesResource(guid));
+    }
 }

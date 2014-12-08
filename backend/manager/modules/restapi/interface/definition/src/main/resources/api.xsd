@@ -4093,6 +4093,60 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="product" type="Product" />
+
+  <xs:element name="vendor" type="Vendor" />
+
+  <xs:element name="host_device" type="HostDevice" />
+
+  <xs:element name="host_devices" type="HostDevices" />
+
+  <xs:complexType name="Product">
+    <xs:complexContent>
+      <xs:extension base="BaseResource" />
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Vendor">
+    <xs:complexContent>
+      <xs:extension base="BaseResource" />
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="HostDevice">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="host" minOccurs="0" maxOccurs="1" />
+          <xs:element name="parent_device" type="HostDevice" minOccurs="0" maxOccurs="1" />
+          <xs:element name="capability" type="xs:string" minOccurs="0" maxOccurs="1" />
+          <xs:element ref="product" minOccurs="0" maxOccurs="1" />
+          <xs:element ref="vendor" minOccurs="0" maxOccurs="1" />
+          <xs:element name="iommu_group" type="xs:int" minOccurs="0" maxOccurs="1" />
+          <xs:element name="physical_function" type="HostDevice" minOccurs="0" maxOccurs="1" />
+          <xs:element name="virtual_functions" type="xs:int" minOccurs="0" maxOccurs="1" />
+          <xs:element ref="vm" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="HostDevices">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="host_device" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="HostDevices"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="nic_configuration" type="GuestNicConfiguration"/>
 
   <xs:element name="nic_configurations" type="GuestNicsConfiguration"/>

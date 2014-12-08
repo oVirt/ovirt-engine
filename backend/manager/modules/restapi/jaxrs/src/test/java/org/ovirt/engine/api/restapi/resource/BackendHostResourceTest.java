@@ -121,7 +121,7 @@ public class BackendHostResourceTest
     @Test
     public void testGetForceTrue() throws Exception {
         UriInfo uriInfo =
-                setUpActionExpectations(VdcActionType.RefreshHostCapabilities,
+                setUpActionExpectations(VdcActionType.RefreshHost,
                                         VdsActionParameters.class,
                                         new String[] { "VdsId" },
                                         new Object[] { GUIDS[0] },

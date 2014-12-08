@@ -186,4 +186,6 @@ public interface VmResource extends UpdatableResource<VM>, AsynchronouslyCreated
     @Path("graphicsconsoles")
     public VmGraphicsConsolesResource getVmGraphicsConsolesResource();
 
+    @Path("hostdevices")
+    public VmHostDevicesResource getVmHostDevicesResource();
 }

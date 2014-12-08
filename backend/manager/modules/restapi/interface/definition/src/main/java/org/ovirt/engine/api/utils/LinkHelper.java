@@ -40,6 +40,7 @@ import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Bookmark;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.HostDevices;
 import org.ovirt.engine.api.model.QuotaClusterLimit;
 import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.api.model.DataCenter;
@@ -63,6 +64,7 @@ import org.ovirt.engine.api.model.GlusterVolumeProfileDetails;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Hook;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.HostDevice;
 import org.ovirt.engine.api.model.HostNIC;
 import org.ovirt.engine.api.model.Icon;
 import org.ovirt.engine.api.model.Image;
@@ -156,6 +158,8 @@ import org.ovirt.engine.api.resource.FileResource;
 import org.ovirt.engine.api.resource.FilesResource;
 import org.ovirt.engine.api.resource.FilterResource;
 import org.ovirt.engine.api.resource.FiltersResource;
+import org.ovirt.engine.api.resource.HostDeviceResource;
+import org.ovirt.engine.api.resource.HostDevicesResource;
 import org.ovirt.engine.api.resource.HostHookResource;
 import org.ovirt.engine.api.resource.HostHooksResource;
 import org.ovirt.engine.api.resource.HostNicResource;
@@ -223,6 +227,8 @@ import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.resource.IconResource;
 import org.ovirt.engine.api.resource.IconsResource;
+import org.ovirt.engine.api.resource.VmHostDeviceResource;
+import org.ovirt.engine.api.resource.VmHostDevicesResource;
 import org.ovirt.engine.api.resource.VmNicResource;
 import org.ovirt.engine.api.resource.VmNumaNodeResource;
 import org.ovirt.engine.api.resource.VmNumaNodesResource;
@@ -522,6 +528,11 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(VmSessionResource.class, VmSessionsResource.class, VM.class);
         TYPES.put(Session.class, map);
+
+        map = new ParentToCollectionMap(HostDevice.class, HostDevices.class);
+        map.add(HostDeviceResource.class, HostDevicesResource.class, Host.class);
+        map.add(VmHostDeviceResource.class, VmHostDevicesResource.class, VM.class);
+        TYPES.put(HostDevice.class, map);
 
         map = new ParentToCollectionMap(SchedulingPolicyUnitResource.class, SchedulingPolicyUnitsResource.class);
         TYPES.put(SchedulingPolicyUnit.class, map);
