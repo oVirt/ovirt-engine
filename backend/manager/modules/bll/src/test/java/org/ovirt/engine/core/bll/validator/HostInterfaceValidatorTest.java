@@ -305,4 +305,62 @@ public class HostInterfaceValidatorTest {
         VdsNetworkInterface vdsNetworkInterface = createVdsNetworkInterfaceWithName();
         assertThat(new HostInterfaceValidator(vdsNetworkInterface).networkCanBeAttached(), isValid());
     }
+
+    @Test
+    public void testInterfaceByNameExists() throws Exception {
+        assertThat(new HostInterfaceValidator(createVdsNetworkInterfaceWithName()).interfaceByNameExists(), isValid());
+    }
+
+    @Test
+    public void testInterfaceByNameExistsWhenInterfaceIsNull() throws Exception {
+        assertThat(new HostInterfaceValidator(null).interfaceByNameExists(),
+                failsWith(VdcBllMessages.HOST_NETWORK_INTERFACE_NOT_EXIST));
+    }
+
+    @Test
+    public void testInterfaceByNameExistsWhenInterfacesNameIsNull() throws Exception {
+        assertThat(new HostInterfaceValidator(createVdsNetworkInterfaceWithName(null)).interfaceByNameExists(),
+                failsWith(VdcBllMessages.HOST_NETWORK_INTERFACE_NOT_EXIST));
+    }
+
+    @Test
+    public void testInterfaceIsBondWhenInterfaceIsNull() throws Exception {
+        assertThat(new HostInterfaceValidator(null).interfaceIsBondOrNull(), isValid());
+    }
+
+    @Test
+    public void testInterfaceIsBondWhenInterfaceIsBonded() throws Exception {
+        VdsNetworkInterface iface = createVdsNetworkInterfaceWithName();
+        iface.setBonded(true);
+        assertThat(new HostInterfaceValidator(iface).interfaceIsBondOrNull(), isValid());
+    }
+
+    @Test
+    public void testInterfaceIsBondWhenInterfaceIsNotBonded() throws Exception {
+        VdsNetworkInterface iface = createVdsNetworkInterfaceWithName();
+        iface.setBonded(false);
+        assertThat(new HostInterfaceValidator(iface).interfaceIsBondOrNull(),
+                failsWith(VdcBllMessages.NETWORK_INTERFACE_IS_NOT_BOND));
+    }
+
+    @Test
+    public void testInterfaceIsValidSlave() throws Exception {
+        assertThat(new HostInterfaceValidator(createVdsNetworkInterfaceWithName()).interfaceIsValidSlave(), isValid());
+    }
+
+    @Test
+    public void testInterfaceIsValidSlaveWhenInterfaceIsBond() throws Exception {
+        VdsNetworkInterface vdsNetworkInterface = createVdsNetworkInterfaceWithName();
+        vdsNetworkInterface.setBonded(true);
+        assertThat(new HostInterfaceValidator(vdsNetworkInterface).interfaceIsValidSlave(),
+                failsWith(VdcBllMessages.NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE));
+    }
+
+    @Test
+    public void testInterfaceIsValidSlaveWhenInterfaceIsVlan() throws Exception {
+        VdsNetworkInterface vdsNetworkInterface = createVdsNetworkInterfaceWithName();
+        vdsNetworkInterface.setVlanId(1);
+        assertThat(new HostInterfaceValidator(vdsNetworkInterface).interfaceIsValidSlave(),
+                failsWith(VdcBllMessages.NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE));
+    }
 }

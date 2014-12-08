@@ -16,6 +16,7 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
+import org.ovirt.engine.core.bll.validator.HostInterfaceValidator;
 import org.ovirt.engine.core.bll.validator.NetworkAttachmentValidator;
 import org.ovirt.engine.core.bll.validator.NetworkAttachmentsValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -158,13 +159,15 @@ public class HostSetupNetworksValidator {
         Set<String> requiredNicsNames = getRemovedBondsUsedByNetworks();
 
         for (VdsNetworkInterface removedBond : removedBondVdsNetworkInterface) {
-            VdsNetworkInterface existingBond = existingIfaces.get(removedBond.getName());
-            if (existingBond != null && !isBond(existingBond)) {
-                return new ValidationResult(VdcBllMessages.NETWORK_INTERFACE_IS_NOT_BOND, removedBond.getName());
+            String bondName = removedBond.getName();
+            VdsNetworkInterface existingBond = existingIfaces.get(bondName);
+            ValidationResult interfaceIsBondOrNull = new HostInterfaceValidator(existingBond).interfaceIsBondOrNull();
+            if (!interfaceIsBondOrNull.isValid()) {
+                return interfaceIsBondOrNull;
             }
 
-            if (requiredNicsNames.contains(removedBond.getName())) {
-                return new ValidationResult(VdcBllMessages.BOND_USED_BY_NETWORK_ATTACHMENTS, removedBond.getName());
+            if (requiredNicsNames.contains(bondName)) {
+                return new ValidationResult(VdcBllMessages.BOND_USED_BY_NETWORK_ATTACHMENTS, bondName);
             }
         }
 
@@ -213,39 +216,52 @@ public class HostSetupNetworksValidator {
     }
 
     private ValidationResult validNewOrModifiedBonds() {
-        for (Bond modifiedBond : params.getBonds()) {
-            if (modifiedBond.getName() == null) {
-                return new ValidationResult(VdcBllMessages.HOST_NETWORK_INTERFACE_NOT_EXIST);
+        for (Bond modifiedOrNewBond : params.getBonds()) {
+            String bondName = modifiedOrNewBond.getName();
+
+            ValidationResult interfaceByNameExists = new HostInterfaceValidator(modifiedOrNewBond).interfaceByNameExists();
+            if (!interfaceByNameExists.isValid()) {
+                return interfaceByNameExists;
             }
 
-            VdsNetworkInterface existingBond = existingIfaces.get(modifiedBond.getName());
-            if (existingBond != null && !isBond(existingBond)) {
-                return new ValidationResult(VdcBllMessages.NETWORK_INTERFACE_IS_NOT_BOND, modifiedBond.getName());
+            //either it's newly create bond, thus non existing, or given name must reference existing bond.
+            ValidationResult interfaceIsBondOrNull = new HostInterfaceValidator(existingIfaces.get(bondName)).interfaceIsBondOrNull();
+            if (!interfaceIsBondOrNull.isValid()) {
+                return interfaceIsBondOrNull;
             }
 
-            // verify bond-slave count legal
-            if (modifiedBond.getSlaves().size() < 2) {
-                return new ValidationResult(VdcBllMessages.NETWORK_BONDS_INVALID_SLAVE_COUNT, modifiedBond.getName());
+            //count of bond slaves must be at least two.
+            if (modifiedOrNewBond.getSlaves().size() < 2) {
+                return new ValidationResult(VdcBllMessages.NETWORK_BONDS_INVALID_SLAVE_COUNT, bondName);
             }
 
-            for (String slaveName : modifiedBond.getSlaves()) {
+            for (String slaveName : modifiedOrNewBond.getSlaves()) {
                 VdsNetworkInterface potentialSlave = getExistingIfaces().get(slaveName);
-                if (potentialSlave == null) {
-                    return new ValidationResult(VdcBllMessages.HOST_NETWORK_INTERFACE_NOT_EXIST, slaveName);
+                HostInterfaceValidator slaveHostInterfaceValidator = new HostInterfaceValidator(potentialSlave);
+
+                ValidationResult interfaceExists = slaveHostInterfaceValidator.interfaceExists();
+                if (!interfaceExists.isValid()) {
+                    return interfaceExists;
                 }
 
-                if (NetworkUtils.isVlan(potentialSlave) || isBond(potentialSlave)) {
-                    return new ValidationResult(VdcBllMessages.NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE,
-                        potentialSlave.getName());
+                ValidationResult interfaceIsValidSlave = slaveHostInterfaceValidator.interfaceIsValidSlave();
+                if (!interfaceIsValidSlave.isValid()) {
+                    return interfaceIsValidSlave;
                 }
 
+                /* definition of currently processed bond references this slave, but this slave already 'slaves' for
+                another bond. This is ok only when this bond will be removed as a part of this request
+                or the slave will be removed from its former bond, as a part of this request. */
                 String currentSlavesBondName = potentialSlave.getBondName();
-                if (potentialSlave.isPartOfBond()
-                    && (!potentialSlave.isPartOfBond(modifiedBond.getName())
-                    && !isBondRemoved(currentSlavesBondName)
+                if (potentialSlave.isPartOfBond() &&
+                        /* we're creating new bond, and it's definition contains reference to slave already assigned
+                        to a different bond. */
+                    (!potentialSlave.isPartOfBond(bondName)
+                        //…but this bond is also removed in this request, so it's ok.
+                        && !isBondRemoved(currentSlavesBondName)
 
-                    //slaveRemovedFromItsFormerBond
-                    && !bondIsUpdatedAndDoesNotContainCertainSlave(slaveName, currentSlavesBondName))) {
+                        //… or slave was removed from its former bond
+                        && !bondIsUpdatedAndDoesNotContainCertainSlave(slaveName, currentSlavesBondName))) {
                     return new ValidationResult(VdcBllMessages.NETWORK_INTERFACE_ALREADY_IN_BOND, slaveName);
                 }
 
@@ -256,6 +272,9 @@ public class HostSetupNetworksValidator {
                             slaveName));
                 }
 
+                /* slave has network assigned and there isn't request for unassigning it;
+                so this check, that nic is part of newly crated bond, and any previously attached network has
+                to be unattached. */
                 if (potentialSlave.getNetworkName() != null && !isNetworkAttachmentRemoved(potentialSlave)) {
                     return new ValidationResult(VdcBllMessages.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE,
                         potentialSlave.getName());
@@ -516,10 +535,6 @@ public class HostSetupNetworksValidator {
 
     private Map<String, VdsNetworkInterface> getExistingIfaces() {
         return existingIfaces;
-    }
-
-    private boolean isBond(VdsNetworkInterface iface) {
-        return Boolean.TRUE.equals(iface.getBonded());
     }
 
     public VmInterfaceManager getVmInterfaceManager() {

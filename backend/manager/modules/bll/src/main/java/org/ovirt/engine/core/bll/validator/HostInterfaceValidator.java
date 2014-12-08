@@ -26,6 +26,11 @@ public class HostInterfaceValidator {
         return ValidationResult.failWith(VdcBllMessages.HOST_NETWORK_INTERFACE_NOT_EXIST).when(iface == null);
     }
 
+    public ValidationResult interfaceByNameExists() {
+        return ValidationResult.failWith(VdcBllMessages.HOST_NETWORK_INTERFACE_NOT_EXIST)
+                .when(iface == null || iface.getName() == null);
+    }
+
     public  ValidationResult interfaceAlreadyLabeledWith(String label) {
         return ValidationResult.failWith(VdcBllMessages.INTERFACE_ALREADY_LABELED)
                 .when(NetworkUtils.isLabeled(iface) && iface.getLabels().contains(label));
@@ -35,8 +40,12 @@ public class HostInterfaceValidator {
         return ValidationResult.failWith(VdcBllMessages.NIC_NOT_EXISTS_ON_HOST).when(!iface.getVdsId().equals(hostId));
     }
 
+    public ValidationResult interfaceIsBondOrNull() {
+        return ValidationResult.failWith(VdcBllMessages.NETWORK_INTERFACE_IS_NOT_BOND)
+            .when(iface != null && !iface.isBond());
+    }
+
     /**
-     *
      * @param nics existing host interfaces
      * @return Validation result evaluated as: isBond ==> isCorrectBond. If <code>iface</code> is not a bond, validation
      * is successful.
@@ -64,7 +73,9 @@ public class HostInterfaceValidator {
     public ValidationResult addLabelToNicAndValidate(String label, List<Class<?>> commandValidationGroups) {
         iface.getLabels().add(label);
         List<String> validationResult = ValidationUtils.validateInputs(commandValidationGroups, iface);
-        return ValidationResult.failWith(VdcBllMessages.IMPROPER_INTERFACE_IS_LABELED).when(!validationResult.isEmpty());
+        return ValidationResult
+                .failWith(VdcBllMessages.IMPROPER_INTERFACE_IS_LABELED)
+                .when(!validationResult.isEmpty());
     }
 
     public ValidationResult validBond(List<VdsNetworkInterface> nics) {
@@ -75,6 +86,11 @@ public class HostInterfaceValidator {
         int slavesCount = getSlaveCount(nics);
         return ValidationResult.failWith(VdcBllMessages.NETWORK_BONDS_INVALID_SLAVE_COUNT,
                 "$NETWORK_BONDS_INVALID_SLAVE_COUNT_LIST " + slavesCount).when(slavesCount < 2);
+    }
+
+    public ValidationResult interfaceIsValidSlave() {
+        return ValidationResult.failWith(VdcBllMessages.NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE)
+            .when(NetworkUtils.isVlan(iface) || iface.isBond());
     }
 
     public ValidationResult anotherInterfaceAlreadyLabeledWithThisLabel(String label,
