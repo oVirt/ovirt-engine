@@ -163,6 +163,29 @@
           </validation>
         </datasource>
 
+        <datasource jndi-name="java:/ENGINEDataSourceNoJTA" pool-name="ENGINEDataSourceNoJTA" enabled="true" use-ccm="false" jta="false">
+          <connection-url><![CDATA[$getstring('ENGINE_DB_URL')]]></connection-url>
+          <driver>postgresql</driver>
+          <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
+          <pool>
+            <min-pool-size>$getinteger('ENGINE_NON_JTA_DB_MIN_CONNECTIONS')</min-pool-size>
+            <max-pool-size>$getinteger('ENGINE_NON_JTA_DB_MAX_CONNECTIONS')</max-pool-size>
+            <prefill>true</prefill>
+          </pool>
+          <security>
+            <user-name><![CDATA[$getstring('ENGINE_DB_USER')]]></user-name>
+            <password><![CDATA[$getstring('ENGINE_DB_PASSWORD')]]></password>
+          </security>
+          <statement>
+            <prepared-statement-cache-size>100</prepared-statement-cache-size>
+            <share-prepared-statements/>
+          </statement>
+          <validation>
+            <validate-on-match>true</validate-on-match>
+            <check-valid-connection-sql>select 1</check-valid-connection-sql>
+          </validation>
+        </datasource>
+
         <drivers>
           <driver name="postgresql" module="org.postgresql">
             <xa-datasource-class>org.postgresql.xa.PGXADataSource</xa-datasource-class>

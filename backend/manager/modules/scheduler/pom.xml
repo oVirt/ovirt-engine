@@ -29,9 +29,21 @@
       <groupId>org.quartz-scheduler</groupId>
       <artifactId>quartz</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
+   <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -39,6 +51,9 @@
           <additionalClasspathElements>
             <additionalClasspathElement>${basedir}/src/test/java</additionalClasspathElement>
           </additionalClasspathElements>
+          <excludes>
+            <exclude>**/DBSchedulerUtilQuartzImplTest.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
       <plugin>
@@ -60,6 +75,22 @@
   </build>
 
   <profiles>
+    <profile>
+      <id>enable-dao-tests</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration combine.self="override">
+              <excludes/>
+              <systemPropertyVariables>
+                <java.util.logging.config.file>src/test/resources/logging.properties</java.util.logging.config.file>
+              </systemPropertyVariables>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
     <profile>
         <id>findbugs</id>
         <activation>

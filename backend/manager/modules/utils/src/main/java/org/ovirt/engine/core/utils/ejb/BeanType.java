@@ -8,6 +8,7 @@ package org.ovirt.engine.core.utils.ejb;
 public enum BeanType {
     BACKEND, // Backend bean
     SCHEDULER, // SchedulerUtil
+    PERSISTENT_SCHEDULER,
     VDS_EVENT_LISTENER,
     LOCK_MANAGER,
     EVENTQUEUE_MANAGER,

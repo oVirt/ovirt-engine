@@ -36,9 +36,9 @@ public class JobWrapper implements Job {
         try {
             JobDataMap data = context.getJobDetail().getJobDataMap();
             Map paramsMap = data.getWrappedMap();
-            methodName = (String) paramsMap.get(SchedulerUtilQuartzImpl.RUN_METHOD_NAME);
-            Object instance = paramsMap.get(SchedulerUtilQuartzImpl.RUNNABLE_INSTANCE);
-            Object[] methodParams = (Object[]) paramsMap.get(SchedulerUtilQuartzImpl.RUN_METHOD_PARAM);
+            methodName = (String) paramsMap.get(SchedulerUtilBaseImpl.RUN_METHOD_NAME);
+            Object instance = getInstanceToRun(paramsMap);
+            Object[] methodParams = (Object[]) paramsMap.get(SchedulerUtilBaseImpl.RUN_METHOD_PARAM);
             String methodKey = getMethodKey(instance.getClass().getName(), methodName);
             Method methodToRun = cachedMethods.get(methodKey);
             if (methodToRun == null) {
@@ -64,6 +64,10 @@ public class JobWrapper implements Job {
             jee.setStackTrace(e.getStackTrace());
             throw jee;
         }
+    }
+
+    protected Object getInstanceToRun(Map paramsMap) {
+        return paramsMap.get(SchedulerUtilBaseImpl.RUNNABLE_INSTANCE);
     }
 
     /**
