@@ -1,12 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
+import com.google.inject.Inject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
@@ -38,7 +38,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
-import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
@@ -59,6 +58,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.UserPortalPermissionList
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolInterfaceListModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
 import org.ovirt.engine.ui.uicommonweb.models.vms.CloneVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
@@ -91,8 +91,6 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
-
-import com.google.inject.Inject;
 
 public class UserPortalListModel extends AbstractUserPortalListModel {
 
@@ -1136,6 +1134,10 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
         parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         setRngDeviceToParams(model, parameters);
+
+        if (!StringHelper.isNullOrEmpty(model.getVmId().getEntity())) {
+            vm.setId(new Guid(model.getVmId().getEntity()));
+        }
 
         Frontend.getInstance().runAction(
                 model.getProvisioning().getEntity() ? VdcActionType.AddVmFromTemplate : VdcActionType.AddVm,

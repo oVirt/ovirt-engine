@@ -1,6 +1,8 @@
 
 package org.ovirt.engine.ui.common.widget.uicommon.popup;
 
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -25,6 +27,11 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ValueLabel;
 import com.google.gwt.user.client.ui.Widget;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -96,11 +103,11 @@ import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.SerialNumberPolicyWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmPopupVmInitWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
-import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
+import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
@@ -112,14 +119,6 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
 
 public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWidget<UnitVmModel>
     implements TabbedView {
@@ -191,6 +190,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Ignore
     public InfoIcon poolNameIcon;
+
+    @UiField
+    @Path(value = "vmId.entity")
+    @WithElementId("vmId")
+    public StringEntityModelTextBoxEditor vmIdEditor;
 
     @UiField(provided = true)
     @Path(value = "description.entity")
@@ -1022,6 +1026,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     private void initTextBoxEditors() {
         templateVersionNameEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        vmIdEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         descriptionEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         commentEditor = new StringEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         numOfVmsEditor = new IntegerEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
@@ -1380,6 +1385,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         quotaEditor.setLabel(constants.quotaVmPopup());
         nameLabel.setText(constants.nameVmPopup());
         templateVersionNameEditor.setLabel(constants.templateVersionName());
+
+        vmIdEditor.setLabel(constants.vmIdPopup());
         descriptionEditor.setLabel(constants.descriptionVmPopup());
         commentEditor.setLabel(constants.commentLabel());
 
@@ -1870,6 +1877,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         nameEditor.setTabIndex(nextTabIndex++);
         templateVersionNameEditor.setTabIndex(nextTabIndex++);
+        vmIdEditor.setTabIndex(nextTabIndex++);
         descriptionEditor.setTabIndex(nextTabIndex++);
         commentEditor.setTabIndex(nextTabIndex++);
         isStatelessEditor.setTabIndex(nextTabIndex++);
@@ -2044,7 +2052,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 memSizeEditor,
                 totalvCPUsEditor,
                 vcpusAdvancedParameterExpander,
-                copyTemplatePermissionsEditor
+                copyTemplatePermissionsEditor,
+                vmIdEditor
                 );
     }
 
@@ -2066,6 +2075,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         return Arrays.<Widget> asList(
                 // general tab
                 oSTypeEditor,
+                vmIdEditor,
 
                 // system tab
                 detachableMemSizeEditor,

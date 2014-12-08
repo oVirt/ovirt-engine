@@ -1,8 +1,7 @@
 package org.ovirt.engine.ui.uicompat;
 
-import org.ovirt.engine.core.common.businessentities.VmPool;
-
 import com.google.gwt.i18n.client.Constants;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 
 public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
@@ -2488,4 +2487,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Next")
     String next();
+
+    @DefaultStringValue("This field is not a valid Guid (use 0-9,A-F format: 00000000-0000-0000-0000-000000000000)")
+    String invalidGuidMsg();
 }

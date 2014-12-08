@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -62,6 +61,9 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().getVmType().setIsChangable(true);
         getModel().getIsSoundcardEnabled().setIsChangable(true);
         getModel().getInstanceTypes().setIsChangable(!vm.isRunning());
+
+        getModel().getVmId().setIsAvailable(true);
+        getModel().getVmId().setIsChangable(false);
 
         loadDataCenter();
         instanceTypeManager = new ExistingVmInstanceTypeManager(getModel(), vm);

@@ -97,11 +97,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     /**
-     * If someone overrides the initalize not calling the super, at least this has to be called
+     * If someone overrides the initialize not calling the super, at least this has to be called
      */
     protected void commonInitialize() {
         priorityUtil = new PriorityUtil(getModel());
         virtioScsiUtil = new VirtioScsiUtil(getModel());
+        getModel().getVmId().setIsAvailable(false);
     }
 
     public void dataCenterWithClusterSelectedItemChanged() {

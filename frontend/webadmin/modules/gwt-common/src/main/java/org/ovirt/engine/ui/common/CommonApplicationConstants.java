@@ -547,6 +547,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Name")
     String nameVmPopup();
 
+    @DefaultStringValue("VM Id")
+    String vmIdPopup();
+
     @DefaultStringValue("Description")
     String descriptionVmPopup();
 

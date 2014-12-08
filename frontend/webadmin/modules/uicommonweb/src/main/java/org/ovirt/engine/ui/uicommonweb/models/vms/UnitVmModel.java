@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -62,6 +61,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.VmNumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
+import org.ovirt.engine.ui.uicommonweb.validation.GuidValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NExtraNameOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -208,6 +208,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getDataCenterWithClustersList().setIsChangable(!value);
             getQuota().setIsChangable(false);
             getCpuProfiles().setIsChangable(false);
+
+            getVmId().setIsChangable(false);
 
             getNumOfDesktops().setIsChangable(false);
             getPrestartedVms().setIsChangable(false);
@@ -505,6 +507,18 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     public EntityModel<Boolean> getAllowConsoleReconnect()
     {
         return privateAllowConsoleReconnect;
+    }
+
+    private NotChangableForVmInPoolEntityModel<String> privateVmId;
+
+    public EntityModel<String> getVmId()
+    {
+        return privateVmId;
+    }
+
+    private void setVmId(NotChangableForVmInPoolEntityModel<String> value)
+    {
+        privateVmId = value;
     }
 
     private void setAllowConsoleReconnect(NotChangableForVmInPoolEntityModel<Boolean> value)
@@ -1418,6 +1432,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setName(new NotChangableForVmInPoolEntityModel<String>());
         setNumOfMonitors(new NotChangableForVmInPoolListModel<Integer>());
         setAllowConsoleReconnect(new NotChangableForVmInPoolEntityModel<Boolean>());
+        setVmId(new NotChangableForVmInPoolEntityModel<String>());
         setDescription(new NotChangableForVmInPoolEntityModel<String>());
         setComment(new NotChangableForVmInPoolEntityModel<String>());
         setMinAllocatedMemory(new NotChangableForVmInPoolEntityModel<Integer>());
@@ -2641,6 +2656,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                                             isValidTab(TabName.POOL_TAB) ? new PoolNameValidation() : new I18NNameValidation()
                     });
 
+            if (getVmId().getIsAvailable() && !StringHelper.isNullOrEmpty(getVmId().getEntity())) {
+                getVmId().validateEntity(new IValidation[] { new GuidValidation() });
+            }
+
             getDescription().validateEntity(
                     new IValidation[] {
                             new LengthValidation(DESCRIPTION_MAX_LIMIT),
@@ -2651,6 +2670,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
             setValidTab(TabName.GENERAL_TAB, isValidTab(TabName.GENERAL_TAB)
                     && getName().getIsValid()
+                    && getVmId().getIsValid()
                     && getDescription().getIsValid()
                     && getComment().getIsValid());
         }

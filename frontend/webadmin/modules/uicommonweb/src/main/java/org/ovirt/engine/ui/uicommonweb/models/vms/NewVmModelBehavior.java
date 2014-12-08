@@ -36,6 +36,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
 
         getModel().getIsSoundcardEnabled().setIsChangable(true);
         getModel().getVmType().setIsChangable(true);
+        getModel().getVmId().setIsAvailable(true);
 
         AsyncDataProvider.getInstance().getDataCenterByClusterServiceList(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {

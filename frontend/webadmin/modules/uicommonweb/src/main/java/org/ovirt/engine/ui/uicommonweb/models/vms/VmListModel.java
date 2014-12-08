@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
@@ -115,10 +116,6 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
-
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-
 public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTreeContext {
 
     public static final String CMD_CONFIGURE_VMS_TO_IMPORT = "ConfigureVmsToImport"; //$NON-NLS-1$
@@ -2120,6 +2117,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.startProgress(null);
 
         VM vm = getcurrentVm();
+        if (!StringHelper.isNullOrEmpty(model.getVmId().getEntity())) {
+            vm.setId(new Guid(model.getVmId().getEntity()));
+        }
         vm.setUseLatestVersion(model.getTemplate().getSelectedItem() instanceof LatestVmTemplate);
 
         AddVmParameters parameters = new AddVmParameters(vm);

@@ -441,6 +441,7 @@
                                 <ge:EntityModelTextBoxOnlyEditor ui:field="nameEditor" addStyleNames="{style.nameEditor} avmpw_nameEditor_pfly_fix" contentWidgetStyleName="{style.nameEditorContent}"/>
                             </g:FlowPanel>
                             <ge:StringEntityModelTextBoxEditor ui:field="templateVersionNameEditor" />
+                            <ge:StringEntityModelTextBoxEditor ui:field="vmIdEditor" />
                             <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
                             <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" />
 
