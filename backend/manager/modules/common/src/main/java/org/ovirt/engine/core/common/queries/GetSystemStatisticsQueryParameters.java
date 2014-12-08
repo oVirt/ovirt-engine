@@ -13,9 +13,11 @@ public class GetSystemStatisticsQueryParameters extends VdcQueryParametersBase {
     }
 
     public GetSystemStatisticsQueryParameters(int max) {
+        this();
         setMax(max);
     }
 
     public GetSystemStatisticsQueryParameters() {
+        setRefresh(false);
     }
 }

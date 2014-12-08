@@ -588,6 +588,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     @Override
     public VdcQueryReturnValue runPublicQuery(VdcQueryType actionType, VdcQueryParametersBase parameters) {
+        parameters.setRefresh(false);
         switch (actionType) {
         case GetAAAProfileList:
         case RegisterVds:
