@@ -228,7 +228,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                                getCluster().setItems(clusters);
                                getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
                            }
-                           VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
+
                            // get storage domains
                            AsyncDataProvider.getStorageDomainList(new AsyncQuery(ImportVmModel.this,
                                    new INewAsyncCallback() {
