@@ -123,7 +123,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
     protected void endWithFailure() {
         if (getDestinationDiskImage() != null) {
             if (getParameters().isShouldRemainIllegalOnFailedExecution()) {
-                setImageStatus(ImageStatus.ILLEGAL);
+                setImageStatus(ImageStatus.ILLEGAL, getDestinationDiskImage());
             } else {
                 DbFacade.getInstance().getDiskImageDynamicDao().remove(getDestinationDiskImage().getImageId());
                 super.endWithFailure();
