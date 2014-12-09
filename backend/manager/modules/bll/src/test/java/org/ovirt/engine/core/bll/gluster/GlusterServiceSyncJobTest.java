@@ -442,7 +442,7 @@ public class GlusterServiceSyncJobTest {
     private VDSReturnValue createVDSReturnValueForFailure() {
         VDSReturnValue ret = new VDSReturnValue();
         ret.setSucceeded(false);
-        ret.setVdsError(new VDSError(VdcBllErrors.GlusterServicesListFailed, "VDSM Error"));
+        ret.setVdsError(new VDSError(VdcBllErrors.GlusterServicesActionFailed, "VDSM Error"));
         return ret;
     }
 }

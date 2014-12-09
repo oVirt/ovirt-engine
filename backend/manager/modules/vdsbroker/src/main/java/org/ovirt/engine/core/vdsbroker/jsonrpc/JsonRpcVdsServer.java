@@ -28,6 +28,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotInfoReturnFo
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeTaskReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.OneStorageDeviceReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.StorageDeviceListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
@@ -1726,5 +1727,20 @@ public class JsonRpcVdsServer implements IVdsServer {
         JsonRpcRequest request = new RequestBuilder("GlusterHost.storageDevicesList").build();
         Map<String, Object> response = new FutureMap(this.client, request).withResponseKey("deviceInfo");
         return new StorageDeviceListReturnForXmlRpc(response);
+    }
+
+    @Override
+    public OneStorageDeviceReturnForXmlRpc glusterCreateBrick(String lvName,
+            String mountPoint,
+            Map<String, Object> raidParams, String fsType,
+            String[] storageDevices) {
+        JsonRpcRequest request = new RequestBuilder("GlusterHost.createBrick").withParameter("brickName", lvName)
+                .withParameter("mountPoint", mountPoint)
+                .withParameter("devices", storageDevices)
+                .withParameter("fsType", fsType)
+                .withOptionalParameterAsMap("raidParams", raidParams).build();
+
+        Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
+        return new OneStorageDeviceReturnForXmlRpc(response);
     }
 }

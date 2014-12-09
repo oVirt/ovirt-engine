@@ -23,6 +23,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotInfoReturnFo
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeTaskReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.OneStorageDeviceReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.StorageDeviceListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
@@ -367,4 +368,10 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc glusterVolumeSnapshotConfigSet(String volumeName, String cfgName, String cfgValue);
 
     StatusOnlyReturnForXmlRpc glusterSnapshotConfigSet(String cfgName, String cfgValue);
+
+    OneStorageDeviceReturnForXmlRpc glusterCreateBrick(String lvName,
+            String mountPoint,
+            Map<String, Object> raidParams,
+            String fsType,
+            String[] storageDevices);
 }
