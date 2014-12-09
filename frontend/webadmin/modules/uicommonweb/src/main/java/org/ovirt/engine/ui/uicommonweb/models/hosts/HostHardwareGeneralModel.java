@@ -259,7 +259,7 @@ public class HostHardwareGeneralModel extends EntityModel
             String fieldValue = String.valueOf(coresPerSocket);
             if (vds.getCountThreadsAsCores()) {
                 fieldValue = ConstantsManager.getInstance().getMessages()
-                        .threadsAsCoresPerSocket(coresPerSocket, vds.getCpuThreads());
+                        .threadsAsCoresPerSocket(coresPerSocket, vds.getCpuThreads() / vds.getCpuSockets());
             }
 
             setCoresPerSocket(fieldValue);
