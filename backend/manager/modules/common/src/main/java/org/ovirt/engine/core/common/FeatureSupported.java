@@ -505,4 +505,13 @@ public class FeatureSupported {
     public static boolean cinderProviderSupported(Version version) {
         return supportedInConfig(ConfigValues.CinderProviderSupported, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if SR-IOV network interfaces are supported for the given version
+     */
+    public static boolean sriov(Version version) {
+        return supportedInConfig(ConfigValues.NetworkSriovSupported, version);
+    }
 }

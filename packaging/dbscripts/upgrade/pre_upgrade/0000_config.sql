@@ -675,6 +675,8 @@ select fn_db_add_config_value('UnsupportedLocalesFilter','','general');
 select fn_db_add_config_value('DefaultAutoConvergence','false','general');
 select fn_db_add_config_value('DefaultMigrationCompression','false','general');
 
+select fn_db_add_config_value_for_versions_up_to('NetworkSriovSupported','false','3.5');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------

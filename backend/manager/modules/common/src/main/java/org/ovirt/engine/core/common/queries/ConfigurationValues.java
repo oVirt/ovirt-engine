@@ -158,7 +158,8 @@ public enum ConfigurationValues {
     DefaultMigrationCompression,
     CORSSupport,
     CORSAllowedOrigins,
-    CinderProviderSupported;
+    CinderProviderSupported,
+    NetworkSriovSupported;
 
     public static enum ConfigAuthType {
         Admin,

@@ -2073,6 +2073,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     CinderProviderSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    NetworkSriovSupported,
+
     Invalid
 
 }
