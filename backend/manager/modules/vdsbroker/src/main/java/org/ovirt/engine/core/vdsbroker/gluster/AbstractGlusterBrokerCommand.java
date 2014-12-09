@@ -53,7 +53,6 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
         case GlusterHookListException:
         case GlusterHostUUIDNotFound:
         case GlusterHookConflict:
-        case GlusterServicesListFailed:
         case GlusterHookUpdateFailed:
         case GlusterHookAlreadyExists:
         case GlusterHookChecksumMismatch:
@@ -88,7 +87,14 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
         case GlusterSnapshotConfigFailedException:
         case GlusterSnapshotConfigSetFailedException:
         case GlusterSnapshotConfigGetFailedException:
-
+        case GlusterHostStorageDeviceNotFoundException:
+        case GlusterHostStorageDeviceInUseException:
+        case GlusterHostStorageDeviceMountFailedException:
+        case GlusterHostStorageDeviceMkfsFailedException:
+        case GlusterHostStorageDeviceFsTabFoundException:
+        case GlusterHostStorageDevicePVCreateFailedException:
+        case GlusterHostStorageDeviceLVConvertFailedException:
+        case GlusterHostStorageDeviceLVChangeFailedException:
             // Capture error from gluster command and record failure
             getVDSReturnValue().setVdsError(new VDSError(returnStatus, getReturnStatus().mMessage));
             getVDSReturnValue().setSucceeded(false);

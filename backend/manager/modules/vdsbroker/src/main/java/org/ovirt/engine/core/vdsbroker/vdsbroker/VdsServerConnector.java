@@ -348,4 +348,10 @@ public interface VdsServerConnector {
     public Map<String, Object> glusterSnapshotConfigSet(String cfgName, String cfgValue);
 
     public Map<String, Object> glusterStorageDevicesList();
+
+    public Map<String, Object> glusterCreateBrick(String brickName,
+            String mountPoint,
+            String[] devices,
+            String fsType,
+            Map<String, Object> raidParams);
 }

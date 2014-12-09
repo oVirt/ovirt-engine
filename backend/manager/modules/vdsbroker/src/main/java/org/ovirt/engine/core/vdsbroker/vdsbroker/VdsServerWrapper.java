@@ -24,6 +24,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotInfoReturnFo
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeTaskReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.OneStorageDeviceReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.StorageDeviceListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
@@ -1713,4 +1714,23 @@ public class VdsServerWrapper implements IVdsServer {
             throw new XmlRpcRunTimeException(ute);
         }
     }
+
+    @Override
+    public OneStorageDeviceReturnForXmlRpc glusterCreateBrick(String lvName,
+            String mountPoint,
+            Map<String, Object> raidParams,
+            String fsType,
+            String[] storageDevices) {
+        try {
+            return new OneStorageDeviceReturnForXmlRpc(vdsServer.glusterCreateBrick(lvName,
+                    mountPoint,
+                    storageDevices,
+                    fsType,
+                    raidParams));
+        } catch (UndeclaredThrowableException exp) {
+            throw new XmlRpcRunTimeException(exp);
+        }
+
+    }
+
 }

@@ -875,4 +875,28 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Failed to get the gluster volume snapshot configuration")
     String GlusterSnapshotConfigGetFailedException();
+
+    @DefaultStringValue("Storage device(s) not found")
+    String GlusterHostStorageDeviceNotFoundException();
+
+    @DefaultStringValue("Storage device(s) already in use")
+    String GlusterHostStorageDeviceInUseException();
+
+    @DefaultStringValue("Failed to mount the device")
+    String GlusterHostStorageDeviceMountFailedException();
+
+    @DefaultStringValue(" Failed to format the device")
+    String GlusterHostStorageDeviceMkfsFailedException();
+
+    @DefaultStringValue("FSTAB entry already exists for the device")
+    String GlusterHostStorageDeviceFsTabFoundException();
+
+    @DefaultStringValue("Failed to create LVM Physical Volume")
+    String GlusterHostStorageDevicePVCreateFailedException();
+
+    @DefaultStringValue("Failed to run lvconvert for device")
+    String GlusterHostStorageDeviceLVConvertFailedException();
+
+    @DefaultStringValue("Failed to run lvchange for the thin pool:")
+    String GlusterHostStorageDeviceLVChangeFailedException();
 }
