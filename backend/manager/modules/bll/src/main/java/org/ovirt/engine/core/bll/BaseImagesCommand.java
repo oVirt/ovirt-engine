@@ -307,7 +307,10 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     protected void setImageStatus(ImageStatus imageStatus) {
-        DiskImage diskImage = getRelevantDiskImage();
+        setImageStatus(imageStatus, getRelevantDiskImage());
+    }
+
+    protected void setImageStatus(ImageStatus imageStatus, DiskImage diskImage) {
         if (diskImage != null && diskImage.getImageStatus() != imageStatus) {
             diskImage.setImageStatus(imageStatus);
             ImagesHandler.updateImageStatus(diskImage.getImage().getId(), imageStatus);
