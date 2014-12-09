@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -634,6 +633,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 .getNumaTuneMode(),
                 getParameters().getVmStaticData().getvNumaNodeList(), getVmId()))) {
             return false;
+        }
+
+        if (vmFromParams.getId() != null &&  getVmStaticDao().get(vmFromParams.getId()) != null) {
+            return failCanDoAction(VdcBllMessages.VM_ID_EXISTS);
         }
 
         return true;

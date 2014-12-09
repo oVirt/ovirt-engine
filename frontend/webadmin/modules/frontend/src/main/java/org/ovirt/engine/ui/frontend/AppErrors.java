@@ -529,6 +529,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Migration option is not supported in this CPU architecture.")
     String VM_MIGRATION_IS_NOT_SUPPORTED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. VM with the given Id already exists in the system.")
+    String VM_ID_EXISTS();
+
     @DefaultStringValue("CPU pinning format invalid.")
     String VM_PINNING_FORMAT_INVALID();
 
