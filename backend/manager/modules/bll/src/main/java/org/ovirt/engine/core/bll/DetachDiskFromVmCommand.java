@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -20,7 +21,11 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
     private VmDevice vmDevice;
 
     public DetachDiskFromVmCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public DetachDiskFromVmCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

@@ -1,15 +1,17 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
+import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.compat.Guid;
@@ -53,20 +55,47 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
     }
 
     private boolean restoreInitialState() {
-        Guid snapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.STATELESS);
-        if (snapshotId == null) {
+        Guid statelessVmSnapshotId = getVmSnapshotIdForType(SnapshotType.STATELESS);
+        if (statelessVmSnapshotId == null) {
             return true;
         }
 
-        List<DiskImage> imagesList = getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshotId);
-        if (imagesList == null || imagesList.isEmpty()) {
-            return true;
+        List<DiskImage> statelessDiskSnapshots = getDiskSnapshotsForVmSnapshot(statelessVmSnapshotId);
+
+        Guid activeVmSnapshotId = getVmSnapshotIdForType(SnapshotType.ACTIVE);
+        List<DiskImage> activeDiskSnapshots = getDiskSnapshotsForVmSnapshot(activeVmSnapshotId);
+        List<Guid> disksWithStatelessSnapshot = Entities.getIds(statelessDiskSnapshots);
+        for (DiskImage activeDiskSnapshot : activeDiskSnapshots) {
+            if (!disksWithStatelessSnapshot.contains(activeDiskSnapshot.getId())) {
+                VdcReturnValueBase returnValue = runInternalAction (
+                        VdcActionType.DetachDiskFromVm,
+                        new AttachDetachVmDiskParameters(
+                                getVmId(), activeDiskSnapshot.getId(), false, false));
+
+                if (!returnValue.getSucceeded()) {
+                    log.errorFormat("Could not restore stateless VM {0} due to a failure to detach Disk {1}",
+                            getVmId(), activeDiskSnapshot.getId());
+                    return false;
+                }
+            }
         }
 
-        // restore all snapshots
-        return runInternalActionWithTasksContext(VdcActionType.RestoreAllSnapshots,
-                        buildRestoreAllSnapshotsParameters(imagesList),
-                getLock()).getSucceeded();
+        if (!statelessDiskSnapshots.isEmpty()) {
+            // restore all snapshots
+            return runInternalActionWithTasksContext(VdcActionType.RestoreAllSnapshots,
+                    buildRestoreAllSnapshotsParameters(statelessDiskSnapshots),
+                    getLock()).getSucceeded();
+        }
+        return true;
+    }
+
+    private Guid getVmSnapshotIdForType(SnapshotType type) {
+        return getSnapshotDao().getId(getVmId(), type);
+    }
+
+    private List<DiskImage> getDiskSnapshotsForVmSnapshot(Guid snapshotId) {
+        List<DiskImage> images = getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshotId);
+        return images != null ? images : Collections.<DiskImage>emptyList();
     }
 
     private RestoreAllSnapshotsParameters buildRestoreAllSnapshotsParameters(List<DiskImage> imagesList) {
