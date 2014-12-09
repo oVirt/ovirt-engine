@@ -336,7 +336,10 @@ public class VmAnalyzer {
                 return;
             }
 
-            if (balloonInfo.getBalloonLastMemory() == 0) { // first time we check, so we don't have enough data yet
+            /* last memory is null the first time we check it or when
+               we're not getting the balloon info from vdsm
+            */
+            if (balloonInfo.getBalloonLastMemory() == null || balloonInfo.getBalloonLastMemory() == 0) {
                 balloonInfo.setBalloonLastMemory(balloonInfo.getCurrentMemory());
                 return;
             }
