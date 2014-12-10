@@ -31,7 +31,7 @@ public class RemoveDiskSnapshotsCommandCallback extends CommandCallBack {
                 break;
             default:
                 CommandEntity cmdEntity = CommandCoordinatorUtil.getCommandEntity(childCmdId);
-                if (cmdEntity.isCallBackNotified()) {
+                if (cmdEntity != null && cmdEntity.isCallBackNotified()) {
                     ++completedChildren;
                     break;
                 } else {
