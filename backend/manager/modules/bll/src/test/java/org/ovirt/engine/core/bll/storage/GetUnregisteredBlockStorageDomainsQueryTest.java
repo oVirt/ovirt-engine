@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.vdscommands.GetVGInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.LunDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 
 import java.util.ArrayList;
@@ -50,6 +51,9 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
     @Mock
     private StorageDomainDAO storageDomainDAO;
 
+    @Mock
+    private LunDAO lunDAO;
+
     @Override
     @Before
     public void setUp() throws Exception {
@@ -67,6 +71,7 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
 
         doReturn(storageDomainDAO).when(getQuery()).getStorageDomainDAO();
         doReturn(getExistingStorageDomains()).when(storageDomainDAO).getAll();
+        doReturn(lunDAO).when(getQuery()).getLunDAO();
     }
 
     @Test
@@ -76,6 +81,7 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
         when(getQueryParameters().getVdsId()).thenReturn(Guid.newGuid());
 
         List<LUNs> luns = getLUNs(storageDomainId, vgId);
+        doReturn(Collections.emptyList()).when(lunDAO).getAll();
 
         doReturn(createSuccessVdcReturnValue()).when(getQuery()).
                 executeConnectStorageToVds(any(StorageServerConnectionParametersBase.class));
@@ -105,6 +111,40 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
     }
 
     @Test
+    public void testIscsiExternalLunDiskPartOfUnregisteredDomain() {
+        when(getQueryParameters().getStorageType()).thenReturn(StorageType.ISCSI);
+        when(getQueryParameters().getStorageServerConnections()).thenReturn(getConnections());
+        when(getQueryParameters().getVdsId()).thenReturn(Guid.newGuid());
+
+        List<LUNs> luns = getLUNs(storageDomainId, vgId);
+        List<LUNs> externalLuns = new ArrayList<>();
+        externalLuns.add(luns.get(1));
+        doReturn(luns).when(lunDAO).getAll();
+
+        doReturn(createSuccessVdcReturnValue()).when(getQuery()).
+                executeConnectStorageToVds(any(StorageServerConnectionParametersBase.class));
+
+        doReturn(createGetDeviceListReturnValue(luns)).when(getQuery()).
+                executeGetDeviceList(any(GetDeviceListQueryParameters.class));
+
+        doReturn(createGetVGInfoReturnValue(luns)).when(getQuery()).
+                executeGetVGInfo(any(GetVGInfoVDSCommandParameters.class));
+
+        doReturn(createGetStorageDomainInfoReturnValue(storageDomainId)).when(getQuery()).
+                executeHSMGetStorageDomainInfo(any(HSMGetStorageDomainInfoVDSCommandParameters.class));
+
+        // Execute query
+        getQuery().executeQueryCommand();
+
+        // Assert query's results
+        Pair<List<StorageDomain>, List<StorageServerConnections>> returnValue =
+                getQuery().getQueryReturnValue().getReturnValue();
+
+        List<StorageDomain> storageDomains = returnValue.getFirst();
+        assertEquals(storageDomains.size(), 0);
+    }
+
+    @Test
     public void testIscsiNotFoundUnregisteredDomain() {
         when(getQueryParameters().getStorageType()).thenReturn(StorageType.ISCSI);
         when(getQueryParameters().getStorageServerConnections()).thenReturn(getConnections());
@@ -112,6 +152,7 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
 
         List<LUNs> luns = getLUNs(existingStorageDomainId, existingVgId);
 
+        doReturn(Collections.emptyList()).when(lunDAO).getAll();
         doReturn(createSuccessVdcReturnValue()).when(getQuery()).
                 executeConnectStorageToVds(any(StorageServerConnectionParametersBase.class));
 
@@ -142,6 +183,7 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
 
         List<LUNs> luns = getLUNs(storageDomainId, vgId);
 
+        doReturn(Collections.emptyList()).when(lunDAO).getAll();
         doReturn(createGetDeviceListReturnValue(luns)).when(getQuery()).
                 executeGetDeviceList(any(GetDeviceListQueryParameters.class));
 
@@ -168,9 +210,9 @@ public class GetUnregisteredBlockStorageDomainsQueryTest extends
         when(getQueryParameters().getStorageType()).thenReturn(StorageType.FCP);
         when(getQueryParameters().getStorageServerConnections()).thenReturn(getConnections());
         when(getQueryParameters().getVdsId()).thenReturn(Guid.newGuid());
-
         List<LUNs> luns = getLUNs(existingStorageDomainId, existingVgId);
 
+        doReturn(Collections.emptyList()).when(lunDAO).getAll();
         doReturn(createSuccessVdcReturnValue()).when(getQuery()).
                 executeConnectStorageToVds(any(StorageServerConnectionParametersBase.class));
 

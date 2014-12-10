@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSComman
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.LunDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -207,6 +208,10 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
     @SuppressWarnings("unchecked")
     protected List<StorageDomain> getStorageDomainsByVolumeGroupIds(List<String> vgIDs) {
         List<StorageDomain> storageDomains = new ArrayList<>();
+
+        // Get existing PhysicalVolumes.
+        List<String> existingPhysicalVolumeIds = Entities.getPhysicalVolumesFromLunsList(getLunDAO().getAll());
+
         for (String vgID : vgIDs) {
             VDSReturnValue returnValue = null;
             try {
@@ -220,6 +225,11 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
             }
 
             ArrayList<LUNs> luns = (ArrayList<LUNs>) returnValue.getReturnValue();
+            List<String> physicalVolumeIdsOnStorage = Entities.getPhysicalVolumesFromLunsList(luns);
+            if (CollectionUtils.containsAny(physicalVolumeIdsOnStorage, existingPhysicalVolumeIds)) {
+                log.info("There are existing luns in the system which are part of VG id '{}'", vgID);
+                continue;
+            }
 
             // Get storage domain ID by a representative LUN
             LUNs lun = luns.get(0);
@@ -276,6 +286,9 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
         return getDbFacade().getStorageDomainDao();
     }
 
+    protected LunDAO getLunDAO() {
+        return getDbFacade().getLunDao();
+    }
 
     /* Execute wrappers (for testing/mocking necessities) */
 

@@ -5,9 +5,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -52,6 +54,14 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
     protected boolean canAddDomain() {
         if (getStorageDomainStaticDAO().get(getStorageDomain().getId()) != null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
+        }
+
+        List<LUNs> physicalVolumeIdsOnStorage = getLUNsFromVgInfo(getStorageDomain().getStorage());
+        if (CollectionUtils.containsAny(Entities.getPhysicalVolumesFromLunsList(physicalVolumeIdsOnStorage),
+                Entities.getPhysicalVolumesFromLunsList(getDbFacade().getLunDao().getAll()))) {
+            log.info("There are existing luns in the system which are part of VG id '{}'",
+                    getStorageDomain().getStorage());
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_STORAGE_DOMAIN_EXTERNAL_LUN_DISK_EXIST);
         }
         return true;
     }
