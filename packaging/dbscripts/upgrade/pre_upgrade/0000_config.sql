@@ -642,6 +642,7 @@ select fn_db_add_config_value('DelayResetPerVmInSeconds','0.5','general');
 --Handling Use Secure Connection with Hosts
 select fn_db_add_config_value('EncryptHostCommunication','true','general');
 select fn_db_add_config_value('VdsmSSLProtocol','TLSv1','general');
+select fn_db_add_config_value('ExternalCommunicationProtocol','TLSv1','general');
 select fn_db_add_config_value('TimeToReduceFailedRunOnVdsInMinutes','30','general');
 select fn_db_add_config_value('UnknownTaskPrePollingLapse','60000','general');
 select fn_db_add_config_value('UserSessionHardLimit','600','general');

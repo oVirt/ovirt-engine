@@ -17,6 +17,8 @@ import javax.net.ssl.SSLException;
 
 import org.apache.commons.codec.binary.Base64;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
@@ -97,7 +99,8 @@ public abstract class BaseProviderProxy implements ProviderProxy {
                     .setTrustStore(
                             EngineLocalConfig.getInstance().getExternalProvidersTrustStore().getAbsolutePath())
                     .setTrustStorePassword(EngineLocalConfig.getInstance().getExternalProvidersTrustStorePassword())
-                    .setTrustStoreType(EngineLocalConfig.getInstance().getExternalProvidersTrustStoreType());
+                    .setTrustStoreType(EngineLocalConfig.getInstance().getExternalProvidersTrustStoreType())
+                    .setHttpsProtocol(Config.<String> getValue(ConfigValues.ExternalCommunicationProtocol));
             }
             result = builder.create();
             handleCredentials(result);
