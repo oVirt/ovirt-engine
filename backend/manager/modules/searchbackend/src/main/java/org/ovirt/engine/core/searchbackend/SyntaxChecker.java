@@ -29,21 +29,22 @@ public class SyntaxChecker implements ISyntaxChecker {
     public static final String SORTBY = "SORTBY";
     public static final String SORTDIR_ASC = "ASC";
     public static final String SORTDIR_DESC = "DESC";
+    public static final String PAGE = "PAGE";
 
-    private SearchObjectAutoCompleter mSearchObjectAC;
-    private BaseAutoCompleter mColonAC;
-    private BaseAutoCompleter mPluralAC;
-    private BaseAutoCompleter mSortbyAC;
-    private BaseAutoCompleter mPageAC;
-    private BaseAutoCompleter mAndAC;
-    private BaseAutoCompleter mOrAC;
-    private BaseAutoCompleter mDotAC;
-    private BaseAutoCompleter mSortDirectionAC;
-    private Map<SyntaxObjectType, SyntaxObjectType[]> mStateMap;
+    private final SearchObjectAutoCompleter mSearchObjectAC;
+    private final BaseAutoCompleter mColonAC;
+    private final BaseAutoCompleter mPluralAC;
+    private final BaseAutoCompleter mSortbyAC;
+    private final BaseAutoCompleter mPageAC;
+    private final BaseAutoCompleter mAndAC;
+    private final BaseAutoCompleter mOrAC;
+    private final BaseAutoCompleter mDotAC;
+    private final BaseAutoCompleter mSortDirectionAC;
+    private final Map<SyntaxObjectType, SyntaxObjectType[]> mStateMap;
 
-    private Regex mFirstDQRegexp;
-    private Regex mNonSpaceRegexp;
-    private List<Character> mDisAllowedChars;
+    private final Regex mFirstDQRegexp;
+    private final Regex mNonSpaceRegexp;
+    private final List<Character> mDisAllowedChars;
     private SqlInjectionChecker sqlInjectionChecker;
 
     public SyntaxChecker(int searchReasultsLimit) {
@@ -52,7 +53,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         mColonAC = new BaseAutoCompleter(":");
         mPluralAC = new BaseAutoCompleter("S");
         mSortbyAC = new BaseAutoCompleter(SORTBY);
-        mPageAC = new BaseAutoCompleter("PAGE");
+        mPageAC = new BaseAutoCompleter(PAGE);
         mSortDirectionAC = new BaseAutoCompleter(SORTDIR_ASC, SORTDIR_DESC);
         mAndAC = new BaseAutoCompleter("AND");
         mOrAC = new BaseAutoCompleter("OR");

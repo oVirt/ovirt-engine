@@ -19,11 +19,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
-import org.ovirt.engine.core.compat.IntegerCompat;
-import org.ovirt.engine.core.compat.Match;
-import org.ovirt.engine.core.compat.Regex;
-import org.ovirt.engine.core.compat.RegexOptions;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SyntaxCheckerFactory;
@@ -204,11 +199,7 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
 
     public String getSearchString()
     {
-        // pagingSearchString is relevant only for non-null searchString
-        if (searchString == null) {
-            return null;
-        }
-        return searchString + (pagingSearchString == null ? "" : pagingSearchString);
+        return searchString;
     }
 
     public void setSearchString(String value)
@@ -234,34 +225,8 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
 
     private String pagingSearchString;
 
-    public int getSearchPageNumber()
-    {
-        if (StringHelper.isNullOrEmpty(getSearchString()))
-        {
-            return 1;
-        }
-
-        // try getting the end of SearchString in the form of "page <n>"
-        String pageStringRegex = PAGE_STRING_REGEX;
-
-        Match match = Regex.Match(getSearchString(), pageStringRegex, RegexOptions.IgnoreCase);
-        if (match.success())
-        {
-            // retrieve the page number itself:
-            String pageString = match.getValue(); // == "page <n>"
-            String pageNumberRegex = PAGE_NUMBER_REGEX;
-            match = Regex.Match(pageString, pageNumberRegex);
-            if (match.success())
-            {
-                final Integer retValue = IntegerCompat.tryParse(match.getValue());
-                if (retValue != null)
-                {
-                    return retValue;
-                }
-            }
-        }
-
-        return 1;
+    public int getSearchPageNumber() {
+        return this.currentPageNumber;
     }
 
     public String getItemsCountString() {
@@ -328,6 +293,7 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
      * Grid refresh timer associated with this list model.
      */
     private GridTimer timer;
+    private int currentPageNumber = 1; //Default to 1
 
     /**
      * Setter for the grid timer.
@@ -676,6 +642,7 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
 
     private void setSearchStringPage(int newSearchPageNumber) {
        this.pagingSearchString = " page " + newSearchPageNumber; //$NON-NLS-1$
+       this.currentPageNumber = newSearchPageNumber;
     }
 
     protected void searchNextPage()
@@ -699,6 +666,7 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
         }
         return str.substring(0, index);
     }
+
     protected boolean getNextSearchPageAllowed()
     {
         if (!getSearchNextPageCommand().getIsAvailable() || getItems() == null
@@ -760,6 +728,8 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
         this.sortAscending = sortAscending;
 
         if (shouldRefresh) {
+            searchString = stripPageKeyword(searchString);
+            setSearchStringPage(1);
             refresh();
         }
     }
@@ -785,7 +755,9 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
             result += " " + SyntaxChecker.SORTBY + " " + sortBy //$NON-NLS-1$ //$NON-NLS-2$
                     + " " + (sortAscending ? SyntaxChecker.SORTDIR_ASC : SyntaxChecker.SORTDIR_DESC); //$NON-NLS-1$
         }
-
+        if (result != null && pagingSearchString != null) {
+            result += " " + pagingSearchString; //$NON-NLS-1$
+        }
         return result;
     }
 
