@@ -3049,6 +3049,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Brick Directory")
     String brickDirectoryBricks();
 
+    @DefaultStringValue("Show available bricks from host")
+    String addBricksShowBricksFromHost();
+
     @DefaultStringValue("Bricks")
     String bricksHeaderLabel();
 

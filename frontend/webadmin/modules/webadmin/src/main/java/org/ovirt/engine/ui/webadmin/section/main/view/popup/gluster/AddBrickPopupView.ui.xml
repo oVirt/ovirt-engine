@@ -25,6 +25,10 @@
 			padding-bottom: 5px;
 		}
 
+        .showBricksListCheckBox {
+			padding-left: 92px;
+			width: 300px;
+		}
 		.messageLabel {
 			color: #FF0000;
 			left: 10px;
@@ -84,6 +88,8 @@
 				<g:HorizontalPanel verticalAlignment="ALIGN_BOTTOM">
 					<g:VerticalPanel>
 						<e:ListModelListBoxEditor ui:field="serverEditor"/>
+						<ge:EntityModelCheckBoxEditor ui:field="showBricksListEditor" addStyleNames="{style.showBricksListCheckBox}"/>
+						<e:ListModelListBoxEditor ui:field="bricksFromServerList" />
 						<ge:StringEntityModelTextBoxEditor ui:field="exportDirEditor" />
 					</g:VerticalPanel>
 					<g:HorizontalPanel spacing="5">

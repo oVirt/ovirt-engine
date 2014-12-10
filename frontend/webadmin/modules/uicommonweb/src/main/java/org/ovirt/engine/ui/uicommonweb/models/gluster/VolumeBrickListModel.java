@@ -350,7 +350,7 @@ public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntit
                 VDSGroup cluster = (VDSGroup) result;
                 volumeBrickModel.getForce()
                         .setIsAvailable(GlusterFeaturesUtil.isGlusterForceAddBricksSupported(cluster.getCompatibilityVersion()));
-
+                volumeBrickModel.setIsBrickProvisioningSupported(GlusterFeaturesUtil.isGlusterBrickProvisioningSupported(cluster.getCompatibilityVersion()));
                 AsyncQuery _asyncQueryInner = new AsyncQuery();
                 _asyncQueryInner.setModel(model);
                 _asyncQueryInner.asyncCallback = new INewAsyncCallback() {

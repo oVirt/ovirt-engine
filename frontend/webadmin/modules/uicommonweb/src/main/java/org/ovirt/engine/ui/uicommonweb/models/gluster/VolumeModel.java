@@ -302,6 +302,7 @@ public class VolumeModel extends Model {
                     GlusterFeaturesUtil.isGlusterForceAddBricksSupported(cluster.getCompatibilityVersion());
             volumeBrickModel.getForce().setIsAvailable(isForceAddBrickSupported);
             volumeBrickModel.getForce().setEntity(isForceAddBricks() && isForceAddBrickSupported);
+            volumeBrickModel.setIsBrickProvisioningSupported(GlusterFeaturesUtil.isGlusterBrickProvisioningSupported(cluster.getCompatibilityVersion()));
         }
 
         setWindow(volumeBrickModel);
