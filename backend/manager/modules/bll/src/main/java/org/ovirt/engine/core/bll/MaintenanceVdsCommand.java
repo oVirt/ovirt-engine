@@ -132,6 +132,8 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
                     appendCustomValue("failedVms", vm.getName(), ",");
                     log.error("ResourceManager::vdsMaintenance - There is not host capable of running the hosted engine VM");
                 }
+                // The Hosted Engine vm is migrated by the HA agent
+                continue;
             }
             // if HAOnly is true check that vm is HA (auto_startup should be true)
             if (vm.getStatus() != VMStatus.MigratingFrom && (!HAOnly || (HAOnly && vm.isAutoStartup()))) {
