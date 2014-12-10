@@ -210,7 +210,7 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
 
 
     @Test
-    public void getVmAndTemplatesIdsWithoutAttachedImageDiכsks() {
+    public void getVmAndTemplatesIdsWithoutAttachedImageDisks() {
         // attaching shareable and snapshots disk to a diskless vm
         addVmDevice(FixturesTool.VM_WITH_NO_ATTACHED_DISKS, FixturesTool.IMAGE_GROUP_ID_2, null);
         addVmDevice(FixturesTool.VM_WITH_NO_ATTACHED_DISKS, FixturesTool.DISK_ID, FixturesTool.EXISTING_SNAPSHOT_ID);
