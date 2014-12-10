@@ -92,9 +92,10 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
     public VmDiskAttachPopupWidget(CommonApplicationConstants constants,
                                    CommonApplicationResources resources,
                                    CommonApplicationTemplates templates,
-                                   boolean isLunDiskEnabled) {
+                                   boolean isLunDiskEnabled,
+                                   boolean allowMultipleSelection) {
         this.isNewLunDiskEnabled = isLunDiskEnabled;
-        initManualWidgets();
+        initManualWidgets(allowMultipleSelection);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
         ViewIdHandler.idHandler.generateAndSetIds(this);
@@ -108,11 +109,10 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         isPluggedEditor.setLabel(constants.activateVmDiskPopup());
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void initManualWidgets() {
+    private void initManualWidgets(boolean allowMultipleSelection) {
         isPluggedEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        imageDiskTable = new EntityModelCellTable<ListModel>(true);
-        lunDiskTable = new EntityModelCellTable<ListModel>(true);
+        imageDiskTable = new EntityModelCellTable<>(allowMultipleSelection);
+        lunDiskTable = new EntityModelCellTable<>(allowMultipleSelection);
     }
 
     private void initAttachPanelWidget() {

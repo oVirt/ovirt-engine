@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.popup.permissions.P
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.template.TemplateInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.template.TemplateEditPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.CloneVmPopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.SingleSelectionVmDiskAttachPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDiskAttachPopupPresenterWidget;
@@ -62,6 +63,7 @@ import org.ovirt.engine.ui.userportal.section.main.view.popup.permissions.Permis
 import org.ovirt.engine.ui.userportal.section.main.view.popup.template.TemplateInterfacePopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.template.TemplateEditPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.CloneVmPopupView;
+import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.SingleSelectionVmDiskAttachPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmChangeCDPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmClonePopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmDiskAttachPopupView;
@@ -285,6 +287,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VmDiskAttachPopupPresenterWidget.class,
                 VmDiskAttachPopupPresenterWidget.ViewDef.class,
                 VmDiskAttachPopupView.class);
+        bindPresenterWidget(SingleSelectionVmDiskAttachPopupPresenterWidget.class,
+                SingleSelectionVmDiskAttachPopupPresenterWidget.ViewDef.class,
+                SingleSelectionVmDiskAttachPopupView.class);
         bindPresenterWidget(VmDiskRemovePopupPresenterWidget.class,
                 VmDiskRemovePopupPresenterWidget.ViewDef.class,
                 VmDiskRemovePopupView.class);

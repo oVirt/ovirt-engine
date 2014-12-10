@@ -105,6 +105,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.Templa
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateEditPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.user.ManageEventsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.CloneVmPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.SingleSelectionVmDiskAttachPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskAttachPopupPresenterWidget;
@@ -352,6 +353,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.template.TemplateInt
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.template.TemplateEditPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.user.ManageEventsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.CloneVmPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.SingleSelectionVmDiskAttachPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmChangeCDPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmClonePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskAttachPopupView;
@@ -1377,6 +1379,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VmDiskAttachPopupPresenterWidget.class,
                 VmDiskAttachPopupPresenterWidget.ViewDef.class,
                 VmDiskAttachPopupView.class);
+        bindPresenterWidget(SingleSelectionVmDiskAttachPopupPresenterWidget.class,
+                SingleSelectionVmDiskAttachPopupPresenterWidget.ViewDef.class,
+                SingleSelectionVmDiskAttachPopupView.class);
 
         // VM Detach/Remove Disk
         bindPresenterWidget(VmDiskRemovePopupPresenterWidget.class,

@@ -1,9 +1,6 @@
 package org.ovirt.engine.ui.userportal.section.main.view.popup.vm;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundWidgetPopupView;
-import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmDiskAttachPopupWidget;
-import org.ovirt.engine.ui.uicommonweb.models.vms.AttachDiskModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
@@ -13,7 +10,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class VmDiskAttachPopupView extends AbstractModelBoundWidgetPopupView<AttachDiskModel> implements VmDiskAttachPopupPresenterWidget.ViewDef {
+public class VmDiskAttachPopupView extends BaseVmDiskAttachPopupView implements VmDiskAttachPopupPresenterWidget.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<VmDiskAttachPopupView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -21,8 +18,8 @@ public class VmDiskAttachPopupView extends AbstractModelBoundWidgetPopupView<Att
 
     @Inject
     public VmDiskAttachPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates) {
-        super(eventBus, resources, new VmDiskAttachPopupWidget(constants, resources, templates, false), "815px", "615px"); //$NON-NLS-1$ //$NON-NLS-2$
+        super(eventBus, resources, constants, templates, true);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        asWidget().enableResizeSupport(true);
     }
+
 }
