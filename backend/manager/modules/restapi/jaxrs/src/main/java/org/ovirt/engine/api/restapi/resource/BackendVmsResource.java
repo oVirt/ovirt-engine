@@ -114,6 +114,12 @@ public class BackendVmsResource extends
 
                 VmTemplate templateEntity = lookupTemplate(templateId);
                 VmStatic builtFromTemplate = getMapper(VmTemplate.class, VmStatic.class).map(templateEntity, null);
+                // if VM is based on a template, and going to be on another cluster then template, clear the cpu_profile
+                // since the template cpu_profile doesn't match cluster.
+                if (!vm.isSetCpuProfile() && vm.isSetCluster()
+                        && !ObjectUtils.equals(templateEntity.getVdsGroupId(), vm.getCluster().getId())) {
+                    builtFromTemplate.setCpuProfileId(null);
+                }
 
                 VmStatic builtFromInstanceType = null;
                 org.ovirt.engine.core.common.businessentities.InstanceType instanceTypeEntity = null;
