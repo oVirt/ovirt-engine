@@ -3979,4 +3979,16 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
+    public static void getUnusedBricksFromServer(AsyncQuery asyncQuery, Guid hostId) {
+        asyncQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source;
+            }
+        };
+        VdsIdParametersBase parameters = new VdsIdParametersBase(hostId);
+        Frontend.getInstance().runQuery(VdcQueryType.GetUnusedGlusterBricks, parameters, asyncQuery);
+    }
+
 }

@@ -80,10 +80,20 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
     @WithElementId
     ListModelListBoxEditor<VDS> serverEditor;
 
+    @UiField(provided = true)
+    @Path(value = "showBricksList.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor showBricksListEditor;
+
     @UiField
     @Path(value = "brickDirectory.entity")
     @WithElementId
     StringEntityModelTextBoxEditor exportDirEditor;
+
+    @UiField
+    @Path(value = "bricksFromServer.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<String> bricksFromServerList;
 
     @UiField
     @WithElementId
@@ -149,6 +159,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
     private void initEditors() {
         volumeTypeEditor = new EntityModelLabelEditor<GlusterVolumeType>(new EnumRenderer<GlusterVolumeType>());
         forceEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        showBricksListEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         serverEditor = new ListModelListBoxEditor<VDS>(new NullSafeRenderer<VDS>() {
             @Override
             public String renderNullSafe(VDS vds) {
@@ -246,6 +257,8 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
         bricksHeader.setText(constants.bricksHeaderLabel());
         serverEditor.setLabel(constants.serverBricks());
         exportDirEditor.setLabel(constants.brickDirectoryBricks());
+        bricksFromServerList.setLabel(constants.brickDirectoryBricks());
+        showBricksListEditor.setLabel(constants.addBricksShowBricksFromHost());
         addBrickButton.setLabel(constants.addBricksButtonLabel());
         removeBricksButton.setLabel(constants.removeBricksButtonLabel());
         removeAllBricksButton.setLabel(constants.removeAllBricksButtonLabel());

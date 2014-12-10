@@ -350,7 +350,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                 VDSGroup cluster = (VDSGroup) result;
                 volumeBrickModel.getForce()
                         .setIsAvailable(GlusterFeaturesUtil.isGlusterForceAddBricksSupported(cluster.getcompatibility_version()));
-
+                volumeBrickModel.setIsBrickProvisioningSupported(GlusterFeaturesUtil.isGlusterBrickProvisioningSupported(cluster.getcompatibility_version()));
                 AsyncQuery _asyncQueryInner = new AsyncQuery();
                 _asyncQueryInner.setModel(model);
                 _asyncQueryInner.asyncCallback = new INewAsyncCallback() {
@@ -829,7 +829,7 @@ public class VolumeBrickListModel extends SearchableListModel {
 
         model.startProgress(null);
 
-        boolean isMigrate = (Boolean) model.getMigrateData().getEntity();
+        boolean isMigrate = model.getMigrateData().getEntity();
 
         Frontend.getInstance().runAction(isMigrate ? VdcActionType.StartRemoveGlusterVolumeBricks
                 : VdcActionType.GlusterVolumeRemoveBricks, parameter, new IFrontendActionAsyncCallback() {
@@ -1239,13 +1239,13 @@ public class VolumeBrickListModel extends SearchableListModel {
             return;
         }
 
-        VDS server = (VDS) replaceBrickModel.getServers().getSelectedItem();
+        VDS server = replaceBrickModel.getServers().getSelectedItem();
 
         GlusterBrickEntity newBrick = new GlusterBrickEntity();
         newBrick.setVolumeId(volumeEntity.getId());
         newBrick.setServerId(server.getId());
         newBrick.setServerName(server.getHostName());
-        newBrick.setBrickDirectory((String) replaceBrickModel.getBrickDirectory().getEntity());
+        newBrick.setBrickDirectory(replaceBrickModel.getBrickDirectory().getEntity());
 
         replaceBrickModel.startProgress(null);
 

@@ -11,7 +11,11 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
+import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -33,6 +37,8 @@ public class VolumeBrickModel extends Model {
 
     ListModel<VDS> servers;
     EntityModel<String> brickDirectory;
+    ListModel<String> bricksFromServer;
+    EntityModel<Boolean> showBricksList;
 
     ListModel<EntityModel<GlusterBrickEntity>> bricks;
 
@@ -59,12 +65,13 @@ public class VolumeBrickModel extends Model {
 
         setServers(new ListModel<VDS>());
         setBrickDirectory(new EntityModel<String>());
+        setBricksFromServer(new ListModel<String>());
+        setShowBricksList(new EntityModel<Boolean>());
 
         setBricks(new ListModel<EntityModel<GlusterBrickEntity>>());
 
         setForce(new EntityModel<Boolean>());
         getForce().setEntity(false);
-
         setAddBrickCommand(new UICommand("AddBrick", this)); //$NON-NLS-1$
         setRemoveBricksCommand(new UICommand("RemoveBricks", this)); //$NON-NLS-1$
         setRemoveAllBricksCommand(new UICommand("RemoveAllBricks", this)); //$NON-NLS-1$
@@ -81,6 +88,22 @@ public class VolumeBrickModel extends Model {
         getMoveBricksUpCommand().setIsExecutionAllowed(false);
         getMoveBricksDownCommand().setIsExecutionAllowed(false);
 
+        getShowBricksList().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (getShowBricksList().getEntity()) {
+                    // Show the brick list and hide the text box for entering brick dir
+                    getBricksFromServer().setIsAvailable(true);
+                    getBrickDirectory().setIsAvailable(false);
+                    updateBricksFromHost();
+                } else {
+                    // Hide the brick list and show the text box for entering brick dir
+                    getBricksFromServer().setIsAvailable(false);
+                    getBrickDirectory().setIsAvailable(true);
+                }
+            }
+
+        });
         getBricks().getSelectedItemsChangedEvent().addListener(new IEventListener() {
 
             @Override
@@ -104,6 +127,41 @@ public class VolumeBrickModel extends Model {
                 }
             }
         });
+
+        getServers().getSelectedItemChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (getShowBricksList().getEntity()) {
+                    updateBricksFromHost();
+                }
+            }
+
+        });
+    }
+
+    private void updateBricksFromHost() {
+        VDS selectedServer = getServers().getSelectedItem();
+        if (selectedServer != null) {
+            AsyncDataProvider.getUnusedBricksFromServer(new AsyncQuery(this, new INewAsyncCallback() {
+                @Override
+                public void onSuccess(Object model, Object returnValue) {
+                    List<StorageDevice> bricks = (List<StorageDevice>) returnValue;
+                    List<String> lvNames = new ArrayList<String>();
+                    for (StorageDevice brick : bricks) {
+                        if (brick.getMountPoint() != null && !brick.getMountPoint().isEmpty()) {
+                            lvNames.add(brick.getMountPoint());
+                        }
+                    }
+                    getBricksFromServer().setItems(lvNames);
+                }
+            }), selectedServer.getId());
+        }
+
+    }
+
+    public void setIsBrickProvisioningSupported(boolean isBrickProvisioningSupported) {
+        getShowBricksList().setIsAvailable(isBrickProvisioningSupported);
+        getShowBricksList().setEntity(isBrickProvisioningSupported);
     }
 
     private void updateSelectedBricksActions()
@@ -272,6 +330,12 @@ public class VolumeBrickModel extends Model {
     private void addBrick()
     {
         VDS server = servers.getSelectedItem();
+        String brickDir = null;
+        if (getShowBricksList().getEntity()) {
+            brickDir = bricksFromServer.getSelectedItem();
+        } else {
+            brickDir = getBrickDirectory().getEntity();
+        }
 
         if (server == null)
         {
@@ -279,15 +343,14 @@ public class VolumeBrickModel extends Model {
             return;
         }
 
-        if (brickDirectory.getEntity() == null || brickDirectory.getEntity().trim().length() == 0)
+        if (brickDir == null || brickDir.trim().length() == 0)
         {
             setMessage(ConstantsManager.getInstance().getConstants().emptyBrickDirectoryMsg());
             return;
         }
 
-        brickDirectory.setEntity(brickDirectory.getEntity().trim());
-
-        if (!validateBrickDirectory(brickDirectory.getEntity()))
+        brickDir = brickDir.trim();
+        if (!validateBrickDirectory(brickDir))
         {
             return;
         }
@@ -295,7 +358,7 @@ public class VolumeBrickModel extends Model {
         GlusterBrickEntity brickEntity = new GlusterBrickEntity();
         brickEntity.setServerId(server.getId());
         brickEntity.setServerName(server.getHostName());
-        brickEntity.setBrickDirectory(brickDirectory.getEntity());
+        brickEntity.setBrickDirectory(brickDir);
 
         EntityModel<GlusterBrickEntity> entityModel = new EntityModel<GlusterBrickEntity>(brickEntity);
         List<EntityModel<GlusterBrickEntity>> items = (List<EntityModel<GlusterBrickEntity>>) bricks.getItems();
@@ -700,5 +763,23 @@ public class VolumeBrickModel extends Model {
             moveItemsUpDown(false);
         }
     }
+
+    public ListModel<String> getBricksFromServer() {
+        return bricksFromServer;
+    }
+
+    public void setBricksFromServer(ListModel<String> bricksFromServer) {
+        this.bricksFromServer = bricksFromServer;
+    }
+
+    public EntityModel<Boolean> getShowBricksList() {
+        return showBricksList;
+    }
+
+    public void setShowBricksList(EntityModel<Boolean> showBricksList) {
+        this.showBricksList = showBricksList;
+    }
+
+
 
 }
