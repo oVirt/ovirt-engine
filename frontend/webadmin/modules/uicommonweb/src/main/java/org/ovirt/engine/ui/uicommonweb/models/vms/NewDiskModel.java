@@ -75,7 +75,7 @@ public class NewDiskModel extends AbstractDiskModel
         super.initialize();
 
         if (getVm() != null) {
-            updateSuggestedDiskAlias();
+            updateSuggestedDiskAliasFromServer();
             getIsPlugged().setIsAvailable(true);
         } else {
             // Read only disk can be created only in the scope of VM.
@@ -86,7 +86,7 @@ public class NewDiskModel extends AbstractDiskModel
         getSizeExtend().setIsAvailable(false);
     }
 
-    private void updateSuggestedDiskAlias() {
+    public void updateSuggestedDiskAliasFromServer() {
         AsyncDataProvider.getInstance().getNextAvailableDiskAliasNameByVMId(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {

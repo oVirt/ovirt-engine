@@ -2558,4 +2558,16 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
             + "Changing configuration parameters will lead to deletion of snapshots if they exceed the new limit.\n\n"
             + "Are you sure you want to continue?")
     String youAreAboutChangeSnapshotConfigurationMsg();
+
+    @DefaultStringValue("existing")
+    String existingDisk();
+
+    @DefaultStringValue("creating")
+    String creatingDisk();
+
+    @DefaultStringValue("attaching")
+    String attachingDisk();
+
+    @DefaultStringValue("boot")
+    String bootDisk();
 }

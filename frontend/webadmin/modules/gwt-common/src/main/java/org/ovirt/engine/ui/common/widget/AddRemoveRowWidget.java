@@ -231,27 +231,43 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
 
                     @Override
                     public void onClick(ClickEvent event) {
-                        ListIterator<Pair<T, V>> last = items.listIterator(items.size());
-                        if (!last.hasPrevious()) { // just a precaution; if there's no item, there should be no button
+                        if (vetoRemoveWidget(item, value, widget)) {
                             return;
                         }
 
-                        if (item == last.previous() && last.hasPrevious()) { // add plus button to previous item
-                            Pair<T, V> previousItem = last.previous();
-                            getEntry(previousItem.getSecond()).appendButton(createButton(previousItem, true));
-                        }
-
-                        removeEntry(item);
-                        onRemove(value, widget);
-
-                        if (items.isEmpty()) {
-                            Pair<T, V> item = addGhostEntry();
-                            onAdd(item.getFirst(), item.getSecond());
-                        }
+                        doRemoveItem(item, value, widget);
                     }
                 });
 
         return button;
+    }
+
+    protected void doRemoveItem(Pair<T, V> item, T value, V widget) {
+        ListIterator<Pair<T, V>> last = items.listIterator(items.size());
+        if (!last.hasPrevious()) { // just a precaution; if there's no item, there should be no button
+            return;
+        }
+
+        if (item == last.previous() && last.hasPrevious()) { // add plus button to previous item
+            Pair<T, V> previousItem = last.previous();
+            getEntry(previousItem.getSecond()).appendButton(createButton(previousItem, true));
+        }
+
+        removeEntry(item);
+        onRemove(value, widget);
+
+        if (items.isEmpty()) {
+            Pair<T, V> ghostItem = addGhostEntry();
+            onAdd(ghostItem.getFirst(), ghostItem.getSecond());
+        }
+    }
+
+    /**
+     * Lets to decide if we really want to remove this item or not.
+     * Everything can be removed by default.
+     */
+    protected boolean vetoRemoveWidget(Pair<T, V> item, T value, V widget) {
+        return false;
     }
 
     @SuppressWarnings("unchecked")

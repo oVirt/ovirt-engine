@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+
+    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
+
+    <ui:style>
+        .mainPanel {
+            width: 330px;
+        }
+
+        .buttonStyle {
+            float: right;
+            padding-top: 5px;
+            padding-right: 5px;
+        }
+
+        .labelStyle {
+            float: left;
+        }
+    </ui:style>
+
+    <g:FlowPanel addStyleNames="{style.mainPanel}">
+        <g:Label ui:field="nameLabel" addStyleNames="{style.labelStyle}"/>
+        <w:UiCommandButton ui:field="createEditButton" label="{constants.addInstanceImages}" addStyleNames="{style.buttonStyle}"/>
+        <w:UiCommandButton ui:field="attachButton" label="{constants.attachInstanceImages}" addStyleNames="{style.buttonStyle}"/>
+    </g:FlowPanel>
+</ui:UiBinder>

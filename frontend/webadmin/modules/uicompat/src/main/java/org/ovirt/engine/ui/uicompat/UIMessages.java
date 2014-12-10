@@ -423,4 +423,8 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Value of volume configuration parameter {0} is empty")
     String volumeSnapshotOptionValueEmpty(String option);
+
+    @DefaultMessage("{0}: ({1} GB) {2} {3}")
+    String vmDialogDisk(String name, String sizeInGb, String type, String boot);
+
 }

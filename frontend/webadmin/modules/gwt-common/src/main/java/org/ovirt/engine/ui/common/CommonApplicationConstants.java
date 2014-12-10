@@ -574,6 +574,18 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Instance Type")
     String instanceType();
 
+    @DefaultStringValue("Instance Images")
+    String instanceImages();
+
+    @DefaultStringValue("Edit")
+    String editInstanceImages();
+
+    @DefaultStringValue("Create")
+    String addInstanceImages();
+
+    @DefaultStringValue("Attach")
+    String attachInstanceImages();
+
     @DefaultStringValue("Memory Size")
     String memSizeVmPopup();
 
