@@ -612,7 +612,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
             String search = ""; //$NON-NLS-1$
             RefObject<String> tempRef_prefix = new RefObject<String>(prefix);
             RefObject<String> tempRef_search = new RefObject<String>(search);
-            splitSearchString(getSelectedItem().getDefaultSearchString(), tempRef_prefix, tempRef_search);
+            splitSearchString(getSelectedItem().getSearchString(), tempRef_prefix, tempRef_search);
             prefix = tempRef_prefix.argvalue;
             search = tempRef_search.argvalue;
 
