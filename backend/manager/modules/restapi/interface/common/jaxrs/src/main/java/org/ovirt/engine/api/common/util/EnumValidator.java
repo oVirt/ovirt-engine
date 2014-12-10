@@ -84,7 +84,7 @@ public class EnumValidator {
     public static <E extends Enum<E>> E validateEnum(String reason, String detail, Class<E> clz, String name, boolean toUppercase) {
         try {
             return Enum.valueOf(clz, toUppercase ? name.toUpperCase() : name);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException|NullPointerException e) {
             detail = detail + getPossibleValues(clz);
             throw new WebApplicationException(response(reason, MessageFormat.format(detail, name, clz.getSimpleName())));
         }
@@ -99,7 +99,7 @@ public class EnumValidator {
 
         try {
             return Enum.valueOf(clz, toUppercase ? name.toUpperCase() : name).name();
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException|NullPointerException e) {
             detail = detail + getPossibleValues(clz, OsTypeUtils.getAllValues());
             throw new WebApplicationException(response(reason, MessageFormat.format(detail, name, clz.getSimpleName())));
         }
