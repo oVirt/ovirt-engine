@@ -363,6 +363,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("TLSv1")
     VdsmSSLProtocol,
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("TLSv1")
+    ExternalCommunicationProtocol,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("oVirt")
