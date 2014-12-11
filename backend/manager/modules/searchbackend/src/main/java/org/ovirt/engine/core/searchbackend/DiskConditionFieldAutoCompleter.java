@@ -11,6 +11,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 
 public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public static final String ALIAS = "ALIAS";
+    public static final String NAME = "NAME";
     public static final String DESCRIPTION = "DESCRIPTION";
     public static final String PROVISIONED_SIZE = "PROVISIONED_SIZE";
     public static final String SIZE = "SIZE";
@@ -28,6 +29,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
     public DiskConditionFieldAutoCompleter() {
         // Building the basic verbs set.
         mVerbs.add(ALIAS);
+        mVerbs.add(NAME);
         mVerbs.add(DESCRIPTION);
         mVerbs.add(PROVISIONED_SIZE);
         mVerbs.add(SIZE);
@@ -47,6 +49,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
 
         // Building the types dict.
         getTypeDictionary().put(ALIAS, String.class);
+        getTypeDictionary().put(NAME, String.class);
         getTypeDictionary().put(DESCRIPTION, String.class);
         getTypeDictionary().put(PROVISIONED_SIZE, Long.class);
         getTypeDictionary().put(SIZE, Long.class);
@@ -63,6 +66,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
 
         // building the ColumnName dict. - the name of the column in db
         columnNameDict.put(ALIAS, "disk_alias");
+        columnNameDict.put(NAME, "disk_alias");
         columnNameDict.put(DESCRIPTION, "disk_description");
         columnNameDict.put(PROVISIONED_SIZE, "size");
         columnNameDict.put(SIZE, "size");
