@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.restapi.resource.aaa;
 
-import java.nio.charset.Charset;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -219,23 +218,25 @@ public class BackendGroupsResourceTest
             SearchType.DirectoryGroup,
             getDirectoryGroup(0)
         );
+        DbGroup dbGroup = new DbGroup(getDirectoryGroup(0));
         setUpCreationExpectations(
             VdcActionType.AddGroup,
             AddGroupParameters.class,
             new String[] { "GroupToAdd" },
-            new Object[] { new DbGroup(getDirectoryGroup(0)) },
+            new Object[] { dbGroup },
             true,
             true,
-            GUIDS[0],
+            dbGroup.getId(),
             VdcQueryType.GetDbGroupById,
             IdQueryParameters.class,
             new String[] { "Id" },
-            new Object[] { GUIDS[0] },
+            new Object[] { dbGroup.getId()},
             getEntity(0)
         );
 
         Domain domain = new Domain();
         domain.setName(DOMAIN);
+        domain.setId(DirectoryEntryIdUtils.encode(domain.getName()));
         Group model = new Group();
         model.setName(GROUP_NAMES_WITH_NO_DOMAIN[0]);
         model.setDomain(domain);
@@ -404,13 +405,7 @@ public class BackendGroupsResourceTest
 
     @Override
     protected DbGroup getEntity(int index) {
-        DbGroup entity = new DbGroup();
-        entity.setId(GUIDS[index]);
-        entity.setExternalId(EXTERNAL_IDS[index]);
-        entity.setName(GROUP_NAMES[index]);
-        entity.setDomain(DOMAIN);
-        entity.setNamespace(NAMESPACE);
-        return entity;
+        return new DbGroup(new DirectoryGroup(DOMAIN, NAMESPACE, EXTERNAL_IDS[index], GROUP_NAMES[index]));
     }
 
     private DirectoryGroup getDirectoryGroup(int index) {
@@ -419,10 +414,11 @@ public class BackendGroupsResourceTest
 
     @Override
     protected void verifyModel(Group model, int index) {
-        assertEquals(GUIDS[index].toString(), model.getId());
-        assertEquals(GROUP_NAMES[index], model.getName());
+        DbGroup entity = getEntity(index);
+        assertEquals(entity.getId().toString(), model.getId());
+        assertEquals(entity.getName(), model.getName());
         assertNotNull(model.getDomain());
-        assertEquals(new Guid(DOMAIN.getBytes(Charset.forName("UTF-8")), true).toString(), model.getDomain().getId());
+        assertEquals(DirectoryEntryIdUtils.encode(entity.getDomain()), model.getDomain().getId());
         verifyLinks(model);
     }
 }

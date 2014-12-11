@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.resource.aaa;
 
-import static org.ovirt.engine.api.utils.ReflectionHelper.assignChildModel;
 import static org.ovirt.engine.api.restapi.resource.aaa.BackendDomainsResource.SUB_COLLECTIONS;
+import static org.ovirt.engine.api.utils.ReflectionHelper.assignChildModel;
 
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.resource.aaa.DomainGroupsResource;
@@ -9,6 +9,7 @@ import org.ovirt.engine.api.resource.aaa.DomainResource;
 import org.ovirt.engine.api.resource.aaa.DomainUsersResource;
 import org.ovirt.engine.api.restapi.model.Directory;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
+import org.ovirt.engine.core.compat.Guid;
 
 public class BackendDomainResource extends AbstractBackendSubResource<Domain, Directory>
 implements DomainResource {
@@ -52,5 +53,10 @@ implements DomainResource {
     @Override
     protected Domain doPopulate(Domain model, Directory entity) {
         return model;
+    }
+
+    @Override
+    protected Guid asGuidOr404(String id) {
+        return null;
     }
 }

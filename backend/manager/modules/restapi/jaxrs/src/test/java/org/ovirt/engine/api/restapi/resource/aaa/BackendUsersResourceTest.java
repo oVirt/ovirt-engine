@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.restapi.resource.aaa;
 
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -16,6 +15,7 @@ import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResourceTest;
+import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.action.IdParameters;
@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
 
 public class BackendUsersResourceTest
     extends AbstractBackendCollectionResourceTest<User, DbUser, BackendUsersResource> {
@@ -138,6 +137,7 @@ public class BackendUsersResourceTest
         User model = new User();
         Domain domain = new Domain();
         domain.setName(DOMAIN);
+        domain.setId(DirectoryEntryIdUtils.encode(domain.getName()));
         model.setDomain(domain);
         model.setUserName(NAMES[0]);
         Response response = collection.add(model);
@@ -170,7 +170,8 @@ public class BackendUsersResourceTest
         User model = new User();
         model.setUserName(NAMES[0]);
         Domain domain = new Domain();
-        domain.setId(new Guid(DOMAIN.getBytes(Charset.forName("UTF-8")), true).toString());
+        domain.setName(DOMAIN);
+        domain.setId(DirectoryEntryIdUtils.encode(domain.getName()));
         model.setDomain(domain);
         Response response = collection.add(model);
         verifyAddUser(response);
@@ -219,13 +220,9 @@ public class BackendUsersResourceTest
 
     @Override
     protected DbUser getEntity(int index) {
-        DbUser entity = new DbUser();
-        entity.setId(GUIDS[index]);
-        entity.setExternalId(EXTERNAL_IDS[index]);
-        entity.setLoginName(NAMES[index]);
+        DbUser entity = new DbUser(getDirectoryUser(index));
         entity.setGroupNames(new LinkedList<String>(Arrays.asList(GROUPS.split(","))));
-        entity.setNamespace(NAMESPACE);
-        entity.setDomain(DOMAIN);
+        entity.setId(GUIDS[index]);
         return entity;
     }
 
@@ -238,7 +235,7 @@ public class BackendUsersResourceTest
         assertEquals(GUIDS[index].toString(), model.getId());
         assertEquals(NAMES[index] + "@" + DOMAIN, model.getUserName());
         assertNotNull(model.getDomain());
-        assertEquals(new Guid(DOMAIN.getBytes(Charset.forName("UTF-8")), true).toString(), model.getDomain().getId());
+        assertEquals(DirectoryEntryIdUtils.encode(DOMAIN), model.getDomain().getId());
         assertTrue(model.isSetGroups());
         assertEquals(PARSED_GROUPS.length, model.getGroups().getGroups().size());
         HashSet<String> groupNames = new HashSet<>();

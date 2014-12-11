@@ -1,7 +1,5 @@
 package org.ovirt.engine.api.restapi.types;
 
-import java.nio.charset.Charset;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Group;
@@ -9,7 +7,6 @@ import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
-import org.ovirt.engine.core.compat.Guid;
 
 public class GroupMapper {
 
@@ -20,7 +17,8 @@ public class GroupMapper {
         model.setId(entity.getId().toString());
         if (!StringUtils.isEmpty(entity.getDomain())) {
             Domain dom = new Domain();
-            dom.setId(new Guid(entity.getDomain().getBytes(Charset.forName("UTF-8")), true).toString());
+            dom.setName(entity.getDomain());
+            dom.setId(DirectoryEntryIdUtils.encode(dom.getName()));
             model.setDomain(dom);
         }
         model.setDomainEntryId(DirectoryEntryIdUtils.encode(entity.getExternalId()));
@@ -34,7 +32,8 @@ public class GroupMapper {
         model.setName(entity.getName());
         if (!StringUtils.isEmpty(entity.getDirectoryName())) {
             Domain dom = new Domain();
-            dom.setId(new Guid(entity.getDirectoryName().getBytes(Charset.forName("UTF-8")), true).toString());
+            dom.setName(entity.getDirectoryName());
+            dom.setId(DirectoryEntryIdUtils.encode(dom.getName()));
             model.setDomain(dom);
         }
         model.setId(DirectoryEntryIdUtils.encode(entity.getId()));

@@ -15,6 +15,7 @@ import org.ovirt.engine.api.restapi.resource.ResourceConstants;
 import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * This resource corresponds to the users that exist in a directory accessible
@@ -82,6 +83,11 @@ public class BackendDomainUsersResource
     @Override
     protected User doPopulate(User model, DirectoryUser entity) {
         return model;
+    }
+
+    @Override
+    protected Guid asGuidOr404(String id) {
+        return null;
     }
 
 }
