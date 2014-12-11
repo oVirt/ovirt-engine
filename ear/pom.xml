@@ -71,6 +71,13 @@
 
     <dependency>
       <groupId>org.ovirt.engine.core</groupId>
+      <artifactId>enginesso</artifactId>
+      <version>${engine.version}</version>
+      <type>war</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ovirt.engine.core</groupId>
       <artifactId>welcome</artifactId>
       <version>${engine.version}</version>
       <type>war</type>
@@ -221,6 +228,13 @@
               <artifactId>docs</artifactId>
               <bundleFileName>docs.war</bundleFileName>
               <contextRoot>/ovirt-engine/docs</contextRoot>
+            </webModule>
+
+            <webModule>
+              <groupId>org.ovirt.engine.core</groupId>
+              <artifactId>enginesso</artifactId>
+              <bundleFileName>enginesso.war</bundleFileName>
+              <contextRoot>/ovirt-engine/sso</contextRoot>
             </webModule>
 
             <webModule>

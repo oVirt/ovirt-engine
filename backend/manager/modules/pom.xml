@@ -18,6 +18,7 @@
     <module>extensions-api-root</module>
     <module>uutils</module>
     <module>extensions-manager</module>
+    <module>enginesso</module>
     <module>compat</module>
     <module>utils</module>
     <module>common</module>

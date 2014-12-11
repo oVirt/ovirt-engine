@@ -1,0 +1,244 @@
+<?xml version="1.0"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5">
+
+    <listener>
+        <listener-class>org.ovirt.engine.core.sso.context.SSOContextListener</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>org.ovirt.engine.core.sso.context.SSOSessionListener</listener-class>
+    </listener>
+
+    <!-- Application with context parameters -->
+    <context-param>
+        <param-name>obrandThemePath</param-name>
+        <param-value>/theme</param-value>
+    </context-param>
+    <context-param>
+        <param-name>obrandResourcePath</param-name>
+        <param-value>/theme-resource</param-value>
+    </context-param>
+    <context-param>
+        <param-name>obrandApplicationName</param-name>
+        <param-value>welcome</param-value>
+    </context-param>
+
+    <!-- Branding Servlet -->
+    <servlet>
+        <servlet-name>BrandingServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.branding.BrandingServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BrandingServlet</servlet-name>
+        <url-pattern>/theme/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- Branding Cascading Resource Servlet -->
+    <servlet>
+        <servlet-name>BrandingCascadingResourceServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.branding.BrandingCascadingResourceServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BrandingCascadingResourceServlet</servlet-name>
+        <url-pattern>/theme-resource/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- Filters -->
+    <!-- Locale Filter, determines the user locale -->
+    <filter>
+        <filter-name>LocaleFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.utils.servlet.LocaleFilter</filter-class>
+    </filter>
+    <!-- Branding Filter, passes branding information to jsps -->
+    <filter>
+        <filter-name>BrandingFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.branding.BrandingFilter</filter-class>
+    </filter>
+
+    <!-- Header filter to automatically add some headers to each response -->
+    <filter>
+        <filter-name>HeaderFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.utils.servlet.HeaderFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>HeaderFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>LocaleFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>BrandingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>
+
+    <servlet>
+        <servlet-name>StatusServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.sso.servlets.StatusServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>StatusServlet</servlet-name>
+        <url-pattern>/status</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>InteractiveAuthServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.sso.servlets.InteractiveAuthServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>InteractiveAuthServlet</servlet-name>
+        <url-pattern>/interactive-login</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>InteractiveRedirectToModuleServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.sso.servlets.InteractiveRedirectToModuleServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>InteractiveRedirectToModuleServlet</servlet-name>
+        <url-pattern>/interactive-redirect-to-module</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>InteractiveBasicAuthServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.sso.servlets.InteractiveBasicAuthServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>InteractiveBasicAuthServlet</servlet-name>
+        <url-pattern>/interactive-login-basic</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>InteractiveBasicEnforceServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.sso.servlets.InteractiveBasicEnforceServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>InteractiveBasicEnforceServlet</servlet-name>
+        <url-pattern>/interactive-login-basic-enforce</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>InteractiveNegotiateAuthServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.sso.servlets.InteractiveNegotiateAuthServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>InteractiveNegotiateAuthServlet</servlet-name>
+        <url-pattern>/interactive-login-negotiate/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>SSOUnauthorizedServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.sso.servlets.InteractiveNextAuthServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>SSOUnauthorizedServlet</servlet-name>
+        <url-pattern>/login-unauthorized</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>InteractiveNextAuthServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.sso.servlets.InteractiveNextAuthServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>InteractiveNextAuthServlet</servlet-name>
+        <url-pattern>/interactive-login-next-auth</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OAuthAuthorizeServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.sso.servlets.OAuthAuthorizeServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>OAuthAuthorizeServlet</servlet-name>
+        <url-pattern>/oauth/authorize</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OAuthTokenServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.sso.servlets.OAuthTokenServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>OAuthTokenServlet</servlet-name>
+        <url-pattern>/oauth/token</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>OAuthTokenServlet</servlet-name>
+        <url-pattern>/oauth/token-http-auth/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OAuthTokenInfo</servlet-name>
+        <servlet-class>org.ovirt.engine.core.sso.servlets.OAuthTokenInfoServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>OAuthTokenInfo</servlet-name>
+        <url-pattern>/oauth/token-info</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OAuthRevokeServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.sso.servlets.OAuthRevokeServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>OAuthRevokeServlet</servlet-name>
+        <url-pattern>/oauth/revoke</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LoginForm</servlet-name>
+        <jsp-file>/WEB-INF/login.jsp</jsp-file>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>LoginForm</servlet-name>
+        <url-pattern>/login.html</url-pattern>
+    </servlet-mapping>
+
+    <welcome-file-list>
+        <welcome-file>/login.html</welcome-file>
+    </welcome-file-list>
+
+    <error-page>
+        <error-code>401</error-code>
+        <location>/login-unauthorized</location>
+    </error-page>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>everything</web-resource-name>
+            <url-pattern>/*</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+
+    <session-config>
+        <cookie-config>
+            <http-only>true</http-only>
+            <secure>false</secure>
+        </cookie-config>
+    </session-config>
+</web-app>

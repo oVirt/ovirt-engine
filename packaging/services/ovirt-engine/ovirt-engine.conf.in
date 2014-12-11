@@ -257,3 +257,46 @@ ENGINE_EXTENSION_PATH="${ENGINE_USR}/extensions.d:${ENGINE_ETC}/extensions.d"
 #
 # ENGINE_EXTENSION_ENABLED_<name>=false
 #
+
+#
+# SSO Configuration
+#
+
+# Maximum lifetime in seconds of a token
+SSO_TOKEN_TIMEOUT=360000
+
+# Interval in which housekeeping occurs in seconds.
+SSO_HOUSE_KEEPING_INTERVAL=60
+
+# Login sequence to use.
+# B - Basic enforce.
+# b - Basic accept.
+# N - Negotiate.
+# I - Internal.
+SSO_AUTH_LOGIN_SEQUENCE=NI
+
+# Login sequence to use for token http login.
+# b - Basic accept.
+# N - Negotiate.
+SSO_TOKEN_HTTP_LOGIN_SEQUENCE=Nb
+
+# Enforce OAuth2 callback prefix. Should not be modified.
+SSO_CALLBACK_PREFIX_CHECK=true
+
+# Read Timeout for outgoing communications.
+SSO_CALLBACK_READ_TIMEOUT=0
+
+# Connect Timeout for outgoing communications.
+SSO_CALLBACK_CONNECT_TIMEOUT=0
+
+# Trust store for outgoing communications.
+SSO_PKI_TRUST_STORE="${ENGINE_PKI_TRUST_STORE}"
+
+# Trust store for outgoing communications.
+SSO_PKI_TRUST_STORE_TYPE="${ENGINE_PKI_TRUST_STORE_TYPE}"
+
+# Trust store password for outgoing communications.
+SSO_PKI_TRUST_STORE_PASSWORD="${ENGINE_PKI_TRUST_STORE_PASSWORD}"
+
+# The URL of the engine
+SSO_ENGINE_URL="http://${ENGINE_FQDN}${ENGINE_URI}"

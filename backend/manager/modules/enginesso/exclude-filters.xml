@@ -1,0 +1,42 @@
+<FindBugsFilter>
+     <Match>
+       <Class name="org.ovirt.engine.core.sso.servlets.InteractiveAuthServlet" />
+       <Method name="service"/>
+       <Bug code="DLS"/>
+     </Match>
+     <Match>
+       <Class name="org.ovirt.engine.core.sso.utils.SSOUtils" />
+       <Bug code="HRS"/>
+     </Match>
+     <Match>
+       <Class name="org.ovirt.engine.core.sso.servlets.OAuthAuthorizeServlet" />
+       <Bug code="HRS"/>
+     </Match>
+    <Match>
+        <Class name="org.ovirt.engine.core.sso.servlets.OAuthTokenServlet" />
+        <Bug code="HRS"/>
+    </Match>
+    <Match>
+        <Class name="org.ovirt.engine.core.sso.servlets.OAuthTokenInfoServlet" />
+        <Bug code="HRS"/>
+    </Match>
+    <Match>
+        <Class name="org.ovirt.engine.core.sso.servlets.OAuthRevokeServlet" />
+        <Bug code="HRS"/>
+    </Match>
+    <Match>
+       <Class name="org.ovirt.engine.core.sso.servlets.InteractiveAuthServlet" />
+       <Method name="service"/>
+       <Bug code="RCN"/>
+    </Match>
+    <Match>
+       <Class name="org.ovirt.engine.core.sso.servlets.OAuthTokenServlet" />
+       <Method name="issueTokenUsingHttpHeaders"/>
+       <Bug code="RCN"/>
+    </Match>
+    <Match>
+       <Class name="org.ovirt.engine.core.sso.servlets.OAuthTokenServlet" />
+       <Method name="issueTokenForPasswd"/>
+       <Bug code="RCN"/>
+    </Match>
+</FindBugsFilter>
