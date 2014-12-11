@@ -111,7 +111,7 @@ public class UpdateStorageDomainCommandTest {
 
     @Test
     public void canDoActionWrongStatus() {
-        sd.setStatus(StorageDomainStatus.Maintenance);
+        sd.setStatus(StorageDomainStatus.Locked);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
     }

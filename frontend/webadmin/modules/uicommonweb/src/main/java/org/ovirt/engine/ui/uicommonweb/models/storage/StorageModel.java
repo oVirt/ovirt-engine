@@ -719,6 +719,10 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
                 || getStorage().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Mixed;
     }
 
+    public boolean isStorageNotLocked() {
+        return getStorage().getStorageDomainSharedStatus() != StorageDomainSharedStatus.Locked;
+    }
+
     public boolean isNewStorage() {
         return getStorage() == null;
     }

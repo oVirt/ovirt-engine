@@ -23,26 +23,33 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
         super(parameters);
     }
 
-    private boolean _storageDomainNameChanged;
+    private boolean storageDomainNameChanged;
     private StorageDomainStatic oldDomain;
 
     @Override
     protected boolean canDoAction() {
-        if (!super.canDoAction() || !checkStorageDomain()
-                || !checkStorageDomainStatus(StorageDomainStatus.Active) || !checkStorageDomainNameLengthValid()) {
+        if (!super.canDoAction() || !checkStorageDomain()) {
             return false;
         }
 
-        // Only after validating the existing of the storage domain in DB, we set the field lastTimeUsedAsMaster in the
+        // Only after validating the existence of the storage domain in DB, we set the field lastTimeUsedAsMaster in the
         // storage domain which is about to be updated.
         oldDomain = getStorageDomainStaticDAO().get(getStorageDomain().getId());
         getStorageDomain().setLastTimeUsedAsMaster(oldDomain.getLastTimeUsedAsMaster());
+
+        return validateStoragePropertiesUpdate();
+    }
+
+    private boolean validateStoragePropertiesUpdate() {
+       if (!checkStorageDomainStatusNotEqual(StorageDomainStatus.Locked) || !validateStorageNameUpdate()) {
+           return false;
+       }
 
         // Collect changed fields to update in a list.
         List<String> props = ObjectIdentityChecker.GetChangedFields(oldDomain, getStorageDomain()
                 .getStorageStaticData());
 
-        // Allow change only to name, description, comment and wipe after delete fields.
+        // Allow changes to the following fields only:
         props.remove("storageName");
         props.remove("description");
         props.remove("comment");
@@ -52,19 +59,33 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
                     StringUtils.join(props, ","));
             return failCanDoAction(VdcBllMessages.ERROR_CANNOT_CHANGE_STORAGE_DOMAIN_FIELDS);
         }
+        return true;
+    }
 
-        _storageDomainNameChanged =
+    private boolean validateStorageNameUpdate() {
+        storageDomainNameChanged =
                 !StringUtils.equals(oldDomain.getStorageName(), getStorageDomain().getStorageName());
+
+        if (!storageDomainNameChanged) {
+            return true;
+        }
+
+        return checkStorageDomainStatus(StorageDomainStatus.Active)
+                && checkStorageDomainNameLengthValid()
+                && isPoolUp()
+                && validateNotTheSameName();
+    }
+
+    private boolean isPoolUp() {
         // if domain is part of pool, and name changed, check that pool is up in
         // order to change description in spm
-        if (_storageDomainNameChanged && !validate(new StoragePoolValidator(getStoragePool()).isUp())) {
-            return false;
-        }
+        return validate(new StoragePoolValidator(getStoragePool()).isUp());
+    }
 
-        if (_storageDomainNameChanged && isStorageWithSameNameExists()) {
+    private boolean validateNotTheSameName() {
+        if (isStorageWithSameNameExists()) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
         }
-
         return true;
     }
 
@@ -83,7 +104,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
     @Override
     protected void executeCommand() {
         getStorageDomainStaticDAO().update(getStorageDomain().getStorageStaticData());
-        if (_storageDomainNameChanged && getStoragePool() != null) {
+        if (storageDomainNameChanged && getStoragePool() != null) {
             runVdsCommand(
                             VDSCommandType.SetStorageDomainDescription,
                             new SetStorageDomainDescriptionVDSCommandParameters(getStoragePool().getId(),

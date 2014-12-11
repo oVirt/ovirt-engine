@@ -344,17 +344,18 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         model.getDataCenter().setIsChangable(false);
         model.getFormat().setIsChangable(false);
 
-        boolean isStorageEditable = model.isStorageActive() || model.isNewStorage();
+        boolean isStorageNameEditable = model.isStorageActive() || model.isNewStorage();
+        boolean isStoragePropertiesEditable = model.isStorageNotLocked() || model.isNewStorage();
         model.getHost().setIsChangable(false);
-        model.getName().setIsChangable(isStorageEditable);
-        model.getDescription().setIsChangable(isStorageEditable);
-        model.getComment().setIsChangable(isStorageEditable);
+        model.getName().setIsChangable(isStorageNameEditable);
+        model.getDescription().setIsChangable(isStoragePropertiesEditable);
+        model.getComment().setIsChangable(isStoragePropertiesEditable);
         //set the field domain type to non editable
         model.getAvailableStorageItems().setIsChangable(false);
-        model.setIsChangable(isStorageEditable);
+        model.setIsChangable(isStorageNameEditable || isStoragePropertiesEditable);
 
         boolean isPathEditable = isPathEditable(storage);
-        isStorageEditable = isStorageEditable || isPathEditable;
+        isStorageNameEditable = isStorageNameEditable || isPathEditable;
 
         IStorageModel item = null;
         switch (storage.getStorageType()) {
@@ -403,7 +404,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
 
 
         UICommand command;
-        if (isStorageEditable) {
+        if (isStorageNameEditable || isStoragePropertiesEditable) {
             command = createOKCommand("OnSave"); //$NON-NLS-1$
             model.getCommands().add(command);
 
@@ -1124,7 +1125,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
     }
 
     private boolean isEditAvailable(StorageDomain storageDomain) {
-        if (storageDomain == null) {
+        if (storageDomain == null || storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Locked) {
             return false;
         }
 
@@ -1236,9 +1237,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
             if (isPathEditable(storageDomain)) {
                 updatePath();
             }
-            else {
-                updateStorageDomain();
-            }
+            updateStorageDomain();
         }
     }
 
@@ -1486,9 +1485,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
             if (isPathEditable(storageDomain)) {
                 updatePath();
             }
-            else {
-                updateStorageDomain();
-            }
+            updateStorageDomain();
         }
     }
 
@@ -1724,9 +1721,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
             if (isPathEditable(storageDomain)) {
                 updatePath();
             }
-            else {
-                updateStorageDomain();
-            }
+            updateStorageDomain();
         }
     }
 
