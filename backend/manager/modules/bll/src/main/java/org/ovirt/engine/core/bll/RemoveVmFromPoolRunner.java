@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -62,9 +63,9 @@ public class RemoveVmFromPoolRunner extends MultipleActionsRunner {
     }
 
     private RemoveVmFromPoolParameters getFirstParam() {
-        List<VdcActionParametersBase> parameters = getParameters();
-        if (parameters != null && parameters.size() != 0) {
-            VdcActionParametersBase param = parameters.get(0);
+        Iterator<?> iterator = getParameters() == null ? null : getParameters().iterator();
+        if (iterator != null && iterator.hasNext()) {
+            Object param = iterator.next();
             if (param instanceof RemoveVmFromPoolParameters) {
                 return ((RemoveVmFromPoolParameters) param);
             }
