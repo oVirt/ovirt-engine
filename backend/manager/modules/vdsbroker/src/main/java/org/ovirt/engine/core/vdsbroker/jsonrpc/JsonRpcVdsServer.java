@@ -51,7 +51,6 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.OneStorageDomainStatsReturnForX
 import org.ovirt.engine.core.vdsbroker.vdsbroker.OneVGReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.OneVmReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.OvfReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.ServerConnectionListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.ServerConnectionStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.SpmStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturnForXmlRpc;
@@ -321,15 +320,6 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc heartBeat() {
-        // check method. This method is not used in the engine
-        JsonRpcRequest request = new RequestBuilder("Host.ping").build();
-        Map<String, Object> response =
-                new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
-    }
-
-    @Override
     public StatusOnlyReturnForXmlRpc monitorCommand(String vmId, String monitorCommand) {
         JsonRpcRequest request =
                 new RequestBuilder("VM.monitorCommand").withParameter("vmID", vmId)
@@ -360,12 +350,6 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
-    }
-
-    @Override
-    public StatusOnlyReturnForXmlRpc startSpice(String vdsIp, int port, String ticket) {
-        // TODO This method is used by StartSpiceVDSCommand
-        return null;
     }
 
     @Override
@@ -538,12 +522,6 @@ public class JsonRpcVdsServer implements IVdsServer {
                 new FutureMap(this.client, request).withResponseKey("statuslist")
                         .withResponseType(Object[].class);
         return new ServerConnectionStatusReturnForXmlRpc(response);
-    }
-
-    @Override
-    public ServerConnectionListReturnForXmlRpc getStorageConnectionsList(String spUUID) {
-        // TODO there is poolsGetConnectedList method not exposed and accepts no args
-        return null;
     }
 
     @Override

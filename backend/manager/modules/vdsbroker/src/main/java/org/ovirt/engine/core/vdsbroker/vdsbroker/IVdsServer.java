@@ -86,16 +86,11 @@ public interface IVdsServer {
 
     OneVmReturnForXmlRpc changeFloppy(String vmId, String imageLocation);
 
-    @Deprecated
-    StatusOnlyReturnForXmlRpc heartBeat();
-
     StatusOnlyReturnForXmlRpc monitorCommand(String vmId, String monitorCommand);
 
     StatusOnlyReturnForXmlRpc setVmTicket(String vmId, String otp64, String sec);
 
     StatusOnlyReturnForXmlRpc setVmTicket(String vmId, String otp64, String sec, String connectionAction, Map<String, String> params);
-
-    StatusOnlyReturnForXmlRpc startSpice(String vdsIp, int port, String ticket);
 
     StatusOnlyReturnForXmlRpc addNetwork(String bridge, String vlan, String bond, String[] nics,
             Map<String, String> options);
@@ -118,8 +113,6 @@ public interface IVdsServer {
 
     ServerConnectionStatusReturnForXmlRpc disconnectStorageServer(int serverType, String spUUID,
             Map<String, String>[] args);
-
-    ServerConnectionListReturnForXmlRpc getStorageConnectionsList(String spUUID);
 
     StatusOnlyReturnForXmlRpc createStorageDomain(int domainType, String sdUUID, String domainName, String arg,
             int storageType, String storageFormatType);

@@ -5,7 +5,6 @@ import java.util.Map;
 import org.apache.commons.httpclient.HttpClient;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.ResizeStorageDomainPVMapReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StorageDomainListReturnForXmlRpc;
 
 public class IrsServerWrapper implements IIrsServer {
 
@@ -101,15 +100,6 @@ public class IrsServerWrapper implements IIrsServer {
     }
 
     @Override
-    public OneUuidReturnForXmlRpc importCandidate(String sdUUID, String vmGUID, String templateGUID,
-            String templateVolGUID, String path, String type, String force) {
-        Map<String, Object> xmlRpcReturnValue = irsServer.importCandidate(sdUUID, vmGUID, templateGUID,
-                templateVolGUID, path, type, force);
-        OneUuidReturnForXmlRpc wrapper = new OneUuidReturnForXmlRpc(xmlRpcReturnValue);
-        return wrapper;
-    }
-
-    @Override
     public FileStatsReturnForXmlRpc getIsoList(String spUUID) {
         Map<String, Object> xmlRpcReturnValue = irsServer.getIsoList(spUUID);
         FileStatsReturnForXmlRpc wrapper = new FileStatsReturnForXmlRpc(xmlRpcReturnValue);
@@ -171,14 +161,6 @@ public class IrsServerWrapper implements IIrsServer {
     public StatusOnlyReturnForXmlRpc setStorageDomainDescription(String sdUUID, String description) {
         Map<String, Object> xmlRpcReturnValue = irsServer.setStorageDomainDescription(sdUUID, description);
         StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
-        return wrapper;
-    }
-
-    @Override
-    public StorageDomainListReturnForXmlRpc reconstructMaster(String spUUID, int hostSpmId, String msdUUID,
-            String masterVersion) {
-        Map<String, Object> xmlRpcReturnValue = irsServer.reconstructMaster(spUUID, hostSpmId, msdUUID, masterVersion);
-        StorageDomainListReturnForXmlRpc wrapper = new StorageDomainListReturnForXmlRpc(xmlRpcReturnValue);
         return wrapper;
     }
 
@@ -245,13 +227,6 @@ public class IrsServerWrapper implements IIrsServer {
     public OneUuidReturnForXmlRpc syncImageData(String spUUID, String srcDomUUID, String imgGUID, String dstDomUUID, String syncType) {
         Map<String, Object> xmlRpcReturnValue = irsServer.syncImageData(spUUID, srcDomUUID, imgGUID, dstDomUUID, syncType);
         OneUuidReturnForXmlRpc wrapper = new OneUuidReturnForXmlRpc(xmlRpcReturnValue);
-        return wrapper;
-    }
-
-    @Override
-    public StatusOnlyReturnForXmlRpc setMaxHosts(int maxHosts) {
-        Map<String, Object> xmlRpcReturnValue = irsServer.setMaxHosts(maxHosts);
-        StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
         return wrapper;
     }
 

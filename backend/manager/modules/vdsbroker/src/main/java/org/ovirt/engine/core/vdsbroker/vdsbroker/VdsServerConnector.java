@@ -53,15 +53,11 @@ public interface VdsServerConnector {
 
     public Map<String, Object> changeFloppy(String vmId, String imageLocation);
 
-    public Map<String, Object> heartBeat();
-
     public Map<String, Object> monitorCommand(String vmId, String monitorCommand);
 
     public Map<String, Object> setVmTicket(String vmId, String otp64, String sec);
 
     public Map<String, Object> setVmTicket(String vmId, String otp64, String sec, String connectionAction, Map<String, String> params);
-
-    public Map<String, Object> startSpice(String vdsIp, int port, String ticket);
 
     public Map<String, Object> addNetwork(String bridge, String vlan, String bond, String[] nics,
             Map<String, String> options);
@@ -87,8 +83,6 @@ public interface VdsServerConnector {
     public Map<String, Object> connectStorageServer(int serverType, String spUUID, Map<String, String>[] args);
 
     public Map<String, Object> disconnectStorageServer(int serverType, String spUUID, Map<String, String>[] args);
-
-    public Map<String, Object> getStorageConnectionsList(String spUUID);
 
     public Map<String, Object> createStorageDomain(int domainType, String sdUUID, String domainName, String arg,
             int storageType, String storageFormatType);

@@ -17,7 +17,6 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.UUIDListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VolumeListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.ResizeStorageDomainPVMapReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StorageDomainListReturnForXmlRpc;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcClient;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcRequest;
 import org.ovirt.vdsm.jsonrpc.client.RequestBuilder;
@@ -217,18 +216,6 @@ public class JsonRpcIIrsServer implements IIrsServer {
     }
 
     @Override
-    public OneUuidReturnForXmlRpc importCandidate(String sdUUID,
-            String vmGUID,
-            String templateGUID,
-            String templateVolGUID,
-            String path,
-            String type,
-            String force) {
-        // This method is not used in the engine
-        return null;
-    }
-
-    @Override
     public FileStatsReturnForXmlRpc getIsoList(String spUUID) {
         // duplicated in IVdsServer#getIsoList
         JsonRpcRequest request =
@@ -336,15 +323,6 @@ public class JsonRpcIIrsServer implements IIrsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
-    }
-
-    @Override
-    public StorageDomainListReturnForXmlRpc reconstructMaster(String spUUID,
-            int hostSpmId,
-            String msdUUID,
-            String masterVersion) {
-        // this method is not used but there is similar method in IVdsServer#reconstructMaster
-        return null;
     }
 
     @Override
@@ -474,12 +452,6 @@ public class JsonRpcIIrsServer implements IIrsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("uuid");
         return new OneUuidReturnForXmlRpc(response);
-    }
-
-    @Override
-    public StatusOnlyReturnForXmlRpc setMaxHosts(int maxHosts) {
-        // this method is not used
-        return null;
     }
 
     @SuppressWarnings("rawtypes")

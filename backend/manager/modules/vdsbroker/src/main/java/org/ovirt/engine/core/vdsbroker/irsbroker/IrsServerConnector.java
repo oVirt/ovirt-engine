@@ -41,9 +41,6 @@ public interface IrsServerConnector {
 
     public Map<String, Object> getStats();
 
-    public Map<String, Object> importCandidate(String sdUUID, String vmGUID, String templateGUID,
-            String templateVolGUID, String path, String type, String force);
-
     public Map<String, Object> getIsoList(String spUUID);
 
     public Map<String, Object> getFloppyList(String spUUID);
@@ -61,8 +58,6 @@ public interface IrsServerConnector {
     public Map<String, Object> attachStorageDomain(String sdUUID, String spUUID);
 
     public Map<String, Object> setStorageDomainDescription(String sdUUID, String description);
-
-    public Map<String, Object> reconstructMaster(String spUUID, int hostSpmId, String msdUUID, String masterVersion);
 
     public Map<String, Object> extendStorageDomain(String sdUUID, String spUUID, String[] devlist);
 
@@ -89,8 +84,6 @@ public interface IrsServerConnector {
     public Map<String, Object> syncImageData(String spUUID, String srcDomUUID, String imgGUID, String dstDomUUID, String syncType);
 
     public Map<String, Object> getImageDomainsList(String spUUID, String imgUUID);
-
-    public Map<String, Object> setMaxHosts(int maxHosts);
 
     public Map<String, Object> updateVM(String spUUID, Map[] vms);
 

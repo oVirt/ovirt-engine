@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.ovirt.engine.core.vdsbroker.vdsbroker.ResizeStorageDomainPVMapReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.StorageDomainListReturnForXmlRpc;
 
 
 public interface IIrsServer {
@@ -35,9 +34,6 @@ public interface IIrsServer {
 
     IrsStatsAndStatusXmlRpc getIrsStats();
 
-    OneUuidReturnForXmlRpc importCandidate(String sdUUID, String vmGUID, String templateGUID, String templateVolGUID,
-            String path, String type, String force);
-
     FileStatsReturnForXmlRpc getIsoList(String spUUID);
 
     FileStatsReturnForXmlRpc getFloppyList(String spUUID);
@@ -55,8 +51,6 @@ public interface IIrsServer {
     StatusOnlyReturnForXmlRpc attachStorageDomain(String sdUUID, String spUUID);
 
     StatusOnlyReturnForXmlRpc setStorageDomainDescription(String sdUUID, String description);
-
-    StorageDomainListReturnForXmlRpc reconstructMaster(String spUUID, int hostSpmId, String msdUUID, String masterVersion);
 
     StatusOnlyReturnForXmlRpc extendStorageDomain(String sdUUID, String spUUID, String[] devlist);
 
@@ -76,8 +70,6 @@ public interface IIrsServer {
     OneUuidReturnForXmlRpc cloneImageStructure(String spUUID, String srcDomUUID, String imgGUID, String dstDomUUID);
 
     OneUuidReturnForXmlRpc syncImageData(String spUUID, String srcDomUUID, String imgGUID, String dstDomUUID, String syncType);
-
-    StatusOnlyReturnForXmlRpc setMaxHosts(int maxHosts);
 
     StatusOnlyReturnForXmlRpc updateVM(String spUUID, Map[] vms);
 
