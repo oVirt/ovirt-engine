@@ -15,6 +15,7 @@ import org.ovirt.engine.api.restapi.resource.ResourceConstants;
 import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * This resource corresponds to the groups that exist in a directory accessible to the engine. Those groups may or may
@@ -88,6 +89,11 @@ public class BackendDomainGroupsResource
     @Override
     protected Group doPopulate(Group model, DirectoryGroup entity) {
         return model;
+    }
+
+    @Override
+    protected Guid asGuidOr404(String id) {
+        return null;
     }
 
 }

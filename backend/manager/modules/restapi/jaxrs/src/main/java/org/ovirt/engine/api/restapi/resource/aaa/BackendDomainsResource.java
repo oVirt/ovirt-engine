@@ -14,9 +14,9 @@ import org.ovirt.engine.api.resource.aaa.DomainsResource;
 import org.ovirt.engine.api.restapi.model.Directory;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
+import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
 
 public class BackendDomainsResource extends AbstractBackendCollectionResource<Domain, Directory>
     implements DomainsResource {
@@ -53,8 +53,7 @@ public class BackendDomainsResource extends AbstractBackendCollectionResource<Do
         for(String domain : getDomainList()){
             Directory ds = new Directory();
             ds.setDomain(domain);
-            Guid guid = asGuid(domain.getBytes(), true);
-            ds.setId(guid.toString());
+            ds.setId(DirectoryEntryIdUtils.encode(domain));
             dsl.add(ds);
         }
         return dsl;
