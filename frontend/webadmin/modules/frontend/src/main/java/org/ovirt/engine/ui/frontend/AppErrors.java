@@ -718,6 +718,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The Storage Domain already exists.")
     String ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Part of the Storage Domain LUNs are being used as an External LUN disk. Please remove them first and try again.")
+    String ACTION_TYPE_FAILED_IMPORT_STORAGE_DOMAIN_EXTERNAL_LUN_DISK_EXIST();
+
     @DefaultStringValue("Cannot ${action} ${type}. The Data Center name is already in use.")
     String ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST();
 

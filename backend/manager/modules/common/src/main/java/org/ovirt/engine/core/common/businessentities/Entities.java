@@ -62,6 +62,14 @@ public class Entities {
         }
     }
 
+    public static List<String> getPhysicalVolumesFromLunsList(List<LUNs> luns) {
+        List<String> physicalVolumeIds = new ArrayList<String>();
+        for (LUNs lun : luns) {
+            physicalVolumeIds.add(lun.getphysical_volume_id());
+        }
+        return physicalVolumeIds;
+    }
+
     public static <E extends VmNetworkInterface> Map<String, E> vmInterfacesByNetworkName(List<E> entityList) {
         if (entityList != null) {
             Map<String, E> map = new HashMap<String, E>();
