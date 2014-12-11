@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
@@ -12,8 +13,8 @@ import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -26,17 +27,21 @@ public class AttachStorageDomainsMultipleActionRunner extends SortedMultipleActi
 
     @Override
     public ArrayList<VdcReturnValueBase> execute() {
-        if (getParameters().size() > 0) {
-            StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(
-                    ((StorageDomainPoolParametersBase) getParameters().get(0)).getStoragePoolId());
+        Iterator<?> iterator = getParameters() == null ? null : getParameters().iterator();
+        Object parameter = iterator != null && iterator.hasNext() ? iterator.next() : null;
+
+        if (parameter instanceof StorageDomainPoolParametersBase) {
+            StorageDomainPoolParametersBase storagePoolParameter = (StorageDomainPoolParametersBase) parameter;
+            StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(storagePoolParameter.getStoragePoolId());
             if (pool.getStatus() == StoragePoolStatus.Uninitialized) {
                 ArrayList<Guid> storageDomainIds = new ArrayList<Guid>();
                 for (VdcActionParametersBase param : getParameters()) {
                     storageDomainIds.add(((StorageDomainPoolParametersBase) param).getStorageDomainId());
                 }
                 ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
-                parameters.add(new StoragePoolWithStoragesParameter(pool, storageDomainIds, getParameters().get(0)
-                        .getSessionId()));
+                parameters.add(new StoragePoolWithStoragesParameter(pool,
+                        storageDomainIds,
+                        storagePoolParameter.getSessionId()));
                 if (isInternal) {
                     return Backend.getInstance().runInternalMultipleActions(VdcActionType.AddStoragePoolWithStorages,
                             parameters);

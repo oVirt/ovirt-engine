@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -20,7 +22,7 @@ public class MultipleActionsRunner {
     private final static int CONCURRENT_ACTIONS = 10;
 
     private VdcActionType actionType = VdcActionType.Unknown;
-    private final List<VdcActionParametersBase> parameters;
+    private final Set<VdcActionParametersBase> parameters;
     private final ArrayList<CommandBase<?>> commands = new ArrayList<CommandBase<?>>();
     protected boolean isInternal;
     private boolean isWaitForResult = false;
@@ -34,12 +36,12 @@ public class MultipleActionsRunner {
 
     public MultipleActionsRunner(VdcActionType actionType, List<VdcActionParametersBase> parameters, CommandContext commandContext, boolean isInternal) {
         this.actionType = actionType;
-        this.parameters = parameters;
         this.isInternal = isInternal;
         this.commandContext = commandContext;
+        this.parameters = new LinkedHashSet<>(parameters);
     }
 
-    protected List<VdcActionParametersBase> getParameters() {
+    protected Set<VdcActionParametersBase> getParameters() {
         return parameters;
     }
 
