@@ -576,7 +576,8 @@ AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
    from vm_templates_view
-   where base_template_id = v_base_template_id and vmt_guid != v_base_template_id;
+   where base_template_id = v_base_template_id and vmt_guid != v_base_template_id
+   order by template_version_number desc;
 END; $procedure$
 LANGUAGE plpgsql;
 
