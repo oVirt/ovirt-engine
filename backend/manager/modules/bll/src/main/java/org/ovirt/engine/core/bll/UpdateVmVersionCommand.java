@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -20,10 +19,8 @@ import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
-import org.ovirt.engine.core.common.businessentities.CopyOnNewVersion;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
@@ -42,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class updates VM to the latest template version for stateless vms that has newer template version
+ * This class updates VM to the required template version for stateless VMs
  */
 @InternalCommandAttribute
 public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends VmCommand<T> {
@@ -61,7 +58,11 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, parameters.getVmId()));
 
         if (getVm() != null) {
-            setVmTemplate(getVmTemplateDAO().getTemplateWithLatestVersionInChain(getVm().getVmtGuid()));
+            if (parameters.getNewTemplateVersion() != null) {
+                setVmTemplate(getVmTemplateDAO().get(parameters.getNewTemplateVersion()));
+            } else {
+                setVmTemplate(getVmTemplateDAO().getTemplateWithLatestVersionInChain(getVm().getVmtGuid()));
+            }
         }
     }
 
@@ -80,7 +81,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
         }
 
-        if (!getVm().isUseLatestVersion()) {
+        if (!getVm().isUseLatestVersion() && getParameters().getNewTemplateVersion() == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_SET_FOR_LATEST);
         }
 
@@ -107,12 +108,16 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
     protected void executeVmCommand() {
         // load vm init from db
         VmHandler.updateVmInitFromDB(getVmTemplate(), false);
-        if (!copyData(getVmTemplate(), getVm().getStaticData())) {
+        if (!VmHandler.copyData(getVmTemplate(), getVm().getStaticData())) {
             return;
         }
 
         getParameters().setPreviousDiskOperatorAuthzPrincipalDbId(getIdOfDiskOperator());
         getParameters().setVmStaticData(getVm().getStaticData());
+
+        if (getParameters().getUseLatestVersion() != null) {
+            getParameters().getVmStaticData().setUseLatestVersion(getParameters().getUseLatestVersion());
+        }
 
         if (getVm().getVmPoolId() != null) {
             getParameters().setVmPoolId(getVm().getVmPoolId());
@@ -174,6 +179,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         return parameters;
     }
 
+
     private void addUpdatedVm() {
         VdcActionType action = getParameters().getVmPoolId() == null ? VdcActionType.AddVm : VdcActionType.AddVmAndAttachToPool;
         runInternalAction(action,
@@ -234,37 +240,6 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         }
     }
 
-    /**
-     * Copy fields that annotated with {@link CopyOnNewVersion} from the new template version to the vm
-     *
-     * @param source
-     *            - template to copy data from
-     * @param dest
-     *            - vm to copy data to
-     */
-    private boolean copyData(VmBase source, VmBase dest) {
-        for (Field srcFld : VmBase.class.getDeclaredFields()) {
-            try {
-                if (srcFld.getAnnotation(CopyOnNewVersion.class) != null) {
-                    srcFld.setAccessible(true);
-
-                    Field dstFld = VmBase.class.getDeclaredField(srcFld.getName());
-                    dstFld.setAccessible(true);
-                    dstFld.set(dest, srcFld.get(source));
-                }
-            } catch (Exception exp) {
-                log.error("Failed to copy field '{}' of new version to VM '{}' ({}): {}",
-                        srcFld.getName(),
-                        source.getName(),
-                        source.getId(),
-                        exp.getMessage());
-                log.debug("Exception", exp);
-                return false;
-            }
-        }
-        return true;
-    }
-
     private boolean deviceExists(VmDeviceGeneralType generalType, VmDeviceType deviceType) {
         return !getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(
                 getVmTemplateId(), generalType, deviceType.getName()).isEmpty();
@@ -282,7 +257,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
 
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
-        // take shared lock on latest template, since we will add vm from it
+        // take shared lock on required template, since we will add vm from it
         if (getVmTemplateId() != null) {
             return Collections.singletonMap(getVmTemplateId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));

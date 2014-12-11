@@ -2,9 +2,9 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.DetachUserFromVmFromPoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
-import org.ovirt.engine.core.common.action.VmPoolSimpleUserParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -14,7 +14,7 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @DisableInPrepareMode
-public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameters> extends
+public class DetachUserFromVmFromPoolCommand<T extends DetachUserFromVmFromPoolParameters> extends
         VmPoolSimpleUserCommandBase<T> {
 
     /**
@@ -36,18 +36,19 @@ public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameter
     }
 
     protected void detachVmFromUser() {
-        VM vm = DbFacade.getInstance().getVmDao().get(getParameters().getVmId());
-
-        if (vm != null && getVmPoolId().equals(vm.getVmPoolId())) {
-            Permission perm = DbFacade
-                    .getInstance()
-                    .getPermissionDao()
-                    .getForRoleAndAdElementAndObject(
-                            PredefinedRoles.ENGINE_USER.getId(),
-                            getAdUserId(), vm.getId());
-            if (perm != null) {
-                DbFacade.getInstance().getPermissionDao().remove(perm.getId());
-                RestoreVmFromBaseSnapshot(vm);
+        Permission perm = DbFacade
+                .getInstance()
+                .getPermissionDao()
+                .getForRoleAndAdElementAndObject(
+                        PredefinedRoles.ENGINE_USER.getId(),
+                        getAdUserId(), getParameters().getVmId());
+        if (perm != null) {
+            DbFacade.getInstance().getPermissionDao().remove(perm.getId());
+            if (getParameters().getIsRestoreStateless()) {
+                VM vm = DbFacade.getInstance().getVmDao().get(getParameters().getVmId());
+                if (vm != null) {
+                    RestoreVmFromBaseSnapshot(vm);
+                }
             }
         }
     }

@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.CopyOnNewVersion;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.EditableDeviceOnVmStatusField;
 import org.ovirt.engine.core.common.businessentities.EditableField;
@@ -1097,5 +1098,36 @@ public class VmHandler {
             }
         }
         return latestVersion;
+    }
+
+    /**
+     * Copy fields that annotated with {@link org.ovirt.engine.core.common.businessentities.CopyOnNewVersion} from the new template version to the vm
+     *
+     * @param source
+     *            - template to copy data from
+     * @param dest
+     *            - vm to copy data to
+     */
+    public static boolean copyData(VmBase source, VmBase dest) {
+        for (Field srcFld : VmBase.class.getDeclaredFields()) {
+            try {
+                if (srcFld.getAnnotation(CopyOnNewVersion.class) != null) {
+                    srcFld.setAccessible(true);
+
+                    Field dstFld = VmBase.class.getDeclaredField(srcFld.getName());
+                    dstFld.setAccessible(true);
+                    dstFld.set(dest, srcFld.get(source));
+                }
+            } catch (Exception exp) {
+                log.error("Failed to copy field '{}' of new version to VM '{}' ({}): {}",
+                        srcFld.getName(),
+                        source.getName(),
+                        source.getId(),
+                        exp.getMessage());
+                log.debug("Exception", exp);
+                return false;
+            }
+        }
+        return true;
     }
 }

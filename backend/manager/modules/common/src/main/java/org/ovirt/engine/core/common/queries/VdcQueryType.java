@@ -10,6 +10,7 @@ public enum VdcQueryType implements Serializable {
     GetAllVms(VdcQueryAuthType.User),
     GetAllVmsForUser(VdcQueryAuthType.User),
     GetAllVmsForAnotherUser,
+    GetAllPoolVms,
     GetUnregisteredVms,
     GetUnregisteredVmTemplates,
     GetVmsRunningOnOrMigratingToVds,
@@ -155,6 +156,8 @@ public enum VdcQueryType implements Serializable {
     GetVmTemplatesByStoragePoolId,
     GetVmTemplatesByImageGuid,
     GetSystemPermissions,
+    GetVmTemplatesByBaseTemplateId,
+    GetLatestTemplateInChain,
 
     // VM Snapshot queries
     GetAllVmSnapshotsByVmId(VdcQueryAuthType.User),

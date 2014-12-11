@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
+import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -59,6 +60,7 @@ import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -100,6 +102,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private VmStatic newVmStatic;
     private VdcReturnValueBase setNumberOfCpusResult;
     private List<GraphicsDevice> cachedGraphics;
+    private boolean isUpdateVmTemplateVersion = false;
 
     public UpdateVmCommand(T parameters) {
         this(parameters, null);
@@ -145,11 +148,15 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     @Override
     protected void executeVmCommand() {
+        oldVm = getVm(); // needs to be here for post-actions
+        if (isUpdateVmTemplateVersion) {
+            updateVmTemplateVersion();
+            return; // template version was changed, no more work is required
+        }
         if (isRunningConfigurationNeeded()) {
             createNextRunSnapshot();
         }
 
-        oldVm = getVm();
         VmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getVdsGroup().getCompatibilityVersion());
         getVmStaticDAO().incrementDbGeneration(getVm().getId());
         newVmStatic = getParameters().getVmStaticData();
@@ -200,6 +207,33 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (isDedicatedVmForVdsChanged()) {
             log.info("Pinned host changed for VM: {}. Dropping configured host devices.", getVm().getName());
             getVmDeviceDao().removeVmDevicesByVmIdAndType(getVmId(), VmDeviceGeneralType.HOSTDEV);
+        }
+    }
+
+    /**
+     * Handles a template-version update use case.
+     * If vm is down -> updateVmVersionCommand will handle the rest and will preform the actual change.
+     * if it's running -> a NEXT_RUN snapshot will be created and the change will take affect only on power down.
+     * in both cases the command should end after this function as no more changes are possible.
+     */
+    private void updateVmTemplateVersion() {
+        if (getVm().getStatus() == VMStatus.Down) {
+            VdcReturnValueBase result =
+                    runInternalActionWithTasksContext(
+                            VdcActionType.UpdateVmVersion,
+                            new UpdateVmVersionParameters(getVmId(),
+                                    getParameters().getVm().getVmtGuid(),
+                                    getParameters().getVm().isUseLatestVersion()),
+                            getLock()
+                    );
+            if (result.getSucceeded()) {
+                getTaskIdList().addAll(result.getInternalVdsmTaskIdList());
+            }
+            setSucceeded(result.getSucceeded());
+            setActionReturnValue(VdcActionType.UpdateVmVersion);
+        } else {
+            createNextRunSnapshot();
+            setSucceeded(true);
         }
     }
 
@@ -554,6 +588,28 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         VM vmFromDB = getVm();
         VM vmFromParams = getParameters().getVm();
+
+        // check if VM was changed to use latest
+        if (vmFromDB.isUseLatestVersion() != vmFromParams.isUseLatestVersion() && vmFromParams.isUseLatestVersion()) {
+            // check if a version change is actually required or just let the local command to update this field
+            vmFromParams.setVmtGuid(getVmTemplateDAO().getTemplateWithLatestVersionInChain(getVm().getVmtGuid()).getId());
+        }
+
+        // pool VMs are allowed to change template id, this verifies that the change is only between template versions.
+        if (!vmFromDB.getVmtGuid().equals(vmFromParams.getVmtGuid())) {
+            VmTemplate origTemplate = getVmTemplateDAO().get(vmFromDB.getVmtGuid());
+            VmTemplate newTemplate = getVmTemplateDAO().get(vmFromParams.getVmtGuid());
+            if (newTemplate == null) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
+            } else if (origTemplate != null && !origTemplate.getBaseTemplateId().equals(newTemplate.getBaseTemplateId())) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_IS_ON_DIFFERENT_CHAIN);
+
+            // check if pool vm - if not, the field is not legal and command will fail later on
+            } else if (vmFromDB.getVmPoolId() != null) {
+                isUpdateVmTemplateVersion = true;
+                return true; // no more tests are needed because no more changes are allowed in this state
+            }
+        }
 
         if (getVdsGroup() == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);

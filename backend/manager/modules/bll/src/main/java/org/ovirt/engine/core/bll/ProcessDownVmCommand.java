@@ -12,12 +12,13 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.host.HostNicVfsConfigHelper;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.action.DetachUserFromVmFromPoolParameters;
 import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
-import org.ovirt.engine.core.common.action.VmPoolSimpleUserParameters;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -44,6 +45,7 @@ import org.slf4j.LoggerFactory;
 public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends CommandBase<T> {
 
     private static final Logger log = LoggerFactory.getLogger(ProcessDownVmCommand.class);
+    private boolean templateVersionChanged;
 
     @Inject
     private HostDeviceManager hostDeviceManager;
@@ -75,10 +77,13 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
 
     @Override
     protected void executeCommand() {
+        applyNextRunConfiguration();
+
         boolean removedStatelessSnapshot = detachUsers();
-        if (!removedStatelessSnapshot) {
-            // If we are dealing with a prestarted Vm or a regular Vm - clean stateless images
-            // Otherwise this was already done in DetachUserFromVmFromPoolCommand
+        if (!removedStatelessSnapshot && !templateVersionChanged) {
+            // If template version didn't change, and we are dealing with a prestarted Vm
+            // or a regular Vm - clean stateless images
+            // Otherwise this was already done in DetachUserFromVmFromPoolCommand \ updateVmVersionCommand->RemoveVmCommand
             removeVmStatelessImages();
         }
 
@@ -91,7 +96,6 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
         refreshHostIfNeeded(hostId == null ? (vmHasDirectPassthroughDevices ? getVm().getDedicatedVmForVds() : null)
                 : hostId);
 
-        applyNextRunConfiguration();
     }
 
     private boolean releaseUsedHostDevices() {
@@ -130,9 +134,11 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
         // check if this VM is attached to a user
         if (users == null || users.isEmpty()) {
             // if not, check if new version or need to restore stateless
-            runInternalActionWithTasksContext(VdcActionType.RestoreStatelessVm,
-                    new VmOperationParameterBase(getVmId()),
-                    getLock());
+            if (!templateVersionChanged) { // if template version was changed, no need to restore
+                runInternalActionWithTasksContext(VdcActionType.RestoreStatelessVm,
+                        new VmOperationParameterBase(getVmId()),
+                        getLock());
+            }
             return true;
         }
         VmPool pool = getVmPoolDAO().get(getVm().getVmPoolId());
@@ -140,7 +146,10 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
             // should be only one user in the collection
             for (DbUser dbUser : users) {
                 runInternalActionWithTasksContext(VdcActionType.DetachUserFromVmFromPool,
-                        new VmPoolSimpleUserParameters(getVm().getVmPoolId(), dbUser.getId(), getVmId()), getLock());
+                        new DetachUserFromVmFromPoolParameters(getVm().getVmPoolId(),
+                                dbUser.getId(),
+                                getVmId(),
+                                !templateVersionChanged), getLock());
             }
 
             return true;
@@ -213,7 +222,11 @@ public class ProcessDownVmCommand<T extends ProcessDownVmParameters> extends Com
             // override creation date because the value in the config is the creation date of the config, not the vm
             getVm().setVmCreationDate(originalCreationDate);
 
-            runInternalAction(VdcActionType.UpdateVm, createUpdateVmParameters());
+            VdcReturnValueBase result = runInternalAction(VdcActionType.UpdateVm, createUpdateVmParameters());
+            if (result.getActionReturnValue() != null && result.getActionReturnValue()
+                    .equals(VdcActionType.UpdateVmVersion)) { // Template-version changed
+                templateVersionChanged = true;
+            }
         }
     }
 
