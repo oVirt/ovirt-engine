@@ -79,7 +79,7 @@ public class ResizableHeader<T> extends Header<SafeHtml> {
     /**
      * Width of the column header resize bar area, in pixels.
      */
-    private static final int RESIZE_BAR_WIDTH = 7;
+    public static final int RESIZE_BAR_WIDTH = 7;
 
     /**
      * The content text.

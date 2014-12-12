@@ -17,6 +17,9 @@ import com.google.gwt.user.client.Event.NativePreviewHandler;
  */
 public class ColumnResizeHandler<T> implements NativePreviewHandler {
 
+    //The offset to stop the header from jumping when starting to drag.
+    private static final int DRAG_AREA_OFFSET = ResizableHeader.RESIZE_BAR_WIDTH / 2 + 1;
+
     private final Element headerElement;
     private final Column<T, ?> column;
     private final HasResizableColumns<T> table;
@@ -44,7 +47,7 @@ public class ColumnResizeHandler<T> implements NativePreviewHandler {
             // Calculate display-relative column width
             int absoluteLeft = headerElement.getAbsoluteLeft();
             int clientX = nativeEvent.getClientX();
-            int displayColumnWidth = clientX - absoluteLeft;
+            int displayColumnWidth = clientX - absoluteLeft + DRAG_AREA_OFFSET;
 
             // Adjust column width as necessary
             int minimumColumnWidth = table.getMinimumColumnWidth(column);
