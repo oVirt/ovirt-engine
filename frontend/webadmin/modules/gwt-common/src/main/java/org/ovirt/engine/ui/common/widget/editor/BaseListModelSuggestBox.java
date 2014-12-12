@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.editor;
 
+import java.util.Collection;
+
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.Unit;
@@ -22,8 +24,6 @@ import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TextBoxBase;
 import com.google.gwt.user.client.ui.Widget;
-
-import java.util.Collection;
 
 /**
  * Base SuggestBox widget that adapts to UiCommon list model items.
@@ -134,10 +134,12 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements Ed
         return suggestionDisplay.getSuggestionMenu();
     }
 
+    @Override
     public void setValue(T value) {
         setValue(value, false);
     }
 
+    @Override
     public void setValue(T value, boolean fireEvents) {
         this.value = value;
         render(value, fireEvents);
@@ -196,13 +198,13 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements Ed
             Element popupPanelElement = getPopupPanel().getWidget().getElement();
             Style popupPanel = popupPanelElement.getStyle();
             popupPanel.setDisplay(Style.Display.BLOCK);
-            popupPanel.setHeight(100, Unit.PCT);
+            popupPanel.setProperty("height", "auto"); //$NON-NLS-1$ //$NON-NLS-2$
             popupPanel.setPropertyPx("maxHeight", maxSuggestionPanelHeightInPx); //$NON-NLS-1$
             popupPanel.setOverflowY(Overflow.SCROLL);
             popupPanel.setOverflowX(Overflow.HIDDEN);
 
             Style suggestPopupContentStyle = popupPanelElement.getParentElement().getStyle();
-            suggestPopupContentStyle.setHeight(100, Unit.PCT);
+            suggestPopupContentStyle.setProperty("height", "auto"); //$NON-NLS-1$ //$NON-NLS-2$
             suggestPopupContentStyle.setPropertyPx("maxHeight", maxSuggestionPanelHeightInPx); //$NON-NLS-1$
             suggestPopupContentStyle.setOverflowX(Overflow.HIDDEN);
             suggestPopupContentStyle.setProperty("display", "table"); //$NON-NLS-1$ //$NON-NLS-2$
