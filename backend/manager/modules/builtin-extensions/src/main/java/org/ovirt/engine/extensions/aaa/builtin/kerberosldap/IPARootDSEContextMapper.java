@@ -1,6 +1,6 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
-import static org.ovirt.engine.extensions.aaa.builtin.kerberosldap.IPARootDSEAttributes.namingContexts;
+import static org.ovirt.engine.extensions.aaa.builtin.kerberosldap.IPARootDSEAttributes.defaultnamingcontext;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
@@ -11,7 +11,7 @@ import org.springframework.ldap.core.DirContextAdapter;
 
 public class IPARootDSEContextMapper implements ContextMapper {
 
-    static final String[] ROOTDSE_ATTRIBUTE_FILTER = { namingContexts.name() };
+    static final String[] ROOTDSE_ATTRIBUTE_FILTER = { defaultnamingcontext.name() };
 
     @Override
     public Object mapFromContext(Object ctx) {
@@ -23,7 +23,7 @@ public class IPARootDSEContextMapper implements ContextMapper {
             return null;
         }
 
-        Attribute att = attributes.get(namingContexts.name());
+        Attribute att = attributes.get(defaultnamingcontext.name());
 
         if (att != null) {
             try {
