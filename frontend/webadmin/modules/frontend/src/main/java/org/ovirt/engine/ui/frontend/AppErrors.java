@@ -1543,6 +1543,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("The specified Network QoS doesn't exist.")
     String ACTION_TYPE_FAILED_NETWORK_QOS_NOT_EXISTS();
 
+    @DefaultStringValue("Provided NetworkAttachments contains duplicates.")
+    String ACTION_TYPE_FAILED_NETWORK_ATTACHMENT_CONTAINS_DUPLICATES();
+
     @DefaultStringValue("Cannot ${action} ${type}. The specified VM network interface profile doesn't exist.")
     String ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS();
 

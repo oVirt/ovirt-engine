@@ -21,6 +21,7 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class HostNetworkAttachmentsPersister {
 
+    static final String INCONSISTENCY_NETWORK_IS_REPORTED_ON_DIFFERENT_NIC_THAN_WAS_SPECIFIED = "Inconsistency in current state and reported data: given network is reported on different nic than was specified.";
     private final NetworkAttachmentDao networkAttachmentDao;
     private final Guid hostId;
     private final List<NetworkAttachment> userNetworkAttachments;
@@ -160,12 +161,12 @@ public class HostNetworkAttachmentsPersister {
             if (networkConfiguredOnHost(networkAttachment.getNetworkId())) {
                 VdsNetworkInterface reportedNicToWhichIsNetworkAttached =
                     reportedNicsByNetworkId.get(networkAttachment.getNetworkId());
-                if (reportedNicToWhichIsNetworkAttached == null) {
-                    throw new IllegalStateException(
-                        "Inconsistency in reported data, trying to set null as a reportedNicId.");
-                }
 
-                networkAttachment.setNicId(baseInterfaceOfNic(reportedNicToWhichIsNetworkAttached).getId());
+                Guid reportedNicId = baseInterfaceOfNic(reportedNicToWhichIsNetworkAttached).getId();
+                if (!networkAttachment.getNicId().equals(reportedNicId)) {
+                    throw new IllegalStateException(
+                        INCONSISTENCY_NETWORK_IS_REPORTED_ON_DIFFERENT_NIC_THAN_WAS_SPECIFIED);
+                }
 
                 boolean alreadyExistingAttachment = validDbAttachmentsById.containsKey(networkAttachment.getId());
                 if (alreadyExistingAttachment) {
