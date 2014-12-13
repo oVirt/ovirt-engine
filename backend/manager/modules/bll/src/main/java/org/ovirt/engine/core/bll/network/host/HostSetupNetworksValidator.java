@@ -49,18 +49,17 @@ public class HostSetupNetworksValidator {
     private List<NetworkAttachment> existingAttachments;
     private final ManagementNetworkUtil managementNetworkUtil;
     private boolean networkCustomPropertiesSupported;
-    private Map<Guid, Network> clusterNetworks;
     private List<VdsNetworkInterface> removedBondVdsNetworkInterface;
     private BusinessEntityMap<VdsNetworkInterface> removedBondVdsNetworkInterfaceMap;
     private List<NetworkAttachment> removedNetworkAttachments;
+    private BusinessEntityMap<Network> networkBusinessEntityMap;
     private final Map<Guid, NetworkAttachment> attachmentsById;
 
     public HostSetupNetworksValidator(VDS host,
         HostSetupNetworksParameters params,
         List<VdsNetworkInterface> existingNics,
         List<NetworkAttachment> existingAttachments,
-
-        Map<Guid, Network> clusterNetworks,
+        BusinessEntityMap<Network> networkBusinessEntityMap,
         ManagementNetworkUtil managementNetworkUtil) {
 
         this.host = host;
@@ -69,7 +68,7 @@ public class HostSetupNetworksValidator {
         this.managementNetworkUtil = managementNetworkUtil;
         this.existingIfaces = Entities.entitiesByName(existingNics);
         this.existingIfacesById = Entities.businessEntitiesById(existingNics);
-        this.clusterNetworks = clusterNetworks;
+        this.networkBusinessEntityMap = networkBusinessEntityMap;
 
         this.removedBondVdsNetworkInterface = Entities.filterEntitiesByRequiredIds(params.getRemovedBonds(),
             existingNics);
@@ -113,13 +112,13 @@ public class HostSetupNetworksValidator {
     }
 
     private ValidationResult attachmentsDontReferenceSameNetworkDuplicately(Collection<NetworkAttachment> attachments) {
-        return new NetworkAttachmentsValidator(attachments,
-            clusterNetworks).verifyUserAttachmentsDoesNotReferenceSameNetworkDuplicately();
+        return new NetworkAttachmentsValidator(attachments, networkBusinessEntityMap)
+            .verifyUserAttachmentsDoesNotReferenceSameNetworkDuplicately();
     }
 
     private ValidationResult validateNetworkExclusiveOnNics(Collection<NetworkAttachment> attachmentsToConfigure) {
         NetworkAttachmentsValidator validator =
-            new NetworkAttachmentsValidator(attachmentsToConfigure, clusterNetworks);
+            new NetworkAttachmentsValidator(attachmentsToConfigure, networkBusinessEntityMap);
         return validator.validateNetworkExclusiveOnNics();
     }
 
@@ -436,7 +435,8 @@ public class HostSetupNetworksValidator {
     }
 
     private ValidationResult validRemovedNetworkAttachments() {
-        List<Guid> invalidIds = Entities.idsNotReferencingExistingRecords(params.getRemovedNetworkAttachments(), existingAttachments);
+        List<Guid> invalidIds = Entities.idsNotReferencingExistingRecords(params.getRemovedNetworkAttachments(),
+            existingAttachments);
         if (!invalidIds.isEmpty()) {
             return new ValidationResult(VdcBllMessages.NETWORK_ATTACHMENT_NOT_EXISTS, commaSeparated(invalidIds));
         }
@@ -580,7 +580,7 @@ public class HostSetupNetworksValidator {
 
 
     private Network existingNetworkRelatedToAttachment(NetworkAttachment attachment) {
-        return clusterNetworks.get(attachment.getNetworkId());
+        return networkBusinessEntityMap.get(attachment.getNetworkId());
     }
 
     private Map<String, VdsNetworkInterface> getExistingIfaces() {

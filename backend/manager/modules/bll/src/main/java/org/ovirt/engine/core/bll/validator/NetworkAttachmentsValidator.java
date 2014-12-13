@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import org.apache.commons.collections.Bag;
 import org.apache.commons.collections.bag.HashBag;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -26,12 +27,12 @@ import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 public class NetworkAttachmentsValidator {
 
     private final Collection<NetworkAttachment> attachmentsToConfigure;
-    private final Map<Guid, Network> clusterNetworks;
+    private final BusinessEntityMap<Network> networkBusinessEntityMap;
 
     public NetworkAttachmentsValidator(Collection<NetworkAttachment> attachmentsToConfigure,
-            Map<Guid, Network> clusterNetworks) {
+            BusinessEntityMap<Network> networkBusinessEntityMap) {
         this.attachmentsToConfigure = attachmentsToConfigure;
-        this.clusterNetworks = clusterNetworks;
+        this.networkBusinessEntityMap = networkBusinessEntityMap;
     }
 
     public ValidationResult validateNetworkExclusiveOnNics() {
@@ -42,7 +43,7 @@ public class NetworkAttachmentsValidator {
                 nicsToNetworks.put(nicName, new ArrayList<NetworkType>());
             }
 
-            Network networkToConfigure = clusterNetworks.get(attachment.getNetworkId());
+            Network networkToConfigure = networkBusinessEntityMap.get(attachment.getNetworkId());
             nicsToNetworks.get(nicName).add(determineNetworkType(networkToConfigure));
         }
 
@@ -90,7 +91,7 @@ public class NetworkAttachmentsValidator {
         MultiValueMapUtils.ListCreator<Guid> creator = new MultiValueMapUtils.ListCreator<>();
 
         for (NetworkAttachment networkAttachment : attachmentsToConfigure) {
-            Network network = clusterNetworks.get(networkAttachment.getNetworkId());
+            Network network = networkBusinessEntityMap.get(networkAttachment.getNetworkId());
 
             MultiValueMapUtils.addToMap(network.getName(),
                 networkAttachment.getId(),

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -60,7 +59,8 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
 
     private static final Logger log = LoggerFactory.getLogger(HostSetupNetworksCommand.class);
-    private Map<Guid, Network> clusterNetworks;
+    private BusinessEntityMap<Network> networkBusinessEntityMap;
+
     private Set<String> removedNetworks;
     private Set<String> removedBondNames;
     private List<VdsNetworkInterface> removedBonds;
@@ -115,9 +115,8 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 getParameters(),
                 getExistingNics(),
                 getExistingAttachments(),
-                getClusterNetworks(),
-            managementNetworkUtil
-        );
+                getNetworkBusinessEntityMap(),
+                managementNetworkUtil);
 
         return validator.validate();
     }
@@ -237,10 +236,9 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private List<VdsNetworkInterface> getExistingNics() {
         if (existingNics == null) {
             existingNics = getDbFacade().getInterfaceDao().getAllInterfacesForVds(getVdsId());
-            Map<String, Network> networksByName = Entities.entitiesByName(getClusterNetworks().values());
 
             for (VdsNetworkInterface iface : existingNics) {
-                Network network = networksByName.get(iface.getNetworkName());
+                Network network = getNetworkBusinessEntityMap().get(iface.getNetworkName());
                 iface.setNetworkImplementationDetails(NetworkUtils.calculateNetworkImplementationDetails(network,
                         network == null ? null : qosDao.get(network.getQosId()),
                         iface));
@@ -271,14 +269,6 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         }
 
         return removedNetworks;
-    }
-
-    private Map<Guid, Network> getClusterNetworks() {
-        if (clusterNetworks == null) {
-            clusterNetworks = Entities.businessEntitiesById(getNetworkDAO().getAllForCluster(getVdsGroupId()));
-        }
-
-        return clusterNetworks;
     }
 
     private List<HostNetwork> getNetworksToConfigure() {
@@ -364,7 +354,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     }
 
     private Network existingNetworkRelatedToAttachment(NetworkAttachment attachment) {
-        return getClusterNetworks().get(attachment.getNetworkId());
+        return getNetworkBusinessEntityMap().get(attachment.getNetworkId());
     }
 
     private void persistNetworkChanges(final VDS updatedHost) {
@@ -391,4 +381,14 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             }
         });
     }
+
+    private BusinessEntityMap<Network> getNetworkBusinessEntityMap() {
+        if (networkBusinessEntityMap == null) {
+            List<Network> networks = getNetworkDAO().getAllForCluster(getVdsGroupId());
+            networkBusinessEntityMap = new BusinessEntityMap<>(networks);
+        }
+
+        return networkBusinessEntityMap;
+    }
+
 }
