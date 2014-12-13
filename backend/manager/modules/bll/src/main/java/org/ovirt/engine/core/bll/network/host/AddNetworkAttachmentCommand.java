@@ -38,8 +38,8 @@ public class AddNetworkAttachmentCommand<T extends NetworkAttachmentParameters> 
 
     @Override
     protected boolean canDoAction() {
-        NetworkAttachmentCompleter completer = new NetworkAttachmentCompleter(getHostInterfaces());
-        completer.completeNicName(getParameters().getNetworkAttachment());
+        NicNameNicIdCompleter completer = new NicNameNicIdCompleter(getHostInterfaces());
+        completer.completeNetworkAttachment(getParameters().getNetworkAttachment());
 
         //TODO MM: add network completer.
 

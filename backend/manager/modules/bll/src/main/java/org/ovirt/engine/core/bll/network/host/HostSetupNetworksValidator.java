@@ -220,6 +220,10 @@ public class HostSetupNetworksValidator {
     private ValidationResult validNewOrModifiedBonds() {
         for (Bond modifiedOrNewBond : params.getBonds()) {
             String bondName = modifiedOrNewBond.getName();
+            ValidationResult validateCoherentNicIdentification = validateCoherentNicIdentification(modifiedOrNewBond);
+            if (!validateCoherentNicIdentification.isValid()) {
+                return validateCoherentNicIdentification;
+            }
 
             ValidationResult interfaceByNameExists = new HostInterfaceValidator(modifiedOrNewBond).interfaceByNameExists();
             if (!interfaceByNameExists.isValid()) {
@@ -357,6 +361,7 @@ public class HostSetupNetworksValidator {
 
             //TODO MM: complain about unset network id.
             vr = skipValidation(vr) ? vr : validator.networkExists();
+            vr = skipValidation(vr) ? vr : validateCoherentNicIdentification(attachment);
             vr = skipValidation(vr) ? vr : modifiedAttachmentExists(attachment.getId());
             vr = skipValidation(vr) ? vr : validator.notExternalNetwork();
             vr = skipValidation(vr) ? vr : validator.networkAttachedToCluster();
@@ -369,6 +374,50 @@ public class HostSetupNetworksValidator {
         }
 
         return vr;
+    }
+
+    private ValidationResult validateCoherentNicIdentification(NetworkAttachment attachment) {
+        return validateCoherentNicIdentification(attachment.getId(),
+            attachment.getNicId(),
+            attachment.getNicName(),
+            VdcBllMessages.NETWORK_ATTACHMENT_REFERENCES_NICS_INCOHERENTLY);
+    }
+
+    private ValidationResult validateCoherentNicIdentification(Bond bond) {
+        Guid nicId = bond.getId();
+        String nicName = bond.getName();
+        VdcBllMessages message = VdcBllMessages.BOND_REFERENCES_NICS_INCOHERENTLY;
+        return validateCoherentNicIdentification(bond.getId(), nicId, nicName, message);
+
+    }
+
+    private ValidationResult validateCoherentNicIdentification(Guid violatingEntityId,
+        Guid nicId,
+        String nicName,
+        VdcBllMessages message) {
+
+        boolean bothIdentificationSet = nicId != null && nicName != null;
+        String[] replacements = createIncoherentNicIdentificationErrorReplacements(violatingEntityId, nicId, nicName);
+        return ValidationResult
+            .failWith(message,
+                replacements)
+            .when(bothIdentificationSet && isNicNameAndNicIdIncoherent(nicId, nicName));
+    }
+
+    private String[] createIncoherentNicIdentificationErrorReplacements(Guid violatingEntityId,
+        Guid nicId,
+        String nicName) {
+        return new String[] {
+            String.format("ENTITY_ID %s", violatingEntityId),
+            String.format("$nicId %s", nicId),
+            String.format("$nicName %s", nicName)
+        };
+    }
+
+    private boolean isNicNameAndNicIdIncoherent(Guid nicId, String nicName) {
+        VdsNetworkInterface interfaceById = existingIfacesById.get(nicId);
+        VdsNetworkInterface interfaceByName = existingIfaces.get(nicName);
+        return !Objects.equals(interfaceById, interfaceByName);
     }
 
     private ValidationResult modifiedAttachmentExists(Guid networkAttachmentId) {

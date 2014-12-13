@@ -102,9 +102,10 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             return validate(hostValidatorResult);
         }
 
-        NetworkAttachmentCompleter completer = new NetworkAttachmentCompleter(getExistingNics());
-        completer.completeNicNames(getParameters().getNetworkAttachments());
-        completer.completeBondNames(getParameters().getBonds());
+        NicNameNicIdCompleter completer = new NicNameNicIdCompleter(getExistingNics());
+        completer.completeNetworkAttachments(getParameters().getNetworkAttachments());
+        completer.completeBonds(getParameters().getBonds());
+        completer.completeNetworkAttachments(getExistingAttachments());
 
         return validate(validateWithHostSetupNetworksValidator(host));
     }
