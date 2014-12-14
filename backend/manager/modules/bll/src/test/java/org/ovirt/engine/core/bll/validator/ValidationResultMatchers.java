@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.not;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.hamcrest.Description;
@@ -44,9 +45,13 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
  * </pre>
  *
  * @see org.junit.Assert#assertThat(Object, Matcher)
- * @see CoreMatchers
+ * @see org.hamcrest.CoreMatchers
  */
 public class ValidationResultMatchers {
+
+    //do not instantiate me.
+    private ValidationResultMatchers() {
+    }
 
     /**
      * @return A matcher matching any {@link ValidationResult} that returns true for {@link ValidationResult#isValid()}.
@@ -66,6 +71,11 @@ public class ValidationResultMatchers {
 
     public static Matcher<ValidationResult> failsWith(VdcBllMessages expectedError, String... variableReplacements) {
         return new Fails(expectedError, variableReplacements);
+    }
+
+    public static Matcher<ValidationResult> failsWith(VdcBllMessages expectedError,
+        Collection<String> variableReplacements) {
+        return new Fails(expectedError, variableReplacements.toArray(new String[variableReplacements.size()]));
     }
 
     /**

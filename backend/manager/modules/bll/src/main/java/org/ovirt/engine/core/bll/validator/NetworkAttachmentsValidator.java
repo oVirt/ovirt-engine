@@ -52,7 +52,7 @@ public class NetworkAttachmentsValidator {
         for (Entry<String, List<NetworkType>> nicNameToNetworkTypes : nicNameToNetworkTypesMap.entrySet()) {
             String nicName = nicNameToNetworkTypes.getKey();
             List<NetworkType> networkTypes = nicNameToNetworkTypes.getValue();
-            if (!validateNetworkExclusiveOnNic(networkTypes)) {
+            if (!validateNetworkTypesOnNic(networkTypes)) {
                 violatedNics.add(nicName);
             }
         }
@@ -63,6 +63,7 @@ public class NetworkAttachmentsValidator {
         Map<String, List<NetworkType>> nicNameToNetworkTypes = new HashMap<>();
         for (NetworkAttachment attachment : attachmentsToConfigure) {
             String nicName = attachment.getNicName();
+            // have to check since if null, multiple results would be merged producing invalid results.
             if (nicName == null) {
                 throw new IllegalArgumentException("nic name cannot be null");
             }
@@ -76,7 +77,7 @@ public class NetworkAttachmentsValidator {
         return nicNameToNetworkTypes;
     }
 
-    private NetworkType determineNetworkType(Network network) {
+    NetworkType determineNetworkType(Network network) {
         return NetworkUtils.isVlan(network)
                 ? NetworkType.VLAN
                 : network.isVmNetwork() ? NetworkType.VM : NetworkType.NON_VM;
@@ -86,19 +87,21 @@ public class NetworkAttachmentsValidator {
      * Make sure that if the given interface has a VM network on it then there is nothing else on the interface, or if
      * the given interface is a VLAN network, than there is no VM network on the interface.<br>
      * Other combinations are either legal or illegal but are not a concern of this method.
+     *
+     * @return true if for given nic there's either nothing, sole VM network,
+     * or at most one NON-VM network with any number of VLANs.
      */
-    private boolean validateNetworkExclusiveOnNic(List<NetworkType> networksOnIface) {
-        if (networksOnIface.size() <= 1) {
+    private boolean validateNetworkTypesOnNic(List<NetworkType> networksOnInterface) {
+        if (networksOnInterface.size() <= 1) {
             return true;
         }
 
-        Bag networkTypes = new HashBag(networksOnIface);
-        if (networkTypes.contains(NetworkType.VM) ||
-                (networkTypes.contains(NetworkType.NON_VM) && (networkTypes.getCount(NetworkType.NON_VM) > 1))) {
-            return false;
-        }
+        Bag networkTypes = new HashBag(networksOnInterface);
+        boolean vmNetworkIsNotSoleNetworkAssigned = networkTypes.contains(NetworkType.VM);
+        boolean moreThanOneNonVmNetworkAssigned =
+            networkTypes.contains(NetworkType.NON_VM) && networkTypes.getCount(NetworkType.NON_VM) > 1;
 
-        return true;
+        return !(vmNetworkIsNotSoleNetworkAssigned || moreThanOneNonVmNetworkAssigned);
     }
 
     public ValidationResult verifyUserAttachmentsDoesNotReferenceSameNetworkDuplicately() {
@@ -134,7 +137,7 @@ public class NetworkAttachmentsValidator {
         return ValidationResult.VALID;
     }
 
-    private enum NetworkType {
+    enum NetworkType {
         VM,
         NON_VM,
         VLAN
