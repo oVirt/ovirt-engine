@@ -32,4 +32,9 @@ public class VmOperationParameterBase extends VdcActionParametersBase implements
     public void setQuotaId(Guid value) {
         quotaId = value;
     }
+
+    @Override
+    public int hashCode() {
+        return vmId == null ? 0 : vmId.hashCode();
+    }
 }
