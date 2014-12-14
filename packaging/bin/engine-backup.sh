@@ -236,6 +236,7 @@ CHANGE_DB_CREDENTIALS=
 MY_DB_HOST=
 MY_DB_PORT=5432
 MY_DB_USER=
+ORIG_DB_USER=
 MY_DB_PASSWORD="${OVIRT_ENGINE_DATABASE_PASSWORD}"
 MY_DB_DATABASE=
 MY_DB_SECURED=False
@@ -245,6 +246,7 @@ CHANGE_DWH_DB_CREDENTIALS=
 MY_DWH_DB_HOST=
 MY_DWH_DB_PORT=5432
 MY_DWH_DB_USER=
+ORIG_DWH_DB_USER=
 MY_DWH_DB_PASSWORD="${OVIRT_DWH_DATABASE_PASSWORD}"
 MY_DWH_DB_DATABASE=
 MY_DWH_DB_SECURED=False
@@ -254,6 +256,7 @@ CHANGE_REPORTS_DB_CREDENTIALS=
 MY_REPORTS_DB_HOST=
 MY_REPORTS_DB_PORT=5432
 MY_REPORTS_DB_USER=
+ORIG_REPORTS_DB_USER=
 MY_REPORTS_DB_PASSWORD="${OVIRT_REPORTS_DATABASE_PASSWORD}"
 MY_REPORTS_DB_DATABASE=
 MY_REPORTS_DB_SECURED=False
@@ -299,6 +302,7 @@ parseArgs() {
 			;;
 			--db-user=*)
 				MY_DB_USER="${v}"
+				ORIG_DB_USER="${ENGINE_DB_USER}"
 			;;
 			--db-passfile=*)
 				DB_PASSFILE="${v}"
@@ -332,6 +336,7 @@ parseArgs() {
 			;;
 			--dwh-db-user=*)
 				MY_DWH_DB_USER="${v}"
+				ORIG_DWH_DB_USER="${DWH_DB_USER}"
 			;;
 			--dwh-db-passfile=*)
 				DB_PASSFILE="${v}"
@@ -365,6 +370,7 @@ parseArgs() {
 			;;
 			--reports-db-user=*)
 				MY_REPORTS_DB_USER="${v}"
+				ORIG_REPORTS_DB_USER="${REPORTS_DB_USER}"
 			;;
 			--reports-db-passfile=*)
 				DB_PASSFILE="${v}"
@@ -606,17 +612,17 @@ dorestore() {
 	if [ -n "${SCOPE_ENGINE_DB}" -a -n "${ENGINE_DB_USER}" ]; then
 		output "- Engine database '"${ENGINE_DB_DATABASE}"'"
 		log "Restoring engine database backup at ${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}"
-		restoreDB "${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}" "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}"
+		restoreDB "${TEMP_FOLDER}/db/${DB_BACKUP_FILE_NAME}" "${ENGINE_DB_USER}" "${ENGINE_DB_HOST}" "${ENGINE_DB_PORT}" "${ENGINE_DB_DATABASE}" "${ORIG_DB_USER}"
 	fi
 	if [ -n "${SCOPE_DWH_DB}" -a -n "${DWH_DB_USER}" ]; then
 		output "- DWH database '"${DWH_DB_DATABASE}"'"
 		log "Restoring dwh database backup at ${TEMP_FOLDER}/db/${DWHDB_BACKUP_FILE_NAME}"
-		restoreDB "${TEMP_FOLDER}/db/${DWHDB_BACKUP_FILE_NAME}" "${DWH_DB_USER}" "${DWH_DB_HOST}" "${DWH_DB_PORT}" "${DWH_DB_DATABASE}"
+		restoreDB "${TEMP_FOLDER}/db/${DWHDB_BACKUP_FILE_NAME}" "${DWH_DB_USER}" "${DWH_DB_HOST}" "${DWH_DB_PORT}" "${DWH_DB_DATABASE}" "${ORIG_DWH_DB_USER}"
 	fi
 	if [ -n "${SCOPE_REPORTS_DB}" -a -n "${REPORTS_DB_USER}" ]; then
 		output "- Reports database '"${REPORTS_DB_DATABASE}"'"
 		log "Restoring REPORTS database backup at ${TEMP_FOLDER}/db/${REPORTSDB_BACKUP_FILE_NAME}"
-		restoreDB "${TEMP_FOLDER}/db/${REPORTSDB_BACKUP_FILE_NAME}" "${REPORTS_DB_USER}" "${REPORTS_DB_HOST}" "${REPORTS_DB_PORT}" "${REPORTS_DB_DATABASE}"
+		restoreDB "${TEMP_FOLDER}/db/${REPORTSDB_BACKUP_FILE_NAME}" "${REPORTS_DB_USER}" "${REPORTS_DB_HOST}" "${REPORTS_DB_PORT}" "${REPORTS_DB_DATABASE}" "${ORIG_REPORTS_DB_USER}"
 	fi
 	[ -n "${CHANGE_DB_CREDENTIALS}" ] && changeEngineDBConf
 	[ -n "${CHANGE_DWH_DB_CREDENTIALS}" ] && changeDwhDBConf
@@ -681,6 +687,8 @@ restoreDB() {
 	local host="$3"
 	local port="$4"
 	local database="$5"
+	local orig_user="$6"
+	log "restoreDB: backupfile ${backupfile} user ${user} host ${host} port ${port} database ${database} orig_user ${orig_user}"
 	local psqllog="${TEMP_FOLDER}/psql-restore-log"
 	bz_cat "${backupfile}" | \
 		PGPASSFILE="${MYPGPASS}" psql \
@@ -689,7 +697,7 @@ restoreDB() {
 		-h "${host}" \
 		-p "${port}" \
 		-d "${database}" \
-		>> "${psqllog}"  2>&1 \
+		> "${psqllog}"  2>&1 \
 		|| logdie "Database ${database} restore failed"
 
 	cat "${psqllog}" >> "${LOG}"  2>&1 \
@@ -713,6 +721,8 @@ function public.uuid_ns_dns\(\) does not exist
 function public.uuid_ns_oid\(\) does not exist
 function public.uuid_ns_url\(\) does not exist
 function public.uuid_ns_x500\(\) does not exist
+# Ignore error when trying to set owner to changed user
+role "$orig_user" does not exist
 __EOF
 )
 	local numerrors=$(grep 'ERROR: ' "${psqllog}" | grep -Ev "${IGNORED_ERRORS}" | wc -l)
