@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RunVmParams extends VmOperationParameterBase {
@@ -39,6 +40,71 @@ public class RunVmParams extends VmOperationParameterBase {
         super(vmId);
         kvmEnable = true;
         acpiEnable = true;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof RunVmParams)) {
+            return false;
+        }
+
+        RunVmParams other = (RunVmParams) obj;
+        return bootSequence == other.bootSequence
+                && ObjectUtils.objectsEqual(getVmId(), other.getVmId())
+                && ObjectUtils.objectsEqual(diskPath, other.diskPath)
+                && kvmEnable == other.kvmEnable
+                && ObjectUtils.objectsEqual(runAndPause, other.runAndPause)
+                && ObjectUtils.objectsEqual(useVnc, other.useVnc)
+                && acpiEnable == other.acpiEnable
+                && ObjectUtils.objectsEqual(win2kHackEnable, other.win2kHackEnable)
+                && ObjectUtils.objectsEqual(customProperties, other.customProperties)
+                && ObjectUtils.objectsEqual(floppyPath, other.floppyPath)
+                && ObjectUtils.objectsEqual(clientIp, other.clientIp)
+                && ObjectUtils.objectsEqual(requestingUser, other.requestingUser)
+                && initializationType == other.initializationType
+                && ObjectUtils.objectsEqual(runAsStateless, other.runAsStateless)
+                && ObjectUtils.objectsEqual(initrdUrl, other.initrdUrl)
+                && ObjectUtils.objectsEqual(kernelUrl, other.kernelUrl)
+                && ObjectUtils.objectsEqual(kernelParams, other.kernelParams)
+                && ObjectUtils.objectsEqual(payload, other.payload)
+                && balloonEnabled == other.balloonEnabled
+                && cpuShares == other.cpuShares
+                && ObjectUtils.objectsEqual(bootMenuEnabled, other.bootMenuEnabled)
+                && ObjectUtils.objectsEqual(spiceFileTransferEnabled, other.spiceFileTransferEnabled)
+                && ObjectUtils.objectsEqual(spiceCopyPasteEnabled, other.spiceCopyPasteEnabled);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((bootSequence == null) ? 0 : bootSequence.hashCode());
+        result = prime * result + ((diskPath == null) ? 0 : diskPath.hashCode());
+        result = prime * result + (kvmEnable ? 1231 : 1237);
+        result = prime * result + ((runAndPause == null) ? 0 : runAndPause.hashCode());
+        result = prime * result + ((useVnc == null) ? 0 : useVnc.hashCode());
+        result = prime * result + (acpiEnable ? 1231 : 1237);
+        result = prime * result + ((win2kHackEnable == null) ? 0 : win2kHackEnable.hashCode());
+        result = prime * result + ((customProperties == null) ? 0 : customProperties.hashCode());
+        result = prime * result + ((floppyPath == null) ? 0 : floppyPath.hashCode());
+        result = prime * result + ((clientIp == null) ? 0 : clientIp.hashCode());
+        result = prime * result + ((requestingUser == null) ? 0 : requestingUser.hashCode());
+        result = prime * result + ((initializationType == null) ? 0 : initializationType.hashCode());
+        result = prime * result + ((runAsStateless == null) ? 0 : runAsStateless.hashCode());
+        result = prime * result + ((initrdUrl == null) ? 0 : initrdUrl.hashCode());
+        result = prime * result + ((kernelUrl == null) ? 0 : kernelUrl.hashCode());
+        result = prime * result + ((kernelParams == null) ? 0 : kernelParams.hashCode());
+        result = prime * result + ((payload == null) ? 0 : payload.hashCode());
+        result = prime * result + (balloonEnabled ? 1231 : 1237);
+        result = prime * result + cpuShares;
+        result = prime * result + ((bootMenuEnabled == null) ? 0 : bootMenuEnabled.hashCode());
+        result = prime * result + ((spiceFileTransferEnabled == null) ? 0 : spiceFileTransferEnabled.hashCode());
+        result = prime * result + ((spiceCopyPasteEnabled == null) ? 0 : spiceCopyPasteEnabled.hashCode());
+        return result;
     }
 
     public BootSequence getBootSequence() {
