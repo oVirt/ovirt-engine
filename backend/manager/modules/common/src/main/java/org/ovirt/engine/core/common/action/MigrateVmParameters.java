@@ -2,6 +2,8 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.ArrayList;
 import java.util.Date;
+
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -38,6 +40,31 @@ public class MigrateVmParameters extends VmOperationParameterBase {
         setTransactionScopeOption(internalMigrateVmParameters.getTransactionScopeOption());
         setCorrelationId(internalMigrateVmParameters.getCorrelationId());
         setParentCommand(internalMigrateVmParameters.getParentCommand());
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + (forceMigrationForNonMigratableVm ? 1231 : 1237);
+        result = prime * result + ((targetVdsGroupId == null) ? 0 : targetVdsGroupId.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof MigrateVmParameters)) {
+            return false;
+        }
+
+        MigrateVmParameters other = (MigrateVmParameters) obj;
+        return forceMigrationForNonMigratableVm == other.forceMigrationForNonMigratableVm
+                && ObjectUtils.objectsEqual(getVmId(), other.getVmId())
+                && ObjectUtils.objectsEqual(targetVdsGroupId, other.targetVdsGroupId);
     }
 
     public boolean isForceMigrationForNonMigratableVm() {
