@@ -36,29 +36,44 @@ public class NetworkAttachmentsValidator {
     }
 
     public ValidationResult validateNetworkExclusiveOnNics() {
-        Map<String, List<NetworkType>> nicsToNetworks = new HashMap<>();
-        for (NetworkAttachment attachment : attachmentsToConfigure) {
-            String nicName = attachment.getNicName();
-            if (!nicsToNetworks.containsKey(nicName)) {
-                nicsToNetworks.put(nicName, new ArrayList<NetworkType>());
-            }
-
-            Network networkToConfigure = networkBusinessEntityMap.get(attachment.getNetworkId());
-            nicsToNetworks.get(nicName).add(determineNetworkType(networkToConfigure));
-        }
-
-        List<String> violatedNics = new ArrayList<>();
-        for (Entry<String, List<NetworkType>> nicToNetworkTypes : nicsToNetworks.entrySet()) {
-            if (!validateNetworkExclusiveOnNic(nicToNetworkTypes.getKey(), nicToNetworkTypes.getValue())) {
-                violatedNics.add(nicToNetworkTypes.getKey());
-            }
-        }
+        Map<String, List<NetworkType>> nicNameToNetworkTypesMap = createNicNameToNetworkTypesMap();
+        List<String> violatedNics = findViolatedNics(nicNameToNetworkTypesMap);
 
         if (violatedNics.isEmpty()) {
             return ValidationResult.VALID;
         } else {
-            return new ValidationResult(VdcBllMessages.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK, violatedNics);
+            return new ValidationResult(VdcBllMessages.NETWORK_INTERFACES_NOT_EXCLUSIVELY_USED_BY_NETWORK,
+                violatedNics);
         }
+    }
+
+    public List<String> findViolatedNics(Map<String, List<NetworkType>> nicNameToNetworkTypesMap) {
+        List<String> violatedNics = new ArrayList<>();
+        for (Entry<String, List<NetworkType>> nicNameToNetworkTypes : nicNameToNetworkTypesMap.entrySet()) {
+            String nicName = nicNameToNetworkTypes.getKey();
+            List<NetworkType> networkTypes = nicNameToNetworkTypes.getValue();
+            if (!validateNetworkExclusiveOnNic(networkTypes)) {
+                violatedNics.add(nicName);
+            }
+        }
+        return violatedNics;
+    }
+
+    private Map<String, List<NetworkType>> createNicNameToNetworkTypesMap() {
+        Map<String, List<NetworkType>> nicNameToNetworkTypes = new HashMap<>();
+        for (NetworkAttachment attachment : attachmentsToConfigure) {
+            String nicName = attachment.getNicName();
+            if (nicName == null) {
+                throw new IllegalArgumentException("nic name cannot be null");
+            }
+
+            Network networkToConfigure = networkBusinessEntityMap.get(attachment.getNetworkId());
+            NetworkType networkTypeToAdd = determineNetworkType(networkToConfigure);
+
+            MultiValueMapUtils.ListCreator<NetworkType> listCreator = new MultiValueMapUtils.ListCreator<>();
+            MultiValueMapUtils.addToMap(nicName, networkTypeToAdd, nicNameToNetworkTypes, listCreator);
+        }
+        return nicNameToNetworkTypes;
     }
 
     private NetworkType determineNetworkType(Network network) {
@@ -72,7 +87,7 @@ public class NetworkAttachmentsValidator {
      * the given interface is a VLAN network, than there is no VM network on the interface.<br>
      * Other combinations are either legal or illegal but are not a concern of this method.
      */
-    private boolean validateNetworkExclusiveOnNic(String nicName, List<NetworkType> networksOnIface) {
+    private boolean validateNetworkExclusiveOnNic(List<NetworkType> networksOnIface) {
         if (networksOnIface.size() <= 1) {
             return true;
         }
