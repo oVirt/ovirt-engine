@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -42,18 +41,15 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
 
         checkMaxMemoryOverCommitValue();
         getVdsGroup().setDetectEmulatedMachine(true);
-        DbFacade.getInstance().getVdsGroupDao().save(getVdsGroup());
+        getVdsGroupDAO().save(getVdsGroup());
 
         alertIfFencingDisabled();
 
         // add default network
         if (getParameters().getVdsGroup().getStoragePoolId() != null) {
             final String networkName = NetworkUtils.getEngineNetwork();
-            List<Network> networks = DbFacade
-                    .getInstance()
-                    .getNetworkDao()
-                    .getAllForDataCenter(
-                            getParameters().getVdsGroup().getStoragePoolId());
+            List<Network> networks =
+                    getNetworkDAO().getAllForDataCenter(getParameters().getVdsGroup().getStoragePoolId());
 
             Network net = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                 @Override
@@ -62,9 +58,12 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
                 }
             });
             if (net != null) {
-                DbFacade.getInstance().getNetworkClusterDao().save(
-                        new NetworkCluster(getParameters().getVdsGroup().getId(), net.getId(),
-                                NetworkStatus.OPERATIONAL, true, true, true));
+                getNetworkClusterDAO().save(new NetworkCluster(getParameters().getVdsGroup().getId(),
+                        net.getId(),
+                        NetworkStatus.OPERATIONAL,
+                        true,
+                        true,
+                        true));
             }
         }
 
@@ -116,8 +115,7 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
         }
 
         if (result && getVdsGroup().getStoragePoolId() != null) {
-            StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().get(
-                    getVdsGroup().getStoragePoolId());
+            StoragePool storagePool = getStoragePoolDAO().get(getVdsGroup().getStoragePoolId());
             // Making sure the given SP ID is valid to prevent
             // breaking Fk_vds_groups_storage_pool_id
             if (storagePool == null) {
@@ -127,9 +125,7 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
                 result = false;
             } else if (storagePool.isLocal()) {
                 // we allow only one cluster in localfs data center
-                if (!DbFacade.getInstance()
-                        .getVdsGroupDao().getAllForStoragePool(getVdsGroup().getStoragePoolId())
-                        .isEmpty()) {
+                if (!getVdsGroupDAO().getAllForStoragePool(getVdsGroup().getStoragePoolId()).isEmpty()) {
                     getReturnValue().getCanDoActionMessages().add(
                             VdcBllMessages.VDS_GROUP_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE
                                     .toString());
