@@ -139,12 +139,12 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         addRegisteredHandler(AsyncOperationStartedEvent.getType(), new AsyncOperationStartedHandler() {
             @Override
             public void onAsyncOperationStarted(AsyncOperationStartedEvent event) {
-                if (event.getTarget() != getModel() || (getModel().getProgress() != null && asyncOperationCounter == 0)) {
+                if (event.getTarget() != getModel() || getModel().getProgress() != null) {
                     return;
                 }
 
                 if (asyncOperationCounter == 0) {
-                    getModel().startProgress(null);
+                    startProgress(null);
                 }
                 asyncOperationCounter++;
             }
@@ -152,13 +152,13 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         addRegisteredHandler(AsyncOperationCompleteEvent.getType(), new AsyncOperationCompleteHandler() {
             @Override
             public void onAsyncOperationComplete(AsyncOperationCompleteEvent event) {
-                if (event.getTarget() != getModel() || asyncOperationCounter == 0) {
+                if (event.getTarget() != getModel() || getModel().getProgress() != null) {
                     return;
                 }
 
                 asyncOperationCounter--;
                 if (asyncOperationCounter == 0) {
-                    getModel().stopProgress();
+                    stopProgress();
                 }
             }
         });
