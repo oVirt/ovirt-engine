@@ -1207,6 +1207,14 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
     }
 
+    @Override
+    protected void setupExportModel(ExportVmModel model) {
+        super.setupExportModel(model);
+        model.setTitle(constants.exportVirtualMachineTitle());
+        model.setHelpTag(HelpTag.export_virtual_machine);
+        model.setHashName("export_virtual_machine"); //$NON-NLS-1$
+    }
+
     public void onExport()
     {
         ExportVmModel model = (ExportVmModel) getWindow();
@@ -2474,7 +2482,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
         else if (command == getExportCommand())
         {
-            export(ConstantsManager.getInstance().getConstants().exportVirtualMachineTitle());
+            export();
         }
         else if (command == getCreateSnapshotCommand())
         {
