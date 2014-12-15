@@ -129,7 +129,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
     public static final Version BALLOON_DEVICE_MIN_VERSION = Version.v3_2;
 
-    Provider<ImportVmsModel> importVmsModelProvider;
+    final Provider<ImportVmsModel> importVmsModelProvider;
 
     private UICommand importVmCommand;
 
@@ -496,6 +496,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             final VmSessionsModel vmSessionsModel, final Provider<ImportVmsModel> importVmsModelProvider) {
         setDetailList(vmGeneralModel, vmInterfaceListModel, vmDiskListModel, vmSnapshotListModel, vmEventListModel,
                 vmAppListModel, permissionListModel, vmAffinityGroupListModel, vmSessionsModel);
+        this.importVmsModelProvider = importVmsModelProvider;
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
         setHelpTag(HelpTag.virtual_machines);
         setApplicationPlace(WebAdminApplicationPlaces.virtualMachineMainTabPlace);
