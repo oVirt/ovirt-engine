@@ -1583,10 +1583,8 @@ public class VdsBrokerObjectsBuilder {
                 addBootProtocol(networkConfig, host, iface);
             }
 
-            if (FeatureSupported.hostNetworkQos(Collections.max(host.getSupportedClusterVersionsSet()))) {
-                HostNetworkQosMapper qosMapper = new HostNetworkQosMapper(network);
-                iface.setQos(qosMapper.deserialize());
-            }
+            HostNetworkQosMapper qosMapper = new HostNetworkQosMapper(network);
+            iface.setQos(qosMapper.deserialize());
         }
     }
 
