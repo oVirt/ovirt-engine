@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
@@ -46,6 +47,11 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
     @Override
     public VDSGroup getVdsGroup() {
         return getParameters().getVdsGroup();
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__CLUSTER);
     }
 
     protected ArchitectureType getArchitecture() {

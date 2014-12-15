@@ -8,7 +8,6 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class VdsGroupCommandBase<T extends VdsGroupParametersBase> extends CommandBase<T> {
@@ -41,12 +40,6 @@ public abstract class VdsGroupCommandBase<T extends VdsGroupParametersBase> exte
         } else {
             return null;
         }
-    }
-
-    @Override
-    protected boolean canDoAction() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__CLUSTER);
-        return true;
     }
 
     @Override

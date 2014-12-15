@@ -26,9 +26,7 @@ public class RemoveVdsGroupCommand<T extends VdsGroupParametersBase> extends Vds
     @Override
     protected boolean canDoAction() {
         List<VmPool> list = null;
-        boolean returnValue = super.canDoAction();
-        getReturnValue().getCanDoActionMessages().add(
-                VdcBllMessages.VAR__ACTION__REMOVE.toString());
+        boolean returnValue = true;
         if (getVdsGroup() == null) {
             addCanDoActionMessage(VdcBllMessages.VMT_CLUSTER_IS_NOT_VALID);
             returnValue = false;
@@ -65,6 +63,12 @@ public class RemoveVdsGroupCommand<T extends VdsGroupParametersBase> extends Vds
         }
 
         return returnValue;
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__CLUSTER);
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
     }
 
     @Override

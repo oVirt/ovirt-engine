@@ -387,7 +387,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__CLUSTER);
+        super.setActionMessageParameters();
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
     }
 
