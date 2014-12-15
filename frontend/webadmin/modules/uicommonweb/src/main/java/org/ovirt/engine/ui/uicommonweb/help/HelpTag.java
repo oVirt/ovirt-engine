@@ -180,6 +180,8 @@ public enum HelpTag {
 
     export_virtual_machine("export_virtual_machine", HelpTagType.WEBADMIN, "VMs Tab > Export Virtual Machine"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    export_template("export_template", HelpTagType.WEBADMIN, "Templates Tab > Export Template"), //$NON-NLS-1$ //$NON-NLS-2$
+
     external_subnets("external_subnets", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
     force_lun_disk_creation("force_lun_disk_creation", HelpTagType.WEBADMIN, "'New Disk' context (probably of type 'Direct LUN') -> confirmation dialog regarding LUNs that are already in use in a storage domain."), //$NON-NLS-1$ //$NON-NLS-2$

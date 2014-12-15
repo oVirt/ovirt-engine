@@ -163,6 +163,9 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
     @Override
     protected void setupExportModel(ExportVmModel model) {
         super.setupExportModel(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().exportTemplateTitle());
+        model.setHelpTag(HelpTag.export_template);
+        model.setHashName("export_template"); //$NON-NLS-1$
         model.getCollapseSnapshots().setIsAvailable(false);
     }
 
@@ -821,7 +824,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         }
         else if (command == getExportCommand())
         {
-            export(ConstantsManager.getInstance().getConstants().exportTemplateTitle());
+            export();
         }
         else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
