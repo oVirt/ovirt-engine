@@ -180,9 +180,7 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
                                 vds.getVdsGroupCompatibilityVersion().getValue()),
                         vds.getSupportedEmulatedMachines().split(","));
 
-        boolean isValidStatus = (vds.getStatus() == VDSStatus.Up || vds.getStatus() == VDSStatus.Maintenance);
-
-        if (matchedEmulatedMachine != null && !matchedEmulatedMachine.isEmpty() && isValidStatus) {
+        if (matchedEmulatedMachine != null && !matchedEmulatedMachine.isEmpty()) {
             setClusterEmulatedMachine(vds, matchedEmulatedMachine);
             return true;
         }
