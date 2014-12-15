@@ -30,7 +30,6 @@ public class SyntaxChecker implements ISyntaxChecker {
     public static final String PAGE = "PAGE";
     public static final String SORTDIR_ASC = "ASC";
     public static final String SORTDIR_DESC = "DESC";
-    public static final String PAGE = "PAGE";
 
     private final SearchObjectAutoCompleter mSearchObjectAC;
     private final BaseAutoCompleter mColonAC;
