@@ -3,9 +3,11 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
@@ -15,12 +17,14 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
+import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
+import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
+import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -55,6 +59,8 @@ public class AddVdsCommandTest {
     private EngineSSHClient sshClient;
     @Mock
     private Logger log;
+    @Mock
+    private HostValidator validator;
 
     @ClassRule
     public static MockConfigRule configRule =
@@ -84,8 +90,9 @@ public class AddVdsCommandTest {
     }
 
     private void setupCommonMock(boolean glusterEnabled) throws Exception {
+        mockHostValidator();
         when(commandMock.canDoAction()).thenCallRealMethod();
-        when(commandMock.canConnect(Mockito.any(VDS.class))).thenCallRealMethod();
+        when(commandMock.canConnect(any(VDS.class))).thenCallRealMethod();
         when(commandMock.getParameters()).thenReturn(parameters);
 
         when(commandMock.isGlusterSupportEnabled()).thenReturn(glusterEnabled);
@@ -95,8 +102,7 @@ public class AddVdsCommandTest {
         when(vdsDaoMock.get(vdsId)).thenReturn(null);
         when(commandMock.getVdsDAO()).thenReturn(vdsDaoMock);
         when(commandMock.validateVdsGroup()).thenReturn(true);
-        when(commandMock.validateSingleHostAttachedToLocalStorage()).thenReturn(true);
-
+        when(commandMock.isPowerManagementLegal(any(Boolean.class), anyListOf(FenceAgent.class), any(String.class))).thenReturn(true);
         when(commandMock.getSSHClient()).thenReturn(sshClient);
         Version version = new Version("1.2.3");
         VDSGroup vdsGroup = new VDSGroup();
@@ -107,6 +113,23 @@ public class AddVdsCommandTest {
                 new Version("1.2.3").toString())).thenReturn(true);
         doNothing().when(sshClient).connect();
         doNothing().when(sshClient).authenticate();
+    }
+
+    private void mockHostValidator() {
+        when(validator.nameNotEmpty()).thenReturn(ValidationResult.VALID);
+        doReturn(ValidationResult.VALID).when(validator).nameLengthIsLegal();
+        doReturn(ValidationResult.VALID).when(validator).hostNameIsValid();
+        doReturn(ValidationResult.VALID).when(validator).nameNotUsed();
+        doReturn(ValidationResult.VALID).when(validator).hostNameNotUsed();
+        doReturn(ValidationResult.VALID).when(validator).portIsValid();
+        when(validator.sshUserNameNotEmpty()).thenReturn(ValidationResult.VALID);
+        doReturn(ValidationResult.VALID).when(validator).validateSingleHostAttachedToLocalStorage();
+        doReturn(ValidationResult.VALID).when(validator).securityKeysExists();
+        when(validator.passwordNotEmpty(any(Boolean.class),
+                any(AuthenticationMethod.class),
+                any(String.class))).thenReturn(ValidationResult.VALID);
+        when(commandMock.getHostValidator()).thenReturn(validator);
+        when(commandMock.validate(any(ValidationResult.class))).thenCallRealMethod();
     }
 
     private void setupVirtMock() throws Exception {

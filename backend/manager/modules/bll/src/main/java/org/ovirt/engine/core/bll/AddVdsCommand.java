@@ -20,6 +20,7 @@ import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.HostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -29,10 +30,7 @@ import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
-import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
-import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -47,7 +45,6 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
-import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.compat.Guid;
@@ -56,7 +53,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
-import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -325,64 +321,47 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         // Check if this is a valid cluster
         boolean returnValue = validateVdsGroup();
         if (returnValue) {
-            VDS vds = getParameters().getvds();
-            String vdsName = vds.getName();
-            String hostName = vds.getHostName();
-            int maxVdsNameLength = Config.<Integer> getValue(ConfigValues.MaxVdsNameLength);
-            // check that vds name is not null or empty
-            if (vdsName == null || vdsName.isEmpty()) {
-                returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY);
-                // check that VDS name is not too long
-            } else if (vdsName.length() > maxVdsNameLength) {
-                returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
-                // check that VDS hostname does not contain special characters.
-            } else if (!ValidationUtils.validHostname(hostName)) {
-                returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_VDS_HOSTNAME);
-            } else if (getVdsDAO().getByName(vdsName) != null) {
-                returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
-            } else if (getVdsDAO().getAllForHostname(hostName).size() != 0) {
-                returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST);
-            } else if (!ValidationUtils.validatePort(vds.getSshPort())) {
-                returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_INVALID_SSH_PORT);
-            } else if ((StringUtils.isBlank(vds.getSshUsername())) ||
-                       (vds.getSshUsername().length() > BusinessEntitiesDefinitions.USER_LOGIN_NAME_SIZE)) {
-                returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_INVALID_SSH_USERNAME);
-            } else {
-                returnValue = returnValue && validateSingleHostAttachedToLocalStorage();
+            HostValidator validator = getHostValidator();
+            returnValue = validate(validator.nameNotEmpty())
+            && validate(validator.nameLengthIsLegal())
+            && validate(validator.hostNameIsValid())
+            && validate(validator.nameNotUsed())
+            && validate(validator.hostNameNotUsed())
+            && validate(validator.portIsValid())
+            && validate(validator.sshUserNameNotEmpty())
+            && validate(validator.validateSingleHostAttachedToLocalStorage())
+            && validate(validator.securityKeysExists())
+            && validate(validator.passwordNotEmpty(getParameters().getAddPending(),
+                    getParameters().getAuthMethod(),
+                    getParameters().getPassword()));
+        }
 
-                if (Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication)
-                        && !EngineEncryptionUtils.haveKey()) {
-                    returnValue = failCanDoAction(VdcBllMessages.VDS_TRY_CREATE_SECURE_CERTIFICATE_NOT_FOUND);
-                } else if (!getParameters().getAddPending()
-                        && (getParameters().getAuthMethod() == AuthenticationMethod.Password)
-                        && StringUtils.isEmpty(getParameters().getPassword())) {
-                    // We block vds installations if it's not a RHEV-H and password is empty
-                    // Note that this may override local host SSH policy. See BZ#688718.
-                    returnValue = failCanDoAction(VdcBllMessages.VDS_CANNOT_INSTALL_EMPTY_PASSWORD);
-                } else if (!isPowerManagementLegal(getParameters().getVdsStaticData().isPmEnabled(),
+        if (!(returnValue
+                && isPowerManagementLegal(getParameters().getVdsStaticData().isPmEnabled(),
                         getParameters().getFenceAgents(),
-                        getVdsGroup().getcompatibility_version().toString())) {
-                    returnValue = false;
-                } else {
-                    returnValue = returnValue && canConnect(vds);
-                }
+                        getVdsGroup().getcompatibility_version().toString())
+                && canConnect(getParameters().getvds()))) {
+            return false;
+        }
+
+        if (getParameters().getNetworkProviderId() != null
+                && !validateNetworkProviderProperties(getParameters().getNetworkProviderId(),
+                        getParameters().getNetworkMappings())) {
+            return false;
+        }
+
+        if (isGlusterSupportEnabled() && clusterHasServers()) {
+            VDS upServer = getClusterUtils().getUpServer(getVdsGroupId());
+            if (upServer == null) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE);
             }
         }
 
-        if (returnValue && getParameters().getNetworkProviderId() != null) {
-            returnValue = validateNetworkProviderProperties(getParameters().getNetworkProviderId(),
-                    getParameters().getNetworkMappings());
-        }
+        return true;
+    }
 
-        if (returnValue && isGlusterSupportEnabled()) {
-            if (clusterHasServers()) {
-                VDS upServer = getClusterUtils().getUpServer(getVdsGroupId());
-                if (upServer == null) {
-                    returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE);
-                }
-            }
-        }
-        return returnValue;
+    protected HostValidator getHostValidator() {
+        return new HostValidator(getDbFacade(), getParameters().getvds());
     }
 
     private boolean clusterHasServers() {
@@ -535,23 +514,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
     protected GlusterUtil getGlusterUtil() {
         return GlusterUtil.getInstance();
-    }
-
-    protected boolean validateSingleHostAttachedToLocalStorage() {
-        boolean retrunValue = true;
-        StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().getForVdsGroup(
-                getParameters().getVdsStaticData().getVdsGroupId());
-
-        if (storagePool != null && storagePool.isLocal()) {
-            if (!DbFacade.getInstance()
-                    .getVdsStaticDao()
-                    .getAllForVdsGroup(getParameters().getVdsStaticData().getVdsGroupId())
-                    .isEmpty()) {
-                addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
-                retrunValue = false;
-            }
-        }
-        return retrunValue;
     }
 
     @Override
