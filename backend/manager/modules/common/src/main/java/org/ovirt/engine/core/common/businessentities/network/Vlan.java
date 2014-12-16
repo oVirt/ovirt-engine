@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
+import java.util.Map;
+
 
 public class Vlan extends VdsNetworkInterface {
 
@@ -15,36 +17,10 @@ public class Vlan extends VdsNetworkInterface {
     }
 
     @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(getName())
-                .append(" {id=")
-                .append(getId())
-                .append(", vdsId=")
-                .append(getVdsId())
-                .append(", name=")
-                .append(getName())
-                .append(", networkName=")
-                .append(getNetworkName())
-                .append(", vlanId=")
-                .append(getVlanId())
-                .append(", bootProtocol=")
-                .append(getBootProtocol())
-                .append(", address=")
-                .append(getAddress())
-                .append(", subnet=")
-                .append(getSubnet())
-                .append(", gateway=")
-                .append(getGateway())
-                .append(", mtu=")
-                .append(getMtu())
-                .append(", bridged=")
-                .append(isBridged())
-                .append(", type=")
-                .append(getType())
-                .append(", networkImplementationDetails=")
-                .append(getNetworkImplementationDetails())
-                .append("}");
-        return builder.toString();
+    protected Map<String, Object> constructStringAttributes() {
+        Map<String, Object> attributes = super.constructStringAttributes();
+        attributes.put("baseInterface", getBaseInterface());
+        attributes.put("vlanId", getVlanId());
+        return attributes;
     }
 }

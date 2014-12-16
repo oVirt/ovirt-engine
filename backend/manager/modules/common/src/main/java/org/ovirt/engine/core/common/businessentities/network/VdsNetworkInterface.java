@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
 import java.io.Serializable;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.validation.constraints.NotNull;
@@ -426,55 +429,45 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         setCustomProperties(sourceNic.getCustomProperties());
     }
 
+    protected Map<String, Object> constructStringAttributes() {
+        Map<String, Object> attributes = new LinkedHashMap<>();
+        attributes.put("id", getId());
+        attributes.put("vdsId", getVdsId());
+        attributes.put("networkName", getNetworkName());
+        attributes.put("bootProtocol", getBootProtocol());
+        attributes.put("address", getAddress());
+        attributes.put("subnet", getSubnet());
+        attributes.put("gateway", getGateway());
+        attributes.put("mtu", getMtu());
+        attributes.put("bridged", isBridged());
+        attributes.put("type", getType());
+        attributes.put("networkImplementationDetails", getNetworkImplementationDetails());
+        attributes.put("qos", getQos());
+        attributes.put("qosOverridden", isQosOverridden());
+        attributes.put("customProperties", getCustomProperties());
+        return attributes;
+    }
+
+    private static void appendEntry(StringBuilder builder, Entry<String, Object> entry) {
+        builder.append(entry.getKey()).append('=').append(entry.getValue());
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append(getName())
-                .append(" {id=")
-                .append(getId())
-                .append(", vdsId=")
-                .append(getVdsId())
-                .append(", macAddress=")
-                .append(getMacAddress())
-                .append(", networkName=")
-                .append(getNetworkName())
-                .append(", baseInterface=")
-                .append(getBaseInterface())
-                .append(", vlanId=")
-                .append(getVlanId())
-                .append(", bonded=")
-                .append(getBonded())
-                .append(", bondName=")
-                .append(getBondName())
-                .append(", bondOptions=")
-                .append(getBondOptions())
-                .append(", bootProtocol=")
-                .append(getBootProtocol())
-                .append(", address=")
-                .append(getAddress())
-                .append(", subnet=")
-                .append(getSubnet())
-                .append(", gateway=")
-                .append(getGateway())
-                .append(", mtu=")
-                .append(getMtu())
-                .append(", bridged=")
-                .append(isBridged())
-                .append(", speed=")
-                .append(getSpeed())
-                .append(", type=")
-                .append(getType())
-                .append(", networkImplementationDetails=")
-                .append(getNetworkImplementationDetails())
-                .append(", qos=")
-                .append(getQos())
-                .append(" qosOverridden=")
-                .append(isQosOverridden())
-                .append(", labels=")
-                .append(getLabels())
-                .append(", customProperties=")
-                .append(getCustomProperties())
-                .append("}");
+        builder.append(getName()).append(" {");
+
+        Map<String, Object> attributes = constructStringAttributes();
+        if (attributes != null && !attributes.isEmpty()) {
+            Iterator<Entry<String, Object>> i = attributes.entrySet().iterator();
+            appendEntry(builder, i.next());
+            while (i.hasNext()) {
+                builder.append(", ");
+                appendEntry(builder, i.next());
+            }
+        }
+
+        builder.append("}");
         return builder.toString();
     }
 

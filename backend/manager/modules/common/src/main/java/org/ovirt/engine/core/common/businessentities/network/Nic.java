@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
+import java.util.Map;
+
 
 public class Nic extends VdsNetworkInterface {
 
@@ -15,40 +17,12 @@ public class Nic extends VdsNetworkInterface {
     }
 
     @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(getName())
-                .append(" {id=")
-                .append(getId())
-                .append(", vdsId=")
-                .append(getVdsId())
-                .append(", name=")
-                .append(getName())
-                .append(", macAddress=")
-                .append(getMacAddress())
-                .append(", networkName=")
-                .append(getNetworkName())
-                .append(", bondName=")
-                .append(getBondName())
-                .append(", bootProtocol=")
-                .append(getBootProtocol())
-                .append(", address=")
-                .append(getAddress())
-                .append(", subnet=")
-                .append(getSubnet())
-                .append(", gateway=")
-                .append(getGateway())
-                .append(", mtu=")
-                .append(getMtu())
-                .append(", bridged=")
-                .append(isBridged())
-                .append(", speed=")
-                .append(getSpeed())
-                .append(", type=")
-                .append(getType())
-                .append(", networkImplementationDetails=")
-                .append(getNetworkImplementationDetails())
-                .append("}");
-        return builder.toString();
+    protected Map<String, Object> constructStringAttributes() {
+        Map<String, Object> attributes = super.constructStringAttributes();
+        attributes.put("macAddress", getMacAddress());
+        attributes.put("bondName", getBondName());
+        attributes.put("speed", getSpeed());
+        attributes.put("labels", getLabels());
+        return attributes;
     }
 }
