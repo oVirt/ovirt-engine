@@ -20,27 +20,45 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.PluralMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
+import org.ovirt.engine.core.dao.network.NetworkClusterDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 
 
 public class NetworkAttachmentValidator {
 
-    protected NetworkAttachment attachment;
-    protected Network network;
-    protected VDS host;
-    protected final ManagementNetworkUtil managementNetworkUtil;
+    private final VdsDAO vdsDao;
+    private final NetworkDao networkDao;
+    private final NetworkAttachmentDao networkAttachmentDao;
+    private final NetworkClusterDao networkClusterDao;
+    private final VmInterfaceManager vmInterfaceManager;
+
+    private NetworkAttachment attachment;
+    private Network network;
+    private VDS host;
+    private final ManagementNetworkUtil managementNetworkUtil;
 
     private NetworkCluster networkCluster;
     private NetworkValidator networkValidator;
     private NetworkAttachment existingNetworkAttachment;
 
     public NetworkAttachmentValidator(NetworkAttachment attachment,
-            VDS host,
-            ManagementNetworkUtil managementNetworkUtil) {
+        VDS host,
+        ManagementNetworkUtil managementNetworkUtil,
+        NetworkAttachmentDao networkAttachmentDao,
+        VmInterfaceManager vmInterfaceManager, NetworkClusterDao networkClusterDao,
+        NetworkDao networkDao,
+        VdsDAO vdsDao) {
 
         this.attachment = attachment;
         this.host = host;
         this.managementNetworkUtil = managementNetworkUtil;
+        this.networkAttachmentDao = networkAttachmentDao;
+        this.vmInterfaceManager = vmInterfaceManager;
+        this.networkClusterDao = networkClusterDao;
+        this.networkDao = networkDao;
+        this.vdsDao = vdsDao;
     }
 
     public ValidationResult networkAttachmentIsSet() {
@@ -49,7 +67,7 @@ public class NetworkAttachmentValidator {
 
     private NetworkAttachment getExistingNetworkAttachment() {
         if (existingNetworkAttachment == null) {
-            existingNetworkAttachment = getDbFacade().getNetworkAttachmentDao().get(attachment.getId());
+            existingNetworkAttachment = networkAttachmentDao.get(attachment.getId());
         }
 
         return existingNetworkAttachment;
@@ -65,8 +83,7 @@ public class NetworkAttachmentValidator {
 
     private ValidationResult networkNotUsedByVms(String networkName) {
         List<String> vmNames =
-            new VmInterfaceManager().findActiveVmsUsingNetworks(host.getId(),
-                Collections.singleton(networkName));
+            vmInterfaceManager.findActiveVmsUsingNetworks(host.getId(), Collections.singleton(networkName));
 
         return new PluralMessages().getNetworkInUse(vmNames,
             VdcBllMessages.VAR__ENTITIES__VM,
@@ -78,7 +95,7 @@ public class NetworkAttachmentValidator {
             .when(getNetwork().isExternal());
     }
 
-    public ValidationResult notManagementNetwork() {
+    public ValidationResult notRemovingManagementNetwork() {
         return getNetworkValidator().notManagementNetwork();
     }
 
@@ -160,7 +177,7 @@ public class NetworkAttachmentValidator {
     }
 
     private boolean networkAttachedToHost() {
-        List<VDS> hostsAttachedToNetwork = getDbFacade().getVdsDao().getAllForNetwork(attachment.getNetworkId());
+        List<VDS> hostsAttachedToNetwork = vdsDao.getAllForNetwork(attachment.getNetworkId());
         for (VDS hostAttachedToNetwork : hostsAttachedToNetwork) {
             if (hostAttachedToNetwork.getId().equals(host.getId())) {
                 return true;
@@ -170,19 +187,15 @@ public class NetworkAttachmentValidator {
         return false;
     }
 
-    protected DbFacade getDbFacade() {
-        return DbFacade.getInstance();
-    }
-
     protected Network getNetwork() {
         if (network == null) {
-            network = getDbFacade().getNetworkDao().get(attachment.getNetworkId());
+            network = networkDao.get(attachment.getNetworkId());
         }
 
         return network;
     }
 
-    private NetworkValidator getNetworkValidator() {
+    NetworkValidator getNetworkValidator() {
         if (networkValidator == null) {
             networkValidator = new NetworkValidator(getNetwork());
         }
@@ -192,8 +205,8 @@ public class NetworkAttachmentValidator {
 
     private NetworkCluster getNetworkCluster() {
         if (networkCluster == null) {
-            NetworkClusterId networkClusterId = new NetworkClusterId(host.getVdsGroupId(), getNetwork().getId());
-            networkCluster = getDbFacade().getNetworkClusterDao().get(networkClusterId);
+            NetworkClusterId networkClusterId = new NetworkClusterId(host.getVdsGroupId(), attachment.getNetworkId());
+            networkCluster = networkClusterDao.get(networkClusterId);
         }
 
         return networkCluster;

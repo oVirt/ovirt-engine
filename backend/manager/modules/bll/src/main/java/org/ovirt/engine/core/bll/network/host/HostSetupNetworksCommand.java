@@ -45,7 +45,11 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
+import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
+import org.ovirt.engine.core.dao.network.NetworkClusterDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -77,6 +81,18 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     @Inject
     private HostNetworkQosDao qosDao;
     private List<Network> modifiedNetworks;
+
+    @Inject
+    private NetworkClusterDao networkClusterDao;
+
+    @Inject
+    private NetworkAttachmentDao networkAttachmentDao;
+
+    @Inject
+    private NetworkDao networkDao;
+
+    @Inject
+    private VdsDAO vdsDao;
 
     public HostSetupNetworksCommand(T parameters) {
         this(parameters, null);
@@ -112,11 +128,15 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     private ValidationResult validateWithHostSetupNetworksValidator(VDS host) {
         HostSetupNetworksValidator validator = new HostSetupNetworksValidator(host,
-                getParameters(),
-                getExistingNics(),
-                getExistingAttachments(),
-                getNetworkBusinessEntityMap(),
-                managementNetworkUtil);
+            getParameters(),
+            getExistingNics(),
+            getExistingAttachments(),
+            getNetworkBusinessEntityMap(),
+            managementNetworkUtil,
+            networkClusterDao,
+            networkAttachmentDao,
+            networkDao,
+            vdsDao);
 
         return validator.validate();
     }
@@ -240,8 +260,8 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             for (VdsNetworkInterface iface : existingNics) {
                 Network network = getNetworkBusinessEntityMap().get(iface.getNetworkName());
                 iface.setNetworkImplementationDetails(NetworkUtils.calculateNetworkImplementationDetails(network,
-                        network == null ? null : qosDao.get(network.getQosId()),
-                        iface));
+                    network == null ? null : qosDao.get(network.getQosId()),
+                    iface));
             }
         }
 

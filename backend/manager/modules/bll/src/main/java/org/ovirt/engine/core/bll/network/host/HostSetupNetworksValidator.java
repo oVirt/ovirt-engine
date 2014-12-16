@@ -34,6 +34,10 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
+import org.ovirt.engine.core.dao.network.NetworkClusterDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
@@ -54,18 +58,30 @@ public class HostSetupNetworksValidator {
     private List<NetworkAttachment> removedNetworkAttachments;
     private BusinessEntityMap<Network> networkBusinessEntityMap;
     private final Map<Guid, NetworkAttachment> attachmentsById;
+    private final NetworkClusterDao networkClusterDao;
+    private final NetworkAttachmentDao networkAttachmentDao;
+    private final NetworkDao networkDao;
+    private final VdsDAO vdsDao;
 
     public HostSetupNetworksValidator(VDS host,
         HostSetupNetworksParameters params,
         List<VdsNetworkInterface> existingNics,
         List<NetworkAttachment> existingAttachments,
         BusinessEntityMap<Network> networkBusinessEntityMap,
-        ManagementNetworkUtil managementNetworkUtil) {
+        ManagementNetworkUtil managementNetworkUtil,
+        NetworkClusterDao networkClusterDao,
+        NetworkAttachmentDao networkAttachmentDao,
+        NetworkDao networkDao,
+        VdsDAO vdsDao) {
 
         this.host = host;
         this.params = params;
         this.existingAttachments = existingAttachments;
         this.managementNetworkUtil = managementNetworkUtil;
+        this.networkClusterDao = networkClusterDao;
+        this.networkAttachmentDao = networkAttachmentDao;
+        this.networkDao = networkDao;
+        this.vdsDao = vdsDao;
         this.existingIfaces = Entities.entitiesByName(existingNics);
         this.existingIfacesById = Entities.businessEntitiesById(existingNics);
         this.networkBusinessEntityMap = networkBusinessEntityMap;
@@ -352,9 +368,7 @@ public class HostSetupNetworksValidator {
         Iterator<NetworkAttachment> iterator = params.getNetworkAttachments().iterator();
         while (iterator.hasNext() && vr.isValid()) {
             NetworkAttachment attachment = iterator.next();
-            NetworkAttachmentValidator validator =
-                new NetworkAttachmentValidator(attachment, host, managementNetworkUtil);
-
+            NetworkAttachmentValidator validator = createNetworkAttachmentValidator(attachment);
 
             vr = skipValidation(vr) ? vr : validator.networkAttachmentIsSet();
 
@@ -370,6 +384,11 @@ public class HostSetupNetworksValidator {
             vr = skipValidation(vr) ? vr : validator.networkIpAddressWasSameAsHostnameAndChanged(getExistingIfaces());
             vr = skipValidation(vr) ? vr : validator.networkNotChanged(attachmentsById.get(attachment.getId()));
             vr = skipValidation(vr) ? vr : validator.validateGateway();
+
+            boolean attachmentUpdated = attachment.getId() != null;
+            if (attachmentUpdated) {
+                vr = skipValidation(vr) ? vr : validator.networkNotUsedByVms();
+            }
         }
 
         return vr;
@@ -446,16 +465,27 @@ public class HostSetupNetworksValidator {
         while (iterator.hasNext() && vr.isValid()) {
             NetworkAttachment attachment = iterator.next();
             NetworkAttachment attachmentToValidate = attachmentsById.get(attachment.getId());
-            NetworkAttachmentValidator validator =
-                new NetworkAttachmentValidator(attachmentToValidate, host, managementNetworkUtil);
+            NetworkAttachmentValidator validator = createNetworkAttachmentValidator(attachmentToValidate);
 
+            vr = skipValidation(vr) ? vr : validator.networkAttachmentIsSet();
             vr = skipValidation(vr) ? vr : validator.notExternalNetwork();
-            vr = skipValidation(vr) ? vr : validator.notManagementNetwork();
+            vr = skipValidation(vr) ? vr : validator.notRemovingManagementNetwork();
             vr = skipValidation(vr) ? vr : notRemovingLabeledNetworks(attachment, getExistingIfaces());
             vr = skipValidation(vr) ? vr : validateNotRemovingUsedNetworkByVms();
         }
 
         return vr;
+    }
+
+    private NetworkAttachmentValidator createNetworkAttachmentValidator(NetworkAttachment attachmentToValidate) {
+        return new NetworkAttachmentValidator(attachmentToValidate,
+            host,
+            managementNetworkUtil,
+            networkAttachmentDao,
+            new VmInterfaceManager(),
+            networkClusterDao,
+            networkDao,
+            vdsDao);
     }
 
     private ValidationResult notRemovingLabeledNetworks(NetworkAttachment attachment,
