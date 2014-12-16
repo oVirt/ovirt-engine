@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
@@ -31,7 +30,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.compat.Version;
 
-@SuppressWarnings("unused")
 public final class Cloner
 {
     public static Object clone(Object instance)
@@ -79,10 +77,6 @@ public final class Cloner
         if (instance instanceof VmNetworkInterface)
         {
             return cloneVmNetworkInterface((VmNetworkInterface) instance);
-        }
-        if (instance instanceof VdsNetworkInterface)
-        {
-            return cloneVdsNetworkInterface((VdsNetworkInterface) instance);
         }
         if (instance instanceof VmStatic)
         {
@@ -550,27 +544,6 @@ public final class Cloner
 
         cloneNetworkStatisticss(instance, obj);
         obj.setVdsId(instance.getVdsId());
-
-        return obj;
-    }
-
-    private static Object cloneVdsNetworkInterface(VdsNetworkInterface vdsNetworkInterface)
-    {
-        VdsNetworkInterface obj = new VdsNetworkInterface();
-
-        obj.setAddress(vdsNetworkInterface.getAddress());
-        obj.setBonded(vdsNetworkInterface.getBonded());
-        obj.setBondName(vdsNetworkInterface.getBondName());
-        obj.setBondOptions(vdsNetworkInterface.getBondOptions());
-        obj.setBondType(vdsNetworkInterface.getBondType());
-        obj.setBootProtocol(vdsNetworkInterface.getBootProtocol());
-        obj.setGateway(vdsNetworkInterface.getGateway());
-        obj.setId(vdsNetworkInterface.getId());
-        obj.setMacAddress(vdsNetworkInterface.getMacAddress());
-        obj.setName(vdsNetworkInterface.getName());
-        obj.setNetworkName(vdsNetworkInterface.getNetworkName());
-        obj.setSpeed(vdsNetworkInterface.getSpeed());
-        obj.setStatistics(cloneVdsNetworkStatistics(vdsNetworkInterface.getStatistics()));
 
         return obj;
     }

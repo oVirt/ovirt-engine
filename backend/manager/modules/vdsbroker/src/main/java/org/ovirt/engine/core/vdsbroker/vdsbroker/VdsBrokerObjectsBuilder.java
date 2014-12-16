@@ -52,12 +52,15 @@ import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
+import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Nic;
 import org.ovirt.engine.core.common.businessentities.network.VdsInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.network.Vlan;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -1405,7 +1408,7 @@ public class VdsBrokerObjectsBuilder {
         Map<String, Object> bonds = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.NETWORK_BONDINGS);
         if (bonds != null) {
             for (Entry<String, Object> entry : bonds.entrySet()) {
-                VdsNetworkInterface iface = new VdsNetworkInterface();
+                VdsNetworkInterface iface = new Bond();
                 VdsNetworkStatistics iStats = new VdsNetworkStatistics();
                 iface.setStatistics(iStats);
                 iStats.setId(Guid.newGuid());
@@ -1454,7 +1457,7 @@ public class VdsBrokerObjectsBuilder {
         Map<String, Object> vlans = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.NETWORK_VLANS);
         if (vlans != null) {
             for (Entry<String, Object> entry : vlans.entrySet()) {
-                VdsNetworkInterface iface = new VdsNetworkInterface();
+                VdsNetworkInterface iface = new Vlan();
                 VdsNetworkStatistics iStats = new VdsNetworkStatistics();
                 iface.setStatistics(iStats);
                 iStats.setId(Guid.newGuid());
@@ -1501,7 +1504,7 @@ public class VdsBrokerObjectsBuilder {
         Map<String, Object> nics = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.NETWORK_NICS);
         if (nics != null) {
             for (Entry<String, Object> entry : nics.entrySet()) {
-                VdsNetworkInterface iface = new VdsNetworkInterface();
+                VdsNetworkInterface iface = new Nic();
                 VdsNetworkStatistics iStats = new VdsNetworkStatistics();
                 iface.setStatistics(iStats);
                 iStats.setId(Guid.newGuid());

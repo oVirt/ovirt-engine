@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
+import org.ovirt.engine.core.common.businessentities.network.Vlan;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.DcNetworkParams;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
@@ -62,7 +63,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
 
         if (hasVlan()) {
             // create vlan bridge (eth0.1)
-            VdsNetworkInterface bridge = new VdsNetworkInterface();
+            VdsNetworkInterface bridge = new Vlan();
             bridge.setName(targetNic.getName() + "." + getVlanId()); //$NON-NLS-1$
             bridge.setNetworkName(getName());
             bridge.setBaseInterface(targetNic.getName());
