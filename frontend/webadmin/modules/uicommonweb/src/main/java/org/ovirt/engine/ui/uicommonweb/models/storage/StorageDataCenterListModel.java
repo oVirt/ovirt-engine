@@ -338,6 +338,20 @@ public class StorageDataCenterListModel extends SearchableListModel
         ListModel model = new ListModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().attachToDataCenterTitle());
+        if (getEntity() != null) {
+            switch (getEntity().getStorageDomainType()) {
+                case ISO:
+                    setHelpTag(HelpTag.attach_iso_library);
+                    break;
+                case Data:
+                    setHelpTag(HelpTag.attach_storage);
+                    break;
+                case ImportExport:
+                    setHelpTag(HelpTag.attach_export_domain);
+                    break;
+            }
+        }
+
         model.setItems(datacenters);
 
         if (datacenters.isEmpty())
