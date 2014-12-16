@@ -89,19 +89,27 @@ public class NetworkAttachmentValidator {
 
     public ValidationResult ipConfiguredForStaticBootProtocol() {
         IpConfiguration ipConfiguration = attachment.getIpConfiguration();
-        return ValidationResult.failWith(VdcBllMessages.NETWORK_ADDR_MANDATORY_IN_STATIC_IP)
-            .unless(ipConfiguration == null
-                || ipConfiguration.getBootProtocol() != NetworkBootProtocol.STATIC_IP
-                || (ipConfiguration.hasPrimaryAddressSet()
-                && StringUtils.isNotEmpty(ipConfiguration.getPrimaryAddress().getAddress())
-                && StringUtils.isNotEmpty(ipConfiguration.getPrimaryAddress().getNetmask())));
+
+        boolean failWhen = ipConfiguration != null
+            && ipConfiguration.getBootProtocol() == NetworkBootProtocol.STATIC_IP
+            && unsetAddress(ipConfiguration);
+
+        return ValidationResult.failWith(VdcBllMessages.NETWORK_ADDR_MANDATORY_IN_STATIC_IP).when(failWhen);
+    }
+
+    private boolean unsetAddress(IpConfiguration ipConfiguration) {
+        return !ipConfiguration.hasPrimaryAddressSet()
+            || StringUtils.isEmpty(ipConfiguration.getPrimaryAddress().getAddress())
+            || StringUtils.isEmpty(ipConfiguration.getPrimaryAddress().getNetmask());
     }
 
     public ValidationResult bootProtocolSetForDisplayNetwork() {
         IpConfiguration ipConfiguration = attachment.getIpConfiguration();
+        boolean failWhen = (getNetworkCluster().isDisplay() &&
+            (ipConfiguration == null || ipConfiguration.getBootProtocol() == NetworkBootProtocol.NONE));
+
         return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL)
-            .unless(!getNetworkCluster().isDisplay()
-                || ipConfiguration != null && ipConfiguration.getBootProtocol() != NetworkBootProtocol.NONE);
+            .when(failWhen);
     }
 
     public ValidationResult nicExists() {
@@ -132,9 +140,10 @@ public class NetworkAttachmentValidator {
     }
 
     public ValidationResult networkNotChanged(NetworkAttachment oldAttachment) {
+        boolean when = oldAttachment != null &&
+            !Objects.equals(oldAttachment.getNetworkId(), attachment.getNetworkId());
         return ValidationResult.failWith(VdcBllMessages.CANNOT_CHANGE_ATTACHED_NETWORK)
-                .unless(oldAttachment == null
-                        || Objects.equals(oldAttachment.getNetworkId(), attachment.getNetworkId()));
+            .when(when);
     }
 
     public ValidationResult validateGateway() {
