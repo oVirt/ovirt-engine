@@ -104,6 +104,9 @@
       <logger category="sun.rmi">
         <level name="WARN"/>
       </logger>
+      <logger category="org.jboss.resteasy.core.SynchronousDispatcher">
+        <level name="ERROR"/>
+      </logger>
 
       <!-- Loggers for the engine: -->
       <logger category="org.ovirt" use-parent-handlers="false">
