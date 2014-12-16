@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.aaa.filters;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -38,6 +41,18 @@ public class BasicAuthenticationFilter implements Filter {
         public UserProfile(String user, AuthenticationProfile profile) {
             this.userName = user;
             this.profile = profile;
+        }
+    }
+
+    private static final Map<Integer, String> authResultMap;
+    static {
+        try {
+            authResultMap = new HashMap<Integer, String>();
+            for (Field field : Authn.AuthResult.class.getFields()) {
+                authResultMap.put((Integer)field.get(null), field.getName());
+            }
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -114,7 +129,7 @@ public class BasicAuthenticationFilter implements Filter {
     private void handleCredentials(HttpServletRequest request, String user, String password) {
         UserProfile userProfile = translateUser(user);
         if (userProfile == null || userProfile.profile == null) {
-            log.error("Error in obtaining profile {}", userProfile.profile);
+            log.error("Cannot obtain profile for user {}", user);
         } else {
             ExtMap outputMap = userProfile.profile.getAuthn().invoke(new ExtMap().mput(
                     Base.InvokeKeys.COMMAND,
@@ -134,24 +149,28 @@ public class BasicAuthenticationFilter implements Filter {
                 request.setAttribute(FiltersHelper.Constants.REQUEST_AUTH_TYPE_KEY, AuthType.CREDENTIALS);
                 request.setAttribute(FiltersHelper.Constants.REQUEST_PROFILE_KEY, userProfile.profile.getName());
                 request.setAttribute(FiltersHelper.Constants.REQUEST_PASSWORD_KEY, password);
-             } else {
-                if (outputMap.<Integer> get(Base.InvokeKeys.RESULT) != Base.InvokeResult.SUCCESS
-                        || outputMap.<Integer> get(Authn.InvokeKeys.RESULT) != Authn.AuthResult.SUCCESS) {
-                    AcctUtils.reportRecords(
-                            Acct.ReportReason.PRINCIPAL_LOGIN_FAILED,
-                            userProfile.userName,
-                            null,
-                            null,
-                            "Basic authentication failed for User %1$s.",
-                            userProfile.userName
-                            );
+            } else {
+                int authResultCode = outputMap.<Integer> get(Authn.InvokeKeys.RESULT, Authn.AuthResult.GENERAL_ERROR);
+                String authnResult = authResultMap.get(authResultCode);
+                if (authnResult == null) {
+                    authnResult = Integer.toString(authResultCode);
                 }
-                log.error("Failure in authentication to profile {}. Invocation Result code is {}. Authn result code is {}",
-                                userProfile.profile,
-                                 outputMap.<Integer> get(Base.InvokeKeys.RESULT),
-                                 outputMap.<Integer> get(Authn.InvokeKeys.RESULT)
+                AcctUtils.reportRecords(
+                        Acct.ReportReason.PRINCIPAL_LOGIN_FAILED,
+                        userProfile.userName,
+                        null,
+                        null,
+                        "Basic authentication failed for User %1$s (%2$s).",
+                        userProfile.userName,
+                        authnResult
                         );
-             }
+                log.error("User {} authentication failed. profile is {}. Invocation Result code is {}. Authn result code is {}",
+                        userProfile.userName,
+                        userProfile.profile.getName(),
+                        outputMap.<Integer> get(Base.InvokeKeys.RESULT),
+                        authnResult
+                        );
+            }
         }
     }
 
