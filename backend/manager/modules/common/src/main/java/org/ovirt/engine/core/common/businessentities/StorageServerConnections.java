@@ -26,19 +26,19 @@ public class StorageServerConnections implements Serializable {
             NfsVersion nfsVersion,
             Short nfsRetrans,
             Short nfsTimeo) {
-        this.connection = connection;
-        this.id = id;
-        this.iqn = iqn;
-        this.password = password;
-        this.storageType = storageType;
-        this.username = userName;
-        this.port = port;
-        this.portal = portal;
-        this.vfsType = vfsType;
-        this.mountOptions = mountOptions;
-        this.nfsVersion = nfsVersion;
-        this.nfsRetrans = nfsRetrans;
-        this.nfsTimeo = nfsTimeo;
+        setconnection(connection);
+        setid(id);
+        setiqn(iqn);
+        setpassword(password);
+        setstorage_type(storageType);
+        setuser_name(userName);
+        setport(port);
+        setportal(portal);
+        setVfsType(vfsType);
+        setMountOptions(mountOptions);
+        setNfsVersion(nfsVersion);
+        setNfsRetrans(nfsRetrans);
+        setNfsTimeo(nfsTimeo);
     }
 
     public StorageServerConnections(String connection,
@@ -80,7 +80,7 @@ public class StorageServerConnections implements Serializable {
     }
 
     public void setiqn(String value) {
-        this.iqn = value;
+        this.iqn = getStringValueToSet(value);
     }
 
     private String port;
@@ -90,7 +90,7 @@ public class StorageServerConnections implements Serializable {
     }
 
     public void setport(String value) {
-        this.port = value;
+        this.port = getStringValueToSet(value);
     }
 
     private String portal = DEFAULT_TPGT;
@@ -100,7 +100,7 @@ public class StorageServerConnections implements Serializable {
     }
 
     public void setportal(String value) {
-        this.portal = value;
+        this.portal = getStringValueToSet(value);
     }
 
     private String password;
@@ -110,7 +110,7 @@ public class StorageServerConnections implements Serializable {
     }
 
     public void setpassword(String value) {
-        this.password = value;
+        this.password = getStringValueToSet(value);
     }
 
     private StorageType storageType;
@@ -130,7 +130,7 @@ public class StorageServerConnections implements Serializable {
     }
 
     public void setuser_name(String value) {
-        this.username = value;
+        this.username = getStringValueToSet(value);
     }
 
     private String mountOptions;
@@ -260,4 +260,11 @@ public class StorageServerConnections implements Serializable {
         this.nfsRetrans = nfsRetrans;
     }
 
+    private static String getStringValueToSet(String value) {
+        if (value != null && value.isEmpty()) {
+            return null;
+        }
+
+        return value;
+    }
 }

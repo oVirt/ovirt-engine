@@ -438,7 +438,7 @@ RETURNS SETOF storage_server_connections STABLE
 BEGIN
    RETURN QUERY SELECT *
    FROM storage_server_connections
-   WHERE iqn = v_iqn;
+   WHERE iqn = v_iqn OR iqn IS NULL AND v_iqn IS NULL;
 
 END; $procedure$
 LANGUAGE plpgsql;
@@ -463,18 +463,16 @@ Create or replace FUNCTION Getstorage_server_connectionsByKey(v_iqn VARCHAR(128)
 	v_connection VARCHAR(250),
 	v_port VARCHAR(50) ,
 	v_portal VARCHAR(50) ,
-	v_username VARCHAR(50) ,
-	v_password text) RETURNS SETOF storage_server_connections STABLE
+	v_username VARCHAR(50)) RETURNS SETOF storage_server_connections STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
    FROM storage_server_connections
-   WHERE (iqn = v_iqn or iqn is NULL) and
-			(connection = v_connection) and
-			(port = v_port or port is NULL) and
-			(portal = v_portal or portal is NULL) and
-			(user_name = v_username or user_name is NULL) and
-			(password = v_password or password is NULL);
+   WHERE (iqn = v_iqn or (iqn IS NULL AND v_iqn IS NULL)) AND
+			(connection = v_connection) AND
+			(port = v_port or (port IS NULL AND v_port IS NULL)) AND
+			(portal = v_portal or (portal is NULL AND v_portal IS NULL)) AND
+			(user_name = v_username or (user_name is NULL AND v_username IS NULL));
 
 END; $procedure$
 LANGUAGE plpgsql;
