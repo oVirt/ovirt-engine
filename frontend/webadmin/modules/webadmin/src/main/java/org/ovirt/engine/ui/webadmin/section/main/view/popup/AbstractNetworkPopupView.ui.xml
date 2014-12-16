@@ -17,7 +17,7 @@
 
        .generalTabTopDecorator {
             background-color: #D3D3D3;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             margin-top: 4px;
             margin-right: 3px;
             padding-top: 6px;
@@ -27,10 +27,6 @@
         .mainLabel {
             font-weight: bold;
             padding: 5px;
-        }
-
-        .sectionStyle {
-            margin-top: 20px;
         }
 
         .dependentField {
@@ -117,13 +113,13 @@
                                     <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
                                     <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" />
                                 </g:FlowPanel>
-                                <g:FlowPanel addStyleNames="{style.sectionStyle}">
+                                <g:FlowPanel>
                                     <g:Label ui:field="exportLabel" addStyleNames="{style.mainLabel}" />
                                     <ge:EntityModelCheckBoxEditor ui:field="exportEditor" />
                                     <e:ListModelListBoxEditor ui:field="externalProviderEditor" addStyleNames="{style.dependentField}" />
                                     <ge:StringEntityModelTextBoxEditor ui:field="neutronPhysicalNetwork" addStyleNames="{style.dependentField}" />
                                 </g:FlowPanel>
-                                <g:FlowPanel addStyleNames="{style.sectionStyle}">
+                                <g:FlowPanel>
                                     <g:Label ui:field="mainLabel" addStyleNames="{style.mainLabel}" />
                                     <ge:ListModelSuggestBoxEditor ui:field="networkLabel" addStyleNames="{style.dependentField} {style.propertyWidth}" />
                                     <g:HorizontalPanel addStyleNames="{style.dependentField}">
