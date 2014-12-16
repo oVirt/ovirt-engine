@@ -27,6 +27,9 @@ from otopi import util
 from otopi import plugin
 
 
+from ovirt_engine import configfile
+
+
 from ovirt_engine_setup import dialog
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
@@ -39,12 +42,23 @@ class Plugin(plugin.PluginBase):
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
+        self._engine_fqdn = None
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
     )
     def _init(self):
         self.environment.setdefault(oenginecons.CoreEnv.ENABLE, None)
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_SETUP,
+    )
+    def _setup(self):
+        config = configfile.ConfigFile([
+            oenginecons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG,
+        ])
+        if config.get('ENGINE_FQDN'):
+            self._engine_fqdn = config.get('ENGINE_FQDN')
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
@@ -58,16 +72,8 @@ class Plugin(plugin.PluginBase):
     )
     def _customization(self):
         if self.environment[oenginecons.CoreEnv.ENABLE] is None:
-            if not self.environment[oenginecons.EngineDBEnv.NEW_DATABASE]:
-                # we are upgrading from 3.4 that doesn't ask about it
-                # but we need to upgrade the engine cause has been configured
-                # in the past
-                # It can be removed in future release ( > 3.5)
-                self.environment[oenginecons.CoreEnv.ENABLE] = True
-            else:
-                self.environment[
-                    oenginecons.CoreEnv.ENABLE
-                ] = dialog.queryBoolean(
+            self.environment[oenginecons.CoreEnv.ENABLE] = (
+                dialog.queryBoolean(
                     dialog=self.dialog,
                     name='OVESETUP_ENGINE_ENABLE',
                     note=_(
@@ -76,7 +82,14 @@ class Plugin(plugin.PluginBase):
                     ),
                     prompt=True,
                     default=True,
+                ) if self.environment[oenginecons.EngineDBEnv.NEW_DATABASE]
+                else (
+                    self._engine_fqdn is not None
+                    and self.environment[
+                        osetupcons.ConfigEnv.FQDN
+                    ] == self._engine_fqdn
                 )
+            )
         if self.environment[oenginecons.CoreEnv.ENABLE]:
             self.environment[oengcommcons.ApacheEnv.ENABLE] = True
 
