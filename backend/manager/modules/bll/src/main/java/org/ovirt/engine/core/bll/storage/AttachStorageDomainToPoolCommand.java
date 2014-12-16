@@ -14,6 +14,8 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RetrieveImageDataParameters;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
+import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
+import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
@@ -439,9 +441,13 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
     protected boolean canDoAction() {
         // We can share only ISO or Export domain , or a data domain
         // which is not attached.
+        StorageDomainToPoolRelationValidator
+                storageDomainToPoolRelationValidator = new StorageDomainToPoolRelationValidator(getStorageDomain().getStorageStaticData(), getStoragePool());
+        StorageDomainValidator storageDomainValidator = new StorageDomainValidator(getStorageDomain());
         boolean returnValue =
                 checkStoragePool()
-                        && initializeVds() && checkStorageDomain() && checkDomainCanBeAttached(getStorageDomain());
+                        && initializeVds() && checkStorageDomain() && validate(storageDomainValidator.checkStorageDomainSharedStatusNotLocked()) &&
+                            validate(storageDomainToPoolRelationValidator.validateDomainCanBeAttachedToPool());
 
         if (returnValue && getStoragePool().getStatus() == StoragePoolStatus.Uninitialized
                 && getStorageDomain().getStorageDomainType() != StorageDomainType.Data) {

@@ -8,6 +8,8 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
+import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -268,7 +270,10 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
             StorageFormatType storageFormat = null;
             for (Guid storageDomainId : getParameters().getStorages()) {
                 StorageDomain domain = DbFacade.getInstance().getStorageDomainDao().get(storageDomainId);
-                if (isStorageDomainNotNull(domain) && checkDomainCanBeAttached(domain)) {
+                StorageDomainToPoolRelationValidator
+                        storageDomainToPoolRelationValidator = new StorageDomainToPoolRelationValidator(domain.getStorageStaticData(), getStoragePool());
+                StorageDomainValidator domainValidator = new StorageDomainValidator(domain);
+                if (isStorageDomainNotNull(domain) && validate(domainValidator.checkStorageDomainSharedStatusNotLocked()) && validate(storageDomainToPoolRelationValidator.validateDomainCanBeAttachedToPool())) {
                     if (domain.getStorageDomainType() == StorageDomainType.Data) {
                         _hasData = true;
                         if (storageFormat == null) {

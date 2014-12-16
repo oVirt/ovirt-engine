@@ -201,7 +201,7 @@ public class AddStorageDomainCommonTest {
     public void canDoActionFailsUnsupportedFormat() {
         sp.setcompatibility_version(Version.v3_0);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
-                (cmd, VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST);
+                (cmd, VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL);
     }
 
     @Test

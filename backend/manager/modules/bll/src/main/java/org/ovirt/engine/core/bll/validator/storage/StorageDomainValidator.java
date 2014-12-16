@@ -7,8 +7,12 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
+import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
@@ -240,6 +244,7 @@ public class StorageDomainValidator {
         public double getSizeForDisk(DiskImage diskImage);
     }
 
+
     public ValidationResult isInProcess() {
         StoragePoolIsoMap domainIsoMap = storageDomain.getStoragePoolIsoMapData();
 
@@ -247,7 +252,39 @@ public class StorageDomainValidator {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2,
                     String.format("$status %1$s", domainIsoMap.getStatus()));
         }
+        return ValidationResult.VALID;
+    }
 
+    public ValidationResult isStorageFormatCompatibleWithDomain() {
+        StorageFormatType storageFormat = storageDomain.getStorageFormat();
+        StorageType storageType = storageDomain.getStorageType();
+        StorageDomainType storageDomainFunction = storageDomain.getStorageDomainType();
+        boolean validationSucceeded = true;
+
+        // V2 is applicable only for block data storage domains
+        if (storageFormat == StorageFormatType.V2) {
+            if ( !(storageDomainFunction.isDataDomain() && storageType.isBlockDomain()) ) {
+                validationSucceeded = false;
+            }
+        }
+
+        // V3 is applicable only for data storage domains
+        if (storageFormat == StorageFormatType.V3) {
+            if (!storageDomainFunction.isDataDomain()) {
+                validationSucceeded = false;
+            }
+        }
+
+        return validationSucceeded? ValidationResult.VALID : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST,
+                    String.format("$storageFormat %1$s", storageDomain.getStorageFormat()));
+    }
+
+    public ValidationResult checkStorageDomainSharedStatusNotLocked() {
+        if (storageDomain != null) {
+            if (storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Locked) {
+                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
+            }
+        }
         return ValidationResult.VALID;
     }
 

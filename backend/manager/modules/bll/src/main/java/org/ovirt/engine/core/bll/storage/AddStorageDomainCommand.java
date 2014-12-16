@@ -6,11 +6,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.WipeAfterDeleteUtils;
+import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
+import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
@@ -172,10 +173,9 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         }
 
         ensureStorageFormatInitialized();
-        if (!isStorageFormatSupportedByStoragePool() || !isStorageFormatCompatibleWithDomain()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST);
-            getReturnValue().getCanDoActionMessages().add(
-                    String.format("$storageFormat %1$s", getStorageDomain().getStorageFormat()));
+        StorageDomainToPoolRelationValidator storageDomainToPoolRelationValidator = getAttachDomainValidator();
+        StorageDomainValidator sdValidator = getStorageDomainValidator();
+        if ( !validate(storageDomainToPoolRelationValidator.isStorageDomainFormatCorrectForDC()) || !validate(sdValidator.isStorageFormatCompatibleWithDomain()) ) {
             return false;
         }
         return canAddDomain();
@@ -197,22 +197,6 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         }
     }
 
-    private boolean isStorageFormatSupportedByStoragePool() {
-        StorageFormatType storageFormat = getStorageDomain().getStorageFormat();
-        StoragePool targetStoragePool = getTargetStoragePool();
-
-        // No reason to check supported storage format if we don't have a pool, the storage format will be validated
-        // upon the future attachment of the the created domain to a pool
-        if (targetStoragePool == null) {
-            return true;
-        }
-
-        Set<StorageFormatType> supportedStorageFormats =
-                getSupportedStorageFormatSet(targetStoragePool.getcompatibility_version());
-        return supportedStorageFormats.contains(storageFormat);
-
-    }
-
     private StoragePool getTargetStoragePool() {
         StoragePool targetStoragePool = getStoragePool();
 
@@ -220,24 +204,6 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
             targetStoragePool = getStoragePoolDAO().get(getVds().getStoragePoolId());
         }
         return targetStoragePool;
-    }
-
-    private boolean isStorageFormatCompatibleWithDomain() {
-        StorageFormatType storageFormat = getStorageDomain().getStorageFormat();
-        StorageType storageType = getStorageDomain().getStorageType();
-        StorageDomainType storageDomainFunction = getStorageDomain().getStorageDomainType();
-
-        // V2 is applicable only for block data storage domains
-        if (storageFormat == StorageFormatType.V2) {
-            return storageDomainFunction.isDataDomain() && storageType.isBlockDomain();
-        }
-
-        // V3 is applicable only for data storage domains
-        if (storageFormat == StorageFormatType.V3) {
-            return storageDomainFunction.isDataDomain();
-        }
-
-        return true;
     }
 
     protected String getStorageArgs() {
@@ -262,5 +228,13 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
+    }
+
+    public StorageDomainToPoolRelationValidator getAttachDomainValidator() {
+        return new StorageDomainToPoolRelationValidator(getStorageDomain().getStorageStaticData(), getTargetStoragePool());
+    }
+
+    public StorageDomainValidator getStorageDomainValidator() {
+        return new StorageDomainValidator(getStorageDomain());
     }
 }

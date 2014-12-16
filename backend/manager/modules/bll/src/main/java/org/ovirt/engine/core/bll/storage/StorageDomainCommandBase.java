@@ -182,11 +182,6 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         return returnValue;
     }
 
-    protected boolean checkStorageDomainNotInPool() {
-        return isStorageDomainNotInPool(getStorageDomain());
-    }
-
-
     protected boolean checkMasterDomainIsUp() {
         boolean returnValue = true;
         List<StorageDomain> storageDomains = getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());

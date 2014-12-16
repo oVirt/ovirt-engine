@@ -17,10 +17,12 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.bll.CommandAssertUtils;
+import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -30,6 +32,7 @@ import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandPar
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
@@ -86,6 +89,9 @@ public class RemoveStorageDomainCommandTest {
         doReturn(vdsDAOMock).when(command).getVdsDAO();
         doReturn(vds).when(vdsDAOMock).get(vdsID);
 
+        StorageDomainToPoolRelationValidatorTesting domainToPoolValidator = spy(new StorageDomainToPoolRelationValidatorTesting(storageDomain, null));
+        doReturn(storagePoolIsoMapDAOMock).when(domainToPoolValidator).getStoragePoolIsoMapDao();
+        doReturn(domainToPoolValidator).when(command).createDomainToPoolValidator(storageDomain);
     }
 
     @Test
@@ -154,5 +160,16 @@ public class RemoveStorageDomainCommandTest {
         ret.setSucceeded(!shouldFail);
         doReturn(ret).when(command).runVdsCommand
                 (eq(VDSCommandType.FormatStorageDomain), any(FormatStorageDomainVDSCommandParameters.class));
+    }
+
+    protected class StorageDomainToPoolRelationValidatorTesting extends StorageDomainToPoolRelationValidator {
+        public StorageDomainToPoolRelationValidatorTesting(StorageDomain domain,
+                StoragePool pool) {
+            super(domain.getStorageStaticData(), pool);
+        }
+
+        public StoragePoolIsoMapDAO getStoragePoolIsoMapDao() {
+            return DbFacade.getInstance().getStoragePoolIsoMapDao();
+        }
     }
 }

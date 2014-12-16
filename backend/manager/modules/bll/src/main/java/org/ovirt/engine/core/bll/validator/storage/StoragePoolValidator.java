@@ -24,34 +24,6 @@ public class StoragePoolValidator {
         this.storagePool = storagePool;
     }
 
-    /**
-     * Checks that the DC compatibility version supports Posix domains.
-     * In case there is mismatch, a proper canDoAction message will be added
-     *
-     * @return The result of the validation
-     */
-    public ValidationResult isPosixSupportedInDC() {
-        if (!storagePool.isLocal() &&
-                !Config.<Boolean> getValue(ConfigValues.PosixStorageEnabled, storagePool.getcompatibility_version().toString())) {
-            return new ValidationResult(VdcBllMessages.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
-        }
-        return ValidationResult.VALID;
-    }
-
-    /**
-     * Checks that the DC compatibility version supports Gluster domains.
-     * In case there is mismatch, a proper canDoAction message will be added
-     *
-     * @return true if the version matches
-     */
-    public ValidationResult isGlusterSupportedInDC() {
-        if (!storagePool.isLocal() &&
-                !Config.<Boolean> getValue(ConfigValues.GlusterFsStorageEnabled, storagePool.getcompatibility_version().toString())) {
-            return new ValidationResult(VdcBllMessages.DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
-        }
-        return ValidationResult.VALID;
-    }
-
     protected VdsGroupDAO getVdsGroupDao() {
         return DbFacade.getInstance().getVdsGroupDao();
     }
