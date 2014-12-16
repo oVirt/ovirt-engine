@@ -406,6 +406,13 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         return graphicsInfos;
     }
 
+    /*
+     * DON'T use this setter. It's here only for serizalization.
+     */
+    public void setGraphicsInfos(Map<GraphicsType, GraphicsInfo> graphicsInfos) {
+        this.graphicsInfos = graphicsInfos;
+    }
+
     public Boolean getAcpiEnable() {
         return this.acpiEnabled;
     }

@@ -396,9 +396,15 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         vmStatic.setDefaultDisplayType(value);
     }
 
-    @JsonIgnore
     public Map<GraphicsType, GraphicsInfo> getGraphicsInfos() {
         return vmDynamic.getGraphicsInfos();
+    }
+
+    /*
+     * DON'T use this setter. It's here only for serizalization.
+     */
+    public void setGraphicsInfos(Map<GraphicsType, GraphicsInfo> graphicsInfos) {
+        vmDynamic.setGraphicsInfos(graphicsInfos);
     }
 
     public int getPriority() {
