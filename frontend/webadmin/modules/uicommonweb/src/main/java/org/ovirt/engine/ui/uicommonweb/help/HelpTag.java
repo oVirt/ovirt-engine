@@ -216,7 +216,7 @@ public enum HelpTag {
 
     import_networks("import_networks", HelpTagType.WEBADMIN, "[Neutron integration?] 'Networks' main tab -> 'Import Networks' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    import_pre_configured_domain("import_pre_configured_domain", HelpTagType.WEBADMIN), //$NON-NLS-1$
+    import_pre_configured_domain("import_pre_configured_domain", HelpTagType.WEBADMIN, "Storage Tab > Import Domain"), //$NON-NLS-1$ //$NON-NLS-2$
 
     import_provider_certificate("import_provider_certificate", HelpTagType.WEBADMIN, "Provider main tab -> Add/Edit Provider dialog -> confirmation dialog on importing a provider certificate:"), //$NON-NLS-1$ //$NON-NLS-2$
 
