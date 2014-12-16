@@ -164,8 +164,8 @@
             <null />
             <null />
             <null />
-            <value></value>
-            <value></value>
+            <null />
+            <null />
             <value>1</value>
             <value></value>
             <value>nfs</value>
@@ -179,8 +179,8 @@
             <null />
             <null />
             <null />
-            <value></value>
-            <value></value>
+            <null />
+            <null />
             <value>2</value>
             <value></value>
             <value>nfs</value>
@@ -194,8 +194,8 @@
             <null />
             <null />
             <null />
-            <value></value>
-            <value></value>
+            <null />
+            <null />
             <value>1</value>
             <value></value>
             <value>nfs</value>
@@ -208,8 +208,8 @@
             <value>10.35.64.25:/export/share</value>
             <null />
             <null />
-            <value></value>
-            <value></value>
+            <value>iqn</value>
+            <null />
             <value>1</value>
             <value>3</value>
             <value>rw</value>

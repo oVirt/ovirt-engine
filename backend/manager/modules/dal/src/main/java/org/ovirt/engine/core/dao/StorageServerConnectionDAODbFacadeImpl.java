@@ -103,6 +103,9 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
     @Override
     public List<StorageServerConnections> getAllForConnection(
             StorageServerConnections connection) {
+        // NOTE - any change to this stored procedure parameters should require a change in
+        // the StorageServerConnections class, as those fields can be set only with null or a
+        // actual value (empty string can't be used).
         return getCallsHandler().executeReadList("Getstorage_server_connectionsByKey",
                 mapper,
                 getCustomMapSqlParameterSource()
@@ -110,8 +113,7 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
                         .addValue("connection", connection.getconnection())
                         .addValue("port", connection.getport())
                         .addValue("portal", connection.getportal())
-                        .addValue("username", connection.getuser_name())
-                        .addValue("password", DbFacadeUtils.encryptPassword(connection.getpassword())));
+                        .addValue("username", connection.getuser_name()));
     }
 
     @Override

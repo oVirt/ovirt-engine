@@ -250,6 +250,69 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
         assertEquals(SERVER_CONNECTION_COUNT_FOR_SPECIFIC_STORAGE, result.size());
     }
 
+
+    @Test
+    public void getAllForForConnection() {
+        StorageServerConnections conn = dao.get(existingConnection.getid());
+        conn.setid("copy");
+        dao.save(conn);
+        assertGetAllForConnectionResult(Arrays.asList(existingConnection, conn), existingConnection);
+    }
+
+
+    @Test
+    public void getAllForForConnectionWithNullValues() {
+        StorageServerConnections noNullValConnection =
+                createConnection("id1", "connection", null, "username", "password", "portal", "port");
+        StorageServerConnections noNullValConnection2 =
+                createConnection("id11", "connection", null, "username", "password", "portal", "port");
+        assertGetAllForConnectionResult(Arrays.asList(noNullValConnection, noNullValConnection2), noNullValConnection);
+
+        noNullValConnection = createConnection("id2", "connection", "iqn", null, "password", "portal", "port");
+        noNullValConnection2 = createConnection("id12", "connection", "iqn", null, "password", "portal", "port");
+        assertGetAllForConnectionResult(Arrays.asList(noNullValConnection, noNullValConnection2), noNullValConnection);
+
+        // testing with different passwords to see that it's not being considered as part of the stored procedure.
+        noNullValConnection = createConnection("id3", "connection", "iqn", "username", "pass1", "portal", "port");
+        noNullValConnection2 = createConnection("id13", "connection", "iqn", "username", "pass2", "portal", "port");
+        assertGetAllForConnectionResult(Arrays.asList(noNullValConnection, noNullValConnection2), noNullValConnection);
+
+        noNullValConnection = createConnection("id4", "connection", "iqn", "username", "password", null, "port");
+        noNullValConnection2 = createConnection("id14", "connection", "iqn", "username", "password", null, "port");
+        assertGetAllForConnectionResult(Arrays.asList(noNullValConnection, noNullValConnection2), noNullValConnection);
+
+        noNullValConnection = createConnection("id5", "connection", "iqn", "username", "password", "portal", null);
+        noNullValConnection2 = createConnection("id15", "connection", "iqn", "username", "password", "portal", null);
+        assertGetAllForConnectionResult(Arrays.asList(noNullValConnection, noNullValConnection2), noNullValConnection);
+
+        noNullValConnection = createConnection("id6", "b", null, null, null, null, null);
+        noNullValConnection2 = createConnection("id16", "b", null, null, null, null, null);
+        assertGetAllForConnectionResult(Arrays.asList(noNullValConnection, noNullValConnection2), noNullValConnection);
+    }
+
+    private StorageServerConnections createConnection(String id,
+            String connection,
+            String iqn,
+            String username,
+            String password,
+            String portal,
+            String port) {
+        StorageServerConnections newConn = new StorageServerConnections();
+        newConn.setid(id);
+        newConn.setconnection(connection);
+        newConn.setiqn(iqn);
+        newConn.setportal(portal);
+        newConn.setport(port);
+        newConn.setuser_name(username);
+        newConn.setpassword(password);
+        dao.save(newConn);
+        return newConn;
+    }
+
+    private void assertGetAllForConnectionResult(List<StorageServerConnections> expected, StorageServerConnections forQuery) {
+        assertTrue(CollectionUtils.disjunction(expected, dao.getAllForConnection(forQuery)).isEmpty());
+    }
+
     /**
      * Ensures saving a connection works as expected.
      */
