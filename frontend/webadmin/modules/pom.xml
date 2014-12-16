@@ -40,6 +40,8 @@
     <aspectj.agent>-javaagent:${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar</aspectj.agent>
     <!-- Control verbosity of GWT compiler -->
     <gwt.logLevel>INFO</gwt.logLevel>
+    <!-- Default GWT logging level used at runtime -->
+    <gwt.runtimeLogLevel>INFO</gwt.runtimeLogLevel>
     <!-- Regular expression that matches types that GWT compiler shouldn't prune (avoid dead code optimization) -->
     <gwt.dontPrune>-Dgwt.dontPrune=org\.ovirt\.engine\.core\.(common|compat)\..*</gwt.dontPrune>
     <!-- Custom JVM arguments for GWT compiler and Dev Mode -->

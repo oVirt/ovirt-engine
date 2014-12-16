@@ -1,12 +1,13 @@
 package org.ovirt.engine.ui.common.gin;
 
-import com.gwtplatform.common.client.CommonGinModule;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.LoggedInGatekeeper;
+import org.ovirt.engine.ui.common.logging.ClientLogProvider;
+import org.ovirt.engine.ui.common.logging.LocalStorageLogHandler;
 import org.ovirt.engine.ui.common.restapi.RestApiSessionManager;
 import org.ovirt.engine.ui.common.system.ApplicationFocusManager;
 import org.ovirt.engine.ui.common.system.AsyncCallFailureHandler;
@@ -43,9 +44,10 @@ import com.google.gwt.user.client.rpc.XsrfTokenService;
 import com.google.gwt.user.client.rpc.XsrfTokenServiceAsync;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.gwtplatform.common.client.CommonGinModule;
 import com.gwtplatform.mvp.client.RootPresenter;
-import com.gwtplatform.mvp.shared.proxy.ParameterTokenFormatter;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.shared.proxy.ParameterTokenFormatter;
 import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 
 /**
@@ -69,6 +71,7 @@ public abstract class BaseSystemModule extends AbstractGinModule {
         bind(ClientStorage.class).to(ClientStorageImpl.class).in(Singleton.class);
         bind(ApplicationFocusManager.class).asEagerSingleton();
         bind(LockInteractionManager.class).asEagerSingleton();
+        bindTypeAndImplAsSingleton(ClientLogProvider.class, LocalStorageLogHandler.class);
         requestStaticInjection(AssetProvider.class);
     }
 

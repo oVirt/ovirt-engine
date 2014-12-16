@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.common.system;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -8,8 +11,10 @@ import org.ovirt.engine.ui.common.auth.AutoLoginData;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.CurrentUser.LogoutHandler;
 import org.ovirt.engine.ui.common.auth.SSOTokenData;
+import org.ovirt.engine.ui.common.logging.LocalStorageLogHandler;
 import org.ovirt.engine.ui.common.restapi.EngineSessionTimeoutData;
 import org.ovirt.engine.ui.common.restapi.RestApiSessionManager;
+import org.ovirt.engine.ui.common.system.ApplicationFocusChangeEvent.ApplicationFocusChangeHandler;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -20,12 +25,13 @@ import org.ovirt.engine.ui.frontend.communication.SSOTokenChangeEvent;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
-import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.GWT.UncaughtExceptionHandler;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
@@ -55,7 +61,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
     private final Provider<T> loginModelProvider;
 
     private final LockInteractionManager lockInteractionManager;
-    private final Provider<CommonModel> commonModelProvider;
+    private final LocalStorageLogHandler localStorageLogHandler;
 
     public BaseApplicationInit(ITypeResolver typeResolver,
             FrontendEventsHandlerImpl frontendEventsHandler,
@@ -63,10 +69,9 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
             CurrentUser user, EventBus eventBus,
             Provider<T> loginModelProvider,
             LockInteractionManager lockInteractionManager,
+            LocalStorageLogHandler localStorageLogHandler,
             Frontend frontend, CurrentUserRole currentUserRole,
-            Provider<CommonModel> commonModelProvider,
             RestApiSessionManager restApiSessionManager) {
-        this.commonModelProvider = commonModelProvider;
         this.typeResolver = typeResolver;
         this.frontendEventsHandler = frontendEventsHandler;
         this.frontendFailureEventListener = frontendFailureEventListener;
@@ -74,13 +79,64 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         this.eventBus = eventBus;
         this.loginModelProvider = loginModelProvider;
         this.lockInteractionManager = lockInteractionManager;
+        this.localStorageLogHandler = localStorageLogHandler;
         this.frontend = frontend;
         this.currentUserRole = currentUserRole;
         this.restApiSessionManager = restApiSessionManager;
     }
 
     @Override
-    public void onBootstrap() {
+    public final void onBootstrap() {
+        Logger rootLogger = Logger.getLogger(""); //$NON-NLS-1$
+        initLocalStorageLogHandler(rootLogger);
+        initUncaughtExceptionHandler(rootLogger);
+
+        // Perform actual bootstrap via deferred command to ensure that
+        // UncaughtExceptionHandler is effective during the bootstrap
+        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+            @Override
+            public void execute() {
+                performBootstrap();
+            }
+        });
+    }
+
+    void initLocalStorageLogHandler(Logger rootLogger) {
+        // Configure and attach LocalStorageLogHandler
+        localStorageLogHandler.init();
+        rootLogger.addHandler(localStorageLogHandler);
+
+        // Enable/disable LocalStorageLogHandler when the application window gains/looses its focus
+        eventBus.addHandler(ApplicationFocusChangeEvent.getType(), new ApplicationFocusChangeHandler() {
+            @Override
+            public void onApplicationFocusChange(ApplicationFocusChangeEvent event) {
+                localStorageLogHandler.setActive(event.isInFocus());
+            }
+        });
+    }
+
+    void initUncaughtExceptionHandler(final Logger rootLogger) {
+        // Prevent uncaught exceptions from escaping application code
+        GWT.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+            @Override
+            public void onUncaughtException(Throwable t) {
+                rootLogger.log(Level.SEVERE, "Uncaught exception: ", t); //$NON-NLS-1$
+            }
+        });
+    }
+
+    /**
+     * Actual initialization logic that bootstraps the application.
+     * <p>
+     * Subclasses must override this method to initiate GWTP place transition via {@code PlaceManager},
+     * for example:
+     * <pre>
+     * super.performBootstrap(); // Common initialization (mandatory)
+     * performCustomBootstrap(); // Custom initialization (optional)
+     * placeManager.revealCurrentPlace(); // Initiate place transition
+     * </pre>
+     */
+    protected void performBootstrap() {
         // Handle UI logout requests
         user.setLogoutHandler(this);
 
@@ -118,14 +174,12 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
             }
         });
 
-        loginModel.getCreateInstanceOnly().getEntityChangedEvent().addListener(
-                new IEventListener<EventArgs>() {
-                    @Override
-                    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                        currentUserRole.setCreateInstanceOnly(loginModel.getCreateInstanceOnly().getEntity() );
-                    }
-                }
-        );
+        loginModel.getCreateInstanceOnly().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                currentUserRole.setCreateInstanceOnly(loginModel.getCreateInstanceOnly().getEntity() );
+            }
+        });
     }
 
     /**
@@ -165,12 +219,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         loginModel.getPassword().setEntity(null);
     }
 
-    protected void updateReportsAvailability() {
-        commonModelProvider.get().updateReportsAvailability();
-    }
-
     /**
-     * <p>
      * Invoked right after the user has logged in successfully on backend, before proceeding with UI login sequence.
      */
     protected abstract void beforeLogin(T loginModel);
@@ -247,6 +296,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         });
 
         SSOTokenChangeEvent.fire(eventBus, SSOTokenData.instance().getToken());
+
         // Indicate that the user should be logged in automatically
         user.setAutoLogin(true);
 

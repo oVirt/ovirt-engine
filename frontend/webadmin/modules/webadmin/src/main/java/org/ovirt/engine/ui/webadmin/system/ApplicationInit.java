@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.webadmin.system;
 
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
+import org.ovirt.engine.ui.common.logging.LocalStorageLogHandler;
+import org.ovirt.engine.ui.common.restapi.RestApiSessionManager;
 import org.ovirt.engine.ui.common.system.BaseApplicationInit;
 import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
@@ -17,7 +19,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
-import org.ovirt.engine.ui.common.restapi.RestApiSessionManager;
 import org.ovirt.engine.ui.webadmin.uimode.UiModeData;
 
 import com.google.gwt.event.shared.EventBus;
@@ -31,6 +32,8 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
     private final PlaceManager placeManager;
     private final ApplicationDynamicMessages dynamicMessages;
 
+    private final Provider<CommonModel> commonModelProvider;
+
     @Inject
     public ApplicationInit(ITypeResolver typeResolver,
             FrontendEventsHandlerImpl frontendEventsHandler,
@@ -39,21 +42,24 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
             EventBus eventBus,
             Provider<LoginModel> loginModelProvider,
             LockInteractionManager lockInteractionManager,
+            LocalStorageLogHandler localStorageLogHandler,
             Frontend frontend,
             PlaceManager placeManager,
             RestApiSessionManager restApiSessionManager,
             ApplicationDynamicMessages dynamicMessages,
-            CurrentUserRole currentUserRole, Provider<CommonModel> commonModelProvider) {
+            CurrentUserRole currentUserRole,
+            Provider<CommonModel> commonModelProvider) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener,
-                user, eventBus, loginModelProvider, lockInteractionManager, frontend, currentUserRole,
-                commonModelProvider, restApiSessionManager);
+                user, eventBus, loginModelProvider, lockInteractionManager,
+                localStorageLogHandler, frontend, currentUserRole, restApiSessionManager);
         this.placeManager = placeManager;
         this.dynamicMessages = dynamicMessages;
+        this.commonModelProvider = commonModelProvider;
     }
 
     @Override
-    public void onBootstrap() {
-        super.onBootstrap();
+    protected void performBootstrap() {
+        super.performBootstrap();
         Window.setTitle(dynamicMessages.applicationTitle());
 
         // Check for ApplicationMode configuration
@@ -86,7 +92,7 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
         ReportInit.getInstance().getReportsInitEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                updateReportsAvailability();
+                commonModelProvider.get().updateReportsAvailability();
             }
         });
 

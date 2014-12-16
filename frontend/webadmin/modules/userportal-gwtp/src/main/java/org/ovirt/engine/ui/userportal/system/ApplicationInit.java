@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.userportal.system;
 
 import org.ovirt.engine.ui.common.auth.CurrentUser;
+import org.ovirt.engine.ui.common.logging.LocalStorageLogHandler;
 import org.ovirt.engine.ui.common.restapi.RestApiSessionManager;
 import org.ovirt.engine.ui.common.system.BaseApplicationInit;
 import org.ovirt.engine.ui.common.system.LockInteractionManager;
-import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -16,7 +16,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.userportal.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.userportal.auth.UserPortalCurrentUserRole;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
-import org.ovirt.engine.ui.userportal.utils.ConnectAutomaticallyManager;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.Window;
@@ -28,8 +27,6 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
 
     private final PlaceManager placeManager;
     private final UserPortalCurrentUserRole userRole;
-    private final ConnectAutomaticallyManager connectAutomaticallyManager;
-    private final ClientAgentType clientAgentType;
     private final ApplicationDynamicMessages dynamicMessages;
 
     @Inject
@@ -40,25 +37,23 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
             EventBus eventBus,
             Provider<UserPortalLoginModel> loginModelProvider,
             LockInteractionManager lockInteractionManager,
+            LocalStorageLogHandler localStorageLogHandler,
             Frontend frontend,
             PlaceManager placeManager,
             UserPortalCurrentUserRole userRole,
-            ConnectAutomaticallyManager connectAutomaticallyManager,
-            ClientAgentType clientAgentType,
             ApplicationDynamicMessages dynamicMessages,
             RestApiSessionManager restApiSessionManager) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener,
-                user, eventBus, loginModelProvider, lockInteractionManager, frontend, userRole, null, restApiSessionManager);
+                user, eventBus, loginModelProvider, lockInteractionManager,
+                localStorageLogHandler, frontend, userRole, restApiSessionManager);
         this.placeManager = placeManager;
         this.userRole = userRole;
-        this.connectAutomaticallyManager = connectAutomaticallyManager;
-        this.clientAgentType = clientAgentType;
         this.dynamicMessages = dynamicMessages;
     }
 
     @Override
-    public void onBootstrap() {
-        super.onBootstrap();
+    protected void performBootstrap() {
+        super.performBootstrap();
         Window.setTitle(dynamicMessages.applicationTitle());
 
         // Initiate transition to requested application place

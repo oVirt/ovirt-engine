@@ -9,13 +9,10 @@
     <!-- Inherit the default GWT theme -->
     <inherits name="com.google.gwt.user.theme.standard.Standard" />
 
-    <!-- Inherit GWT logging module and configure it -->
-    <inherits name="com.google.gwt.logging.Logging" />
-    <set-property name="gwt.logging.enabled" value="TRUE" />
-    <set-property name="gwt.logging.logLevel" value="INFO" />
-    <set-property name="gwt.logging.popupHandler" value="DISABLED" />
+    <!-- Configure GWT logging level -->
+    <set-property name="gwt.logging.logLevel" value="${gwt.runtimeLogLevel}" />
 
-    <!-- Supported browsers (defined via maven property) -->
+    <!-- Supported browsers -->
     <set-property name="user.agent" value="${gwt.userAgent}" />
 
     <!-- GWTP GIN configuration -->
@@ -37,7 +34,7 @@
     <!-- Allow user agent locale information to determine the locale -->
     <set-configuration-property name="locale.useragent" value="Y" />
 
-    <!-- Supported locales (defined via maven property) -->
+    <!-- Supported locales -->
     <extend-property name="locale" values="en_US,es_ES,fr_FR,ja_JP,pt_BR,zh_CN,de_DE,ko_KR" />
     <set-property name="locale" value="${gwt.locale}" />
     <set-property-fallback name="locale" value="en_US" />

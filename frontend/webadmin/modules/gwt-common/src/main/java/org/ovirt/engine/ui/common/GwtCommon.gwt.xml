@@ -22,6 +22,19 @@
     <inherits name="org.ovirt.engine.ui.UICommonWeb" />
     <inherits name="com.google.gwt.rpc.RPC" />
 
+    <!-- Inherit GWT logging module -->
+    <inherits name="com.google.gwt.logging.Logging" />
+    <set-property name="gwt.logging.enabled" value="TRUE" />
+
+    <!-- Configure default GWT log handlers -->
+    <set-property name="gwt.logging.consoleHandler" value="ENABLED" />
+    <set-property name="gwt.logging.developmentModeHandler" value="ENABLED" />
+    <set-property name="gwt.logging.systemHandler" value="ENABLED" />
+    <set-property name="gwt.logging.firebugHandler" value="DISABLED" />
+    <set-property name="gwt.logging.hasWidgetsHandler" value="DISABLED" />
+    <set-property name="gwt.logging.popupHandler" value="DISABLED" />
+    <set-property name="gwt.logging.simpleRemoteHandler" value="DISABLED" />
+
     <!-- All source code within this module is translatable -->
     <source path="">
         <!-- Except deferred binding classes -->
