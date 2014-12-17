@@ -1356,6 +1356,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Allow to access image domain")
     String allowAccessImageDomainRoleTreeTooltip();
 
+    @DefaultStringValue("Allow to attach Disk Profile to a Disk")
+    String allowToAttachDiskProfile();
+
     @DefaultStringValue("No")
     String noAlerts();
 
@@ -1554,6 +1557,15 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("VM Pool")
     String vmPoolRoleTree();
+
+    @DefaultStringValue("Disk Profile")
+    String attachDiskProfileRoleTree();
+
+    @DefaultStringValue("Note: Permissions containing these operations should be associated with Disk Profile or Storage Domain Object (or above)")
+    String notePermissionsContainingDiskProfileOperationsRoleTreeTooltip();
+
+    @DefaultStringValue("Allow to attach Disk Profile to a Disk")
+    String allowToAttachDiskProfileToDiskRoleTreeTooltip();
 
     // Error
     @DefaultStringValue("This Network does not exist in the Cluster")

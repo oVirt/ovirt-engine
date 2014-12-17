@@ -3203,6 +3203,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Cannot remove last Disk profile in Storage Domain.")
     String ACTION_TYPE_CANNOT_REMOVE_LAST_DISK_PROFILE_IN_STORAGE_DOMAIN();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The user doesn't have permissions to attach Disk Profile to the Disk.")
+    String USER_NOT_AUTHORIZED_TO_ATTACH_DISK_PROFILE();
+
     @DefaultStringValue("Cannot ${action}. New disk size cannot be smaller than the current.")
     String ACTION_TYPE_FAILED_REQUESTED_DISK_SIZE_IS_TOO_SMALL();
 

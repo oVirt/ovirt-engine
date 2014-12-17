@@ -99,21 +99,29 @@ public class RoleTreeView
 
     protected static RoleNode createDiskRoleTree() {
         return new RoleNode(getConstants().diskRoleTree(),
-                new RoleNode[] { new RoleNode(getConstants().provisioningOperationsRoleTree(),
-                        getConstants().notePermissionsContainingOperationsRoleTreeTooltip(),
-                        new RoleNode[] {
-                                new RoleNode(ActionGroup.CREATE_DISK, getConstants().allowToCreateDiskRoleTreeTooltip()),
-                                new RoleNode(ActionGroup.DELETE_DISK, getConstants().allowToDeleteDiskRoleTreeTooltip()),
-                                new RoleNode(ActionGroup.CONFIGURE_DISK_STORAGE,
-                                        getConstants().allowToMoveDiskToAnotherStorageDomainRoleTreeTooltip()),
-                                new RoleNode(ActionGroup.ATTACH_DISK,
-                                        getConstants().allowToAttachDiskToVmRoleTreeTooltip()),
-                                new RoleNode(ActionGroup.EDIT_DISK_PROPERTIES,
-                                        getConstants().allowToChangePropertiesOfTheDiskRoleTreeTooltip()),
-                                new RoleNode(ActionGroup.CONFIGURE_SCSI_GENERIC_IO,
-                                        getConstants().allowToChangeSGIORoleTreeTooltip()),
-                                new RoleNode(ActionGroup.ACCESS_IMAGE_STORAGE,
-                                        getConstants().allowAccessImageDomainRoleTreeTooltip()) }) });
+                new RoleNode[] {
+                        new RoleNode(getConstants().provisioningOperationsRoleTree(),
+                                getConstants().notePermissionsContainingOperationsRoleTreeTooltip(),
+                                new RoleNode[] {
+                                        new RoleNode(ActionGroup.CREATE_DISK,
+                                                getConstants().allowToCreateDiskRoleTreeTooltip()),
+                                        new RoleNode(ActionGroup.DELETE_DISK,
+                                                getConstants().allowToDeleteDiskRoleTreeTooltip()),
+                                        new RoleNode(ActionGroup.CONFIGURE_DISK_STORAGE,
+                                                getConstants().allowToMoveDiskToAnotherStorageDomainRoleTreeTooltip()),
+                                        new RoleNode(ActionGroup.ATTACH_DISK,
+                                                getConstants().allowToAttachDiskToVmRoleTreeTooltip()),
+                                        new RoleNode(ActionGroup.EDIT_DISK_PROPERTIES,
+                                                getConstants().allowToChangePropertiesOfTheDiskRoleTreeTooltip()),
+                                        new RoleNode(ActionGroup.CONFIGURE_SCSI_GENERIC_IO,
+                                                getConstants().allowToChangeSGIORoleTreeTooltip()),
+                                        new RoleNode(ActionGroup.ACCESS_IMAGE_STORAGE,
+                                                getConstants().allowAccessImageDomainRoleTreeTooltip()) }),
+                        new RoleNode(getConstants().attachDiskProfileRoleTree(),
+                                getConstants().notePermissionsContainingDiskProfileOperationsRoleTreeTooltip(),
+                                new RoleNode[] {
+                                        new RoleNode(ActionGroup.ATTACH_DISK_PROFILE,
+                                                getConstants().allowToAttachDiskProfileToDiskRoleTreeTooltip()) }) });
     }
 
     protected static RoleNode createVmPoolRoleTree() {

@@ -5002,6 +5002,15 @@
             <value>true</value>
             <value>1</value>
         </row>
+        <row>
+            <value>def00020-0000-0000-0000-abc000000010</value>
+            <value>profile_user_role</value>
+            <null />
+            <value>0</value>
+            <value>2</value>
+            <value>true</value>
+            <value>1</value>
+        </row>
     </table>
 
     <table name="roles_groups">
@@ -5158,6 +5167,20 @@
             <value>9bf7c640-b620-456f-a550-0348f366544b</value>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a37</value>
             <value>19</value>
+        </row>
+        <row>
+            <value>2d2f2522-afd2-4964-a3b1-001cca295e47</value>
+            <value>def00020-0000-0000-0000-abc000000010</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544b</value>
+            <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
+            <value>29</value>
+        </row>
+        <row>
+            <value>2d2f2522-afd2-4964-a3b1-001cca295e48</value>
+            <value>def00020-0000-0000-0000-abc000000010</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544b</value>
+            <value>a667da39-27b0-47ec-a5fa-d4293a62b222</value>
+            <value>29</value>
         </row>
     </table>
 

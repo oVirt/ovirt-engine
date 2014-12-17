@@ -650,7 +650,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 map.put(diskImage, diskImage.getStorageIds().get(0));
             }
             return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
-                    getStoragePool().getCompatibilityVersion()));
+                    getStoragePool().getCompatibilityVersion(), getCurrentUser()));
         }
         return true;
     }

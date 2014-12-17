@@ -1214,7 +1214,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 }
             }
             return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
-                    getStoragePool().getCompatibilityVersion()));
+                    getStoragePool().getCompatibilityVersion(), getCurrentUser()));
         }
         return true;
     }

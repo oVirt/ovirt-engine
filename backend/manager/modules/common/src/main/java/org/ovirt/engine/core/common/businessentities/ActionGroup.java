@@ -141,13 +141,13 @@ public enum ActionGroup {
     CONFIGURE_STORAGE_DISK_PROFILE(1560, RoleType.ADMIN, true, ApplicationMode.VirtOnly),
     CREATE_STORAGE_DISK_PROFILE(1561, RoleType.ADMIN, true, ApplicationMode.VirtOnly),
     DELETE_STORAGE_DISK_PROFILE(1562, RoleType.ADMIN, true, ApplicationMode.VirtOnly),
+    ATTACH_DISK_PROFILE(1563, RoleType.USER, true, ApplicationMode.VirtOnly),
 
     // MAC pool actions groups
     CREATE_MAC_POOL(1660, RoleType.ADMIN, true, ApplicationMode.VirtOnly),
     EDIT_MAC_POOL(1661, RoleType.ADMIN, true, ApplicationMode.VirtOnly),
     DELETE_MAC_POOL(1662, RoleType.ADMIN, true, ApplicationMode.VirtOnly),
     CONFIGURE_MAC_POOL(1663, RoleType.ADMIN, true, ApplicationMode.VirtOnly);
-
 
     private int id;
     private RoleType roleType;

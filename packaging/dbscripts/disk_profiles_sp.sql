@@ -87,8 +87,8 @@ BEGIN
    FROM disk_profiles
    WHERE storage_domain_id = v_storage_domain_id
       AND (NOT v_is_filtered OR EXISTS (SELECT 1
-                                     FROM   user_storage_domain_permissions_view
-                                     WHERE  user_id = v_user_id AND entity_id = v_storage_domain_id));
+                                     FROM   user_disk_profile_permissions_view
+                                     WHERE  user_id = v_user_id AND entity_id = disk_profiles.id));
 
 END; $procedure$
 LANGUAGE plpgsql;

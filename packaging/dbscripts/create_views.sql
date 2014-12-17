@@ -1741,6 +1741,20 @@ SELECT       DISTINCT entity_id, user_id
 FROM         user_network_permissions_view_base
 NATURAL JOIN engine_session_user_flat_groups;
 
+-- Permissions on disk profiles
+-- The user has permissions on the disk profile directly
+CREATE OR REPLACE VIEW user_disk_profile_permissions_view_base (entity_id, granted_id)
+AS
+SELECT     object_id, ad_element_id
+FROM       internal_permissions_view
+WHERE      object_type_id = 29 AND role_type = 2;
+
+CREATE OR REPLACE VIEW user_disk_profile_permissions_view (entity_id, user_id)
+AS
+SELECT       DISTINCT entity_id, user_id
+FROM         user_disk_profile_permissions_view_base
+NATURAL JOIN engine_session_user_flat_groups;
+
 CREATE OR REPLACE VIEW gluster_volumes_view
 AS
 SELECT gluster_volumes.*,

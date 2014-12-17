@@ -414,7 +414,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     protected boolean setAndValidateDiskProfiles() {
         getImage().setDiskProfileId(getParameters().getDiskProfileId());
         return validate(DiskProfileHelper.setAndValidateDiskProfiles(Collections.singletonMap(getImage(),
-                getParameters().getStorageDomainId()), getStoragePool().getCompatibilityVersion()));
+                getParameters().getStorageDomainId()), getStoragePool().getCompatibilityVersion(), getCurrentUser()));
     }
 
     @Override

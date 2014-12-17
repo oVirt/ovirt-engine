@@ -602,7 +602,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     protected boolean setAndValidateDiskProfiles() {
         return validate(DiskProfileHelper.setAndValidateDiskProfiles(Collections.singletonMap(getDiskImageInfo(),
-                getStorageDomainId()), getStoragePool().getCompatibilityVersion()));
+                getStorageDomainId()), getStoragePool().getCompatibilityVersion(), getCurrentUser()));
     }
 
     @Override

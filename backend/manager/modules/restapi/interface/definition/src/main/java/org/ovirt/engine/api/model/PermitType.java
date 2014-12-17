@@ -138,7 +138,8 @@ public enum PermitType {
     // disk profile
     CONFIGURE_STORAGE_DISK_PROFILE,
     CREATE_STORAGE_DISK_PROFILE,
-    DELETE_STORAGE_DISK_PROFILE;
+    DELETE_STORAGE_DISK_PROFILE,
+    ATTACH_DISK_PROFILE;
 
     private final ActionGroup actionGroup;
 

@@ -265,7 +265,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
             map.put(diskImage, diskImage.getStorageIds().get(0));
         }
         return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
-                getStoragePool().getCompatibilityVersion()));
+                getStoragePool().getCompatibilityVersion(), getCurrentUser()));
     }
 
     @Override
