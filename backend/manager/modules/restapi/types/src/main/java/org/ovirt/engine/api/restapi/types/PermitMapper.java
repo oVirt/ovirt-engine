@@ -198,6 +198,8 @@ public class PermitMapper {
             return PermitType.CONFIGURE_STORAGE_DISK_PROFILE;
         case DELETE_STORAGE_DISK_PROFILE:
             return PermitType.DELETE_STORAGE_DISK_PROFILE;
+        case ATTACH_DISK_PROFILE:
+            return PermitType.ATTACH_DISK_PROFILE;
         default:
             return null;
         }
@@ -360,6 +362,8 @@ public class PermitMapper {
             return ActionGroup.CONFIGURE_STORAGE_DISK_PROFILE;
         case DELETE_STORAGE_DISK_PROFILE:
             return ActionGroup.DELETE_STORAGE_DISK_PROFILE;
+        case ATTACH_DISK_PROFILE:
+            return ActionGroup.ATTACH_DISK_PROFILE;
         default:
             return null;
         }

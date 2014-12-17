@@ -93,7 +93,9 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
 
     protected boolean setAndValidateDiskProfiles() {
         return validate(DiskProfileHelper.setAndValidateDiskProfiles(Collections.singletonMap(getParameters().getDiskImage(),
-                getStorageDomainId()), getStoragePool().getcompatibility_version()));
+                getStorageDomainId()),
+                getStoragePool().getcompatibility_version(),
+                getCurrentUser()));
     }
 
     @Override

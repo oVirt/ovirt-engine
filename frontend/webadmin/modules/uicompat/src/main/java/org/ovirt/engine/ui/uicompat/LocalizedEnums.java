@@ -214,6 +214,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String ActionGroup___DELETE_STORAGE_DISK_PROFILE();
 
+    String ActionGroup___ATTACH_DISK_PROFILE();
+
     String EventNotificationEntity___Host();
 
     String EventNotificationEntity___VdsGroup();

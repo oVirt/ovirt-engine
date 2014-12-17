@@ -137,8 +137,8 @@ public enum ActionGroup {
     // disk profiles
     CONFIGURE_STORAGE_DISK_PROFILE(1560, RoleType.ADMIN, true, ApplicationMode.VirtOnly),
     CREATE_STORAGE_DISK_PROFILE(1561, RoleType.ADMIN, true, ApplicationMode.VirtOnly),
-    DELETE_STORAGE_DISK_PROFILE(1562, RoleType.ADMIN, true, ApplicationMode.VirtOnly);
-
+    DELETE_STORAGE_DISK_PROFILE(1562, RoleType.ADMIN, true, ApplicationMode.VirtOnly),
+    ATTACH_DISK_PROFILE(1563, RoleType.USER, true, ApplicationMode.VirtOnly);
 
     private int id;
     private RoleType roleType;

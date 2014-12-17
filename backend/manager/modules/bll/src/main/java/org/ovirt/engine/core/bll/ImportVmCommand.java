@@ -1340,7 +1340,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                 }
             }
             return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
-                    getStoragePool().getcompatibility_version()));
+                    getStoragePool().getcompatibility_version(), getCurrentUser()));
         }
         return true;
     }

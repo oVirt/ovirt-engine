@@ -586,10 +586,15 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     protected boolean setAndValidateDiskProfiles() {
         if (isDiskImage()) {
             DiskImage diskImage = (DiskImage) getNewDisk();
+            // when disk profile isn't updated, skip check.
+            if (diskImage.getDiskProfileId() != null
+                    && diskImage.getDiskProfileId().equals(((DiskImage) getOldDisk()).getDiskProfileId())) {
+                return true;
+            }
             Map<DiskImage, Guid> map = new HashMap<>();
             map.put(diskImage, diskImage.getStorageIds().get(0));
             return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
-                    getStoragePool().getcompatibility_version()));
+                    getStoragePool().getcompatibility_version(), getCurrentUser()));
         }
         return true;
     }
