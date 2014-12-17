@@ -8208,4 +8208,52 @@
          </row>
      </table>
 
+     <table name="storage_device">
+        <column>id</column>
+        <column>name</column>
+        <column>device_uuid</column>
+        <column>filesystem_uuid</column>
+        <column>vds_id</column>
+        <column>description</column>
+        <column>device_type</column>
+        <column>device_path</column>
+        <column>filesystem_type</column>
+        <column>mount_point</column>
+        <column>size</column>
+        <column>is_free</column>
+        <column>_create_date</column>
+        <column>_update_date</column>
+        <row>
+            <value>00000000-0000-0000-0000-000000000001</value>
+            <value>sda</value>
+            <null/>
+            <null/>
+            <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
+            <value>DELL PERC H310 (disk)</value>
+            <value>SCSI</value>
+            <value>/dev/sda</value>
+            <null/>
+            <null/>
+            <value>3814400</value>
+            <value>true</value>
+            <value>2015-02-10 14:49:55.806609+05:30 </value>
+            <value>2015-02-10 16:35:15.362494+05:30</value>
+        </row>
+        <row>
+            <value>00000000-0000-0000-0000-000000000002</value>
+            <value>sdb</value>
+            <null/>
+            <null/>
+            <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
+            <value>DELL PERC H310 (disk)</value>
+            <value>SCSI</value>
+            <value>/dev/sdb</value>
+            <null/>
+            <null/>
+            <value>34400</value>
+            <value>true</value>
+            <value>2015-02-10 14:49:55.806609+05:30 </value>
+            <value>2015-02-10 16:35:15.362494+05:30</value>
+        </row>
+     </table>
 </dataset>
