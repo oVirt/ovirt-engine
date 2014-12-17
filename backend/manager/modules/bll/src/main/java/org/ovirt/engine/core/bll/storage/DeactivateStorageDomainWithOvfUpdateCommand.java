@@ -66,7 +66,7 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
         }
 
         if (getReturnValue().getVdsmTaskIdList().isEmpty()) {
-            executeDeactivateCommnad(true);
+            executeDeactivateCommand(true);
         } else {
             setCommandShouldBeLogged(false);
         }
@@ -154,7 +154,7 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
         return AuditLogType.UNASSIGNED;
     }
 
-    private boolean executeDeactivateCommnad(boolean passContext) {
+    private boolean executeDeactivateCommand(boolean passContext) {
         final StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase(getStorageDomainId(), getStoragePoolId());
         params.setSkipChecks(true);
         params.setSkipLock(true);
@@ -185,7 +185,7 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
                 public void run() {
                     try {
                         waitForTasksToBeCleared();
-                        executeDeactivateCommnad(false);
+                        executeDeactivateCommand(false);
                         ctx.resetCompensation();
                     } catch (Exception e) {
                         log.error("Error when attempting to deactivate storage domain {}", getStorageDomainId(), e);
@@ -194,7 +194,7 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
                 }
             });
         } else {
-            executeDeactivateCommnad(false);
+            executeDeactivateCommand(false);
         }
     }
 
