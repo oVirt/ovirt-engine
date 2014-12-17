@@ -173,6 +173,7 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
             entity.setAutoRecoverable(rs.getBoolean("recoverable"));
             entity.setContainsUnregisteredEntities(rs.getBoolean("contains_unregistered_entities"));
             entity.setLastTimeUsedAsMaster(rs.getLong("last_time_used_as_master"));
+            entity.setWipeAfterDelete(rs.getBoolean("wipe_after_delete"));
             return entity;
         }
     }

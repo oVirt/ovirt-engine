@@ -47,6 +47,8 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
 
     private transient long lastTimeUsedAsMaster;
 
+    private Boolean wipeAfterDelete;
+
     public StorageDomainStatic() {
         id = Guid.Empty;
         storageType = StorageDomainType.Master;
@@ -137,6 +139,14 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
         this.lastTimeUsedAsMaster = lastTimeUsedAsMaster;
     }
 
+    public Boolean getWipeAfterDelete() {
+        return wipeAfterDelete;
+    }
+
+    public void setWipeAfterDelete(Boolean wipeAfterDelete) {
+        this.wipeAfterDelete = wipeAfterDelete;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -181,6 +191,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
         result = prime * result + ((storageType == null) ? 0 : storageType.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((sanState == null) ? 0 : sanState.hashCode());
+        result = prime * result + ((wipeAfterDelete == null) ? 0 : wipeAfterDelete.hashCode());
         return result;
     }
 
@@ -206,6 +217,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
                 && storagePoolType == other.storagePoolType
                 && storageType == other.storageType
                 && sanState == other.sanState
+                && ObjectUtils.objectsEqual(wipeAfterDelete, other.wipeAfterDelete)
                 && ObjectUtils.objectsEqual(description, other.description));
     }
 

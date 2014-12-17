@@ -1552,7 +1552,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot extend Storage Domain. Storage device ${lun} is unreachable from ${hostName}.")
     String ERROR_CANNOT_EXTEND_CONNECTION_FAILED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Only Storage Domain name, description and comment are updateable.")
+    @DefaultStringValue("Cannot ${action} ${type}. Only Storage Domain name, description, comment and wipe after delete are updateable.")
     String ERROR_CANNOT_CHANGE_STORAGE_DOMAIN_FIELDS();
 
     @DefaultStringValue("Cannot update Data Center compatibility version to a value that is greater than its Cluster's version. The following clusters should be upgraded ${ClustersList}.")

@@ -16,6 +16,7 @@ SELECT     storage_domain_static.id as id,
 			storage_domain_static.storage_type as storage_type,
                         storage_domain_static.storage_domain_format_type as storage_domain_format_type,
             storage_domain_static.last_time_used_as_master as last_time_used_as_master,
+            storage_domain_static.wipe_after_delete as wipe_after_delete,
 			storage_pool.name as storage_pool_name,
 			unregistered_entities.storage_domain_id IS NOT NULL AS contains_unregistered_entities
 FROM        storage_domain_static LEFT OUTER JOIN
@@ -307,6 +308,7 @@ storage_domain_static.id as id,
 		storage_domain_static.storage_domain_type as storage_domain_type,
                 storage_domain_static.storage_domain_format_type as storage_domain_format_type,
         storage_domain_static.last_time_used_as_master as last_time_used_as_master,
+    storage_domain_static.wipe_after_delete as wipe_after_delete,
         fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id,storage_pool_iso_map.status,storage_domain_static.storage_domain_type) as storage_domain_shared_status,
 	storage_domain_static.recoverable as recoverable,
 	unregistered_entities.storage_domain_id IS NOT NULL AS contains_unregistered_entities
@@ -327,6 +329,7 @@ storage_domain_static.id as id, storage_domain_static.storage as storage, storag
 		storage_domain_static.storage_comment as storage_comment, storage_domain_static.storage_type as storage_type, storage_domain_static.storage_domain_type as storage_domain_type,
                 storage_domain_static.storage_domain_format_type as storage_domain_format_type,
         storage_domain_static.last_time_used_as_master as last_time_used_as_master,
+        storage_domain_static.wipe_after_delete as wipe_after_delete,
 		null as storage_pool_id, null as storage_pool_name,
 		storage_domain_dynamic.available_disk_size as available_disk_size,
 		storage_domain_dynamic.used_disk_size as used_disk_size,
@@ -351,6 +354,7 @@ SELECT
                 storage_domain_static.storage_comment as storage_comment, storage_domain_static.storage_type as storage_type, storage_domain_static.storage_domain_type as storage_domain_type,
                 storage_domain_static.storage_domain_format_type as storage_domain_format_type,
                 storage_domain_static.last_time_used_as_master as last_time_used_as_master,
+                storage_domain_static.wipe_after_delete as wipe_after_delete,
                 CASE
                           WHEN status_table.is_multi_domain THEN NULL
                           WHEN status_table.status IS NULL THEN 2 -- in case domain is unattached
@@ -1096,6 +1100,7 @@ storage_domain_static.id,
 		storage_domain_static.storage_domain_type,
                 storage_domain_static.storage_domain_format_type,
         storage_domain_static.last_time_used_as_master as last_time_used_as_master,
+        storage_domain_static.wipe_after_delete as wipe_after_delete,
 		fn_get_storage_domain_shared_status_by_domain_id(storage_domain_static.id,storage_pool_iso_map.status,storage_domain_static.storage_domain_type) AS
 		storage_domain_shared_status,
 		vds_groups.vds_group_id,

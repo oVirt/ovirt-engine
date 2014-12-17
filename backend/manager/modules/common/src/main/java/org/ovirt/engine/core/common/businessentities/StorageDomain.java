@@ -315,6 +315,14 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntityWithSt
         staticData.setLastTimeUsedAsMaster(lastTimeUsedAsMaster);
     }
 
+    public Boolean getWipeAfterDelete() {
+        return staticData.getWipeAfterDelete();
+    }
+
+    public void setWipeAfterDelete(Boolean wipeAfterDelete) {
+        staticData.setWipeAfterDelete(wipeAfterDelete);
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

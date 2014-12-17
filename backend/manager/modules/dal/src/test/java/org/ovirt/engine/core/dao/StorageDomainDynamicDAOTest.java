@@ -34,6 +34,7 @@ public class StorageDomainDynamicDAOTest extends BaseDAOTestCase {
         newStaticDomain = new StorageDomainStatic();
         newStaticDomain.setStorage("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePl");
         newStaticDomain.setStorageFormat(StorageFormatType.V1);
+        newStaticDomain.setWipeAfterDelete(true);
         newDynamicDomain = new StorageDomainDynamic();
         newDynamicDomain.setAvailableDiskSize(USED_DISK_SIZE);
     }

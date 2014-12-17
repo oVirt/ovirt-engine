@@ -41,10 +41,11 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
         List<String> props = ObjectIdentityChecker.GetChangedFields(oldDomain, getStorageDomain()
                 .getStorageStaticData());
 
-        // Allow change only to name & description field
+        // Allow change only to name, description, comment and wipe after delete fields.
         props.remove("storageName");
         props.remove("description");
         props.remove("comment");
+        props.remove("wipeAfterDelete");
         if (!props.isEmpty()) {
             log.warn("There was an attempt to update the following fields although they are not allowed to be updated: {}",
                     StringUtils.join(props, ","));

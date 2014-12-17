@@ -1541,7 +1541,7 @@ actions:
             logical_unit.port: 'xs:int', logical_unit.target: 'xs:string', logical_unit.username: 'xs:string', logical_unit.password: 'xs:string',
             logical_unit.serial: 'xs:string', logical_unit.vendor_id: 'xs:string', logical_unit.product_id: 'xs:string',
             logical_unit.lun_mapping: 'xs:int', logical_unit.portal: 'xs:string', logical_unit.paths: 'xs:int', logical_unit.id: 'xs:string'}}
-        optionalArguments: {storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage.override_luns: 'xs:boolean'}
+        optionalArguments: {storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage.override_luns: 'xs:boolean', storagedomain.wipe_after_delete: 'xs:boolean'}
         description: update the storage domain
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
@@ -1561,23 +1561,23 @@ actions:
             logical_unit.port: 'xs:int', logical_unit.target: 'xs:string', logical_unit.username: 'xs:string', logical_unit.password: 'xs:string',
             logical_unit.serial: 'xs:string', logical_unit.vendor_id: 'xs:string', logical_unit.product_id: 'xs:string',
             logical_unit.lun_mapping: 'xs:int', logical_unit.portal: 'xs:string', logical_unit.paths: 'xs:int', logical_unit.id: 'xs:string'}}
-        optionalArguments: {storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage.override_luns: 'xs:boolean', storagedomain.storage_format: 'xs:string'}
+        optionalArguments: {storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage.override_luns: 'xs:boolean', storagedomain.storage_format: 'xs:string', storagedomain.wipe_after_delete: 'xs:boolean'}
         description: add a new storage domain to the system using a direct lun
       - mandatoryArguments: {storagedomain.host.id|name: 'xs:string',
           storagedomain.type: 'xs:string', storagedomain.storage.type: 'xs:string',
           storagedomain.format: 'xs:boolean',storagedomain.storage.address: 'xs:string',
           storagedomain.storage.path: 'xs:string'}
-        optionalArguments: {storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage_format: 'xs:string'}
+        optionalArguments: {storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage_format: 'xs:string', storagedomain.wipe_after_delete: 'xs:boolean'}
         description: add a new storage domain to the system using the storage on the given host and path
       - mandatoryArguments: {storagedomain.host.id|name: 'xs:string',
           storagedomain.type: 'xs:string', storagedomain.storage.type: 'xs:string',
           storagedomain.format: 'xs:boolean', storagedomain.storage.path: 'xs:string'}
-        optionalArguments: {storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage_format: 'xs:string'}
+        optionalArguments: {storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage_format: 'xs:string', storagedomain.wipe_after_delete: 'xs:boolean'}
         description: add a new storage domain to the system using the storage on the localhost at the given path
       - mandatoryArguments: {storagedomain.host.id|name: 'xs:string',
           storagedomain.type: 'xs:string', storagedomain.storage.type: 'xs:string',
           storagedomain.format: 'xs:boolean', storagedomain.storage.path: 'xs:string', storagedomain.storage.vfs_type: 'xs:string'}
-        optionalArguments: {storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage.address: 'xs:string', storagedomain.storage.mount_options: 'xs:string', storagedomain.storage_format: 'xs:string'}
+        optionalArguments: {storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage.address: 'xs:string', storagedomain.storage.mount_options: 'xs:string', storagedomain.storage_format: 'xs:string', storagedomain.wipe_after_delete: 'xs:boolean'}
         description: add a new storage domain to the system using the gluster or posixfs storage
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}

@@ -418,12 +418,13 @@ Create or replace FUNCTION Insertstorage_domain_static(v_id UUID,
 	v_storage_type INTEGER,
 	v_storage_domain_type INTEGER,
     v_storage_domain_format_type VARCHAR(50),
-    v_last_time_used_as_master BIGINT)
+    v_last_time_used_as_master BIGINT,
+    v_wipe_after_delete boolean)
 RETURNS VOID
    AS $procedure$
    BEGIN
-INSERT INTO storage_domain_static(id, storage,storage_name, storage_description, storage_comment, storage_type, storage_domain_type, storage_domain_format_type, last_time_used_as_master)
-	VALUES(v_id, v_storage, v_storage_name, v_storage_description, v_storage_comment, v_storage_type, v_storage_domain_type, v_storage_domain_format_type, v_last_time_used_as_master);
+INSERT INTO storage_domain_static(id, storage,storage_name, storage_description, storage_comment, storage_type, storage_domain_type, storage_domain_format_type, last_time_used_as_master, wipe_after_delete)
+VALUES(v_id, v_storage, v_storage_name, v_storage_description, v_storage_comment, v_storage_type, v_storage_domain_type, v_storage_domain_format_type, v_last_time_used_as_master, v_wipe_after_delete);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -449,7 +450,8 @@ Create or replace FUNCTION Updatestorage_domain_static(v_id UUID,
 	v_storage_type INTEGER,
 	v_storage_domain_type INTEGER,
 	v_storage_domain_format_type INTEGER,
-	v_last_time_used_as_master BIGINT)
+    v_last_time_used_as_master BIGINT,
+    v_wipe_after_delete boolean)
 RETURNS VOID
 
 	--The [storage_domain_static] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -460,6 +462,7 @@ BEGIN
       storage_domain_type = v_storage_domain_type, _update_date = LOCALTIMESTAMP,
       storage_domain_format_type = v_storage_domain_format_type,
       last_time_used_as_master = v_last_time_used_as_master,
+      wipe_after_delete = v_wipe_after_delete,
       storage_description = v_storage_description, storage_comment = v_storage_comment
       WHERE id = v_id;
 END; $procedure$

@@ -41,6 +41,7 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
         newStaticDomain.setStorageName("NewStorageDomain");
         newStaticDomain.setStorage("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePl");
         newStaticDomain.setStorageFormat(StorageFormatType.V1);
+        newStaticDomain.setWipeAfterDelete(true);
     }
 
     /**
@@ -166,6 +167,7 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
     @Test
     public void testUpdate() {
         existingDomain.setStorageName("UpdatedName");
+        existingDomain.setWipeAfterDelete(true);
         dao.update(existingDomain);
 
         StorageDomainStatic after = dao.get(existingDomain.getId());

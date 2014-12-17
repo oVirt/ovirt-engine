@@ -15,7 +15,6 @@ import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
-import org.ovirt.engine.core.bll.utils.WipeAfterDeleteUtils;
 import org.ovirt.engine.core.bll.validator.DiskValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -404,8 +403,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     private void createDiskBasedOnImage() {
         if(!getParameters().getDiskInfo().isWipeAfterDeleteSet()) {
-            StorageType storageType = getStorageDomain().getStorageType();
-            getParameters().getDiskInfo().setWipeAfterDelete(WipeAfterDeleteUtils.getDefaultWipeAfterDeleteFlag(storageType));
+            getParameters().getDiskInfo().setWipeAfterDelete(getStorageDomain().getWipeAfterDelete());
         }
         // create from blank template, create new vm snapshot id
         AddImageFromScratchParameters parameters =

@@ -2759,6 +2759,7 @@
           <xs:element name="used" type="xs:long" minOccurs="0"/>
           <xs:element name="committed" type="xs:long" minOccurs="0"/>
           <xs:element name="storage_format" type="xs:string" minOccurs="0"/>
+          <xs:element name="wipe_after_delete" type="xs:boolean" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

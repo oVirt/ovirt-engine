@@ -51,6 +51,9 @@ public class StorageDomainMapper {
                 entity.setStorageFormat(StorageFormatMapper.map(storageFormat, null));
             }
         }
+        if (model.isSetWipeAfterDelete()) {
+            entity.setWipeAfterDelete(model.isWipeAfterDelete());
+        }
         return entity;
     }
 
@@ -153,6 +156,7 @@ public class StorageDomainMapper {
                 model.setStorageFormat(storageFormat);
             }
         }
+        model.setWipeAfterDelete(entity.getWipeAfterDelete());
         return model;
     }
 

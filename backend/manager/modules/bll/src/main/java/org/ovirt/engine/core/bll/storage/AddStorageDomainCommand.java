@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.WipeAfterDeleteUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
@@ -48,6 +49,11 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
 
     protected void initializeStorageDomain() {
         getStorageDomain().setId(Guid.newGuid());
+        if(getStorageDomain().getStorageStaticData().getWipeAfterDelete() == null) {
+            getStorageDomain().getStorageStaticData().setWipeAfterDelete(
+                    WipeAfterDeleteUtils.getDefaultWipeAfterDeleteFlag(
+                            getStorageDomain().getStorageStaticData().getStorageType()));
+        }
     }
 
     protected boolean addStorageDomainInIrs() {
