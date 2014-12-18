@@ -3,12 +3,15 @@ package org.ovirt.engine.core.searchbackend;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.ovirt.engine.core.common.businessentities.DateEnumForSearch;
 import org.ovirt.engine.core.common.businessentities.Tags;
@@ -164,7 +167,12 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         } else if ("!=".equals(relations)) {
             relations = "NOT " + getLikeSyntax(caseSensitive);
         }
-        for (Map.Entry<String, String> columnNameEntry : columnNameDict.entrySet()) {
+        // Sort according to the value (real column name) in order not to rely on random access from map
+        SortedSet<Map.Entry<String, String>> sortedEntrySet = new TreeSet<>(new ColNameMapEntryComparator());
+        for (Map.Entry<String, String> entry : columnNameDict.entrySet()) {
+            sortedEntrySet.add(entry);
+        }
+        for (Map.Entry<String, String> columnNameEntry : sortedEntrySet) {
             if (typeDict.get(columnNameEntry.getKey()) == String.class && !notFreeTextSearchableFieldsList.contains(columnNameEntry.getKey())) {
                 if (firstTime) {
                     firstTime = false;
@@ -392,4 +400,13 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     public String getWildcard(String fieldName) {
         return verbsWithMultipleValues.contains(fieldName) ? ".*" : "%";
     }
+
+    public static class ColNameMapEntryComparator implements Comparator<Map.Entry<String, String>> {
+
+        @Override
+        public int compare(Map.Entry<String, String> e1, Map.Entry<String, String> e2) {
+            return e1.getValue().compareTo(e2.getValue());
+        }
+    }
+
 }
