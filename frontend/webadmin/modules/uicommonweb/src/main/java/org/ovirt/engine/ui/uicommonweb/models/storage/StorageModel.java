@@ -176,6 +176,16 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
         this.activateDomain = activateDomain;
     }
 
+    private EntityModel<Boolean> wipeAfterDelete;
+
+    public EntityModel<Boolean> getWipeAfterDelete() {
+        return wipeAfterDelete;
+    }
+
+    public void setWipeAfterDelete(EntityModel<Boolean> wipeAfterDelete) {
+        this.wipeAfterDelete = wipeAfterDelete;
+    }
+
     public StorageModel(StorageModelBehavior behavior)
     {
         this.behavior = behavior;
@@ -194,6 +204,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
         getAvailableStorageItems().getSelectedItemChangedEvent().addListener(this);
         setActivateDomain(new EntityModel<Boolean>(true));
         getActivateDomain().setIsAvailable(false);
+        setWipeAfterDelete(new EntityModel<>(false));
 
         localFSPath = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.RhevhLocalFSPath);
     }
@@ -229,6 +240,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
                 {
                     setSelectedItem(null);
                     setSelectedItem(getAvailableStorageItems().getSelectedItem());
+                    updateWipeAfterDelete();
                 }
             }
         }
@@ -615,6 +627,22 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
         }
 
         behavior.updateItemsAvailability();
+    }
+
+    private void updateWipeAfterDelete() {
+        StorageType storageType = getAvailableStorageItems().getSelectedItem().getType();
+        if (isNewStorage()) {
+            AsyncDataProvider.getInstance().getStorageDomainDefaultWipeAfterDelete(new AsyncQuery(this,
+                    new INewAsyncCallback() {
+                        @Override public void onSuccess(Object model, Object returnValue) {
+                            StorageModel storageModel = (StorageModel) model;
+                            storageModel.getWipeAfterDelete().setEntity((Boolean) returnValue);
+                        }
+                    }), storageType);
+        }
+        else {
+            getWipeAfterDelete().setEntity(getStorage().getWipeAfterDelete());
+        }
     }
 
     public boolean validate() {

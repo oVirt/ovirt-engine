@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
@@ -101,6 +102,19 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
     FlowPanel specificStorageTypePanel;
 
     @UiField
+    @Ignore
+    AdvancedParametersExpander advancedParametersExpander;
+
+    @UiField
+    @Ignore
+    FlowPanel advancedParametersExpanderContent;
+
+    @UiField
+    @Path(value = "wipeAfterDelete.entity")
+    @WithElementId("wipeAfterDelete")
+    EntityModelCheckBoxEditor wipeAfterDeleteEditor;
+
+    @UiField
     Image datacenterAlertIcon;
 
     @SuppressWarnings("rawtypes")
@@ -115,6 +129,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         super(eventBus, resources);
         initListBoxEditors(constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        initAdvancedParametersExpander();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         asWidget().enableResizeSupport(true);
         localize(constants);
@@ -191,6 +206,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         formatListEditor.setLabelStyleName(style.label());
         formatListEditor.addContentWidgetStyleName(style.formatContentWidget());
         activateDomainEditor.addContentWidgetStyleName(style.activateDomainEditor());
+        advancedParametersExpanderContent.setStyleName(style.advancedParametersExpanderContent());
     }
 
     void localize(ApplicationConstants constants) {
@@ -202,6 +218,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         formatListEditor.setLabel(constants.storagePopupFormatTypeLabel());
         hostListEditor.setLabel(constants.storagePopupHostLabel());
         activateDomainEditor.setLabel(constants.activateDomainLabel());
+        wipeAfterDeleteEditor.setLabel(constants.wipeAfterDelete());
     }
 
     @Override
@@ -224,6 +241,10 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
                 datacenterAlertIcon.setTitle(storageModel.getDataCenterAlert().getEntity());
             }
         });
+    }
+
+    private void initAdvancedParametersExpander() {
+        advancedParametersExpander.initWithContent(advancedParametersExpanderContent.getElement());
     }
 
     @SuppressWarnings("unchecked")
@@ -307,6 +328,8 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         String storageTypeLabel();
 
         String storageDomainTypeLabel();
+
+        String advancedParametersExpanderContent();
     }
 
 }

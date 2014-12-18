@@ -374,6 +374,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Activate Domain in Data Center")
     String activateDomainLabel();
 
+    @DefaultStringValue("Wipe After Delete")
+    String wipeAfterDelete();
+
     @DefaultStringValue("Export Path")
     String storagePopupNfsPathLabel();
 

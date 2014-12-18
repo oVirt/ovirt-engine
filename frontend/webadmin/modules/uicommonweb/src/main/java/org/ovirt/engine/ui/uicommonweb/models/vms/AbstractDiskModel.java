@@ -75,7 +75,6 @@ public abstract class AbstractDiskModel extends DiskModel
 
     private SanStorageModel sanStorageModel;
     private VolumeFormat volumeFormat;
-    private boolean previousWipeAfterDeleteEntity;
     private boolean previousIsQuotaAvailable;
 
     private SystemTreeItemModel systemTreeSelectedItem;
@@ -626,11 +625,9 @@ public abstract class AbstractDiskModel extends DiskModel
         getDiskProfile().setIsAvailable(isDiskImage);
 
         if (!isDiskImage) {
-            previousWipeAfterDeleteEntity = getIsWipeAfterDelete().getEntity();
             previousIsQuotaAvailable = getQuota().getIsAvailable();
         }
 
-        getIsWipeAfterDelete().setEntity(isDiskImage ? previousWipeAfterDeleteEntity : false);
         getQuota().setIsAvailable(isDiskImage ? previousIsQuotaAvailable : false);
 
         updateDatacenters();
@@ -770,6 +767,9 @@ public abstract class AbstractDiskModel extends DiskModel
         StorageDomain selectedStorage = getStorageDomain().getSelectedItem();
         if (selectedStorage != null) {
             updateVolumeType(selectedStorage.getStorageType());
+            if (getIsNew()) {
+                getIsWipeAfterDelete().setEntity(selectedStorage.getWipeAfterDelete());
+            }
         }
         updateQuota(getDataCenter().getSelectedItem());
         updateDiskProfiles(getDataCenter().getSelectedItem());

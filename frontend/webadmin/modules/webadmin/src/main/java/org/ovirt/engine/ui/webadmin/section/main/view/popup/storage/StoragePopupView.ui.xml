@@ -7,6 +7,7 @@
         <ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StoragePopupView.WidgetStyle">
 		.content {
+            overflow-x: hidden;
 		}
 
 		.formatContentWidget {
@@ -32,6 +33,10 @@
 			font-family: Arial,sans-serif;
 			line-height: 30px;
 		}
+
+        .wipeAfterDeleteEditor {
+            width: 437px;
+        }
 
 		.nameEditor,
 		.datacenterListEditor,
@@ -75,10 +80,14 @@
 			font-weight: bold;
 		}
 
+        .advancedParametersExpanderContent {
+            margin-left: 15px;
+            display: none;
+        }
+
         .specificStorageTypePanel {
             width: 100%;
             margin-top: 8px;
-            overflow-x: hidden;
         }
 
         .dataCenterAlertIcon {
@@ -87,7 +96,7 @@
 
 	</ui:style>
 
-	<d:SimpleDialogPanel width="760px" height="635px">
+	<d:SimpleDialogPanel width="760px" height="665px">
 		<d:content>
 			<g:FlowPanel addStyleNames="{style.content}">
 				<g:HorizontalPanel>
@@ -106,6 +115,10 @@
 				</g:HorizontalPanel>
                 <e:ListModelListBoxEditor ui:field="hostListEditor" addStyleNames="{style.hostListEditor}"/>
 				<g:FlowPanel ui:field="specificStorageTypePanel" addStyleNames="{style.specificStorageTypePanel}"></g:FlowPanel>
+                <d:AdvancedParametersExpander ui:field="advancedParametersExpander"/>
+                <g:FlowPanel ui:field="advancedParametersExpanderContent">
+                    <ge:EntityModelCheckBoxEditor ui:field="wipeAfterDeleteEditor" addStyleNames="{style.wipeAfterDeleteEditor}"/>
+                </g:FlowPanel>
 			</g:FlowPanel>
 		</d:content>
 	</d:SimpleDialogPanel>

@@ -108,6 +108,7 @@ import org.ovirt.engine.core.common.queries.GetHostsForStorageOperationParameter
 import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
 import org.ovirt.engine.core.common.queries.GetPermittedStorageDomainsByStoragePoolIdParameters;
+import org.ovirt.engine.core.common.queries.GetStorageDomainDefaultWipeAfterDeleteParameters;
 import org.ovirt.engine.core.common.queries.GetStorageDomainsByConnectionParameters;
 import org.ovirt.engine.core.common.queries.GetStoragePoolsByClusterServiceParameters;
 import org.ovirt.engine.core.common.queries.GetSupportedCpuListParameters;
@@ -2573,6 +2574,17 @@ public class AsyncDataProvider {
         params.setActionGroup(actionGroup);
 
         Frontend.getInstance().runQuery(VdcQueryType.GetPermittedStorageDomainsByStoragePoolId, params, aQuery);
+    }
+
+    public void getStorageDomainDefaultWipeAfterDelete(AsyncQuery aQuery, StorageType storageType) {
+        aQuery.converterCallback = new IAsyncConverter<Boolean>() {
+            @Override public Boolean Convert(Object returnValue, AsyncQuery asyncQuery) {
+                return (Boolean) returnValue;
+            }
+        };
+        GetStorageDomainDefaultWipeAfterDeleteParameters params =
+                new GetStorageDomainDefaultWipeAfterDeleteParameters(storageType);
+        Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainDefaultWipeAfterDelete, params, aQuery);
     }
 
     public void getAllDataCenterNetworks(AsyncQuery aQuery, Guid storagePoolId) {

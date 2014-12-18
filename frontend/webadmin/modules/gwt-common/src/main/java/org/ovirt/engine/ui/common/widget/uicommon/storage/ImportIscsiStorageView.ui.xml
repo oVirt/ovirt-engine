@@ -7,10 +7,10 @@
 
 	<ui:style type="org.ovirt.engine.ui.common.widget.uicommon.storage.ImportIscsiStorageView.WidgetStyle">
         .splitLayoutPanel {
-            position: absolute !important;
             width: 100%;
             bottom: 0;
-            top: 120px;
+            top: 0px;
+            height: 440px;
         }
 
         .containerPanel {

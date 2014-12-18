@@ -6,10 +6,11 @@
 
 	<ui:style>
         .containerPanel {
-            position: absolute !important;
+            position: relative;
             width: 100%;
             bottom: 0;
-            top: 120px;
+            top: 0px;
+            height: 430px;
         }
 
         .containerPanelInner {

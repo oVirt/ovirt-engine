@@ -283,7 +283,7 @@ public enum VdcQueryType implements Serializable {
     GetStorageDomainsWithAttachedStoragePoolGuid,
     GetFileStorageDomainsWithAttachedStoragePoolGuid,
     GetBlockStorageDomainsWithAttachedStoragePoolGuid,
-
+    GetStorageDomainDefaultWipeAfterDelete,
 
     // Event Notification
     GetEventSubscribersBySubscriberIdGrouped,

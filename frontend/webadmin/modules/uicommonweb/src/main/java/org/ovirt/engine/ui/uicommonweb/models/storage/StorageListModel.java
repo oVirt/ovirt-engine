@@ -351,6 +351,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         model.getName().setIsChangable(isStorageNameEditable);
         model.getDescription().setIsChangable(isStoragePropertiesEditable);
         model.getComment().setIsChangable(isStoragePropertiesEditable);
+        model.getWipeAfterDelete().setIsChangable(isStoragePropertiesEditable);
         //set the field domain type to non editable
         model.getAvailableStorageItems().setIsChangable(false);
         model.setIsChangable(isStorageNameEditable || isStoragePropertiesEditable);
@@ -1252,6 +1253,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         storageDomain.setDescription(model.getDescription().getEntity());
         storageDomain.setComment(model.getComment().getEntity());
         storageDomain.setStorageFormat(model.getFormat().getSelectedItem());
+        storageDomain.setWipeAfterDelete(model.getWipeAfterDelete().getEntity());
 
         if (isNew) {
             AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
@@ -1378,6 +1380,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         storageDomain.setStorageDomainType(isNew ? storageModel.getRole() : storageDomain.getStorageDomainType());
         storageDomain.setStorageName(model.getName().getEntity());
         storageDomain.setStorageFormat(model.getFormat().getSelectedItem());
+        storageDomain.setWipeAfterDelete(model.getWipeAfterDelete().getEntity());
 
         if (isNew) {
             AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
@@ -1498,6 +1501,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         storageDomain.setDescription(model.getDescription().getEntity());
         storageDomain.setComment(model.getComment().getEntity());
         storageDomain.setStorageFormat(model.getFormat().getSelectedItem());
+        storageDomain.setWipeAfterDelete(model.getWipeAfterDelete().getEntity());
 
         if (isNew)
         {
@@ -1733,6 +1737,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         storageDomain.setStorageName(model.getName().getEntity());
         storageDomain.setDescription(model.getDescription().getEntity());
         storageDomain.setComment(model.getComment().getEntity());
+        storageDomain.setWipeAfterDelete(model.getWipeAfterDelete().getEntity());
 
         if (isNew)
         {
@@ -1879,6 +1884,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         storageDomain.setStorageName(model.getName().getEntity());
         storageDomain.setDescription(model.getDescription().getEntity());
         storageDomain.setComment(model.getComment().getEntity());
+        storageDomain.setWipeAfterDelete(model.getWipeAfterDelete().getEntity());
 
         if (isNew)
         {
@@ -1956,6 +1962,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         List<IFrontendActionAsyncCallback> callbacks = new LinkedList<IFrontendActionAsyncCallback>();
 
         for (final StorageDomain storageDomain : storageDomains) {
+            storageDomain.setWipeAfterDelete(((StorageModel) getWindow()).getWipeAfterDelete().getEntity());
             StorageDomainManagementParameter parameters =
                     new StorageDomainManagementParameter(storageDomain.getStorageStaticData());
             parameters.setVdsId(hostId);
@@ -2125,6 +2132,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
 
     public void addExistingFileStorageDomain() {
         StorageDomain sdToAdd = Linq.firstOrDefault(storageDomainsToAdd);
+        sdToAdd.setWipeAfterDelete(((StorageModel)getWindow()).getWipeAfterDelete().getEntity());
         StorageDomainStatic sdsToAdd = sdToAdd.getStorageStaticData();
 
         StorageDomainManagementParameter params = new StorageDomainManagementParameter(sdsToAdd);
