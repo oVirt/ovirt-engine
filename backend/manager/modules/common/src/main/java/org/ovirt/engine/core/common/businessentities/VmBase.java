@@ -266,6 +266,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     public VmBase() {
         name = "";
         interfaces = new ArrayList<VmNetworkInterface>();
+        images = new ArrayList<DiskImage>();
         diskList = new ArrayList<DiskImage>();
         managedDeviceMap = new HashMap<Guid, VmDevice>();
         unmanagedDeviceList = new ArrayList<VmDevice>();

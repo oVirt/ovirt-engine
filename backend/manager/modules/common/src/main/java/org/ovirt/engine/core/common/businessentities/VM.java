@@ -88,7 +88,6 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         this.setStaticData(vmStatic);
         this.setDynamicData(vmDynamic);
         this.setStatisticsData(vmStatistics);
-        this.setImages(new ArrayList<DiskImage>());
         this.setvNumaNodeList(new ArrayList<VmNumaNode>());
         this.setDiskMap(new HashMap<Guid, Disk>());
         this.setCdPath("");
