@@ -1193,8 +1193,7 @@ public class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    ArrayList<VDS> list = Linq.<VDS> cast((ArrayList<IVdcQueryable>) source);
-                    return list;
+                    return Linq.<VDS> cast((List<?>) source);
                 }
 
                 return new ArrayList<VDS>();
