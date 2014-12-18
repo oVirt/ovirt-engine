@@ -177,6 +177,8 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
         retransmissionsLabel.setText(constants.storagePopupNfsRetransmissionsLabel());
         timeoutLabel.setText(constants.storagePopupNfsTimeoutLabel());
         mountOptionsLabel.setText(constants.storagePopupAdditionalMountOptionsLabel());
+        expander.setTitleWhenCollapsed(constants.storagePopupConnectionLabel());
+        expander.setTitleWhenExpended(constants.storagePopupConnectionLabel());
     }
 
     @Override
