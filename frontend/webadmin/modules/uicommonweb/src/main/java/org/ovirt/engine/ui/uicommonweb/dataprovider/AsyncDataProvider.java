@@ -1175,7 +1175,7 @@ public class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    ArrayList<VDS> list = Linq.<VDS> cast((ArrayList<IVdcQueryable>) source);
+                    ArrayList<VDS> list = Linq.<VDS> cast((List<IVdcQueryable>) source);
                     return list;
                 }
 
@@ -3873,7 +3873,7 @@ public class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    ArrayList<VDS> vdsList = Linq.<VDS> cast((ArrayList<IVdcQueryable>) source);
+                    ArrayList<VDS> vdsList = Linq.<VDS> cast((List<IVdcQueryable>) source);
                     Set<String> emulatedMachineList = new HashSet<String>();
                     for (VDS host : vdsList) {
                         String hostSupportedMachines = host.getSupportedEmulatedMachines();
