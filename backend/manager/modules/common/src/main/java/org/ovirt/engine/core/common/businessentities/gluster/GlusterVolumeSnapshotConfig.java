@@ -90,4 +90,19 @@ public class GlusterVolumeSnapshotConfig extends IVdcQueryable {
 
         return true;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("GlusterVolumeSnapshotConfig {");
+        sb.append("clusterId=");
+        sb.append(getClusterId());
+        sb.append(", volumeId=");
+        sb.append(getVolumeId());
+        sb.append(", paramName=");
+        sb.append(getParamName());
+        sb.append(", paramValue=");
+        sb.append(getParamValue());
+        sb.append("}");
+        return sb.toString();
+    }
 }

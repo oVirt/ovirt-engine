@@ -86,6 +86,7 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
         case GlusterSnapshotDeactivateFailedException:
         case GlusterSnapshotRestoreFailedException:
         case GlusterSnapshotCreateFailedException:
+        case GlusterSnapshotConfigFailedException:
 
             // Capture error from gluster command and record failure
             getVDSReturnValue().setVdsError(new VDSError(returnStatus, getReturnStatus().mMessage));

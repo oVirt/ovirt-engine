@@ -415,7 +415,8 @@ public enum VdcBllErrors {
     GlusterSnapshotActivateFailedException(4704),
     GlusterSnapshotDeactivateFailedException(4705),
     GlusterSnapshotRestoreFailedException(4706),
-    GlusterSnapshotInfoFailedException(4708),
+    GlusterSnapshotConfigFailedException(4708),
+    GlusterSnapshotInfoFailedException(4710),
     GlusterSnapshotCreateFailedException(4701),
 
     UnicodeArgumentException(4900),
