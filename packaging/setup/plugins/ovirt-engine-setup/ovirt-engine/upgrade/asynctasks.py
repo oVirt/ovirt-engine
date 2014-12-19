@@ -21,6 +21,7 @@
 
 import time
 import gettext
+import distutils.version
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
@@ -31,6 +32,7 @@ from otopi import base
 
 
 from ovirt_engine_setup import dialog
+from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.engine_common import database
@@ -128,33 +130,57 @@ class Plugin(plugin.PluginBase):
                 timeout=self._origTimeout,
             )
 
-    def _clearZombieTasks(self):
-        rc, tasks, stderr = self.execute(
-            args=(
-                oenginecons.FileLocations.OVIRT_ENGINE_TASKCLEANER,
-                '-l', self.environment[otopicons.CoreEnv.LOG_FILE_NAME],
-                '-u', self.environment[oenginecons.EngineDBEnv.USER],
-                '-s', self.environment[oenginecons.EngineDBEnv.HOST],
-                '-p', str(self.environment[oenginecons.EngineDBEnv.PORT]),
-                '-d', self.environment[oenginecons.EngineDBEnv.DATABASE],
-                '-R',
-                '-A',
-                '-J',
-                '-q',
-            ),
-            raiseOnError=False,
-            envAppend={
-                'DBFUNC_DB_PGPASSFILE': self.environment[
-                    oenginecons.EngineDBEnv.PGPASS_FILE
-                ]
-            },
+    def _clearZombies(self):
+        inst_v = distutils.version.LooseVersion(
+            self.environment[
+                osetupcons.CoreEnv.ORIGINAL_GENERATED_BY_VERSION
+            ]
+        ).version[:2]
+        _args_base = (
+            oenginecons.FileLocations.OVIRT_ENGINE_TASKCLEANER,
+            '-l', self.environment[otopicons.CoreEnv.LOG_FILE_NAME],
+            '-u', self.environment[oenginecons.EngineDBEnv.USER],
+            '-s', self.environment[oenginecons.EngineDBEnv.HOST],
+            '-p', str(self.environment[oenginecons.EngineDBEnv.PORT]),
+            '-d', self.environment[oenginecons.EngineDBEnv.DATABASE],
+            '-q',
         )
+        envPwd = {
+            'DBFUNC_DB_PGPASSFILE': self.environment[
+                oenginecons.EngineDBEnv.PGPASS_FILE
+            ]
+        }
 
+        if inst_v > [3, 4]:
+            # removing zombie commands if present (just for 3.5 and upper)
+            _args_commands = _args_base + ('-r', '-Z',)
+            rc, tasks, stderr = self.execute(
+                args=_args_commands,
+                raiseOnError=False,
+                envAppend=envPwd,
+            )
+            if rc:
+                raise RuntimeError(
+                    _(
+                        'Failed to clear zombie commands. '
+                        'Please access support in attempt to resolve '
+                        'the problem'
+                    )
+                )
+
+        # than remove zombie tasks ans related jobs and compensation entries
+        _args_tasks = _args_base + ('-R', '-z', '-C', '-J',)
+        rc, tasks, stderr = self.execute(
+            args=_args_tasks,
+            raiseOnError=False,
+            envAppend=envPwd,
+        )
         if rc:
             raise RuntimeError(
                 _(
-                    'Failed to clear zombie tasks. Please access support '
-                    'in attempt to resolve the problem'
+                    'Failed to clear zombie tasks. '
+                    'Please access support in attempt to resolve '
+                    'the problem'
                 )
             )
 
@@ -417,9 +443,9 @@ class Plugin(plugin.PluginBase):
     )
     def _validateZombies(self):
         self.logger.info(
-            _('Cleaning stale zombie tasks')
+            _('Cleaning stale zombie tasks and commands')
         )
-        self._clearZombieTasks()
+        self._clearZombies()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
