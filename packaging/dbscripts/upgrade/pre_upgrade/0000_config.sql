@@ -151,6 +151,7 @@ select fn_db_add_config_value_for_versions_up_to('GlusterRefreshHeavyWeight', 'f
 select fn_db_add_config_value('GlusterRefreshRateHooks', '7200', 'general');
 select fn_db_add_config_value('GlusterRefreshRateLight', '5', 'general');
 select fn_db_add_config_value('GlusterRefreshRateHeavy', '300', 'general');
+select fn_db_add_config_value('GlusterRefreshRateStorageDevices', '7200', 'general');
 select fn_db_add_config_value('GlusterSupport', 'false', '3.0');
 select fn_db_add_config_value_for_versions_up_to('GlusterSupportForceCreateVolume', 'false', '3.3');
 select fn_db_add_config_value('GlusterVolumeOptionGroupVirtValue','virt','general');
@@ -168,6 +169,9 @@ select fn_db_add_config_value('GlusterRefreshRateGeoRepStatusInSecs', '300', 'ge
 -- Gluster Volume Snapshots --
 select fn_db_add_config_value_for_versions_up_to('GlusterVolumeSnapshotSupported', 'false', '3.5');
 select fn_db_add_config_value('GlusterRefreshRateSnapshotDiscovery', '300', 'general');
+
+-- Gluster Disk Provisioning --
+select fn_db_add_config_value_for_versions_up_to('GlusterBrickProvisioningEnabled', 'false', '3.5');
 
 -- OpenStack related
 select fn_db_add_config_value('KeystoneAuthUrl', '', 'general');

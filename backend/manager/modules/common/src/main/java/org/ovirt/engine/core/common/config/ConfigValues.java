@@ -1276,6 +1276,13 @@ public enum ConfigValues {
     GlusterRefreshRateLight,
 
     /**
+     * Refresh rate (in seconds) for Storage Devices.
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("7200")
+    GlusterRefreshRateStorageDevices,
+
+    /**
      * Refresh rate (in seconds) for heavy-weight gluster data i.e. commands to fetch such data adds a considerable
      * overhead on the GlusterFS processes.
      */
@@ -1415,6 +1422,10 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     GlusterGeoReplicationEnabled,
+
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    GlusterBrickProvisioningEnabled,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3600")

@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
@@ -70,6 +71,15 @@ public class GlusterJobsManager {
                 new Class [0],
                 getRefreshRate(ConfigValues.GlusterRefreshRateGeoRepDiscoveryInSecs),
                 getRefreshRate(ConfigValues.GlusterRefreshRateGeoRepDiscoveryInSecs),
+                TimeUnit.SECONDS);
+
+        StorageDeviceSyncJob StorageDeviceSyncJobInstance = Injector.get(StorageDeviceSyncJob.class);
+        scheduler.scheduleAFixedDelayJob(StorageDeviceSyncJobInstance,
+                "gluster_storage_device_pool_event",
+                new Class[0],
+                new Class[0],
+                getRefreshRate(ConfigValues.GlusterRefreshRateStorageDevices),
+                getRefreshRate(ConfigValues.GlusterRefreshRateStorageDevices),
                 TimeUnit.SECONDS);
 
         scheduler.scheduleAFixedDelayJob(GlusterGeoRepSyncJob.getInstance(),
