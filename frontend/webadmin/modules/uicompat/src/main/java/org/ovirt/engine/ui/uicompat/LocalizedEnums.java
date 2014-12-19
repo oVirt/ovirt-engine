@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicompat;
 
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
+import org.ovirt.engine.core.common.AuditLogSeverity;
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 
 public interface LocalizedEnums extends ConstantsWithLookup {
@@ -478,6 +480,12 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String AuditLogType___GLUSTER_VOLUME_SNAPSHOT_RESTORED();
 
     String AuditLogType___GLUSTER_VOLUME_SNAPSHOT_RESTORE_FAILED();
+
+    String AuditLogType___GLUSTER_VOLUME_SNAPSHOT_CONFIG_UPDATED();
+
+    String AuditLogType___GLUSTER_VOLUME_SNAPSHOT_CONFIG_UPDATE_FAILED();
+
+    String AuditLogType___GLUSTER_VOLUME_SNAPSHOT_CONFIG_UPDATE_FAILED_PARTIALLY();
 
     String VdcActionType___ActivateVds();
 
