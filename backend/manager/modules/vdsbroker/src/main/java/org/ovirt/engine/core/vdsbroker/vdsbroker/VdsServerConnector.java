@@ -342,4 +342,8 @@ public interface VdsServerConnector {
     public Map<String, Object> glusterSnapshotRestore(String snapshotName);
 
     public Map<String, Object> glusterSnapshotCreate(String volumeName, String snapshotName, String description, boolean force);
+
+    public Map<String, Object> glusterVolumeSnapshotConfigSet(String volumeName, String cfgName, String cfgValue);
+
+    public Map<String, Object> glusterSnapshotConfigSet(String cfgName, String cfgValue);
 }
