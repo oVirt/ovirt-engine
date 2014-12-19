@@ -340,6 +340,7 @@ public enum VdcQueryType implements Serializable {
     GetGlusterGeoReplicationEligibleVolumes,
     GetGlusterVolumeSnapshotsByVolumeId,
     GetGlusterVolumeGeoRepConfigList,
+    GetGlusterVolumeSnapshotConfig,
 
     GetDefaultConfigurationVersion(VdcQueryAuthType.User),
     OsRepository(VdcQueryAuthType.User),

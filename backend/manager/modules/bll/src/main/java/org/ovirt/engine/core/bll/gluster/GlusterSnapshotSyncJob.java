@@ -84,7 +84,7 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
         }
     }
 
-    private void refreshSnapshotConfigInCluster(VDSGroup cluster) {
+    public void refreshSnapshotConfigInCluster(VDSGroup cluster) {
         if (!supportsGlusterSnapshotFeature(cluster)) {
             return;
         }
