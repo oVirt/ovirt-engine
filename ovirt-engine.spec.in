@@ -220,7 +220,8 @@ Requires:	%{name}-webadmin-portal = %{version}-%{release}
 Requires:	%{name}-websocket-proxy >= %{version}-%{release}
 Requires:	fop
 Requires:	java
-Requires:	java-1.7.0-openjdk >= 1:1.7.0.9-2.3.3.2
+# rhbz#1028966
+Requires:	java-1.7.0-openjdk > 1:1.7.0.45-2.4.3.3.el6
 Requires:	jpackage-utils
 Requires:	ovirt-image-uploader >= 3.6.0
 Requires:	ovirt-iso-uploader >= 3.6.0
@@ -264,9 +265,6 @@ Requires:	xmlrpc-client
 # setup package because it needs to be updated independently as part
 # of the update process implemented in the engine-upgrade script:
 Requires:	%{name}-setup >= %{version}-%{release}
-
-# rhbz#1028966
-Conflicts:	java-1.7.0-openjdk = 1:1.7.0.45-2.4.3.3.el6
 
 # We can drop these conflicts when
 # we drop Requires: mod_ssl
