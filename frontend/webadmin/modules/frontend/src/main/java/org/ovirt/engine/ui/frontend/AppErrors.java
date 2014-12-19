@@ -1009,6 +1009,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action commit removing")
     String VAR__ACTION__REMOVE_BRICKS_COMMIT();
 
+    @DefaultStringValue("$action sync")
+    String VAR__ACTION__SYNC();
+
     @DefaultStringValue("$action start profiling")
     String VAR__ACTION__START_PROFILE();
 
@@ -1116,6 +1119,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("$type Service")
     String VAR__TYPE__GLUSTER_SERVICE();
+
+    @DefaultStringValue("$type Storage Device")
+    String VAR__TYPE__STORAGE_DEVICE();
 
     @DefaultStringValue("Cannot ${action} ${type}. The chosen disk drive letter is already in use, please select a free one.")
     String ACTION_TYPE_FAILED_DISK_LETTER_ALREADY_IN_USE();
@@ -3127,6 +3133,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Gluster task management is not supported in compatibility version ${compatibilityVersion}.")
     String GLUSTER_TASKS_NOT_SUPPORTED_FOR_CLUSTER_LEVEL();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The selected cluster doesn't support Storage provisioning.")
+    String ACTION_TYPE_FAILED_STORAGE_PROVISIONING_NOT_SUPPORTED_BY_CLUSTER();
 
     @DefaultStringValue("Cannot ${action} ${type}. All three values are needed in order to define QoS on each network directions.")
     String ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES();

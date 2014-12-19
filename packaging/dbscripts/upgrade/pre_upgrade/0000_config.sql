@@ -167,6 +167,7 @@ select fn_db_add_config_value('GlusterRefreshRateHeavy', '300', 'general');
 select fn_db_add_config_value('GlusterServicesEnabled', 'false', '3.0');
 select fn_db_add_config_value('GlusterServicesEnabled', 'false', '3.1');
 select fn_db_add_config_value('GlusterServicesEnabled', 'false', '3.2');
+select fn_db_add_config_value('GlusterRefreshRateStorageDevices', '7200', 'general');
 select fn_db_add_config_value('GlusterSupport', 'false', '3.0');
 select fn_db_add_config_value('GlusterSupportForceCreateVolume', 'false', '3.0');
 select fn_db_add_config_value('GlusterSupportForceCreateVolume', 'false', '3.1');
@@ -201,6 +202,14 @@ select fn_db_add_config_value('GlusterGeoReplicationEnabled', 'false', '3.5');
 select fn_db_add_config_value('GlusterRefreshRateGeoRepDiscoveryInSecs', '3600', 'general');
 select fn_db_add_config_value('GlusterRefreshRateGeoRepStatusInSecs', '300', 'general');
 
+
+-- Gluster Disk Provisioning --
+select fn_db_add_config_value('GlusterBrickProvisioningEnabled', 'false', '3.0');
+select fn_db_add_config_value('GlusterBrickProvisioningEnabled', 'false', '3.1');
+select fn_db_add_config_value('GlusterBrickProvisioningEnabled', 'false', '3.2');
+select fn_db_add_config_value('GlusterBrickProvisioningEnabled', 'false', '3.3');
+select fn_db_add_config_value('GlusterBrickProvisioningEnabled', 'false', '3.4');
+select fn_db_add_config_value('GlusterBrickProvisioningEnabled', 'false', '3.5');
 
 -- OpenStack related
 select fn_db_add_config_value('KeystoneAuthUrl', '', 'general');

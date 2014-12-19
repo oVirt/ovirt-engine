@@ -33,6 +33,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.ovirt.engine.core.dao.gluster.StorageDeviceDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
@@ -134,6 +135,9 @@ public abstract class GlusterJob {
         return DbFacade.getInstance().getGlusterGeoRepDao();
     }
 
+    protected StorageDeviceDao getStorageDeviceDao() {
+        return DbFacade.getInstance().getStorageDeviceDao();
+    }
     /**
      * Acquires a lock on the cluster with given id and locking group {@link LockingGroup#GLUSTER}
      *
