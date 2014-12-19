@@ -1057,6 +1057,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action update version for")
     String VAR__ACTION__UPDATE_VM_VERSION();
 
+    @DefaultStringValue("$action gluster volume snapshot config update")
+    String VAR__ACTION__VOLUME_SNAPSHOT_CONFIG_UPDATE();
+
     @DefaultStringValue("$hostStatus Up")
     String VAR__HOST_STATUS__UP();
 
@@ -2929,6 +2932,15 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume is down.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_DOWN();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Gluster volume is not thinly provisioned.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_NOT_THINLY_PROVISIONED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. No gluster volume snapshot parameters for update.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_CONFIG_PARAMS_IS_EMPTY();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The value of gluster volume snapshot parameter ${snapshotConfigParam} is empty.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_CONFIG_PARAM_VALUE_IS_EMPTY();
 
     @DefaultStringValue("Cannot ${action} ${type}. Cannot remove all the bricks from a Volume.")
     String ACTION_TYPE_FAILED_CAN_NOT_REMOVE_ALL_BRICKS_FROM_VOLUME();
