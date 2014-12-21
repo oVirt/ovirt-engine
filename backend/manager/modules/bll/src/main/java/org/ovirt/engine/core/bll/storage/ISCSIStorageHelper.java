@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -156,13 +157,31 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         return (List<StorageServerConnections>) CollectionUtils.subtract(connections, toRemove);
     }
 
+    public static StorageServerConnections findConnectionWithSameDetails(StorageServerConnections connection) {
+        // As we encrypt the password when saving the connection to the DB and each encryption generates different
+        // result,
+        // we can't query the connections to check if connection with the exact
+        // same details was already added - so we query the connections with the same (currently relevant) details and
+        // then compare the password after it was already
+        // decrypted.
+        List<StorageServerConnections> connections =
+                DbFacade.getInstance().getStorageServerConnectionDao().getAllForConnection(connection);
+        for (StorageServerConnections dbConnection : connections) {
+            if (ObjectUtils.objectsEqual(dbConnection.getpassword(), connection.getpassword())) {
+                return dbConnection;
+            }
+        }
+
+        return null;
+    }
+
     private void fillConnectionDetailsIfNeeded(StorageServerConnections connection) {
         // in case that the connection id is null (in case it wasn't loaded from the db before) - we can attempt to load
         // it from the db by its details.
         if (connection.getid() == null) {
-            List<StorageServerConnections> dbConnections = DbFacade.getInstance().getStorageServerConnectionDao().getAllForConnection(connection);
-            if (!dbConnections.isEmpty()) {
-                connection.setid(dbConnections.get(0).getid());
+            StorageServerConnections dbConnection = findConnectionWithSameDetails(connection);
+            if (dbConnection != null) {
+                connection.setid(dbConnection.getid());
             }
         }
     }

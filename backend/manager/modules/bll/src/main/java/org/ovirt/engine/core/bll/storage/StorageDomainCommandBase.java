@@ -281,15 +281,14 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         }
 
         for (StorageServerConnections connection : lun.getLunConnections()) {
-            List<StorageServerConnections> connections = DbFacade.getInstance()
-                    .getStorageServerConnectionDao().getAllForConnection(connection);
-            if (connections.isEmpty()) {
+            StorageServerConnections dbConnection = ISCSIStorageHelper.findConnectionWithSameDetails(connection);
+            if (dbConnection == null) {
                 connection.setid(Guid.newGuid().toString());
                 connection.setstorage_type(storageType);
                 DbFacade.getInstance().getStorageServerConnectionDao().save(connection);
 
             } else {
-                connection.setid(connections.get(0).getid());
+                connection.setid(dbConnection.getid());
             }
             if (DbFacade.getInstance()
                     .getStorageServerConnectionLunMapDao()
