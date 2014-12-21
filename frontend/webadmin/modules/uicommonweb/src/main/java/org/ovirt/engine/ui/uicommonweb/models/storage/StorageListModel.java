@@ -778,7 +778,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
                 StorageListModel storageListModel = (StorageListModel) array[0];
                 RemoveStorageModel removeStorageModel = (RemoveStorageModel) array[1];
                 StorageDomain storage = (StorageDomain) storageListModel.getSelectedItem();
-                ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
+                List<VDS> hosts = (List<VDS>) returnValue;
                 removeStorageModel.getHostList().setItems(hosts);
                 removeStorageModel.getHostList().setSelectedItem(Linq.firstOrDefault(hosts));
                 removeStorageModel.getFormat().setEntity(storage.getStorageDomainType().isDataDomain());
