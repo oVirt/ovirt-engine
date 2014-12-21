@@ -49,6 +49,10 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
 
     protected void initializeStorageDomain() {
         getStorageDomain().setId(Guid.newGuid());
+        updateStorageDomainWipeAfterDelete();
+    }
+
+    protected void updateStorageDomainWipeAfterDelete() {
         if(getStorageDomain().getStorageStaticData().getWipeAfterDelete() == null) {
             getStorageDomain().getStorageStaticData().setWipeAfterDelete(
                     WipeAfterDeleteUtils.getDefaultWipeAfterDeleteFlag(
