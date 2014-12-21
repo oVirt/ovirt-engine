@@ -19,4 +19,12 @@ basicConstraints = CA:false
 keyUsage = critical,digitalSignature,keyEncipherment
 extendedKeyUsage = critical,serverAuth,clientAuth
 
+[custom]
+subjectKeyIdentifier = hash
+authorityInfoAccess = caIssuers;URI:@AIA@
+authorityKeyIdentifier = keyid:always,issuer:always
+basicConstraints = CA:false
+keyUsage = critical,${ENV::OVIRT_KU}
+extendedKeyUsage = ${ENV::OVIRT_EKU}
+
 [req_distinguished_name]

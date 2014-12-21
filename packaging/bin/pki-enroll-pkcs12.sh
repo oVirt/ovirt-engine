@@ -4,7 +4,9 @@ enroll() {
 	local name="$1"
 	local pass="$2"
 	local subj="$3"
-	local keep_key="$4"
+	local ovirt_ku="$4"
+	local ovirt_eku="$5"
+	local keep_key="$6"
 
 	local req="${PKIDIR}/requests/${name}.req"
 	local cert="${PKIDIR}/certs/${name}.cer"
@@ -45,6 +47,8 @@ enroll() {
 	"${BINDIR}/pki-enroll-request.sh" \
 		--name="${name}" \
 		--subject="${subj}" \
+		--ku="${ovirt_ku}" \
+		--eku="${ovirt_eku}" \
 		|| die "Cannot sign request"
 
 	touch "${pkcs12}"
@@ -71,6 +75,8 @@ Result will be at ${PKIDIR}/keys/PREFIX.p12
     --name=prefix         file name without prefix.
     --password=password   password of PKCS#12.
     --subject=subject     X.500 subject name.
+    --ku=ku               optional custom key usage.
+    --eku=ekus            optional custom extended key usage.
     --keep-key            reissue certificate based on previous request.
 __EOF__
 }
@@ -83,6 +89,8 @@ cleanup() {
 }
 trap cleanup 0
 
+OVIRT_KU=""
+OVIRT_EKU=""
 while [ -n "$1" ]; do
 	x="$1"
 	v="${x#*=}"
@@ -96,6 +104,12 @@ while [ -n "$1" ]; do
 		;;
 		--subject=*)
 			SUBJECT="${v}"
+		;;
+		--ku=*)
+			OVIRT_KU="${v}"
+		;;
+		--eku=*)
+			OVIRT_EKU="${v}"
 		;;
 		--keep-key)
 			KEEP_KEY="1"
@@ -115,4 +129,4 @@ done
 [ -n "${PASSWORD}" ] || die "Please specify password"
 [ -n "${SUBJECT}" ] || die "Please specify subject"
 
-enroll "${NAME}" "${PASSWORD}" "${SUBJECT}" "${KEEP_KEY}"
+enroll "${NAME}" "${PASSWORD}" "${SUBJECT}" "${OVIRT_KU}" "${OVIRT_EKU}" "${KEEP_KEY}"

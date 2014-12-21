@@ -11,3 +11,5 @@ Subordinate OIDs
 
 engine = .1
 engine.notifier = .1.1 - see OVIRT-MIB
+engine.x509 = .1.2
+engine.x509.eku = .1.2.1
