@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
@@ -105,6 +106,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         doReturn(storageConnDao).when(command).getStorageConnDao();
         doReturn(storageDomainDynamicDao).when((UpdateStorageServerConnectionCommand) command).getStorageDomainDynamicDao();
         doReturn(storagePoolIsoMapDAO).when((UpdateStorageServerConnectionCommand) command).getStoragePoolIsoMapDao();
+        doReturn(null).when(command).findConnectionWithSameDetails(any(StorageServerConnections.class));
         doReturn(lunDAO).when(command).getLunDao();
         doReturn(vmDAO).when(command).getVmDAO();
         doReturn(storageDomainDAO).when(command).getStorageDomainDao();
@@ -689,11 +691,9 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
     public void isConnWithSameDetailsExistBlockDomains() {
        StorageServerConnections  newISCSIConnection = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3260", "user1", "mypassword123");
 
-       List<StorageServerConnections> connections = new ArrayList<>();
        StorageServerConnections connection1 = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3260", "user1", "mypassword123");
-       connections.add(connection1);
 
-       when(storageConnDao.getAllForConnection(newISCSIConnection)).thenReturn(connections);
+       when(command.findConnectionWithSameDetails(newISCSIConnection)).thenReturn(connection1);
        boolean isExists = command.isConnWithSameDetailsExists(newISCSIConnection, null);
        assertTrue(isExists);
     }
@@ -702,10 +702,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
     public void isConnWithSameDetailsExistCheckSameConn() {
        StorageServerConnections  newISCSIConnection = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3260", "user1", "mypassword123");
 
-       List<StorageServerConnections> connections = new ArrayList<>();
-       connections.add(newISCSIConnection);
-
-       when(storageConnDao.getAllForConnection(newISCSIConnection)).thenReturn(connections);
+       when(command.findConnectionWithSameDetails(newISCSIConnection)).thenReturn(newISCSIConnection);
        boolean isExists = command.isConnWithSameDetailsExists(newISCSIConnection, null);
         assertFalse(isExists);
     }

@@ -2,12 +2,12 @@ package org.ovirt.engine.core.bll.storage;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,6 +49,7 @@ public class AddStorageServerConnectionCommandTest extends StorageServerConnecti
         command = spy(new AddStorageServerConnectionCommand<StorageServerConnectionParametersBase>(parameters, null));
         doReturn(storageConnDao).when(command).getStorageConnDao();
         doReturn(storageDomainDao).when(command).getStorageDomainDao();
+        doReturn(null).when(command).findConnectionWithSameDetails(any(StorageServerConnections.class));
     }
 
     @Test
@@ -194,10 +195,7 @@ public class AddStorageServerConnectionCommandTest extends StorageServerConnecti
        StorageServerConnections  existingConn = createISCSIConnection("1.2.3.4", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "3650", "user1", "mypassword123");
        existingConn.setid(Guid.newGuid().toString());
 
-       List<StorageServerConnections> connections = new ArrayList<>();
-       connections.add(existingConn);
-
-       when(storageConnDao.getAllForConnection(newISCSIConnection)).thenReturn(connections);
+       when(command.findConnectionWithSameDetails(newISCSIConnection)).thenReturn(existingConn);
        boolean isExists = command.isConnWithSameDetailsExists(newISCSIConnection, null);
        assertTrue(isExists);
     }
