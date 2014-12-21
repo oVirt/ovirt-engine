@@ -2068,7 +2068,7 @@ public class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    for (IVdcQueryable item : (ArrayList<IVdcQueryable>) source)
+                    for (IVdcQueryable item : (List<IVdcQueryable>) source)
                     {
                         return item;
                     }

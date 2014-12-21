@@ -132,7 +132,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     private ArrayList<StorageDomain> allStorageDomains;
     private ArrayList<StorageDomain> attachedStorageDomains;
     private ArrayList<StorageDomain> isoStorageDomains;
-    private ArrayList<VDS> allHosts;
+    private List<VDS> allHosts;
     private VDS localStorageHost;
     private boolean noLocalStorageHost;
 
@@ -235,7 +235,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
                         DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        ArrayList<VDS> hosts =
+                        List<VDS> hosts =
                                 ((VdcQueryReturnValue) returnValue).getReturnValue();
                         if (hosts == null) {
                             hosts = new ArrayList<VDS>();
