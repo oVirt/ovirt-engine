@@ -797,11 +797,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("30")
     LDAPQueryTimeout,
 
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("0")
-    SupportedStorageFormats,
-
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ILIKE")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = ConfigValues.DBEngine,

@@ -43,10 +43,8 @@ public class AddStorageDomainCommonTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.StorageDomainNameSizeLimit, 10),
-            mockConfig(ConfigValues.SupportedStorageFormats, Version.v3_5.toString(), "0,2,3"),
-            mockConfig(ConfigValues.SupportedStorageFormats, Version.v3_0.toString(), "0")
-            );
+            mockConfig(ConfigValues.StorageDomainNameSizeLimit, 10)
+    );
 
     @Mock
     private VdsDAO vdsDao;

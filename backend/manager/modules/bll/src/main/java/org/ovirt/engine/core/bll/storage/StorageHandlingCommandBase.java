@@ -38,7 +38,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
@@ -416,11 +415,6 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     /** @return The maximum length for a storage pool's name, from the configuration. */
     protected Integer getStoragePoolNameSizeLimit() {
         return Config.<Integer> getValue(ConfigValues.StoragePoolNameSizeLimit);
-    }
-
-    /** @return The supported storage domain formats, delimited by commas (","). */
-    protected String getSupportedStorageFormats(Version version) {
-        return Config.<String> getValue(ConfigValues.SupportedStorageFormats, version.toString());
     }
 
     /* Overidden DAO access methods, for easier testing */

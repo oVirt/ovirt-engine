@@ -50,8 +50,6 @@ public class AddExistingFileStorageDomainCommandTest {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.StorageDomainNameSizeLimit, SD_MAX_NAME_LENGTH),
-            mockConfig(ConfigValues.SupportedStorageFormats, Version.v3_4.toString(), "3"),
-            mockConfig(ConfigValues.SupportedStorageFormats, Version.v3_5.toString(), "3"),
             mockConfig(ConfigValues.HostedEngineStorageDomainName, StorageConstants.HOSTED_ENGINE_STORAGE_DOMAIN_NAME)
     );
 

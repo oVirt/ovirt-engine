@@ -471,8 +471,6 @@ select fn_db_add_config_value('StoragePoolRefreshTimeInSeconds','10','general');
 select fn_db_add_config_value('HostStorageConnectionAndPoolRefreshTimeInSeconds','30','general');
 select fn_db_add_config_value('SucceededJobCleanupTimeInMinutes','10','general');
 select fn_db_add_config_value('SupportedClusterLevels','3.0','general');
-select fn_db_add_config_value('SupportedStorageFormats','0,2','3.0');
-select fn_db_add_config_value_for_versions_up_to('SupportedStorageFormats', '0,2,3','3.6');
 select fn_db_add_config_value('SupportedVDSMVersions','4.9,4.10,4.11,4.12,4.13,4.14','general');
 
 select fn_db_add_config_value('SupportForceCreateVG','false','3.0');
@@ -842,6 +840,7 @@ select fn_db_update_default_config_value('ExternalCommunicationProtocol','SSLv3'
 --              Cleanup deprecated configuration values section
 ------------------------------------------------------------------------------------
 
+select fn_db_delete_config_value_all_versions('SupportedStorageFormats');
 select fn_db_delete_config_value('AsyncPollingCyclesBeforeCallbackCleanup','general');
 select fn_db_delete_config_value('AsyncPollingCyclesBeforeRefreshSuspend','general');
 select fn_db_delete_config_value('AutoMode','general');
