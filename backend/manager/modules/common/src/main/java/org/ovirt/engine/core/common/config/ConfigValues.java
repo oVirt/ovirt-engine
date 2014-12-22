@@ -1159,6 +1159,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     TotalNetworkStatisticsReported,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    CfgEntriesDeprecated,
+
     @Reloadable
     @TypeConverterAttribute(Map.class)
     @DefaultValueAttribute("{\"storage domains\":\"true\",\"hosts\":\"true\"}")

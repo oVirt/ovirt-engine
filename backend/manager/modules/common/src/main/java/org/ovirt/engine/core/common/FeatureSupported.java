@@ -90,6 +90,15 @@ public class FeatureSupported {
     /**
      * @param version
      *            Compatibility version to check for.
+     * @return <code>true</code> iff VDSM doesn't depend on ifcfg files for reporting.
+     */
+    public static boolean cfgEntriesDeprecated(Version version) {
+        return supportedInConfig(ConfigValues.CfgEntriesDeprecated, version);
+    }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
      * @return <code>true</code> if anti MAC spoofing is supported for the version, <code>false</code> if it's not.
      */
     public static boolean antiMacSpoofing(Version version) {

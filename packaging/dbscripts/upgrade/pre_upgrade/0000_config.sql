@@ -414,6 +414,7 @@ select fn_db_add_config_value('NumberVmRefreshesBeforeSave','5','general');
 select fn_db_add_config_value('SupportBridgesReportByVDSM','false','3.0');
 select fn_db_add_config_value('SupportBridgesReportByVDSM','false','3.1');
 select fn_db_add_config_value_for_versions_up_to('TotalNetworkStatisticsReported', 'false', '3.5');
+select fn_db_add_config_value_for_versions_up_to('CfgEntriesDeprecated', 'false', '3.5');
 select fn_db_add_config_value('MacAntiSpoofingFilterRulesSupported','false', '3.0');
 select fn_db_add_config_value('MacAntiSpoofingFilterRulesSupported','false', '3.1');
 select fn_db_add_config_value('EnableMACAntiSpoofingFilterRules','true', 'general');

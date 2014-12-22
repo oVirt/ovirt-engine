@@ -56,7 +56,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
-import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
@@ -1581,6 +1580,7 @@ public class VdsBrokerObjectsBuilder {
         Map<String, Map<String, Object>> bonds =
                 (Map<String, Map<String, Object>>) xmlRpcStruct.get(VdsProperties.NETWORK_BONDINGS);
         if (bonds != null) {
+            boolean cfgEntriesDeprecated = FeatureSupported.cfgEntriesDeprecated(vds.getVdsGroupCompatibilityVersion());
             for (Entry<String, Map<String, Object>> entry : bonds.entrySet()) {
                 VdsNetworkInterface iface = new Bond();
                 updateCommonInterfaceData(iface, vds, entry);
@@ -1593,11 +1593,15 @@ public class VdsBrokerObjectsBuilder {
                         addBondDeviceToHost(vds, iface, (Object[]) bond.get("slaves"));
                     }
 
-                    Map<String, Object> config =
-                            (Map<String, Object>) bond.get("cfg");
-
-                    if (config != null && config.get("BONDING_OPTS") != null) {
-                        iface.setBondOptions(config.get("BONDING_OPTS").toString());
+                    Object bondOptions = null;
+                    if (cfgEntriesDeprecated) {
+                        bondOptions = bond.get("opts");
+                    } else {
+                        Map<String, Object> config = (Map<String, Object>) bond.get("cfg");
+                        bondOptions = (config == null) ? null : config.get("BONDING_OPTS");
+                    }
+                    if (bondOptions != null) {
+                        iface.setBondOptions(bondOptions.toString());
                     }
                 }
             }
@@ -1707,7 +1711,7 @@ public class VdsBrokerObjectsBuilder {
                 iface.setMtu(Integer.parseInt(mtu));
             }
 
-            addBootProtocol((Map<String, Object>) nicProperties.get("cfg"), host, iface);
+            addBootProtocol(nicProperties, host, iface);
         }
     }
 
@@ -1749,32 +1753,12 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    private static void addBootProtocol(Map<String, Object> cfg, VDS host, VdsNetworkInterface iface) {
-        NetworkBootProtocol bootproto = NetworkBootProtocol.NONE;
-
-        if (cfg != null) {
-            String bootProtocol = (String) cfg.get("BOOTPROTO");
-
-            if (bootProtocol != null) {
-                if (bootProtocol.toLowerCase().equals("dhcp")) {
-                    bootproto = NetworkBootProtocol.DHCP;
-                } else if (bootProtocol.toLowerCase().equals("none") || bootProtocol.toLowerCase().equals("static")) {
-                    if (StringUtils.isNotEmpty((String) cfg.get("IPADDR"))) {
-                        bootproto = NetworkBootProtocol.STATIC_IP;
-                    }
-                }
-            } else if (StringUtils.isNotEmpty((String) cfg.get("IPADDR"))) {
-                bootproto = NetworkBootProtocol.STATIC_IP;
-            }
-
-            if (bootproto == NetworkBootProtocol.STATIC_IP) {
-                String gateway = (String) cfg.get(VdsProperties.GATEWAY);
-                if (StringUtils.isNotEmpty(gateway)) {
-                    setGatewayIfNecessary(iface, host, gateway.toString());
-                }
-            }
-        }
-        iface.setBootProtocol(bootproto);
+    private static void addBootProtocol(Map<String, Object> entry, VDS host, VdsNetworkInterface iface) {
+        BootProtocolResolver resolver =
+                FeatureSupported.cfgEntriesDeprecated(host.getVdsGroupCompatibilityVersion())
+                        ? new NoCfgBootProtocolResolver(entry, iface, host)
+                        : new CfgBootProtocolResolver(entry, iface, host);
+        resolver.resolve();
     }
 
     private static void addBondDeviceToHost(VDS vds, VdsNetworkInterface iface, Object[] interfaces) {
@@ -1805,7 +1789,7 @@ public class VdsBrokerObjectsBuilder {
      * @param gateway
      *            the gateway value to be set
      */
-    private static void setGatewayIfNecessary(VdsNetworkInterface iface, VDS host, String gateway) {
+    public static void setGatewayIfNecessary(VdsNetworkInterface iface, VDS host, String gateway) {
         final ManagementNetworkUtil managementNetworkUtil = getManagementNetworkUtil();
         if (FeatureSupported.multipleGatewaysSupported(host.getVdsGroupCompatibilityVersion())
                 || managementNetworkUtil.isManagementNetwork(iface.getNetworkName(), host.getVdsGroupId())
