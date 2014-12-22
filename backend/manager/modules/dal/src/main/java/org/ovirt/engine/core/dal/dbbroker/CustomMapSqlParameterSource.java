@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.dal.dbbroker;
 
 import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -34,6 +36,17 @@ public class CustomMapSqlParameterSource extends MapSqlParameterSource {
         }
 
         return super.addValue(dialect.getParamNamePrefix() + paramName, tmpValue);
+    }
+
+    @Override
+    public MapSqlParameterSource addValues(Map<String, ?> values) {
+        if (values != null) {
+            for (Entry<String, ?> entry : values.entrySet()) {
+                addValue(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return this;
     }
 
     private static Object extractEnumValue(Object value) {

@@ -13,7 +13,6 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
-import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -24,6 +23,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.ovirt.engine.core.dao.BaseDAODbFacade;
+import org.ovirt.engine.core.dao.network.NetworkStatisticsDaoDbFacadeImpl.NetworkStatisticsParametersMapper;
+import org.ovirt.engine.core.dao.network.NetworkStatisticsDaoDbFacadeImpl.NetworkStatisticsRowMapper;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -90,13 +91,9 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
     }
 
     private MapSqlParameterSource createStatisticsParametersMapper(VdsNetworkStatistics stats) {
+        NetworkStatisticsParametersMapper<VdsNetworkStatistics> mapper = new NetworkStatisticsParametersMapper<>();
         return getCustomMapSqlParameterSource()
-                .addValue("id", stats.getId())
-                .addValue("rx_drop", stats.getReceiveDropRate())
-                .addValue("rx_rate", stats.getReceiveRate())
-                .addValue("tx_drop", stats.getTransmitDropRate())
-                .addValue("tx_rate", stats.getTransmitRate())
-                .addValue("iface_status", stats.getStatus())
+                .addValues(mapper.createParametersMap(stats))
                 .addValue("vds_id", stats.getVdsId());
     }
 
@@ -299,13 +296,7 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                 public VdsNetworkInterface mapRow(ResultSet rs, int rowNum)
                         throws SQLException {
                     VdsNetworkInterface entity = createInterface(rs);
-                    entity.getStatistics().setId(getGuidDefaultEmpty(rs, "id"));
-                    entity.getStatistics().setReceiveRate(rs.getDouble("rx_rate"));
-                    entity.getStatistics().setTransmitRate(rs.getDouble("tx_rate"));
-                    entity.getStatistics().setReceiveDropRate(rs.getDouble("rx_drop"));
-                    entity.getStatistics().setTransmitDropRate(rs.getDouble("tx_drop"));
-                    entity.getStatistics().setStatus(InterfaceStatus.forValue(rs.getInt("iface_status")));
-                    entity.getStatistics().setVdsId(getGuidDefaultEmpty(rs, "vds_id"));
+                    entity.setStatistics(HostNetworkStatisticsRowMapper.INSTANCE.mapRow(rs, rowNum));
                     entity.setType((Integer) rs.getObject("type"));
                     entity.setGateway(rs.getString("gateway"));
                     entity.setSubnet(rs.getString("subnet"));
@@ -378,4 +369,21 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
             return new Pair<Guid, String>(getGuid(rs, "vds_id"), rs.getString("network_name"));
         }
     };
+
+    private static class HostNetworkStatisticsRowMapper extends NetworkStatisticsRowMapper<VdsNetworkStatistics> {
+
+        private static final HostNetworkStatisticsRowMapper INSTANCE = new HostNetworkStatisticsRowMapper();
+
+        @Override
+        public VdsNetworkStatistics mapRow(ResultSet rs, int rowNum) throws SQLException {
+            VdsNetworkStatistics entity = super.mapRow(rs, rowNum);
+            entity.setVdsId(getGuidDefaultEmpty(rs, "vds_id"));
+            return entity;
+        }
+
+        @Override
+        protected VdsNetworkStatistics createEntity() {
+            return new VdsNetworkStatistics();
+        }
+    }
 }

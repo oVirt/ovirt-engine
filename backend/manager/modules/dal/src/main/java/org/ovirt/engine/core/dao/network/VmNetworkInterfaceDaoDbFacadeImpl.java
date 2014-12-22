@@ -6,10 +6,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.comparators.InterfaceComparerByMAC;
-import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DefaultReadDaoDbFacade;
+import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDaoDbFacadeImpl.VmNetworkStatisticsRowMapper;
 import org.ovirt.engine.core.dao.network.VmNicDaoDbFacadeImpl.VmNicRowMapperBase;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -81,16 +81,10 @@ public class VmNetworkInterfaceDaoDbFacadeImpl extends DefaultReadDaoDbFacade<Vm
 
         public static VmNetworkInterfaceRowMapper INSTANCE = new VmNetworkInterfaceRowMapper();
 
-        @SuppressWarnings("unchecked")
         @Override
         public VmNetworkInterface mapRow(ResultSet rs, int rowNum) throws SQLException {
             VmNetworkInterface entity = super.mapRow(rs, rowNum);
-            entity.getStatistics().setId(getGuidDefaultEmpty(rs, "id"));
-            entity.getStatistics().setReceiveRate(rs.getDouble("rx_rate"));
-            entity.getStatistics().setTransmitRate(rs.getDouble("tx_rate"));
-            entity.getStatistics().setReceiveDropRate(rs.getDouble("rx_drop"));
-            entity.getStatistics().setTransmitDropRate(rs.getDouble("tx_drop"));
-            entity.getStatistics().setStatus(InterfaceStatus.forValue(rs.getInt("iface_status")));
+            entity.setStatistics(VmNetworkStatisticsRowMapper.INSTANCE.mapRow(rs, rowNum));
             entity.setNetworkName(rs.getString("network_name"));
             entity.setVmName(rs.getString("vm_name"));
             entity.setVnicProfileName(rs.getString("vnic_profile_name"));
@@ -98,8 +92,8 @@ public class VmNetworkInterfaceDaoDbFacadeImpl extends DefaultReadDaoDbFacade<Vm
             entity.setPortMirroring(rs.getBoolean("port_mirroring"));
             entity.setQosName(rs.getString("qos_name"));
             return entity;
-
         }
+
         @Override
         protected VmNetworkInterface createVmNicEntity() {
             return new VmNetworkInterface();
