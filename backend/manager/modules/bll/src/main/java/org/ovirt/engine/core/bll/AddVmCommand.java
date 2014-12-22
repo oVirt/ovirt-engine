@@ -1243,17 +1243,20 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected void addDiskPermissions() {
         List<Guid> newDiskImageIds = new ArrayList<>(srcDiskIdToTargetDiskIdMapping.values());
         Permissions[] permsArray = new Permissions[newDiskImageIds.size()];
-        Guid diskOperatorIdFromParams = getParameters().getDiskOperatorAuthzPrincipalDbId();
-        Guid diskOperatorId = diskOperatorIdFromParams != null ? diskOperatorIdFromParams : getCurrentUser().getId();
 
         for (int i = 0; i < newDiskImageIds.size(); i++) {
             permsArray[i] =
-                    new Permissions(diskOperatorId,
+                    new Permissions(getUserIdOfDiskOperator(),
                             PredefinedRoles.DISK_OPERATOR.getId(),
                             newDiskImageIds.get(i),
                             VdcObjectType.Disk);
         }
         MultiLevelAdministrationHandler.addPermission(permsArray);
+    }
+
+    private Guid getUserIdOfDiskOperator() {
+        Guid diskOperatorIdFromParams = getParameters().getDiskOperatorAuthzPrincipalDbId();
+        return diskOperatorIdFromParams != null ? diskOperatorIdFromParams : getCurrentUser().getId();
     }
 
     protected void addActiveSnapshot() {
