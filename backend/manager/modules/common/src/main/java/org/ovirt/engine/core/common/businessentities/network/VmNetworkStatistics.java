@@ -13,6 +13,13 @@ public class VmNetworkStatistics extends NetworkStatistics implements Comparable
 
     private Guid vmId;
 
+    public VmNetworkStatistics() {
+    }
+
+    public VmNetworkStatistics(VmNetworkStatistics statistics) {
+        super(statistics);
+        setVmId(statistics.getVmId());
+    }
     /**
      * Sets the VM id.
      *

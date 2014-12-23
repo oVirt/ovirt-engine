@@ -19,11 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
-import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -73,10 +69,6 @@ public final class Cloner
         if (instance instanceof VmTemplate)
         {
             return cloneVmTemplate((VmTemplate) instance);
-        }
-        if (instance instanceof VmNetworkInterface)
-        {
-            return cloneVmNetworkInterface((VmNetworkInterface) instance);
         }
         if (instance instanceof VmStatic)
         {
@@ -524,54 +516,6 @@ public final class Cloner
         obj.setPredefinedProperties(instance.getPredefinedProperties());
         obj.setUserDefinedProperties(instance.getUserDefinedProperties());
         obj.setCustomProperties(instance.getCustomProperties());
-
-        return obj;
-    }
-
-    private static void cloneNetworkStatisticss(NetworkStatistics instance, NetworkStatistics obj)
-    {
-        obj.setId(instance.getId());
-        obj.setReceiveDropRate(instance.getReceiveDropRate());
-        obj.setReceiveRate(instance.getReceiveRate());
-        obj.setTransmitDropRate(instance.getTransmitDropRate());
-        obj.setTransmitRate(instance.getTransmitRate());
-        obj.setStatus(instance.getStatus());
-    }
-
-    private static VdsNetworkStatistics cloneVdsNetworkStatistics(VdsNetworkStatistics instance)
-    {
-        VdsNetworkStatistics obj = new VdsNetworkStatistics();
-
-        cloneNetworkStatisticss(instance, obj);
-        obj.setVdsId(instance.getVdsId());
-
-        return obj;
-    }
-
-    private static VmNetworkStatistics cloneVmNetworkStatistics(VmNetworkStatistics instance)
-    {
-        VmNetworkStatistics obj = new VmNetworkStatistics();
-
-        cloneNetworkStatisticss(instance, obj);
-        obj.setVmId(instance.getVmId());
-
-        return obj;
-    }
-
-    private static Object cloneVmNetworkInterface(VmNetworkInterface vmNetworkInterface)
-    {
-        VmNetworkInterface obj = new VmNetworkInterface();
-        obj.setId(vmNetworkInterface.getId());
-        obj.setMacAddress(vmNetworkInterface.getMacAddress());
-        obj.setName(vmNetworkInterface.getName());
-        obj.setNetworkName(vmNetworkInterface.getNetworkName());
-        obj.setLinked(vmNetworkInterface.isLinked());
-        obj.setSpeed(vmNetworkInterface.getSpeed());
-        obj.setType(vmNetworkInterface.getType());
-        obj.setVmId(vmNetworkInterface.getVmId());
-        obj.setVmName(vmNetworkInterface.getVmName());
-        obj.setVmTemplateId(vmNetworkInterface.getVmTemplateId());
-        obj.setStatistics(cloneVmNetworkStatistics(vmNetworkInterface.getStatistics()));
 
         return obj;
     }

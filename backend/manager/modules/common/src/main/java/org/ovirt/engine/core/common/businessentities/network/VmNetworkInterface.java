@@ -19,6 +19,20 @@ public class VmNetworkInterface extends VmNic {
         plugged = true;
     }
 
+    public VmNetworkInterface(VmNetworkInterface iface) {
+        setId(iface.getId());
+        setMacAddress(iface.getMacAddress());
+        setName(iface.getName());
+        setNetworkName(iface.getNetworkName());
+        setLinked(iface.isLinked());
+        setSpeed(iface.getSpeed());
+        setType(iface.getType());
+        setVmId(iface.getVmId());
+        setVmName(iface.getVmName());
+        setVmTemplateId(iface.getVmTemplateId());
+        setStatistics(new VmNetworkStatistics(iface.getStatistics()));
+    }
+
     @Override
     public Object getQueryableId() {
         return id;

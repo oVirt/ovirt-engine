@@ -22,6 +22,18 @@ public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid
 
     private Double transmitRate;
 
+    public NetworkStatistics() {
+    }
+
+    public NetworkStatistics(NetworkStatistics statistics) {
+        setId(statistics.getId());
+        setReceiveDropRate(statistics.getReceiveDropRate());
+        setReceiveRate(statistics.getReceiveRate());
+        setTransmitDropRate(statistics.getTransmitDropRate());
+        setTransmitRate(statistics.getTransmitRate());
+        setStatus(statistics.getStatus());
+    }
+
     /**
      * Sets the instance id.
      *

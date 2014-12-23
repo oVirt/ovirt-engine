@@ -14,7 +14,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -86,7 +85,7 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
 
     @Override
     protected VmNetworkInterface createBaseNic() {
-        return (VmNetworkInterface) Cloner.clone(getNic());
+        return new VmNetworkInterface(getNic());
     }
 
     @Override
