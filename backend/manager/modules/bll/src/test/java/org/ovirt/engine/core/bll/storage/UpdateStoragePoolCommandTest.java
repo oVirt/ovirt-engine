@@ -97,6 +97,7 @@ public class UpdateStoragePoolCommandTest {
         doReturn(vdsDao).when(cmd).getVdsDAO();
         doReturn(networkDao).when(cmd).getNetworkDAO();
         doReturn(poolValidator).when(cmd).createStoragePoolValidator();
+        doReturn(true).when(sdList).isEmpty();
 
         mcr.mockConfigValue(ConfigValues.AutoRegistrationDefaultVdsGroupID, DEFAULT_VDS_GROUP_ID);
         mcr.mockConfigValue(ConfigValues.ManagementNetwork, "test_mgmt");
@@ -242,6 +243,7 @@ public class UpdateStoragePoolCommandTest {
     }
 
     private void domainListNotEmpty() {
+        when(sdList.isEmpty()).thenReturn(false);
         when(sdList.size()).thenReturn(1);
     }
 

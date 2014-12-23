@@ -164,28 +164,27 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = checkStoragePool();
-        if (returnValue && !StringUtils.equals(getOldStoragePool().getName(), getStoragePool().getName())
+        if (!checkStoragePool()) {
+            return false;
+        }
+
+        // Name related validations
+        if (!StringUtils.equals(getOldStoragePool().getName(), getStoragePool().getName())
                 && !isStoragePoolUnique(getStoragePool().getName())) {
-            returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
         }
-        if (returnValue
-                && getOldStoragePool().isLocal() != getStoragePool().isLocal()
-                && getStorageDomainStaticDAO().getAllForStoragePool(getStoragePool().getId()).size() > 0) {
-            returnValue = false;
-            getReturnValue()
-                    .getCanDoActionMessages()
-                    .add(VdcBllMessages.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_DOMAINS
-                            .toString());
+        if (!checkStoragePoolNameLengthValid()) {
+            return false;
         }
-        returnValue = returnValue && checkStoragePoolNameLengthValid();
-        if (returnValue
-                && !getOldStoragePool().getcompatibility_version().equals(getStoragePool()
-                        .getcompatibility_version())) {
+
+        List<StorageDomainStatic> poolDomains = getStorageDomainStaticDAO().getAllForStoragePool(getStoragePool().getId());
+        if ( getOldStoragePool().isLocal() != getStoragePool().isLocal() && !poolDomains.isEmpty() ) {
+            return failCanDoAction(VdcBllMessages.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_DOMAINS);
+        }
+        if ( !getOldStoragePool().getcompatibility_version().equals(getStoragePool()
+                .getcompatibility_version())) {
             if (!isStoragePoolVersionSupported()) {
-                addCanDoActionMessage(VersionSupport.getUnsupportedVersionMessage());
-                returnValue = false;
+                return failCanDoAction(VersionSupport.getUnsupportedVersionMessage());
             }
             // decreasing of compatibility version is allowed under conditions
             else if (getStoragePool().getcompatibility_version().compareTo(getOldStoragePool().getcompatibility_version()) < 0) {
@@ -196,24 +195,18 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                     validator.setDataCenter(getStoragePool());
                     if (!NetworkUtils.isManagementNetwork(network)
                             || !validator.canNetworkCompatabilityBeDecreased()) {
-                        returnValue = false;
-                        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+                        return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
                     }
                 } else if (networks.size() > 1) {
-                    returnValue = false;
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
+                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
                 }
-            } else {
-                // Check all clusters has at least the same compatibility version.
-                returnValue = checkAllClustersLevel();
+            } else if (!checkAllClustersLevel()) {  // Check all clusters has at least the same compatibility version.
+                return false;
             }
         }
 
         StoragePoolValidator validator = createStoragePoolValidator();
-        if (returnValue) {
-            returnValue = validate(validator.isNotLocalfsWithDefaultCluster());
-        }
-        return returnValue;
+        return validate(validator.isNotLocalfsWithDefaultCluster());
     }
 
     protected boolean checkAllClustersLevel() {
