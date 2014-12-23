@@ -136,28 +136,18 @@ public class InterfaceDaoTest extends BaseDAOTestCase {
     }
 
     /**
-     * Ensures that all statistics are removed for the specified VDS.
+     * Ensures that statistics are removed for the specified VDS interface, in which case it shouldn't be returned by
+     * the DAO (as the interface view is an inner join with the statistics).
      */
     @Test
-    public void testRemoveStatisticsForVds() {
-        List<VdsNetworkInterface> before = dao.getAllInterfacesForVds(VDS_ID);
+    public void testRemoveStatisticsForVdsInterface() {
+        VdsNetworkInterface before = dao.get(FixturesTool.VDS_NETWORK_INTERFACE);
+        assertNotNull(before);
 
-        for (VdsNetworkInterface iface : before) {
-            assertNotSame(0.0, iface.getStatistics().getTransmitRate());
-            assertNotSame(0.0, iface.getStatistics().getReceiveRate());
-            assertNotSame(0.0, iface.getStatistics().getReceiveDropRate());
-            assertNotSame(0.0, iface.getStatistics().getReceiveDropRate());
-        }
         dao.removeStatisticsForVds(FixturesTool.VDS_NETWORK_INTERFACE);
 
-        List<VdsNetworkInterface> after = dao.getAllInterfacesForVds(VDS_ID);
-
-        for (VdsNetworkInterface iface : after) {
-            assertEquals(0.0, iface.getStatistics().getTransmitRate(), 0.0001);
-            assertEquals(0.0, iface.getStatistics().getReceiveRate(), 0.0001);
-            assertEquals(0.0, iface.getStatistics().getReceiveDropRate(), 0.0001);
-            assertEquals(0.0, iface.getStatistics().getReceiveDropRate(), 0.0001);
-        }
+        VdsNetworkInterface after = dao.get(FixturesTool.VDS_NETWORK_INTERFACE);
+        assertNull(after);
     }
 
     private void testUpdateInterface(Guid interface_id) {
