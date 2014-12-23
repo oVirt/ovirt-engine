@@ -10,4 +10,6 @@ import java.lang.annotation.Target;
 public @interface OnTimerMethodAnnotation {
 
     String value();
+
+    boolean transactional() default false;
 }

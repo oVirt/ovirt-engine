@@ -1,9 +1,13 @@
 package org.ovirt.engine.core.utils.timer;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -19,7 +23,7 @@ import org.slf4j.LoggerFactory;
 public class JobWrapper implements Job {
 
     // static data members
-    private static Map<String, Method> cachedMethods = new HashMap<String, Method>();
+    private static ConcurrentMap<String, Method> cachedMethods = new ConcurrentHashMap<>();
     private final Logger log = LoggerFactory.getLogger(SchedulerUtilQuartzImpl.class);
 
     /**
@@ -37,33 +41,44 @@ public class JobWrapper implements Job {
             JobDataMap data = context.getJobDetail().getJobDataMap();
             Map paramsMap = data.getWrappedMap();
             methodName = (String) paramsMap.get(SchedulerUtilBaseImpl.RUN_METHOD_NAME);
-            Object instance = getInstanceToRun(paramsMap);
-            Object[] methodParams = (Object[]) paramsMap.get(SchedulerUtilBaseImpl.RUN_METHOD_PARAM);
+            final Object instance = getInstanceToRun(paramsMap);
+            final Object[] methodParams = (Object[]) paramsMap.get(SchedulerUtilBaseImpl.RUN_METHOD_PARAM);
             String methodKey = getMethodKey(instance.getClass().getName(), methodName);
-            Method methodToRun = cachedMethods.get(methodKey);
-            if (methodToRun == null) {
-                synchronized (cachedMethods) {
-                    if (cachedMethods.containsKey(methodKey)) {
-                        methodToRun = cachedMethods.get(methodKey);
-                    } else {
-                        methodToRun = getMethodToRun(instance, methodName);
-                        if (methodToRun == null) {
-                            log.error("could not find the required method '{}' on instance of {}",
-                                    methodName, instance.getClass().getSimpleName());
-                            return;
-                        }
-
-                        cachedMethods.put(methodKey, methodToRun);
-                    }
-                }
+            final Method methodToRun;
+            if (!cachedMethods.containsKey(methodKey)) {
+                cachedMethods.putIfAbsent(methodKey, getMethodToRun(instance, methodName));
             }
-            methodToRun.invoke(instance, methodParams);
+            methodToRun = cachedMethods.get(methodKey);
+            invokeMethod(instance, methodToRun, methodParams);
         } catch (Exception e) {
             log.error("Failed to invoke scheduled method {}: {}", methodName, e.getMessage());
             log.debug("Exception", e);
             JobExecutionException jee = new JobExecutionException("failed to execute job");
             jee.setStackTrace(e.getStackTrace());
             throw jee;
+        }
+    }
+
+    private void invokeMethod(final Object instance, final Method methodToRun, final Object[] methodParams)
+            throws Exception, IllegalAccessException, InvocationTargetException {
+        OnTimerMethodAnnotation annotation = methodToRun.getAnnotation(OnTimerMethodAnnotation.class);
+        if (annotation.transactional()) {
+            Exception e = TransactionSupport.executeInNewTransaction(new TransactionMethod<Exception>() {
+                @Override
+                public Exception runInTransaction() {
+                    try {
+                        methodToRun.invoke(instance, methodParams);
+                    } catch (Exception e) {
+                        return e;
+                    }
+                    return null;
+                }
+            });
+            if (e != null) {
+                throw e;
+            }
+        } else {
+            methodToRun.invoke(instance, methodParams);
         }
     }
 
