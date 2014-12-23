@@ -16,9 +16,10 @@ import org.ovirt.engine.core.compat.Guid;
 public abstract class AbstractUserQueryTest<P extends VdcQueryParametersBase, Q extends QueriesCommandBase<? extends P>>
         extends AbstractQueryTest<P, Q> {
 
+    protected static final long UNPRIVILEGED_USER_SESSION_ID = 1;
+
     private DbUser user;
     private Guid userID;
-    protected final long UNPRIVILEGED_USER_SESSION_ID = 1;
 
     @Before
     @Override
