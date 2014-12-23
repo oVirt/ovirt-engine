@@ -1036,8 +1036,9 @@ INNER JOIN roles ON permissions.role_id = roles.id;
         vds/vm/ interface view
 *************************************************/
 CREATE OR REPLACE VIEW vds_interface_view AS
-  SELECT vds_interface_statistics.rx_rate, vds_interface_statistics.tx_rate, vds_interface_statistics.rx_drop,
-      vds_interface_statistics.tx_drop, vds_interface_statistics.iface_status, vds_interface.type, vds_interface.gateway,
+  SELECT vds_interface_statistics.rx_rate, vds_interface_statistics.tx_rate, vds_interface_statistics.rx_drop, vds_interface_statistics.tx_drop,
+      vds_interface_statistics.rx_total, vds_interface_statistics.tx_total, vds_interface_statistics.rx_offset, vds_interface_statistics.tx_offset,
+      vds_interface_statistics.iface_status, vds_interface_statistics.sample_time, vds_interface.type, vds_interface.gateway,
       vds_interface.subnet, vds_interface.addr, vds_interface.speed, vds_interface.base_interface, vds_interface.vlan_id, vds_interface.bond_type,
       vds_interface.bond_name, vds_interface.is_bond, vds_interface.bond_opts, vds_interface.mac_addr,
       vds_interface.network_name, vds_interface.name, vds_static.vds_id, vds_static.vds_name,  vds_interface.id,
@@ -1048,8 +1049,9 @@ CREATE OR REPLACE VIEW vds_interface_view AS
   JOIN vds_static ON vds_interface.vds_id = vds_static.vds_id;
 
 CREATE OR REPLACE VIEW vm_interface_view AS
-  SELECT vm_interface_statistics.rx_rate, vm_interface_statistics.tx_rate, vm_interface_statistics.rx_drop,
-      vm_interface_statistics.tx_drop, vm_interface_statistics.iface_status, vm_interface.type, vm_interface.speed,
+  SELECT vm_interface_statistics.rx_rate, vm_interface_statistics.tx_rate, vm_interface_statistics.rx_drop, vm_interface_statistics.tx_drop,
+      vm_interface_statistics.rx_total, vm_interface_statistics.tx_total, vm_interface_statistics.rx_offset, vm_interface_statistics.tx_offset,
+      vm_interface_statistics.iface_status, vm_interface_statistics.sample_time, vm_interface.type, vm_interface.speed,
       vm_interface.mac_addr, network.name AS network_name, vm_interface.name, vm_interface.vnic_profile_id, vm_static.vm_guid, vm_interface.vmt_guid,
       vm_static.vm_name, vm_interface.id, 0 AS boot_protocol, 0 AS is_vds, vm_device.is_plugged,
       vm_device.custom_properties, vnic_profiles.port_mirroring AS port_mirroring, vm_interface.linked,
@@ -1060,8 +1062,9 @@ CREATE OR REPLACE VIEW vm_interface_view AS
   JOIN vm_device ON vm_interface.vm_guid = vm_device.vm_id AND vm_interface.id = vm_device.device_id
   LEFT JOIN ((vnic_profiles JOIN network ON network.id = vnic_profiles.network_id)LEFT JOIN qos ON vnic_profiles.network_qos_id = qos.id) ON vnic_profiles.id = vm_interface.vnic_profile_id
   UNION
-  SELECT vm_interface_statistics.rx_rate, vm_interface_statistics.tx_rate, vm_interface_statistics.rx_drop,
-      vm_interface_statistics.tx_drop, vm_interface_statistics.iface_status, vm_interface.type, vm_interface.speed,
+  SELECT vm_interface_statistics.rx_rate, vm_interface_statistics.tx_rate, vm_interface_statistics.rx_drop, vm_interface_statistics.tx_drop,
+      vm_interface_statistics.rx_total, vm_interface_statistics.tx_total, vm_interface_statistics.rx_offset, vm_interface_statistics.tx_offset,
+      vm_interface_statistics.iface_status, vm_interface_statistics.sample_time, vm_interface.type, vm_interface.speed,
       vm_interface.mac_addr, network.name AS network_name, vm_interface.name, vm_interface.vnic_profile_id, NULL::uuid as vm_guid,
       vm_interface.vmt_guid, vm_templates.vm_name AS vm_name, vm_interface.id, 0 AS boot_protocol, 0 AS is_vds,
       vm_device.is_plugged as is_plugged, vm_device.custom_properties as custom_properties, vnic_profiles.port_mirroring AS port_mirroring,

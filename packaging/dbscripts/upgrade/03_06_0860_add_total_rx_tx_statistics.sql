@@ -1,0 +1,10 @@
+SELECT fn_db_add_column('vds_interface_statistics', 'rx_total', 'BIGINT DEFAULT NULL');
+SELECT fn_db_add_column('vds_interface_statistics', 'rx_offset', 'BIGINT DEFAULT NULL');
+SELECT fn_db_add_column('vds_interface_statistics', 'tx_total', 'BIGINT DEFAULT NULL');
+SELECT fn_db_add_column('vds_interface_statistics', 'tx_offset', 'BIGINT DEFAULT NULL');
+SELECT fn_db_add_column('vds_interface_statistics', 'sample_time', 'DOUBLE PRECISION DEFAULT NULL');
+SELECT fn_db_add_column('vm_interface_statistics', 'rx_total', 'BIGINT DEFAULT NULL');
+SELECT fn_db_add_column('vm_interface_statistics', 'rx_offset', 'BIGINT DEFAULT NULL');
+SELECT fn_db_add_column('vm_interface_statistics', 'tx_total', 'BIGINT DEFAULT NULL');
+SELECT fn_db_add_column('vm_interface_statistics', 'tx_offset', 'BIGINT DEFAULT NULL');
+SELECT fn_db_add_column('vm_interface_statistics', 'sample_time', 'DOUBLE PRECISION DEFAULT NULL');

@@ -36,9 +36,14 @@ public abstract class NetworkStatisticsDaoDbFacadeImpl<T extends NetworkStatisti
             map.put("id", stats.getId());
             map.put("rx_drop", stats.getReceiveDropRate());
             map.put("rx_rate", stats.getReceiveRate());
+            map.put("rx_total", stats.getReceivedBytes());
+            map.put("rx_offset", stats.getReceivedBytesOffset());
             map.put("tx_drop", stats.getTransmitDropRate());
             map.put("tx_rate", stats.getTransmitRate());
+            map.put("tx_total", stats.getTransmittedBytes());
+            map.put("tx_offset", stats.getTransmittedBytesOffset());
             map.put("iface_status", stats.getStatus());
+            map.put("sample_time", stats.getSampleTime());
             return map;
         }
     }
@@ -53,9 +58,14 @@ public abstract class NetworkStatisticsDaoDbFacadeImpl<T extends NetworkStatisti
             entity.setId(getGuidDefaultEmpty(rs, "id"));
             entity.setReceiveRate(rs.getDouble("rx_rate"));
             entity.setTransmitRate(rs.getDouble("tx_rate"));
+            entity.setReceivedBytes(getLong(rs, "rx_total"));
+            entity.setTransmittedBytes(getLong(rs, "tx_total"));
+            entity.setReceivedBytesOffset(getLong(rs, "rx_offset"));
+            entity.setTransmittedBytesOffset(getLong(rs, "tx_offset"));
             entity.setReceiveDropRate(rs.getDouble("rx_drop"));
             entity.setTransmitDropRate(rs.getDouble("tx_drop"));
             entity.setStatus(InterfaceStatus.forValue(rs.getInt("iface_status")));
+            entity.setSampleTime(getDouble(rs, "sample_time"));
             return entity;
         }
     }

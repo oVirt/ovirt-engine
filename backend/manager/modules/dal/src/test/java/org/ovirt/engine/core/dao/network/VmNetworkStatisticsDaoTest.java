@@ -3,7 +3,6 @@ package org.ovirt.engine.core.dao.network;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,9 +13,8 @@ import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAOTestCase;
 
-public class VmNetworkStatisticsDaoTest extends BaseDAOTestCase {
+public class VmNetworkStatisticsDaoTest extends NetworkStatisticsDaoTest<VmNetworkStatistics> {
     private static final Guid INTERFACE_ID = new Guid("e2817b12-f873-4046-b0da-0098293c14fd");
     private static final Guid NEW_INTERFACE_ID = new Guid("14550e82-1e1f-47b5-ae41-b009348dabfa");
     private static final Guid VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
@@ -35,10 +33,15 @@ public class VmNetworkStatisticsDaoTest extends BaseDAOTestCase {
         newVmStatistics.setId(NEW_INTERFACE_ID);
         newVmStatistics.setVmId(VM_ID);
         newVmStatistics.setStatus(InterfaceStatus.DOWN);
+        newVmStatistics.setSampleTime(0.0);
         newVmStatistics.setReceiveDropRate(0.0);
         newVmStatistics.setReceiveRate(0.0);
+        newVmStatistics.setReceivedBytes(0L);
+        newVmStatistics.setReceivedBytesOffset(0L);
         newVmStatistics.setTransmitDropRate(0.0);
         newVmStatistics.setTransmitRate(0.0);
+        newVmStatistics.setTransmittedBytes(0L);
+        newVmStatistics.setTransmittedBytesOffset(0L);
     }
 
     /**
@@ -75,30 +78,24 @@ public class VmNetworkStatisticsDaoTest extends BaseDAOTestCase {
         assertEquals(newVmStatistics.getStatus(), savedStatistics.getStatus());
     }
 
-    /**
-     * Ensures that updating statistics for an interface works as expected.
-     */
-    @Test
-    public void testUpdate() {
-        List<VmNetworkInterface> before = dbFacade.getVmNetworkInterfaceDao().getAllForVm(VM_ID);
-        VmNetworkStatistics stats = before.get(0).getStatistics();
+    @Override
+    protected List<VmNetworkInterface> getAllInterfaces() {
+        return dbFacade.getVmNetworkInterfaceDao().getAllForVm(VM_ID);
+    }
 
-        stats.setReceiveDropRate(999.0);
-
+    @Override
+    protected void updateStatistics(VmNetworkStatistics stats) {
         dao.update(stats);
+    }
 
-        List<VmNetworkInterface> after = dbFacade.getVmNetworkInterfaceDao().getAllForVm(VM_ID);
-        boolean found = false;
+    @Test
+    public void testUpdateWithValues() {
+        testUpdateStatistics(999.0, 999L);
+    }
 
-        for (VmNetworkInterface ifaced : after) {
-            if (ifaced.getStatistics().getId().equals(stats.getId())) {
-                found = true;
-                assertEquals(stats.getReceiveDropRate(), ifaced.getStatistics().getReceiveDropRate());
-            }
-        }
-
-        if (!found)
-            fail("Did not find statistics which is bad.");
+    @Test
+    public void testUpdateNullValues() {
+        testUpdateStatistics(null, null);
     }
 
     /**

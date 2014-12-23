@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +16,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
@@ -31,6 +31,7 @@ public class InterfaceDaoTest extends BaseDAOTestCase {
     private static final String TARGET_ID = "0cc146e8-e5ed-482c-8814-270bc48c297b";
     private static final String LABEL = "abc";
 
+    private HostNetworkStatisticsDaoTest statsTest;
     private InterfaceDao dao;
     private VdsNetworkInterface existingVdsInterface;
     private VdsNetworkInterface newVdsInterface;
@@ -41,6 +42,7 @@ public class InterfaceDaoTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
+        statsTest = new HostNetworkStatisticsDaoTest();
         dao = dbFacade.getInterfaceDao();
         existingVdsInterface = dao.get(FixturesTool.VDS_NETWORK_INTERFACE);
 
@@ -179,30 +181,28 @@ public class InterfaceDaoTest extends BaseDAOTestCase {
         testUpdateInterface(FixturesTool.VDS_NETWORK_INTERFACE_WITHOUT_QOS);
     }
 
-    /**
-     * Ensures that updating statistics for an interface works as expected.
-     */
-    @Test
-    public void testUpdateStatisticsForVds() {
-        List<VdsNetworkInterface> before = dao.getAllInterfacesForVds(VDS_ID);
-        VdsNetworkStatistics stats = before.get(0).getStatistics();
+    private class HostNetworkStatisticsDaoTest extends NetworkStatisticsDaoTest<VdsNetworkStatistics> {
 
-        stats.setReceiveDropRate(999.0);
-
-        dao.updateStatisticsForVds(stats);
-
-        List<VdsNetworkInterface> after = dao.getAllInterfacesForVds(VDS_ID);
-        boolean found = false;
-
-        for (VdsNetworkInterface ifaced : after) {
-            if (ifaced.getStatistics().getId().equals(stats.getId())) {
-                found = true;
-                assertEquals(stats.getReceiveDropRate(), ifaced.getStatistics().getReceiveDropRate());
-            }
+        @Override
+        protected List<? extends NetworkInterface<VdsNetworkStatistics>> getAllInterfaces() {
+            return dao.getAllInterfacesForVds(VDS_ID);
         }
 
-        if (!found)
-            fail("Did not find statistics which is bad.");
+        @Override
+        protected void updateStatistics(VdsNetworkStatistics stats) {
+            dao.updateStatisticsForVds(stats);
+        }
+
+    }
+
+    @Test
+    public void testUpdateStatisticsWithValues() {
+        statsTest.testUpdateStatistics(999.0, 999L);
+    }
+
+    @Test
+    public void testUpdateStatisticsNullValues() {
+        statsTest.testUpdateStatistics(null, null);
     }
 
     @Test

@@ -112,10 +112,25 @@ public abstract class BaseDAODbFacade {
      * Returns a Double or a null if the column was NULL.
      * @param resultSet the ResultSet to extract the result from
      * @param columnName
+     * @return a Double or null
+     * @throws SQLException
+     */
+    public final static Double getDouble(ResultSet resultSet, String columnName) throws SQLException {
+        if (resultSet.getDouble(columnName) == 0 && resultSet.wasNull()) {
+            return null;
+        } else {
+            return resultSet.getDouble(columnName);
+        }
+    }
+
+    /**
+     * Returns a Long or a null if the column was NULL.
+     * @param resultSet the ResultSet to extract the result from
+     * @param columnName
      * @return a Long or null
      * @throws SQLException
      */
-    final static Long getLong(ResultSet resultSet, String columnName) throws SQLException {
+    public final static Long getLong(ResultSet resultSet, String columnName) throws SQLException {
         if (resultSet.getLong(columnName) == 0 && resultSet.wasNull()) {
             return null;
         } else {

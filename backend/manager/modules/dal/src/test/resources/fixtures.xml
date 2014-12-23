@@ -5426,11 +5426,21 @@
         <column>tx_rate</column>
         <column>rx_drop</column>
         <column>tx_drop</column>
+        <column>rx_total</column>
+        <column>tx_total</column>
+        <column>rx_offset</column>
+        <column>tx_offset</column>
         <column>iface_status</column>
+        <column>sample_time</column>
         <column>_update_date</column>
         <row>
             <value>e2817b12-f873-4046-b0da-0098293c14fd</value>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
             <value>0</value>
             <value>0</value>
             <value>0</value>
@@ -5445,7 +5455,12 @@
             <value>0</value>
             <value>0</value>
             <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
             <value>1</value>
+            <value>0</value>
             <null />
         </row>
         <row>
@@ -5455,7 +5470,12 @@
             <value>0</value>
             <value>0</value>
             <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
             <value>1</value>
+            <value>0</value>
             <null />
         </row>
             <row>
@@ -5465,7 +5485,12 @@
             <value>0</value>
             <value>0</value>
             <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
             <value>1</value>
+            <value>0</value>
             <null />
         </row>
     </table>
@@ -5588,11 +5613,21 @@
         <column>tx_rate</column>
         <column>rx_drop</column>
         <column>tx_drop</column>
+        <column>rx_total</column>
+        <column>tx_total</column>
+        <column>rx_offset</column>
+        <column>tx_offset</column>
         <column>iface_status</column>
+        <column>sample_time</column>
         <column>_update_date</column>
         <row>
             <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9db</value>
             <null />
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
             <value>0</value>
             <value>0</value>
             <value>0</value>
@@ -5608,11 +5643,21 @@
             <value>0</value>
             <value>0</value>
             <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
             <null />
         </row>
         <row>
             <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9dc</value>
             <null />
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
             <value>0</value>
             <value>0</value>
             <value>0</value>
@@ -5628,11 +5673,21 @@
             <value>0</value>
             <value>0</value>
             <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
             <null />
         </row>
         <row>
             <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9de</value>
             <null />
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
             <value>0</value>
             <value>0</value>
             <value>0</value>

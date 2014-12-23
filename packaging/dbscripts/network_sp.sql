@@ -767,15 +767,20 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION Insertvm_interface_statistics(v_id UUID,
 	v_rx_drop DECIMAL(18,0) ,
 	v_rx_rate DECIMAL(18,0) ,
+	v_rx_total BIGINT ,
+	v_rx_offset BIGINT ,
 	v_tx_drop DECIMAL(18,0) ,
 	v_tx_rate DECIMAL(18,0) ,
+	v_tx_total BIGINT ,
+	v_tx_offset BIGINT ,
 	v_iface_status INTEGER ,
+	v_sample_time DOUBLE PRECISION ,
 	v_vm_id UUID)
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO vm_interface_statistics(id, rx_drop, rx_rate, tx_drop, tx_rate, vm_id, iface_status)
-	VALUES(v_id, v_rx_drop, v_rx_rate, v_tx_drop, v_tx_rate, v_vm_id,v_iface_status);
+INSERT INTO vm_interface_statistics(id, rx_drop, rx_rate, rx_total, rx_offset, tx_drop, tx_rate, tx_total, tx_offset, vm_id, iface_status, sample_time)
+	VALUES(v_id, v_rx_drop, v_rx_rate, v_rx_total, v_rx_offset, v_tx_drop, v_tx_rate, v_tx_total, v_tx_offset, v_vm_id, v_iface_status, v_sample_time);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -786,9 +791,14 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION Updatevm_interface_statistics(v_id UUID,
  v_rx_drop DECIMAL(18,0) ,
  v_rx_rate DECIMAL(18,0) ,
+ v_rx_total BIGINT ,
+ v_rx_offset BIGINT ,
  v_tx_drop DECIMAL(18,0) ,
  v_tx_rate DECIMAL(18,0) ,
+ v_tx_total BIGINT ,
+ v_tx_offset BIGINT ,
  v_iface_status INTEGER ,
+ v_sample_time DOUBLE PRECISION ,
  v_vm_id UUID)
 RETURNS VOID
 
@@ -796,8 +806,9 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE vm_interface_statistics
-      SET rx_drop = v_rx_drop,rx_rate = v_rx_rate,tx_drop = v_tx_drop,tx_rate = v_tx_rate,
-      vm_id = v_vm_id,iface_status = v_iface_status, _update_date = LOCALTIMESTAMP
+      SET rx_drop = v_rx_drop,rx_rate = v_rx_rate,rx_total = v_rx_total,rx_offset = v_rx_offset,
+      tx_drop = v_tx_drop,tx_rate = v_tx_rate,tx_total = v_tx_total,tx_offset = v_tx_offset,
+      vm_id = v_vm_id,iface_status = v_iface_status,sample_time = v_sample_time, _update_date = LOCALTIMESTAMP
       WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -875,15 +886,20 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION Insertvds_interface_statistics(v_id UUID,
 	v_rx_drop DECIMAL(18,0) ,
 	v_rx_rate DECIMAL(18,0) ,
+	v_rx_total BIGINT ,
+	v_rx_offset BIGINT ,
 	v_tx_drop DECIMAL(18,0) ,
 	v_tx_rate DECIMAL(18,0) ,
+	v_tx_total BIGINT ,
+	v_tx_offset BIGINT ,
 	v_iface_status INTEGER ,
+	v_sample_time DOUBLE PRECISION ,
 	v_vds_id UUID)
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO vds_interface_statistics(id, rx_drop, rx_rate, tx_drop, tx_rate, vds_id, iface_status)
-	VALUES(v_id, v_rx_drop, v_rx_rate, v_tx_drop, v_tx_rate, v_vds_id,v_iface_status);
+INSERT INTO vds_interface_statistics(id, rx_drop, rx_rate, rx_total, rx_offset, tx_drop, tx_rate, tx_total, tx_offset, vds_id, iface_status, sample_time)
+	VALUES(v_id, v_rx_drop, v_rx_rate, v_rx_total, v_rx_offset, v_tx_drop, v_tx_rate, v_tx_total, v_tx_offset, v_vds_id, v_iface_status, v_sample_time);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -894,9 +910,14 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION Updatevds_interface_statistics(v_id UUID,
  v_rx_drop DECIMAL(18,0) ,
  v_rx_rate DECIMAL(18,0) ,
+ v_rx_total BIGINT ,
+ v_rx_offset BIGINT ,
  v_tx_drop DECIMAL(18,0) ,
  v_tx_rate DECIMAL(18,0) ,
+ v_tx_total BIGINT ,
+ v_tx_offset BIGINT ,
  v_iface_status INTEGER ,
+ v_sample_time DOUBLE PRECISION ,
  v_vds_id UUID)
 RETURNS VOID
 
@@ -904,8 +925,9 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE vds_interface_statistics
-      SET rx_drop = v_rx_drop,rx_rate = v_rx_rate,tx_drop = v_tx_drop,tx_rate = v_tx_rate,
-      vds_id = v_vds_id,iface_status = v_iface_status, _update_date = LOCALTIMESTAMP
+      SET rx_drop = v_rx_drop,rx_rate = v_rx_rate,rx_total = v_rx_total,rx_offset = v_rx_offset,
+      tx_drop = v_tx_drop,tx_rate = v_tx_rate,tx_total = v_tx_total,tx_offset = v_tx_offset,
+      vds_id = v_vds_id,iface_status = v_iface_status,sample_time = v_sample_time, _update_date = LOCALTIMESTAMP
       WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;
