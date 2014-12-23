@@ -392,6 +392,18 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("TLSv1")
     ExternalCommunicationProtocol,
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("jms.queue.requests")
+    VdsRequestQueueName,
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("jms.queue.reponses")
+    VdsResponseQueueName,
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("jms.queue.irsrequests")
+    IrsRequestQueueName,
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("jms.queue.irsreponses")
+    IrsResponseQueueName,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("oVirt")

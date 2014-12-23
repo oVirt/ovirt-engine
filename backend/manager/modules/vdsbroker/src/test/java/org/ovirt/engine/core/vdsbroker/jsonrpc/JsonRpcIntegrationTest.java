@@ -24,10 +24,13 @@ public class JsonRpcIntegrationTest {
     private final static String HOST_ADDRESS = "192.168.1.10";
     private final static int PORT = 4044;
     private final static int TIMEOUT = 5000;
+    private final static String DEFAULT_REQUEST_QUEUE = "jms.queue.requests";
+    private final static String DEFAULT_RESPONSE_QUEUE = "jms.queue.reponses";
 
     @Test
     public void testGetVdsCapabilities() throws InterruptedException, ExecutionException, ClientConnectionException {
-        JsonRpcClient client = JsonRpcUtils.createStompClient(HOST_ADDRESS, PORT, TIMEOUT, 0, TIMEOUT, TIMEOUT, true, "TLSv1");
+        JsonRpcClient client = JsonRpcUtils.createStompClient(HOST_ADDRESS, PORT, TIMEOUT, 0, TIMEOUT, TIMEOUT, true, "TLSv1",
+                DEFAULT_REQUEST_QUEUE, DEFAULT_RESPONSE_QUEUE);
         final JsonRpcRequest request = new RequestBuilder("Host.getCapabilities").build();
         Map<String, Object> map = new FutureMap(client, request);
         assertTrue(map.isEmpty());

@@ -65,7 +65,7 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcClient;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcRequest;
 import org.ovirt.vdsm.jsonrpc.client.RequestBuilder;
-import org.ovirt.vdsm.jsonrpc.client.utils.retry.RetryPolicy;
+import org.ovirt.vdsm.jsonrpc.client.internal.ClientPolicy;
 
 /**
  * Implementation of <code>IVdsServer</code> interface which provides JSONRPC by
@@ -443,7 +443,7 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("bondings", bonding)
                         .withParameter("options", options)
                         .build();
-        final RetryPolicy policy = client.getClientRetryPolicy();
+        final ClientPolicy policy = client.getClientRetryPolicy();
         final FutureCallable callable = new FutureCallable(new Callable<Map<String, Object>>() {
             @Override
             public Map<String, Object> call() throws Exception {
@@ -466,7 +466,7 @@ public class JsonRpcVdsServer implements IVdsServer {
         return future;
     }
 
-    private void updateHeartbeatPolicy(RetryPolicy policy, boolean isHeartbeat) {
+    private void updateHeartbeatPolicy(ClientPolicy policy, boolean isHeartbeat) {
         policy.setIncomingHeartbeat(isHeartbeat);
         policy.setOutgoingHeartbeat(isHeartbeat);
         client.setClientRetryPolicy(policy);
