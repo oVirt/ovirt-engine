@@ -61,12 +61,15 @@ public final class VdsProperties {
     public static final String launch_rate = "launchRate";
     public static final String launch_total = "launchTotal";
     public static final String vds_usage_mem_percent = "memUsed";
-    public static final String rx_dropped = "rxDropped"; // in vm also
     public static final String guestOverhead = "guestOverhead";
+    public static final String rx_dropped = "rxDropped"; // in vm also
     public static final String rx_rate = "rxRate"; // in vm also
+    public static final String rx_total = "rx"; // in vm also
     public static final String tx_dropped = "txDropped"; // in vm also
     public static final String tx_rate = "txRate"; // in vm also
+    public static final String tx_total = "tx"; // in vm also
     public static final String iface_status = "state";
+    public static final String sample_time = "sampleTime"; // in vm also
     public static final String vm_active = "vmActive";
     public static final String vm_count = "vmCount";
     public static final String vm_migrating = "vmMigrating";

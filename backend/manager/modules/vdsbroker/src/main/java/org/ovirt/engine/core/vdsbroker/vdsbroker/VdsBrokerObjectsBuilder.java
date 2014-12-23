@@ -83,6 +83,7 @@ import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
+import org.ovirt.engine.core.vdsbroker.NetworkStatisticsBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -510,7 +511,7 @@ public class VdsBrokerObjectsBuilder {
                     stats.setName((String) ((nic.get(VdsProperties.VM_INTERFACE_NAME) instanceof String) ? nic
                             .get(VdsProperties.VM_INTERFACE_NAME) : null));
                 }
-                updateInterfaceStatistics(nic, stats);
+                extractInterfaceStatistics(nic, stats);
                 stats.setMacAddress((String) ((nic.get(VdsProperties.MAC_ADDR) instanceof String) ? nic
                         .get(VdsProperties.MAC_ADDR) : null));
             }
@@ -856,16 +857,25 @@ public class VdsBrokerObjectsBuilder {
         if (interfaces != null) {
             int networkUsage = 0;
             Map<String, VdsNetworkInterface> nicsByName = Entities.entitiesByName(vds.getInterfaces());
+            NetworkStatisticsBuilder statsBuilder = new NetworkStatisticsBuilder(vds.getVdsGroupCompatibilityVersion());
             for (Entry<String, Object> entry : interfaces.entrySet()) {
                 if (nicsByName.containsKey(entry.getKey())) {
-                    VdsNetworkInterface iface = nicsByName.get(entry.getKey());
-                    iface.setVdsId(vds.getId());
-                    Map<String, Object> dict = (Map<String, Object>) entry.getValue();
-                    updateInterfaceStatistics(dict, iface);
-                    iface.getStatistics().setStatus(AssignInterfaceStatusValue(dict, VdsProperties.iface_status));
+                    VdsNetworkInterface existingIface = nicsByName.get(entry.getKey());
+                    existingIface.setVdsId(vds.getId());
 
-                    if (!NetworkUtils.isVlan(iface) && !iface.isBondSlave()) {
-                        networkUsage = (int) Math.max(networkUsage, computeInterfaceUsage(iface));
+                    Map<String, Object> dict = (Map<String, Object>) entry.getValue();
+                    VdsNetworkInterface reportedIface = new VdsNetworkInterface();
+                    extractInterfaceStatistics(dict, reportedIface);
+
+                    statsBuilder.updateExistingInterfaceStatistics(existingIface, reportedIface);
+                    existingIface.getStatistics()
+                            .setStatus(AssignInterfaceStatusValue(dict, VdsProperties.iface_status));
+
+                    if (!NetworkUtils.isVlan(existingIface) && !existingIface.isBondSlave()) {
+                        Double ifaceUsage = computeInterfaceUsage(existingIface);
+                        if (ifaceUsage != null) {
+                            networkUsage = (int) Math.max(networkUsage, ifaceUsage);
+                        }
                     }
                 }
             }
@@ -950,23 +960,33 @@ public class VdsBrokerObjectsBuilder {
 
     }
 
-    private static void updateInterfaceStatistics(Map<String, Object> dict, NetworkInterface<?> iface) {
+    private static void extractInterfaceStatistics(Map<String, Object> dict, NetworkInterface<?> iface) {
         NetworkStatistics stats = iface.getStatistics();
         stats.setReceiveRate(assignDoubleValueWithNullProtection(dict, VdsProperties.rx_rate));
         stats.setReceiveDropRate(assignDoubleValueWithNullProtection(dict, VdsProperties.rx_dropped));
+        stats.setReceivedBytes(AssignLongValue(dict, VdsProperties.rx_total));
         stats.setTransmitRate(assignDoubleValueWithNullProtection(dict, VdsProperties.tx_rate));
         stats.setTransmitDropRate(assignDoubleValueWithNullProtection(dict, VdsProperties.tx_dropped));
+        stats.setTransmittedBytes(AssignLongValue(dict, VdsProperties.tx_total));
+        stats.setSampleTime(AssignDoubleValue(dict, VdsProperties.sample_time));
 
         iface.setSpeed(AssignIntValue(dict, VdsProperties.INTERFACE_SPEED));
     }
 
-    private static double computeInterfaceUsage(VdsNetworkInterface iface) {
-        return Math.max(truncatePercentage(iface.getStatistics().getReceiveRate()),
-                truncatePercentage(iface.getStatistics().getTransmitRate()));
+    private static Double computeInterfaceUsage(VdsNetworkInterface iface) {
+        Double receiveRate = truncatePercentage(iface.getStatistics().getReceiveRate());
+        Double transmitRate = truncatePercentage(iface.getStatistics().getTransmitRate());
+        if (receiveRate == null) {
+            return transmitRate;
+        } else if (transmitRate == null) {
+            return receiveRate;
+        } else {
+            return Math.max(receiveRate, transmitRate);
+        }
     }
 
-    private static double truncatePercentage(double value) {
-        return Math.min(100, value);
+    private static Double truncatePercentage(Double value) {
+        return value == null ? null : Math.min(100, value);
     }
 
     public static void updateNumaStatisticsData(VDS vds, Map<String, Object> xmlRpcStruct) {
@@ -1112,12 +1132,13 @@ public class VdsBrokerObjectsBuilder {
     }
 
     private static Double AssignDoubleValue(Map<String, Object> input, String name) {
-        Double returnValue = null;
-        if (input.containsKey(name)) {
-            String stringValue = (String) ((input.get(name) instanceof String) ? input.get(name) : null);
-            returnValue = (stringValue == null) ? null : Double.parseDouble(stringValue);
+        Object value = input.get(name);
+        if (value instanceof Double) {
+            return (Double) value;
+        } else if (value instanceof String) {
+            return Double.parseDouble((String) value);
         }
-        return returnValue;
+        return null;
     }
 
     /**

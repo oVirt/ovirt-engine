@@ -727,6 +727,8 @@ public class VmAnalyzer {
 
         dbVm.setUsageNetworkPercent(0);
 
+        NetworkStatisticsBuilder statsBuilder = new NetworkStatisticsBuilder(dbVm.getVdsGroupCompatibilityVersion());
+
         for (VmNetworkInterface ifStats : vdsmVm.getVmStatistics().getInterfaceStatistics()) {
             boolean firstTime = !macs.contains(ifStats.getMacAddress());
 
@@ -747,11 +749,7 @@ public class VmAnalyzer {
 
             // if rtl+pv it will get here 2 times (we take the max one)
             if (firstTime) {
-
-                vmIface.getStatistics().setReceiveRate(ifStats.getStatistics().getReceiveRate());
-                vmIface.getStatistics().setReceiveDropRate(ifStats.getStatistics().getReceiveDropRate());
-                vmIface.getStatistics().setTransmitRate(ifStats.getStatistics().getTransmitRate());
-                vmIface.getStatistics().setTransmitDropRate(ifStats.getStatistics().getTransmitDropRate());
+                statsBuilder.updateExistingInterfaceStatistics(vmIface, ifStats);
             } else {
                 vmIface.getStatistics().setReceiveRate(Math.max(vmIface.getStatistics().getReceiveRate(),
                         ifStats.getStatistics().getReceiveRate()));

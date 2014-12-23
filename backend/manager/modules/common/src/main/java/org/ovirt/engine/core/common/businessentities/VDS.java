@@ -192,6 +192,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         vds.setNumaNodeList(getNumaNodeList());
         vds.setAutoNumaBalancing(getAutoNumaBalancing());
         vds.setFenceAgents(getFenceAgents());
+        vds.setVdsGroupCompatibilityVersion(getVdsGroupCompatibilityVersion());
         return vds;
     }
 
