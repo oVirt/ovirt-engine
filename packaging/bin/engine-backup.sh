@@ -16,6 +16,9 @@
 # limitations under the License.
 #
 
+# Clean the environment, see bz 1172191
+[ -z "${BACKUP_ENV_CLEAN}" ] && exec -c env -i PATH="${PATH}" BACKUP_ENV_CLEAN=1 "$0" "$@"
+
 # Load the prolog:
 . "$(dirname "$(readlink -f "$0")")"/engine-prolog.sh
 
