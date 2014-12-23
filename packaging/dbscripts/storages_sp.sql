@@ -419,7 +419,7 @@ Create or replace FUNCTION Insertstorage_domain_static(v_id UUID,
 	v_storage_domain_type INTEGER,
     v_storage_domain_format_type VARCHAR(50),
     v_last_time_used_as_master BIGINT,
-    v_wipe_after_delete boolean)
+    v_wipe_after_delete BOOLEAN)
 RETURNS VOID
    AS $procedure$
    BEGIN
@@ -451,7 +451,7 @@ Create or replace FUNCTION Updatestorage_domain_static(v_id UUID,
 	v_storage_domain_type INTEGER,
 	v_storage_domain_format_type INTEGER,
     v_last_time_used_as_master BIGINT,
-    v_wipe_after_delete boolean)
+    v_wipe_after_delete BOOLEAN)
 RETURNS VOID
 
 	--The [storage_domain_static] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
