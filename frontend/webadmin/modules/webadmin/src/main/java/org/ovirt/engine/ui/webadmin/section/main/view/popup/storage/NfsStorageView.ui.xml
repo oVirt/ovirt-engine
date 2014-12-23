@@ -84,7 +84,7 @@
                             <g:Label ui:field="versionLabel" addStyleNames="{style.label}"/>
                         </td>
                         <td>
-                            <e:ListModelListBoxOnlyEditor ui:field="versionEditor"/>
+                            <e:ListModelListBoxOnlyEditor ui:field="versionEditor" addStyleNames="table_contentWidget_pfly_fix"/>
                             <ge:StringEntityModelTextBoxOnlyEditor ui:field="versionReadOnlyEditor" addStyleNames="table_contentWidget_pfly_fix"/>
                         </td>
                     </tr>
@@ -93,7 +93,7 @@
                             <g:Label ui:field="retransmissionsLabel" addStyleNames="{style.label}"/>
                         </td>
                         <td>
-                            <ge:ShortEntityModelTextBoxOnlyEditor ui:field="retransmissionsEditor"/>
+                            <ge:ShortEntityModelTextBoxOnlyEditor ui:field="retransmissionsEditor" addStyleNames="table_contentWidget_pfly_fix"/>
                         </td>
                     </tr>
                     <tr>
