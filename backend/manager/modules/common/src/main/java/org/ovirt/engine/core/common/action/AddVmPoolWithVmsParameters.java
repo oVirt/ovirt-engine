@@ -111,4 +111,7 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters {
         return graphicsDevices.values();
     }
 
+    public void addGraphicsDevice(GraphicsDevice graphicsDevice) {
+        graphicsDevices.put(graphicsDevice.getGraphicsType(), graphicsDevice);
+    }
 }

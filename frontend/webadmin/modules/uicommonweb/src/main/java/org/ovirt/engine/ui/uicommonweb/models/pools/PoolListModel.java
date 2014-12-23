@@ -526,7 +526,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
 
         for (GraphicsType graphicsType : model.getGraphicsType().getSelectedItem().getBackingGraphicsType()) {
             GraphicsDevice d = new GraphicsDevice(graphicsType.getCorrespondingDeviceType());
-            params.getGraphicsDevices().add(d);
+            params.addGraphicsDevice(d);
         }
     }
 
