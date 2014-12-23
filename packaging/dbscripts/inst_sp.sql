@@ -26,7 +26,7 @@ BEGIN
         -- Insert storage server connection info
         perform Insertstorage_server_connections(v_connection,cast(v_connection_id as varchar(250)),NULL,NULL,NULL,NULL,1,NULL,NULL,NULL,NULL,NULL,NULL);
         -- Insert storage domain static info
-        perform Insertstorage_domain_static(v_storage_domain_id,cast(v_connection_id as varchar(250)),v_name,v_name,'',1,2,'0',0);
+        perform Insertstorage_domain_static(v_storage_domain_id,cast(v_connection_id as varchar(250)),v_name,v_name,'',1,2,'0',0, FALSE);
         -- Insert storage domain dynamic  info
         perform Insertstorage_domain_dynamic(v_available,v_storage_domain_id,v_used);
     end if;
