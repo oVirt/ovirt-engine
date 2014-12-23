@@ -1135,6 +1135,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     SupportBridgesReportByVDSM,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    TotalNetworkStatisticsReported,
+
     @Reloadable
     @TypeConverterAttribute(Map.class)
     @DefaultValueAttribute("{\"storage domains\":\"true\",\"hosts\":\"true\"}")
