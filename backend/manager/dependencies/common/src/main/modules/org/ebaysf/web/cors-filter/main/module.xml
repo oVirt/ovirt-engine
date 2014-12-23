@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- This is needed to add support for CORS to the RESTAPI: -->
+
+<module xmlns="urn:jboss:module:1.1" name="org.ebaysf.web.cors-filter">
+
+  <resources>
+    <resource-root path="cors-filter.jar"/>
+  </resources>
+
+  <dependencies>
+    <module name="javax.servlet.api"/>
+  </dependencies>
+
+</module>

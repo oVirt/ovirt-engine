@@ -56,7 +56,6 @@ import org.ovirt.engine.core.common.interfaces.ITagsHandler;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -598,11 +597,14 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             return runQueryImpl(actionType, parameters, false);
         case GetConfigurationValue:
             GetConfigurationValueParameters configParameters = (GetConfigurationValueParameters) parameters;
-            if (configParameters.getConfigValue() == ConfigurationValues.VdcVersion ||
-                    configParameters.getConfigValue() == ConfigurationValues.ProductRPMVersion ||
-                    configParameters.getConfigValue() == ConfigurationValues.ApplicationMode ||
-                    configParameters.getConfigValue() == ConfigurationValues.UserMessageOfTheDay ||
-                    configParameters.getConfigValue() == ConfigurationValues.UserSessionTimeOutInterval) {
+            switch (configParameters.getConfigValue()) {
+            case VdcVersion:
+            case ProductRPMVersion:
+            case ApplicationMode:
+            case UserMessageOfTheDay:
+            case UserSessionTimeOutInterval:
+            case CORSSupport:
+            case CORSAllowedOrigins:
                 return runQueryImpl(actionType, parameters, false);
             }
 

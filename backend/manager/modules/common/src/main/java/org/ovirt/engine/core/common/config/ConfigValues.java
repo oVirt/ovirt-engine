@@ -1923,6 +1923,21 @@ public enum ConfigValues {
     CSRFProtection,
 
     /**
+     * If the values is {@code true} then the RESTAPI will support CORS (Cross Origin Resource Sharing).
+     */
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    CORSSupport,
+
+    /**
+     * If CORS is enabled (with the {@code CORSSupport} parameter set to {@code true} then this indicates which are the
+     * allowed origins.
+     */
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    CORSAllowedOrigins,
+
+    /**
      * Feature to skip fencing if host is connected to at least one storage domain
      */
     @TypeConverterAttribute(Boolean.class)

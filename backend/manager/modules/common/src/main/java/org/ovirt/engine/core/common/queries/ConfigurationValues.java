@@ -152,7 +152,9 @@ public enum ConfigurationValues {
     AutoConvergenceSupported(ConfigAuthType.User),
     MigrationCompressionSupported(ConfigAuthType.User),
     DefaultAutoConvergence,
-    DefaultMigrationCompression;
+    DefaultMigrationCompression,
+    CORSSupport,
+    CORSAllowedOrigins;
 
     public static enum ConfigAuthType {
         Admin,

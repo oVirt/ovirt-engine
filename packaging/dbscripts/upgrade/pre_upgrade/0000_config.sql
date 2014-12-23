@@ -645,6 +645,8 @@ select fn_db_add_config_value('KdumpStartedTimeout','30','general');
 select fn_db_add_config_value('AlertOnNumberOfLVs','300','general');
 
 select fn_db_add_config_value('CSRFProtection','false','general');
+select fn_db_add_config_value('CORSSupport','false','general');
+select fn_db_add_config_value('CORSAllowedOrigins','','general');
 select fn_db_add_config_value('UsageHistoryLimit','40', 'general');
 select fn_db_add_config_value_for_versions_up_to('SkipFencingIfSDActiveSupported', 'false', '3.4');
 

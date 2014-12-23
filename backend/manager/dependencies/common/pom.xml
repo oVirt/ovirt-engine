@@ -379,6 +379,13 @@
       <version>${jackson.version}</version>
     </dependency>
 
+    <!-- This is needed to add CORS support to the RESTAPI: -->
+    <dependency>
+      <groupId>org.ebaysf.web</groupId>
+      <artifactId>cors-filter</artifactId>
+      <version>1.0.1</version>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -732,6 +739,12 @@
                 <groupId>org.codehaus.jackson</groupId>
                 <artifactId>jackson-xc</artifactId>
                 <moduleName>org.codehaus.jackson.jackson-xc</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.ebaysf.web</groupId>
+                <artifactId>cors-filter</artifactId>
+                <moduleName>org.ebaysf.web.cors-filter</moduleName>
               </module>
 
             </modules>
