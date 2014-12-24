@@ -436,7 +436,7 @@ public class FenceExecutor {
 
                 // check if host supports minimal cluster level needed by fencing policy
                 if (fencingPolicy != null) {
-                    ret = ret && _vds.getSupportedClusterVersionsSet().contains(minVersionSupportingFencingPol);
+                    ret = ret && vds.getSupportedClusterVersionsSet().contains(minVersionSupportingFencingPol);
                 }
 
                 return ret;
