@@ -232,6 +232,10 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
         // ovfDisks cache list updated.
         List<DiskImage> ovfStoreDiskImages = new ArrayList(getAllOVFDisks());
         if (!ovfStoreDiskImages.isEmpty()) {
+            if (!FeatureSupported.ovfStoreOnAnyDomain(getStoragePool().getcompatibility_version())) {
+                AuditLogDirector.log(this, AuditLogType.RETRIEVE_UNREGISTERED_ENTITIES_NOT_SUPPORTED_IN_DC_VERSION);
+                return Collections.emptyList();
+            }
             while (!ovfStoreDiskImages.isEmpty()) {
                 Pair<DiskImage, Long> ovfDiskAndSize = getLatestOVFDisk(ovfStoreDiskImages);
                 DiskImage ovfDisk = ovfDiskAndSize.getFirst();
