@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.validation.MaskValidator;
 import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameters;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
@@ -125,7 +126,12 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
             break;
         case STATIC_IP:
             putIfNotEmpty(opts, "ipaddr", iface.getAddress());
-            putIfNotEmpty(opts, "netmask", iface.getSubnet());
+            if (MaskValidator.getInstance().isPrefixValid(iface.getSubnet())) {
+                putIfNotEmpty(opts, "prefix", iface.getSubnet().replace("/", ""));
+            } else {
+                putIfNotEmpty(opts, "netmask", iface.getSubnet());
+            }
+
             putIfNotEmpty(opts, "gateway", iface.getGateway());
             break;
         default:
