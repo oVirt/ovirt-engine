@@ -29,7 +29,7 @@ public class HostInterfaceForm extends Composite {
         grid.getColumnFormatter().setWidth(0, "230px"); //$NON-NLS-1$
         grid.getColumnFormatter().setWidth(1, "200px"); //$NON-NLS-1$
         grid.getColumnFormatter().setWidth(2, "520px"); //$NON-NLS-1$
-        grid.getColumnFormatter().setWidth(3, "520px"); //$NON-NLS-1$
+        grid.getColumnFormatter().setWidth(3, "820px"); //$NON-NLS-1$
         grid.setWidth("100%"); //$NON-NLS-1$
         grid.setHeight("100%"); //$NON-NLS-1$
         initWidget(grid);

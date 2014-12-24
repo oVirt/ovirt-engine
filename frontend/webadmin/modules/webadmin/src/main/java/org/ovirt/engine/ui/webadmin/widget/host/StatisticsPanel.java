@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.widget.renderer.RxTxRateRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.SumUpRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterface;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.widget.label.NullableNumberLabel;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;
@@ -27,13 +28,18 @@ public class StatisticsPanel extends VerticalPanel {
 
 class StatisticsElementPanel extends TogglePanel {
 
+    private final NullableNumberLabel<Long> rxTotalLabel;
+    private final NullableNumberLabel<Long> txTotalLabel;
+
     public StatisticsElementPanel(HostInterface hostInterface) {
         super(hostInterface);
+        rxTotalLabel = new NullableNumberLabel<>();
+        txTotalLabel = new NullableNumberLabel<>();
         add(createRow(hostInterface));
     }
 
     Grid createRow(final HostInterface hostInterface) {
-        Grid row = new Grid(1, 5);
+        Grid row = new Grid(1, 7);
         row.setHeight("100%"); //$NON-NLS-1$
         row.setWidth("100%"); //$NON-NLS-1$
 
@@ -46,7 +52,9 @@ class StatisticsElementPanel extends TogglePanel {
         row.getColumnFormatter().setWidth(1, "100px"); //$NON-NLS-1$
         row.getColumnFormatter().setWidth(2, "100px"); //$NON-NLS-1$
         row.getColumnFormatter().setWidth(3, "100px"); //$NON-NLS-1$
-        row.getColumnFormatter().setWidth(4, "100px"); //$NON-NLS-1$
+        row.getColumnFormatter().setWidth(4, "150px"); //$NON-NLS-1$
+        row.getColumnFormatter().setWidth(5, "150px"); //$NON-NLS-1$
+        row.getColumnFormatter().setWidth(6, "100px"); //$NON-NLS-1$
 
         // MAC
         LabelWithTextOverflow macLabel = new LabelWithTextOverflow(hostInterface.getMAC());
@@ -84,8 +92,14 @@ class StatisticsElementPanel extends TogglePanel {
             }
         });
 
+        // Rx/Tx totals
+        rxTotalLabel.setValue(hostInterface.getRxTotal());
+        txTotalLabel.setValue(hostInterface.getTxTotal());
+        row.setWidget(0, 4, rxTotalLabel);
+        row.setWidget(0, 5, txTotalLabel);
+
         // Drops
-        row.setWidget(0, 4, new Label() {
+        row.setWidget(0, 6, new Label() {
             {
                 setText(new SumUpRenderer().render(new Double[] {
                         hostInterface.getRxDrop(),

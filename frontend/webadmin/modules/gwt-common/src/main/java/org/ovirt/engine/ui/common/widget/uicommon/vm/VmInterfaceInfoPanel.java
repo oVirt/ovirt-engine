@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.common.widget.table.column.NullableNumberColumn;
 import org.ovirt.engine.ui.common.widget.table.column.RxTxRateColumn;
 import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlWithSafeHtmlTooltipColumn;
 import org.ovirt.engine.ui.common.widget.table.column.SumUpColumn;
@@ -100,7 +101,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
         };
 
         statisticsTable.addColumn(rxColumn,
-                templates.sub(constants.rxInterface(), constants.mbps()), "150px"); //$NON-NLS-1$
+                templates.sub(constants.rxRate(), constants.mbps()), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> txColumn = new RxTxRateColumn<VmNetworkInterface>() {
             @Override
@@ -119,7 +120,25 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
         };
 
         statisticsTable.addColumn(txColumn,
-                templates.sub(constants.txInterface(), constants.mbps()), "150px"); //$NON-NLS-1$
+                templates.sub(constants.txRate(), constants.mbps()), "100px"); //$NON-NLS-1$
+
+        NullableNumberColumn<VmNetworkInterface> totalRxColumn = new NullableNumberColumn<VmNetworkInterface>() {
+            @Override
+            protected Number getRawValue(VmNetworkInterface object) {
+                return object.getStatistics().getReceivedBytes();
+            }
+        };
+
+        statisticsTable.addColumn(totalRxColumn, templates.sub(constants.rxTotal(), constants.bytes()), "150px"); //$NON-NLS-1$
+
+        NullableNumberColumn<VmNetworkInterface> totalTxColumn = new NullableNumberColumn<VmNetworkInterface>() {
+            @Override
+            protected Number getRawValue(VmNetworkInterface object) {
+                return object.getStatistics().getTransmittedBytes();
+            }
+        };
+
+        statisticsTable.addColumn(totalTxColumn, templates.sub(constants.txTotal(), constants.bytes()), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> dropsColumn = new SumUpColumn<VmNetworkInterface>() {
             @Override
@@ -130,7 +149,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
             }
         };
         statisticsTable.addColumn(dropsColumn,
-                templates.sub(constants.dropsInterface(), constants.pkts()), "150px"); //$NON-NLS-1$
+                templates.sub(constants.dropsInterface(), constants.pkts()), "100px"); //$NON-NLS-1$
 
         statisticsTable.setRowData(new ArrayList<EntityModel>());
         statisticsTable.setWidth("100%", true); //$NON-NLS-1$
@@ -150,7 +169,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
 
         };
         guestAgentDataTable.addColumn(nameColumn,
-                constants.nameVmGuestAgent(), "150px"); //$NON-NLS-1$
+                constants.nameVmGuestAgent(), "100px"); //$NON-NLS-1$
 
         SafeHtmlWithSafeHtmlTooltipColumn<VmGuestAgentInterface> ipv4Column =
                 new SafeHtmlWithSafeHtmlTooltipColumn<VmGuestAgentInterface>() {

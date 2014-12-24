@@ -115,6 +115,26 @@ public class HostInterface extends Model
         txRate = value;
     }
 
+    private Long rxTotal;
+
+    public Long getRxTotal() {
+        return rxTotal;
+    }
+
+    public void setRxTotal(Long value) {
+        rxTotal = value;
+    }
+
+    private Long txTotal;
+
+    public Long getTxTotal() {
+        return txTotal;
+    }
+
+    public void setTxTotal(Long value) {
+        txTotal = value;
+    }
+
     private Double txDrop;
 
     public Double getTxDrop()

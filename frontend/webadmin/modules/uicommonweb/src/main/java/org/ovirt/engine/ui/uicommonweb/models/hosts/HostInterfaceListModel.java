@@ -533,8 +533,10 @@ public class HostInterfaceListModel extends SearchableListModel
         hi.setMAC(nic.getMacAddress());
         hi.setSpeed(nic.getSpeed());
         hi.setRxRate(nic.getStatistics().getReceiveRate());
+        hi.setRxTotal(nic.getStatistics().getReceivedBytes());
         hi.setRxDrop(nic.getStatistics().getReceiveDropRate());
         hi.setTxRate(nic.getStatistics().getTransmitRate());
+        hi.setTxTotal(nic.getStatistics().getTransmittedBytes());
         hi.setTxDrop(nic.getStatistics().getTransmitDropRate());
         hi.setStatus(nic.getStatistics().getStatus());
         hi.getPropertyChangedEvent().addListener(this);

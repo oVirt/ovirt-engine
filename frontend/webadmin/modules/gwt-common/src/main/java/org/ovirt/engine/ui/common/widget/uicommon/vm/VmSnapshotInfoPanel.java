@@ -240,7 +240,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
                 }
             }
         };
-        nicsTable.addColumn(rxColumn, templates.sub(constants.rxInterface(), constants.mbps()), "80px"); //$NON-NLS-1$
+        nicsTable.addColumn(rxColumn, templates.sub(constants.rxRate(), constants.mbps()), "80px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> txColumn = new RxTxRateColumn<VmNetworkInterface>() {
             @Override
@@ -257,7 +257,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
                 }
             }
         };
-        nicsTable.addColumn(txColumn, templates.sub(constants.txInterface(), constants.mbps()), "80px"); //$NON-NLS-1$
+        nicsTable.addColumn(txColumn, templates.sub(constants.txRate(), constants.mbps()), "80px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> dropsColumn = new SumUpColumn<VmNetworkInterface>() {
             @Override

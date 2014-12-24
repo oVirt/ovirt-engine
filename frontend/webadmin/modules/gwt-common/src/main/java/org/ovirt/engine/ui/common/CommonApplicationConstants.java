@@ -801,11 +801,17 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Speed")
     String speedInterface();
 
-    @DefaultStringValue("Rx")
-    String rxInterface();
+    @DefaultStringValue("Rx Rate")
+    String rxRate();
 
-    @DefaultStringValue("Tx")
-    String txInterface();
+    @DefaultStringValue("Tx Rate")
+    String txRate();
+
+    @DefaultStringValue("Total Rx")
+    String rxTotal();
+
+    @DefaultStringValue("Total Tx")
+    String txTotal();
 
     @DefaultStringValue("QoS Name")
     String vmNetworkQosName();
@@ -827,6 +833,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("(Mbps)")
     String mbps();
+
+    @DefaultStringValue("(Bytes)")
+    String bytes();
 
     @DefaultStringValue("(Pkts)")
     String pkts();

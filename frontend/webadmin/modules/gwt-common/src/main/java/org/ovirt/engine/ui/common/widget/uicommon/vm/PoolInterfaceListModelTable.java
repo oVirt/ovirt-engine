@@ -128,7 +128,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
             }
         };
         getTable().addColumnWithHtmlHeader(rxColumn,
-                templates.sub(constants.rxInterface(), constants.mbps()).asString());
+                templates.sub(constants.rxRate(), constants.mbps()).asString());
 
         TextColumnWithTooltip<VmNetworkInterface> txColumn = new RxTxRateColumn<VmNetworkInterface>() {
             @Override
@@ -146,7 +146,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
             }
         };
         getTable().addColumnWithHtmlHeader(txColumn,
-                templates.sub(constants.txInterface(), constants.mbps()).asString());
+                templates.sub(constants.txRate(), constants.mbps()).asString());
 
         TextColumnWithTooltip<VmNetworkInterface> dropsColumn = new SumUpColumn<VmNetworkInterface>() {
             @Override

@@ -246,7 +246,7 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
                 }
             }
         };
-        nicsTable.addColumn(rxColumn, templates.sub(constants.rxInterface(), constants.mbps()), "90px"); //$NON-NLS-1$
+        nicsTable.addColumn(rxColumn, templates.sub(constants.rxRate(), constants.mbps()), "90px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> txColumn = new RxTxRateColumn<VmNetworkInterface>() {
             @Override
@@ -263,7 +263,7 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
                 }
             }
         };
-        nicsTable.addColumn(txColumn, templates.sub(constants.txInterface(), constants.mbps()), "90px"); //$NON-NLS-1$
+        nicsTable.addColumn(txColumn, templates.sub(constants.txRate(), constants.mbps()), "90px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmNetworkInterface> dropsColumn = new SumUpColumn<VmNetworkInterface>() {
             @Override

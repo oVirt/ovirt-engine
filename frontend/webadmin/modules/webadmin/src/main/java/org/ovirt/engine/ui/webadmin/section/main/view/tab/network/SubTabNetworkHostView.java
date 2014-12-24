@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.ViewRadioGroup;
+import org.ovirt.engine.ui.common.widget.table.column.NullableNumberColumn;
 import org.ovirt.engine.ui.common.widget.table.column.RxTxRateColumn;
 import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlWithSafeHtmlTooltipColumn;
 import org.ovirt.engine.ui.common.widget.table.column.SimpleStatusColumnComparator;
@@ -195,6 +196,22 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         }
     };
 
+    private final TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> totalRxColumn =
+            new NullableNumberColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
+                @Override
+                protected Number getRawValue(PairQueryable<VdsNetworkInterface, VDS> object) {
+                    return object.getFirst() == null ? null : object.getFirst().getStatistics().getReceivedBytes();
+                }
+            };
+
+    private final TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> totalTxColumn =
+            new NullableNumberColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
+                @Override
+                protected Number getRawValue(PairQueryable<VdsNetworkInterface, VDS> object) {
+                    return object.getFirst() == null ? null : object.getFirst().getStatistics().getTransmittedBytes();
+                }
+            };
+
     private void handleRadioButtonClick(ClickEvent event) {
         getDetailModel().setViewFilterType((viewRadioGroup.getSelectedValue()));
 
@@ -218,6 +235,14 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
                 templates.sub(constants.txNetworkHost(), constants.mbps()).asString(),
                 attached,
                 "100px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(totalRxColumn,
+                templates.sub(constants.rxTotal(), constants.bytes()).asString(),
+                attached,
+                "150px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(totalTxColumn,
+                templates.sub(constants.txTotal(), constants.bytes()).asString(),
+                attached,
+                "150px"); //$NON-NLS-1$
     }
 
     void initTable() {
@@ -254,6 +279,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         speedColumn.makeSortable();
         nicRxColumn.makeSortable();
         nicTxColumn.makeSortable();
+        totalRxColumn.makeSortable();
+        totalTxColumn.makeSortable();
     }
 }
-

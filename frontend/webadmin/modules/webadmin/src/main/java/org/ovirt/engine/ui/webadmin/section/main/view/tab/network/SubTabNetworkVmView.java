@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.ViewRadioGroup;
 import org.ovirt.engine.ui.common.widget.table.column.NicActivateStatusColumn;
+import org.ovirt.engine.ui.common.widget.table.column.NullableNumberColumn;
 import org.ovirt.engine.ui.common.widget.table.column.RxTxRateColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -87,17 +88,27 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
 
         getTable().ensureColumnPresent(fqdnColumn, constants.fqdn(), true, "150px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(nicActivateStatusColumn, constants.vnicStatusNetworkVM(), true, "150px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(nicActivateStatusColumn, constants.vnicStatusNetworkVM(), true, "100px"); //$NON-NLS-1$
 
-        getTable().ensureColumnPresent(vnicNameColumn, constants.vnicNetworkVM(), true, "150px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(vnicNameColumn, constants.vnicNetworkVM(), true, "100px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(rxColumn,
                 templates.sub(constants.rxNetworkVM(), constants.mbps()).asString(),
-                running, "150px"); //$NON-NLS-1$
+                running, "100px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(txColumn,
                 templates.sub(constants.txNetworkVM(), constants.mbps()).asString(),
-                running, "150px"); //$NON-NLS-1$
+                running, "100px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(totalRxColumn,
+                templates.sub(constants.rxTotal(), constants.bytes()).asString(),
+                running,
+                "150px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(totalTxColumn,
+                templates.sub(constants.txTotal(), constants.bytes()).asString(),
+                running,
+                "150px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(descriptionColumn, constants.descriptionVm(), true, "150px"); //$NON-NLS-1$
     }
@@ -180,6 +191,22 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
                 }
             };
 
+    private final NullableNumberColumn<PairQueryable<VmNetworkInterface, VM>> totalRxColumn =
+            new NullableNumberColumn<PairQueryable<VmNetworkInterface, VM>>() {
+        @Override
+        protected Number getRawValue(PairQueryable<VmNetworkInterface, VM> object) {
+            return object.getFirst() == null ? null : object.getFirst().getStatistics().getReceivedBytes();
+        }
+    };
+
+    private final NullableNumberColumn<PairQueryable<VmNetworkInterface, VM>> totalTxColumn =
+            new NullableNumberColumn<PairQueryable<VmNetworkInterface, VM>>() {
+        @Override
+        protected Number getRawValue(PairQueryable<VmNetworkInterface, VM> object) {
+            return object.getFirst() == null ? null : object.getFirst().getStatistics().getTransmittedBytes();
+        }
+    };
+
     private final TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>> descriptionColumn =
             new TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>>() {
                 @Override
@@ -213,6 +240,8 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
         vnicNameColumn.makeSortable();
         rxColumn.makeSortable();
         txColumn.makeSortable();
+        totalRxColumn.makeSortable();
+        totalTxColumn.makeSortable();
         descriptionColumn.makeSortable();
     }
 

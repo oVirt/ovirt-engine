@@ -96,10 +96,14 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
         table.addColumn(new EmptyColumn(), constants.macInterface(), "120px"); //$NON-NLS-1$
         table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.speedInterface(), constants.mbps())
                 .asString(), "100px"); //$NON-NLS-1$
-        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.rxInterface(), constants.mbps())
+        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.rxRate(), constants.mbps())
                 .asString(), "100px"); //$NON-NLS-1$
-        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.txInterface(), constants.mbps())
+        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.txRate(), constants.mbps())
                 .asString(), "100px"); //$NON-NLS-1$
+        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.rxTotal(), constants.bytes())
+                .asString(), "150px"); //$NON-NLS-1$
+        table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.txTotal(), constants.bytes())
+                .asString(), "150px"); //$NON-NLS-1$
         table.addColumnWithHtmlHeader(new EmptyColumn(), templates.sub(constants.dropsInterface(), constants.pkts())
                 .asString(), "100px"); //$NON-NLS-1$
 
