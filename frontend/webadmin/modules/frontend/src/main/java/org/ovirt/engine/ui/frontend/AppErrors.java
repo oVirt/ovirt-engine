@@ -1582,7 +1582,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot deactivate a Master Storage Domain while there are ISO/Export active domains in the Data Center.\n-Please deactivate all ISO/Export domains first.")
     String ERROR_CANNOT_DEACTIVATE_MASTER_WITH_NON_DATA_DOMAINS();
 
-    @DefaultStringValue("Cannot deactivate Data Domain while there are running tasks in the Data Center.\n-Please wait until tasks will finish and try again.")
+    @DefaultStringValue("Cannot ${action} ${type} while there are running tasks on this ${type}.\n-Please wait until tasks will finish and try again.")
     String ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_TASKS();
 
     @DefaultStringValue("Cannot deactivate Master Data Domain while there are running tasks on its Data Center.\n-Please wait until tasks will finish and try again.")
