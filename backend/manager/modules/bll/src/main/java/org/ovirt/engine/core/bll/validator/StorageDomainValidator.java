@@ -167,28 +167,28 @@ public class StorageDomainValidator {
     }
 
     public ValidationResult hasSpaceForNewDisks(Collection<DiskImage> diskImages) {
-        double availableSize = storageDomain.getAvailableDiskSizeInBytes();
+        Long availableSize = storageDomain.getAvailableDiskSizeInBytes();
         double totalSizeForDisks = getTotalSizeForNewDisks(diskImages);
 
         return validateRequiredSpace(availableSize, totalSizeForDisks);
     }
 
     public ValidationResult hasSpaceForClonedDisks(Collection<DiskImage> diskImages) {
-        double availableSize = storageDomain.getAvailableDiskSizeInBytes();
+        Long availableSize = storageDomain.getAvailableDiskSizeInBytes();
         double totalSizeForDisks = getTotalSizeForClonedDisks(diskImages);
 
         return validateRequiredSpace(availableSize, totalSizeForDisks);
     }
 
     public ValidationResult hasSpaceForDisksWithSnapshots(Collection<DiskImage> diskImages) {
-        double availableSize = storageDomain.getAvailableDiskSizeInBytes();
+        Long availableSize = storageDomain.getAvailableDiskSizeInBytes();
         double totalSizeForDisks = getTotalSizeForDisksWithSnapshots(diskImages);
 
         return validateRequiredSpace(availableSize, totalSizeForDisks);
     }
 
     public ValidationResult hasSpaceForAllDisks(Collection<DiskImage> newDiskImages, Collection<DiskImage> clonedDiskImages) {
-        double availableSize = storageDomain.getAvailableDiskSizeInBytes();
+        Long availableSize = storageDomain.getAvailableDiskSizeInBytes();
         double totalSizeForNewDisks = getTotalSizeForNewDisks(newDiskImages);
         double totalSizeForClonedDisks = getTotalSizeForClonedDisks(clonedDiskImages);
         double totalSizeForDisks = totalSizeForNewDisks + totalSizeForClonedDisks;
@@ -208,8 +208,9 @@ public class StorageDomainValidator {
         return hasSpaceForNewDisks(Collections.singleton(diskImage));
     }
 
-    private ValidationResult validateRequiredSpace(double availableSize, double requiredSize) {
-        if (availableSize >= requiredSize) {
+    private ValidationResult validateRequiredSpace(Long availableSize, double requiredSize) {
+        // If availableSize is not yet set, we'll allow the operation.
+        if (availableSize == null || availableSize.doubleValue() >= requiredSize) {
             return ValidationResult.VALID;
         }
 
