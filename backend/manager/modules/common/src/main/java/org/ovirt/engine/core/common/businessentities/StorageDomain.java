@@ -133,8 +133,9 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntityWithSt
     }
 
     @JsonIgnore
-    public long getAvailableDiskSizeInBytes() {
-        return getAvailableDiskSize() * SizeConverter.BYTES_IN_GB;
+    public Long getAvailableDiskSizeInBytes() {
+        Integer availableSize = getAvailableDiskSize();
+        return availableSize != null ? availableSize * SizeConverter.BYTES_IN_GB : null;
     }
 
     public void setAvailableDiskSize(Integer availableDiskSize) {
