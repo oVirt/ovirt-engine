@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
@@ -12,6 +15,7 @@ import org.ovirt.engine.core.common.vdscommands.StoragePoolDomainAndGroupIdBaseV
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.JsonHelper;
 
 public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParameters> extends QueriesCommandBase<P> {
 
@@ -70,6 +74,16 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
         }
 
         DiskImage newDiskImage = (DiskImage) imageInfoReturn.getReturnValue();
+        if (StringUtils.isNotEmpty(newDiskImage.getDescription())) {
+            try {
+                Map<String, Object> diskDescriptionMap = JsonHelper.jsonToMap(newDiskImage.getDescription());
+                newDiskImage.setDiskAlias((String) diskDescriptionMap.get(ImagesHandler.DISK_ALIAS));
+                newDiskImage.setDiskDescription((String) diskDescriptionMap.get(ImagesHandler.DISK_DESCRIPTION));
+            } catch (IOException e) {
+                log.warn("Exception while parsing JSON for disk. Exception: '{}'", e);
+            }
+        }
+
         // The disk image won't have an interface set on it. Set it to IDE by default. When the
         // disk is attached to a VM, its interface can be changed to the appropriate value for that VM.
         newDiskImage.setDiskInterface(DiskInterface.IDE);
