@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -117,5 +118,27 @@ public class ImagesHandlerTest {
         List<DiskImage> intersection = ImagesHandler.imagesIntersection(list1, list2);
 
         assertTrue("Intersection should contain only disk1", intersection.size() == 1 && intersection.contains(disk1));
+    }
+
+    @Test
+    public void testJsonDiskDescription() throws IOException {
+        String jsonDescription = null;
+        jsonDescription = ImagesHandler.getJsonDiskDescription("DiskAlias", "DiskDescription");
+        assertTrue("Should be map of disk alias and disk description",
+                jsonDescription.equals("{\"DiskDescription\":\"DiskDescription\",\"DiskAlias\":\"DiskAlias\"}"));
+    }
+
+    @Test
+    public void testJsonNullDiskDescription() throws IOException {
+        String jsonDescription = ImagesHandler.getJsonDiskDescription("DiskAlias", null);
+        assertTrue("Should be map of disk alias and disk description",
+                jsonDescription.equals("{\"DiskDescription\":\"\",\"DiskAlias\":\"DiskAlias\"}"));
+    }
+
+    @Test
+    public void testJsonEmptyDiskDescription() throws IOException {
+        String jsonDescription = ImagesHandler.getJsonDiskDescription("DiskAlias", "");
+        assertTrue("Should be map of disk alias and disk description",
+                jsonDescription.equals("{\"DiskDescription\":\"\",\"DiskAlias\":\"DiskAlias\"}"));
     }
 }

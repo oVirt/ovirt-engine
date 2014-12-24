@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -51,6 +52,7 @@ import org.ovirt.engine.core.common.vdscommands.VdsAndPoolIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -61,6 +63,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public final class ImagesHandler {
     public static final String DISK = "_Disk";
+    public static final String DISK_ALIAS = "DiskAlias";
+    public static final String DISK_DESCRIPTION = "DiskDescription";
     public static final String DefaultDriveName = "1";
     private static final Log log = LogFactory.getLog(ImagesHandler.class);
 
@@ -838,5 +842,17 @@ public final class ImagesHandler {
         dummy.setStorageIds(new ArrayList<Guid>(Collections.singletonList(sdId)));
         dummy.getSnapshots().addAll(ImagesHandler.getAllImageSnapshots(dummy.getImageId()));
         return dummy;
+    }
+
+    /**
+     * Creates and returns a Json string containing the disk alias and the disk description. The disk alias and
+     * description are preserved in the disk meta data. If the meta data will be added with more fields
+     * UpdateVmDiskCommand should be changed accordingly.
+     */
+    public static String getJsonDiskDescription(String diskAlias, String diskDescription) throws IOException {
+        Map<String, Object> description = new HashMap<>();
+        description.put(ImagesHandler.DISK_ALIAS, diskAlias);
+        description.put(ImagesHandler.DISK_DESCRIPTION, diskDescription != null ? diskDescription : "");
+        return JsonHelper.mapToJson(description, false);
     }
 }
