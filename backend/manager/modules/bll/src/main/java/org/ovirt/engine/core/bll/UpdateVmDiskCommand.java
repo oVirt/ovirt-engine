@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,8 +44,13 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.vdscommands.SetVolumeDescriptionVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -166,7 +172,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 return false;
             }
         }
-
         if (DiskStorageType.IMAGE == getOldDisk().getDiskStorageType() && !validateCanResizeDisk()) {
             return false;
         }
@@ -177,6 +182,12 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 (getOldDisk().getDiskInterface() == getNewDisk().getDiskInterface()
                 || validate(diskValidator.isDiskInterfaceSupported(getVm()))) &&
                 setAndValidateDiskProfiles();
+    }
+
+    protected StorageDomainValidator getStorageDomainValidator(DiskImage diskImage) {
+        StorageDomain storageDomain = getStorageDomainDAO().getForStoragePool(
+                diskImage.getStorageIds().get(0), diskImage.getStoragePoolId());
+        return new StorageDomainValidator(storageDomain);
     }
 
     @Override
@@ -308,11 +319,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                     return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vm.getStatus()));
                 }
             }
-
-            StorageDomain storageDomain = getStorageDomainDAO().getForStoragePool(
-                    newDiskImage.getStorageIds().get(0), newDiskImage.getStoragePoolId());
-            StorageDomainValidator storageDomainValidator = new StorageDomainValidator(storageDomain);
-
+            StorageDomainValidator storageDomainValidator = getStorageDomainValidator((DiskImage) getNewDisk());
             if (!validate(storageDomainValidator.isDomainExistAndActive())) {
                 return false;
             }
@@ -348,6 +355,9 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     private void performDiskUpdate(final boolean unlockImage) {
+        if (shouldPerformMetadataUpdate()) {
+            updateMetaDataDescription((DiskImage) getNewDisk());
+        }
         final Disk disk = getDiskDao().get(getParameters().getDiskId());
         applyUserChanges(disk);
 
@@ -386,6 +396,51 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 }
             }
         });
+    }
+
+    private boolean shouldPerformMetadataUpdate() {
+        return ((getNewDisk().getDiskStorageType() == DiskStorageType.IMAGE) && (!ObjectUtils.objectsEqual(getOldDisk().getDiskAlias(),
+                getNewDisk().getDiskAlias()) || !ObjectUtils.objectsEqual(getOldDisk().getDiskDescription(),
+                getNewDisk().getDiskDescription())));
+    }
+
+    private void updateMetaDataDescription(DiskImage diskImage) {
+        StorageDomain storageDomain =
+                getStorageDomainDAO().getForStoragePool(diskImage.getStorageIds().get(0),
+                        getVm().getStoragePoolId());
+        if (!getStorageDomainValidator((DiskImage) getNewDisk()).isDomainExistAndActive().isValid()) {
+            auditLogForNoMetadataDescriptionUpdate(AuditLogType.UPDATE_DESCRIPTION_FOR_DISK_SKIPPED_SINCE_STORAGE_DOMAIN_NOT_ACTIVE,
+                    storageDomain,
+                    diskImage);
+            return;
+        }
+        try {
+            SetVolumeDescriptionVDSCommandParameters vdsCommandParameters =
+                    new SetVolumeDescriptionVDSCommandParameters(getVm().getStoragePoolId(),
+                            diskImage.getStorageIds().get(0),
+                            diskImage.getId(),
+                            diskImage.getImageId(),
+                            getJsonDiskDescription());
+            runVdsCommand(VDSCommandType.SetVolumeDescription, vdsCommandParameters);
+        } catch (Exception e) {
+            log.error("Exception while setting volume description for disk. ERROR: '{}'", e);
+            auditLogForNoMetadataDescriptionUpdate(AuditLogType.UPDATE_DESCRIPTION_FOR_DISK_FAILED,
+                    storageDomain,
+                    diskImage);
+        }
+    }
+
+    private void auditLogForNoMetadataDescriptionUpdate(AuditLogType auditLogType, StorageDomain storageDomain, DiskImage diskImage) {
+        AuditLogableBase auditLogableBase = new AuditLogableBase();
+        auditLogableBase.addCustomValue("DataCenterName", getStoragePool().getName());
+        auditLogableBase.addCustomValue("StorageDomainName", storageDomain.getName());
+        auditLogableBase.addCustomValue("DiskName", diskImage.getDiskAlias());
+        AuditLogDirector.log(auditLogableBase, auditLogType);
+    }
+
+    private String getJsonDiskDescription() throws IOException {
+        return ImagesHandler.getJsonDiskDescription(getParameters().getDiskInfo().getDiskAlias(),
+                getParameters().getDiskInfo().getDiskDescription());
     }
 
     protected void updateDiskProfile() {
