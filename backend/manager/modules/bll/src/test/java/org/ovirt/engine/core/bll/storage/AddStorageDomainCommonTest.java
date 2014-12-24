@@ -183,11 +183,19 @@ public class AddStorageDomainCommonTest {
     }
 
     @Test
-    public void canDoActionFailsBlockLocal() {
+    public void canDoActionFailsExportOnLocal() {
         sd.setStorageDomainType(StorageDomainType.ImportExport);
         sd.setStorageType(StorageType.LOCALFS);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
-                (cmd, VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+                (cmd, VdcBllMessages.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
+    }
+
+    @Test
+    public void canDoActionFailsExportOnBlock() {
+        sd.setStorageDomainType(StorageDomainType.ImportExport);
+        sd.setStorageType(StorageType.ISCSI);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+                (cmd, VdcBllMessages.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
     }
 
     @Test

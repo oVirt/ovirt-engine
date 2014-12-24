@@ -1549,6 +1549,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Storage Domain type not specified.")
     String ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL();
 
+    @DefaultStringValue("Cannot ${action} ${type}. ${domainType} Storage Domain can only be created on the following storage types: ${storageTypes}.")
+    String ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS();
+
     @DefaultStringValue("Cannot ${action} ${type}. Storage Domain format ${storageFormat} is illegal.")
     String ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL();
 

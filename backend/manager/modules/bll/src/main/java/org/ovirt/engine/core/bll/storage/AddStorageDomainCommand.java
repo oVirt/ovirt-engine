@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.errors.VdcFault;
@@ -161,8 +162,11 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
         if (getStorageDomain().getStorageDomainType() == StorageDomainType.ImportExport
-                && getStorageDomain().getStorageType() == StorageType.LOCALFS) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+                && (getStorageDomain().getStorageType() == StorageType.LOCALFS || getStorageDomain().getStorageType().isBlockDomain())) {
+            addCanDoActionMessageVariable("domainType", StorageConstants.EXPORT);
+            addCanDoActionMessageVariable("storageTypes", StorageConstants.SHARED + " " + StorageConstants.FILE);
+
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
         }
         if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
