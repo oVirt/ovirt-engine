@@ -108,7 +108,7 @@ public class FenceProxyLocator {
                     || host.getId().equals(excludedHostId)
                     || !matchesOption(host, proxyOption)
                     || !areAgentsVersionCompatible(host)
-                    || (fencingPolicy != null && !isFencingPolicySupported(_vds, minSupportedVersion))
+                    || (fencingPolicy != null && !isFencingPolicySupported(host, minSupportedVersion))
                     || isHostNetworkUnreacable(host)) {
                 iterator.remove();
             }
