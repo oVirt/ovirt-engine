@@ -62,6 +62,8 @@ import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
+import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VdsInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
@@ -508,17 +510,9 @@ public class VdsBrokerObjectsBuilder {
                     stats.setName((String) ((nic.get(VdsProperties.VM_INTERFACE_NAME) instanceof String) ? nic
                             .get(VdsProperties.VM_INTERFACE_NAME) : null));
                 }
-                Double rx_rate = AssignDoubleValue(nic, VdsProperties.rx_rate);
-                Double rx_dropped = AssignDoubleValue(nic, VdsProperties.rx_dropped);
-                Double tx_rate = AssignDoubleValue(nic, VdsProperties.tx_rate);
-                Double tx_dropped = AssignDoubleValue(nic, VdsProperties.tx_dropped);
-                stats.getStatistics().setReceiveRate(rx_rate != null ? rx_rate : 0);
-                stats.getStatistics().setReceiveDropRate(rx_dropped != null ? rx_dropped : 0);
-                stats.getStatistics().setTransmitRate(tx_rate != null ? tx_rate : 0);
-                stats.getStatistics().setTransmitDropRate(tx_dropped != null ? tx_dropped : 0);
+                updateInterfaceStatistics(nic, stats);
                 stats.setMacAddress((String) ((nic.get(VdsProperties.MAC_ADDR) instanceof String) ? nic
                         .get(VdsProperties.MAC_ADDR) : null));
-                stats.setSpeed(AssignIntValue(nic, VdsProperties.INTERFACE_SPEED));
             }
         }
 
@@ -867,15 +861,7 @@ public class VdsBrokerObjectsBuilder {
                     VdsNetworkInterface iface = nicsByName.get(entry.getKey());
                     iface.setVdsId(vds.getId());
                     Map<String, Object> dict = (Map<String, Object>) entry.getValue();
-                    Double rx_rate = AssignDoubleValue(dict, VdsProperties.rx_rate);
-                    Double rx_dropped = AssignDoubleValue(dict, VdsProperties.rx_dropped);
-                    Double tx_rate = AssignDoubleValue(dict, VdsProperties.tx_rate);
-                    Double tx_dropped = AssignDoubleValue(dict, VdsProperties.tx_dropped);
-                    iface.getStatistics().setReceiveRate(rx_rate != null ? rx_rate : 0);
-                    iface.getStatistics().setReceiveDropRate(rx_dropped != null ? rx_dropped : 0);
-                    iface.getStatistics().setTransmitRate(tx_rate != null ? tx_rate : 0);
-                    iface.getStatistics().setTransmitDropRate(tx_dropped != null ? tx_dropped : 0);
-                    iface.setSpeed(AssignIntValue(dict, VdsProperties.INTERFACE_SPEED));
+                    updateInterfaceStatistics(dict, iface);
                     iface.getStatistics().setStatus(AssignInterfaceStatusValue(dict, VdsProperties.iface_status));
 
                     if (!NetworkUtils.isVlan(iface) && !iface.isBondSlave()) {
@@ -962,6 +948,16 @@ public class VdsBrokerObjectsBuilder {
 
         updateNumaStatisticsData(vds, xmlRpcStruct);
 
+    }
+
+    private static void updateInterfaceStatistics(Map<String, Object> dict, NetworkInterface<?> iface) {
+        NetworkStatistics stats = iface.getStatistics();
+        stats.setReceiveRate(assignDoubleValueWithNullProtection(dict, VdsProperties.rx_rate));
+        stats.setReceiveDropRate(assignDoubleValueWithNullProtection(dict, VdsProperties.rx_dropped));
+        stats.setTransmitRate(assignDoubleValueWithNullProtection(dict, VdsProperties.tx_rate));
+        stats.setTransmitDropRate(assignDoubleValueWithNullProtection(dict, VdsProperties.tx_dropped));
+
+        iface.setSpeed(AssignIntValue(dict, VdsProperties.INTERFACE_SPEED));
     }
 
     private static double computeInterfaceUsage(VdsNetworkInterface iface) {
