@@ -9,4 +9,5 @@ public class StorageConstants {
     public static final String EXPORT = "Export";
     public static final String FILE = "File";
     public static final String SHARED = "Shared";
+    public static final String ISO = "ISO";
 }

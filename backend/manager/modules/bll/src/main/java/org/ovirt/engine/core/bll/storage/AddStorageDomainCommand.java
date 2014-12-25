@@ -159,7 +159,10 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         }
         if (getStorageDomain().getStorageDomainType() == StorageDomainType.ISO
                 && !getStorageDomain().getStorageType().isFileDomain()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+            addCanDoActionMessageVariable("domainType", StorageConstants.ISO);
+            addCanDoActionMessageVariable("storageTypes", StorageConstants.FILE);
+
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
         }
         if (getStorageDomain().getStorageDomainType() == StorageDomainType.ImportExport
                 && (getStorageDomain().getStorageType() == StorageType.LOCALFS || getStorageDomain().getStorageType().isBlockDomain())) {
