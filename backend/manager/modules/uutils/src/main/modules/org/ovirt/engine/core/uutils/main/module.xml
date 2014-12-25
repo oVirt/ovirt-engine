@@ -11,6 +11,8 @@
     <module name="javax.servlet.api"/>
     <module name="org.apache.commons.codec"/>
     <module name="org.apache.commons.lang"/>
+    <module name="org.codehaus.jackson.jackson-core-asl"/>
+    <module name="org.codehaus.jackson.jackson-mapper-asl"/>
     <module name="org.apache.sshd"/>
     <module name="org.slf4j"/>
   </dependencies>

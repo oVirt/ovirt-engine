@@ -299,6 +299,7 @@ Provides:	ovirt-engine-extensions-api-javadoc = 0
 %package lib
 Summary:	%{ovirt_product_name_short} library
 Group:		%{ovirt_product_group}
+Requires:	m2crypto
 Requires:	python-daemon
 
 %description lib
@@ -529,7 +530,6 @@ fi
 Summary:	%{ovirt_product_name_short} Websocket Proxy
 Group:		%{ovirt_product_group}
 Requires:	%{name}-lib >= %{version}-%{release}
-Requires:	m2crypto
 Requires:	numpy
 Requires:	python-websockify
 Requires:	%{name}-setup-plugin-websocket-proxy >= %{version}-%{release}

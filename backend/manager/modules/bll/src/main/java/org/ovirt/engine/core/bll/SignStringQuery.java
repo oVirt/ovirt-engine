@@ -1,9 +1,17 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.SignStringParameters;
-import org.ovirt.engine.core.utils.crypt.TicketUtils;
+import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
+import org.ovirt.engine.core.uutils.crypto.ticket.TicketEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SignStringQuery<P extends SignStringParameters> extends QueriesCommandBase<P> {
+
+    private static final Logger log = LoggerFactory.getLogger(SignStringQuery.class);
+
     public SignStringQuery(P parameters) {
         super(parameters);
     }
@@ -13,14 +21,16 @@ public class SignStringQuery<P extends SignStringParameters> extends QueriesComm
         getQueryReturnValue().setSucceeded(false);
 
         try {
-            TicketUtils ticketUtils = TicketUtils.getInstanceForEngineStoreSigning();
-
-            String ticket = ticketUtils.generateTicket(getParameters().getString());
-            getQueryReturnValue().setReturnValue(ticket);
-
+            getQueryReturnValue().setReturnValue(
+                new TicketEncoder(
+                    EngineEncryptionUtils.getPrivateKeyEntry().getCertificate(),
+                    EngineEncryptionUtils.getPrivateKeyEntry().getPrivateKey(),
+                    Config.<Integer> getValue (ConfigValues.WebSocketProxyTicketValiditySeconds)
+                ).encode(getParameters().getString())
+            );
             getQueryReturnValue().setSucceeded(true);
         } catch (Exception e) {
-            log.error("Error when signing string: {}", e.getMessage());
+            log.error("Ticket encoding failed: {}", e.getMessage());
             log.debug("Exception", e);
         }
     }

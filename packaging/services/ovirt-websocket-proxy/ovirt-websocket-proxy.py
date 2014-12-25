@@ -18,14 +18,11 @@ import os
 import sys
 import signal
 import gettext
-import base64
 import json
-import datetime
 import urllib
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine')
 
 
-from M2Crypto import X509
 import websockify
 
 
@@ -34,6 +31,7 @@ import config
 
 from ovirt_engine import configfile
 from ovirt_engine import service
+from ovirt_engine import ticket
 
 
 class OvirtWebSocketProxy(websockify.WebSocketProxy):
@@ -60,43 +58,6 @@ class OvirtWebSocketProxy(websockify.WebSocketProxy):
         target_port = connection_data['port'].encode('utf8')
         self.ssl_target = connection_data['ssl_target']
         return (target_host, target_port)
-
-
-class TicketDecoder(object):
-
-    def __init__(
-            self,
-            insecure,
-            certificate
-    ):
-        self._insecure = insecure
-        if not insecure:
-            self._key = X509.load_cert(
-                certificate,
-                X509.FORMAT_PEM,
-            ).get_pubkey()
-
-    def decode(self, ticket):
-        decoded = json.loads(base64.b64decode(ticket))
-        if not self._insecure:
-            self._key.verify_init()
-            for field in decoded['signedFields'].split(','):
-                self._key.verify_update(decoded[field].encode('utf8'))
-            if self._key.verify_final(
-                base64.b64decode(decoded['signature'])
-            ) != 1:
-                raise ValueError('Invalid ticket signature')
-        if (
-            datetime.datetime.utcnow() -
-            datetime.datetime.strptime(decoded['validFrom'], '%Y%m%d%H%M%S')
-        ) < datetime.timedelta(seconds=-5):  # tolerance to the past
-            raise ValueError('Ticket life time expired')
-        if (
-            datetime.datetime.strptime(decoded['validTo'], '%Y%m%d%H%M%S') -
-            datetime.datetime.utcnow()
-        ) < datetime.timedelta():
-            raise ValueError('Ticket life time expired')
-        return decoded['data']
 
 
 class Daemon(service.Daemon):
@@ -186,18 +147,22 @@ class Daemon(service.Daemon):
         # WORKAROUND-END
 
         try:
+            with open(
+                self._config.get(
+                    'CERT_FOR_DATA_VERIFICATION'
+                )
+            ) as f:
+                peer = f.read()
+
             OvirtWebSocketProxy(
                 listen_host=self._config.get('PROXY_HOST'),
                 listen_port=self._config.get('PROXY_PORT'),
                 source_is_ipv6=self._config.getboolean('SOURCE_IS_IPV6'),
                 verbose=self.debug,
-                ticketDecoder=TicketDecoder(
-                    insecure=not self._config.getboolean(
-                        'FORCE_DATA_VERIFICATION'
-                    ),
-                    certificate=self._config.get(
-                        'CERT_FOR_DATA_VERIFICATION'
-                    )
+                ticketDecoder=ticket.TicketDecoder(
+                    ca=None,
+                    eku=None,
+                    peer=peer,
                 ),
                 cert=self._config.get('SSL_CERTIFICATE'),
                 key=self._config.get('SSL_KEY'),

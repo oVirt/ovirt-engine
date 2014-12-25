@@ -237,7 +237,6 @@ class Plugin(plugin.PluginBase):
                     "PROXY_PORT={port}\n"
                     "SSL_CERTIFICATE={certificate}\n"
                     "SSL_KEY={key}\n"
-                    "FORCE_DATA_VERIFICATION=True\n"
                     "CERT_FOR_DATA_VERIFICATION={engine_cert}\n"
                     "SSL_ONLY=True\n"
                 ).format(
