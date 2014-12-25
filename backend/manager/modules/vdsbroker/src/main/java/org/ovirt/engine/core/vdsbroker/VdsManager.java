@@ -840,14 +840,23 @@ public class VdsManager {
     }
 
     private void logChangeStatusToConnecting(long timeoutToFence) {
-        log.warn("Host '{}' is not responding. It will stay in Connecting state for a grace period " +
-                        "of {} seconds and after that an attempt to fence the host will be issued.",
-                cachedVds.getName(),
-                TimeUnit.MILLISECONDS.toSeconds(timeoutToFence));
+        String msg;
+        AuditLogType auditLogType;
+
+        if (cachedVds.isPmEnabled()) {
+            msg = "Host '{}' is not responding. It will stay in Connecting state for a grace period " +
+                    "of {} seconds and after that an attempt to fence the host will be issued.";
+            auditLogType = AuditLogType.VDS_HOST_NOT_RESPONDING_CONNECTING;
+            log.warn(msg, cachedVds.getName(), TimeUnit.MILLISECONDS.toSeconds(timeoutToFence));
+        } else {
+            msg = "Host '{}' is not responding.";
+            auditLogType = AuditLogType.VDS_HOST_NOT_RESPONDING;
+            log.warn(msg, cachedVds.getName());
+        }
         AuditLogableBase logable = new AuditLogableBase();
         logable.setVdsId(cachedVds.getId());
         logable.addCustomValue("Seconds", Long.toString(TimeUnit.MILLISECONDS.toSeconds(timeoutToFence)));
-        auditLogDirector.log(logable, AuditLogType.VDS_HOST_NOT_RESPONDING_CONNECTING);
+        auditLogDirector.log(logable, auditLogType);
     }
 
     public void dispose() {
