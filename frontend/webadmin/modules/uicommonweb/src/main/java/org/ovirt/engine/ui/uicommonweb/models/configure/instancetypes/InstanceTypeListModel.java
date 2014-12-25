@@ -416,6 +416,11 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
         }
     }
 
+    @Override
+    public UICommand getEditCommand() {
+        return getEditInstanceTypeCommand();
+    }
+
     public UICommand getNewInstanceTypeCommand() {
         return newInstanceTypeCommand;
     }
