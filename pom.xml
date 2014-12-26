@@ -109,7 +109,7 @@
     <!-- https://jira.codehaus.org/browse/MGWT-350 -->
     <gwt-maven-plugin.workingRefresh.version>2.4.0</gwt-maven-plugin.workingRefresh.version>
     <cdi.api.version>1.0-SP4</cdi.api.version>
-    <antlr.version>4.2.2</antlr.version>
+    <javacc.version>2.6</javacc.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -320,9 +320,9 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
-        <groupId>org.antlr</groupId>
-        <artifactId>antlr4-runtime</artifactId>
-        <version>${antlr.version}</version>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>javacc-maven-plugin</artifactId>
+        <version>${javacc.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
