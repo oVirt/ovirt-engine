@@ -812,6 +812,9 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Failed to get status information of geo-replication session(s) on gluster volume")
     String GlusterVolumeGeoRepStatusFailed();
 
+    @DefaultStringValue("Failed to modify geo-replication config")
+    String GlusterGeoRepConfigFailed();
+
     @DefaultStringValue("Failed to get status of gluster volume remove bricks")
     String GlusterVolumeRemoveBrickStatusFailed();
 

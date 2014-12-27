@@ -14,6 +14,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterServersListReturnForXmlRpc
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterServicesReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterTaskInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterTasksListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeConfigListXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusDetailForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeOptionsInfoReturnForXmlRpc;
@@ -1487,6 +1488,33 @@ public class VdsServerWrapper implements IVdsServer {
             return new StatusOnlyReturnForXmlRpc(vdsServer.glusterVolumeGeoRepSessionStop(volumeName,
                     remoteHost, remoteVolumeName, force));
         } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepConfigSet(String volumeName, String slaveHost, String slaveVolumeName, String configKey, String configValue) {
+        try {
+            return new StatusOnlyReturnForXmlRpc(vdsServer.glusterVolumeGeoRepConfigSet(volumeName, slaveHost, slaveVolumeName, configKey, configValue));
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepConfigReset(String volumeName, String slaveHost, String slaveVolumeName, String configKey) {
+        try {
+            return new StatusOnlyReturnForXmlRpc(vdsServer.glusterVolumeGeoRepConfigReset(volumeName, slaveHost, slaveVolumeName, configKey));
+        } catch(UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public GlusterVolumeConfigListXmlRpc glusterVolumeGeoRepConfigList(String volumeName, String slaveHost, String slaveVolumeName) {
+        try {
+            return new GlusterVolumeConfigListXmlRpc(vdsServer.glusterVolumeGeoRepConfigList(volumeName, slaveHost, slaveVolumeName));
+        } catch(UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);
         }
     }

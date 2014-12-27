@@ -70,6 +70,7 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
         case GlusterVolumeRemoveBrickStatusFailed:
         case GlusterVolumeRemoveBricksCommitFailed:
         case GlusterVolumeGeoRepStatusFailed:
+        case GlusterGeoRepConfigFailed:
         case GlusterLibgfapiException:
         case GlfsStatvfsException:
         case GlfsInitException:
