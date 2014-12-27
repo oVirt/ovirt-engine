@@ -200,11 +200,11 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetGlusterGeoRepSessionConfig(v_session_id UUID)
-RETURNS SETOF gluster_georep_config STABLE
+RETURNS SETOF gluster_geo_rep_config_view STABLE
 AS $procedure$
 BEGIN
-    RETURN QUERY SELECT session_id, config_key, config_value, _update_date
-    FROM  gluster_georep_config
+    RETURN QUERY SELECT *
+    FROM  gluster_geo_rep_config_view
     WHERE session_id = v_session_id order by config_key asc;
 END; $procedure$
 LANGUAGE plpgsql;

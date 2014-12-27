@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao.gluster;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepCrawlStatus;
@@ -58,6 +59,8 @@ public class GlusterGeoRepDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
             entity.setId(getGuidDefaultEmpty(rs, "session_id"));
             entity.setKey(rs.getString("config_key"));
             entity.setValue(rs.getString("config_value"));
+            entity.setDescription(rs.getString("config_description"));
+            entity.setAllowedValues(Arrays.asList(rs.getString("config_possible_values").split(";")));
             return entity;
         }
     }
@@ -179,7 +182,9 @@ public class GlusterGeoRepDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
             GlusterGeoRepSessionConfiguration geoRepSessionConfig) {
         return createIdParameterMapper(geoRepSessionConfig.getId())
                 .addValue("config_key", geoRepSessionConfig.getKey())
-                .addValue("config_value", geoRepSessionConfig.getValue());
+                .addValue("config_value", geoRepSessionConfig.getValue())
+                .addValue("config_description", geoRepSessionConfig.getDescription())
+                .addValue("config_possible_values", geoRepSessionConfig.getAllowedValues());
     }
 
     @Override

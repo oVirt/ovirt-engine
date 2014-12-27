@@ -3146,6 +3146,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Geo-replication session is paused.")
     String ACTION_TYPE_FAILED_GEOREP_SESSION_ALREADY_PAUSED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Cannot set the configuration.")
+    String ACTION_TYPE_FAILED_GLUSTER_GEOREP_CONFIG_SET();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Cannot reset the configuration to its default value.")
+    String ACTION_TYPE_FAILED_GLUSTER_GEOREP_CONFIG_DEFAULT_SET();
+
     @DefaultStringValue("Cannot ${action} ${type}. All three values are needed in order to define QoS on each network directions.")
     String ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES();
 

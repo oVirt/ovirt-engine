@@ -8225,4 +8225,20 @@
              <null/>
          </row>
      </table>
+
+     <table name="gluster_config_master">
+         <column>config_key</column>
+         <column>config_description</column>
+         <column>minimum_supported_cluster</column>
+         <column>config_possible_values</column>
+         <column>config_feature</column>
+         <row>
+             <value>georep-crawl</value>
+             <value>Geo-replication session  crawl</value>
+             <value>3.5</value>
+             <value></value>
+             <value>geo_replication</value>
+         </row>
+     </table>
+
 </dataset>
