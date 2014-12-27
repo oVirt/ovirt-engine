@@ -35,6 +35,7 @@ public class GlusterConstants {
     public static final String MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP = "stop";
     public static final String MANAGE_GLUSTER_SERVICE_ACTION_TYPE_RESTART = "restart";
     public static final String COMMAND = "command";
+    public static final String GEO_REP_SESSION_KEY = "geoRepSessionKey";
 
     public static final String HOOK_NAME = "glusterhookname";
     public static final String FAILURE_MESSAGE = "failuremessage";

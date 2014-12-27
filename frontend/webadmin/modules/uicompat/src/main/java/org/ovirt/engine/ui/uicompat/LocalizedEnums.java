@@ -451,6 +451,14 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___GEOREP_SESSION_START_FAILED();
 
+    String AuditLogType___GLUSTER_GEOREP_CONFIG_SET();
+
+    String AuditLogType___GLUSTER_GEOREP_CONFIG_SET_FAILED();
+
+    String AuditLogType___GLUSTER_GEOREP_CONFIG_SET_DEFAULT();
+
+    String AuditLogType___GLUSTER_GEOREP_CONFIG_SET_DEFAULT_FAILED();
+
     String VdcActionType___ActivateVds();
 
     String VdcActionType___RecoveryStoragePool();

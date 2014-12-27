@@ -56,6 +56,7 @@ public class GlusterGeoRepDaoTest extends BaseDAOTestCase {
         GlusterGeoRepSessionConfiguration sessionConfig = new GlusterGeoRepSessionConfiguration();
         sessionConfig.setId(FixturesTool.GLUSTER_GEOREP_SESSION_ID);
         sessionConfig.setKey("georep-crawl");
+        sessionConfig.setDescription("Geo-replication session  crawl");
         sessionConfig.setValue("changelog");
         return sessionConfig;
     }

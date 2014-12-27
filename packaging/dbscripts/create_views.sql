@@ -1790,6 +1790,12 @@ SELECT session_id, master_volume_id, session_key, slave_host_uuid,
 FROM  gluster_georep_session georep
 INNER JOIN gluster_volumes ON gluster_volumes.id = georep.master_volume_id;
 
+CREATE OR REPLACE VIEW gluster_geo_rep_config_view
+AS
+SELECT session_id, georepConfig.config_key, config_value, config_description, config_possible_values, _update_date
+FROM  gluster_georep_config georepConfig
+INNER JOIN gluster_config_master ON gluster_config_master.config_key = georepConfig.config_key AND gluster_config_master.config_feature='geo_replication';
+
 -- Affinity Groups view, including members
 CREATE OR REPLACE VIEW affinity_groups_view
 AS
