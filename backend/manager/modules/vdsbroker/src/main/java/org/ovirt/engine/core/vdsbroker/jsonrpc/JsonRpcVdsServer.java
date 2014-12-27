@@ -18,6 +18,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterServersListReturnForXmlRpc
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterServicesReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterTaskInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterTasksListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeConfigListXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusDetailForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeOptionsInfoReturnForXmlRpc;
@@ -1312,6 +1313,44 @@ public class JsonRpcVdsServer implements IVdsServer {
                 .withParameter("force", force).build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepConfigSet(String volumeName, String slaveHost, String slaveVolumeName, String configKey, String configValue) {
+        JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepConfigSet")
+                .withParameter("volumeName", volumeName)
+                .withParameter("remoteHost", slaveHost)
+                .withParameter("remoteVolumeName", slaveVolumeName)
+                .withParameter("key", configKey)
+                .withParameter("value", configValue).build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepConfigReset(String volumeName,
+            String slaveHost,
+            String slaveVolumeName,
+            String configKey) {
+        JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepConfigReset")
+        .withParameter("volumeName", volumeName)
+        .withParameter("remoteHost", slaveHost)
+        .withParameter("remoteVolumeName", slaveVolumeName)
+        .withParameter("key", configKey)
+        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
+
+    @Override
+    public GlusterVolumeConfigListXmlRpc glusterVolumeGeoRepConfigList(String volumeName, String slaveHost, String slaveVolumeName) {
+        JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepConfigList")
+        .withParameter("volumeName", volumeName)
+        .withParameter("remoteHost", slaveHost)
+        .withParameter("remoteVolumeName", slaveVolumeName)
+        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new GlusterVolumeConfigListXmlRpc(response);
     }
 
     @Override

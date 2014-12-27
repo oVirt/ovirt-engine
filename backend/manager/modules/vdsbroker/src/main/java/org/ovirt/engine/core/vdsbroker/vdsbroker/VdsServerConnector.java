@@ -252,6 +252,8 @@ public interface VdsServerConnector {
 
     public Map<String, Object> glusterVolumeGeoRepSessionStop(String volumeName, String remoteHost, String remoteVolumeName, Boolean force);
 
+    public Map<String, Object> glusterVolumeGeoRepConfigSet(String volumeName, String slaveHost, String slaveVolumeName, String configKey, String configValue);
+
     public Map<String, Object> ping();
 
     @FutureCall(delegeteTo = "ping")
@@ -316,4 +318,8 @@ public interface VdsServerConnector {
     public Map<String, Object> setNumberOfCpus(String vmId, String numberOfCpus);
 
     public Map<String, Object> updateVmPolicy(Map info);
+
+    public Map<String, Object> glusterVolumeGeoRepConfigReset(String volumeName, String slaveHost, String slaveVolumeName, String configKey);
+
+    public Map<String, Object> glusterVolumeGeoRepConfigList(String volumeName, String slaveHost, String slaveVolumeName);
 }

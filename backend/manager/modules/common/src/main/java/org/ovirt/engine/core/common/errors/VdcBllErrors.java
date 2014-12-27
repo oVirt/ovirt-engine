@@ -381,6 +381,7 @@ public enum VdcBllErrors {
     GlusterVolumeGeoRepStatusFailed(4203),
     GlusterVolumeGeoRepSessionPauseFailed(4204),
     GlusterVolumeGeoRepSessionResumeFailed(4205),
+    GlusterGeoRepConfigFailed(4206),
     GlusterHostIsNotPartOfCluster(4403),
     GlusterAddHostFailed(4404),
     GlusterHostRemoveFailedException(4406),
