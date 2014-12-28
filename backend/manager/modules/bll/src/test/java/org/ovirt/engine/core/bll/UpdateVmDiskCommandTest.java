@@ -36,8 +36,8 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
-import org.ovirt.engine.core.bll.validator.DiskValidator;
-import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
+import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
+import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -183,7 +183,8 @@ public class UpdateVmDiskCommandTest {
         when(storageDomainStaticDao.get(storage.getId())).thenReturn(storage.getStorageStaticData());
         initializeCommand(parameters);
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT);
     }
 
     @Test
@@ -210,7 +211,8 @@ public class UpdateVmDiskCommandTest {
 
         vmDevice.setIsReadOnly(true);
         parameters.getDiskInfo().setReadOnly(false);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
     }
 
     @Test
@@ -225,11 +227,13 @@ public class UpdateVmDiskCommandTest {
         vm.setVmPoolId(Guid.newGuid());
         initializeCommand(parameters, Collections.singletonList(vm));
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
 
         oldDisk.setWipeAfterDelete(false);
         parameters.getDiskInfo().setWipeAfterDelete(true);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
     }
 
     @Test
@@ -243,7 +247,8 @@ public class UpdateVmDiskCommandTest {
         when(storageDomainStaticDao.get(storage.getId())).thenReturn(storage.getStorageStaticData());
         initializeCommand(parameters);
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.ACTION_TYPE_FAILED_SHAREABLE_DISKS_NOT_SUPPORTED_ON_GLUSTER_DOMAIN);
     }
 
 
@@ -396,7 +401,7 @@ public class UpdateVmDiskCommandTest {
             public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
                 final DiskImage oldDisk = createDiskImage();
                 oldDisk.setDiskInterface(DiskInterface.VirtIO);
-                assertNotSame (oldDisk.getDiskInterface(), parameters.getDiskInfo().getDiskInterface());
+                assertNotSame(oldDisk.getDiskInterface(), parameters.getDiskInfo().getDiskInterface());
                 return oldDisk;
             }
         });

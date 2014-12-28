@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.storage;
+package org.ovirt.engine.core.bll.validator.storage;
 
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;

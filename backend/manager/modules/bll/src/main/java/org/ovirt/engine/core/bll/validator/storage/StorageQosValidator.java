@@ -1,6 +1,7 @@
-package org.ovirt.engine.core.bll.validator;
+package org.ovirt.engine.core.bll.validator.storage;
 
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.validator.QosValidator;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;

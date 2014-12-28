@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.validator;
+package org.ovirt.engine.core.bll.validator.storage;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

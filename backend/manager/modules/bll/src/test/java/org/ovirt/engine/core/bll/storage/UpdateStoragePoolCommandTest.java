@@ -23,6 +23,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
+import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -34,6 +35,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
@@ -82,8 +84,8 @@ public class UpdateStoragePoolCommandTest {
         UpdateStoragePoolCommand<StoragePoolManagementParameter> realCommand =
                 new UpdateStoragePoolCommand<StoragePoolManagementParameter>(params);
 
-        StoragePoolValidator validator = spy(realCommand.createStoragePoolValidator());
-        doReturn(vdsGroupDao).when(validator).getVdsGroupDao();
+        StoragePoolValidatorForTesting poolValidator = spy(new StoragePoolValidatorForTesting(params.getStoragePool()));
+        doReturn(vdsGroupDao).when(poolValidator).getVdsGroupDao();
 
         cmd = spy(realCommand);
         doReturn(10).when(cmd).getStoragePoolNameSizeLimit();
@@ -94,7 +96,7 @@ public class UpdateStoragePoolCommandTest {
         doReturn(vdsGroupDao).when(cmd).getVdsGroupDAO();
         doReturn(vdsDao).when(cmd).getVdsDAO();
         doReturn(networkDao).when(cmd).getNetworkDAO();
-        doReturn(validator).when(cmd).createStoragePoolValidator();
+        doReturn(poolValidator).when(cmd).createStoragePoolValidator();
 
         mcr.mockConfigValue(ConfigValues.AutoRegistrationDefaultVdsGroupID, DEFAULT_VDS_GROUP_ID);
         mcr.mockConfigValue(ConfigValues.ManagementNetwork, "test_mgmt");
@@ -352,5 +354,15 @@ public class UpdateStoragePoolCommandTest {
     private void canDoActionFailed(final VdcBllMessages reason) {
         assertFalse(cmd.canDoAction());
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(reason.toString()));
+    }
+
+    protected class StoragePoolValidatorForTesting extends StoragePoolValidator {
+        public StoragePoolValidatorForTesting(StoragePool storagePool) {
+            super(storagePool);
+        }
+
+        public VdsGroupDAO getVdsGroupDao() {
+            return DbFacade.getInstance().getVdsGroupDao();
+        }
     }
 }

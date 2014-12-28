@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.validator;
+package org.ovirt.engine.core.bll.validator.storage;
 
 import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.hasItem;

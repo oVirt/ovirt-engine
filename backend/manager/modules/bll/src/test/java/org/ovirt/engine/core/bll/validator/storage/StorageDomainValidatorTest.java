@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.validator;
+package org.ovirt.engine.core.bll.validator.storage;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -15,9 +15,9 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 /**
- * A test case for the {@link StorageDomainValidator} class.
+ * A test case for the {@link org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator} class.
  * The hasSpaceForClonedDisk() and hasSpaceForNewDisk() methods are covered separately in
- * {@link StorageDomainValidatorFreeSpaceTest}.
+ * {@link org.ovirt.engine.core.bll.validator.storage.StorageDomainValidatorFreeSpaceTest}.
  */
 public class StorageDomainValidatorTest {
     private StorageDomain domain;

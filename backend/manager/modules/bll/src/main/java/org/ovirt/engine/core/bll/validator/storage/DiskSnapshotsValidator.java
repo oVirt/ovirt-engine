@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.validator;
+package org.ovirt.engine.core.bll.validator.storage;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ImagesHandler;
