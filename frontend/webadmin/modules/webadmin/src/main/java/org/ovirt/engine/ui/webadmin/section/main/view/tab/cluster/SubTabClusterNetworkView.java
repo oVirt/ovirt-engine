@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -43,6 +44,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
     private final SafeHtml displayImage;
     private final SafeHtml migrationImage;
     private final SafeHtml emptyImage;
+    private final SafeHtml managementImage;
 
     @Inject
     public SubTabClusterNetworkView(SearchableDetailModelProvider<Network, ClusterListModel, ClusterNetworkListModel> modelProvider,
@@ -55,6 +57,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
         migrationImage =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.migrationNetwork()).getHTML());
         emptyImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkEmpty()).getHTML());
+        managementImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.mgmtNetwork()).getHTML());
         initTable(constants, templates);
         initWidget(getTable());
     }
@@ -92,17 +95,24 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
                     @Override
                     public SafeHtml getValue(Network network) {
 
-                        List<SafeHtml> images = new LinkedList<SafeHtml>();
+                        List<SafeHtml> images = new LinkedList<>();
 
-                        if (network.getCluster() != null) {
-                            if (network.getCluster().isDisplay()) {
+                        final NetworkCluster networkCluster = network.getCluster();
+                        if (networkCluster != null) {
 
+                            if (networkCluster.isManagement()) {
+                                images.add(managementImage);
+                            } else {
+                                images.add(emptyImage);
+                            }
+
+                            if (networkCluster.isDisplay()) {
                                 images.add(displayImage);
                             } else {
                                 images.add(emptyImage);
                             }
 
-                            if (network.getCluster().isMigration()) {
+                            if (networkCluster.isMigration()) {
                                 images.add(migrationImage);
                             } else {
                                 images.add(emptyImage);
@@ -114,22 +124,25 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
 
                     @Override
                     public SafeHtml getTooltip(Network network) {
-                        Map<SafeHtml, String> imagesToText = new LinkedHashMap<SafeHtml, String>();
-                        if (network.getCluster() != null) {
-                            if (network.getCluster().isDisplay()) {
+                        Map<SafeHtml, String> imagesToText = new LinkedHashMap<>();
+                        final NetworkCluster networkCluster = network.getCluster();
+                        if (networkCluster != null) {
+                            if (networkCluster.isManagement()) {
+                                imagesToText.put(managementImage, constants.managementItemInfo());
+                            }
+                            if (networkCluster.isDisplay()) {
                                 imagesToText.put(displayImage, constants.displayItemInfo());
                             }
 
-                            if (network.getCluster().isMigration()) {
+                            if (networkCluster.isMigration()) {
                                 imagesToText.put(migrationImage, constants.migrationItemInfo());
-
                             }
                         }
                         return NetworkRoleColumnHelper.getTooltip(imagesToText);
                     }
                 };
 
-        getTable().addColumn(roleColumn, constants.roleNetwork(), "60px"); //$NON-NLS-1$
+        getTable().addColumn(roleColumn, constants.roleNetwork(), "90px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<Network> descColumn = new TextColumnWithTooltip<Network>() {
             @Override

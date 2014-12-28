@@ -369,6 +369,7 @@ public final class Cloner
         obj.setDisplay(instance.isDisplay());
         obj.setRequired(instance.isRequired());
         obj.setMigration(instance.isMigration());
+        obj.setManagement(instance.isManagement());
         return obj;
     }
 
