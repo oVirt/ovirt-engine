@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -346,20 +345,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
     private void dataCenter_SelectedItemChanged()
     {
         updateItemsAvailability();
-        updateDataCenterAlert();
-    }
-
-    private void updateDataCenterAlert() {
-        if (getDataCenter().getSelectedItem() != null
-                && !UnassignedDataCenterId.equals((getDataCenter().getSelectedItem()).getId())
-                && (getDataCenter().getSelectedItem()).getStatus() == StoragePoolStatus.Uninitialized) {
-            getDataCenterAlert().setIsAvailable(true);
-            getDataCenterAlert().setEntity(ConstantsManager.getInstance().getConstants().dataCenterUninitializedAlert());
-        }
-        else {
-            getDataCenterAlert().setIsAvailable(false);
-            getDataCenterAlert().setEntity("");
-        }
+        behavior.updateDataCenterAlert();
     }
 
     private void host_SelectedItemChanged()
