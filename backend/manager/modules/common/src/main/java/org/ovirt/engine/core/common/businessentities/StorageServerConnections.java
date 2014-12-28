@@ -189,6 +189,16 @@ public class StorageServerConnections implements Serializable {
         this.iface = iface;
     }
 
+    private String netIfaceName;
+
+    public String getNetIfaceName() {
+        return netIfaceName;
+    }
+
+    public void setNetIfaceName(String netIfaceName) {
+        this.netIfaceName = netIfaceName;
+    }
+
     @Override
     public boolean equals(Object obj) {
         boolean returnValue = super.equals(obj);
@@ -244,9 +254,13 @@ public class StorageServerConnections implements Serializable {
         sb.append(this.getNfsRetrans());
         sb.append(", nfsTimeo: ");
         sb.append(this.getNfsTimeo());
-        if (getIface() != null) {
+        if (this.getIface() != null) {
             sb.append(", iface: ");
             sb.append(this.getIface());
+        }
+        if (getNetIfaceName() != null) {
+            sb.append(", netIfaceName: ");
+            sb.append(this.getNetIfaceName());
         }
         sb.append(" };");
         return sb.toString();

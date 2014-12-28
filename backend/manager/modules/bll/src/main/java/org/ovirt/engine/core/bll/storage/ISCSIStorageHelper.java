@@ -92,20 +92,26 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                     .getIscsiIfacesByHostIdAndStorageTargetId(vdsId, conn.getid());
 
             if (!ifaces.isEmpty()) {
-                conn.setIface(ifaces.remove(0).getName());
+                VdsNetworkInterface removedInterface = ifaces.remove(0);
+                setInterfaceProperties(conn, removedInterface);
 
                 // Iscsi target is represented by connection object, therefore if this target is approachable
                 // from more than one endpoint(initiator) we have to clone this connection per endpoint.
                 for (VdsNetworkInterface iface : ifaces) {
                     StorageServerConnections newConn = StorageServerConnections.copyOf(conn);
                     newConn.setid(Guid.newGuid().toString());
-                    newConn.setIface(iface.getName());
+                    setInterfaceProperties(newConn, iface);
                     res.add(newConn);
                 }
             }
         }
 
         return res;
+    }
+
+    private static void setInterfaceProperties(StorageServerConnections conn, VdsNetworkInterface iface) {
+        conn.setIface(iface.getName());
+        conn.setNetIfaceName(iface.isBridged() ? iface.getNetworkName() : iface.getName());
     }
 
     @SuppressWarnings("unchecked")
