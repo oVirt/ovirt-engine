@@ -623,14 +623,6 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         model.getComment().setIsAvailable(false);
         model.getFormat().setIsAvailable(false);
 
-        List<IStorageModel> items = AsyncDataProvider.getIsoStorageModels();
-
-        NfsStorageModel tempVar2 = new NfsStorageModel();
-        tempVar2.setRole(StorageDomainType.ImportExport);
-        items.add(tempVar2);
-
-        model.setItems(items);
-
         model.initialize();
 
         UICommand command;

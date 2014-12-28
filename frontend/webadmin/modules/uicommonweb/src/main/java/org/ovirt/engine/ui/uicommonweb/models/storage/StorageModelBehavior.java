@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -91,6 +92,24 @@ public abstract class StorageModelBehavior extends Model
             }
         }
     }
+
+    public final void updateDataCenterAlert() {
+        StoragePool selectedItem = getModel().getDataCenter().getSelectedItem();
+        EntityModel alert = getModel().getDataCenterAlert();
+        if (shouldShowDataCenterAlert(selectedItem)) {
+            alert.setIsAvailable(true);
+            alert.setEntity(getDataCenterAlertMessage());
+        }
+        else {
+            alert.setIsAvailable(false);
+            alert.setEntity("");
+        }
+    }
+
+    public abstract boolean shouldShowDataCenterAlert(StoragePool selectedDataCenter);
+
+    public abstract String getDataCenterAlertMessage();
+
 
     @Override
     public void eventRaised(Event ev, Object sender, EventArgs args)

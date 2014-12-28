@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class NewEditStorageModelBehavior extends StorageModelBehavior
@@ -69,6 +70,18 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
                 postUpdateItemsAvailability(item, false);
             }
         }
+    }
+
+    @Override
+    public boolean shouldShowDataCenterAlert(StoragePool selectedDataCenter) {
+        return selectedDataCenter != null
+                && !getModel().UnassignedDataCenterId.equals(selectedDataCenter.getId())
+                && selectedDataCenter.getStatus() == StoragePoolStatus.Uninitialized;
+    }
+
+    @Override
+    public String getDataCenterAlertMessage() {
+        return ConstantsManager.getInstance().getConstants().dataCenterUninitializedAlert();
     }
 
     @Override
