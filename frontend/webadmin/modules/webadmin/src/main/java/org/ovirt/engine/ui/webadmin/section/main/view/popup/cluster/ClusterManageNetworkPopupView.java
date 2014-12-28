@@ -3,6 +3,17 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.google.gwt.cell.client.Cell.Context;
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.inject.Inject;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -20,18 +31,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkRoleColumnHelper;
-
-import com.google.gwt.cell.client.Cell.Context;
-import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.inject.Inject;
 
 public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<ClusterNetworkManageModel>
         implements ClusterManageNetworkPopupPresenterWidget.ViewDef {
@@ -58,7 +57,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
         this.constants = constants;
         this.templates = templates;
-        this.networks = new EntityModelCellTable<ClusterNetworkManageModel>(SelectionMode.NONE, true);
+        this.networks = new EntityModelCellTable<>(SelectionMode.NONE, true);
         vmImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkVm()).getHTML());
         emptyImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkEmpty()).getHTML());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -75,7 +74,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
     void initEntityModelCellTable(final ApplicationConstants constants, final ApplicationTemplates templates) {
         networks.enableColumnResizing();
-        boolean multipleSelectionAllowed = networks.asEditor().flush().isMultiCluster();
+        boolean multiCluster = networks.asEditor().flush().isMultiCluster();
 
         networks.addColumn(new NetworkNameTextColumnWithTooltip(), constants.nameNetwork(), "85px"); //$NON-NLS-1$
 
@@ -91,16 +90,20 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
                 new VmNetworkImageSafeHtmlWithSafeHtmlTooltipColumn(constants),
                 constants.vmNetwork(), "80px"); //$NON-NLS-1$
 
+        networks.addColumn(
+                new ManagementNetworkIndicatorCheckboxColumn(multiCluster, new ManagementNetworkIndicatorFieldUpdater()),
+                constants.managementItemInfo(), "80px"); //$NON-NLS-1$
+
         final SafeHtml displayNetworkColumnHeader = templates.textWithTooltip(
                 constants.displayNetwork(),
                 constants.changeDisplayNetworkWarning());
         networks.addColumn(
-                new DisplayNetworkIndicatorCheckboxColumn(multipleSelectionAllowed,
+                new DisplayNetworkIndicatorCheckboxColumn(multiCluster,
                         new DisplayNetworkIndicatorFieldUpdater()),
                 displayNetworkColumnHeader, "100px"); //$NON-NLS-1$
 
         networks.addColumn(
-                new MigrationNetworkIndicatorCheckboxColumn(multipleSelectionAllowed,
+                new MigrationNetworkIndicatorCheckboxColumn(multiCluster,
                         new MigrationNetworkIndicatorFieldUpdater()),
                 constants.migrationNetwork(), "105px"); //$NON-NLS-1$
     }
@@ -338,6 +341,44 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
     private void updateMigrationNetwork(ClusterNetworkModel clusterNetworkModel, boolean value) {
         networks.asEditor().flush().setMigrationNetwork(clusterNetworkModel, value);
+    }
+
+    private static final class ManagementNetworkIndicatorCheckboxColumn extends CheckboxColumn<ClusterNetworkModel> {
+        private final boolean multiCluster;
+
+        private ManagementNetworkIndicatorCheckboxColumn(boolean multiCluster,
+                ManagementNetworkIndicatorFieldUpdater managementNetworkIndicatorFieldUpdater) {
+            super(multiCluster, managementNetworkIndicatorFieldUpdater);
+            this.multiCluster = multiCluster;
+        }
+
+        @Override
+        public Boolean getValue(ClusterNetworkModel clusterNetworkModel) {
+            return clusterNetworkModel.isManagement();
+        }
+
+        @Override
+        protected boolean canEdit(ClusterNetworkModel clusterNetworkModel) {
+            return clusterNetworkModel.isAttached() && !clusterNetworkModel.isExternal() &&
+                    !(multiCluster && isManagementOriginally(clusterNetworkModel));
+        }
+
+        private boolean isManagementOriginally(ClusterNetworkModel clusterNetworkModel) {
+            return clusterNetworkModel.getOriginalNetworkCluster() != null
+                    && clusterNetworkModel.getOriginalNetworkCluster().isManagement();
+        }
+    }
+
+    private final class ManagementNetworkIndicatorFieldUpdater implements FieldUpdater<ClusterNetworkModel, Boolean> {
+        @Override
+        public void update(int index, ClusterNetworkModel clusterNetworkModel, Boolean value) {
+            updateManagementNetwork(clusterNetworkModel, value);
+            refreshNetworksTable();
+        }
+    }
+
+    private void updateManagementNetwork(ClusterNetworkModel clusterNetworkModel, boolean value) {
+        networks.asEditor().flush().setManagementNetwork(clusterNetworkModel, value);
     }
 
     private final class DisplayNetworkIndicatorFieldUpdater implements FieldUpdater<ClusterNetworkModel, Boolean> {

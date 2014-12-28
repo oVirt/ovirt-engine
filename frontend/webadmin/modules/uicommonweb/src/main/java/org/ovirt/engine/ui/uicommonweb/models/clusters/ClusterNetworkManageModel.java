@@ -71,7 +71,7 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
                 }
             } else {
                 // Set the management network as display
-                managementNetwork.setDisplayNetwork(true);
+                getManagementNetwork().setDisplayNetwork(true);
             }
         }
         model.setDisplayNetwork(value);
@@ -97,10 +97,27 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
                 }
             } else {
                 // Set the management network as migration
-                managementNetwork.setMigrationNetwork(true);
+                getManagementNetwork().setMigrationNetwork(true);
             }
         }
         model.setMigrationNetwork(value);
+    }
+
+    private ClusterNetworkModel getManagementNetwork() {
+        return managementNetwork;
+    }
+
+    public void setManagementNetwork(ClusterNetworkModel model, boolean value) {
+        if (!isMultiCluster()) {
+            if (value) {
+                // Unset the old management network
+                if (getManagementNetwork() != null) {
+                    getManagementNetwork().setManagement(false);
+                }
+                managementNetwork = model;
+            }
+        }
+        model.setManagement(value);
     }
 
     private void onManage() {
