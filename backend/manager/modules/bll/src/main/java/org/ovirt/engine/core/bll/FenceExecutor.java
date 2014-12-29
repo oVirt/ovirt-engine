@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
@@ -27,8 +28,14 @@ public class FenceExecutor {
 
     private final VDS _vds;
     private FencingPolicy fencingPolicy;
+    private FenceProxyLocator proxyLocator;
+    private VdsArchitectureHelper architectureHelper;
 
     public FenceExecutor(VDS vds) {
+        this(vds, null);
+    }
+
+    public FenceExecutor(VDS vds, FencingPolicy fencingPolicy) {
         // TODO remove if block after UI patch that should set also cluster & proxy preferences in GetNewVdsFenceStatusParameters
         if (! vds.getId().equals(Guid.Empty)) {
             VDS dbVds =  DbFacade.getInstance().getVdsDao().get(vds.getId());
@@ -40,11 +47,9 @@ public class FenceExecutor {
             }
         }
         this._vds = vds;
-    }
-
-    public FenceExecutor(VDS vds, FencingPolicy fencingPolicy) {
-        this(vds);
         this.fencingPolicy = fencingPolicy;
+        this.proxyLocator = new FenceProxyLocator(_vds, fencingPolicy);
+        this.architectureHelper = new VdsArchitectureHelper();
     }
 
     /**
@@ -53,7 +58,7 @@ public class FenceExecutor {
      */
     public VDSFenceReturnValue checkStatus() {
         VDSFenceReturnValue returnValue = null;
-        VDS proxyHost = new FenceProxyLocator(_vds, fencingPolicy).findProxyHost(false);
+        VDS proxyHost = proxyLocator.findProxyHost();
         if (proxyHost == null) {
             returnValue = proxyNotFound();
         } else {
@@ -77,7 +82,7 @@ public class FenceExecutor {
 
     public VDSFenceReturnValue fence(FenceActionType action, FenceAgent agent) {
         boolean withRetries = action != FenceActionType.Status; // for status check, no retries on proxy-host selection.
-        VDS proxyHost = new FenceProxyLocator(_vds, fencingPolicy).findProxyHost(withRetries);
+        VDS proxyHost = proxyLocator.findProxyHost(withRetries);
         if (proxyHost == null) {
             return proxyNotFound();
         } else {
@@ -106,7 +111,7 @@ public class FenceExecutor {
                         proxyHost.getId());
                 boolean withRetries = action != FenceActionType.Status;
                 VDS alternativeProxy =
-                        new FenceProxyLocator(_vds, fencingPolicy).findProxyHost(withRetries, proxyHost.getId());
+                        proxyLocator.findProxyHost(withRetries, proxyHost.getId());
                 if (alternativeProxy != null) {
                     result = runFenceAction(action, agent, alternativeProxy);
                 } else {
@@ -135,8 +140,7 @@ public class FenceExecutor {
             VdsSpmStatus spmStatus = DbFacade.getInstance().getVdsDao().get(_vds.getId()).getSpmStatus();
             // try to stop SPM if action is Restart or Stop and the vds is SPM
             if (spmStatus != VdsSpmStatus.None) {
-                Backend.getInstance()
-                        .getResourceManager()
+                getBackend().getResourceManager()
                         .RunVdsCommand(VDSCommandType.SpmStop,
                                 new SpmStopVDSCommandParameters(_vds.getId(), _vds.getStoragePoolId()));
             }
@@ -150,9 +154,7 @@ public class FenceExecutor {
      */
     private VDSReturnValue runFenceAction(FenceActionType action, FenceAgent agent, VDS proxyHost) {
         auditFenceAction(action, agent, proxyHost);
-        return Backend
-                    .getInstance()
-                    .getResourceManager()
+        return getBackend().getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.FenceVds,
                         new FenceVdsVDSCommandParameters(proxyHost.getId(), _vds.getId(), agent.getIp(),
@@ -205,9 +207,11 @@ public class FenceExecutor {
     }
 
     private String getOptions(FenceAgent agent) {
-        ArchitectureType architectureType = VdsArchitectureHelper.getArchitecture(_vds.getStaticData());
+        ArchitectureType architectureType = architectureHelper.getArchitecture(_vds.getStaticData());
         String managementOptions =
-                VdsFenceOptions.getDefaultAgentOptions(agent.getType(), agent.getOptions(), architectureType);
+                VdsFenceOptions.getDefaultAgentOptions(agent.getType(),
+                        agent.getOptions() == null ? "" : agent.getOptions(),
+                        architectureType);
         return managementOptions;
     }
 
@@ -221,5 +225,25 @@ public class FenceExecutor {
         } else {
             return host.getId().toString();
         }
+    }
+
+    BackendInternal getBackend() {
+        return Backend.getInstance();
+    }
+
+    public VdsArchitectureHelper getArchitectureHelper() {
+        return architectureHelper;
+    }
+
+    public void setArchitectureHelper(VdsArchitectureHelper architectureHelper) {
+        this.architectureHelper = architectureHelper;
+    }
+
+    public FenceProxyLocator getProxyLocator() {
+        return proxyLocator;
+    }
+
+    public void setProxyLocator(FenceProxyLocator proxyLocator) {
+        this.proxyLocator = proxyLocator;
     }
 }
