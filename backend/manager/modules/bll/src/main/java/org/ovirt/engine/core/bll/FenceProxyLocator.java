@@ -74,7 +74,7 @@ public class FenceProxyLocator {
             }
         }
         if (proxyHost == null) {
-            log.error("Failed to run Power Management command on Host {}, no running proxy Host was found.",
+            log.error("Can not run Power Management command on Host {}, no suitable proxy Host was found.",
                     _vds.getName());
             return null;
         }
@@ -177,4 +177,12 @@ public class FenceProxyLocator {
         DC,
         OTHER_DC;
     };
+
+    public FencingPolicy getFencingPolicy() {
+        return fencingPolicy;
+    }
+
+    public void setFencingPolicy(FencingPolicy fencingPolicy) {
+        this.fencingPolicy = fencingPolicy;
+    }
 }
