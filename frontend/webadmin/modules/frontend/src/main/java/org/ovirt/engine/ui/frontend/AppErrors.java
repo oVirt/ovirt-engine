@@ -1334,7 +1334,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE_TYPE();
 
     @DefaultStringValue("Cannot ${action} ${type}. The data domains ${domainNames} should be in maintenance or unattached.")
-    String ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_DOMAINS_STATUS();
+    String ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED();
 
     @DefaultStringValue("Cannot ${action} ${type}. Storage connection and domain type don't match.")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_NOT_SAME_STORAGE_TYPE();

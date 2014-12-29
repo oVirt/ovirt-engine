@@ -270,7 +270,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
 
         doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_DOMAINS_STATUS);
+                VdcBllMessages.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
     }
 
     @Test
@@ -410,7 +410,7 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
                         (new StoragePoolIsoMap(storageDomainId, Guid.newGuid(), StorageDomainStatus.Active)));
         List<String> messages =
                 CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                        VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_DOMAINS_STATUS);
+                        VdcBllMessages.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
         assertTrue(messages.contains("$domainNames storagedomain4"));
     }
 

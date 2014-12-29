@@ -119,7 +119,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
             boolean isConnectionEditable = isDomainInEditState(domains.get(0));
             if (!isConnectionEditable) {
                 addCanDoActionMessageVariable("domainNames", domains.get(0).getStorageName());
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_DOMAINS_STATUS);
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
             }
             return isConnectionEditable;
         }
@@ -172,7 +172,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
 
             if (!problematicDomainNames.isEmpty()) {
                 addCanDoActionMessageVariable("domainNames", prepareEntityNamesForMessage(problematicDomainNames));
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_DOMAINS_STATUS);
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
                 return false;
             }
         }
