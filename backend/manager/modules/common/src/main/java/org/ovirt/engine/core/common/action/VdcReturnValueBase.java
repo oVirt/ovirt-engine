@@ -86,8 +86,9 @@ public class VdcReturnValueBase implements Serializable {
         return executeFailedMessages;
     }
 
-    public Object getActionReturnValue() {
-        return returnValue;
+    @SuppressWarnings("unchecked")
+    public <T> T getActionReturnValue() {
+        return (T)returnValue;
     }
 
     public void setActionReturnValue(Object value) {
