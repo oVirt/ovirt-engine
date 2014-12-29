@@ -1253,6 +1253,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("36")
     GlusterVolumeOptionOwnerGroupVirtValue,
 
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("/gluster-bricks")
+    GlusterDefaultBrickMountPoint,
+
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")

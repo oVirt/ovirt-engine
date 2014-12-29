@@ -322,6 +322,7 @@ public enum VdcActionType {
     CreateGlusterVolumeSnapshot(1441, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     ScheduleGlusterVolumeSnapshot(1442, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     RescheduleGlusterVolumeSnapshot(1443, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    CreateBrick(1444, ActionGroup.MANIPULATE_HOST, QuotaDependency.NONE),
 
     // Cluster Policy
     AddClusterPolicy(1450, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),
