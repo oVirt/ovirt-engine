@@ -1,0 +1,182 @@
+options {
+    STATIC = false;
+}
+
+PARSER_BEGIN( OsInfoParser )
+
+package org.ovirt.engine.core.utils.osinfo;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.io.StringReader;
+
+public class OsInfoParser {
+
+}
+PARSER_END( OsInfoParser )
+
+void parse() : {} { ((osRecord() | compatibilityRecord() | comment()) (<EOL>|<EOF>))* }
+
+void osRecord() : {} { <OS> <DOT> <OS_UNIQUE_NAME> <DOT> attribute() }
+
+void compatibilityRecord() : {} { <BACKWARDCOMPATIBILITY> <DOT> <OS_UNIQUE_NAME> (<WS>)* <EQUALS> (<WS>)* <INT> }
+
+void comment() : {} { <LINECOMMENT> }
+
+void attribute() : {} {
+    ( (<ID> intValue())
+    | (<NAME> stringValue())
+    | (<DESCRIPTION> stringValue())
+    | (<DERIVED_FROM> stringValue())
+    | (<FAMILY> stringValue())
+    | ("cpuArchitecture" archValue())
+    | (<CPU_UNSUPPORTED> stringValue())
+    | ("bus" busValue())
+    | (<SYSPREP_PATH> stringValue())
+    | (<SYSPREP_FILENAME> stringValue())
+    | (<PRODUCT_KEY>  stringValue())
+    | ("isTimezoneTypeInteger" booleanValue())
+    | resources()
+    | devices()
+    )
+}
+
+void resources() : {} {
+    "resources" <DOT>
+    (
+      ("minimum" <DOT> ("ram"|"disksize"|"numberOfCpus") intValue())
+    | ("maximum" <DOT> ("ram"|"disksize"|"numberOfCpus") intValue())
+    )+
+}
+
+void devices() : {} {
+    "devices" <DOT>
+    (
+      ("display.protocols" displayValue())
+    | ("watchdog.models" watchdogValue())
+    | ("network" networkValue())
+    | ("network.hotplugSupport" booleanValue())
+    | ("disk.hotpluggableInterfaces" hardwareInterfacesValue())
+    | ("balloon.enabled" booleanValue())
+    | ("audio" audioValue())
+    | ("cdInterface" cdInterfaceValue())
+    | ("diskInterfaces" hardwareInterfacesValue())
+    | ("maxPciDevices" intValue())
+    | ("hyperv.enabled" booleanValue())
+    )
+}
+
+void intValue() : {} {
+    valueSpecifier() (<INT> | <BUS_WIDTH>)
+}
+
+void stringValue() : {} {
+    <VALUE> (<DOT> <VERSION>)* (<WS>)* <EQUALS_STR>
+}
+
+void booleanValue() : {} {
+    valueSpecifier() ("true" | "false")
+}
+
+void archValue() : {} {
+    valueSpecifier() ("x86_64" | "ppc64")
+}
+
+void busValue() : {} {
+    valueSpecifier() <BUS_WIDTH>
+}
+
+void displayValue() : {} {
+    valueSpecifier() <DISPLAY_PROTOCOL_TYPE> (<COMMA> (<WS>)* <DISPLAY_PROTOCOL_TYPE> )*
+}
+
+void watchdogValue() : {} {
+    valueSpecifier() ("i6300esb")
+}
+
+void networkValue() : {} {
+    valueSpecifier() <NETWORK_DEVICE_TYPE> (<COMMA> (<WS>)* <NETWORK_DEVICE_TYPE>)*
+}
+
+void audioValue() : {} {
+    valueSpecifier() ("ich6" | "ac97")
+}
+
+void cdInterfaceValue() : {} {
+    valueSpecifier() ("ide" | "scsi")
+}
+
+void hardwareInterfacesValue() : {} {
+    valueSpecifier() (<HARDWARE_INTERFACE_TYPE>)* (<COMMA> (<WS>)* <HARDWARE_INTERFACE_TYPE>)*
+}
+
+void valueSpecifier() : {} {
+    <VALUE> (<DOT> <VERSION>)* (<WS>)* <EQUALS> (<WS>)*
+}
+
+<STRING_VALUE, DEFAULT> TOKEN:
+{
+    < VALUE : ".value" >
+|   < DOT : "." >
+|   < VERSION : "3" "." ["0"-"5"] >
+|   < WS : [" ", "\t"] >
+}
+
+<STRING_VALUE> TOKEN:
+{
+    < EQUALS_STR: "=" > : STRING_LITERAL
+}
+
+<STRING_LITERAL> SKIP:
+{
+    < ~["\r","\n"] >
+}
+
+<STRING_LITERAL, DEFAULT> TOKEN:
+{
+    < EOL: (["\r","\n"])+ > : DEFAULT
+}
+
+<DEFAULT> TOKEN:
+{
+    < EQUALS : "=" >
+|   < COMMA : "," >
+|   < NETWORK_DEVICE_TYPE
+    :
+    ("rtl8139_pv" | "rtl8139" | "e1000" | "pv" | "spaprVlan")
+    >
+|   < HARDWARE_INTERFACE_TYPE
+    :
+    ("IDE" | "VirtIO" | "VirtIO_SCSI" | "SPAPR_VSCSI")
+    >
+|   < DISPLAY_PROTOCOL_TYPE
+    :
+    (<GRAPHICS_TYPE>) "/" (<DISPLAY_TYPE>)
+    >
+|   < GRAPHICS_TYPE
+    :
+    ("qxl" | "vnc")
+    >
+|   < DISPLAY_TYPE
+    :
+    ("qxl" | "cirrus" | "vga")
+    >
+|   < BUS_WIDTH : ("32" | "64") >
+|   < INT : (<DIGIT>)+ >
+|   < DIGIT : ["0"-"9"] >
+|   < OS : "os" >
+|   < BACKWARDCOMPATIBILITY : "backwardCompatibility" >
+|   < ID : "id" >
+|   < NAME : "name" > : STRING_VALUE
+|   < DESCRIPTION : "description" > : STRING_VALUE
+|   < DERIVED_FROM : "derivedFrom" > : STRING_VALUE
+|   < FAMILY : "family" > : STRING_VALUE
+|   < CPU_UNSUPPORTED : "cpu.unsupported" > : STRING_VALUE
+|   < SYSPREP_PATH : "sysprepPath" > : STRING_VALUE
+|   < SYSPREP_FILENAME : "sysprepFileName" > : STRING_VALUE
+|   < PRODUCT_KEY : "productKey" > : STRING_VALUE
+|   < CHAR : ["a"-"z","A"-"Z","0"-"9","_"] >
+|   < OS_UNIQUE_NAME : (<CHAR>)+ >
+|   < LINECOMMENT : "#" (~["\r","\n"])* >
+}

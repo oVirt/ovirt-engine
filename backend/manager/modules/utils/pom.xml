@@ -158,10 +158,6 @@
       <version>${openstack-client.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.antlr</groupId>
-      <artifactId>antlr4-runtime</artifactId>
-    </dependency>
   </dependencies>
 
   <build>
@@ -191,14 +187,14 @@
 
       <!-- Generate osinfo parser from grammer file-->
       <plugin>
-        <groupId>org.antlr</groupId>
-        <artifactId>antlr4-maven-plugin</artifactId>
-        <version>${antlr.version}</version>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>javacc-maven-plugin</artifactId>
+        <version>${javacc.version}</version>
         <executions>
           <execution>
-              <id>antlr</id>
+              <id>javacc</id>
               <goals>
-                  <goal>antlr4</goal>
+                  <goal>javacc</goal>
               </goals>
           </execution>
         </executions>

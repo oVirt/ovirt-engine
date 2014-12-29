@@ -31,7 +31,6 @@
     <module name="org.postgresql"/>
     <module name="org.springframework"/>
     <module name="org.slf4j"/>
-    <module name="org.antlr.antlr4-runtime"/>
   </dependencies>
 
 </module>
