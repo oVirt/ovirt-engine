@@ -21,16 +21,6 @@
        <Bug code="RV"/>
      </Match>
 
-    <Match>
-        <!--
-         findbugs complains on possible null dereference that'll cause to a
-         NPE. As the connections varible can't be null that warning is false.
-        -->
-        <Class name="org.ovirt.engine.core.bll.storage.StorageServerConnectionCommandBase" />
-        <Method name="isConnWithSameDetailsExists"/>
-        <Bug pattern="NP_NULL_ON_SOME_PATH" />
-    </Match>
-
      <!--
       findbugs complains that class does not call super.clone()
       its super class is QuotaConsumptionParameter which is abstract
