@@ -161,6 +161,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         // same details was already added - so we query the connections with the same (currently relevant) details and
         // then compare the password after it was already
         // decrypted.
+        // NOTE- THIS METHOD IS CURRENTLY USED ALSO FOR FCP connections, change with care.
         List<StorageServerConnections> connections =
                 DbFacade.getInstance().getStorageServerConnectionDao().getAllForConnection(connection);
         for (StorageServerConnections dbConnection : connections) {

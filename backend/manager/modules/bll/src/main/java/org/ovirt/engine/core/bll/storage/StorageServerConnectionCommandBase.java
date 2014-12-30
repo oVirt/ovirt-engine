@@ -85,7 +85,7 @@ public abstract class StorageServerConnectionCommandBase<T extends StorageServer
             String connectionField = connection.getconnection();
             connections = getStorageConnDao().getAllForStorage(connectionField);
         }
-        else if (connection.getstorage_type() == StorageType.ISCSI) {
+        else {
             StorageServerConnections sameConnection = findConnectionWithSameDetails(connection);
             connections =
                     sameConnection != null ? Arrays.asList(sameConnection)
