@@ -266,6 +266,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
     public StorageDomainType domainType = StorageDomainType.values()[0];
     public StorageType storageType;
     public boolean removeConnection;
+    public List<StorageDomain> storageDomainsToAdd;
 
     @Override
     public boolean isSearchStringMatch(String searchString)
@@ -1011,6 +1012,25 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         setConfirmWindow(null);
     }
 
+    private void cancelImportConfirm() {
+        cancelConfirm();
+        getWindow().stopProgress();
+
+        if (fileConnection != null) {
+            Frontend.getInstance().runAction(VdcActionType.DisconnectStorageServerConnection,
+                new StorageServerConnectionParametersBase(fileConnection, hostId),
+                new IFrontendActionAsyncCallback() {
+                    @Override
+                    public void executed(FrontendActionAsyncResult result) {
+                        StorageListModel storageListModel = (StorageListModel) result.getState();
+                        cleanConnection(storageListModel.fileConnection, storageListModel.hostId);
+                        storageListModel.fileConnection = null;
+                    }
+                },
+                this);
+        }
+    }
+
     private void cancel()
     {
         setWindow(null);
@@ -1180,9 +1200,27 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         {
             cancelConfirm();
         }
+        else if ("CancelImportConfirm".equals(command.getName())) //$NON-NLS-1$
+        {
+            cancelImportConfirm();
+        }
         else if ("OnImport".equals(command.getName())) //$NON-NLS-1$
         {
             onImport();
+        }
+        else if ("OnImportFile".equals(command.getName())) { //$NON-NLS-1$
+            if (getConfirmWindow() != null && !((ConfirmationModel) getConfirmWindow()).validate()) {
+                return;
+            }
+            cancelConfirm();
+            getExistingStorageDomainList();
+        }
+        else if ("OnImportSan".equals(command.getName())) { //$NON-NLS-1$
+            if (getConfirmWindow() != null && !((ConfirmationModel) getConfirmWindow()).validate()) {
+                return;
+            }
+            cancelConfirm();
+            onImportSanDomainApprove();
         }
         else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
         {
@@ -1901,14 +1939,16 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         importFileStorageInit();
     }
 
-    private void importSanStorage(final TaskContext context)
-    {
+    private void importSanStorage(final TaskContext context) {
         this.context = context;
-
-        ArrayList<Object> data = (ArrayList<Object>) context.getState();
         StorageModel model = (StorageModel) getWindow();
-
         storageModel = model.getSelectedItem();
+        ImportSanStorageModel importSanStorageModel = (ImportSanStorageModel) storageModel;
+        checkSanDomainAttachedToDc("OnImportSan", importSanStorageModel.getStorageDomains().getSelectedItems()); //$NON-NLS-1$
+    }
+
+    private void onImportSanDomainApprove() {
+        ArrayList<Object> data = (ArrayList<Object>) context.getState();
         hostId = (Guid) data.get(1);
 
         ImportSanStorageModel importSanStorageModel = (ImportSanStorageModel) storageModel;
@@ -2021,74 +2061,72 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
                         tempVar.setMountOptions(glusterModel.getMountOptions().getEntity());
                     }
                     storageListModel.fileConnection = tempVar;
-                    storageListModel.importFileStorageConnect();
+                    importFileStorageConnect();
                 }
             }
         }), null, path);
     }
 
-    public void importFileStorageConnect()
-    {
+    public void importFileStorageConnect() {
         Frontend.getInstance().runAction(VdcActionType.AddStorageServerConnection, new StorageServerConnectionParametersBase(fileConnection, hostId),
             new IFrontendActionAsyncCallback() {
                 @Override
                 public void executed(FrontendActionAsyncResult result) {
-
                     StorageListModel storageListModel = (StorageListModel) result.getState();
-                        VdcReturnValueBase returnVal = result.getReturnValue();
-                        boolean success = returnVal != null && returnVal.getSucceeded();
-                        if (success)
-                        {
-                            storageListModel.fileConnection.setid((String) returnVal.getActionReturnValue());
-                            AsyncDataProvider.getInstance().getExistingStorageDomainList(new AsyncQuery(storageListModel,
-                                    new INewAsyncCallback() {
-                                        @Override
-                                        public void onSuccess(Object target, Object returnValue) {
+                    VdcReturnValueBase returnVal = result.getReturnValue();
+                    boolean success = returnVal != null && returnVal.getSucceeded();
+                    if (success) {
+                        storageListModel.fileConnection.setid((String) returnVal.getActionReturnValue());
+                        checkFileDomainAttachedToDc("OnImportFile", storageListModel.fileConnection); //$NON-NLS-1$
+                    }
+                    else {
+                        postImportFileStorage(storageListModel.context,
+                            false,
+                            storageListModel.storageModel,
+                            ConstantsManager.getInstance()
+                                    .getConstants()
+                                    .failedToRetrieveExistingStorageDomainInformationMsg());
+                    }
+                }
+            },
+            this);
+    }
 
-                                            StorageListModel storageListModel1 = (StorageListModel) target;
-                                            ArrayList<StorageDomain> domains = (ArrayList<StorageDomain>) returnValue;
-                                            if (domains != null && !domains.isEmpty()) {
-                                                storageListModel1.importFileStorageAddDomain(domains);
-                                            }
-                                            else {
-                                                String errorMessage = domains == null ?
-                                                        ConstantsManager.getInstance().getConstants()
-                                                                .failedToRetrieveExistingStorageDomainInformationMsg() :
-                                                        ConstantsManager.getInstance().getConstants()
-                                                                .thereIsNoStorageDomainUnderTheSpecifiedPathMsg();
-
-                                                postImportFileStorage(storageListModel1.context,
-                                                        false,
-                                                        storageListModel1.storageModel,
-                                                        errorMessage);
-
-                                                storageListModel1.cleanConnection(storageListModel1.fileConnection, storageListModel1.hostId);
-                                            }
-                                        }
-                                    }),
-                                    hostId,
-                                    domainType,
-                                    storageType,
-                                    path);
+    private void getExistingStorageDomainList() {
+        AsyncDataProvider.getInstance().getExistingStorageDomainList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
+                        StorageListModel storageListModel = (StorageListModel) target;
+                        ArrayList<StorageDomain> domains = (ArrayList<StorageDomain>) returnValue;
+                        if (domains != null && !domains.isEmpty()) {
+                            storageListModel.storageDomainsToAdd = domains;
+                            addExistingFileStorageDomain();
                         }
-                        else
-                        {
+                        else {
+                            String errorMessage = domains == null ?
+                                    ConstantsManager.getInstance().getConstants()
+                                            .failedToRetrieveExistingStorageDomainInformationMsg() :
+                                    ConstantsManager.getInstance().getConstants()
+                                            .thereIsNoStorageDomainUnderTheSpecifiedPathMsg();
+
                             postImportFileStorage(storageListModel.context,
                                     false,
                                     storageListModel.storageModel,
-                                    ConstantsManager.getInstance()
-                                            .getConstants()
-                                            .failedToRetrieveExistingStorageDomainInformationMsg());
-                        }
+                                    errorMessage);
 
+                            storageListModel.cleanConnection(storageListModel.fileConnection, storageListModel.hostId);
+                        }
                     }
-                },
-                this);
+                }),
+        hostId,
+        domainType,
+        storageType,
+        path);
     }
 
-    public void importFileStorageAddDomain(ArrayList<StorageDomain> domains)
-    {
-        StorageDomain sdToAdd = Linq.firstOrDefault(domains);
+    public void addExistingFileStorageDomain() {
+        StorageDomain sdToAdd = Linq.firstOrDefault(storageDomainsToAdd);
         StorageDomainStatic sdsToAdd = sdToAdd.getStorageStaticData();
 
         StorageDomainManagementParameter params = new StorageDomainManagementParameter(sdsToAdd);
@@ -2146,6 +2184,57 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
             new Object[] {context, isSucceeded, model, message});
     }
 
+    private void checkSanDomainAttachedToDc(String commandName, List<StorageDomain> storageDomains) {
+        checkDomainAttachedToDc(commandName, storageDomains, null);
+    }
+
+    private void checkFileDomainAttachedToDc(String commandName, StorageServerConnections storageServerConnections) {
+        checkDomainAttachedToDc(commandName, null, storageServerConnections);
+    }
+
+    private void checkDomainAttachedToDc(String commandName, List<StorageDomain> storageDomains,
+                                         StorageServerConnections storageServerConnections) {
+        final StorageModel storageModel = (StorageModel) getWindow();
+        StoragePool storagePool = storageModel.getDataCenter().getSelectedItem();
+
+        final UICommand okCommand = createOKCommand(commandName);
+
+        if (storagePool.getId().equals(Guid.Empty)) {
+            okCommand.execute();
+            return;
+        }
+
+        VDS host = storageModel.getHost().getSelectedItem();
+
+        AsyncDataProvider.getInstance().getStorageDomainsWithAttachedStoragePoolGuid(
+                new AsyncQuery(this, new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
+                        List<StorageDomainStatic> attachedStorageDomains = (List<StorageDomainStatic>) returnValue;
+                        if (!attachedStorageDomains.isEmpty()) {
+                            ConfirmationModel model = new ConfirmationModel();
+                            setConfirmWindow(model);
+
+                            model.setTitle(ConstantsManager.getInstance().getConstants().storageDomainsAttachedToDataCenterWarningTitle());
+                            model.setMessage(ConstantsManager.getInstance().getConstants().storageDomainsAttachedToDataCenterWarningMessage());
+                            model.setHelpTag(HelpTag.import_storage_domain_confirmation);
+                            model.setHashName("import_storage_domain_confirmation"); //$NON-NLS-1$
+
+                            List<String> stoageDomainNames = new ArrayList<String>();
+                            for (StorageDomainStatic domain : attachedStorageDomains) {
+                                stoageDomainNames.add(domain.getStorageName());
+                            }
+                            model.setItems(stoageDomainNames);
+
+                            UICommand cancelCommand = createCancelCommand("CancelImportConfirm"); //$NON-NLS-1$
+                            model.getCommands().add(okCommand);
+                            model.getCommands().add(cancelCommand);
+                        } else {
+                            okCommand.execute();
+                        }
+                    }
+                }), storagePool, storageDomains, storageServerConnections, host.getId());
+    }
 
     @Override
     public void run(TaskContext context)

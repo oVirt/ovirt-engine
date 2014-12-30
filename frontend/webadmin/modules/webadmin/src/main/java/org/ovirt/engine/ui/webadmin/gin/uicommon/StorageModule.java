@@ -101,7 +101,8 @@ public class StorageModule extends AbstractGinModule {
                             UICommand lastExecutedCommand) {
                         if (lastExecutedCommand == getModel().getDestroyCommand()) {
                             return destroyConfirmPopupProvider.get();
-                        } else if (lastExecutedCommand.getName().equals("OnSave")) { //$NON-NLS-1$
+                        } else if (lastExecutedCommand.getName().equals("OnSave") //$NON-NLS-1$
+                                  || lastExecutedCommand.getName().equals("OnImport")) { //$NON-NLS-1$
                             return forceCreateConfirmPopupProvider.get();
                         } else {
                             return super.getConfirmModelPopup(source, lastExecutedCommand);
@@ -155,7 +156,8 @@ public class StorageModule extends AbstractGinModule {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(StorageDataCenterListModel source,
                             UICommand lastExecutedCommand) {
-                        if (lastExecutedCommand == getModel().getDetachCommand()) {
+                        if (lastExecutedCommand == getModel().getDetachCommand() ||
+                                lastExecutedCommand.getName().equals("OnAttach")) { //$NON-NLS-1$) {
                             return removeConfirmPopupProvider.get();
                         } else {
                             return super.getConfirmModelPopup(source, lastExecutedCommand);

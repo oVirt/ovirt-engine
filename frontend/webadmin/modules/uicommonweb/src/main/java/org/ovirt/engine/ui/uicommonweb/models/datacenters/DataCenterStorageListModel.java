@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
@@ -11,6 +12,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
@@ -163,6 +165,8 @@ public class DataCenterStorageListModel extends SearchableListModel
     {
         privatepb_remove = value;
     }
+
+    private ArrayList<StorageDomain> selectedStorageDomains;
 
     public DataCenterStorageListModel()
     {
@@ -449,6 +453,7 @@ public class DataCenterStorageListModel extends SearchableListModel
     public void onAttach()
     {
         ListModel model = (ListModel) getWindow();
+        ArrayList<StorageDomain> selectedDataStorageDomains = new ArrayList<StorageDomain>();
 
         if (getEntity() == null)
         {
@@ -456,26 +461,83 @@ public class DataCenterStorageListModel extends SearchableListModel
             return;
         }
 
-        ArrayList<StorageDomain> items = new ArrayList<StorageDomain>();
-        for (EntityModel a : Linq.<EntityModel> cast(model.getItems()))
-        {
-            if (a.getIsSelected())
-            {
-                items.add((StorageDomain) a.getEntity());
+        selectedStorageDomains = new ArrayList<StorageDomain>();
+        for (EntityModel a : Linq.<EntityModel> cast(model.getItems())) {
+            if (a.getIsSelected()) {
+                StorageDomain storageDomain = (StorageDomain) a.getEntity();
+                selectedStorageDomains.add(storageDomain);
+                if (storageDomain.getStorageDomainType() == StorageDomainType.Data) {
+                    selectedDataStorageDomains.add(storageDomain);
+                }
             }
         }
 
-        if (items.size() > 0)
-        {
-            ArrayList<VdcActionParametersBase> pb = new ArrayList<VdcActionParametersBase>();
-            for (StorageDomain a : items)
-            {
-                pb.add(new AttachStorageDomainToPoolParameters(a.getId(), getEntity().getId()));
-            }
-
-            Frontend.getInstance().runMultipleAction(VdcActionType.AttachStorageDomainToPool, pb);
+        if (selectedStorageDomains.isEmpty()) {
+            cancel();
+            return;
         }
 
+        AsyncDataProvider.getInstance().getStorageDomainsWithAttachedStoragePoolGuid(
+                new AsyncQuery(this, new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
+                        DataCenterStorageListModel dataCenterStorageListModel = (DataCenterStorageListModel) target;
+                        List<StorageDomainStatic> attachedStorageDomains = (List<StorageDomainStatic>) returnValue;
+                        if (!attachedStorageDomains.isEmpty()) {
+                            ConfirmationModel model = new ConfirmationModel();
+                            dataCenterStorageListModel.setWindow(null);
+                            dataCenterStorageListModel.setWindow(model);
+
+                            List<String> stoageDomainNames = new ArrayList<String>();
+                            for (StorageDomainStatic domain : attachedStorageDomains) {
+                                stoageDomainNames.add(domain.getStorageName());
+                            }
+                            model.setItems(stoageDomainNames);
+
+                            model.setTitle(ConstantsManager.getInstance()
+                                    .getConstants()
+                                    .storageDomainsAttachedToDataCenterWarningTitle());
+                            model.setMessage(ConstantsManager.getInstance()
+                                    .getConstants()
+                                    .storageDomainsAttachedToDataCenterWarningMessage());
+
+                            model.setHelpTag(HelpTag.attach_storage_domain_confirmation);
+                            model.setHashName("attach_storage_domain_confirmation"); //$NON-NLS-1$
+
+                            model.getLatch().setIsAvailable(true);
+                            model.getLatch().setIsChangable(true);
+
+                            UICommand onApprove = new UICommand("OnAttachApprove", dataCenterStorageListModel); //$NON-NLS-1$
+                            onApprove.setTitle(ConstantsManager.getInstance().getConstants().ok());
+                            onApprove.setIsDefault(true);
+                            model.getCommands().add(onApprove);
+
+                            UICommand cancel = new UICommand("Cancel", dataCenterStorageListModel); //$NON-NLS-1$
+                            cancel.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+                            cancel.setIsCancel(true);
+                            model.getCommands().add(cancel);
+                        } else {
+                            executeAttachStorageDomains();
+                        }
+                    }
+                }), getEntity(), selectedDataStorageDomains);
+    }
+
+    public void onAttachApprove() {
+        ConfirmationModel model = (ConfirmationModel) getWindow();
+        if (!model.validate()) {
+            return;
+        }
+
+        executeAttachStorageDomains();
+    }
+
+    public void executeAttachStorageDomains() {
+        ArrayList<VdcActionParametersBase> pb = new ArrayList<VdcActionParametersBase>();
+        for (StorageDomain storageDomain : selectedStorageDomains) {
+            pb.add(new AttachStorageDomainToPoolParameters(storageDomain.getId(), getEntity().getId()));
+        }
+        Frontend.getInstance().runMultipleAction(VdcActionType.AttachStorageDomainToPool, pb);
         cancel();
     }
 
@@ -795,6 +857,10 @@ public class DataCenterStorageListModel extends SearchableListModel
         else if ("OnAttach".equals(command.getName())) //$NON-NLS-1$
         {
             onAttach();
+        }
+        else if ("OnAttachApprove".equals(command.getName())) //$NON-NLS-1$
+        {
+            onAttachApprove();
         }
         else if ("OnDetach".equals(command.getName())) //$NON-NLS-1$
         {

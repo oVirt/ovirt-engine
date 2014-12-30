@@ -190,6 +190,10 @@ public enum HelpTag {
 
     force_storage_domain_creation("force_storage_domain_creation", HelpTagType.WEBADMIN, "Storage Tab > New Domain > Confirm LUNs in Use"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    import_storage_domain_confirmation("import_storage_domain_confirmation", HelpTagType.WEBADMIN, "Storage Tab > Import Domain > Confirm import storage domain"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    attach_storage_domain_confirmation("attach_storage_domain_confirmation", HelpTagType.WEBADMIN, "Storage main-tab > Data Center sub-tab > Attach > Confirm attach storage domain"), //$NON-NLS-1$ //$NON-NLS-2$
+
     general("general", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
     gluster_bricks("gluster_bricks", HelpTagType.UNKNOWN), //$NON-NLS-1$
