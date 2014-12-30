@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.Backend;
@@ -13,20 +14,22 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.queries.StorageDomainsAndStoragePoolIdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.common.vdscommands.CreateStoragePoolVDSCommandParameters;
@@ -297,7 +300,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
     protected boolean canDoAction() {
         boolean returnValue = super.canDoAction() && checkStoragePool()
                 && checkStoragePoolStatus(StoragePoolStatus.Uninitialized) && initializeVds()
-                && checkStorageDomainsInPool();
+                && checkStorageDomainsInPool() && isDomainAttachedToDifferentStoragePool();
         return returnValue;
     }
 
@@ -305,5 +308,28 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getStoragePoolId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.POOL, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+    }
+
+    private boolean isDomainAttachedToDifferentStoragePool() {
+        if (getStoragePool().getStatus() == StoragePoolStatus.Uninitialized) {
+            for (Guid storageDomainId : getParameters().getStorages()) {
+                StorageDomain domain = getStorageDomainDAO().get(storageDomainId);
+                if (domain.getStorageDomainType().isDataDomain() && isStorageDomainAttachedToStoragePool(domain)) {
+                    return failCanDoAction(VdcBllMessages.ERROR_CANNOT_ADD_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN);
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean isStorageDomainAttachedToStoragePool(StorageDomain storageDomain) {
+        List<StorageDomain> storageDomainList =
+                (List<StorageDomain>) getBackend().runInternalQuery(VdcQueryType.GetStorageDomainsWithAttachedStoragePoolGuid,
+                        new StorageDomainsAndStoragePoolIdQueryParameters(storageDomain,
+                                getStoragePoolId(),
+                                getVds().getId(),
+                                false))
+                        .getReturnValue();
+        return !storageDomainList.isEmpty();
     }
 }
