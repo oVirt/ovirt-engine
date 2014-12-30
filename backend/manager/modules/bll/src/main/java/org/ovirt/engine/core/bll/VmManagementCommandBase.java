@@ -47,7 +47,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
     }
 
     public VmManagementCommandBase(T parameters, CommandContext commandContext) {
-        super(parameters);
+        super(parameters, commandContext);
         if (parameters.getVmStaticData() != null) {
             setVmId(parameters.getVmStaticData().getId());
             setVdsGroupId(parameters.getVmStaticData().getVdsGroupId());
