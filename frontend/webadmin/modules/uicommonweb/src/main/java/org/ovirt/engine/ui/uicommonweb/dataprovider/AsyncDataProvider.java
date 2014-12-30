@@ -123,6 +123,7 @@ import org.ovirt.engine.core.common.queries.OsQueryParameters.OsRepositoryVerb;
 import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.ServerParameters;
+import org.ovirt.engine.core.common.queries.StorageDomainsAndStoragePoolIdQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -311,6 +312,48 @@ public final class AsyncDataProvider {
         };
         Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(
                 OsRepositoryVerb.GetDefaultOSes), callback);
+    }
+
+    public static void getStorageDomainsWithAttachedStoragePoolGuid(
+            AsyncQuery aQuery, StoragePool storagePool, List<StorageDomain> storageDomains) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+                return source == null ?
+                        new ArrayList<StorageDomain>() : (ArrayList<StorageDomain>) source;
+            }
+        };
+        StorageDomainsAndStoragePoolIdQueryParameters parameters =
+                new StorageDomainsAndStoragePoolIdQueryParameters(storageDomains, storagePool.getId());
+        Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsWithAttachedStoragePoolGuid,
+                parameters, aQuery);
+    }
+
+    public static void getStorageDomainsWithAttachedStoragePoolGuid(
+            AsyncQuery aQuery, StoragePool storagePool,
+            List<StorageDomain> storageDomains, StorageServerConnections storageServerConnection, Guid vdsId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+                return source == null ?
+                        new ArrayList<StorageDomain>() : (ArrayList<StorageDomain>) source;
+            }
+        };
+
+        if (storageDomains != null) {
+            // Get file storage domains
+            StorageDomainsAndStoragePoolIdQueryParameters parameters =
+                    new StorageDomainsAndStoragePoolIdQueryParameters(storageDomains, storagePool.getId(), vdsId);
+            Frontend.getInstance().runQuery(VdcQueryType.GetBlockStorageDomainsWithAttachedStoragePoolGuid,
+                    parameters, aQuery);
+        }
+        else {
+            // Get block storage domains
+            StorageDomainsAndStoragePoolIdQueryParameters parameters =
+                    new StorageDomainsAndStoragePoolIdQueryParameters(storageServerConnection, storagePool.getId(), vdsId);
+            Frontend.getInstance().runQuery(VdcQueryType.GetFileStorageDomainsWithAttachedStoragePoolGuid,
+                    parameters, aQuery);
+        }
     }
 
     public static Boolean isMigrationSupported(ArchitectureType architecture, Version version) {
