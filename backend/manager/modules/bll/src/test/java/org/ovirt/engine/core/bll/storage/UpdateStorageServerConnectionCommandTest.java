@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -228,19 +229,20 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
                 300,
                 0);
         parameters.setStorageServerConnection(newNFSConnection);
-        List<StorageDomain> domains = new ArrayList<StorageDomain>();
+
         StorageDomain domain1 = new StorageDomain();
         domain1.setStorage(newNFSConnection.getconnection());
         domain1.setStatus(StorageDomainStatus.Active);
         domain1.setStorageName("domain1");
+
         StorageDomain domain2 = new StorageDomain();
         domain2.setStorage(newNFSConnection.getconnection());
         domain2.setStatus(StorageDomainStatus.Maintenance);
         domain2.setStorageName("domain2");
-        domains.add(domain1);
-        domains.add(domain2);
         when(storageConnDao.get(newNFSConnection.getid())).thenReturn(oldNFSConnection);
-        doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getid());
+
+        initDomainListForConnection(newNFSConnection.getid(), domain1, domain2);
+
         doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
         List<String> messages =
                 CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
@@ -256,15 +258,16 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
                 NfsVersion.V4,
                 300,
                 0);
-        List<StorageDomain> domains = new ArrayList<StorageDomain>();
+
         StorageDomain domain1 = new StorageDomain();
         domain1.setStorage(newNFSConnection.getconnection());
         domain1.setStatus(StorageDomainStatus.Active);
         domain1.setStorageDomainSharedStatus(StorageDomainSharedStatus.Active);
-        domains.add(domain1);
+        initDomainListForConnection(newNFSConnection.getid(), domain1);
+
         parameters.setStorageServerConnection(newNFSConnection);
         when(storageConnDao.get(newNFSConnection.getid())).thenReturn(oldNFSConnection);
-        doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getid());
+
         doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_DOMAINS_STATUS);
@@ -317,14 +320,14 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         parameters.setStorageServerConnection(iscsiConnection);
         when(storageConnDao.get(iscsiConnection.getid())).thenReturn(iscsiConnection);
         doReturn(luns).when(command).getLuns();
-        List<StorageDomain> domains = new ArrayList<>();
+
         StorageDomain domain1 = new StorageDomain();
         domain1.setStorage(iscsiConnection.getconnection());
         domain1.setStatus(StorageDomainStatus.Active);
         domain1.setStorageDomainSharedStatus(StorageDomainSharedStatus.Active);
         domain1.setId(storageDomainId);
         domain1.setStorageName("storagedomain4");
-        domains.add(domain1);
+
         when(storageDomainDAO.get(storageDomainId)).thenReturn(domain1);
         when(storagePoolIsoMapDAO.getAllForStorage(storageDomainId)).
                 thenReturn(Collections.singletonList
@@ -445,15 +448,16 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
                 NfsVersion.V4,
                 300,
                 0);
-        List<StorageDomain> domains = new ArrayList<StorageDomain>();
+
         StorageDomain domain1 = new StorageDomain();
         domain1.setStorage(newNFSConnection.getconnection());
         domain1.setStatus(StorageDomainStatus.Unknown);
         domain1.setStorageDomainSharedStatus(StorageDomainSharedStatus.Unattached);
-        domains.add(domain1);
+        initDomainListForConnection(newNFSConnection.getid(), domain1);
+
         parameters.setStorageServerConnection(newNFSConnection);
         when(storageConnDao.get(newNFSConnection.getid())).thenReturn(oldNFSConnection);
-        doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getid());
+
         doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
@@ -483,14 +487,15 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
                 300,
                 0);
         parameters.setStorageServerConnection(newNFSConnection);
-        List<StorageDomain> domains = new ArrayList<StorageDomain>();
+
         StorageDomain domain1 = new StorageDomain();
         domain1.setStorage(newNFSConnection.getconnection());
         domain1.setStatus(StorageDomainStatus.Maintenance);
-        domains.add(domain1);
+        initDomainListForConnection(newNFSConnection.getid(), domain1);
+
         when(storageConnDao.get(newNFSConnection.getid())).thenReturn(oldNFSConnection);
         doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection, null);
-        doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getid());
+
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
@@ -502,14 +507,15 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
                         "nfs",
                         "timeo=30");
         parameters.setStorageServerConnection(newPosixConnection);
-        List<StorageDomain> domains = new ArrayList<StorageDomain>();
+
         StorageDomain domain1 = new StorageDomain();
         domain1.setStorage(newPosixConnection.getconnection());
         domain1.setStatus(StorageDomainStatus.Maintenance);
-        domains.add(domain1);
+        initDomainListForConnection(newPosixConnection.getid(), domain1);
+
         parameters.setStorageServerConnection(newPosixConnection);
         when(storageConnDao.get(newPosixConnection.getid())).thenReturn(oldPosixConnection);
-        doReturn(domains).when(command).getStorageDomainsByConnId(newPosixConnection.getid());
+
         doReturn(false).when(command).isConnWithSameDetailsExists(newPosixConnection, null);
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
@@ -578,10 +584,10 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         parameters.setStorageServerConnection(newNFSConnection);
         VDSReturnValue returnValueUpdate = new VDSReturnValue();
         returnValueUpdate.setSucceeded(false);
-        List<StorageDomain> domains = new ArrayList<>();
+
         StorageDomain domain = createDomain(new StorageDomainDynamic());
-        domains.add(domain);
-        doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getid());
+        initDomainListForConnection(newNFSConnection.getid(), domain);
+
         StorageDomainDynamic domainDynamic = new StorageDomainDynamic();
         StoragePoolIsoMap map = new StoragePoolIsoMap();
         doReturn(Collections.singletonList(map)).when(command).getStoragePoolIsoMap(domain);
@@ -607,11 +613,11 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         doReturn(false).when(command).connectToStorage();
         VDSReturnValue returnValueUpdate = new VDSReturnValue();
         returnValueUpdate.setSucceeded(true);
-        List<StorageDomain> domains = new ArrayList<>();
+
         StorageDomainDynamic domainDynamic = new StorageDomainDynamic();
         StorageDomain domain = createDomain(domainDynamic);
-        domains.add(domain);
-        doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getid());
+        initDomainListForConnection(newNFSConnection.getid(), domain);
+
         StoragePoolIsoMap map = new StoragePoolIsoMap();
         doReturn(Collections.singletonList(map)).when(command).getStoragePoolIsoMap(domain);
         doReturn(returnValueUpdate).when(command).getStatsForDomain(domain);
@@ -705,6 +711,10 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
        when(command.findConnectionWithSameDetails(newISCSIConnection)).thenReturn(newISCSIConnection);
        boolean isExists = command.isConnWithSameDetailsExists(newISCSIConnection, null);
         assertFalse(isExists);
+    }
+
+    private void initDomainListForConnection(String connId, StorageDomain... domains) {
+        doReturn(Arrays.asList(domains)).when(command).getStorageDomainsByConnId(connId);
     }
 
     protected ConnectStorageToVdsCommand getCommand() {
