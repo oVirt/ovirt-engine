@@ -58,6 +58,7 @@ public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomai
                                         .getReturnValue();
                         StorageDomain domain = new StorageDomain();
                         domain.setStorageStaticData(domainFromIrs.getFirst());
+                        domain.setStoragePoolId(domainFromIrs.getSecond());
                         if (getParameters().getStorageFormatType() == null
                                 || getParameters().getStorageFormatType() == domain.getStorageFormat()) {
                             if (domain.getStorageType().getValue() != getParameters().getStorageType().getValue()) {
