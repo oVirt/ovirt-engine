@@ -713,6 +713,28 @@ public class UpdateStorageServerConnectionCommandTest extends StorageServerConne
         assertFalse(isExists);
     }
 
+    @Test
+    public void failDomainIsActive() {
+        StorageServerConnections NFSConnection = createNFSConnection(
+                "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
+                StorageType.NFS,
+                NfsVersion.V4,
+                300,
+                0);
+        when(command.getConnection()).thenReturn(NFSConnection);
+        doReturn(oldNFSConnection).when(storageConnDao).get(any(String.class));
+
+        // Create an active domain.
+        StorageDomain domain = new StorageDomain();
+        domain.setStatus(StorageDomainStatus.Active);
+        domain.setStorageDomainSharedStatus(StorageDomainSharedStatus.Active);
+        doReturn(domain).when(storageDomainDAO).get(any(Guid.class));
+
+        initDomainListForConnection(NFSConnection.getid(), domain);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
+    }
+
     private void initDomainListForConnection(String connId, StorageDomain... domains) {
         doReturn(Arrays.asList(domains)).when(command).getStorageDomainsByConnId(connId);
     }

@@ -116,7 +116,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
 
     protected boolean isConnectionEditable(StorageServerConnections connection) {
         if (connection.getstorage_type().isFileDomain()) {
-            boolean isConnectionEditable = isDomainInEditState(domains.get(0));
+            boolean isConnectionEditable = isFileDomainInEditState(domains.get(0));
             if (!isConnectionEditable) {
                 addCanDoActionMessageVariable("domainNames", domains.get(0).getStorageName());
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_UNSUPPORTED_ACTION_DOMAIN_MUST_BE_IN_MAINTENANCE_OR_UNATTACHED);
@@ -183,10 +183,8 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         return StringUtils.join(entityNames, ",");
     }
 
-    protected boolean isDomainInEditState(StorageDomain storageDomain) {
-        boolean isEditable = storageDomain.getStorageDomainType().isDataDomain()
-                && (storageDomain.getStatus() == StorageDomainStatus.Maintenance || storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached);
-        return isEditable;
+    private boolean isFileDomainInEditState(StorageDomain storageDomain) {
+        return (storageDomain.getStatus() == StorageDomainStatus.Maintenance || storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached);
     }
 
     @Override

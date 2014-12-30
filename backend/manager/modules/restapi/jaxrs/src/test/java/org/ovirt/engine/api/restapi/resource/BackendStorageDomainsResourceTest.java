@@ -823,11 +823,11 @@ public class BackendStorageDomainsResourceTest
         assertEquals(PATHS[index], model.getStorage().getPath());
         assertEquals("permissions", model.getLinks().get(0).getRel());
         if (StorageDomainType.fromValue(model.getType()) == StorageDomainType.ISO) {
-            assertEquals(4, model.getLinks().size());
+            assertEquals(5, model.getLinks().size());
             assertEquals("files", model.getLinks().get(1).getRel());
 
         } else if (model.getType().equals(TYPES[2].value())) {
-            assertEquals(6, model.getLinks().size());
+            assertEquals(7, model.getLinks().size());
             assertEquals("templates", model.getLinks().get(1).getRel());
             assertEquals("vms", model.getLinks().get(2).getRel());
         }

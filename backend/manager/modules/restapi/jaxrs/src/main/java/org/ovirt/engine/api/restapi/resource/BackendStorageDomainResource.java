@@ -155,8 +155,8 @@ public class BackendStorageDomainResource extends
     }
 
     public static synchronized String[] getLinksToExclude(StorageDomain storageDomain) {
-        return isIsoDomain(storageDomain) ? new String[] { "templates", "vms", "disks", "storageconnections", "images" }
-                : isExportDomain(storageDomain) ? new String[] { "files", "storageconnections", "images" }
+        return isIsoDomain(storageDomain) ? new String[] { "templates", "vms", "disks", "images" }
+                : isExportDomain(storageDomain) ? new String[] { "files", "images" }
                         : isImageDomain(storageDomain) ? new String[] { "templates", "vms", "files", "disks",
                                 "storageconnections" }
                                 : new String[] { "templates", "vms", "files", "images" };
