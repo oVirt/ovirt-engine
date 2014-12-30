@@ -17,6 +17,8 @@ public class NicStatisticalQuery extends AbstractStatisticalQuery<NIC, VmNetwork
     private static final Statistic DATA_TX = create("data.current.tx", "Transmit data rate", GAUGE,   BYTES_PER_SECOND, DECIMAL);
     private static final Statistic ERRS_RX = create("errors.total.rx", "Total receive errors", COUNTER, NONE, INTEGER);
     private static final Statistic ERRS_TX = create("errors.total.tx", "Total transmit errors", COUNTER, NONE, INTEGER);
+    private static final Statistic TOTAL_RX = create("data.total.rx", "Total received data", COUNTER, BYTES, INTEGER);
+    private static final Statistic TOTAL_TX = create("data.total.tx", "Total transmitted data", COUNTER, BYTES, INTEGER);
 
     protected NicStatisticalQuery(NIC parent) {
         this(null, parent);
@@ -32,7 +34,9 @@ public class NicStatisticalQuery extends AbstractStatisticalQuery<NIC, VmNetwork
         return asList(setDatum(clone(DATA_RX), RxTxCalculator.percent2bytes(iface.getSpeed(), s.getReceiveRate())),
                 setDatum(clone(DATA_TX), RxTxCalculator.percent2bytes(iface.getSpeed(), s.getTransmitRate())),
                 setDatum(clone(ERRS_RX), s.getReceiveDropRate()),
-                setDatum(clone(ERRS_TX), s.getTransmitDropRate()));
+                setDatum(clone(ERRS_TX), s.getTransmitDropRate()),
+                setDatum(clone(TOTAL_RX), s.getReceivedBytes()),
+                setDatum(clone(TOTAL_TX), s.getTransmittedBytes()));
     }
 
     @Override

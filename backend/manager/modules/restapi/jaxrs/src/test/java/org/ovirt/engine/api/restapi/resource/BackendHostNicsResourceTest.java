@@ -416,6 +416,8 @@ public class BackendHostNicsResourceTest
         statistics.setReceiveRate(2D);
         statistics.setTransmitDropRate(3D);
         statistics.setTransmitRate(4D);
+        statistics.setReceivedBytes(5L);
+        statistics.setTransmittedBytes(6L);
         statistics.setVdsId(id);
         statistics.setStatus(null);
         entity.setStatistics(statistics);

@@ -58,6 +58,14 @@ public abstract class AbstractStatisticalQuery<R extends BaseResource, E> {
         return StatisticResourceUtils.setDatum(statistic, datum);
     }
 
+    public Statistic setDatum(Statistic statistic, Long datum) {
+        return StatisticResourceUtils.setDatum(statistic, datum);
+    }
+
+    public Statistic setDatum(Statistic statistic, Double datum) {
+        return StatisticResourceUtils.setDatum(statistic, datum);
+    }
+
     public Statistic setDatum(Statistic statistic, long datum) {
         return StatisticResourceUtils.setDatum(statistic, datum);
     }

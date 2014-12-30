@@ -14,6 +14,8 @@ public class HostNicStatisticalQuery extends AbstractStatisticalQuery<HostNIC, V
 
     private final static Statistic DATA_RX = create("data.current.rx", "Receive data rate",  GAUGE, BYTES_PER_SECOND, DECIMAL);
     private final static Statistic DATA_TX = create("data.current.tx", "Transmit data rate", GAUGE, BYTES_PER_SECOND, DECIMAL);
+    private final static Statistic TOTAL_RX = create("data.total.rx", "Total received data", COUNTER, BYTES, INTEGER);
+    private final static Statistic TOTAL_TX = create("data.total.tx", "Total transmitted data", COUNTER, BYTES, INTEGER);
     private final static Statistic ERRS_RX = create("errors.total.rx", "Total receive errors", COUNTER, NONE, INTEGER);
     private final static Statistic ERRS_TX = create("errors.total.tx", "Total transmit errors", COUNTER, NONE, INTEGER);
 
@@ -32,6 +34,8 @@ public class HostNicStatisticalQuery extends AbstractStatisticalQuery<HostNIC, V
 
         return asList(setDatum(clone(DATA_RX), RxTxCalculator.percent2bytes(iface.getSpeed(), s.getReceiveRate())),
                 setDatum(clone(DATA_TX), RxTxCalculator.percent2bytes(iface.getSpeed(), s.getTransmitRate())),
+                setDatum(clone(TOTAL_RX), s.getReceivedBytes()),
+                setDatum(clone(TOTAL_TX), s.getTransmittedBytes()),
                 setDatum(clone(ERRS_RX), s.getReceiveDropRate()),
                 setDatum(clone(ERRS_TX), s.getTransmitDropRate()));
     }

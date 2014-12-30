@@ -44,6 +44,14 @@ public class StatisticResourceUtils {
         return statistic;
     }
 
+    public static Statistic setDatum(Statistic statistic, Long datum) {
+        return setDatum(statistic, datum == null ? null : new BigDecimal(datum));
+    }
+
+    public static Statistic setDatum(Statistic statistic, Double datum) {
+        return setDatum(statistic, datum == null ? null : new BigDecimal(datum, new MathContext(2)));
+    }
+
     public static Statistic setDatum(Statistic statistic, long datum) {
         return setDatum(statistic, new BigDecimal(datum));
     }

@@ -299,6 +299,8 @@ public class BackendVmNicResourceTest
         expect(stats.getTransmitRate()).andReturn(20D);
         expect(stats.getReceiveDropRate()).andReturn(30D);
         expect(stats.getTransmitDropRate()).andReturn(40D);
+        expect(stats.getReceivedBytes()).andReturn(50L);
+        expect(stats.getTransmittedBytes()).andReturn(60L);
         List<VmNetworkInterface> ifaces = new ArrayList<VmNetworkInterface>();
         ifaces.add(entity);
         setUpEntityQueryExpectations(VdcQueryType.GetVmInterfacesByVmId,
@@ -315,9 +317,10 @@ public class BackendVmNicResourceTest
         assertSame(entity, query.resolve(NIC_ID));
         List<Statistic> statistics = query.getStatistics(entity);
         verifyStatistics(statistics,
-                new String[] { "data.current.rx", "data.current.tx", "errors.total.rx", "errors.total.tx" },
+                new String[] { "data.current.rx", "data.current.tx", "errors.total.rx", "errors.total.tx",
+                        "data.total.rx", "data.total.tx" },
                 new BigDecimal[] { asDec(RxTxCalculator.percent2bytes(50, 10D)), asDec(RxTxCalculator.percent2bytes(50, 20D)),
-                        asDec(30), asDec(40) });
+                        asDec(30), asDec(40), asDec(50), asDec(60) });
         Statistic adopted = query.adopt(new Statistic());
         assertTrue(adopted.isSetNic());
         assertEquals(NIC_ID.toString(), adopted.getNic().getId());

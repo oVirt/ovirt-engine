@@ -116,6 +116,8 @@ public class AbstractBackendNicsResourceTest<T extends AbstractBackendReadOnlyDe
         expect(statistics.getReceiveDropRate()).andReturn(2D).anyTimes();
         expect(statistics.getTransmitRate()).andReturn(3D).anyTimes();
         expect(statistics.getTransmitDropRate()).andReturn(4D).anyTimes();
+        expect(statistics.getReceivedBytes()).andReturn(5L).anyTimes();
+        expect(statistics.getTransmittedBytes()).andReturn(6L).anyTimes();
         return entity;
     }
 

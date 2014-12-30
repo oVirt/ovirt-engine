@@ -50,6 +50,8 @@ public class BackendHostNicResourceTest
     private static final double TRANSMIT_RATE = 20;
     private static final double RECEIVE_DROP_RATE = 30;
     private static final double TRANSMIT_DROP_RATE = 40;
+    private static final long RECEIVED_BYTES = 50;
+    private static final long TRANSMITTED_BYTES = 60;
 
     private final BackendHostNicsResourceTest hostNicsResource;
 
@@ -466,6 +468,8 @@ public class BackendHostNicResourceTest
         expect(stats.getTransmitRate()).andReturn(TRANSMIT_RATE);
         expect(stats.getReceiveDropRate()).andReturn(RECEIVE_DROP_RATE);
         expect(stats.getTransmitDropRate()).andReturn(TRANSMIT_DROP_RATE);
+        expect(stats.getReceivedBytes()).andReturn(RECEIVED_BYTES);
+        expect(stats.getTransmittedBytes()).andReturn(TRANSMITTED_BYTES);
         List<VdsNetworkInterface> ifaces = new ArrayList<VdsNetworkInterface>();
         ifaces.add(entity);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsInterfacesByVdsId,
@@ -482,10 +486,12 @@ public class BackendHostNicResourceTest
         assertSame(entity, query.resolve(NIC_ID));
         List<Statistic> statistics = query.getStatistics(entity);
         verifyStatistics(statistics,
-                new String[] { "data.current.rx", "data.current.tx", "errors.total.rx", "errors.total.tx" },
+                new String[] { "data.current.rx", "data.current.tx", "errors.total.rx", "errors.total.tx",
+                        "data.total.rx", "data.total.tx" },
                 new BigDecimal[] { asDec(RxTxCalculator.percent2bytes(SPEED, RECEIVE_RATE)),
                         asDec(RxTxCalculator.percent2bytes(SPEED, TRANSMIT_RATE)),
-                        asDec(RECEIVE_DROP_RATE), asDec(TRANSMIT_DROP_RATE) });
+                        asDec(RECEIVE_DROP_RATE), asDec(TRANSMIT_DROP_RATE),
+                        asDec(RECEIVED_BYTES), asDec(TRANSMITTED_BYTES) });
         Statistic adopted = query.adopt(new Statistic());
         assertTrue(adopted.isSetHostNic());
         assertEquals(NIC_ID.toString(), adopted.getHostNic().getId());

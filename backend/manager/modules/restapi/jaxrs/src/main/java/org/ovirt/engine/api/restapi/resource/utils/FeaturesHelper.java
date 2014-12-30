@@ -96,6 +96,7 @@ public class FeaturesHelper {
             addExternalHostProvidersFeature(features);
             addOpenStackImageProvidersFeature(features);
             addErrataForHostsFeature(features);
+            addCumulativeNetworkUsageFeature(features);
         }
         return features;
     }
@@ -542,6 +543,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Katello Host Errata");
         feature.setDescription("View available Katello Errata for hosts.");
+        features.getFeature().add(feature);
+    }
+
+    private void addCumulativeNetworkUsageFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Cumulative Network Usage Statistics");
+        feature.setDescription("Reporting of cumulative RX/TX statistics for host and VM network interfaces.");
         features.getFeature().add(feature);
     }
 }
