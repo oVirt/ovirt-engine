@@ -15,8 +15,8 @@ public class NicStatisticalQuery extends AbstractStatisticalQuery<NIC, VmNetwork
 
     private static final Statistic DATA_RX = create("data.current.rx", "Receive data rate",  GAUGE,   BYTES_PER_SECOND, DECIMAL);
     private static final Statistic DATA_TX = create("data.current.tx", "Transmit data rate", GAUGE,   BYTES_PER_SECOND, DECIMAL);
-    private static final Statistic ERRS_RX = create("errors.total.rx", "Total transmit errors",     COUNTER, NONE,            INTEGER);
-    private static final Statistic ERRS_TX = create("errors.total.tx", "Total transmit errors",        COUNTER, NONE,            INTEGER);
+    private static final Statistic ERRS_RX = create("errors.total.rx", "Total receive errors", COUNTER, NONE, INTEGER);
+    private static final Statistic ERRS_TX = create("errors.total.tx", "Total transmit errors", COUNTER, NONE, INTEGER);
 
     protected NicStatisticalQuery(NIC parent) {
         this(null, parent);
