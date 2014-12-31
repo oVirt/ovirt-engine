@@ -57,9 +57,9 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
         }
 
-        List<LUNs> physicalVolumeIdsOnStorage = getLUNsFromVgInfo(getStorageDomain().getStorage());
-        if (CollectionUtils.containsAny(Entities.getPhysicalVolumesFromLunsList(physicalVolumeIdsOnStorage),
-                Entities.getPhysicalVolumesFromLunsList(getDbFacade().getLunDao().getAll()))) {
+        List<LUNs> lunsOnStorage = getLUNsFromVgInfo(getStorageDomain().getStorage());
+        if (CollectionUtils.containsAny(Entities.getIds(lunsOnStorage),
+                Entities.getIds(getDbFacade().getLunDao().getAll()))) {
             log.info("There are existing luns in the system which are part of VG id '{}'",
                     getStorageDomain().getStorage());
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_STORAGE_DOMAIN_EXTERNAL_LUN_DISK_EXIST);

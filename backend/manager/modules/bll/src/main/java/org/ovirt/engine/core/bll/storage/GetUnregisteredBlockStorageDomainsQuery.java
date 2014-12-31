@@ -210,7 +210,7 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
         List<StorageDomain> storageDomains = new ArrayList<>();
 
         // Get existing PhysicalVolumes.
-        List<String> existingPhysicalVolumeIds = Entities.getPhysicalVolumesFromLunsList(getLunDAO().getAll());
+        List<String> existingLunIds = Entities.getIds(getLunDAO().getAll());
 
         for (String vgID : vgIDs) {
             VDSReturnValue returnValue = null;
@@ -225,8 +225,8 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
             }
 
             ArrayList<LUNs> luns = (ArrayList<LUNs>) returnValue.getReturnValue();
-            List<String> physicalVolumeIdsOnStorage = Entities.getPhysicalVolumesFromLunsList(luns);
-            if (CollectionUtils.containsAny(physicalVolumeIdsOnStorage, existingPhysicalVolumeIds)) {
+            List<String> lunIdsOnStorage = Entities.getIds(luns);
+            if (CollectionUtils.containsAny(lunIdsOnStorage, existingLunIds)) {
                 log.info("There are existing luns in the system which are part of VG id '{}'", vgID);
                 continue;
             }
