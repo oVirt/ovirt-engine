@@ -2664,4 +2664,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Unable to fetch gluster volume snapshot schedule")
     String unableToFetchVolumeSnapshotSchedule();
+
+    @DefaultStringValue("Create Brick")
+    String createBrick();
 }

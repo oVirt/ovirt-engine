@@ -478,6 +478,9 @@ public enum HelpTag {
 
     gluster_storage_devices("gluster_storage_devices", HelpTagType.WEBADMIN), //$NON-NLS-1$
 
+    create_brick(
+            "create_brick", HelpTagType.WEBADMIN, "[gluster] Hosts main tab -> Storage Devices sub tab -> 'Create Brick' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+
     virtual_machines("virtual_machines", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
     vm_import("vm_import", HelpTagType.UNKNOWN), //$NON-NLS-1$

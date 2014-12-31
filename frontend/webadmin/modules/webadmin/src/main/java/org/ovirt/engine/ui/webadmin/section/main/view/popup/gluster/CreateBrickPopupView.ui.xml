@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+
+	<ui:style>
+		.headerLabel {
+			font-weight: bold;
+			padding: 5px;
+		}
+
+		.tablePanel {
+			height: 270px;
+			width: 530px;
+			padding-left: 15px;
+			padding-bottom: 15px;
+			border: 1px solid #CED8DF;
+		}
+		.explanationLabel {
+			font-style: italic;
+			padding-bottom: 10px;
+		}
+	</ui:style>
+
+	<d:SimpleDialogPanel width="550px" height="575px">
+		<d:content>
+			<g:FlowPanel>
+				<ge:StringEntityModelTextBoxEditor ui:field="lvNameEditor" />
+				<ge:StringEntityModelTextBoxEditor ui:field="mountPointEditor" />
+				<e:ListModelListBoxEditor  ui:field="raidTypeEditor" />
+				<ge:IntegerEntityModelTextBoxEditor ui:field="noOfPhysicalDisksEditor" />
+				<ge:IntegerEntityModelTextBoxEditor ui:field="stripeSizeEditor" />
+				<g:Label ui:field="deviceHeader" addStyleNames="{style.headerLabel}"/>
+				<g:Label ui:field="deviceSelectionInfo" addStyleNames="{style.explanationLabel}"/>
+				<g:HorizontalPanel spacing="5" verticalAlignment="ALIGN_MIDDLE">
+					<g:VerticalPanel>
+						<g:ScrollPanel addStyleNames="{style.tablePanel}">
+							<e:ListModelObjectCellTable ui:field="deviceTable"/>
+						</g:ScrollPanel>
+					</g:VerticalPanel>
+				</g:HorizontalPanel>
+				<ge:StringEntityModelLabelEditor ui:field="sizeEditor" />
+			</g:FlowPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+</ui:UiBinder>

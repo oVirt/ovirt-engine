@@ -27,8 +27,8 @@ import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
-import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterStorageDevicesListModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBondInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBricksListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostEventListModel;
@@ -47,6 +47,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.CreateBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ConfigureLocalStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostBondPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
@@ -271,6 +272,32 @@ public class HostModule extends AbstractGinModule {
 
     @Provides
     @Singleton
+    public SearchableDetailModelProvider<StorageDevice, HostListModel<Void>, HostGlusterStorageDevicesListModel> getGlusterHostStorageDeviceProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<CreateBrickPopupPresenterWidget> createBrickPopupProvider,
+            final Provider<HostListModel<Void>> mainModelProvider,
+            final Provider<HostGlusterStorageDevicesListModel> modelProvider) {
+        SearchableDetailTabModelProvider<StorageDevice, HostListModel<Void>, HostGlusterStorageDevicesListModel> result =
+                new SearchableDetailTabModelProvider<StorageDevice, HostListModel<Void>, HostGlusterStorageDevicesListModel>(
+                eventBus, defaultConfirmPopupProvider) {
+            @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostGlusterStorageDevicesListModel source,
+                    UICommand lastExecutedCommand,
+                    Model windowModel) {
+                if (lastExecutedCommand == getModel().getCreateBrickCommand()) {
+                    return createBrickPopupProvider.get();
+                } else {
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                }
+            }
+        };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
+    }
+
+    @Provides
+    @Singleton
     public SearchableDetailModelProvider<AuditLog, HostListModel<Void>, HostEventListModel> getHostEventListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<EventPopupPresenterWidget> eventPopupProvider,
@@ -323,11 +350,6 @@ public class HostModule extends AbstractGinModule {
         bind(new TypeLiteral<SearchableDetailModelProvider<GlusterServerService, HostListModel<Void>, HostGlusterSwiftListModel>>(){})
             .to(new TypeLiteral<SearchableDetailTabModelProvider<GlusterServerService, HostListModel<Void>, HostGlusterSwiftListModel>>(){})
             .in(Singleton.class);
-
-        bind(new TypeLiteral<SearchableDetailModelProvider<StorageDevice, HostListModel<Void>, HostGlusterStorageDevicesListModel>>(){})
-            .to(new TypeLiteral<SearchableDetailTabModelProvider<StorageDevice, HostListModel<Void>, HostGlusterStorageDevicesListModel>>(){})
-            .in(Singleton.class);
-
         // Permission Detail Model
         bind(new TypeLiteral<SearchableDetailModelProvider<Permission, HostListModel<Void>, PermissionListModel<VDS>>>(){})
             .to(new TypeLiteral<PermissionModelProvider<VDS, HostListModel<Void>>>() {

@@ -3229,6 +3229,18 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The selected cluster doesn't support Storage provisioning.")
     String ACTION_TYPE_FAILED_STORAGE_PROVISIONING_NOT_SUPPORTED_BY_CLUSTER();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Storage Device is locked.")
+    String ACTION_TYPE_FAILED_STORAGE_DEVICE_LOCKED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. At least one storage device is required.")
+    String ACTION_TYPE_FAILED_STORAGE_DEVICE_REQUIRED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Different types of storage devices are selected.")
+    String ACTION_TYPE_FAILED_DIFFERENT_STORAGE_DEVICE_TYPES_SELECTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Storage Device ${storageDevice} is already in use.")
+    String ACTION_TYPE_FAILED_DEVICE_IS_ALREADY_IN_USE();
+
     @DefaultStringValue("Cannot ${action} ${type}. All three values are needed in order to define QoS on each network directions.")
     String ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES();
 

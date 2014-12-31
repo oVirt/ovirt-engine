@@ -99,6 +99,13 @@ public class SubTabHostGlusterStorageDevicesView extends AbstractSubTabTableView
         fsTypeColumn.makeSortable();
         getTable().addColumn(fsTypeColumn, constants.fileSystemType(), "170px"); //$NON-NLS-1$
 
+        getTable().addActionButton(new WebAdminButtonDefinition<StorageDevice>(constants.createBrick()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getCreateBrickCommand();
+            }
+        });
+
         getTable().addActionButton(new WebAdminButtonDefinition<StorageDevice>(constants.syncStorageDevices()) {
             @Override
             protected UICommand resolveCommand() {

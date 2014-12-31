@@ -4191,4 +4191,28 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Frequent creation of snapshots would overload the cluster")
     String criticalSnapshotIntervalNote();
+
+    @DefaultStringValue("Brick Name")
+    String logicalVolume();
+
+    @DefaultStringValue("Size")
+    String lvSize();
+
+    @DefaultStringValue("Create Brick")
+    String createBrick();
+
+    @DefaultStringValue("Extend Brick")
+    String extendBrick();
+
+    @DefaultStringValue("RAID Type")
+    String raidType();
+
+    @DefaultStringValue("No. of Physical Disks in RAID Volume")
+    String noOfPhysicalDisksInRaidVolume();
+
+    @DefaultStringValue("Stripe Size")
+    String stripeSize();
+
+    @DefaultStringValue("Choose storage devices of RAID type: ")
+    String getStorageDeviceSelectionInfo();
 }
