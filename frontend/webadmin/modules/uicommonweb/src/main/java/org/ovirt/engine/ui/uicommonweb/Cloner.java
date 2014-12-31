@@ -422,6 +422,7 @@ public final class Cloner
         obj.setStorageType(instance.getStorageType());
         obj.setStorageName(instance.getStorageName());
         obj.setStorageFormat(instance.getStorageFormat());
+        obj.setWipeAfterDelete(instance.getWipeAfterDelete());
 
         return obj;
     }
