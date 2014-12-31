@@ -1007,7 +1007,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         return StringUtils.EMPTY;
     }
 
-    private Snapshot getActiveSnapshot() {
+    @Override
+    protected Snapshot getActiveSnapshot() {
         for (Snapshot snapshot : getVm().getSnapshots()) {
             if (snapshot.getType() == SnapshotType.ACTIVE)
                 return snapshot;

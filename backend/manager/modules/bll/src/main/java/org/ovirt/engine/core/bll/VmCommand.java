@@ -19,11 +19,13 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.TagsVmMap;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.Config;
@@ -585,5 +587,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      */
     protected boolean shouldSkipCommandExecution() {
         return false;
+    }
+
+    protected Snapshot getActiveSnapshot() {
+        return getSnapshotDAO().get(getVm().getId(), SnapshotType.ACTIVE);
     }
 }

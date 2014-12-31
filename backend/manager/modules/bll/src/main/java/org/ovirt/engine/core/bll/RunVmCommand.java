@@ -44,7 +44,6 @@ import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
-import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -75,7 +74,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
-import org.ovirt.engine.core.dao.SnapshotDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -156,14 +154,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         return cachedMemoryVolumeFromSnapshot;
-    }
-
-    private Snapshot getActiveSnapshot() {
-        return getSnapshotDao().get(getVm().getId(), SnapshotType.ACTIVE);
-    }
-
-    private SnapshotDao getSnapshotDao() {
-        return getDbFacade().getSnapshotDao();
     }
 
     /**
@@ -354,7 +344,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      */
     protected boolean isStatelessSnapshotExistsForVm() {
         if (cachedStatelessSnapshotExistsForVm == null) {
-            cachedStatelessSnapshotExistsForVm = getSnapshotDao().exists(getVm().getId(), SnapshotType.STATELESS);
+            cachedStatelessSnapshotExistsForVm = getSnapshotDAO().exists(getVm().getId(), SnapshotType.STATELESS);
         }
         return cachedStatelessSnapshotExistsForVm;
     }
@@ -1058,10 +1048,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         // If the active snapshot is the only one that points to the memory volume we can remove it
-        if (getSnapshotDao().getNumOfSnapshotsByMemory(cachedMemoryVolumeFromSnapshot) == 1) {
+        if (getSnapshotDAO().getNumOfSnapshotsByMemory(cachedMemoryVolumeFromSnapshot) == 1) {
             removeMemoryVolumes(cachedMemoryVolumeFromSnapshot, getActionType(), true);
         }
-        getSnapshotDao().removeMemoryFromActiveSnapshot(getVmId());
+        getSnapshotDAO().removeMemoryFromActiveSnapshot(getVmId());
     }
 
     /**
