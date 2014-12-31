@@ -124,8 +124,6 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
             final Guid taskId1 = getAsyncTaskId(SAVE_IMAGE_TASK_KEY);
 
             Guid image1GroupId = Guid.newGuid();
-            // this is temp code until SPM will implement the new verb that does
-            // it for us:
 
             Guid hiberVol1 = Guid.newGuid();
             final VDSReturnValue ret1 =
@@ -185,12 +183,9 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
             Guid guid2 = createTask(taskId2, ret2.getCreationInfo(), VdcActionType.HibernateVm);
             getReturnValue().getVdsmTaskIdList().add(guid2);
 
-            // this is the new param that should be passed to the hibernate
-            // command
             getVm().setHibernationVolHandle(MemoryUtils.createMemoryStateString(
                     getStorageDomainId(), getVm().getStoragePoolId(),
                     image1GroupId, hiberVol1, image2GroupId, hiberVol2));
-            // end of temp code
 
             runVdsCommand(VDSCommandType.UpdateVmDynamicData,
                             new UpdateVmDynamicDataVDSCommandParameters(getVm().getDynamicData()));
@@ -319,10 +314,8 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
                 String hiberVol = getVm().getHibernationVolHandle();
                 if (hiberVol != null) {
                     try {
-                        runVdsCommand(
-                                        VDSCommandType.Hibernate,
-                                        new HibernateVDSCommandParameters(new Guid(getVm().getRunOnVds().toString()),
-                                                getVmId(), getVm().getHibernationVolHandle()));
+                        runVdsCommand(VDSCommandType.Hibernate,
+                                new HibernateVDSCommandParameters(getVm().getRunOnVds(), getVmId(), hiberVol));
                     } catch (VdcBLLException e) {
                         isHibernateVdsProblematic = true;
                         throw e;
