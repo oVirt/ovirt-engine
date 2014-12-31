@@ -22,7 +22,7 @@ GROUP BY
     device_id,
     entity_type;
 CREATE
-OR REPLACE VIEW images_storage_domain_view AS -- TODO: Change code to treat disks values directly instead of through this view.
+OR REPLACE VIEW memory_and_disk_images_storage_domain_view AS
 SELECT
     images.image_guid AS image_guid,
     storage_domain_static.storage_name AS storage_name,
@@ -81,7 +81,15 @@ SELECT
         FROM
             storage_domains_ovf_info
         WHERE
-            images.image_group_id = storage_domains_ovf_info.ovf_disk_id ) AS ovf_store
+            images.image_group_id = storage_domains_ovf_info.ovf_disk_id ) AS ovf_store,
+    EXISTS (
+        SELECT
+	    1
+	FROM
+	    snapshots
+	WHERE
+	    images.image_group_id IN (snapshots.memory_metadata_disk_id, snapshots.memory_dump_disk_id))
+        as memory_image
 FROM
     images
 LEFT
@@ -106,6 +114,14 @@ LEFT
 OUTER JOIN storage_pool ON storage_pool.id = storage_pool_iso_map.storage_pool_id
 WHERE
     images.image_guid != '00000000-0000-0000-0000-000000000000';
+CREATE
+OR REPLACE VIEW images_storage_domain_view AS -- TODO: Change code to treat disks values directly instead of through this view.
+SELECT
+    *
+FROM
+    memory_and_disk_images_storage_domain_view
+WHERE
+    memory_image = FALSE;
 CREATE
 OR REPLACE VIEW storage_domain_file_repos AS
 SELECT
@@ -402,6 +418,183 @@ FROM (
             JOIN luns l ON l.lun_id = dlm.lun_id
         LEFT JOIN vms_for_disk_view ON vms_for_disk_view.device_id = dlm.disk_id ) AS storage_impl
     JOIN base_disks bd ON bd.disk_id = storage_impl.image_group_id;
+-- The following view is mostly a copy-paste of all_disks_including_snapshots but it uses
+-- memory_and_disk_images_storage_domain_view to get memory disks as well
+-- TODO: when memory disks are handled correctly this view should be deleted
+CREATE
+OR REPLACE VIEW all_disks_including_snapshots_and_memory AS
+SELECT
+    storage_impl.*,
+    bd.disk_id,
+    -- Disk fields
+    bd.disk_interface,
+    bd.wipe_after_delete,
+    bd.propagate_errors,
+    bd.disk_alias,
+    bd.disk_description,
+    bd.shareable,
+    bd.boot,
+    bd.sgio,
+    bd.alignment,
+    bd.last_alignment_scan,
+    bd.disk_storage_type,
+    bd.cinder_volume_type
+FROM (
+        SELECT
+            storage_for_image_view.storage_id AS storage_id,
+            -- Storage fields
+            storage_for_image_view.storage_path AS storage_path,
+            storage_for_image_view.storage_name AS storage_name,
+            storage_for_image_view.storage_type AS storage_type,
+            storage_pool_id,
+            image_guid,
+            -- Image fields
+            creation_date,
+            actual_size,
+            read_rate,
+            write_rate,
+            read_latency_seconds,
+            write_latency_seconds,
+            flush_latency_seconds,
+            SIZE,
+            it_guid,
+            imageStatus,
+            lastModified,
+            volume_type,
+            volume_format,
+            image_group_id,
+            description,
+            -- Snapshot fields
+            ParentId,
+            app_list,
+            vm_snapshot_id,
+            active,
+            volume_classification,
+            entity_type,
+            number_of_vms,
+            vm_names,
+            storage_for_image_view.quota_id AS quota_id,
+            -- Quota fields
+            storage_for_image_view.quota_name AS quota_name,
+            quota_enforcement_type,
+            ovf_store,
+            storage_for_image_view.disk_profile_id AS disk_profile_id,
+            -- disk profile fields
+            storage_for_image_view.disk_profile_name AS disk_profile_name,
+	    memory_image,
+            NULL AS lun_id,
+            -- LUN fields
+            NULL AS physical_volume_id,
+            NULL AS volume_group_id,
+            NULL AS serial,
+            NULL AS lun_mapping,
+            NULL AS vendor_id,
+            NULL AS product_id,
+            NULL AS device_size
+        FROM
+            memory_and_disk_images_storage_domain_view
+        INNER JOIN storage_for_image_view ON memory_and_disk_images_storage_domain_view.image_guid = storage_for_image_view.image_id
+        GROUP BY
+            storage_for_image_view.storage_id,
+            storage_for_image_view.storage_path,
+            storage_for_image_view.storage_name,
+            storage_for_image_view.storage_type,
+            storage_pool_id,
+            image_guid,
+            -- Image fields
+            creation_date,
+            actual_size,
+            read_rate,
+            write_rate,
+            read_latency_seconds,
+            write_latency_seconds,
+            flush_latency_seconds,
+            SIZE,
+            it_guid,
+            imageStatus,
+            lastModified,
+            volume_type,
+            volume_format,
+            image_group_id,
+            description,
+            -- Snapshot fields
+            ParentId,
+            app_list,
+            vm_snapshot_id,
+            active,
+            volume_classification,
+            entity_type,
+            number_of_vms,
+            vm_names,
+            storage_for_image_view.quota_id,
+            storage_for_image_view.quota_name,
+            quota_enforcement_type,
+            ovf_store,
+            storage_for_image_view.disk_profile_id,
+            storage_for_image_view.disk_profile_name,
+            memory_image
+        UNION
+            ALL
+        SELECT
+            NULL AS storage_id,
+            -- Storage domain fields
+            NULL AS storage_path,
+            NULL AS storage_name,
+            NULL AS storage_type,
+            NULL AS storage_pool_id,
+            NULL AS image_guid,
+            -- Image fields
+            NULL AS creation_date,
+            NULL AS actual_size,
+            NULL AS read_rate,
+            NULL AS write_rate,
+            NULL AS read_latency_seconds,
+            NULL AS write_latency_seconds,
+            NULL AS flush_latency_seconds,
+            NULL AS SIZE,
+            NULL AS it_guid,
+            NULL AS imageStatus,
+            NULL AS lastModified,
+            NULL AS volume_type,
+            NULL AS volume_format,
+            dlm.disk_id AS image_group_id,
+            NULL AS description,
+            -- Snapshot fields
+            NULL AS ParentId,
+            NULL AS app_list,
+            NULL AS vm_snapshot_id,
+            NULL AS active,
+            NULL AS volume_classification,
+            vms_for_disk_view.entity_type,
+            COALESCE ( array_upper ( vms_for_disk_view.array_vm_names,
+                    1 )
+,
+                0 ) AS number_of_vms,
+            array_to_string ( vms_for_disk_view.array_vm_names,
+                ',' ) AS vm_names,
+            NULL AS quota_id,
+            -- Quota fields
+            NULL AS quota_name,
+            NULL AS quota_enforcement_type,
+            FALSE AS ovf_store,
+            NULL AS disk_profile_id,
+            -- disk profile fields
+            NULL AS disk_profile_name,
+	    FALSE AS memory_image,
+            l.lun_id,
+            -- LUN fields
+            l.physical_volume_id,
+            l.volume_group_id,
+            l.serial,
+            l.lun_mapping,
+            l.vendor_id,
+            l.product_id,
+            l.device_size
+        FROM
+            disk_lun_map dlm
+            JOIN luns l ON l.lun_id = dlm.lun_id
+        LEFT JOIN vms_for_disk_view ON vms_for_disk_view.device_id = dlm.disk_id ) AS storage_impl
+    JOIN base_disks bd ON bd.disk_id = storage_impl.image_group_id;
 CREATE
 OR REPLACE VIEW all_disks AS
 SELECT
@@ -411,6 +604,16 @@ FROM
 WHERE
     active IS NULL
     OR active = TRUE;
+CREATE
+OR REPLACE VIEW all_disks_including_memory AS
+SELECT
+    *
+FROM
+    all_disks_including_snapshots_and_memory
+WHERE
+    active IS NULL
+    OR active = TRUE
+    OR memory_image = TRUE;
 CREATE
 OR REPLACE VIEW all_disks_for_vms AS
 SELECT

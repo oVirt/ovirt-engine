@@ -23,12 +23,12 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetDiskByDiskId(v_disk_id UUID, v_user_id UUID, v_is_filtered boolean)
-RETURNS SETOF all_disks STABLE
+RETURNS SETOF all_disks_including_memory STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
     SELECT *
-    FROM   all_disks
+    FROM   all_disks_including_memory
     WHERE  image_group_id = v_disk_id
     AND    (NOT v_is_filtered OR EXISTS (SELECT 1
                                          FROM user_disk_permissions_view

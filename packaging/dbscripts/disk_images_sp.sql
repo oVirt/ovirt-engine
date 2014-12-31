@@ -49,11 +49,11 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetSnapshotByGuid(v_image_guid UUID)
-RETURNS SETOF images_storage_domain_view STABLE
+RETURNS SETOF memory_and_disk_images_storage_domain_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
-      FROM images_storage_domain_view images_storage_domain_view
+      FROM memory_and_disk_images_storage_domain_view memory_and_disk_images_storage_domain_view
       WHERE image_guid = v_image_guid;
 END; $procedure$
 LANGUAGE plpgsql;
