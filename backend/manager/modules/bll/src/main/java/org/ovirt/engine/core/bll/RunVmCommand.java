@@ -698,9 +698,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     getVdsGroup().getEmulatedMachine()));
         }
 
-        if (getFlow() != RunVmFlow.RESUME_HIBERNATE) {
-            getVm().setHibernationVolHandle(getMemoryFromSnapshot());
-        }
+        getVm().setHibernationVolHandle(getMemoryFromSnapshot());
     }
 
     protected boolean isPayloadExists(VmDeviceType deviceType) {

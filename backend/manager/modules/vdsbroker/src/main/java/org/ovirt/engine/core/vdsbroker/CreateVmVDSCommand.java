@@ -3,7 +3,6 @@ package org.ovirt.engine.core.vdsbroker;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -47,7 +46,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                     vm.setInitialized(true);
                     vm.setRunOnVds(getParameters().getVdsId());
                     if (clearHibernationVolume) {
-                        vm.setHibernationVolHandle(StringUtils.EMPTY);
+                        DbFacade.getInstance().getSnapshotDao().removeMemoryFromActiveSnapshot(vm.getId());
                     }
                     vmManager.update(vm.getDynamicData());
                 } else {

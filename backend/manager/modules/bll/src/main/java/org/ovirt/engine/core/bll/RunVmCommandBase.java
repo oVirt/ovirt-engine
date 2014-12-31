@@ -38,7 +38,6 @@ import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.FailedToRunVmVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -184,20 +183,9 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                 getVm().setLastVdsRunOn(getCurrentVdsId());
             }
 
-            if (StringUtils.isNotEmpty(getVm().getHibernationVolHandle())) {
+            if (StringUtils.isNotEmpty(getActiveSnapshot().getMemoryVolume())) {
                 removeVmHibernationVolumes();
-
-                // In order to prevent a race where VdsUpdateRuntimeInfo saves the Vm Dynamic as UP prior to execution of
-                // this method (which is a part of the cached VM command,
-                // so the state this method is aware to is RESTORING, in case of RunVmCommand after the VM got suspended.
-                // In addition, as the boolean return value of HandleHIbernateVm is ignored here, it is safe to set the
-                // status to up.
-                getVm().setStatus(VMStatus.Up);
-                getVm().setHibernationVolHandle(null);
-                Backend.getInstance()
-                .getResourceManager()
-                .RunVdsCommand(VDSCommandType.UpdateVmDynamicData,
-                        new UpdateVmDynamicDataVDSCommandParameters(getVm().getDynamicData()));
+                getSnapshotDAO().removeMemoryFromActiveSnapshot(getVmId());
             }
         }
         finally {

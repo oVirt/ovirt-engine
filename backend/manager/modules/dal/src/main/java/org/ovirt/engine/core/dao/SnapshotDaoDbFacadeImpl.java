@@ -273,4 +273,15 @@ public class SnapshotDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Snapshot,
         getCallsHandler().executeModification("RemoveMemoryFromSnapshotBySnapshotId",
                 parameterSource);
     }
+
+    @Override
+    public void updateHibernationMemory(Guid vmId, String memoryVolume) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("memory_volume", getNullableRepresentation(memoryVolume))
+                .addValue("vm_id", vmId)
+                .addValue("snapshot_type", SnapshotType.ACTIVE.name());
+
+        getCallsHandler().executeModification("UpdateMemory",
+                parameterSource);
+    }
 }

@@ -15,6 +15,8 @@ import org.ovirt.engine.core.common.action.RemoveVmHibernationVolumesParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.compat.Guid;
 
 @NonTransactiveCommandAttribute
@@ -34,11 +36,15 @@ public class RemoveVmHibernationVolumesCommand<T extends RemoveVmHibernationVolu
     protected void executeCommand() {
         HibernationVolumesRemover hibernationVolumesRemover =
                 new HibernationVolumesRemover(
-                        getVm().getHibernationVolHandle(),
+                        getActiveSnapshot().getMemoryVolume(),
                         getVm().getId(),
                         this);
 
         setSucceeded(hibernationVolumesRemover.remove());
+    }
+
+    protected Snapshot getActiveSnapshot() {
+        return getSnapshotDAO().get(getVm().getId(), SnapshotType.ACTIVE);
     }
 
     @Override

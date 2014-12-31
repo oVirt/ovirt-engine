@@ -226,4 +226,15 @@ public interface SnapshotDao extends GenericDao<Snapshot, Guid>, StatusAwareDao<
      *          The id of the snapshot that its memory should be cleared
      */
     void removeMemoryFromSnapshot(Guid snapshotId);
+
+    /**
+     * Update the memory for the given VM
+     * The memory of the active snapshot will be updated
+     *
+     * @param vmId
+     *          The ID of the VM which we are going to update the memory for
+     * @param memoryVolume
+     *          The updated memory volumes (metadata and dump)
+     */
+    void updateHibernationMemory(Guid vmId, String memoryVolume);
 }

@@ -183,12 +183,10 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
             Guid guid2 = createTask(taskId2, ret2.getCreationInfo(), VdcActionType.HibernateVm);
             getReturnValue().getVdsmTaskIdList().add(guid2);
 
-            getVm().setHibernationVolHandle(MemoryUtils.createMemoryStateString(
-                    getStorageDomainId(), getVm().getStoragePoolId(),
-                    image1GroupId, hiberVol1, image2GroupId, hiberVol2));
-
-            runVdsCommand(VDSCommandType.UpdateVmDynamicData,
-                            new UpdateVmDynamicDataVDSCommandParameters(getVm().getDynamicData()));
+            getSnapshotDAO().updateHibernationMemory(getVmId(),
+                    MemoryUtils.createMemoryStateString(
+                            getStorageDomainId(), getVm().getStoragePoolId(),
+                            image1GroupId, hiberVol1, image2GroupId, hiberVol2));
 
             getParameters().setVdsmTaskIds(new ArrayList<Guid>(getReturnValue().getVdsmTaskIdList()));
 
@@ -311,7 +309,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
             }
 
             else {
-                String hiberVol = getVm().getHibernationVolHandle();
+                String hiberVol = getActiveSnapshot().getMemoryVolume();
                 if (hiberVol != null) {
                     try {
                         runVdsCommand(VDSCommandType.Hibernate,
@@ -339,7 +337,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         if (getVm() != null) {
             revertTasks();
             if (getVm().getRunOnVds() != null) {
-                getVm().setHibernationVolHandle(null);
+                getSnapshotDAO().removeMemoryFromActiveSnapshot(getVmId());
                 getVm().setStatus(VMStatus.Up);
 
                 runVdsCommand(

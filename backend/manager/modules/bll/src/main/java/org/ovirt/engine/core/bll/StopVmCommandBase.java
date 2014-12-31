@@ -99,7 +99,7 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
         // Mark that the stopped vm was suspended before for audit log messages
         suspendedVm = getVm().getStatus() == VMStatus.Suspended;
 
-        if (suspendedVm || StringUtils.isNotEmpty(getVm().getHibernationVolHandle())) {
+        if (suspendedVm || StringUtils.isNotEmpty(getActiveSnapshot().getMemoryVolume())) {
             if (!stopSuspendedVm()) {
                 return;
             }
@@ -145,7 +145,7 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
     }
 
     private boolean removeVmHibernationVolumes() {
-        if (StringUtils.isEmpty(getVm().getHibernationVolHandle())) {
+        if (StringUtils.isEmpty(getActiveSnapshot().getMemoryVolume())) {
             return false;
         }
 
@@ -200,7 +200,7 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
 
         if (getVm() != null) {
             getVm().setStatus(VMStatus.Down);
-            getVm().setHibernationVolHandle(null);
+            getSnapshotDAO().removeMemoryFromActiveSnapshot(getVmId());
 
             getVmDynamicDao().update(getVm().getDynamicData());
         }
