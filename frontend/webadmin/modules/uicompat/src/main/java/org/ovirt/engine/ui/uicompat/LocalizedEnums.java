@@ -511,6 +511,10 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___GLUSTER_VOLUME_SNAPSHOT_CREATE_FAILED();
 
+    String AuditLogType___CREATE_GLUSTER_BRICK();
+
+    String AuditLogType___CREATE_GLUSTER_BRICK_FAILED();
+
     String VdcActionType___ActivateVds();
 
     String VdcActionType___RecoveryStoragePool();
@@ -856,6 +860,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String VdcActionType___RestoreGlusterVolumeSnapshot();
 
+    String VdcActionType___CreateBrick();
+
     String VdcObjectType___AdElements();
 
     String VdcObjectType___System();
@@ -985,6 +991,20 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String GlusterServiceStatus___NOT_AVAILABLE();
 
     String GlusterServiceStatus___UNKNOWN();
+
+    String RaidType___None();
+
+    String RaidType___Raid0();
+
+    String RaidType___Raid1();
+
+    String RaidType___Raid2();
+
+    String RaidType___Raid5();
+
+    String RaidType___Raid6();
+
+    String RaidType___Raid10();
 
     String VmWatchdogType___i6300esb();
 

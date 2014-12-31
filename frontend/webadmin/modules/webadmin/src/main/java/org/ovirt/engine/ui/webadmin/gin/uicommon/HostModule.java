@@ -48,6 +48,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopup
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.CreateBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ConfigureLocalStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostBondPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
@@ -183,11 +184,23 @@ public class HostModule extends AbstractGinModule {
     @Provides
     @Singleton
     public SearchableDetailModelProvider<StorageDevice, HostListModel, HostGlusterStorageDevicesListModel> getHostGlusterStorageDevicesListProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<CreateBrickPopupPresenterWidget> createBrickPopupProvider) {
         return new SearchableDetailTabModelProvider<StorageDevice, HostListModel, HostGlusterStorageDevicesListModel>(
                 eventBus, defaultConfirmPopupProvider,
                 HostListModel.class,
-                HostGlusterStorageDevicesListModel.class);
+                HostGlusterStorageDevicesListModel.class){
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostGlusterStorageDevicesListModel source,
+                    UICommand lastExecutedCommand,
+                    Model windowModel) {
+                if (lastExecutedCommand == getModel().getCreateBrickCommand()) {
+                    return createBrickPopupProvider.get();
+                } else {
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                }
+            }
+        };
     }
 
     @Provides

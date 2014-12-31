@@ -41,6 +41,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.Reco
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.AddBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.BrickAdvancedDetailsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.CreateBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.DetachGlusterHostsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterClusterSnapshotConfigureOptionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget;
@@ -284,6 +285,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.RecoveryS
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.event.EventPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.AddBrickPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.BrickAdvancedDetailsPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.CreateBrickPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.DetachGlusterHostsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.GeoRepActionConfirmPopUpView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.GlusterClusterSnapshotConfigureOptionsPopupView;
@@ -1479,6 +1481,10 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(AddBrickPopupPresenterWidget.class,
                 AddBrickPopupPresenterWidget.ViewDef.class,
                 AddBrickPopupView.class);
+
+        bindPresenterWidget(CreateBrickPopupPresenterWidget.class,
+                CreateBrickPopupPresenterWidget.ViewDef.class,
+                CreateBrickPopupView.class);
 
         bindPresenterWidget(RemoveBrickPopupPresenterWidget.class,
                 RemoveBrickPopupPresenterWidget.ViewDef.class,
