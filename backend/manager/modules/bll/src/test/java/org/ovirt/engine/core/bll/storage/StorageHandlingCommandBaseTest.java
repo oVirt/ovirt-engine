@@ -61,25 +61,29 @@ public class StorageHandlingCommandBaseTest {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
-            // Indicates a supported storage format of V2 & V3 in version 3.4
+            // Indicates a supported storage format of V2 & V3
             mockConfig(ConfigValues.SupportedStorageFormats, Version.v3_0.toString(), "0,1"),
             mockConfig(ConfigValues.SupportedStorageFormats, Version.v3_1.toString(), "3"),
             mockConfig(ConfigValues.SupportedStorageFormats, Version.v3_2.toString(), "3"),
             mockConfig(ConfigValues.SupportedStorageFormats, Version.v3_3.toString(), "3"),
             mockConfig(ConfigValues.SupportedStorageFormats, Version.v3_4.toString(), "3"),
             mockConfig(ConfigValues.SupportedStorageFormats, Version.v3_5.toString(), "3"),
+            mockConfig(ConfigValues.SupportedStorageFormats, Version.v3_6.toString(), "3"),
             mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_0.toString(), false),
             mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_4.toString(), true),
             mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_5.toString(), true),
+            mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_6.toString(), true),
             mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_0.toString(), false),
             mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_4.toString(), true),
             mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_5.toString(), true),
+            mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_6.toString(), true),
             mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_0.toString(), false),
             mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_1.toString(), false),
             mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_2.toString(), false),
             mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_3.toString(), false),
             mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_4.toString(), true),
-            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_5.toString(), true)
+            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_5.toString(), true),
+            mockConfig(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_6.toString(), true)
     );
 
     @Before

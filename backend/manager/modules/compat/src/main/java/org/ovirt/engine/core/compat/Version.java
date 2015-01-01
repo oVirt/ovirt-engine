@@ -22,7 +22,8 @@ public class Version implements Comparable<Version>, Serializable {
     public static final Version v3_3 = new Version(3, 3);
     public static final Version v3_4 = new Version(3, 4);
     public static final Version v3_5 = new Version(3, 5);
-    public static final List<Version> ALL = Arrays.asList(v3_0, v3_1, v3_2, v3_3, v3_4, v3_5);
+    public static final Version v3_6 = new Version(3, 6);
+    public static final List<Version> ALL = Arrays.asList(v3_0, v3_1, v3_2, v3_3, v3_4, v3_5, v3_6);
 
 
     public Version(String value) {
