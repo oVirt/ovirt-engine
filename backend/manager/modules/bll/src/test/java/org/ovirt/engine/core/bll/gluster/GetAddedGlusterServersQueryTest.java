@@ -11,12 +11,14 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.bll.context.EngineContext;
@@ -64,11 +66,12 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     private static final Guid server_id3 = new Guid("7a797a38-cb32-4399-b6fb-21c79c03a1d6");
     private static final String serverKeyFingerprint = "fingerprint";
 
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.GlusterHostUUIDSupport, Version.v3_2.toString(), false),
-            mockConfig(ConfigValues.GlusterHostUUIDSupport, Version.v3_3.toString(), true),
-            mockConfig(ConfigValues.UserSessionTimeOutInterval, 60));
+    @Override
+    public Set<MockConfigRule.MockConfigDescriptor<Boolean>> getExtraConfigDescriptors() {
+        return new HashSet<>(Arrays.asList(
+                mockConfig(ConfigValues.GlusterHostUUIDSupport, Version.v3_2.toString(), false),
+                mockConfig(ConfigValues.GlusterHostUUIDSupport, Version.v3_3.toString(), true)));
+    }
 
     private VDSGroup getVdsGroup(Version ver) {
         VDSGroup vdsGroup = new VDSGroup();

@@ -6,14 +6,12 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.LUNs;
@@ -32,14 +30,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.LunDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQueryParameters, GetDeviceListQuery<GetDeviceListQueryParameters>> {
-
-    @ClassRule
-    public static final MockConfigRule mcr = new MockConfigRule(
-            mockConfig(ConfigValues.UserSessionTimeOutInterval, 60));
-
     private DbFacade dbFacadeMock;
     private LunDAO lunDAOMock;
     private VdsDAO vdsDAOMock;

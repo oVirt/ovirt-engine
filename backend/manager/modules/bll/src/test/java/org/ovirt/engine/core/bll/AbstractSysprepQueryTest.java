@@ -1,11 +1,12 @@
 package org.ovirt.engine.core.bll;
 
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
+import static org.ovirt.engine.core.utils.MockConfigRule.MockConfigDescriptor;
 
-import org.junit.ClassRule;
+import java.util.Collections;
+import java.util.Set;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 /**
  * An abstract class for setting up tests for queries using Sysprep.
@@ -13,7 +14,8 @@ import org.ovirt.engine.core.utils.MockConfigRule;
  */
 public abstract class AbstractSysprepQueryTest<P extends VdcQueryParametersBase, Q extends QueriesCommandBase<? extends P>> extends AbstractUserQueryTest<P, Q> {
 
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.AdUserName, ""),
-            mockConfig(ConfigValues.UserSessionTimeOutInterval, 60));
+    @Override
+    public Set<MockConfigDescriptor<String>> getExtraConfigDescriptors() {
+        return Collections.singleton(mockConfig(ConfigValues.AdUserName, ""));
+    }
 }

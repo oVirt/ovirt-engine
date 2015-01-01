@@ -86,6 +86,10 @@ public class MockConfigRule extends TestWatcher {
         mockConfigValue(value, version.getValue(), returnValue);
     }
 
+    public <T> void mockConfigValue(MockConfigDescriptor<T> mcd) {
+        mockConfigValue(mcd.getValue(), mcd.getVersion(), mcd.getReturnValue());
+    }
+
     private static <T> void mockConfigValue(ConfigValues value, String version, T returnValue) {
         when(Config.getConfigUtils().getValue(value, version)).thenReturn(returnValue);
     }

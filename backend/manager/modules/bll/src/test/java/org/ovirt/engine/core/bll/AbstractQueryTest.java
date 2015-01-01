@@ -5,11 +5,14 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.MockConfigDescriptor;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -42,6 +45,13 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
     public void setUp() throws Exception {
         setUpMockQueryParameters();
         setUpSpyQuery();
+        for (MockConfigDescriptor<?> mcd : getExtraConfigDescriptors()) {
+            mcr.mockConfigValue(mcd);
+        }
+    }
+
+    public <T> Set<MockConfigDescriptor<T>> getExtraConfigDescriptors() {
+        return Collections.emptySet();
     }
 
     /** Sets up a mock for {@link #params} */
