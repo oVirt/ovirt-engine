@@ -1546,7 +1546,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}.User is not subscribed to this event with the given Notification method.")
     String EN_NOT_SUBSCRIBED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Storage Domain type not specified.")
+    @DefaultStringValue("Cannot ${action} ${type}. Storage Domain type is illegal.")
     String ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL();
 
     @DefaultStringValue("Cannot ${action} ${type}. ${domainType} Storage Domain can only be created on the following storage types: ${storageTypes}.")
