@@ -961,7 +961,7 @@ select fn_db_update_config_value('ClusterEmulatedMachines','rhel6.4.0,pc-1.0,pse
 select fn_db_update_config_value('SpiceDriverNameInGuest','{"windows": "RHEV-Spice", "linux" : "xorg-x11-drv-qxl" }','general');
 select fn_db_update_config_value('SupportedClusterLevels','3.0,3.1,3.2,3.3,3.4,3.5','general');
 select fn_db_update_config_value('SupportedStorageFormats','0,2,3','3.1,3.2,3.3,3.4,3.5');
-select fn_db_update_config_value('SupportedVDSMVersions','4.9,4.10,4.11,4.12,4.13,4.14,4.15','general');
+select fn_db_update_config_value('SupportedVDSMVersions','4.9,4.10,4.11,4.12,4.13,4.14,4.15,4.16','general');
 select fn_db_update_config_value('VdcVersion','3.5.0.0','general');
 select fn_db_update_config_value('ProductRPMVersion','3.5.0.0','general');
 select fn_db_update_config_value('VdsFenceOptionMapping','alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port;bladecenter:secure=secure,port=ipport,slot=port;drac5:secure=secure,port=ipport;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port','3.0');
