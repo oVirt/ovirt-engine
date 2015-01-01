@@ -45,7 +45,7 @@ public interface StorageDomainsResource {
     public Response remove(@PathParam("id") String id, StorageDomain storageDomain);
 
     /**
-     * Sub-resource locator method, returns individual DataCenterResource on which the
+     * Sub-resource locator method, returns individual StorageDomainResource on which the
      * remainder of the URI is dispatched.
      *
      * @param id  the StorageDomain ID
