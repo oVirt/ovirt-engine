@@ -516,11 +516,11 @@ public enum HelpTag {
 
     new_cpu_profile("new_cpu_profile", HelpTagType.WEBADMIN, "Clusters Tab > Cpu Profiles sub-tab -> New Cpu Profile dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    edit_cpu_profile("edit_cpu_profile", HelpTagType.WEBADMIN, "Cluster Tab > Cpu Profiles sub-tab -> Edit Cpu Profile dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+    edit_cpu_profile("edit_cpu_profile", HelpTagType.WEBADMIN, "Clusters Tab > Cpu Profiles sub-tab -> Edit Cpu Profile dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    remove_cpu_profile("remove_cpu_profile", HelpTagType.WEBADMIN, "Clsuter Tab > Cpu Profiles sub-tab -> Remove Cpu Profile dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+    remove_cpu_profile("remove_cpu_profile", HelpTagType.WEBADMIN, "Clusters Tab > Cpu Profiles sub-tab -> Remove Cpu Profile dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    numa_support("numa_support", HelpTagType.WEBADMIN, "Hosts maint tab -> NUMA Support"); //$NON-NLS-1$ //$NON-NLS-2$
+    numa_support("numa_support", HelpTagType.WEBADMIN, "Host Tab > NUMA Support"); //$NON-NLS-1$ //$NON-NLS-2$
 
     public final String name;
 
