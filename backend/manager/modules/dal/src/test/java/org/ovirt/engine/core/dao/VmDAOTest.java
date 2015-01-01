@@ -133,17 +133,6 @@ public class VmDAOTest extends BaseDAOTestCase {
     }
 
     /**
-     * Ensures the correct VM is returned.
-     */
-    @Test
-    public void testGetForHibernationImage() {
-        VM result = dao.getForHibernationImage(FixturesTool.IMAGE_ID);
-
-        assertNotNull(result);
-        assertEquals(FixturesTool.IMAGE_ID.toString(), result.getHibernationVolHandle());
-    }
-
-    /**
      * Gets the VM associated with the specified image.
      */
     @Test

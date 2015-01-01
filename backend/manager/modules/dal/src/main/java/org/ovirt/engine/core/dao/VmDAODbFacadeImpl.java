@@ -43,14 +43,6 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
     }
 
     @Override
-    public VM getForHibernationImage(Guid id) {
-        return getCallsHandler().executeRead("GetVmByHibernationImageId",
-                VMRowMapper.instance,
-                getCustomMapSqlParameterSource()
-                        .addValue("image_id", id));
-    }
-
-    @Override
     public Map<Boolean, List<VM>> getForDisk(Guid id, boolean includeVmsSnapshotAttachedTo) {
         Map<Boolean, List<VM>> result = new HashMap<Boolean, List<VM>>();
         List<Pair<VM, VmDevice>> vms = getVmsWithPlugInfo(id);

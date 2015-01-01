@@ -50,15 +50,6 @@ public interface VmDAO extends DAO {
     VM getByNameForDataCenter(Guid dataCenterId, String name, Guid userID, boolean isFiltered);
 
     /**
-     * Retrieves the VM for the specified hibernate image.
-     *
-     * @param hibernationImage
-     *            the hibernation image
-     * @return the VM
-     */
-    VM getForHibernationImage(Guid hibernationImage);
-
-    /**
      * Retrieves the VMs with the specified image id.
      *
      *

@@ -1150,16 +1150,6 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmByHibernationImageId(v_image_id VARCHAR(4000)) RETURNS SETOF vms STABLE
-   AS $procedure$
-BEGIN
-      RETURN QUERY SELECT DISTINCT vms.*
-      FROM vms
-      WHERE hibernation_vol_handle like '%' || coalesce(v_image_id,'') || '%';
-END; $procedure$
-LANGUAGE plpgsql;
-
-
 Create or replace FUNCTION GetAllVMsWithDisksOnOtherStorageDomain(v_storage_domain_id UUID) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
