@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -27,14 +28,14 @@ public abstract class ActivateDeactivateSingleAsyncOperationFactory implements I
 
     @Override
     public void initialize(ArrayList<?> parameters) {
-        if (!(parameters.get(0) instanceof ArrayList)) {
+        if (!(parameters.get(0) instanceof List)) {
             throw new IllegalArgumentException();
         }
-        ArrayList l = (ArrayList) parameters.get(0);
+        ArrayList l = new ArrayList((List)parameters.get(0));
         if (!l.isEmpty() && !(l.get(0) instanceof VDS)) {
             throw new IllegalArgumentException();
         }
-        _vdss = (ArrayList<VDS>) parameters.get(0);
+        _vdss = (ArrayList<VDS>) l;
         if (parameters.get(1) != null && !(parameters.get(1) instanceof StorageDomain)) {
             throw new IllegalArgumentException();
         }
