@@ -225,12 +225,7 @@ select fn_db_add_config_value_for_versions_up_to('ClusterRequiredRngSourcesDefau
 
 select fn_db_add_config_value_for_versions_up_to('SpiceCopyPasteToggleSupported', 'false', '3.4');
 -- Graphics Framebuffer Device support
-select fn_db_add_config_value('GraphicsDeviceEnabled','false','3.0');
-select fn_db_add_config_value('GraphicsDeviceEnabled','false','3.1');
-select fn_db_add_config_value('GraphicsDeviceEnabled','false','3.2');
-select fn_db_add_config_value('GraphicsDeviceEnabled','false','3.3');
-select fn_db_add_config_value('GraphicsDeviceEnabled','false','3.4');
-select fn_db_add_config_value('GraphicsDeviceEnabled','false','3.5');
+select fn_db_add_config_value_for_versions_up_to('GraphicsDeviceEnabled','false','3.5');
 
 select fn_db_add_config_value_for_versions_up_to('SpiceFileTransferToggleSupported', 'false', '3.5');
 select fn_db_add_config_value_for_versions_up_to('StoragePoolMemoryBackend', 'false', '3.4');
@@ -240,19 +235,9 @@ select fn_db_add_config_value_for_versions_up_to('VmSlaPolicySupported', 'false'
 
 select fn_db_add_config_value_for_versions_up_to('ReportedDisksLogicalNames', 'false', '3.4');
 
-select fn_db_add_config_value('AutoConvergenceSupported','false','3.0');
-select fn_db_add_config_value('AutoConvergenceSupported','false','3.1');
-select fn_db_add_config_value('AutoConvergenceSupported','false','3.2');
-select fn_db_add_config_value('AutoConvergenceSupported','false','3.3');
-select fn_db_add_config_value('AutoConvergenceSupported','false','3.4');
-select fn_db_add_config_value('AutoConvergenceSupported','false','3.5');
+select fn_db_add_config_value_for_versions_up_to('AutoConvergenceSupported','false','3.5');
 
-select fn_db_add_config_value('MigrationCompressionSupported','false','3.0');
-select fn_db_add_config_value('MigrationCompressionSupported','false','3.1');
-select fn_db_add_config_value('MigrationCompressionSupported','false','3.2');
-select fn_db_add_config_value('MigrationCompressionSupported','false','3.3');
-select fn_db_add_config_value('MigrationCompressionSupported','false','3.4');
-select fn_db_add_config_value('MigrationCompressionSupported','false','3.5');
+select fn_db_add_config_value_for_versions_up_to('MigrationCompressionSupported','false','3.5');
 
 -- by default use no proxy
 select fn_db_add_config_value('SpiceProxyDefault','','general');
