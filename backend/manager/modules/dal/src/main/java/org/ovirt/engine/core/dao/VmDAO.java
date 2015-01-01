@@ -310,4 +310,12 @@ public interface VmDAO extends DAO {
      * @return the list of ids of these vms
      */
     List<Guid> getVmIdsForVersionUpdate(Guid baseTemplateId);
+
+    /**
+     * Retrieves all vms given storage pool (Data Center) id
+     *
+     * @param storagePoolId id for storage pool
+     * @return vms that are part of the given storage pool
+     */
+    List<VM> getAllForStoragePool(Guid storagePoolId);
 }

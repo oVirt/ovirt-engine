@@ -4,10 +4,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
 import org.ovirt.engine.core.common.businessentities.SessionState;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -74,6 +76,14 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
     }
 
     @Override
+    public void updateGuestAgentStatus(Guid vmId, GuestAgentStatus guestAgentStatus) {
+        getCallsHandler().executeModification("UpdateGuestAgentStatus",
+                getCustomMapSqlParameterSource()
+                        .addValue("vm_guid", vmId)
+                        .addValue("guest_agent_status", guestAgentStatus.getValue()));
+    }
+
+    @Override
     protected MapSqlParameterSource createIdParameterMapper(Guid id) {
         return getCustomMapSqlParameterSource().addValue("vm_guid", id);
     }
@@ -119,6 +129,7 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 .addValue("last_watchdog_action", vm.getLastWatchdogAction())
                 .addValue("is_run_once", vm.isRunOnce())
                 .addValue("cpu_name", vm.getCpuName())
+                .addValue("guest_agent_status", vm.getGuestAgentStatus().getValue())
                 .addValue("current_cd", vm.getCurrentCd())
                 .addValue("reason", vm.getStopReason())
                 .addValue("exit_reason", vm.getExitReason().getValue())
@@ -177,6 +188,7 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
             entity.setLastWatchdogAction(rs.getString("last_watchdog_action"));
             entity.setRunOnce(rs.getBoolean("is_run_once"));
             entity.setCpuName(rs.getString("cpu_name"));
+            entity.setGuestAgentStatus(GuestAgentStatus.forValue(rs.getInt("guest_agent_status")));
             entity.setCurrentCd(rs.getString("current_cd"));
             entity.setStopReason(rs.getString("reason"));
             VmExitReason exitReason = VmExitReason.forValue(rs.getInt("exit_reason"));

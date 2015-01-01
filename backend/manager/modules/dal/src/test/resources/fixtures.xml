@@ -3686,6 +3686,7 @@
         <column>spice_ip</column>
         <column>vnc_port</column>
         <column>vnc_ip</column>
+        <column>guest_agent_status</column>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
             <value>5</value>
@@ -3726,6 +3727,7 @@
             <value>0</value>
             <null />
             <null />
+            <value>0</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4357</value>
@@ -3767,6 +3769,7 @@
             <value>0</value>
             <null />
             <null />
+            <value>0</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
@@ -3808,6 +3811,7 @@
             <value>0</value>
             <null />
             <null />
+            <value>0</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
@@ -3849,6 +3853,7 @@
             <value>0</value>
             <null />
             <null />
+            <value>0</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
@@ -3890,6 +3895,7 @@
             <value>0</value>
             <null />
             <null />
+            <value>0</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
@@ -3931,6 +3937,7 @@
             <value>0</value>
             <null />
             <null />
+            <value>0</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5002</value>
@@ -3972,6 +3979,7 @@
             <value>0</value>
             <null />
             <null />
+            <value>0</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5003</value>
@@ -4013,6 +4021,7 @@
             <value>0</value>
             <null />
             <null />
+            <value>0</value>
         </row>
     </table>
 

@@ -279,6 +279,14 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
                     .addValue("base_template_id", baseTemplateId));
     }
 
+    @Override
+    public List<VM> getAllForStoragePool(Guid storagePoolId) {
+        return getCallsHandler().executeReadList("GetAllForStoragePool",
+                VMRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("storage_pool_id", storagePoolId));
+    }
+
     static final class VMRowMapper implements RowMapper<VM> {
         public static final VMRowMapper instance = new VMRowMapper();
 

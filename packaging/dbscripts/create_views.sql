@@ -736,7 +736,8 @@ SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as mem_size_mb, v
                       vm_dynamic.spice_tls_port as spice_tls_port,
                       vm_dynamic.spice_ip as spice_ip,
                       vm_dynamic.vnc_port as vnc_port,
-                      vm_dynamic.vnc_ip as vnc_ip
+                      vm_dynamic.vnc_ip as vnc_ip,
+                      vm_dynamic.guest_agent_status as guest_agent_status
 FROM         vm_static INNER JOIN
 vm_dynamic ON vm_static.vm_guid = vm_dynamic.vm_guid INNER JOIN
 vm_static AS vm_templates ON vm_static.vmt_guid = vm_templates.vm_guid INNER JOIN
@@ -791,7 +792,8 @@ SELECT      vms.vm_name, vms.mem_size_mb, vms.nice_level, vms.cpu_shares, vms.vm
             vms.spice_tls_port,
             vms.spice_ip,
             vms.vnc_port,
-            vms.vnc_ip
+            vms.vnc_ip,
+            vms.guest_agent_status
 FROM        vms LEFT OUTER JOIN
             tags_vm_map_view ON vms.vm_guid = tags_vm_map_view.vm_id LEFT OUTER JOIN
             vm_device ON vm_device.vm_id = vms.vm_guid LEFT OUTER JOIN

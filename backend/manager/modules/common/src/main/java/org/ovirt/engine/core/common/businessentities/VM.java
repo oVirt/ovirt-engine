@@ -725,6 +725,14 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         vmDynamic.setGuestAgentNicsHash(guestAgentNicsHash);
     }
 
+    public GuestAgentStatus getGuestAgentStatus() {
+        return vmDynamic.getGuestAgentStatus();
+    }
+
+    public void setGuestAgentStatus(GuestAgentStatus status) {
+        vmDynamic.setGuestAgentStatus(status);
+    }
+
     public Double getCpuUser() {
         return this.vmStatistics.getcpu_user();
     }

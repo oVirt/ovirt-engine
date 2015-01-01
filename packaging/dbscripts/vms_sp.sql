@@ -274,7 +274,8 @@ v_spice_port INTEGER,
 v_spice_tls_port INTEGER,
 v_spice_ip varchar(32),
 v_vnc_port INTEGER,
-v_vnc_ip varchar(32)
+v_vnc_ip varchar(32),
+v_guest_agent_status INTEGER
 )
 RETURNS VOID
    AS $procedure$
@@ -284,7 +285,8 @@ spice_port,
 spice_tls_port,
 spice_ip,
 vnc_port,
-vnc_ip
+vnc_ip,
+guest_agent_status
 )
 	VALUES(v_app_list, v_guest_cur_user_name, v_console_cur_user_name, v_guest_last_login_time, v_guest_last_logout_time, v_console_user_id, v_guest_os, v_migrating_to_vds, v_run_on_vds, v_status, v_vm_guid, v_vm_host, v_vm_ip, v_last_start_time, v_last_stop_time, v_vm_pid, v_acpi_enable, v_session, v_kvm_enable, v_boot_sequence, v_utc_diff, v_last_vds_run_on, v_client_ip, v_guest_requested_memory, v_exit_status, v_pause_status, v_exit_message, v_guest_agent_nics_hash, v_last_watchdog_event, v_last_watchdog_action, v_is_run_once, v_vm_fqdn, v_cpu_name, v_emulated_machine, v_current_cd, v_exit_reason,
          v_guest_cpu_count,
@@ -292,7 +294,8 @@ v_spice_port,
 v_spice_tls_port,
 v_spice_ip,
 v_vnc_port,
-v_vnc_ip
+v_vnc_ip,
+v_guest_agent_status
          );
 END; $procedure$
 LANGUAGE plpgsql;
@@ -342,7 +345,8 @@ Create or replace FUNCTION UpdateVmDynamic(v_app_list text ,
   v_spice_tls_port INTEGER,
   v_spice_ip varchar(32),
   v_vnc_port INTEGER,
-  v_vnc_ip varchar(32)
+  v_vnc_ip varchar(32),
+  v_guest_agent_status INTEGER
   )
 RETURNS VOID
 
@@ -374,7 +378,8 @@ BEGIN
       spice_tls_port = v_spice_tls_port,
       spice_ip = v_spice_ip,
       vnc_port = v_vnc_port,
-      vnc_ip = v_vnc_ip
+      vnc_ip = v_vnc_ip,
+      guest_agent_status = v_guest_agent_status
 WHERE vm_guid = v_vm_guid;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -1073,7 +1078,29 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetAllForStoragePool(v_storage_pool_id UUID) RETURNS SETOF vms STABLE
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT *
+             FROM vms
+             WHERE storage_pool_id = v_storage_pool_id;
+END; $procedure$
+LANGUAGE plpgsql;
 
+
+Create or replace FUNCTION UpdateGuestAgentStatus(
+	v_vm_guid UUID,
+	v_guest_agent_status INTEGER)
+RETURNS VOID
+
+   AS $procedure$
+BEGIN
+      UPDATE vm_dynamic
+      SET
+      guest_agent_status = v_guest_agent_status
+      WHERE vm_guid = v_vm_guid;
+END; $procedure$
+LANGUAGE plpgsql;
 
 
 

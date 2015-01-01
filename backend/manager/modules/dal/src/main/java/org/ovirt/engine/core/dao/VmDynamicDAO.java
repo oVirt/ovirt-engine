@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.compat.Guid;
@@ -66,4 +67,13 @@ public interface VmDynamicDAO extends GenericDao<VmDynamic, Guid>, StatusAwareDa
     boolean updateConsoleUserWithOptimisticLocking(VmDynamic vm);
 
     void clearMigratingToVds(Guid id);
+
+
+    /**
+     * Update vm dynamics guest_agent_status field
+     *
+     * @param the vm id
+     * @param new status
+     */
+    void updateGuestAgentStatus(Guid vmId, GuestAgentStatus guestAgentStatus);
 }

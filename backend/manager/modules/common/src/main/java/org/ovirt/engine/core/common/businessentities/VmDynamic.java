@@ -63,6 +63,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     @UnchangeableByVdsm
     private String cpuName;
     @UnchangeableByVdsm
+    private GuestAgentStatus guestAgentStatus;
+    @UnchangeableByVdsm
     private String emulatedMachine;
     private String currentCd;
     @UnchangeableByVdsm
@@ -113,6 +115,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         result = prime * result + (lastWatchdogAction == null ? 0 : lastWatchdogAction.hashCode());
         result = prime * result + (runOnce ? 1231 : 1237);
         result = prime * result + (cpuName == null ? 0 : cpuName.hashCode());
+        result = prime * result + (guestAgentStatus == null ? 0 : guestAgentStatus.hashCode());
         result = prime * result + (currentCd == null ? 0 : currentCd.hashCode());
         result = prime * result + (stopReason == null ? 0 : stopReason.hashCode());
         result = prime * result + exitReason.hashCode();
@@ -168,6 +171,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && ObjectUtils.objectsEqual(lastWatchdogAction, other.lastWatchdogAction)
                 && runOnce == other.runOnce
                 && ObjectUtils.objectsEqual(cpuName, other.cpuName)
+                && ObjectUtils.objectsEqual(guestAgentStatus, other.guestAgentStatus)
                 && ObjectUtils.objectsEqual(currentCd, other.currentCd)
                 && ObjectUtils.objectsEqual(stopReason, other.stopReason)
                 && exitReason == other.exitReason
@@ -235,6 +239,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         bootSequence = BootSequence.C;
         exitReason = VmExitReason.Unknown;
         graphicsInfos = new HashMap<GraphicsType, GraphicsInfo>();
+        guestAgentStatus = GuestAgentStatus.DoesntExist;
     }
 
     public String getAppList() {
@@ -502,6 +507,13 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setCpuName(String cpuName) {
         this.cpuName = cpuName;
+    }
+    public GuestAgentStatus getGuestAgentStatus() {
+        return guestAgentStatus;
+    }
+
+    public void setGuestAgentStatus(GuestAgentStatus guestAgentStatus) {
+        this.guestAgentStatus = guestAgentStatus;
     }
 
     public String getCurrentCd() {

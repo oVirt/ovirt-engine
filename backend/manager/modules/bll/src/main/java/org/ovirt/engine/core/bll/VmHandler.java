@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -37,6 +39,7 @@ import org.ovirt.engine.core.common.businessentities.EditableOnVm;
 import org.ovirt.engine.core.common.businessentities.EditableOnVmStatusField;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -944,5 +947,69 @@ public class VmHandler {
             }
         }
         return result;
+    }
+
+    private static final Pattern TOOLS_PATTERN = Pattern.compile(".*rhev-tools\\s+([\\d\\.]+).*");
+    // FIXME: currently oVirt-ToolsSetup is not present in app_list when it does
+    // ISO_VERSION_PATTERN should address this pattern as well as the TOOLS_PATTERN
+    // if the name will be different.
+    private static final Pattern ISO_VERSION_PATTERN = Pattern.compile(".*rhev-toolssetup_(\\d\\.\\d\\_\\d).*");
+
+    /**
+     * Looking for "RHEV_Tools x.x.x" in VMs app_list if found we look if there is a newer version in the isoList - if
+     * so we update the GuestAgentStatus of VmDynamic to UpdateNeeded
+     *
+     * @param poolId
+     *            storage pool id
+     * @param isoList
+     *            list of iso file names
+     */
+    public static void refreshVmsToolsVersion(Guid poolId, Set<String> isoList) {
+        String latestVersion = getLatestGuestToolsVersion(isoList);
+        if (latestVersion == null) {
+            return;
+        }
+
+        List<VM> vms = DbFacade.getInstance().getVmDao().getAllForStoragePool(poolId);
+        for (VM vm : vms) {
+            if (vm.getAppList() != null && vm.getAppList().toLowerCase().contains("rhev-tools")) {
+                Matcher m = TOOLS_PATTERN.matcher(vm.getAppList().toLowerCase());
+                if (m.matches() && m.groupCount() > 0) {
+                    String toolsVersion = m.group(1);
+                    if (toolsVersion.compareTo(latestVersion) < 0
+                            && vm.getGuestAgentStatus() != GuestAgentStatus.UpdateNeeded) {
+                        vm.setGuestAgentStatus(GuestAgentStatus.UpdateNeeded);
+                        DbFacade.getInstance()
+                                .getVmDynamicDao()
+                                .updateGuestAgentStatus(vm.getId(), vm.getGuestAgentStatus());
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * iso file name that we are looking for: RHEV_toolsSetup_x.x_x.iso returning latest version only: xxx (ie 3.1.2)
+     *
+     * @param isoList
+     *            list of iso file names
+     * @return latest iso version or null if no iso tools was found
+     */
+    private static String getLatestGuestToolsVersion(Set<String> isoList) {
+        String latestVersion = null;
+        for (String iso: isoList) {
+            if (iso.toLowerCase().contains("rhev-toolssetup")) {
+                Matcher m = ISO_VERSION_PATTERN.matcher(iso.toLowerCase());
+                if (m.matches() && m.groupCount() > 0) {
+                    String isoVersion = m.group(1).replace('_', '.');
+                    if (latestVersion == null) {
+                        latestVersion = isoVersion;
+                    } else if (latestVersion.compareTo(isoVersion) < 0) {
+                        latestVersion = isoVersion;
+                    }
+                }
+            }
+        }
+        return latestVersion;
     }
 }

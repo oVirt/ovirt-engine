@@ -681,6 +681,9 @@ public class IsoDomainListSyncronizer {
                                     repoStorageDom,
                                     fileStats,
                                     ImageFileType.ISO);
+                    if (refreshIsoSucceeded) {
+                        VmHandler.refreshVmsToolsVersion(repoStoragePoolId, fileStats.keySet());
+                    }
                 }
             } catch (Exception e) {
                 refreshIsoSucceeded = false;

@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.compat.Guid;
@@ -163,5 +164,15 @@ public class VmDynamicDAOTest extends BaseDAOTestCase {
         vmDynamic = dao.get(vmId);
         assertNull("migrating_to_vds field should be null after we clear it",
                 vmDynamic.getMigratingToVds());
+    }
+
+    @Test
+    public void testGuestAgentStatus() throws Exception {
+        Guid vmId = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4356");
+        VmDynamic vmDynamic = dao.get(vmId);
+        vmDynamic.setGuestAgentStatus(GuestAgentStatus.UpdateNeeded);
+        dao.update(vmDynamic);
+        vmDynamic = dao.get(vmId);
+        assertTrue(vmDynamic.getGuestAgentStatus().getValue() == GuestAgentStatus.UpdateNeeded.getValue());
     }
 }

@@ -162,6 +162,7 @@
 		<include name="common/businessentities/VmDeviceId.java" />
 		<include name="common/businessentities/VmExitReason.java" />
 		<include name="common/businessentities/VmExitStatus.java" />
+		<include name="common/businessentities/GuestAgentStatus.java" />
 		<include name="common/businessentities/VmJob.java" />
 		<include name="common/businessentities/VmJobState.java" />
 		<include name="common/businessentities/VmJobType.java" />
