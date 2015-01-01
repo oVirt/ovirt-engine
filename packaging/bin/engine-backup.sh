@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # ovirt-engine-backup - oVirt engine backup and restore utility
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -112,9 +112,11 @@ BACKUP_PATHS="/etc/ovirt-engine
 /etc/firewalld/services/ovirt-https.xml
 /etc/firewalld/services/ovirt-http.xml
 /etc/firewalld/services/ovirt-postgres.xml"
-# Add /var/lib/ovirt-engine except backups
+# Add /var/lib/ovirt-engine except a few
+VAR_LIB_EXCLUSIONS="/var/lib/ovirt-engine/backups
+/var/lib/ovirt-engine/jboss_runtime"
 for p in /var/lib/ovirt-engine/*; do
-	[ "${p}" != /var/lib/ovirt-engine/backups ] && BACKUP_PATHS="${BACKUP_PATHS}
+	echo "${VAR_LIB_EXCLUSIONS}" | grep -q "^${p}\$" || BACKUP_PATHS="${BACKUP_PATHS}
 ${p}"
 done
 
