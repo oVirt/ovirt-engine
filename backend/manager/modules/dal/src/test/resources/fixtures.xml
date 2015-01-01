@@ -3675,7 +3675,6 @@
         <column>last_vds_run_on</column>
         <column>client_ip</column>
         <column>guest_requested_memory</column>
-        <column>hibernation_vol_handle</column>
         <column>boot_sequence</column>
         <column>exit_status</column>
         <column>pause_status</column>
@@ -3720,7 +3719,6 @@
             <null />
             <value></value>
             <null />
-            <value>42058975-3d5e-484a-80c1-01c31207f578</value>
             <value>0</value>
             <value>0</value>
             <value>0</value>
@@ -3766,7 +3764,6 @@
             <null />
             <value></value>
             <null />
-            <value>42058975-3d5e-484a-80c1-01c31207f578</value>
             <value>0</value>
             <value>0</value>
             <value>0</value>
@@ -3807,7 +3804,6 @@
             <null />
             <value></value>
             <null />
-            <value>42058975-3d5e-484a-80c1-01c31207f579</value>
             <value>0</value>
             <value>0</value>
             <value>0</value>
@@ -3853,7 +3849,6 @@
             <null />
             <value></value>
             <null />
-            <value>42058975-3d5e-484a-80c1-01c31207f57a</value>
             <value>0</value>
             <value>0</value>
             <value>0</value>
@@ -3899,7 +3894,6 @@
             <null />
             <value></value>
             <null />
-            <value>42058975-3d5e-484a-80c1-01c31207f57a</value>
             <value>0</value>
             <value>1</value>
             <value>0</value>
@@ -3945,7 +3939,6 @@
             <null />
             <value></value>
             <null />
-            <value>42058975-3d5e-484a-80c1-01c31207f57a</value>
             <value>0</value>
             <value>0</value>
             <value>0</value>
@@ -3991,7 +3984,6 @@
             <null />
             <value></value>
             <null />
-            <null />
             <value>0</value>
             <value>0</value>
             <value>0</value>
@@ -4036,7 +4028,6 @@
             <value>0</value>
             <null />
             <value></value>
-            <null />
             <null />
             <value>0</value>
             <value>0</value>

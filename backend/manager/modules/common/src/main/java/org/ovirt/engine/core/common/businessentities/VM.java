@@ -48,6 +48,8 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
 
     private boolean nextRunConfigurationExists;
 
+    private String hibernationVolHandle;
+
     public String getUserDefinedProperties() {
         return vmStatic.getUserDefinedProperties();
     }
@@ -1060,11 +1062,11 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
     }
 
     public String getHibernationVolHandle() {
-        return this.vmDynamic.getHibernationVolHandle();
+        return hibernationVolHandle;
     }
 
     public void setHibernationVolHandle(String value) {
-        this.vmDynamic.setHibernationVolHandle(value);
+        this.hibernationVolHandle = value;
     }
 
     public String getCustomCpuName() {

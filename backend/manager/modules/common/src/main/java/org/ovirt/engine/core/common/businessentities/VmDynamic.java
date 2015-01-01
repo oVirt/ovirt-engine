@@ -50,8 +50,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private String clientIp;
     private Integer guestRequestedMemory;
     @UnchangeableByVdsm
-    private String hibernationVolHandle;
-    @UnchangeableByVdsm
     private BootSequence bootSequence;
     private VmExitStatus exitStatus;
     private VmPauseStatus pauseStatus;
@@ -101,7 +99,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         result = prime * result + ((guestLastLogoutTime == null) ? 0 : guestLastLogoutTime.hashCode());
         result = prime * result + ((guestOs == null) ? 0 : guestOs.hashCode());
         result = prime * result + ((guestRequestedMemory == null) ? 0 : guestRequestedMemory.hashCode());
-        result = prime * result + ((hibernationVolHandle == null) ? 0 : hibernationVolHandle.hashCode());
         result = prime * result + ((kvmEnable == null) ? 0 : kvmEnable.hashCode());
         result = prime * result + ((lastVdsRunOn == null) ? 0 : lastVdsRunOn.hashCode());
         result = prime * result + ((disks == null) ? 0 : disks.hashCode());
@@ -161,7 +158,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && ObjectUtils.objectsEqual(guestLastLogoutTime, other.guestLastLogoutTime)
                 && ObjectUtils.objectsEqual(guestOs, other.guestOs)
                 && ObjectUtils.objectsEqual(guestRequestedMemory, other.guestRequestedMemory)
-                && ObjectUtils.objectsEqual(hibernationVolHandle, other.hibernationVolHandle)
                 && ObjectUtils.objectsEqual(kvmEnable, other.kvmEnable)
                 && ObjectUtils.objectsEqual(lastVdsRunOn, other.lastVdsRunOn)
                 && ObjectUtils.objectsEqual(disks, other.disks)
@@ -507,14 +503,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setGuestRequestedMemory(Integer value) {
         this.guestRequestedMemory = value;
-    }
-
-    public String getHibernationVolHandle() {
-        return this.hibernationVolHandle;
-    }
-
-    public void setHibernationVolHandle(String value) {
-        this.hibernationVolHandle = value;
     }
 
     public void setPauseStatus(VmPauseStatus pauseStatus) {

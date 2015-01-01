@@ -115,8 +115,6 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 .addValue("client_ip", vm.getClientIp())
                 .addValue("guest_requested_memory",
                         vm.getGuestRequestedMemory())
-                .addValue("hibernation_vol_handle",
-                        vm.getHibernationVolHandle())
                 .addValue("exit_status", vm.getExitStatus().getValue())
                 .addValue("pause_status", vm.getPauseStatus().getValue())
                 .addValue("exit_message", vm.getExitMessage())
@@ -177,7 +175,6 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
             entity.setLastVdsRunOn(getGuid(rs, "last_vds_run_on"));
             entity.setClientIp(rs.getString("client_ip"));
             entity.setGuestRequestedMemory((Integer) rs.getObject("guest_requested_memory"));
-            entity.setHibernationVolHandle(rs.getString("hibernation_vol_handle"));
             VmExitStatus exitStatus = VmExitStatus.forValue(rs.getInt("exit_status"));
             VmPauseStatus pauseStatus = VmPauseStatus.forValue(rs.getInt("pause_status"));
             entity.setExitMessage(rs.getString("exit_message"));
