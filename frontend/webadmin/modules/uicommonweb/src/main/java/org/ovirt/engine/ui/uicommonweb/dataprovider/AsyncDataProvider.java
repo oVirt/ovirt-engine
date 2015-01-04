@@ -2363,13 +2363,7 @@ public class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                if (source != null)
-                {
-                    ArrayList<VDS> list = Linq.<VDS> cast((ArrayList<IVdcQueryable>) source);
-                    return list;
-                }
-
-                return new ArrayList<VDS>();
+                return source != null ? source : Collections.emptyList();
             }
         };
         getUpHostListByCluster(aQuery, clusterName, null);

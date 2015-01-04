@@ -228,14 +228,15 @@ public class MigrateModel extends Model
 
         AsyncDataProvider.getInstance().getUpHostListByCluster(new AsyncQuery(this,
                 new INewAsyncCallback() {
+                    @SuppressWarnings("unchecked")
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
-                        postMigrateGetUpHosts(privateVmList, (ArrayList<VDS>) returnValue);
+                        postMigrateGetUpHosts(privateVmList, (List<VDS>) returnValue);
                     }
                 }), selectedCluster.getName());
     }
 
-    private void postMigrateGetUpHosts(List<VM> selectedVms, ArrayList<VDS> hosts) {
+    private void postMigrateGetUpHosts(List<VM> selectedVms, List<VDS> hosts) {
         setVmsOnSameCluster(true);
         setIsSameVdsMessageVisible(false);
         setNoSelAvailable(false);
@@ -287,7 +288,7 @@ public class MigrateModel extends Model
         }
     }
 
-    private void removeUnselectableHosts(ArrayList<VDS> hosts, Guid run_on_vds, boolean allRunOnSameVds) {
+    private void removeUnselectableHosts(List<VDS> hosts, Guid run_on_vds, boolean allRunOnSameVds) {
         if (getVmsOnSameCluster() && allRunOnSameVds) {
             VDS runOnSameVDS = null;
             for (VDS host : hosts) {
