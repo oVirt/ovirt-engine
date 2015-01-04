@@ -183,7 +183,7 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
 
         ValidationResult propagatedResult =
                 new ValidationResult(VdcBllMessages.NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK, "a");
-        when(networkValidatorMock.notManagementNetwork()).thenReturn(propagatedResult);
+        when(networkValidatorMock.notRemovingManagementNetwork()).thenReturn(propagatedResult);
 
         assertThat("ValidationResult is not correctly propagated",
                 networkAttachmentValidatorSpy.notRemovingManagementNetwork(),

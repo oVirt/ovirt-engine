@@ -160,6 +160,13 @@ public class NetworkValidator {
         return Injector.get(ManagementNetworkUtil.class);
     }
 
+    public ValidationResult notRemovingManagementNetwork() {
+        return isManagementNetwork()
+                ? new ValidationResult(VdcBllMessages.NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK,
+                        getNetworkNameReplacement())
+                : ValidationResult.VALID;
+    }
+
     public ValidationResult notIscsiBondNetwork() {
         List<IscsiBond> iscsiBonds = getDbFacade().getIscsiBondDao().getIscsiBondsByNetworkId(network.getId());
         if (!iscsiBonds.isEmpty()) {

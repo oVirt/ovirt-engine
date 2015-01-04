@@ -96,7 +96,7 @@ public class NetworkAttachmentValidator {
     }
 
     public ValidationResult notRemovingManagementNetwork() {
-        return getNetworkValidator().notManagementNetwork();
+        return getNetworkValidator().notRemovingManagementNetwork();
     }
 
     public ValidationResult networkAttachedToCluster() {
