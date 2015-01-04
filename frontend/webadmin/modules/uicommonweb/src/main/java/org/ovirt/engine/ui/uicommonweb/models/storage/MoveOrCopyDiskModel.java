@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
@@ -174,6 +175,13 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         }
     }
 
+    private boolean isDiskValidForStorage(DiskImage disk, StorageDomain storage) {
+        if (disk.isShareable() && storage.getStorageType() == StorageType.GLUSTERFS) {
+            return false;
+        }
+        return true;
+    }
+
     protected void postInitStorageDomains() {
         for (DiskModel disk : getDisks()) {
             DiskImage diskImage = ((DiskImage) disk.getDisk());
@@ -187,6 +195,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             ArrayList<StorageDomain> destStorageDomains =
                     Linq.except(getActiveStorageDomains(), sourceStorageDomains);
             destStorageDomains = filterStoragesByDatacenterId(destStorageDomains, diskImage.getStoragePoolId());
+            destStorageDomains = filterValidStoragesForDisk(destStorageDomains, diskImage);
 
             if (isFilterDestinationDomainsBySourceType(disk)) {
                 destStorageDomains = filterDestinationDomainsByDiskStorageSubtype(destStorageDomains, diskImage);
@@ -194,6 +203,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
             // Filter storage domains with missing template disk
             boolean isDiskBasedOnTemplate = !diskImage.getParentId().equals(Guid.Empty);
+
             if (isDiskBasedOnTemplate) {
                 destStorageDomains = Linq.except(destStorageDomains, getMissingStorages(destStorageDomains, disk));
             }
@@ -276,6 +286,17 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
         return storages;
     }
+
+    protected ArrayList<StorageDomain> filterValidStoragesForDisk(ArrayList<StorageDomain> storageDomains, DiskImage diskImage) {
+        ArrayList<StorageDomain> storages = new ArrayList<StorageDomain>();
+        for (StorageDomain storage : storageDomains) {
+            if (isDiskValidForStorage(diskImage, storage)) {
+                storages.add(storage);
+            }
+        }
+        return storages;
+    }
+
 
     protected ArrayList<StorageDomain> getMissingStorages(ArrayList<StorageDomain> storageDomains, DiskModel vmdisk) {
         ArrayList<StorageDomain> missingStorageDomains = new ArrayList<StorageDomain>();
