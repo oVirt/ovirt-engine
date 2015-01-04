@@ -2355,6 +2355,12 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("The following VMs are attached to the instance type")
     String vmsAttachedToInstanceTypeWarningMessage();
 
+    @DefaultStringValue("Are you sure?")
+    String storageDomainsAttachedToDataCenterWarningTitle();
+
+    @DefaultStringValue("Storage Domain(s) are already attached to a Data Center. Approving this operation might cause data corruption if both Data Centers are active.")
+    String storageDomainsAttachedToDataCenterWarningMessage();
+
     @DefaultStringValue("If period is specified, bytes per period must be specified as well.")
     String rngRateInvalid();
 

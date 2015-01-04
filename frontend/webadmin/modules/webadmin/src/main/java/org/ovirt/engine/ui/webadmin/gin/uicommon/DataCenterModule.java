@@ -174,7 +174,8 @@ public class DataCenterModule extends AbstractGinModule {
                 DataCenterStorageListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(DataCenterStorageListModel source,
-                    UICommand lastExecutedCommand, Model windowModel) {
+                    UICommand lastExecutedCommand,
+                    Model windowModel) {
                 DataCenterStorageListModel model = getModel();
 
                 if (lastExecutedCommand == model.getAttachStorageCommand()) {
@@ -190,7 +191,8 @@ public class DataCenterModule extends AbstractGinModule {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(DataCenterStorageListModel source,
                     UICommand lastExecutedCommand) {
-                if (lastExecutedCommand == getModel().getDetachCommand()) {
+                if (lastExecutedCommand == getModel().getDetachCommand() ||
+                        lastExecutedCommand.getName().equals("OnAttach")) { //$NON-NLS-1$ ) {
                     return removeConfirmPopupProvider.get();
                 } else {
                     return super.getConfirmModelPopup(source, lastExecutedCommand);
