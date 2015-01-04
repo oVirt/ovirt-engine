@@ -250,4 +250,11 @@ public class StorageDomainValidator {
 
         return ValidationResult.VALID;
     }
+
+    public ValidationResult isHostedEngineStorage() {
+        if (Config.getValue(ConfigValues.HostedEngineStorageDomainName).equals(storageDomain.getName())) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_HOSTED_ENGINE_STORAGE);
+        }
+        return ValidationResult.VALID;
+    }
 }

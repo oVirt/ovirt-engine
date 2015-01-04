@@ -8,28 +8,39 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddExistingBlockStorageDomainCommandTest {
 
     private AddExistingBlockStorageDomainCommand<StorageDomainManagementParameter> command;
     private StorageDomainManagementParameter parameters;
+
+    @ClassRule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.HostedEngineStorageDomainName, StorageConstants.HOSTED_ENGINE_STORAGE_DOMAIN_NAME)
+    );
 
     @Mock
     private DbFacade dbFacade;
@@ -66,6 +77,17 @@ public class AddExistingBlockStorageDomainCommandTest {
                 command.getReturnValue()
                         .getCanDoActionMessages()
                         .contains(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST.toString()));
+    }
+
+    @Test
+    public void testAddHostedEngineStorageFails() {
+        when(command.getLUNsFromVgInfo(parameters.getStorageDomain().getStorage())).thenReturn(getLUNs());
+        doReturn(new ArrayList<LUNs>()).when(command).getAllLuns();
+
+        parameters.getStorageDomain().setStorageName(StorageConstants.HOSTED_ENGINE_STORAGE_DOMAIN_NAME);
+        assertFalse(command.canAddDomain());
+        CanDoActionTestUtils.assertCanDoActionMessages("Add self hosted engine storage domain succeeded where it should have failed",
+                command, VdcBllMessages.ACTION_TYPE_FAILED_HOSTED_ENGINE_STORAGE);
     }
 
     private static StorageDomainStatic getStorageDomain() {

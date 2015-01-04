@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
@@ -50,7 +51,8 @@ public class AddExistingFileStorageDomainCommandTest {
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.StorageDomainNameSizeLimit, SD_MAX_NAME_LENGTH),
             mockConfig(ConfigValues.SupportedStorageFormats, Version.v3_4.toString(), "3"),
-            mockConfig(ConfigValues.SupportedStorageFormats, Version.v3_5.toString(), "3")
+            mockConfig(ConfigValues.SupportedStorageFormats, Version.v3_5.toString(), "3"),
+            mockConfig(ConfigValues.HostedEngineStorageDomainName, StorageConstants.HOSTED_ENGINE_STORAGE_DOMAIN_NAME)
     );
 
     @Mock
@@ -129,6 +131,18 @@ public class AddExistingFileStorageDomainCommandTest {
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
+    @Test
+    public void testAddHostedEngineStorageFails() {
+        parameters.getStorageDomain().setStorageName(StorageConstants.HOSTED_ENGINE_STORAGE_DOMAIN_NAME);
+
+        when(command.getStorageDomainStaticDAO().get(any(Guid.class))).thenReturn(null);
+
+        StorageDomainStatic sdStatic = command.getStorageDomain().getStorageStaticData();
+        doReturn(new Pair<>(sdStatic, sdStatic.getId())).when(command).executeHSMGetStorageDomainInfo(
+                any(HSMGetStorageDomainInfoVDSCommandParameters.class));
+
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_FAILED_HOSTED_ENGINE_STORAGE);
+    }
 
     private static StorageDomainStatic getStorageDomain() {
         StorageDomainStatic storageDomain = new StorageDomainStatic();
