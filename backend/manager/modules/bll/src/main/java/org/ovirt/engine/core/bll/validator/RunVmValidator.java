@@ -105,6 +105,16 @@ public class RunVmValidator {
             // if the VM is paused, we should only check the VDS status
             // as the rest of the checks were already checked before
             return validate(validateVdsStatus(vm), messages);
+        } else if (vm.getStatus() == VMStatus.Suspended) {
+            return validate(new VmValidator(vm).vmNotLocked(), messages) &&
+                   validate(getSnapshotValidator().vmNotDuringSnapshot(vm.getId()), messages) &&
+                   validate(validateVmStatusUsingMatrix(vm), messages) &&
+                   validate(validateStoragePoolUp(vm, storagePool, getVmImageDisks()), messages) &&
+                   validate(vmDuringInitialization(vm), messages) &&
+                   validate(validateStorageDomains(vm, isInternalExecution, getVmImageDisks()), messages) &&
+                   validate(validateImagesForRunVm(vm, getVmImageDisks()), messages) &&
+                   SchedulingManager.getInstance().canSchedule(
+                            vdsGroup, vm, vdsBlackList, vdsWhiteList, destVds, messages);
         }
 
         return
