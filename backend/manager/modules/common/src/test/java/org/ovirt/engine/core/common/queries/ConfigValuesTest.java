@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.common.queries;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -25,15 +26,14 @@ public class ConfigValuesTest {
     @Test
     public void findMissingEnumNames() {
         // Find missing ConfigurationValues enum names in ConfigValues enum
-        boolean missingKey = false;
+        Set<ConfigurationValues> missingKeys = new TreeSet<ConfigurationValues>();
         for (ConfigurationValues configValue : ConfigurationValues.values()) {
             if (!configValuesEnumNames.contains(configValue.toString())) {
                 log.error("Found missing key: {}", configValue);
-                missingKey = true;
-                break;
+                missingKeys.add(configValue);
             }
         }
 
-        assertFalse("Found missing key: ", missingKey);
+        assertTrue("Found missing keys: " + missingKeys, missingKeys.isEmpty());
     }
 }
