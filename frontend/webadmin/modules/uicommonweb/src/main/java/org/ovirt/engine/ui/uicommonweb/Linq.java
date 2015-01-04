@@ -793,7 +793,7 @@ public final class Linq
         for (Guid storageId : storageIds) {
             StorageDomain storageDomain = getStorageById(storageId, storageDomains);
             if (storageDomain != null) {
-                list.add(getStorageById(storageId, storageDomains));
+                list.add(storageDomain);
             }
         }
         return list;

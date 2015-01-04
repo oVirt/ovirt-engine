@@ -191,22 +191,11 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             ArrayList<StorageDomain> sourceStorageDomains =
                     Linq.getStorageDomainsByIds(diskStorageIds, getActiveStorageDomains());
 
-            // Destination storage domains
-            ArrayList<StorageDomain> destStorageDomains =
-                    Linq.except(getActiveStorageDomains(), sourceStorageDomains);
-            destStorageDomains = filterStoragesByDatacenterId(destStorageDomains, diskImage.getStoragePoolId());
-            destStorageDomains = filterValidStoragesForDisk(destStorageDomains, diskImage);
-
-            if (isFilterDestinationDomainsBySourceType(disk)) {
-                destStorageDomains = filterDestinationDomainsByDiskStorageSubtype(destStorageDomains, diskImage);
-            }
-
-            // Filter storage domains with missing template disk
             boolean isDiskBasedOnTemplate = !diskImage.getParentId().equals(Guid.Empty);
-
-            if (isDiskBasedOnTemplate) {
-                destStorageDomains = Linq.except(destStorageDomains, getMissingStorages(destStorageDomains, disk));
-            }
+            ArrayList<StorageDomain> destStorageDomains = getDestinationDomains(getActiveStorageDomains(),
+                    sourceStorageDomains,
+                    disk,
+                    isDiskBasedOnTemplate);
 
             // Add prohibition reasons
             if (sourceStorageDomains.isEmpty() || destStorageDomains.isEmpty()) {
@@ -225,6 +214,57 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
         sortDisks();
         postCopyOrMoveInit();
+    }
+
+    private ArrayList<StorageDomain> getDestinationDomains(ArrayList<StorageDomain> activeStorageDomains,
+            ArrayList<StorageDomain> sourceActiveStorageDomains, DiskModel diskModel, boolean isDiskBasedOnTemplate) {
+
+        boolean shouldFilterBySourceType = isFilterDestinationDomainsBySourceType(diskModel);
+        DiskImage diskImage = ((DiskImage) diskModel.getDisk());
+
+        DiskModel templateDisk = null;
+        if (isDiskBasedOnTemplate) {
+            templateDisk = getTemplateDiskByVmDisk(diskModel);
+        }
+
+        ArrayList<StorageDomain> destinationDomains = new ArrayList<>();
+        for (StorageDomain sd : activeStorageDomains) {
+            // Storage domain destination should not be a domain which the disk is attached to.
+            if (sourceActiveStorageDomains.contains(sd)) {
+                continue;
+            }
+
+            // Destination should be in the same pool as the disk.
+            boolean connectedToSamePool = sd.getStoragePoolId().equals(diskImage.getStoragePoolId());
+            if (!connectedToSamePool) {
+                continue;
+            }
+
+            boolean hasSameSubType = sd.getStorageType().getStorageSubtype() == diskImage.getStorageTypes().get(0).getStorageSubtype();
+            if (shouldFilterBySourceType && !hasSameSubType) {
+                continue;
+            }
+
+            if (!isDomainValidForDiskTemplate(templateDisk, sd)) {
+                continue;
+            }
+
+            if (!isDiskValidForStorage(diskImage, sd)) {
+                continue;
+            }
+
+            // All conditions are valid for moving the current disk to this domain.
+            destinationDomains.add(sd);
+        }
+
+        return destinationDomains;
+    }
+
+    private boolean isDomainValidForDiskTemplate(DiskModel templateDisk, StorageDomain sd) {
+        if (templateDisk != null) {
+            return ((DiskImage) templateDisk.getDisk()).getStorageIds().contains(sd.getId());
+        }
+        return true;
     }
 
     private void updateChangeability(DiskModel disk, boolean isDiskBasedOnTemplate, boolean noSources, boolean noTargets) {
@@ -272,45 +312,6 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         }
 
         stopProgress();
-    }
-
-    protected ArrayList<StorageDomain> filterStoragesByDatacenterId(ArrayList<StorageDomain> storageDomains,
-            Guid diskDatacenterId) {
-
-        ArrayList<StorageDomain> storages = new ArrayList<StorageDomain>();
-        for (StorageDomain storage : storageDomains) {
-            if (storage.getStoragePoolId().equals(diskDatacenterId)) {
-                storages.add(storage);
-            }
-        }
-
-        return storages;
-    }
-
-    protected ArrayList<StorageDomain> filterValidStoragesForDisk(ArrayList<StorageDomain> storageDomains, DiskImage diskImage) {
-        ArrayList<StorageDomain> storages = new ArrayList<StorageDomain>();
-        for (StorageDomain storage : storageDomains) {
-            if (isDiskValidForStorage(diskImage, storage)) {
-                storages.add(storage);
-            }
-        }
-        return storages;
-    }
-
-
-    protected ArrayList<StorageDomain> getMissingStorages(ArrayList<StorageDomain> storageDomains, DiskModel vmdisk) {
-        ArrayList<StorageDomain> missingStorageDomains = new ArrayList<StorageDomain>();
-        DiskModel templateDisk = getTemplateDiskByVmDisk(vmdisk);
-
-        if (templateDisk != null) {
-            for (StorageDomain storageDomain : storageDomains) {
-                if (!((DiskImage) templateDisk.getDisk()).getStorageIds().contains(storageDomain.getId())) {
-                    missingStorageDomains.add(storageDomain);
-                }
-            }
-        }
-
-        return missingStorageDomains;
     }
 
     protected DiskModel getTemplateDiskByVmDisk(DiskModel vmdisk) {
@@ -376,16 +377,6 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         params.setDiskProfileId(disk.getDiskProfileId());
 
         parameters.add(params);
-    }
-
-    protected ArrayList<StorageDomain> filterDestinationDomainsByDiskStorageSubtype(List<StorageDomain> destDomains, DiskImage disk) {
-        ArrayList<StorageDomain> filteredDomains = new ArrayList<StorageDomain>();
-        for (StorageDomain sd : destDomains) {
-            if (sd.getStorageType().getStorageSubtype() == disk.getStorageTypes().get(0).getStorageSubtype()) {
-                filteredDomains.add(sd);
-            }
-        }
-        return filteredDomains;
     }
 
     protected boolean isFilterDestinationDomainsBySourceType(DiskModel model) {
