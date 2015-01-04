@@ -53,6 +53,7 @@ public enum ConfigurationValues {
     VmPriorityMaxValue(ConfigAuthType.User),
     StorageDomainNameSizeLimit(ConfigAuthType.User),
     ImportDataStorageDomain,
+    HostedEngineStorageDomainName,
     StoragePoolNameSizeLimit(ConfigAuthType.User),
     SANWipeAfterDelete(ConfigAuthType.User),
     AuthenticationMethod(ConfigAuthType.User),

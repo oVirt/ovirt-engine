@@ -306,4 +306,11 @@ public class StorageDomainValidator {
     private static interface SizeAssessment {
         public double getSizeForDisk(DiskImage diskImage);
     }
+
+    public ValidationResult isHostedEngineStorage() {
+        if (Config.getValue(ConfigValues.HostedEngineStorageDomainName).equals(storageDomain.getName())) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_HOSTED_ENGINE_STORAGE);
+        }
+        return ValidationResult.VALID;
+    }
 }

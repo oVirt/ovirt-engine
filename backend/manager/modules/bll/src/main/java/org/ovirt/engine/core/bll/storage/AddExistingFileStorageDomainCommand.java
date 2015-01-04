@@ -2,9 +2,11 @@ package org.ovirt.engine.core.bll.storage;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -61,6 +63,14 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
         if (domainFromIrs == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         }
+
+        StorageDomain storageDomainFromIrs = new StorageDomain();
+        storageDomainFromIrs.setStorageStaticData(domainFromIrs.getFirst());
+        StorageDomainValidator validator = new StorageDomainValidator(storageDomainFromIrs);
+        if (!validate(validator.isHostedEngineStorage())) {
+            return false;
+        }
+
         return concreteCheckExistingStorageDomain(domainFromIrs);
     }
 
