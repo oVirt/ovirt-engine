@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSFenceReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -50,6 +51,9 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCommand<T> {
 
     private static final String INTERNAL_FENCE_USER = "Engine";
+
+    protected boolean skippedDueToFencingPolicy;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      *
@@ -57,6 +61,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
      */
     protected RestartVdsCommand(Guid commandId) {
         super(commandId);
+        skippedDueToFencingPolicy = false;
     }
 
     public RestartVdsCommand(T parameters) {
@@ -65,6 +70,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
 
     public RestartVdsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
+        skippedDueToFencingPolicy = false;
     }
 
     @Override
@@ -123,6 +129,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
         }
         if (wasSkippedDueToPolicy(returnValue)) {
             // fence execution was skipped due to fencing policy, host should be alive
+            skippedDueToFencingPolicy = true;
             setSucceeded(false);
             runVdsCommand(VDSCommandType.SetVdsStatus, new SetVdsStatusVDSCommandParameters(vdsId,
                     VDSStatus.NonResponsive));
@@ -198,11 +205,14 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
      * to policy.
      */
     protected boolean wasSkippedDueToPolicy(VdcReturnValueBase result) {
-        if (result.getActionReturnValue() instanceof FenceStatusReturnValue) {
-            return ((FenceStatusReturnValue) result.getActionReturnValue()).getIsSkipped();
-        } else {
-            return false;
+        boolean skipped = false;
+        if (result.getActionReturnValue() instanceof VDSFenceReturnValue) {
+            VDSFenceReturnValue fenceReturnValue = result.getActionReturnValue();
+            if (fenceReturnValue.getReturnValue() instanceof FenceStatusReturnValue) {
+                skipped = ((FenceStatusReturnValue) fenceReturnValue.getReturnValue()).getIsSkipped();
+            }
         }
+        return skipped;
     }
 
     @Override

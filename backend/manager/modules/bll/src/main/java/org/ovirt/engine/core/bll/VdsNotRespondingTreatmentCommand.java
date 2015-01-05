@@ -80,7 +80,6 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
      */
     @Override
     protected void executeCommand() {
-        boolean skippedDueToFencingPolicy = false;
         setVds(null);
         if (getVds() == null) {
             setCommandShouldBeLogged(false);

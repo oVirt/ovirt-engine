@@ -161,7 +161,18 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
 
             if (result != null) {
                 if (result.getSucceeded()) {
-                    handleSpecificCommandActions();
+                    int numOfSkipped = countSkippedOperations(results);
+                    if (numOfSkipped == 0) {
+                        // no agent reported that stop operation was skipped, continue with stop operation
+                        handleSpecificCommandActions();
+                    } else {
+                        // check if all agents reported that stop operation has skipped,
+                        // if so, just return, skipping is handled in caller
+                        if (numOfSkipped < agents.size()) {
+                            // not all agents skipped stop operation, mark as error
+                            result.setSucceeded(false);
+                        }
+                    }
                 } else {
                     logConcurrentAgentsFailure(FenceActionType.Stop, agents, result);
                 }

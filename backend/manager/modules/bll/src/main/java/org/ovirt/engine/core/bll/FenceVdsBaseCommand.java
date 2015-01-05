@@ -138,9 +138,11 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             // when fencing is skipped due to policy we want to suppress command result logging, because
             // we fire an alert in VdsNotRespondingTreatment
             setCommandShouldBeLogged(false);
+            setSucceeded(false);
+        } else {
+            setSucceeded(result.getSucceeded());
         }
         setActionReturnValue(result);
-        setSucceeded(result.getSucceeded());
     }
 
     /**
@@ -203,8 +205,10 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             log.info("Attemp to {} host using fence agent '{}' skipped, host is already at the requested state.",
                     getAction().name().toLowerCase(),
                     fenceAgent.getId());
-        }
-        else {
+        } else if (wasSkippedDueToPolicy(fenceExecutionResult)) {
+            // fencing execution was skipped due to fencing policy
+            return fenceExecutionResult;
+        } else {
             if (fenceExecutionResult.getSucceeded()) {
                 boolean requiredStatusAchieved = waitForStatus();
                 int i = 0;
@@ -422,4 +426,17 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
      * Get the fence action
      */
     protected abstract FenceActionType getAction();
+
+    /**
+     * Returns numbers of agents for which fencing operation was skipped
+     */
+    protected int countSkippedOperations(List<VDSFenceReturnValue> results) {
+        int numOfSkipped = 0;
+        for (VDSFenceReturnValue result : results) {
+            if (wasSkippedDueToPolicy(result)) {
+                numOfSkipped++;
+            }
+        }
+        return numOfSkipped;
+    }
 }
