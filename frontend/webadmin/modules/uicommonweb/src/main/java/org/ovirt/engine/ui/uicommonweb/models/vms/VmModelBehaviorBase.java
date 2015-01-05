@@ -405,14 +405,14 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                     public void onSuccess(Object target, Object returnValue) {
 
                         UnitVmModel model = (UnitVmModel) target;
-                        ArrayList<VDS> hosts = null;
-                        if (returnValue instanceof ArrayList) {
-                            hosts = (ArrayList<VDS>) returnValue;
+                        List<VDS> hosts = null;
+                        if (returnValue instanceof List) {
+                            hosts = (List<VDS>) returnValue;
                         } else if (returnValue instanceof VdcQueryReturnValue
-                                && ((VdcQueryReturnValue) returnValue).getReturnValue() instanceof ArrayList) {
+                                && ((VdcQueryReturnValue) returnValue).getReturnValue() instanceof List) {
                             hosts = ((VdcQueryReturnValue) returnValue).getReturnValue();
                         } else {
-                            throw new IllegalArgumentException("The return value should be ArrayList<VDS> or VdcQueryReturnValue with return value ArrayList<VDS>"); //$NON-NLS-1$
+                            throw new IllegalArgumentException("The return value should be List<VDS> or VdcQueryReturnValue with return value List<VDS>"); //$NON-NLS-1$
                         }
 
                         VDS oldDefaultHost = model.getDefaultHost().getSelectedItem();
