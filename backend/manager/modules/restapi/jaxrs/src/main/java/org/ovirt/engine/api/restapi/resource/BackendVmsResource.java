@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Certificate;
@@ -419,6 +420,17 @@ public class BackendVmsResource extends
             for (Disk disk : disks.getDisks()) {
                 DiskImage templateDisk = templatesDisksMap.get(asGuid(disk.getId()));
                 if( templateDisk != null ) {
+                    // when disk profile isn't specified, and disks are cloned to another storage
+                    // domain then the original disk, disk profile is cleared since template disk
+                    // disk profile isn't matching destination storage domain.
+                    if (!disk.isSetDiskProfile()
+                            && disk.isSetStorageDomains()
+                            && disk.getStorageDomains().isSetStorageDomains()
+                            && disk.getStorageDomains().getStorageDomains().get(0).isSetId()
+                            && !ObjectUtils.equals(disk.getStorageDomains().getStorageDomains().get(0).getId(),
+                                    templateDisk.getStorageIds().get(0))) {
+                        templateDisk.setDiskProfileId(null);
+                    }
                     disksMap.put(templateDisk.getId(), map(disk, templateDisk));
                 } else {
                     throw new WebApplicationException(Response.Status.NOT_FOUND);
