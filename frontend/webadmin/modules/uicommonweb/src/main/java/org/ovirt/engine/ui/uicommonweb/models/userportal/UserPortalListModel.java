@@ -61,7 +61,6 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.UserPortalPermissionList
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolInterfaceListModel;
-import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
 import org.ovirt.engine.ui.uicommonweb.models.vms.CloneVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
@@ -601,7 +600,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
         UnitVmModel model = (UnitVmModel) getWindow();
 
-        if (!model.validate())
+        if (!model.validate(false))
         {
             model.setIsValid(false);
         }
@@ -1087,7 +1086,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         else
         {
             final VM selectedItem = (VM) ((UserPortalItemModel) userPortalListModel.getSelectedItem()).getEntity();
-            gettempVm().setUseLatestVersion(model.getTemplate().getSelectedItem() instanceof LatestVmTemplate);
+            gettempVm().setUseLatestVersion(model.getTemplateWithVersion().getSelectedItem().isLatest());
 
             if (selectedItem.isRunningOrPaused()) {
                 AsyncDataProvider.getInstance().getVmChangedFieldsForNextRun(editedVm, gettempVm(), getUpdateVmParameters(false), new AsyncQuery(this,
@@ -1129,7 +1128,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         setstorageDomain(model.getStorageDomain().getSelectedItem());
 
         VM vm = gettempVm();
-        vm.setUseLatestVersion(model.getTemplate().getSelectedItem() instanceof LatestVmTemplate);
+        vm.setUseLatestVersion(model.getTemplateWithVersion().getSelectedItem().isLatest());
 
         AddVmParameters parameters = new AddVmParameters(vm);
         parameters.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());

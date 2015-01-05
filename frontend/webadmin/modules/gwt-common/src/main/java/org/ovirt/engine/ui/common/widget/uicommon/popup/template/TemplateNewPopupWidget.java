@@ -37,9 +37,10 @@ public class TemplateNewPopupWidget extends AbstractVmPopupWidget {
         return super.createWidgetConfiguration().
                 putOne(logicalNetworksEditorPanel, hiddenField()).
                 putAll(poolSpecificFields(), hiddenField()).
-                putOne(templateEditor, hiddenField()).
                 putOne(instanceTypesEditor, hiddenField()).
+                putOne(templateWithVersionEditor, hiddenField()).
                 update(resourceAllocationTab, hiddenField());
+
     }
 
 }

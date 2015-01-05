@@ -87,11 +87,6 @@ public class InstanceTypeModelBehaviorBase extends VmModelBehaviorBase<UnitVmMod
     }
 
     @Override
-    public void template_SelectedItemChanged() {
-
-    }
-
-    @Override
     public void postDataCenterWithClusterSelectedItemChanged() {
     }
 

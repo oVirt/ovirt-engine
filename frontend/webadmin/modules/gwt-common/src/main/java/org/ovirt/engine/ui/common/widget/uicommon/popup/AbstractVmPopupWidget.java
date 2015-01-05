@@ -52,7 +52,6 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -107,7 +106,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
-import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
+import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
@@ -212,9 +211,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public ListModelTypeAheadListBoxEditor<VmTemplate> baseTemplateEditor;
 
     @UiField(provided = true)
-    @Path(value = "template.selectedItem")
-    @WithElementId("template")
-    public ListModelTypeAheadListBoxEditor<VmTemplate> templateEditor;
+    @Path(value = "templateWithVersion.selectedItem")
+    @WithElementId("templateWithVersion")
+    public ListModelTypeAheadListBoxEditor<TemplateWithVersion> templateWithVersionEditor;
 
     @UiField(provided = true)
     @Path(value = "OSType.selectedItem")
@@ -1158,32 +1157,35 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 },
                 new ModeSwitchingVisibilityRenderer());
 
-        templateEditor = new ListModelTypeAheadListBoxEditor<VmTemplate>(
-                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<VmTemplate>() {
-
+        templateWithVersionEditor = new ListModelTypeAheadListBoxEditor<>(
+                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<TemplateWithVersion>(){
                     @Override
-                    public String getReplacementStringNullSafe(VmTemplate data) {
-                        return getDisplayableTemplateVersionName(data);
+                    public String getReplacementStringNullSafe(TemplateWithVersion templateWithVersion) {
+                        return getFirstColumn(templateWithVersion)
+                                + " | " //$NON-NLS-1$
+                                + getSecondColumn(templateWithVersion);
                     }
 
                     @Override
-                    public String getDisplayStringNullSafe(VmTemplate data) {
+                    public String getDisplayStringNullSafe(TemplateWithVersion templateWithVersion) {
                         return typeAheadNameDescriptionTemplateNullSafe(
-                                getDisplayableTemplateVersionName(data),
-                                data.getDescription()
-                        );
+                                getFirstColumn(templateWithVersion),
+                                getSecondColumn(templateWithVersion));
                     }
 
-                    private String getDisplayableTemplateVersionName(VmTemplate template) {
-                        if (template instanceof LatestVmTemplate) {
-                            return constants.latest();
-                        }
+                    private String getFirstColumn(TemplateWithVersion templateWithVersion) {
+                        return templateWithVersion.getBaseTemplate().getName();
+                    }
 
-                        String versionName = template.getId().equals(template.getBaseTemplateId()) ?
-                                constants.baseTemplate() : template.getTemplateVersionName();
-
-                        return (versionName == null ? "" : versionName) //$NON-NLS-1$
-                                + StringFormat.format(" (%d)", template.getTemplateVersionNumber()); //$NON-NLS-1$
+                    private String getSecondColumn(TemplateWithVersion templateWithVersion) {
+                        final VmTemplate versionTemplate = templateWithVersion.getTemplateVersion();
+                        final String versionName = versionTemplate.getTemplateVersionName() == null
+                                ? "" //$NON-NLS-1$
+                                : versionTemplate.getTemplateVersionName() + " "; //$NON-NLS-1$
+                        return templateWithVersion.isLatest()
+                                ? constants.latest()
+                                : versionName + "(" //$NON-NLS-1$
+                                        + versionTemplate.getTemplateVersionNumber() + ")"; //$NON-NLS-1$
                     }
                 },
                 new ModeSwitchingVisibilityRenderer());
@@ -1398,7 +1400,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         commentEditor.setLabel(constants.commentLabel());
 
         baseTemplateEditor.setLabel(constants.basedOnTemplateVmPopup());
-        templateEditor.setLabel(constants.templateSubVersion());
+        templateWithVersionEditor.setLabel(constants.template());
         instanceTypesEditor.setLabel(constants.instanceType());
 
         oSTypeEditor.setLabel(constants.osVmPopup());
@@ -1881,7 +1883,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         oSTypeEditor.setTabIndex(nextTabIndex++);
         baseTemplateEditor.setTabIndex(nextTabIndex++);
         instanceTypesEditor.setTabIndexes(nextTabIndex++);
-        templateEditor.setTabIndex(nextTabIndex++);
+        templateWithVersionEditor.setTabIndexes(nextTabIndex++);
 
         nameEditor.setTabIndex(nextTabIndex++);
         templateVersionNameEditor.setTabIndex(nextTabIndex++);
@@ -2124,8 +2126,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         oSTypeEditor.setEnabled(false);
         quotaEditor.setEnabled(false);
         dataCenterWithClusterEditor.setEnabled(false);
-        templateEditor.setEnabled(false);
         baseTemplateEditor.setEnabled(false);
+        templateWithVersionEditor.setEnabled(false);
         vmTypeEditor.setEnabled(false);
         instanceTypesEditor.setEnabled(false);
         emulatedMachine.setEnabled(false);

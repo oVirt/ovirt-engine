@@ -21,11 +21,12 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.CoreVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.NewVmInstanceTypeManager;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class NewVmModelBehavior extends VmModelBehaviorBase {
+public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
 
     private InstanceTypeManager instanceTypeManager;
 
@@ -82,73 +83,73 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
     }
 
     @Override
-    public void template_SelectedItemChanged()
-    {
-        VmTemplate template = getModel().getTemplate().getSelectedItem();
+    public void templateWithVersion_SelectedItemChanged() {
+        TemplateWithVersion selectedTemplateWithVersion = getModel().getTemplateWithVersion().getSelectedItem();
+        if (selectedTemplateWithVersion != null) {
+            VmTemplate selectedTemplate = selectedTemplateWithVersion.getTemplateVersion();
+            selectedTemplateChanged(selectedTemplate);
+        }
+    }
 
-        if (template != null)
+    private void selectedTemplateChanged(VmTemplate template) {
+        // Copy VM parameters from template.
+        buildModel(template);
+
+        setSelectedOSType(template, getModel().getSelectedCluster().getArchitecture());
+        doChangeDefautlHost(template.getDedicatedVmForVds());
+
+        getModel().getIsStateless().setEntity(template.isStateless());
+
+        boolean hasCd = !StringHelper.isNullOrEmpty(template.getIsoPath());
+
+        getModel().getCdImage().setIsChangable(hasCd);
+        getModel().getCdAttached().setEntity(hasCd);
+        if (hasCd) {
+            getModel().getCdImage().setSelectedItem(template.getIsoPath());
+        }
+
+        updateTimeZone(template.getTimeZone());
+
+        if (!template.getId().equals(Guid.Empty))
         {
-            // Copy VM parameters from template.
-            buildModel(template);
+            getModel().getStorageDomain().setIsChangable(true);
+            getModel().getProvisioning().setIsChangable(true);
 
-            setSelectedOSType(template, getModel().getSelectedCluster().getArchitecture());
-            doChangeDefautlHost(template.getDedicatedVmForVds());
+            getModel().getVmType().setSelectedItem(template.getVmType());
+            getModel().getCopyPermissions().setIsAvailable(true);
+            getModel().getAllowConsoleReconnect().setEntity(template.isAllowConsoleReconnect());
+            initDisks();
+            updateRngDevice(template.getId());
+        }
+        else
+        {
+            getModel().getStorageDomain().setIsChangable(false);
+            getModel().getProvisioning().setIsChangable(false);
 
-            getModel().getIsStateless().setEntity(template.isStateless());
+            getModel().setIsDisksAvailable(false);
+            getModel().getCopyPermissions().setIsAvailable(false);
+            getModel().setDisks(null);
+        }
 
-            boolean hasCd = !StringHelper.isNullOrEmpty(template.getIsoPath());
+        initStorageDomains();
 
-            getModel().getCdImage().setIsChangable(hasCd);
-            getModel().getCdAttached().setEntity(hasCd);
-            if (hasCd) {
-                getModel().getCdImage().setSelectedItem(template.getIsoPath());
-            }
+        InstanceType selectedInstanceType = getModel().getInstanceTypes().getSelectedItem();
+        int instanceTypeMinAllocatedMemory = selectedInstanceType != null ? selectedInstanceType.getMinAllocatedMem() : 0;
 
-            updateTimeZone(template.getTimeZone());
+        // do not update if specified on template or instance type
+        if (template.getMinAllocatedMem() == 0 && instanceTypeMinAllocatedMemory == 0) {
+            updateMinAllocatedMemory();
+        }
 
-            if (!template.getId().equals(Guid.Empty))
-            {
-                getModel().getStorageDomain().setIsChangable(true);
-                getModel().getProvisioning().setIsChangable(true);
+        updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
+        getModel().getCustomPropertySheet().deserialize(template.getCustomProperties());
 
-                getModel().getVmType().setSelectedItem(template.getVmType());
-                getModel().setIsBlankTemplate(false);
-                getModel().getCopyPermissions().setIsAvailable(true);
-                getModel().getAllowConsoleReconnect().setEntity(template.isAllowConsoleReconnect());
-                initDisks();
-                updateRngDevice(template.getId());
-            }
-            else
-            {
-                getModel().getStorageDomain().setIsChangable(false);
-                getModel().getProvisioning().setIsChangable(false);
+        getModel().getVmInitModel().init(template);
+        getModel().getVmInitEnabled().setEntity(template.getVmInit() != null);
 
-                getModel().setIsBlankTemplate(true);
-                getModel().setIsDisksAvailable(false);
-                getModel().getCopyPermissions().setIsAvailable(false);
-                getModel().setDisks(null);
-            }
-
-            initStorageDomains();
-
-            InstanceType selectedInstanceType = getModel().getInstanceTypes().getSelectedItem();
-            int instanceTypeMinAllocatedMemory = selectedInstanceType != null ? selectedInstanceType.getMinAllocatedMem() : 0;
-
-            // do not update if specified on template or instance type
-            if (template.getMinAllocatedMem() == 0 && instanceTypeMinAllocatedMemory == 0) {
-                updateMinAllocatedMemory();
-            }
-
-            updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
-            getModel().getCustomPropertySheet().deserialize(template.getCustomProperties());
-
-            getModel().getVmInitModel().init(template);
-            getModel().getVmInitEnabled().setEntity(template.getVmInit() != null);
-
-            if (getModel().getSelectedCluster() != null) {
-                updateCpuProfile(getModel().getSelectedCluster().getId(),
-                        getClusterCompatibilityVersion(), template.getCpuProfileId());
-            }
+        if (getModel().getSelectedCluster() != null) {
+            updateCpuProfile(getModel().getSelectedCluster().getId(),
+                    getClusterCompatibilityVersion(), template.getCpuProfileId());
         }
     }
 
@@ -171,8 +172,8 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
         updateCustomPropertySheet();
         updateMinAllocatedMemory();
         updateNumOfSockets();
-        if (getModel().getTemplate().getSelectedItem() != null) {
-            VmTemplate template = getModel().getTemplate().getSelectedItem();
+        if (getModel().getTemplateWithVersion().getSelectedItem() != null) {
+            VmTemplate template = getModel().getTemplateWithVersion().getSelectedItem().getTemplateVersion();
             updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
         }
         updateCpuPinningVisibility();
@@ -210,7 +211,9 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
 
     @Override
     public void oSType_SelectedItemChanged() {
-        VmTemplate template = getModel().getTemplate().getSelectedItem();
+        VmTemplate template = getModel().getTemplateWithVersion().getSelectedItem() == null
+                ? null
+                : getModel().getTemplateWithVersion().getSelectedItem().getTemplateVersion();
         Integer osType = getModel().getOSType().getSelectedItem();
         if ((template != null || !basedOnCustomInstanceType()) && osType != null) {
             Guid id = basedOnCustomInstanceType() ? template.getId() : getModel().getInstanceTypes().getSelectedItem().getId();
@@ -235,7 +238,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
     private void updateTemplate()
     {
         final DataCenterWithCluster dataCenterWithCluster =
-                (DataCenterWithCluster) getModel().getDataCenterWithClustersList().getSelectedItem();
+                getModel().getDataCenterWithClustersList().getSelectedItem();
         StoragePool dataCenter = dataCenterWithCluster == null ? null : dataCenterWithCluster.getDataCenter();
         if (dataCenter == null) {
             return;
@@ -246,21 +249,18 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
         {
             final StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
 
-            AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(getModel(),
+            AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(null,
                     new INewAsyncCallback() {
                         @Override
-                        public void onSuccess(Object target1, Object returnValue1) {
+                        public void onSuccess(Object nothing, Object returnValue1) {
 
-                            NewVmModelBehavior behavior1 = NewVmModelBehavior.this;
-                            AsyncDataProvider.getInstance().getTemplateListByStorage(new AsyncQuery(new Object[] { behavior1,
-                                    returnValue1 },
+                            final List<VmTemplate> templatesByDataCenter = (List<VmTemplate>) returnValue1;
+
+                            AsyncDataProvider.getInstance().getTemplateListByStorage(new AsyncQuery(null,
                                     new INewAsyncCallback() {
                                         @Override
-                                        public void onSuccess(Object target2, Object returnValue2) {
+                                        public void onSuccess(Object nothing, Object returnValue2) {
 
-                                            Object[] array2 = (Object[]) target2;
-                                            NewVmModelBehavior behavior2 = (NewVmModelBehavior) array2[0];
-                                            List<VmTemplate> templatesByDataCenter = (List<VmTemplate>) array2[1];
                                             List<VmTemplate> templatesByStorage = (List<VmTemplate>) returnValue2;
                                             VmTemplate blankTemplate =
                                                     Linq.firstOrDefault(templatesByDataCenter,
@@ -273,7 +273,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
                                             List<VmTemplate> templateList = AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templatesByStorage,
                                                             dataCenterWithCluster.getCluster().getArchitecture());
 
-                                            behavior2.postInitTemplate(templateList);
+                                            NewVmModelBehavior.this.postInitTemplate(templateList);
 
                                         }
                                     }),
@@ -285,16 +285,14 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
         }
         else
         {
-            AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(getModel(),
+            AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(null,
                     new INewAsyncCallback() {
                         @Override
-                        public void onSuccess(Object target, Object returnValue) {
-
-                            NewVmModelBehavior behavior = NewVmModelBehavior.this;
+                        public void onSuccess(Object nothing, Object returnValue) {
 
                             List<VmTemplate> templates = (List<VmTemplate>) returnValue;
 
-                            behavior.postInitTemplate(AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templates,
+                            NewVmModelBehavior.this.postInitTemplate(AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templates,
                                     dataCenterWithCluster.getCluster().getArchitecture()));
 
                         }
@@ -302,18 +300,8 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
         }
     }
 
-    private void postInitTemplate(List<VmTemplate> templates)
-    {
-        List<VmTemplate> baseTemplates = filterNotBaseTemplates(templates);
-
-        // If there was some template selected before, try select it again.
-        VmTemplate prevBaseTemplate = getModel().getBaseTemplate().getSelectedItem();
-
-        getModel().getBaseTemplate().setItems(baseTemplates);
-
-        getModel().getBaseTemplate().setSelectedItem(Linq.firstOrDefault(baseTemplates,
-                new Linq.TemplatePredicate(prevBaseTemplate != null ? prevBaseTemplate.getId() : Guid.Empty)));
-
+    private void postInitTemplate(List<VmTemplate> templates) {
+        initTemplateWithVersion(templates);
         updateIsDisksAvailable();
     }
 

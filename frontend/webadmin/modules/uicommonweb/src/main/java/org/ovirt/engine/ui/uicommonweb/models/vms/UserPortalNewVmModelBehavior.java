@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -16,7 +15,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
@@ -27,7 +25,6 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings("unused")
@@ -56,10 +53,8 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                     public void onSuccess(Object target, Object returnValue) {
 
                         final List<StoragePool> dataCenters = new ArrayList<StoragePool>();
-                        for (StoragePool a : (ArrayList<StoragePool>) returnValue)
-                        {
-                            if (a.getStatus() == StoragePoolStatus.Up)
-                            {
+                        for (StoragePool a : (ArrayList<StoragePool>) returnValue) {
+                            if (a.getStatus() == StoragePoolStatus.Up) {
                                 dataCenters.add(a);
                             }
                         }
@@ -114,63 +109,29 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
     public void executed(FrontendMultipleQueryAsyncResult result)
     {
         List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
-        ArrayList<VmTemplate> templates =
+        List<VmTemplate> templates =
                 (ArrayList<VmTemplate>) returnValueList.get(0).getReturnValue();
-        initTemplates(templates);
+        initTemplateWithVersion(templates);
         initCdImage();
     }
 
-    private void initTemplates(List<VmTemplate> templates)
-    {
-        List<VmTemplate> rootTemplates = filterNotBaseTemplates(templates);
-
-        // Filter templates list (include only templates that belong to the selected datacenter)
-        ArrayList<VmTemplate> templatesList = new ArrayList<VmTemplate>();
-        VmTemplate blankTemplate = null;
-        DataCenterWithCluster dataCenterWithCluster = getModel().getDataCenterWithClustersList().getSelectedItem();
+    @Override
+    protected void initTemplateWithVersion(List<VmTemplate> templates) {
+        DataCenterWithCluster dataCenterWithCluster = this.getModel().getDataCenterWithClustersList().getSelectedItem();
         StoragePool selectedDataCenter = dataCenterWithCluster.getDataCenter();
         Guid selectedDataCenterId = selectedDataCenter.getId();
         if (selectedDataCenterId == null) {
             return;
         }
-
-        for (VmTemplate template : rootTemplates)
-        {
-            Guid datacenterId =
-                    template.getStoragePoolId() == null ? Guid.Empty : template.getStoragePoolId();
-
-            if (template.getId().equals(Guid.Empty))
-            {
-                blankTemplate = template;
-            }
-            else if (!selectedDataCenterId.equals(datacenterId))
-            {
-                continue;
-            }
-            else if (template.getStatus() == VmTemplateStatus.OK)
-            {
-                templatesList.add(template);
+        List<VmTemplate> properArchitectureTemplates = AsyncDataProvider.getInstance()
+                .filterTemplatesByArchitecture(templates, dataCenterWithCluster.getCluster().getArchitecture());
+        List<VmTemplate> properStateTemplates = new ArrayList<>();
+        for (VmTemplate template : properArchitectureTemplates) {
+            if (template.getStatus().equals(VmTemplateStatus.OK)) {
+                properStateTemplates.add(template);
             }
         }
-
-        // Sort list and position "Blank" template as first
-        Collections.sort(templatesList, new NameableComparator());
-        if (blankTemplate != null && rootTemplates.contains(blankTemplate))
-        {
-            templatesList.add(0, blankTemplate);
-        }
-
-        List<VmTemplate> filteredTemplates = AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templatesList,
-                dataCenterWithCluster.getCluster().getArchitecture());
-
-        // If there was some template selected before, try select it again.
-        VmTemplate prevBaseTemplate = getModel().getBaseTemplate().getSelectedItem();
-
-        getModel().getBaseTemplate().setItems(filteredTemplates);
-
-        getModel().getBaseTemplate().setSelectedItem(Linq.firstOrDefault(filteredTemplates,
-                new Linq.TemplatePredicate(prevBaseTemplate != null ? prevBaseTemplate.getId() : Guid.Empty)));
-
+        super.initTemplateWithVersion(properStateTemplates);
         updateIsDisksAvailable();
     }
 

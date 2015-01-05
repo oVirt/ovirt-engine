@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class TemplateVmModelBehavior extends VmModelBehaviorBase
@@ -36,8 +37,9 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
     public void initialize(SystemTreeItemModel systemTreeSelectedItem)
     {
         super.initialize(systemTreeSelectedItem);
-        getModel().getTemplate().setIsChangable(false);
+        getModel().getTemplateWithVersion().setIsChangable(false);
         getModel().getBaseTemplate().setIsChangable(false);
+        getModel().getTemplateWithVersion().setIsChangable(false);
         getModel().getProvisioning().setIsChangable(false);
         getModel().getStorageDomain().setIsChangable(false);
         getModel().getIsSoundcardEnabled().setIsChangable(true);
@@ -47,18 +49,16 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
 
         if (template.getStoragePoolId() != null && !template.getStoragePoolId().equals(Guid.Empty))
         {
-            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(getModel(),
+            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(null,
                     new INewAsyncCallback() {
                         @Override
-                        public void onSuccess(Object target, Object returnValue) {
+                        public void onSuccess(Object nothing, Object returnValue) {
                             final StoragePool dataCenter = (StoragePool) returnValue;
                             AsyncDataProvider.getInstance().getClusterListByService(
-                                    new AsyncQuery(getModel(), new INewAsyncCallback() {
+                                    new AsyncQuery(null, new INewAsyncCallback() {
 
                                         @Override
-                                        public void onSuccess(Object target, Object returnValue) {
-                                            UnitVmModel model = (UnitVmModel) target;
-
+                                        public void onSuccess(Object nothing, Object returnValue) {
                                             ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
                                             ArrayList<VDSGroup> clustersSupportingVirt = new ArrayList<VDSGroup>();
                                             // filter clusters supporting virt service only
@@ -72,16 +72,16 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                                                     AsyncDataProvider.getInstance().filterByArchitecture(clustersSupportingVirt,
                                                             template.getClusterArch());
 
-                                            model.setDataCentersAndClusters(model,
-                                                    new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dataCenter })),
+                                            getModel().setDataCentersAndClusters(getModel(),
+                                                    new ArrayList<StoragePool>(Arrays.asList(new StoragePool[]{dataCenter})),
                                                     filteredClusters,
                                                     template.getVdsGroupId());
 
-                                            AsyncDataProvider.getInstance().isSoundcardEnabled(new AsyncQuery(getModel(),
+                                            AsyncDataProvider.getInstance().isSoundcardEnabled(new AsyncQuery(null,
                                                     new INewAsyncCallback() {
 
                                                         @Override
-                                                        public void onSuccess(Object model, Object returnValue) {
+                                                        public void onSuccess(Object nothing, Object returnValue) {
                                                             getModel().getIsSoundcardEnabled().setEntity((Boolean) returnValue);
                                                             initTemplate();
                                                             initCdImage();
@@ -96,10 +96,10 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                     template.getStoragePoolId());
         }
 
-        AsyncDataProvider.getInstance().getWatchdogByVmId(new AsyncQuery(this.getModel(), new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getWatchdogByVmId(new AsyncQuery(null, new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object target, Object returnValue) {
-                UnitVmModel model = (UnitVmModel) target;
+            public void onSuccess(Object nothing, Object returnValue) {
+                UnitVmModel model = TemplateVmModelBehavior.this.getModel();
                 @SuppressWarnings("unchecked")
                 Collection<VmWatchdog> watchdogs =
                         ((VdcQueryReturnValue) returnValue).getReturnValue();
@@ -115,16 +115,24 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().getMigrationMode().setSelectedItem(template.getMigrationSupport());
 
         setupBaseTemplate(template.getBaseTemplateId());
+
     }
 
-    @Override
-    protected void baseTemplateSelectedItemChanged() {
-    }
+    protected void setupBaseTemplate(Guid baseTemplateId) {
+        AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery(null,
+                        new INewAsyncCallback() {
+                            @Override
+                            public void onSuccess(Object nothing, Object returnValue) {
 
-    @Override
-    public void template_SelectedItemChanged()
-    {
-        // Leave this method empty. Not relevant for template.
+                                UnitVmModel model = getModel();
+                                VmTemplate template = (VmTemplate) returnValue;
+
+                                model.getBaseTemplate().setItems(Collections.singletonList(template));
+                                model.getBaseTemplate().setSelectedItem(template);
+                                model.getBaseTemplate().setIsChangable(false);
+                            }
+                        }),
+                baseTemplateId);
     }
 
     @Override

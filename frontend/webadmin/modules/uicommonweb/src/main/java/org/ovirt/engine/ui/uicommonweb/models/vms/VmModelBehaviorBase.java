@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.ovirt.engine.core.common.TimeZoneType;
@@ -44,6 +44,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -52,7 +53,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.NumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.VmNumaSupportModel;
-import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
+import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
@@ -64,7 +65,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     private final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
     private TModel privateModel;
-    private final HashMap<Guid, List<VmTemplate>> baseTemplateToSubTemplates = new HashMap<Guid, List<VmTemplate>>();
 
     public TModel getModel() {
         return privateModel;
@@ -176,7 +176,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     protected void buildModel(VmBase vmBase) {
     }
 
-    public abstract void template_SelectedItemChanged();
+    public void templateWithVersion_SelectedItemChanged() {}
 
     public abstract void postDataCenterWithClusterSelectedItemChanged();
 
@@ -218,49 +218,94 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     }
 
-    protected List<VmTemplate> filterNotBaseTemplates(List<VmTemplate> templates) {
-        List<VmTemplate> baseTemplates = new ArrayList<VmTemplate>();
-        for (VmTemplate template : templates) {
-            if (template.getId().equals(template.getBaseTemplateId())) {
-                baseTemplates.add(template);
-                baseTemplateToSubTemplates.put(template.getId(),
-                        new ArrayList<VmTemplate>());
-            }
-        }
-
-        for (VmTemplate template : templates) {
-            Guid baseTemplateId = template.getBaseTemplateId();
-            if (baseTemplateToSubTemplates.containsKey(baseTemplateId)) {
-                baseTemplateToSubTemplates.get(baseTemplateId).add(template);
-            }
-        }
-
-        for (List<VmTemplate> subversions : baseTemplateToSubTemplates.values()) {
-            Collections.sort(subversions, new Comparator<VmTemplate>() {
-                @Override
-                public int compare(VmTemplate o1, VmTemplate o2) {
-                    return o2.getTemplateVersionNumber() - o1.getTemplateVersionNumber();
-                }
-            });
-        }
-
-        for (List<VmTemplate> subversions : baseTemplateToSubTemplates.values()) {
-            subversions.add(0, new LatestVmTemplate(subversions.get(0)));
-        }
-
-        return baseTemplates;
+    protected void baseTemplateSelectedItemChanged() {
     }
 
-    protected void baseTemplateSelectedItemChanged() {
-        VmTemplate baseTemplate = getModel().getBaseTemplate().getSelectedItem();
-        if (baseTemplate != null) {
-            List<VmTemplate> subVersions = baseTemplateToSubTemplates.get(baseTemplate.getId());
-            getModel().getTemplate().setItems(new ArrayList<VmTemplate>(subVersions));
-
-            // it's safe because in index 0 there's the latest version and
-            // in index 1 the base version or the last custom version
-            getModel().getTemplate().setSelectedItem(subVersions.get(1));
+    /**
+     *
+     * @param templates empty list is allowed
+     */
+    protected void initTemplateWithVersion(List<VmTemplate> templates) {
+        List<TemplateWithVersion> templatesWithVersion = createTemplateWithVersionsAddLatest(templates);
+        TemplateWithVersion previouslySelectedTemplate = getModel().getTemplateWithVersion().getSelectedItem();
+        TemplateWithVersion templateToSelect = computeTemplateWithVersionToSelect(templatesWithVersion,
+                previouslySelectedTemplate);
+        getModel().getTemplateWithVersion().setItems(templatesWithVersion);
+        if (templateToSelect != null) {
+            getModel().getTemplateWithVersion().setSelectedItem(templateToSelect);
         }
+    }
+
+    private static TemplateWithVersion computeTemplateWithVersionToSelect(
+            List<TemplateWithVersion> newItems,
+            TemplateWithVersion previousSelection) {
+        if (previousSelection == null) {
+            return computeNewTemplateWithVersionToSelect(newItems);
+        }
+        Guid previousTemplateId = previousSelection.getTemplateVersion().getId();
+        TemplateWithVersion oldTemplateToSelect = Linq.firstOrDefault(
+                newItems,
+                new Linq.TemplateWithVersionPredicate(previousTemplateId));
+        return oldTemplateToSelect != null
+                ? oldTemplateToSelect
+                : computeNewTemplateWithVersionToSelect(newItems);
+    }
+
+    /**
+     * It prefers to select second element (usually [Blank-1]) to the first one (usually [Blank-latest]).
+     */
+    private static TemplateWithVersion computeNewTemplateWithVersionToSelect(List<TemplateWithVersion> newItems) {
+        return newItems.isEmpty()
+                ? null
+                : newItems.size() >= 2
+                        ? newItems.get(1)
+                        : newItems.get(0);
+    }
+
+    /**
+     *
+     * @param templates raw templates from backend, latest not included
+     * @return model ready for 'Template' comobox, including latest
+     */
+    private static List<TemplateWithVersion> createTemplateWithVersionsAddLatest(List<VmTemplate> templates) {
+        final Map<Guid, VmTemplate> baseIdToBaseTemplateMap = new HashMap<>();
+        final Map<Guid, VmTemplate> baseIdToLastVersionMap = new HashMap<>();
+        for (VmTemplate template : templates) {
+            if (template.isBaseTemplate())  {
+                baseIdToBaseTemplateMap.put(template.getId(), template);
+                baseIdToLastVersionMap.put(template.getId(), template);
+            }
+        }
+        final List<TemplateWithVersion> result = new ArrayList<>();
+        for (VmTemplate template : templates) {
+            // update last version map
+            if (baseIdToLastVersionMap.get(template.getBaseTemplateId()).getTemplateVersionNumber() < template.getTemplateVersionNumber()) {
+                baseIdToLastVersionMap.put(template.getBaseTemplateId(), template);
+            }
+
+            final VmTemplate baseTemplate = baseIdToBaseTemplateMap.get(template.getBaseTemplateId());
+            result.add(new TemplateWithVersion(baseTemplate, template));
+        }
+
+        // add latest
+        for (Map.Entry<Guid, VmTemplate> pair : baseIdToLastVersionMap.entrySet()) {
+            VmTemplate baseTemplate = baseIdToBaseTemplateMap.get(pair.getKey());
+            VmTemplate latestTemplate = new LatestVmTemplate(pair.getValue());
+            result.add(new TemplateWithVersion(baseTemplate, latestTemplate));
+        }
+
+        Collections.sort(result);
+        return result;
+    }
+
+    protected static List<VmTemplate> keepBaseTemplates(List<VmTemplate> templates) {
+        List<VmTemplate> baseTemplates = new ArrayList<>();
+        for (VmTemplate template : templates) {
+            if (template.isBaseTemplate()) {
+                baseTemplates.add(template);
+            }
+        }
+        return baseTemplates;
     }
 
     protected void isSubTemplateEntityChanged() {
@@ -523,9 +568,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 }), version);
     }
 
-    public void initDisks()
-    {
-        VmTemplate template = getModel().getTemplate().getSelectedItem();
+    public void initDisks() {
+        VmTemplate template = getModel().getTemplateWithVersion().getSelectedItem().getTemplateVersion();
 
         AsyncDataProvider.getInstance().getTemplateDiskList(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
@@ -577,9 +621,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        VmTemplate template = getModel().getTemplate().getSelectedItem();
+        TemplateWithVersion templateWithVersion = getModel().getTemplateWithVersion().getSelectedItem();
 
-        if (template != null && !template.getId().equals(Guid.Empty))
+        if (templateWithVersion != null && !templateWithVersion.getTemplateVersion().getId().equals(Guid.Empty))
         {
             postInitStorageDomains();
         }
@@ -739,45 +783,44 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         getModel().getIsVirtioScsiEnabled().setIsAvailable(isVirtioScsiEnabled);
     }
 
-    protected void setupTemplate(Guid templateId, final boolean useLatest) {
-        AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery(getModel(),
+    protected void setupReadOnlyTemplateWithVersion(Guid templateId, final boolean useLatest) {
+        AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery(null,
                         new INewAsyncCallback() {
                             @Override
-                            public void onSuccess(Object target, Object returnValue) {
+                            public void onSuccess(Object nothing, Object returnValue) {
+                                VmTemplate rawTemplate = (VmTemplate) returnValue;
 
-                                UnitVmModel model = (UnitVmModel) target;
-                                VmTemplate template = (VmTemplate) returnValue;
+                                final VmTemplate template = useLatest
+                                        ? new LatestVmTemplate(rawTemplate)
+                                        : rawTemplate;
 
-                                if (useLatest) {
-                                    template = new LatestVmTemplate(template);
+                                if (template.isBaseTemplate()) {
+                                    TemplateWithVersion templateCouple = new TemplateWithVersion(template, template);
+                                    setReadOnlyTemplateWithVersion(templateCouple);
+                                } else {
+                                    AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery(null,
+                                                    new INewAsyncCallback() {
+                                                        @Override
+                                                        public void onSuccess(Object nothing, Object returnValue) {
+                                                            VmTemplate baseTemplate = (VmTemplate) returnValue;
+                                                            TemplateWithVersion templateCouple = new TemplateWithVersion(baseTemplate, template);
+                                                            setReadOnlyTemplateWithVersion(templateCouple);
+                                                        }
+                                                    }),
+                                            template.getBaseTemplateId());
                                 }
 
-                                setupBaseTemplate(template.getBaseTemplateId());
-
-                                model.getTemplate().setItems(Collections.singletonList(template));
-                                model.getTemplate().setSelectedItem(template);
-                                model.getTemplate().setIsChangable(false);
                             }
                         }),
                 templateId
         );
     }
 
-    protected void setupBaseTemplate(Guid baseTemplateId) {
-        AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery(getModel(),
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
+    protected void setReadOnlyTemplateWithVersion(TemplateWithVersion templateCouple) {
+        getModel().getTemplateWithVersion().setItems(Collections.singleton(templateCouple));
+        getModel().getTemplateWithVersion().setSelectedItem(templateCouple);
+        getModel().getTemplateWithVersion().setIsChangable(false);
 
-                        UnitVmModel model = (UnitVmModel) target;
-                        VmTemplate template = (VmTemplate) returnValue;
-
-                        model.getBaseTemplate().setItems(Collections.singletonList(template));
-                        model.getBaseTemplate().setSelectedItem(template);
-                        model.getBaseTemplate().setIsChangable(false);
-                    }
-                }),
-                baseTemplateId);
     }
 
     protected void updateCpuPinningVisibility() {
@@ -1190,9 +1233,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     /**
      * In case of a blank template, use the proper value for the default OS.
-     *
-     * @param VmBase
-     * @param ArchitectureType
      */
     protected void setSelectedOSType(VmBase vmBase,
             ArchitectureType architectureType) {

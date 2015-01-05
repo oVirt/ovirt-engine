@@ -129,14 +129,12 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             {
                 getModel().getStorageDomain().setIsChangable(true);
 
-                getModel().setIsBlankTemplate(false);
                 initDisks();
             }
             else
             {
                 getModel().getStorageDomain().setIsChangable(false);
 
-                getModel().setIsBlankTemplate(true);
                 getModel().setIsDisksAvailable(false);
                 getModel().setDisks(null);
             }
@@ -171,11 +169,6 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     }
 
     @Override
-    public void template_SelectedItemChanged() {
-        // overrideSerialNumberPolicy if there is a need to do some actions
-    }
-
-    @Override
     public void postDataCenterWithClusterSelectedItemChanged()
     {
         updateDefaultHost();
@@ -184,8 +177,8 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
         updateNumOfSockets();
         updateOSValues();
 
-        if (getModel().getTemplate().getSelectedItem() != null) {
-            VmTemplate template = getModel().getTemplate().getSelectedItem();
+        if (getModel().getTemplateWithVersion().getSelectedItem() != null) {
+            VmTemplate template = getModel().getTemplateWithVersion().getSelectedItem().getTemplateVersion();
             updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
         }
         updateMemoryBalloon();
@@ -206,7 +199,9 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
     @Override
     public void oSType_SelectedItemChanged() {
-        VmTemplate template = getModel().getTemplate().getSelectedItem();
+        VmTemplate template = getModel().getTemplateWithVersion().getSelectedItem() == null
+                ? null
+                : getModel().getTemplateWithVersion().getSelectedItem().getTemplateVersion();
         Integer osType = getModel().getOSType().getSelectedItem();
         if ((template != null || !basedOnCustomInstanceType()) && osType != null) {
             Guid id = basedOnCustomInstanceType() ? template.getId() : getModel().getInstanceTypes().getSelectedItem().getId();

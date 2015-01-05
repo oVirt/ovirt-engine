@@ -16,7 +16,9 @@ public class NewPoolInstanceTypeManager extends InstanceTypeManager {
         if (!(getModel().getInstanceTypes().getSelectedItem() instanceof CustomInstanceType)) {
             return (VmBase) getModel().getInstanceTypes().getSelectedItem();
         } else {
-            return getModel().getTemplate().getSelectedItem();
+            return getModel().getTemplateWithVersion().getSelectedItem() == null
+                    ? null
+                    : getModel().getTemplateWithVersion().getSelectedItem().getTemplateVersion();
         }
     }
 
@@ -33,8 +35,9 @@ public class NewPoolInstanceTypeManager extends InstanceTypeManager {
     protected void maybeSetSingleQxlPci(VmBase vmBase) {
         boolean customInstanceTypeUsed = getModel().getInstanceTypes().getSelectedItem() instanceof CustomInstanceType;
         boolean blankTemplateUsed =
-                getModel().getTemplate().getSelectedItem() != null
-                        && getModel().getTemplate().getSelectedItem().getId().equals(Guid.Empty);
+                getModel().getTemplateWithVersion().getSelectedItem() != null
+                        && getModel().getTemplateWithVersion().getSelectedItem().getTemplateVersion()
+                                .getId().equals(Guid.Empty);
         if (customInstanceTypeUsed && blankTemplateUsed) {
             maybeSetEntity(getModel().getIsSingleQxlEnabled(), getModel().getIsQxlSupported());
         } else {

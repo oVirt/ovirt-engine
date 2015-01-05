@@ -6,6 +6,14 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 /**
  * It allows for frontend to distinguish between regular template and latest template.
+ * <p>
+ *     Note: Latest template instance equals to its pattern.
+ *     <pre>
+ *         VmTemplate a = ...
+ *         LatestVmTemplate b = new LatestVmTemplate(a);
+ *         a.equals(b); // returns true
+ *     </pre>
+ * </p>
  */
 public class LatestVmTemplate extends VmTemplate {
 

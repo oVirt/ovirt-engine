@@ -65,6 +65,7 @@ import org.ovirt.engine.ui.uicommonweb.models.providers.ExternalNetwork;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDomainModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
@@ -1098,6 +1099,19 @@ public final class Linq
         public boolean match(VmTemplate source)
         {
             return source.getId().equals(id);
+        }
+    }
+
+    public final static class TemplateWithVersionPredicate implements IPredicate<TemplateWithVersion> {
+        private final Guid id;
+
+        public TemplateWithVersionPredicate(Guid id) {
+            this.id = id;
+        }
+
+        @Override
+        public boolean match(TemplateWithVersion templateWithVersion) {
+            return id.equals(templateWithVersion.getTemplateVersion().getId());
         }
     }
 

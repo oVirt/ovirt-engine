@@ -16,6 +16,10 @@ import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
+/**
+ * Template
+ * <p>Blank template has id {@link org.ovirt.engine.core.compat.Guid#Empty}</p>
+ */
 public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid, VmTemplateStatus>, InstanceType, ImageType {
     private static final long serialVersionUID = -5238366659716600486L;
     public static final int BASE_VERSION_NUMBER = 1;
@@ -341,5 +345,14 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
      */
     public boolean isBaseTemplate() {
         return getId().equals(getBaseTemplateId());
+    }
+
+    /**
+     * Check if template is special 'Blank' template or its version.
+     * <p>Blank template is recognized by id being {@link org.ovirt.engine.core.compat.Guid#Empty}</p>
+     * @return true if this is Blank template, false otherwise
+     */
+    public boolean isBlank() {
+        return Guid.Empty.equals(getBaseTemplateId());
     }
 }

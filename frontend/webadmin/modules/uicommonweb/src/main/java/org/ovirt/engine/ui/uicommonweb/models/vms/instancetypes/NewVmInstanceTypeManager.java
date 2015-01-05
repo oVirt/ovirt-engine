@@ -20,7 +20,9 @@ public class NewVmInstanceTypeManager extends VmInstanceTypeManager {
         if (!(getModel().getInstanceTypes().getSelectedItem() instanceof CustomInstanceType)) {
             return (VmBase) getModel().getInstanceTypes().getSelectedItem();
         } else {
-            return getModel().getTemplate().getSelectedItem();
+            return getModel().getTemplateWithVersion().getSelectedItem() == null
+                    ? null
+                    : getModel().getTemplateWithVersion().getSelectedItem().getTemplateVersion();
         }
     }
 
@@ -44,8 +46,9 @@ public class NewVmInstanceTypeManager extends VmInstanceTypeManager {
         // The default value cannot be set in the template since it will effect REST API as well
         boolean customInstanceTypeUsed = getModel().getInstanceTypes().getSelectedItem() instanceof CustomInstanceType;
         boolean blankTemplateUsed =
-                getModel().getTemplate().getSelectedItem() != null
-                        && getModel().getTemplate().getSelectedItem().getId().equals(Guid.Empty);
+                getModel().getTemplateWithVersion().getSelectedItem() != null
+                        && getModel().getTemplateWithVersion().getSelectedItem().getTemplateVersion()
+                                .getId().equals(Guid.Empty);
         if (customInstanceTypeUsed && blankTemplateUsed) {
             maybeSetEntity(getModel().getIsSingleQxlEnabled(), getModel().getIsQxlSupported());
         } else {

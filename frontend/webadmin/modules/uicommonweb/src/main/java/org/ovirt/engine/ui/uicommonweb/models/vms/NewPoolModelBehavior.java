@@ -55,21 +55,19 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
             @Override
             public void onSuccess(Object target1, Object returnValue1) {
 
-                List<VmTemplate> baseTemplates =
-                        filterNotBaseTemplates((List<VmTemplate>) returnValue1);
-
-                List<VmTemplate> filteredTemplates =
-                        AsyncDataProvider.getInstance().filterTemplatesByArchitecture(baseTemplates,
+                List<VmTemplate> templatesByDataCenter = (List<VmTemplate>) returnValue1;
+                List<VmTemplate> properArchitectureTemplates =
+                        AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templatesByDataCenter,
                                 dataCenterWithCluster.getCluster().getArchitecture());
-
-                List<VmTemplate> templatesWithoutBlank = new ArrayList<VmTemplate>();
-                for (VmTemplate template : filteredTemplates) {
-                    if (!template.getId().equals(Guid.Empty)) {
+                List<VmTemplate> templatesWithoutBlank = new ArrayList<>();
+                for (VmTemplate template : properArchitectureTemplates) {
+                    final boolean isBlankOrVersionOfBlank = template.getId().equals(Guid.Empty)
+                            || template.getBaseTemplateId().equals(Guid.Empty);
+                    if (!isBlankOrVersionOfBlank) {
                         templatesWithoutBlank.add(template);
                     }
                 }
-
-                getModel().getBaseTemplate().setItems(templatesWithoutBlank);
+                initTemplateWithVersion(templatesWithoutBlank);
             }
         }), dataCenter.getId());
 
@@ -77,9 +75,11 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
     }
 
     @Override
-    public void template_SelectedItemChanged() {
-        super.template_SelectedItemChanged();
-        VmTemplate template = getModel().getTemplate().getSelectedItem();
+    public void templateWithVersion_SelectedItemChanged() {
+        super.templateWithVersion_SelectedItemChanged();
+        VmTemplate template = getModel().getTemplateWithVersion().getSelectedItem() != null
+                ? getModel().getTemplateWithVersion().getSelectedItem().getTemplateVersion()
+                : null;
 
         if (template == null) {
             return;

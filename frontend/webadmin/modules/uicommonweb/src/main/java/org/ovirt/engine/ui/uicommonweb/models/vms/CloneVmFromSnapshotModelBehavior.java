@@ -13,9 +13,8 @@ public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior
     }
 
     @Override
-    public void template_SelectedItemChanged()
-    {
-        super.template_SelectedItemChanged();
+    public void templateWithVersion_SelectedItemChanged() {
+        super.templateWithVersion_SelectedItemChanged();
 
         getModel().getName().setEntity(""); //$NON-NLS-1$
         getModel().getDescription().setEntity(""); //$NON-NLS-1$

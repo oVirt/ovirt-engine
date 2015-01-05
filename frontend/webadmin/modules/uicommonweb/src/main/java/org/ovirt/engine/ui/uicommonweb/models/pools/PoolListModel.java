@@ -29,7 +29,6 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
-import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
@@ -265,7 +264,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                                             .getItems(),
                                             new Linq.DataCenterWithClusterPredicate(vm.getStoragePoolId(), vm.getVdsGroupId())));
 
-                                    model.getTemplate().setIsChangable(false);
+                                    model.getTemplateWithVersion().setIsChangable(false);
                                     cdImage = vm.getIsoPath();
                                     model.getVmType().setSelectedItem(vm.getVmType());
                                 }
@@ -460,7 +459,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         vm.setVmInit(model.getVmInitModel().buildCloudInitParameters(model));
                         vm.setBalloonEnabled(model.getMemoryBalloonDeviceEnabled().getEntity());
 
-                        vm.setUseLatestVersion(model.getTemplate().getSelectedItem() instanceof LatestVmTemplate);
+                        vm.setUseLatestVersion(model.getTemplateWithVersion().getSelectedItem().isLatest());
                         vm.setStateless(false);
                         vm.setInstanceTypeId(model.getInstanceTypes().getSelectedItem().getId());
 

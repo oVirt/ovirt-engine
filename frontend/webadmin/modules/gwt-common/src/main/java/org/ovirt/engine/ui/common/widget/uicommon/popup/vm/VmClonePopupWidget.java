@@ -38,6 +38,6 @@ public class VmClonePopupWidget extends AbstractVmPopupWidget {
                 putAll(poolSpecificFields(), hiddenField()).
                 putOne(logicalNetworksEditorPanel, hiddenField()).
                 update(consoleTab, simpleField().visibleInAdvancedModeOnly()).
-                update(templateVersionNameEditor, hiddenField());
+                putOne(baseTemplateEditor, hiddenField());
     }
 }

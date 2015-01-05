@@ -47,7 +47,7 @@ public class VmPopupWidget extends AbstractVmPopupWidget {
     protected PopupWidgetConfigMap createWidgetConfiguration() {
         PopupWidgetConfigMap widgetConfiguration = super.createWidgetConfiguration().
                 putAll(poolSpecificFields(), hiddenField()).
-                update(templateVersionNameEditor, hiddenField());
+                putOne(baseTemplateEditor, hiddenField());
 
         updateOrAddToWidgetConfiguration(widgetConfiguration, detachableWidgets(), UpdateToDetachable.INSTANCE);
         updateOrAddToWidgetConfiguration(widgetConfiguration, adminOnlyWidgets(), UpdateToAdminOnly.INSTANCE);

@@ -76,19 +76,16 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
     }
 
     public void initTemplate() {
-        setupTemplate(pool.getVmtGuid(), pool.isUseLatestVersion());
+        setupReadOnlyTemplateWithVersion(pool.getVmtGuid(), pool.isUseLatestVersion());
     }
 
     @Override
-    public void template_SelectedItemChanged() {
+    public void templateWithVersion_SelectedItemChanged() {
+        super.templateWithVersion_SelectedItemChanged();
         getModel().setIsDisksAvailable(true);
-        VmTemplate template = getModel().getTemplate().getSelectedItem();
+        VmTemplate template = getModel().getTemplateWithVersion().getSelectedItem().getTemplateVersion();
         updateRngDevice(template.getId());
         getModel().getCustomPropertySheet().deserialize(template.getCustomProperties());
-    }
-
-    @Override
-    protected void baseTemplateSelectedItemChanged() {
     }
 
     @Override

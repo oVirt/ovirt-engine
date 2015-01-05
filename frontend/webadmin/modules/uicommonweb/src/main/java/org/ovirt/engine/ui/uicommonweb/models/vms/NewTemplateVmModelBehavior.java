@@ -51,7 +51,6 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         super.initialize(systemTreeSelectedItem);
         getModel().getVmInitEnabled().setEntity(vm.getVmInit() != null);
         getModel().getVmInitModel().init(vm.getStaticData());
-        getModel().getTemplate().setIsChangable(false);
 
         getModel().getVmType().setIsChangable(true);
         getModel().getCopyPermissions().setIsAvailable(true);
@@ -186,9 +185,8 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         }
     }
 
-    private void postInitTemplate(List<VmTemplate> templates)
-    {
-        List<VmTemplate> baseTemplates = filterNotBaseTemplates(templates);
+    private void postInitTemplate(List<VmTemplate> templates) {
+        List<VmTemplate> baseTemplates = keepBaseTemplates(templates);
 
         VmTemplate currentTemplate = Linq.firstOrDefault(templates,
                 new Linq.TemplatePredicate(vm.getVmtGuid()));
@@ -259,11 +257,6 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
             list.add(diskModel);
         }
         getModel().setDisks(list);
-    }
-
-    @Override
-    public void template_SelectedItemChanged()
-    {
     }
 
     @Override
@@ -453,8 +446,8 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         if (!getModel().getIsSubTemplate().getEntity()) {
             getModel().getName().setEntity(""); //$NON-NLS-1$
         } else {
-            // by default select the template of the vm
-            getModel().getBaseTemplate().setEntity(getModel().getTemplate().getEntity());
+            // there will always be at least 'Blank' base template
+            getModel().getBaseTemplate().setSelectedItem(getModel().getBaseTemplate().getItems().iterator().next());
 
             // copy any entered name to be the template-version name
             getModel().getTemplateVersionName().setEntity(getModel().getName().getEntity());

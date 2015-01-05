@@ -91,36 +91,36 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
 
     private void loadDataCenter() {
         AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(getModel(),
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
+                        new INewAsyncCallback() {
+                            @Override
+                            public void onSuccess(Object target, Object returnValue) {
 
-                        UnitVmModel model = (UnitVmModel) target;
-                        if (returnValue != null) {
-                            StoragePool dataCenter = (StoragePool) returnValue;
-                            final List<StoragePool> dataCenters =
-                                    new ArrayList<StoragePool>(Arrays.asList(new StoragePool[]{dataCenter}));
+                                UnitVmModel model = (UnitVmModel) target;
+                                if (returnValue != null) {
+                                    StoragePool dataCenter = (StoragePool) returnValue;
+                                    final List<StoragePool> dataCenters =
+                                            new ArrayList<StoragePool>(Arrays.asList(new StoragePool[]{dataCenter}));
 
-                            initClusters(dataCenters);
-                        } else {
-                            ExistingVmModelBehavior behavior = (ExistingVmModelBehavior) model.getBehavior();
-                            VM currentVm = behavior.vm;
-                            VDSGroup tempVar = new VDSGroup();
-                            tempVar.setId(currentVm.getVdsGroupId());
-                            tempVar.setName(currentVm.getVdsGroupName());
-                            tempVar.setcompatibility_version(currentVm.getVdsGroupCompatibilityVersion());
-                            tempVar.setStoragePoolId(currentVm.getStoragePoolId());
-                            VDSGroup cluster = tempVar;
-                            DataCenterWithCluster dataCenterWithCluster =
-                                    new DataCenterWithCluster(null, cluster);
-                            model.getDataCenterWithClustersList().setItems(Arrays.asList(dataCenterWithCluster));
-                            model.getDataCenterWithClustersList().setSelectedItem(dataCenterWithCluster);
-                            behavior.initTemplate();
-                            behavior.initCdImage();
-                        }
+                                    initClusters(dataCenters);
+                                } else {
+                                    ExistingVmModelBehavior behavior = (ExistingVmModelBehavior) model.getBehavior();
+                                    VM currentVm = behavior.vm;
+                                    VDSGroup tempVar = new VDSGroup();
+                                    tempVar.setId(currentVm.getVdsGroupId());
+                                    tempVar.setName(currentVm.getVdsGroupName());
+                                    tempVar.setcompatibility_version(currentVm.getVdsGroupCompatibilityVersion());
+                                    tempVar.setStoragePoolId(currentVm.getStoragePoolId());
+                                    VDSGroup cluster = tempVar;
+                                    DataCenterWithCluster dataCenterWithCluster =
+                                            new DataCenterWithCluster(null, cluster);
+                                    model.getDataCenterWithClustersList().setItems(Arrays.asList(dataCenterWithCluster));
+                                    model.getDataCenterWithClustersList().setSelectedItem(dataCenterWithCluster);
+                                    behavior.initTemplate();
+                                    behavior.initCdImage();
+                                }
 
-                    }
-                }),
+                            }
+                        }),
                 vm.getStoragePoolId());
     }
 
@@ -148,12 +148,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
     }
 
     @Override
-    protected void baseTemplateSelectedItemChanged() {
-    }
-
-    @Override
-    public void template_SelectedItemChanged()
-    {
+    public void templateWithVersion_SelectedItemChanged() {
         // This method will be called even if a VM created from Blank template.
 
         // Update model state according to VM properties.
@@ -198,7 +193,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
             }), vm.getRunOnVds());
         }
 
-    updateCpuProfile(vm.getVdsGroupId(), vm.getVdsGroupCompatibilityVersion(), vm.getCpuProfileId());
+        updateCpuProfile(vm.getVdsGroupId(), vm.getVdsGroupCompatibilityVersion(), vm.getCpuProfileId());
     }
 
     @Override
@@ -317,9 +312,8 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         }
     }
 
-    protected void initTemplate()
-    {
-        setupTemplate(vm.getVmtGuid(), vm.isUseLatestVersion());
+    protected void initTemplate() {
+        setupReadOnlyTemplateWithVersion(vm.getVmtGuid(), vm.isUseLatestVersion());
     }
 
     public void initCdImage()

@@ -95,7 +95,6 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_grou
 import org.ovirt.engine.ui.uicommonweb.models.storage.ImportCloneModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
-import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
 import org.ovirt.engine.ui.uicommonweb.models.templates.VmBaseListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.AttachCdModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -1252,14 +1251,14 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             model.startProgress(null);
 
             Frontend.getInstance().runMultipleAction(VdcActionType.ExportVm, parameters,
-                                                     new IFrontendMultipleActionAsyncCallback() {
-                                                         @Override
-                                                         public void executed(FrontendMultipleActionAsyncResult result) {
-                                                             ExportVmModel localModel = (ExportVmModel) result.getState();
-                                                             localModel.stopProgress();
-                                                             cancel();
-                                                         }
-                                                     }, model);
+                    new IFrontendMultipleActionAsyncCallback() {
+                        @Override
+                        public void executed(FrontendMultipleActionAsyncResult result) {
+                            ExportVmModel localModel = (ExportVmModel) result.getState();
+                            localModel.stopProgress();
+                            cancel();
+                        }
+                    }, model);
         }
     }
 
@@ -1406,7 +1405,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             return;
         }
 
-        if (!model.validate())
+        if (!model.validate(false))
         {
             model.setIsValid(false);
         }
@@ -2011,7 +2010,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             final VM selectedItem = (VM) getSelectedItem();
             // explicitly pass non-editable field from the original VM
             getcurrentVm().setCreatedByUserId(selectedItem.getCreatedByUserId());
-            getcurrentVm().setUseLatestVersion(model.getTemplate().getSelectedItem() instanceof LatestVmTemplate);
+            getcurrentVm().setUseLatestVersion(model.getTemplateWithVersion().getSelectedItem().isLatest());
 
             if (selectedItem.isRunningOrPaused()) {
                 AsyncDataProvider.getInstance().getVmChangedFieldsForNextRun(editedVm, getcurrentVm(), getUpdateVmParameters(false), new AsyncQuery(this,
@@ -2129,7 +2128,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         if (!StringHelper.isNullOrEmpty(model.getVmId().getEntity())) {
             vm.setId(new Guid(model.getVmId().getEntity()));
         }
-        vm.setUseLatestVersion(model.getTemplate().getSelectedItem() instanceof LatestVmTemplate);
+        vm.setUseLatestVersion(model.getTemplateWithVersion().getSelectedItem().isLatest());
 
         AddVmParameters parameters = new AddVmParameters(vm);
         parameters.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
@@ -2426,20 +2425,16 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         if (command == getNewVmCommand())
         {
             newVm();
-        }
-        else if (command == getImportVmCommand()) {
+        } else if (command == getImportVmCommand()) {
             importVms();
-        }
-        else if (command == getCloneVmCommand())
+        } else if (command == getCloneVmCommand())
         {
             cloneVm();
-        }
-        else if (command == getEditCommand())
+        } else if (command == getEditCommand())
         {
             edit();
         }
-        else if (command == getEditConsoleCommand())
-        {
+        else if (command == getEditConsoleCommand()) {
             editConsole();
         }
         else if (command == getConsoleConnectCommand())
@@ -2457,44 +2452,36 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         else if (command == getPauseCommand())
         {
             pause();
-        }
-        else if (command == getStopCommand())
+        } else if (command == getStopCommand())
         {
             stop();
-        }
-        else if (command == getShutdownCommand())
+        } else if (command == getShutdownCommand())
         {
             shutdown();
         }
         else if (command == getRebootCommand()) {
             reboot();
-        }
-        else if (command == getMigrateCommand())
+        } else if (command == getMigrateCommand())
         {
             migrate();
         }
         else if (command == getNewTemplateCommand())
         {
             newTemplate();
-        }
-        else if (command == getRunOnceCommand())
+        } else if (command == getRunOnceCommand())
         {
             runOnce();
-        }
-        else if (command == getExportCommand())
-        {
+        } else if (command == getExportCommand()) {
             export();
         }
         else if (command == getCreateSnapshotCommand())
         {
             createSnapshot();
         }
-        else if (command == getGuideCommand())
-        {
+        else if (command == getGuideCommand()) {
             guide();
         }
-        else if (command == getRetrieveIsoImagesCommand())
-        {
+        else if (command == getRetrieveIsoImagesCommand()) {
             retrieveIsoImages();
         }
         else if (command == getChangeCdCommand())
@@ -2668,8 +2655,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 setWindow(null); // remove current window first
                 setWindow(importVmsModel);
             }
-        })
-        .setTitle(ConstantsManager.getInstance().getConstants().back())
+                })
+                        .setTitle(ConstantsManager.getInstance().getConstants().back())
         );
 
         model.getCommands().add(new UICommand(CMD_CANCEL, this)

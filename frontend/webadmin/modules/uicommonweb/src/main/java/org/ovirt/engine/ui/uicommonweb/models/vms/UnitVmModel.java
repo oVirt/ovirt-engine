@@ -61,6 +61,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.NumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.VmNumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.GuidValidation;
@@ -218,7 +219,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getMaxAssignedVmsPerUser().setIsChangable(false);
 
             getBaseTemplate().setIsChangable(false);
-            getTemplate().setIsChangable(false);
+            getTemplateWithVersion().setIsChangable(false);
             getInstanceTypes().setIsChangable(false);
             getMemSize().setIsChangable(false);
             getTotalCPUCores().setIsChangable(false);
@@ -288,23 +289,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             vmAttachedToPool = true;
         }
     }
-
-    private boolean isBlankTemplate;
-
-    public boolean getIsBlankTemplate()
-    {
-        return isBlankTemplate;
-    }
-
-    public void setIsBlankTemplate(boolean value)
-    {
-        if (isBlankTemplate != value)
-        {
-            isBlankTemplate = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsBlankTemplate")); //$NON-NLS-1$
-        }
-    }
-
     private boolean isWindowsOS;
 
     public boolean getIsWindowsOS()
@@ -381,16 +365,14 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         privateStorageDomain = value;
     }
 
-    private NotChangableForVmInPoolListModel<VmTemplate> privateTemplate;
+    private NotChangableForVmInPoolListModel<TemplateWithVersion> templateWithVersion;
 
-    public ListModel<VmTemplate> getTemplate()
-    {
-        return privateTemplate;
+    public ListModel<TemplateWithVersion> getTemplateWithVersion() {
+        return templateWithVersion;
     }
 
-    private void setTemplate(NotChangableForVmInPoolListModel<VmTemplate> value)
-    {
-        privateTemplate = value;
+    public void setTemplateWithVersion(NotChangableForVmInPoolListModel<TemplateWithVersion> templateWithVersion) {
+        this.templateWithVersion = templateWithVersion;
     }
 
     private NotChangableForVmInPoolListModel<VmTemplate> baseTemplate;
@@ -917,6 +899,15 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.graphicsType = graphicsType;
     }
 
+    /**
+     * Template provisioning: clone / thin - how to copy template disk.
+     * <ul>
+     *     <li>true - Clone</li>
+     *     <li>false - Thin</li>
+     * </ul>
+     * Aggregation of {@link #privateProvisioningThin_IsSelected}
+     * and {@link #privateProvisioningClone_IsSelected}.
+     */
     private NotChangableForVmInPoolEntityModel<Boolean> privateProvisioning;
 
     public EntityModel<Boolean> getProvisioning()
@@ -1544,9 +1535,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setSysprepEnabled(new EntityModel<Boolean>());
         getVmInitEnabled().getEntityChangedEvent().addListener(this);
         setVmInitModel(new VmInitModel());
-
-        setTemplate(new NotChangableForVmInPoolListModel<VmTemplate>());
-        getTemplate().getSelectedItemChangedEvent().addListener(this);
+        setTemplateWithVersion(new NotChangableForVmInPoolListModel<TemplateWithVersion>());
+        getTemplateWithVersion().getSelectedItemChangedEvent().addListener(this);
 
         setInstanceTypes(new NotChangableForVmInPoolListModel<InstanceType>());
 
@@ -1777,9 +1767,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 behavior.updateEmulatedMachines();
                 behavior.updateCustomCpu();
             }
-            else if (sender == getTemplate())
+            else if (sender == getTemplateWithVersion())
             {
-                template_SelectedItemChanged(sender, args);
+                templateWithVersion_SelectedItemChanged(sender, args);
             }
             else if (sender == getTimeZone())
             {
@@ -2214,9 +2204,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
     }
 
-    private void template_SelectedItemChanged(Object sender, EventArgs args)
-    {
-        behavior.template_SelectedItemChanged();
+    private void templateWithVersion_SelectedItemChanged(Object sender, EventArgs args) {
+        behavior.templateWithVersion_SelectedItemChanged();
         behavior.updateMigrationForLocalSD();
     }
 
@@ -2641,6 +2630,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     public boolean validate() {
+        return this.validate(true);
+    }
+
+    public boolean validate(boolean templateWithVersionRequired) {
+
         boolean hwPartValid = validateHwPart();
 
         getInstanceTypes().setIsValid(true);
@@ -2690,8 +2684,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                     && getComment().getIsValid());
         }
 
-
-        getTemplate().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        if (templateWithVersionRequired) {
+            getTemplateWithVersion().validateSelectedItem(new IValidation[]{new NotEmptyValidation()});
+        }
         getDisksAllocationModel().validateEntity(new IValidation[] {});
 
         getCdImage().setIsValid(true);
@@ -2727,7 +2722,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         setValidTab(TabName.GENERAL_TAB, isValidTab(TabName.GENERAL_TAB)
                 && getDataCenterWithClustersList().getIsValid()
-                && getTemplate().getIsValid());
+                && getTemplateWithVersion().getIsValid());
 
         setValidTab(TabName.INITIAL_RUN_TAB, getTimeZone().getIsValid());
 

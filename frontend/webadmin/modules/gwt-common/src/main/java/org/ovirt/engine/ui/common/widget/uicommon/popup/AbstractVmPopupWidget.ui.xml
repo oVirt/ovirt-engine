@@ -422,7 +422,7 @@
                 <e:ListModelTypeAheadListBoxEditor ui:field="dataCenterWithClusterEditor" />
                 <e:ListModelTypeAheadListBoxEditor ui:field="quotaEditor" />
                 <e:ListModelTypeAheadListBoxEditor ui:field="baseTemplateEditor"/>
-                <e:ListModelTypeAheadListBoxEditor ui:field="templateEditor" />
+                <e:ListModelTypeAheadListBoxEditor ui:field="templateWithVersionEditor" />
                 <e:ListModelListBoxEditor ui:field="oSTypeEditor" />
                 <e:ListModelTypeAheadListBoxEditor ui:field="instanceTypesEditor" />
                 <e:ListModelListBoxEditor ui:field="vmTypeEditor" />

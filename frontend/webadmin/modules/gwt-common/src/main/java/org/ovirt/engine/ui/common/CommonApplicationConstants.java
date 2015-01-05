@@ -71,8 +71,8 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Sub Version Name")
     String templateVersionName();
 
-    @DefaultStringValue("Template Sub Version")
-    String templateSubVersion();
+    @DefaultStringValue("Template")
+    String template();
 
     @DefaultStringValue("latest")
     String latest();

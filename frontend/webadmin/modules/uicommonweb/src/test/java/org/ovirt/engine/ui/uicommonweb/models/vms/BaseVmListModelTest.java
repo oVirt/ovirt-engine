@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
 
 public class BaseVmListModelTest extends BaseVmTest {
 
@@ -24,7 +25,9 @@ public class BaseVmListModelTest extends BaseVmTest {
         when(model.getVmType().getSelectedItem()).thenReturn(VM_TYPE);
         VmTemplate template = new VmTemplate();
         template.setId(TEMPLATE_GUID);
-        when(model.getTemplate().getSelectedItem()).thenReturn(template);
+        TemplateWithVersion templateWithVersion = mock(TemplateWithVersion.class);
+        when(templateWithVersion.getTemplateVersion()).thenReturn(template);
+        when(model.getTemplateWithVersion().getSelectedItem()).thenReturn(templateWithVersion);
         when(model.getName().getEntity()).thenReturn(VM_NAME);
         InstanceType instanceType = new VmTemplate();
         instanceType.setId(INSTANCE_TYPE_ID);

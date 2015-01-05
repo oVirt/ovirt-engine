@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 public class VmSpecificUnitToVmBuilder extends BaseSyncBuilder<UnitVmModel, VM> {
     @Override
     protected void build(UnitVmModel model, VM vm) {
-        vm.setVmtGuid(model.getTemplate().getSelectedItem().getId());
+        vm.setVmtGuid(model.getTemplateWithVersion().getSelectedItem().getTemplateVersion().getId());
         vm.setInstanceTypeId(model.getInstanceTypes().getSelectedItem().getId());
     }
 }

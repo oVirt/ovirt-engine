@@ -47,7 +47,6 @@ public class InstanceTypesPopupWidget extends AbstractVmPopupWidget {
                 putOne(commentEditor, hiddenField()).
                 putOne(vmTypeEditor, hiddenField()).
                 putOne(oSTypeEditor, hiddenField()).
-                putOne(templateEditor, hiddenField()).
                 putOne(initialRunTab, hiddenField()).
                 putOne(expander, hiddenField()).
                 putOne(allowConsoleReconnectEditor, hiddenField()).

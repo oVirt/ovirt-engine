@@ -180,7 +180,7 @@ public abstract class InstanceTypeManager {
     private void registerListeners(UnitVmModel model) {
         ManagedFieldsManager managedFieldsManager = new ManagedFieldsManager();
         model.getInstanceTypes().getSelectedItemChangedEvent().addListener(managedFieldsManager);
-        model.getTemplate().getSelectedItemChangedEvent().addListener(managedFieldsManager);
+        model.getTemplateWithVersion().getSelectedItemChangedEvent().addListener(managedFieldsManager);
 
         model.getOSType().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
@@ -234,7 +234,7 @@ public abstract class InstanceTypeManager {
 
             boolean customInstanceTypeSelected = model.getInstanceTypes().getSelectedItem() instanceof CustomInstanceType;
 
-            if (sender == model.getTemplate() && customInstanceTypeSelected) {
+            if (sender == model.getTemplateWithVersion() && customInstanceTypeSelected) {
                 // returns the VM/Pool's static data or the template (depending on the specific new/existing manager)
                 updateInstanceTypeFieldsFrom(getSource());
             } else if (sender == model.getInstanceTypes() && !customInstanceTypeSelected) {

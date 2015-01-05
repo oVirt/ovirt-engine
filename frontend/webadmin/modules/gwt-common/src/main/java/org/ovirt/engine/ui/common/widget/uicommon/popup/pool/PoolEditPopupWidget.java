@@ -98,8 +98,8 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
         quotaEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
         instanceTypesEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
         descriptionEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
-        templateEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
         memSizeEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        templateWithVersionEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
         detachableMemSizeEditor.addContentWrapperStypeName(style.generalTabExtendedRightWidgetWrapperWidth());
         totalvCPUsEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
         totalvCPUsEditorWithInfoIcon.getContentWidget().addContentWrapperStypeName(style.generalTabExtendedRightWidgetWrapperWidth());

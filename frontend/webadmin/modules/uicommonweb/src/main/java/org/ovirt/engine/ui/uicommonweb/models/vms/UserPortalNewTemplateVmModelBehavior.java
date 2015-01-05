@@ -55,10 +55,10 @@ public class UserPortalNewTemplateVmModelBehavior extends NewTemplateVmModelBeha
     }
 
     private void initTemplates(List<VmTemplate> templates) {
-        List<VmTemplate> rootTemplates = filterNotBaseTemplates(templates);
+        List<VmTemplate> rootTemplates = keepBaseTemplates(templates);
 
         // Filter templates list (include only templates that belong to the selected datacenter)
-        ArrayList<VmTemplate> templatesList = new ArrayList<VmTemplate>();
+        List<VmTemplate> templatesList = new ArrayList<>();
         VmTemplate blankTemplate = null;
         DataCenterWithCluster dataCenterWithCluster = getModel().getDataCenterWithClustersList().getSelectedItem();
         StoragePool selectedDataCenter = dataCenterWithCluster.getDataCenter();
