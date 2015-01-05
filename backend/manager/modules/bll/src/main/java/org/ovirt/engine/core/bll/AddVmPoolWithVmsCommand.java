@@ -19,6 +19,8 @@ import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmPool;
+import org.ovirt.engine.core.common.businessentities.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -131,11 +133,13 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
 
     protected boolean validateSpaceRequirements() {
         int numOfVms = getParameters().getVmsCount();
+        List<DiskImage> diskDummies = getDiskList();
         List<DiskImage> disksList = new ArrayList<>();
         // Number of added disks multiplies by the vms number
         for (int i = 0; i < numOfVms; ++i) {
-            disksList.addAll(diskInfoDestinationMap.values());
+            disksList.addAll(diskDummies);
         }
+
         Guid spId = getVmTemplate().getStoragePoolId();
         Set<Guid> sdIds = destStorages.keySet();
         MultipleStorageDomainsValidator storageDomainsValidator = getStorageDomainsValidator(spId, sdIds);
@@ -145,5 +149,18 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
 
     protected MultipleStorageDomainsValidator getStorageDomainsValidator(Guid spId, Set<Guid> sdIds) {
         return new MultipleStorageDomainsValidator(spId, sdIds);
+    }
+
+    private List<DiskImage> getDiskList() {
+        List<DiskImage> disksList = new ArrayList<>();
+        for (DiskImage diskImage : diskInfoDestinationMap.values()) {
+            DiskImage clone = DiskImage.copyOf(diskImage);
+            // At this point the disks are the template's, which could have another volume type/format
+            // This change is for storage allocation validations, "real" override for these values is done in CreateSnapshotCommand.
+            clone.setVolumeType(VolumeType.Sparse);
+            clone.setvolumeFormat(VolumeFormat.COW);
+            disksList.add(clone);
+        }
+        return disksList;
     }
 }
