@@ -13,10 +13,7 @@ import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.RemoveVmHibernationVolumesParameters;
 import org.ovirt.engine.core.common.action.StopVmParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -136,7 +133,7 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
         // Set the VM to image locked to decrease race condition.
         updateVmStatus(VMStatus.ImageLocked);
 
-        if (!removeVmHibernationVolumes()) {
+        if (!removeHibernationDisks()) {
             updateVmStatus(vmStatus);
             return false;
         }
@@ -144,26 +141,13 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
         return true;
     }
 
-    private boolean removeVmHibernationVolumes() {
-        if (StringUtils.isEmpty(getActiveSnapshot().getMemoryVolume())) {
+    private boolean removeHibernationDisks() {
+        String hiberVol = getActiveSnapshot().getMemoryVolume();
+        if (StringUtils.isEmpty(hiberVol)) {
             return false;
         }
 
-        RemoveVmHibernationVolumesParameters parameters = new RemoveVmHibernationVolumesParameters(getVmId());
-        parameters.setParentCommand(getActionType());
-        parameters.setEntityInfo(getParameters().getEntityInfo());
-        parameters.setParentParameters(getParameters());
-
-        VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
-                VdcActionType.RemoveVmHibernationVolumes,
-                parameters
-                );
-
-        if (vdcRetValue.getSucceeded()) {
-            getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
-        }
-
-        return vdcRetValue.getSucceeded();
+        return removeHibernationDisks(hiberVol);
     }
 
     private void updateVmStatus(VMStatus newStatus) {

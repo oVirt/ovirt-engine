@@ -16,8 +16,10 @@ import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -388,6 +390,26 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                 CommandCoordinatorUtil.startPollingTask(guid1);
                 CommandCoordinatorUtil.startPollingTask(guid2);
             }
+        }
+
+        return true;
+    }
+
+    protected boolean removeHibernationDisks(String memory) {
+        String[] guids = memory.split(",");
+
+        RemoveDiskParameters removeMemoryDumpDiskParameters = new RemoveDiskParameters(new Guid(guids[2]));
+        removeMemoryDumpDiskParameters.setShouldBeLogged(false);
+        VdcReturnValueBase retVal = runInternalAction(VdcActionType.RemoveDisk, removeMemoryDumpDiskParameters);
+        if (!retVal.getSucceeded()) {
+            return false;
+        }
+
+        RemoveDiskParameters removeMemoryMetadataDiskParameters = new RemoveDiskParameters(new Guid(guids[4]));
+        removeMemoryMetadataDiskParameters.setShouldBeLogged(false);
+        retVal = runInternalAction(VdcActionType.RemoveDisk, removeMemoryMetadataDiskParameters);
+        if (!retVal.getSucceeded()) {
+            return false;
         }
 
         return true;

@@ -233,8 +233,12 @@ public interface SnapshotDao extends GenericDao<Snapshot, Guid>, StatusAwareDao<
      *
      * @param vmId
      *          The ID of the VM which we are going to update the memory for
+     * @param memoryDumpDiskId
+     *          The ID of the disk that contains the memory dump
+     * @param memoryMetadataDiskId
+     *          The ID of the disk that contains the memory metadata
      * @param memoryVolume
-     *          The updated memory volumes (metadata and dump)
+     *          Comma-separated String representation of the memory volumes
      */
-    void updateHibernationMemory(Guid vmId, String memoryVolume);
+    void updateHibernationMemory(Guid vmId, Guid memoryDumpDiskId, Guid memoryMetadataDiskId, String memoryVolume);
 }

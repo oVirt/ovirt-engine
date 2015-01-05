@@ -363,13 +363,17 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION UpdateMemory(
     v_memory_volume VARCHAR(255),
+    v_memory_dump_disk_id UUID,
+    v_memory_metadata_disk_id UUID,
     v_vm_id UUID,
     v_snapshot_type VARCHAR(32))
 RETURNS VOID
 AS $procedure$
 BEGIN
     UPDATE snapshots
-    SET    memory_volume = v_memory_volume
+    SET    memory_volume = v_memory_volume,
+           memory_dump_disk_id = v_memory_dump_disk_id,
+           memory_metadata_disk_id = v_memory_metadata_disk_id
     WHERE  vm_id = v_vm_id
     AND    snapshot_type = v_snapshot_type;
 END; $procedure$

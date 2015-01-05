@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -11,9 +10,11 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
@@ -21,16 +22,12 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
-import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.errors.EngineException;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.HibernateVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.slf4j.Logger;
@@ -40,9 +37,6 @@ import org.slf4j.LoggerFactory;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> {
     private static final Logger log = LoggerFactory.getLogger(HibernateVmCommand.class);
-
-    private static final String SAVE_IMAGE_TASK_KEY = "SAVE_IMAGE_TASK_KEY";
-    private static final String SAVE_RAM_STATE_TASK_KEY = "SAVE_RAM_STATE_TASK_KEY";
 
     private boolean isHibernateVdsProblematic;
     private Guid cachedStorageDomainId;
@@ -92,63 +86,54 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
     @Override
     protected void perform() {
-        final Guid taskId1 = persistAsyncTaskPlaceHolder(getParameters().getParentCommand(), SAVE_IMAGE_TASK_KEY);
+        DiskImage memoryDisk = MemoryUtils.createMemoryDiskForVm(getVm(), getStorageDomain().getStorageType());
+        Guid dumpDiskId = addDisk(memoryDisk);
 
-        Guid image1GroupId = Guid.newGuid();
+        DiskImage metaDataDisk = MemoryUtils.createMetadataDiskForVm(getVm());
+        Guid metadataDiskId = addDisk(metaDataDisk);
 
-        Guid hiberVol1 = Guid.newGuid();
-        final VDSReturnValue ret1 =
-                runVdsCommand(
-                        VDSCommandType.CreateImage,
-                        new CreateImageVDSCommandParameters(
-                                getStoragePoolId(),
-                                getStorageDomainId(),
-                                image1GroupId,
-                                getVm().getTotalMemorySizeInBytes(),
-                                MemoryUtils.storageTypeToMemoryVolumeType(getStorageDomain().getStorageType()),
-                                VolumeFormat.RAW,
-                                hiberVol1,
-                                ""));
-
-        if (!ret1.getSucceeded()) {
-            return;
-        }
-
-        Guid guid1 = createTask(taskId1, ret1.getCreationInfo(), VdcActionType.HibernateVm);
-        getReturnValue().getVdsmTaskIdList().add(guid1);
-
-        Guid taskId2 = persistAsyncTaskPlaceHolder(getParameters().getParentCommand(), SAVE_RAM_STATE_TASK_KEY);
-
-        // second vol should be 10kb
-        Guid image2GroupId = Guid.newGuid();
-
-        Guid hiberVol2 = Guid.newGuid();
-        VDSReturnValue ret2 =
-                runVdsCommand(
-                        VDSCommandType.CreateImage,
-                        new CreateImageVDSCommandParameters(getStoragePoolId(),
-                                getStorageDomainId(),
-                                image2GroupId,
-                                MemoryUtils.META_DATA_SIZE_IN_BYTES,
-                                VolumeType.Sparse,
-                                VolumeFormat.COW,
-                                hiberVol2,
-                                ""));
-
-        if (!ret2.getSucceeded()) {
-            return;
-        }
-        Guid guid2 = createTask(taskId2, ret2.getCreationInfo(), VdcActionType.HibernateVm);
-        getReturnValue().getVdsmTaskIdList().add(guid2);
+        DiskImage dumpDisk = getDisk(dumpDiskId);
+        DiskImage metadataDisk = getDisk(metadataDiskId);
 
         getSnapshotDao().updateHibernationMemory(getVmId(),
-                MemoryUtils.createMemoryStateString(
-                        getStorageDomainId(), getStoragePoolId(),
-                        image1GroupId, hiberVol1, image2GroupId, hiberVol2));
-
-        getParameters().setVdsmTaskIds(new ArrayList<>(getReturnValue().getVdsmTaskIdList()));
+                dumpDisk.getId(), metadataDisk.getId(),
+                createHibernationVolumeString(dumpDisk, metadataDisk));
 
         setSucceeded(true);
+    }
+
+    private String createHibernationVolumeString(DiskImage dumpDisk, DiskImage metadataDisk) {
+        return MemoryUtils.createMemoryStateString(
+                getStorageDomainId(), getStoragePoolId(),
+                dumpDisk.getId(), dumpDisk.getImageId(),
+                metadataDisk.getId(), metadataDisk.getImageId());
+    }
+
+    private DiskImage getDisk(Guid diskId) {
+        return (DiskImage) getDiskDao().get(diskId);
+    }
+
+    private Guid addDisk(DiskImage disk) {
+        VdcReturnValueBase returnValue = runInternalActionWithTasksContext(
+                VdcActionType.AddDisk,
+                buildAddDiskParameters(disk));
+
+        if (returnValue.getSucceeded()) {
+            getTaskIdList().addAll(returnValue.getInternalVdsmTaskIdList());
+            return returnValue.getActionReturnValue();
+        } else {
+            throw new EngineException(returnValue.getFault().getError(),
+                    String.format("Failed to create disk! %s", disk.getDiskAlias()));
+        }
+    }
+
+    private AddDiskParameters buildAddDiskParameters(DiskImage disk) {
+        AddDiskParameters parameters = new AddDiskParameters(Guid.Empty, disk);
+        parameters.setStorageDomainId(getStorageDomainId());
+        parameters.setParentCommand(getActionType());
+        parameters.setParentParameters(getParameters());
+        parameters.setShouldBeLogged(false);
+        return parameters;
     }
 
     @Override
@@ -241,6 +226,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
     @Override
     protected void endSuccessfully() {
+        endActionOnDisks();
         if (getVm().getRunOnVds() == null) {
             log.warn(
                     "VM '{}' doesn't have 'run_on_vds' value - cannot Hibernate.",
@@ -268,6 +254,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
     @Override
     protected void endWithFailure() {
+        endActionOnDisks();
         revertTasks();
         if (getVm().getRunOnVds() != null) {
             getSnapshotDao().removeMemoryFromActiveSnapshot(getVmId());

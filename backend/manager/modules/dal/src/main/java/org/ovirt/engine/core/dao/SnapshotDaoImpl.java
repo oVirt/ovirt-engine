@@ -280,9 +280,11 @@ public class SnapshotDaoImpl extends DefaultGenericDao<Snapshot, Guid> implement
     }
 
     @Override
-    public void updateHibernationMemory(Guid vmId, String memoryVolume) {
+    public void updateHibernationMemory(Guid vmId, Guid memoryDumpDiskId, Guid memoryMetadataDiskId, String memoryVolume) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("memory_volume", getNullableRepresentation(memoryVolume))
+                .addValue("memory_dump_disk_id", memoryDumpDiskId)
+                .addValue("memory_metadata_disk_id", memoryMetadataDiskId)
                 .addValue("vm_id", vmId)
                 .addValue("snapshot_type", SnapshotType.ACTIVE.name());
 

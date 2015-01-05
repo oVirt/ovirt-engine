@@ -1163,8 +1163,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     public void runningSucceded() {
-        setFlow(RunVmFlow.RUNNING_SUCCEEDED);
         removeMemoryFromActiveSnapshot();
+        setFlow(RunVmFlow.RUNNING_SUCCEEDED);
         super.runningSucceded();
     }
 
@@ -1185,8 +1185,11 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         getSnapshotDao().removeMemoryFromActiveSnapshot(getVmId());
 
+        if (getFlow() == RunVmFlow.RESUME_HIBERNATE) {
+            removeHibernationDisks(memory);
+        }
         // If the memory volumes are not used by any other snapshot, we can remove them
-        if (getSnapshotDao().getNumOfSnapshotsByMemory(memory) == 0) {
+        else if (getSnapshotDao().getNumOfSnapshotsByMemory(memory) == 0) {
             removeMemoryVolumes(memory, getActionType(), true);
         }
     }

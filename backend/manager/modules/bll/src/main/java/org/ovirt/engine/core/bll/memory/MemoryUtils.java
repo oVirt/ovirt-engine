@@ -7,7 +7,9 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
@@ -19,6 +21,11 @@ public class MemoryUtils {
     /** The size for the snapshot's meta data which is vm related properties at the
      *  time the snapshot was taken */
     public static final long META_DATA_SIZE_IN_BYTES = 10 * 1024;
+
+    private static final String VM_META_DATA_DISK_DESCRIPTION = "meta-data for hibernated VM";
+    private static final String VM_MEMORY_DISK_DESCRIPTION = "memory dump for hibernated VM";
+    private static final String VM_META_DATA_DISK_ALIAS_PATTERN = "%s_hibernation_metadata";
+    private static final String VM_MEMORY_DATA_DISK_ALIAS_PATTERN = "%s_hibernation_memory";
 
     /**
      * Modified the given memory volume String representation to have the given storage
@@ -69,6 +76,36 @@ public class MemoryUtils {
         dataVolume.getSnapshots().add(dataVolume);
 
         return Arrays.asList(memoryVolume, dataVolume);
+    }
+
+    public static DiskImage createMetadataDiskForVm(VM vm) {
+        DiskImage image = new DiskImage();
+        image.setDiskAlias(generateMetaDataDiskAlias(vm.getName()));
+        image.setDescription(VM_META_DATA_DISK_DESCRIPTION);
+        image.setSize(MemoryUtils.META_DATA_SIZE_IN_BYTES);
+        image.setVolumeType(VolumeType.Sparse);
+        image.setvolumeFormat(VolumeFormat.COW);
+        image.setDiskInterface(DiskInterface.VirtIO);
+        return image;
+    }
+
+    private static String generateMetaDataDiskAlias(String vmName) {
+        return String.format(VM_META_DATA_DISK_ALIAS_PATTERN, vmName);
+    }
+
+    public static DiskImage createMemoryDiskForVm(VM vm, StorageType storageType) {
+        DiskImage image = new DiskImage();
+        image.setDiskAlias(generateMemoryDiskAlias(vm.getName()));
+        image.setDescription(VM_MEMORY_DISK_DESCRIPTION);
+        image.setSize(vm.getTotalMemorySizeInBytes());
+        image.setVolumeType(storageTypeToMemoryVolumeType(storageType));
+        image.setvolumeFormat(VolumeFormat.RAW);
+        image.setDiskInterface(DiskInterface.VirtIO);
+        return image;
+    }
+
+    private static String generateMemoryDiskAlias(String vmName) {
+        return String.format(VM_MEMORY_DATA_DISK_ALIAS_PATTERN, vmName);
     }
 
     /**
