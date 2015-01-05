@@ -47,7 +47,9 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
     private static final String SAVE_IMAGE_TASK_KEY = "SAVE_IMAGE_TASK_KEY";
     private static final String SAVE_RAM_STATE_TASK_KEY = "SAVE_RAM_STATE_TASK_KEY";
-    private boolean isHibernateVdsProblematic = false;
+
+    private boolean isHibernateVdsProblematic;
+    private Guid cachedStorageDomainId;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -71,129 +73,119 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         return lockProperties.withScope(Scope.Execution);
     }
 
-    private Guid _storageDomainId = Guid.Empty;
-
     @Override
     protected void insertAsyncTaskPlaceHolders() {
         persistAsyncTaskPlaceHolder(getParameters().getParentCommand(), SAVE_IMAGE_TASK_KEY);
         persistAsyncTaskPlaceHolder(getParameters().getParentCommand(), SAVE_RAM_STATE_TASK_KEY);
     }
 
-    /*
-     * find a storage domain to store the hibernation volumes
-     * domain must:
-     *     be data domain (or master)
-     *     be active
-     *     have enough space for the volumes
-     * return Guid.Empty if no domain found
+    /**
+     * Finds an active data/master storage domain which has enough space to store the hibernation volumes
+     *
+     * @return storage domain id or null if no suitable storage domain exists
      */
     @Override
     public Guid getStorageDomainId() {
-        if (_storageDomainId.equals(Guid.Empty) && getVm() != null) {
-            List<DiskImage> diskDummiesForMemSize = MemoryUtils.createDiskDummies(getVm().getTotalMemorySizeInBytes(),
+        if (cachedStorageDomainId == null) {
+            List<DiskImage> diskDummiesForMemSize = MemoryUtils.createDiskDummies(
+                    getVm().getTotalMemorySizeInBytes(),
                     MemoryUtils.META_DATA_SIZE_IN_BYTES);
-            StorageDomain storageDomain = VmHandler.findStorageDomainForMemory(getVm().getStoragePoolId(), diskDummiesForMemSize);
+            StorageDomain storageDomain = VmHandler.findStorageDomainForMemory(getStoragePoolId(), diskDummiesForMemSize);
             if (storageDomain != null) {
-                _storageDomainId = storageDomain.getId();
+                cachedStorageDomainId = storageDomain.getId();
             }
         }
-        return _storageDomainId;
+        return cachedStorageDomainId;
     }
 
     @Override
     protected void perform() {
-        // Set the VM to null, to fetch it again from the DB ,instead from the cache.
-        // We want to get the VM state from the DB, to avoid multi requests for VM hibernation.
-        setVm(null);
-        if (getVm().isRunning()) {
+        TransactionSupport.executeInNewTransaction(
+                new TransactionMethod<Object>() {
+                    @Override
+                    public Object runInTransaction() {
+                        getCompensationContext().snapshotEntityStatus(getVm().getDynamicData());
 
-            TransactionSupport.executeInNewTransaction(
-                    new TransactionMethod<Object>() {
-                        @Override
-                        public Object runInTransaction() {
-                            getCompensationContext().snapshotEntityStatus(getVm().getDynamicData());
+                        // Set the VM to SavingState to lock the VM,to avoid situation of multi VM hibernation.
+                        getVm().setStatus(VMStatus.PreparingForHibernate);
 
-                            // Set the VM to SavingState to lock the VM,to avoid situation of multi VM hibernation.
-                            getVm().setStatus(VMStatus.PreparingForHibernate);
+                        runVdsCommand(VDSCommandType.UpdateVmDynamicData,
+                                new UpdateVmDynamicDataVDSCommandParameters(getVm().getDynamicData()));
+                        getCompensationContext().stateChanged();
+                        return null;
+                    }
+                });
 
-                            runVdsCommand(VDSCommandType.UpdateVmDynamicData,
-                                            new UpdateVmDynamicDataVDSCommandParameters(getVm().getDynamicData()));
-                            getCompensationContext().stateChanged();
-                            return null;
-                        }
-                    });
+        final Guid taskId1 = getAsyncTaskId(SAVE_IMAGE_TASK_KEY);
 
-            final Guid taskId1 = getAsyncTaskId(SAVE_IMAGE_TASK_KEY);
+        Guid image1GroupId = Guid.newGuid();
 
-            Guid image1GroupId = Guid.newGuid();
+        Guid hiberVol1 = Guid.newGuid();
+        final VDSReturnValue ret1 =
+                runVdsCommand(
+                        VDSCommandType.CreateImage,
+                        new CreateImageVDSCommandParameters(
+                                getStoragePoolId(),
+                                getStorageDomainId(),
+                                image1GroupId,
+                                getVm().getTotalMemorySizeInBytes(),
+                                getMemoryVolumeType(),
+                                VolumeFormat.RAW,
+                                hiberVol1,
+                                ""));
 
-            Guid hiberVol1 = Guid.newGuid();
-            final VDSReturnValue ret1 =
-                    runVdsCommand(
-                                    VDSCommandType.CreateImage,
-                                    new CreateImageVDSCommandParameters(
-                                            getVm().getStoragePoolId(),
-                                            getStorageDomainId(),
-                                            image1GroupId,
-                                            getVm().getTotalMemorySizeInBytes(),
-                                            getMemoryVolumeType(),
-                                            VolumeFormat.RAW,
-                                            hiberVol1,
-                                            ""));
-
-            if (!ret1.getSucceeded()) {
-                return;
-            }
-
-            Guid guid1 = TransactionSupport.executeInNewTransaction(
-                    new TransactionMethod<Guid>() {
-                        @Override
-                        public Guid runInTransaction() {
-                            getCompensationContext().resetCompensation();
-                            return createTaskInCurrentTransaction(
-                                    taskId1,
-                                    ret1.getCreationInfo(),
-                                    VdcActionType.HibernateVm,
-                                    VdcObjectType.Storage,
-                                    getStorageDomainId());
-                        }
-                    });
-
-            getReturnValue().getVdsmTaskIdList().add(guid1);
-
-            Guid taskId2 = getAsyncTaskId(SAVE_RAM_STATE_TASK_KEY);
-
-            // second vol should be 10kb
-            Guid image2GroupId = Guid.newGuid();
-
-            Guid hiberVol2 = Guid.newGuid();
-            VDSReturnValue ret2 =
-                    runVdsCommand(
-                                    VDSCommandType.CreateImage,
-                                    new CreateImageVDSCommandParameters(getVm().getStoragePoolId(),
-                                            getStorageDomainId(),
-                                            image2GroupId,
-                                            MemoryUtils.META_DATA_SIZE_IN_BYTES,
-                                            VolumeType.Sparse,
-                                            VolumeFormat.COW,
-                                            hiberVol2,
-                                            ""));
-
-            if (!ret2.getSucceeded()) {
-                return;
-            }
-            Guid guid2 = createTask(taskId2, ret2.getCreationInfo(), VdcActionType.HibernateVm);
-            getReturnValue().getVdsmTaskIdList().add(guid2);
-
-            getSnapshotDAO().updateHibernationMemory(getVmId(),
-                    MemoryUtils.createMemoryStateString(
-                            getStorageDomainId(), getVm().getStoragePoolId(),
-                            image1GroupId, hiberVol1, image2GroupId, hiberVol2));
-
-            getParameters().setVdsmTaskIds(new ArrayList<Guid>(getReturnValue().getVdsmTaskIdList()));
-
-            setSucceeded(true);
+        if (!ret1.getSucceeded()) {
+            return;
         }
+
+        Guid guid1 = TransactionSupport.executeInNewTransaction(
+                new TransactionMethod<Guid>() {
+                    @Override
+                    public Guid runInTransaction() {
+                        getCompensationContext().resetCompensation();
+                        return createTaskInCurrentTransaction(
+                                taskId1,
+                                ret1.getCreationInfo(),
+                                VdcActionType.HibernateVm,
+                                VdcObjectType.Storage,
+                                getStorageDomainId());
+                    }
+                });
+
+        getReturnValue().getVdsmTaskIdList().add(guid1);
+
+        Guid taskId2 = getAsyncTaskId(SAVE_RAM_STATE_TASK_KEY);
+
+        // second vol should be 10kb
+        Guid image2GroupId = Guid.newGuid();
+
+        Guid hiberVol2 = Guid.newGuid();
+        VDSReturnValue ret2 =
+                runVdsCommand(
+                        VDSCommandType.CreateImage,
+                        new CreateImageVDSCommandParameters(getStoragePoolId(),
+                                getStorageDomainId(),
+                                image2GroupId,
+                                MemoryUtils.META_DATA_SIZE_IN_BYTES,
+                                VolumeType.Sparse,
+                                VolumeFormat.COW,
+                                hiberVol2,
+                                ""));
+
+        if (!ret2.getSucceeded()) {
+            return;
+        }
+        Guid guid2 = createTask(taskId2, ret2.getCreationInfo(), VdcActionType.HibernateVm);
+        getReturnValue().getVdsmTaskIdList().add(guid2);
+
+        getSnapshotDAO().updateHibernationMemory(getVmId(),
+                MemoryUtils.createMemoryStateString(
+                        getStorageDomainId(), getStoragePoolId(),
+                        image1GroupId, hiberVol1, image2GroupId, hiberVol2));
+
+        getParameters().setVdsmTaskIds(new ArrayList<Guid>(getReturnValue().getVdsmTaskIdList()));
+
+        setSucceeded(true);
     }
 
     @Override
@@ -260,7 +252,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
             return failCanDoAction(VdcBllMessages.VM_CANNOT_SUSPEND_STATELESS_VM);
         }
 
-        if (getStorageDomainId().equals(Guid.Empty)) {
+        if (getStorageDomainId() == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
         }
 
