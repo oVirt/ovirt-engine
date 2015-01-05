@@ -66,6 +66,11 @@ public class FenceExecutor {
                 }
             }
         }
+        if (returnValue == null) {
+            returnValue = new VDSFenceReturnValue();
+            returnValue.setSucceeded(false);
+            returnValue.setExceptionString("No fence-agents found for host " + _vds.getName());
+        }
         return returnValue;
     }
 
