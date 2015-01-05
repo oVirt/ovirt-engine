@@ -166,14 +166,15 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     }
 
     protected VM getVmFromConfiguration() {
-        VM result = null;
-        VdcQueryReturnValue queryReturnValue =
-                runInternalQuery(VdcQueryType.GetVmConfigurationBySnapshot,
-                        new IdQueryParameters(snapshot.getId()));
-        if (queryReturnValue.getSucceeded()) {
-            result = queryReturnValue.getReturnValue();
+        if (vmFromConfiguration == null) {
+            VdcQueryReturnValue queryReturnValue =
+                    runInternalQuery(VdcQueryType.GetVmConfigurationBySnapshot,
+                            new IdQueryParameters(snapshot.getId()));
+            if (queryReturnValue.getSucceeded()) {
+                vmFromConfiguration = queryReturnValue.getReturnValue();
+            }
         }
-        return result;
+        return vmFromConfiguration;
     }
 
     protected SnapshotDao getSnapshotDao() {
