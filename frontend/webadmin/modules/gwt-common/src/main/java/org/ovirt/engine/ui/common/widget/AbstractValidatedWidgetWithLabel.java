@@ -7,6 +7,7 @@ import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.ui.common.css.OvirtCss;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
+import org.ovirt.engine.ui.common.widget.editor.EditorStateUpdateEvent;
 import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 
@@ -69,6 +70,11 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         String contentWidget_legacy();
     }
 
+    //We need to store the valid state of the editor so that when the model validator
+    //runs and the editor is not valid (due to a parsing error), the editor doesn't get
+    //reset by the model.
+    private boolean editorStateValid = true;
+
     private final W contentWidget;
 
     @UiField
@@ -103,8 +109,8 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         this.renderer = renderer;
 
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-
         setUsePatternFly(false);
+        addStateUpdateHandler();
     }
 
     public AbstractValidatedWidgetWithLabel(W contentWidget) {
@@ -291,7 +297,9 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
 
     @Override
     public void markAsValid() {
-        super.markAsValid();
+        if (editorStateValid) {
+            super.markAsValid();
+        }
         labelTooltip.setText(labelConfiguredTooltip);
         labelTooltip.reconfigure();
         contentWidgetContainerTooltip.setText(contentWidgetContainerConfiguredTooltip);
@@ -410,5 +418,25 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
      */
     public void fireChangeEvent() {
         ValueChangeEvent.fire(getContentWidget(), getContentWidget().getValue());
+    }
+
+    protected void handleInvalidState() {
+        editorStateValid = false;
+    }
+
+    private void addStateUpdateHandler() {
+        ((Widget) this.getContentWidget()).addHandler(new EditorStateUpdateEvent.EditorStateUpdateHandler() {
+            @Override
+            public void onEditorStateUpdate(EditorStateUpdateEvent event) {
+                if (event.isValid()) {
+                    //Mark the editor as valid.
+                    editorStateValid = true;
+                    markAsValid();
+                } else {
+                    //Mark the editor as invalid.
+                    handleInvalidState();
+                }
+            }
+        }, EditorStateUpdateEvent.getType());
     }
 }

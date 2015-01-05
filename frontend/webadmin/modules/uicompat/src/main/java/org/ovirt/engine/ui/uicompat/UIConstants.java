@@ -1225,6 +1225,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("This field must contain integer number")
     String thisFieldMustContainIntegerNumberInvalidReason();
 
+    @DefaultStringValue("This field must contain a number")
+    String thisFieldMustContainNumberInvalidReason();
+
     @DefaultStringValue("This field must contain positive integer number")
     String thisFieldMustContainNonNegativeIntegerNumberInvalidReason();
 

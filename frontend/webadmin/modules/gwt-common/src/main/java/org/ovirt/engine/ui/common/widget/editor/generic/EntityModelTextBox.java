@@ -1,15 +1,22 @@
 package org.ovirt.engine.ui.common.widget.editor.generic;
 
+import java.text.ParseException;
+
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.editor.ui.client.adapters.ValueBoxEditor;
 import com.google.gwt.text.shared.Parser;
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.user.client.ui.ValueBox;
-import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
 
-public class EntityModelTextBox<T> extends ValueBox<T> implements EditorWidget<T, ValueBoxEditor<T>> {
+import org.ovirt.engine.ui.common.widget.editor.EditorStateUpdateEvent;
+import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
+import org.ovirt.engine.ui.common.widget.editor.HasEditorValidityState;
+
+public class EntityModelTextBox<T> extends ValueBox<T> implements EditorWidget<T, ValueBoxEditor<T>>,
+    HasEditorValidityState {
 
     private ObservableValueBoxEditor<T> editor;
+    private boolean isValid = true;
 
     public EntityModelTextBox(Renderer<T> renderer, Parser<T> parser) {
         super(Document.get().createTextInputElement(), renderer, parser);
@@ -23,4 +30,28 @@ public class EntityModelTextBox<T> extends ValueBox<T> implements EditorWidget<T
         return editor;
     }
 
+    /**
+     * Return the parsed value, or null if the field is empty or parsing fails. If the validity of the box changes
+     * fire an {@code EditorStateUpdateEvent}, so interested parties can handle it.
+     */
+    @Override
+    public T getValue() {
+        T value = null;
+        boolean originalValidState = isValid;
+        try {
+            value = getValueOrThrow();
+            isValid = true;
+        } catch (ParseException e) {
+            isValid = false;
+        }
+        if (originalValidState != isValid) {
+            fireEvent(new EditorStateUpdateEvent(isValid));
+        }
+        return value;
+    }
+
+    @Override
+    public boolean isStateValid() {
+        return isValid;
+    }
 }

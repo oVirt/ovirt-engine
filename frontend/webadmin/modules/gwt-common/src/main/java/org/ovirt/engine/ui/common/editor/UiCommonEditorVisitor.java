@@ -6,6 +6,7 @@ import java.util.Map;
 import org.ovirt.engine.ui.common.widget.HasAccess;
 import org.ovirt.engine.ui.common.widget.HasEnabledWithHints;
 import org.ovirt.engine.ui.common.widget.HasValidation;
+import org.ovirt.engine.ui.common.widget.editor.HasEditorValidityState;
 import org.ovirt.engine.ui.common.widget.editor.TakesConstrainedValueEditor;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -62,10 +63,7 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
             ((HasValueChangeHandlers<T>) editor).addValueChangeHandler(new ValueChangeHandler<T>() {
                 @Override
                 public void onValueChange(ValueChangeEvent<T> event) {
-                    // Set value in model
-                    if (ctx.canSetInModel()) {
-                        ctx.setInModel(event.getValue());
-                    }
+                    setInModel(ctx, event.getSource(), event.getValue());
                 }
             });
         }
@@ -84,10 +82,7 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
                 @Override
                 public void onKeyPress(KeyPressEvent event) {
                     if (KeyCodes.KEY_ENTER == event.getNativeEvent().getKeyCode()) {
-                        // Set value in model
-                        if (ctx.canSetInModel()) {
-                            ctx.setInModel(editor.getValue());
-                        }
+                        setInModel(ctx, editor, editor.getValue());
                     }
                 }
             });
@@ -164,6 +159,18 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
         return super.visit(ctx);
     }
 
+    private <T> void setInModel(final EditorContext<T> ctx, Object editor, T value) {
+        if (ctx.canSetInModel()) {
+            boolean editorValid = true;
+            if (editor instanceof HasEditorValidityState) {
+                editorValid = ((HasEditorValidityState)editor).isStateValid();
+            }
+            if (editorValid) {
+                ctx.setInModel(value);
+            }
+        }
+    }
+
     @SuppressWarnings("unchecked")
     <T> LeafValueEditor<T> getActualEditor(LeafValueEditor<T> editor) {
         if (editor instanceof UiCommonEditor) {
@@ -214,7 +221,13 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
         if (model.getIsValid()) {
             editor.markAsValid();
         } else {
-            editor.markAsInvalid(model.getInvalidityReasons());
+            //The entity validator will mark the entity valid before running the validation
+            //this will cause the editor to be marked valid if it was invalid due to an entity validation
+            //error. Then if the validation is invalid again this will update the error message. So there is
+            //no possibility to go from one invalid reason to another without the editor message being updated.
+            if (editor.isValid()) {
+                editor.markAsInvalid(model.getInvalidityReasons());
+            }
         }
     }
 

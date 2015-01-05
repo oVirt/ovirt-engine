@@ -12,7 +12,9 @@ public class ToDoubleEntityModelParser implements com.google.gwt.text.shared.Par
         Double ret = null;
         try {
             ret = Double.parseDouble(text.toString());
-        } catch (NumberFormatException e) {}
+        } catch (NumberFormatException e) {
+            throw new ParseException("Unable to parse String to Double", 0); //$NON-NLS-1$
+        }
 
         return ret;
     }

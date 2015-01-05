@@ -12,7 +12,9 @@ public class ToShortEntityModelParser implements com.google.gwt.text.shared.Pars
         Short ret = null;
         try {
             ret = Short.parseShort(text.toString());
-        } catch (NumberFormatException e) {}
+        } catch (NumberFormatException e) {
+            throw new ParseException("Unable to parse String to Short", 0); //$NON-NLS-1$
+        }
 
         return ret;
     }

@@ -14,7 +14,9 @@ public class ToIntEntityModelParser implements Parser<Integer> {
         Integer ret = null;
         try {
             ret = Integer.parseInt(text.toString());
-        } catch (NumberFormatException e) {}
+        } catch (NumberFormatException e) {
+            throw new ParseException("Unable to parse String to Integer", 0); //$NON-NLS-1$
+        }
 
         return ret;
     }
