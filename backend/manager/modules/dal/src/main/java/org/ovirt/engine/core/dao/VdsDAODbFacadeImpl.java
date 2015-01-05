@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -397,7 +396,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     }
 
     private VDS uniteAgentsSingleVds(List<VDS> vdsList) {
-        List<FenceAgent> agents = new LinkedList<>();
+        List<FenceAgent> agents = new ArrayList<>();
         for (VDS vds : vdsList) { // collect agents from all rows
             agents.addAll(vds.getFenceAgents());
         }
@@ -410,7 +409,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
         Map<Guid, List<VDS>> map = new HashMap<>();
         for (VDS vds : vdsList) {
             if (!map.containsKey(vds.getId())) {
-                map.put(vds.getId(), new LinkedList<VDS>());
+                map.put(vds.getId(), new ArrayList<VDS>());
             }
             map.get(vds.getId()).add(vds);
         }
@@ -419,7 +418,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
 
     private List<VDS> uniteAgents(List<VDS> vdsList) {
         Map<Guid, List<VDS>> vdsMap = getVdsMap(vdsList);
-        List<VDS> results = new LinkedList<>();
+        List<VDS> results = new ArrayList<>();
         for (Entry<Guid, List<VDS>> entry : vdsMap.entrySet()) {
             results.add(uniteAgentsSingleVds(entry.getValue()));
         }
