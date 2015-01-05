@@ -30,6 +30,9 @@ import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -280,6 +283,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         DbFacade.getInstance().getVdsStaticDao().save(getParameters().getVdsStaticData());
         getCompensationContext().snapshotNewEntity(getParameters().getVdsStaticData());
         setVdsIdRef(getParameters().getVdsStaticData().getId());
+        addFenceAgents();
         setVds(null);
     }
 
@@ -556,4 +560,14 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         }
         return jobProperties;
     }
+
+    private void addFenceAgents() {
+        if (getParameters().getFenceAgents() != null) { // if == null, means no update. Empty list means
+            for (FenceAgent agent : getParameters().getFenceAgents()) {
+                agent.setHostId(getVdsId());
+                DbFacade.getInstance().getFenceAgentDao().save(agent);
+            }
+        }
+    }
+
 }
