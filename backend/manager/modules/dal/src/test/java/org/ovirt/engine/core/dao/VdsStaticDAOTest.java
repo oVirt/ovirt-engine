@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.compat.Guid;
 
 
-public class VdsStaticDAOTest extends BaseDAOTestCase {
+public class VdsStaticDAOTest extends BaseHibernateDaoTestCase<VdsStaticDAO, VdsStatic, Guid> {
     private VdsStaticDAO dao;
     private VdsDynamicDAO dynamicDao;
     private VdsStatisticsDAO statisticsDao;
@@ -30,33 +30,15 @@ public class VdsStaticDAOTest extends BaseDAOTestCase {
         statisticsDao = dbFacade.getVdsStatisticsDao();
         existingVds = dao.get(FixturesTool.VDS_GLUSTER_SERVER2);
         newStaticVds = new VdsStatic();
+        newStaticVds.setId(Guid.newGuid());
         newStaticVds.setHostName("farkle.redhat.com");
         newStaticVds.setSshPort(22);
         newStaticVds.setSshUsername("root");
         newStaticVds.setVdsGroupId(existingVds.getVdsGroupId());
         newStaticVds.setSshKeyFingerprint("b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31");
         newStaticVds.setProtocol(VdsProtocol.STOMP);
-    }
-
-    /**
-     * Ensures that an invalid id returns null.
-     */
-    @Test
-    public void testGetWithInvalidId() {
-        VdsStatic result = dao.get(Guid.newGuid());
-
-        assertNull(result);
-    }
-
-    /**
-     * Ensures that the right object is returned.
-     */
-    @Test
-    public void testGet() {
-        VdsStatic result = dao.get(existingVds.getId());
-
-        assertNotNull(result);
-        assertEquals(existingVds.getId(), result.getId());
+        newStaticVds.setPort(54321);
+        newStaticVds.setName("farkle");
     }
 
     /**
@@ -86,18 +68,6 @@ public class VdsStaticDAOTest extends BaseDAOTestCase {
         }
     }
 
-    /**
-     * Ensures saving a VDS instance works.
-     */
-    @Test
-    public void testSave() {
-        dao.save(newStaticVds);
-
-        VdsStatic staticResult = dao.get(newStaticVds.getId());
-
-        assertNotNull(staticResult);
-        assertEquals(newStaticVds, staticResult);
-    }
 
     /**
      * Ensures removing a VDS instance works.
@@ -116,4 +86,34 @@ public class VdsStaticDAOTest extends BaseDAOTestCase {
         assertNull(resultStatistics);
     }
 
+    @Override
+    protected VdsStaticDAO getDao() {
+        return dao;
+    }
+
+    @Override
+    protected VdsStatic getExistingEntity() {
+        return existingVds;
+    }
+
+    @Override
+    protected VdsStatic getNonExistentEntity() {
+        return newStaticVds;
+    }
+
+    @Override
+    protected int getAllEntitiesCount() {
+        return 5;
+    }
+
+    @Override
+    protected VdsStatic modifyEntity(VdsStatic entity) {
+        entity.setName("test");
+        return entity;
+    }
+
+    @Override
+    protected void verifyEntityModification(VdsStatic result) {
+        assertEquals("test", result.getName());
+    }
 }

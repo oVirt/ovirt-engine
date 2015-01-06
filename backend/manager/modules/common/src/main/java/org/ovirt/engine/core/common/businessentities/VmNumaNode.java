@@ -3,59 +3,49 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.compat.Guid;
+import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 
 /**
  * Object which represents vm virtual NUMA node information
  *
  */
+@Entity
+@DiscriminatorValue("0")
+@NamedQueries({
+        @NamedQuery(name = "VmNumaNode.getAllVmNumaNodeByVmId",
+                query = "select n from VmNumaNode n where n.vmId = :vmId")
+})
 public class VmNumaNode extends VdsNumaNode {
 
     private static final long serialVersionUID = -5384287037435972730L;
 
-    private List<Pair<Guid, Pair<Boolean, Integer>>> vdsNumaNodeList;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "vmNumaNode")
+    private List<NumaNodeVmVds> numaNodeVdsList;
 
     public VmNumaNode() {
-        setVdsNumaNodeList(new ArrayList<Pair<Guid, Pair<Boolean, Integer>>>());
+        setNumaNodeVdsList(new ArrayList<NumaNodeVmVds>());
     }
 
-    /**
-     * @return vNUMA node pair list; first is the pNUMA node uuid,
-     *         second is a pair(boolean for pinned or not (TRUE=pinned), integer for pNUMA node index)
-     */
-    public List<Pair<Guid, Pair<Boolean, Integer>>> getVdsNumaNodeList() {
-        return vdsNumaNodeList;
+    public List<NumaNodeVmVds> getNumaNodeVdsList() {
+        return numaNodeVdsList;
     }
 
-    public void setVdsNumaNodeList(List<Pair<Guid, Pair<Boolean, Integer>>> vdsNumaNodeList) {
-        this.vdsNumaNodeList = vdsNumaNodeList;
+    public void setNumaNodeVdsList(List<NumaNodeVmVds> numaNodeVdsList) {
+        this.numaNodeVdsList = numaNodeVdsList;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result
-                + ((vdsNumaNodeList == null) ? 0 : vdsNumaNodeList.hashCode());
-        return result;
+        return super.hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        VmNumaNode other = (VmNumaNode) obj;
-        if (vdsNumaNodeList == null) {
-            if (other.vdsNumaNodeList != null)
-                return false;
-        } else if (!vdsNumaNodeList.equals(other.vdsNumaNodeList))
-            return false;
-        return true;
+        return super.equals(obj);
     }
-
 }

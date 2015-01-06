@@ -1,33 +1,88 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+import javax.persistence.Cacheable;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.CollectionId;
+import org.hibernate.annotations.DiscriminatorFormula;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
  * Object which represents host NUMA node information
  *
  */
-public class VdsNumaNode implements IVdcQueryable, BusinessEntity<Guid> {
+@Entity
+@Table(name = "numa_node")
+@Cacheable(true)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorFormula("case when vds_id is null then '0' else '1' end")
+@DiscriminatorValue("1")
+@NamedQueries({
+        @NamedQuery(name = "VdsNumaNode.getAllVdsNumaNodeByVdsId",
+                query = "select n from VdsNumaNode n where n.vdsId = :vdsId")
+})
+public class VdsNumaNode implements IVdcQueryable, Serializable, BusinessEntity<Guid> {
 
     private static final long serialVersionUID = -683066053231559224L;
 
+    @Id
+    @Column(name = "numa_node_id")
+    @Type(type = "org.ovirt.engine.core.dao.jpa.GuidUserType")
     private Guid id;
 
+    @Column(name = "vds_id")
+    @Type(type = "org.ovirt.engine.core.dao.jpa.GuidUserType")
+    private Guid vdsId;
+
+    @Column(name = "vm_id")
+    @Type(type = "org.ovirt.engine.core.dao.jpa.GuidUserType")
+    private Guid vmId;
+
+    @Column(name = "numa_node_index")
     private int index;
 
+    @GenericGenerator(name = "guid", strategy = "org.ovirt.engine.core.dao.jpa.GuidGenerator")
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "numa_node_cpu_map", joinColumns = @JoinColumn(name = "numa_node_id"))
+    @CollectionId(columns = @Column(name = "id"), type = @Type(type = "org.ovirt.engine.core.dao.jpa.GuidUserType"),
+            generator = "guid")
+    @Column(name = "cpu_core_id")
     private List<Integer> cpuIds;
 
+    @Column(name = "mem_total")
     private long memTotal;
 
+    @Embedded
     private NumaNodeStatistics numaNodeStatistics;
 
+    @Column(name = "distance")
+    @Type(type = "org.ovirt.engine.core.dao.jpa.DistanceUserType")
     private Map<Integer, Integer> numaNodeDistances;
 
     public VdsNumaNode() {
+        id = Guid.newGuid();
         cpuIds = new ArrayList<Integer>();
         numaNodeDistances = new HashMap<Integer, Integer>();
     }
@@ -38,6 +93,22 @@ public class VdsNumaNode implements IVdcQueryable, BusinessEntity<Guid> {
 
     public void setId(Guid id) {
         this.id = id;
+    }
+
+    public Guid getVdsId() {
+        return vdsId;
+    }
+
+    public void setVdsId(Guid vdsId) {
+        this.vdsId = vdsId;
+    }
+
+    public Guid getVmId() {
+        return vmId;
+    }
+
+    public void setVmId(Guid vmId) {
+        this.vmId = vmId;
     }
 
     public int getIndex() {
@@ -87,51 +158,19 @@ public class VdsNumaNode implements IVdcQueryable, BusinessEntity<Guid> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((cpuIds == null) ? 0 : cpuIds.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + index;
-        result = prime * result + (int) (memTotal ^ (memTotal >>> 32));
-        result = prime * result + ((numaNodeDistances == null) ? 0 : numaNodeDistances.hashCode());
-        result = prime * result + ((numaNodeStatistics == null) ? 0 : numaNodeStatistics.hashCode());
-        return result;
+        return Objects.hash(id);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (!(obj instanceof VdsNumaNode)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         VdsNumaNode other = (VdsNumaNode) obj;
-        if (cpuIds == null) {
-            if (other.cpuIds != null)
-                return false;
-        } else if (!cpuIds.equals(other.cpuIds))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (index != other.index)
-            return false;
-        if (memTotal != other.memTotal)
-            return false;
-        if (numaNodeDistances == null) {
-            if (other.numaNodeDistances != null)
-                return false;
-        } else if (!numaNodeDistances.equals(other.numaNodeDistances))
-            return false;
-        if (numaNodeStatistics == null) {
-            if (other.numaNodeStatistics != null)
-                return false;
-        } else if (!numaNodeStatistics.equals(other.numaNodeStatistics))
-            return false;
-        return true;
+        return Objects.equals(id, other.id);
     }
 
     @Override

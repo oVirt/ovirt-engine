@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
+import org.ovirt.engine.core.common.businessentities.NumaNodeVmVds;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -23,7 +24,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  *
  */
-public class VmNumaNodeDAOTest extends BaseDAOTestCase {
+public class VmNumaNodeDAOTest extends BaseHibernateDaoTestCase<VdsNumaNodeDAO, VdsNumaNode, Guid> {
 
     private static final Guid ANOTHER_EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
 
@@ -31,6 +32,8 @@ public class VmNumaNodeDAOTest extends BaseDAOTestCase {
     private VmStaticDAO vmStaticDao;
     private VmStatic existingVm;
     private NumaNodeStatistics newNodeStatistics;
+    private VmNumaNode existingNode;
+    private VmNumaNode newNode;
 
     @Override
     public void setUp() throws Exception {
@@ -42,6 +45,9 @@ public class VmNumaNodeDAOTest extends BaseDAOTestCase {
         newNodeStatistics = new NumaNodeStatistics();
         newNodeStatistics.setCpuUsagePercent(20);
         newNodeStatistics.setMemUsagePercent(50);
+        existingNode = (VmNumaNode) vmNumaNodeDao.get(new Guid("3c2b81e6-5080-4ad1-86a1-cf513b15b517"));
+        newNode = new VmNumaNode();
+        newNode.setId(Guid.newGuid());
     }
 
     @Test
@@ -61,13 +67,13 @@ public class VmNumaNodeDAOTest extends BaseDAOTestCase {
         assertTrue(nodes.containsKey(vmNumaNode1));
         assertTrue(nodes.containsKey(vmNumaNode2));
 
-        assertEquals(2, nodes.get(vmNumaNode1).getVdsNumaNodeList().size());
-        assertEquals(true, nodes.get(vmNumaNode1).getVdsNumaNodeList().get(0).getSecond().getFirst());
-        assertEquals(true, nodes.get(vmNumaNode1).getVdsNumaNodeList().get(1).getSecond().getFirst());
+        assertEquals(2, nodes.get(vmNumaNode1).getNumaNodeVdsList().size());
+        assertEquals(true, nodes.get(vmNumaNode1).getNumaNodeVdsList().get(0).isPinned());
+        assertEquals(true, nodes.get(vmNumaNode1).getNumaNodeVdsList().get(1).isPinned());
 
-        assertEquals(1, nodes.get(vmNumaNode2).getVdsNumaNodeList().size());
-        assertEquals(false, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getSecond().getFirst());
-        assertEquals(0, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getSecond().getSecond().intValue());
+        assertEquals(1, nodes.get(vmNumaNode2).getNumaNodeVdsList().size());
+        assertEquals(false, nodes.get(vmNumaNode2).getNumaNodeVdsList().get(0).isPinned());
+        assertEquals(0, nodes.get(vmNumaNode2).getNumaNodeVdsList().get(0).getNodeIndex().intValue());
     }
 
     @Test
@@ -80,9 +86,9 @@ public class VmNumaNodeDAOTest extends BaseDAOTestCase {
         assertEquals(1, result.size());
 
         assertEquals(vmNumaNode1, result.get(0).getId());
-        assertEquals(vdsNumaNodeId, result.get(0).getVdsNumaNodeList().get(0).getFirst());
-        assertEquals(true, result.get(0).getVdsNumaNodeList().get(0).getSecond().getFirst());
-        assertEquals(0, result.get(0).getVdsNumaNodeList().get(0).getSecond().getSecond().intValue());
+        assertEquals(vdsNumaNodeId, result.get(0).getNumaNodeVdsList().get(0).getVdsNumaNode().getId());
+        assertEquals(true, result.get(0).getNumaNodeVdsList().get(0).isPinned());
+        assertEquals(0, result.get(0).getNumaNodeVdsList().get(0).getNodeIndex().intValue());
     }
 
     @Test
@@ -102,13 +108,13 @@ public class VmNumaNodeDAOTest extends BaseDAOTestCase {
         assertTrue(nodes.containsKey(vmNumaNode1));
         assertTrue(nodes.containsKey(vmNumaNode2));
 
-        assertEquals(vdsNumaNodeId, nodes.get(vmNumaNode1).getVdsNumaNodeList().get(0).getFirst());
-        assertEquals(true, nodes.get(vmNumaNode1).getVdsNumaNodeList().get(0).getSecond().getFirst());
-        assertEquals(0, nodes.get(vmNumaNode1).getVdsNumaNodeList().get(0).getSecond().getSecond().intValue());
+        assertEquals(vdsNumaNodeId, nodes.get(vmNumaNode1).getNumaNodeVdsList().get(0).getVdsNumaNode().getId());
+        assertEquals(true, nodes.get(vmNumaNode1).getNumaNodeVdsList().get(0).isPinned());
+        assertEquals(0, nodes.get(vmNumaNode1).getNumaNodeVdsList().get(0).getNodeIndex().intValue());
 
-        assertEquals(vdsNumaNodeId, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getFirst());
-        assertEquals(false, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getSecond().getFirst());
-        assertEquals(0, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getSecond().getSecond().intValue());
+        assertEquals(vdsNumaNodeId, nodes.get(vmNumaNode2).getNumaNodeVdsList().get(0).getVdsNumaNode().getId());
+        assertEquals(false, nodes.get(vmNumaNode2).getNumaNodeVdsList().get(0).isPinned());
+        assertEquals(0, nodes.get(vmNumaNode2).getNumaNodeVdsList().get(0).getNodeIndex().intValue());
     }
 
     @Test
@@ -143,14 +149,16 @@ public class VmNumaNodeDAOTest extends BaseDAOTestCase {
         newVmNumaNode.setCpuIds(generateCpuList(0, 4));
         newVmNumaNode.setId(vmNumaNode1);
         newVmNumaNode.setIndex(0);
-        ((VmNumaNode)newVmNumaNode).getVdsNumaNodeList().add(new Pair<>(vdsNumaNode1, new Pair<>(true, 0)));
+        ((VmNumaNode) newVmNumaNode).getNumaNodeVdsList()
+                .add(createNumaNodeVmVds((VmNumaNode) newVmNumaNode, getVdsNumaNodeFromId(vdsNumaNode1), true, 0));
         newVmNode.add(newVmNumaNode);
 
         newVmNumaNode = new VmNumaNode();
         newVmNumaNode.setCpuIds(generateCpuList(4, 4));
         newVmNumaNode.setId(vmNumaNode2);
         newVmNumaNode.setIndex(1);
-        ((VmNumaNode)newVmNumaNode).getVdsNumaNodeList().add(new Pair<>(vdsNumaNode2, new Pair<>(true, 1)));
+        ((VmNumaNode) newVmNumaNode).getNumaNodeVdsList()
+                .add(createNumaNodeVmVds((VmNumaNode) newVmNumaNode, getVdsNumaNodeFromId(vdsNumaNode2), true, 1));
         newVmNode.add(newVmNumaNode);
 
         vmNumaNodeDao.massSaveNumaNode(newVmNode, null, ANOTHER_EXISTING_VM_ID);
@@ -165,15 +173,15 @@ public class VmNumaNodeDAOTest extends BaseDAOTestCase {
         assertTrue(nodes.containsKey(vmNumaNode1));
         assertTrue(nodes.containsKey(vmNumaNode2));
 
-        assertEquals(1, nodes.get(vmNumaNode1).getVdsNumaNodeList().size());
-        assertEquals(true, nodes.get(vmNumaNode1).getVdsNumaNodeList().get(0).getSecond().getFirst());
-        assertEquals(vdsNumaNode1, nodes.get(vmNumaNode1).getVdsNumaNodeList().get(0).getFirst());
-        assertEquals(0, nodes.get(vmNumaNode1).getVdsNumaNodeList().get(0).getSecond().getSecond().intValue());
+        assertEquals(1, nodes.get(vmNumaNode1).getNumaNodeVdsList().size());
+        assertEquals(true, nodes.get(vmNumaNode1).getNumaNodeVdsList().get(0).isPinned());
+        assertEquals(vdsNumaNode1, nodes.get(vmNumaNode1).getNumaNodeVdsList().get(0).getVdsNumaNode().getId());
+        assertEquals(0, nodes.get(vmNumaNode1).getNumaNodeVdsList().get(0).getNodeIndex().intValue());
 
-        assertEquals(1, nodes.get(vmNumaNode2).getVdsNumaNodeList().size());
-        assertEquals(true, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getSecond().getFirst());
-        assertEquals(vdsNumaNode2, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getFirst());
-        assertEquals(1, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getSecond().getSecond().intValue());
+        assertEquals(1, nodes.get(vmNumaNode2).getNumaNodeVdsList().size());
+        assertEquals(true, nodes.get(vmNumaNode2).getNumaNodeVdsList().get(0).isPinned());
+        assertEquals(vdsNumaNode2, nodes.get(vmNumaNode2).getNumaNodeVdsList().get(0).getVdsNumaNode().getId());
+        assertEquals(1, nodes.get(vmNumaNode2).getNumaNodeVdsList().get(0).getNodeIndex().intValue());
 
         List<Guid> vmNodeList = new ArrayList<Guid>();
         vmNodeList.add(vmNumaNode1);
@@ -183,6 +191,10 @@ public class VmNumaNodeDAOTest extends BaseDAOTestCase {
         result = vmNumaNodeDao.getAllVmNumaNodeByVmId(ANOTHER_EXISTING_VM_ID);
         assertNotNull(result);
         assertEquals(0, result.size());
+    }
+
+    private VdsNumaNode getVdsNumaNodeFromId(Guid id) {
+        return vmNumaNodeDao.get(id);
     }
 
     @Test
@@ -203,7 +215,11 @@ public class VmNumaNodeDAOTest extends BaseDAOTestCase {
         newVmNumaNode.setIndex(0);
         newVmNumaNode.setNumaNodeDistances(generateDistance(2, 0));
         newVmNumaNode.setNumaNodeStatistics(newNodeStatistics);
-        ((VmNumaNode)newVmNumaNode).getVdsNumaNodeList().add(new Pair<>(vdsNumaNode1, new Pair<>(true, 0)));
+
+        ((VmNumaNode) newVmNumaNode).getNumaNodeVdsList().add(createNumaNodeVmVds((VmNumaNode) newVmNumaNode,
+                getVdsNumaNodeFromId(vdsNumaNode1),
+                true,
+                0));
         newVmNode.add(newVmNumaNode);
 
         newVmNumaNode = new VmNumaNode();
@@ -212,7 +228,10 @@ public class VmNumaNodeDAOTest extends BaseDAOTestCase {
         newVmNumaNode.setIndex(1);
         newVmNumaNode.setNumaNodeDistances(generateDistance(2, 1));
         newVmNumaNode.setNumaNodeStatistics(newNodeStatistics);
-        ((VmNumaNode)newVmNumaNode).getVdsNumaNodeList().add(new Pair<>(vdsNumaNode2, new Pair<>(true, 1)));
+        ((VmNumaNode) newVmNumaNode).getNumaNodeVdsList().add(createNumaNodeVmVds((VmNumaNode) newVmNumaNode,
+                getVdsNumaNodeFromId(vdsNumaNode2),
+                true,
+                1));
         newVmNode.add(newVmNumaNode);
 
         vmNumaNodeDao.massSaveNumaNode(newVmNode, null, ANOTHER_EXISTING_VM_ID);
@@ -224,11 +243,15 @@ public class VmNumaNodeDAOTest extends BaseDAOTestCase {
         nodes.put(result.get(0).getId(), result.get(0));
         nodes.put(result.get(1).getId(), result.get(1));
 
-        nodes.get(vmNumaNode1).getVdsNumaNodeList().clear();
-        nodes.get(vmNumaNode1).getVdsNumaNodeList().add(new Pair<>(vdsNumaNode2, new Pair<>(true, 1)));
+        nodes.get(vmNumaNode1).getNumaNodeVdsList().clear();
+        nodes.get(vmNumaNode1)
+                .getNumaNodeVdsList()
+                .add(createNumaNodeVmVds(nodes.get(vmNumaNode1), getVdsNumaNodeFromId(vdsNumaNode2), true, 1));
 
-        nodes.get(vmNumaNode2).getVdsNumaNodeList().clear();
-        nodes.get(vmNumaNode2).getVdsNumaNodeList().add(new Pair<>(vdsNumaNode1, new Pair<>(true, 0)));
+        nodes.get(vmNumaNode2).getNumaNodeVdsList().clear();
+        nodes.get(vmNumaNode2)
+                .getNumaNodeVdsList()
+                .add(createNumaNodeVmVds(nodes.get(vmNumaNode2), getVdsNumaNodeFromId(vdsNumaNode1), true, 0));
 
         newVmNode.clear();
         newVmNode.add(nodes.get(vmNumaNode1));
@@ -247,15 +270,15 @@ public class VmNumaNodeDAOTest extends BaseDAOTestCase {
         assertTrue(nodes.containsKey(vmNumaNode1));
         assertTrue(nodes.containsKey(vmNumaNode2));
 
-        assertEquals(1, nodes.get(vmNumaNode1).getVdsNumaNodeList().size());
-        assertEquals(true, nodes.get(vmNumaNode1).getVdsNumaNodeList().get(0).getSecond().getFirst());
-        assertEquals(vdsNumaNode2, nodes.get(vmNumaNode1).getVdsNumaNodeList().get(0).getFirst());
-        assertEquals(1, nodes.get(vmNumaNode1).getVdsNumaNodeList().get(0).getSecond().getSecond().intValue());
+        assertEquals(1, nodes.get(vmNumaNode1).getNumaNodeVdsList().size());
+        assertEquals(true, nodes.get(vmNumaNode1).getNumaNodeVdsList().get(0).isPinned());
+        assertEquals(vdsNumaNode2, nodes.get(vmNumaNode1).getNumaNodeVdsList().get(0).getVdsNumaNode().getId());
+        assertEquals(1, nodes.get(vmNumaNode1).getNumaNodeVdsList().get(0).getNodeIndex().intValue());
 
-        assertEquals(1, nodes.get(vmNumaNode2).getVdsNumaNodeList().size());
-        assertEquals(true, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getSecond().getFirst());
-        assertEquals(vdsNumaNode1, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getFirst());
-        assertEquals(0, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getSecond().getSecond().intValue());
+        assertEquals(1, nodes.get(vmNumaNode2).getNumaNodeVdsList().size());
+        assertEquals(true, nodes.get(vmNumaNode2).getNumaNodeVdsList().get(0).isPinned());
+        assertEquals(vdsNumaNode1, nodes.get(vmNumaNode2).getNumaNodeVdsList().get(0).getVdsNumaNode().getId());
+        assertEquals(0, nodes.get(vmNumaNode2).getNumaNodeVdsList().get(0).getNodeIndex().intValue());
 
         List<Guid> vmNodeList = new ArrayList<Guid>();
         vmNodeList.add(vmNumaNode1);
@@ -285,7 +308,10 @@ public class VmNumaNodeDAOTest extends BaseDAOTestCase {
         newVmNumaNode.setIndex(0);
         newVmNumaNode.setNumaNodeDistances(generateDistance(2, 0));
         newVmNumaNode.setNumaNodeStatistics(newNodeStatistics);
-        newVmNumaNode.getVdsNumaNodeList().add(new Pair<>(vdsNumaNode1, new Pair<>(false, 0)));
+        newVmNumaNode.getNumaNodeVdsList().add(createNumaNodeVmVds(newVmNumaNode,
+                getVdsNumaNodeFromId(vdsNumaNode1),
+                false,
+                0));
         newVmNode.add(newVmNumaNode);
 
         newVmNumaNode = new VmNumaNode();
@@ -294,7 +320,10 @@ public class VmNumaNodeDAOTest extends BaseDAOTestCase {
         newVmNumaNode.setIndex(1);
         newVmNumaNode.setNumaNodeDistances(generateDistance(2, 1));
         newVmNumaNode.setNumaNodeStatistics(newNodeStatistics);
-        newVmNumaNode.getVdsNumaNodeList().add(new Pair<>(vdsNumaNode2, new Pair<>(false, 1)));
+        newVmNumaNode.getNumaNodeVdsList().add(createNumaNodeVmVds(newVmNumaNode,
+                getVdsNumaNodeFromId(vdsNumaNode2),
+                false,
+                1));
         newVmNode.add(newVmNumaNode);
 
         vmNumaNodeDao.massSaveNumaNode(newVmNode, null, ANOTHER_EXISTING_VM_ID);
@@ -306,11 +335,15 @@ public class VmNumaNodeDAOTest extends BaseDAOTestCase {
         nodes.put(result.get(0).getId(), result.get(0));
         nodes.put(result.get(1).getId(), result.get(1));
 
-        nodes.get(vmNumaNode1).getVdsNumaNodeList().clear();
-        nodes.get(vmNumaNode1).getVdsNumaNodeList().add(new Pair<>(vdsNumaNode2, new Pair<>(false, 1)));
+        nodes.get(vmNumaNode1).getNumaNodeVdsList().clear();
+        nodes.get(vmNumaNode1)
+                .getNumaNodeVdsList()
+                .add(createNumaNodeVmVds(nodes.get(vmNumaNode1), getVdsNumaNodeFromId(vdsNumaNode2), false, 1));
 
-        nodes.get(vmNumaNode2).getVdsNumaNodeList().clear();
-        nodes.get(vmNumaNode2).getVdsNumaNodeList().add(new Pair<>(vdsNumaNode1, new Pair<>(false, 0)));
+        nodes.get(vmNumaNode2).getNumaNodeVdsList().clear();
+        nodes.get(vmNumaNode2)
+                .getNumaNodeVdsList()
+                .add(createNumaNodeVmVds(nodes.get(vmNumaNode2), getVdsNumaNodeFromId(vdsNumaNode1), false, 0));
 
         List<VmNumaNode> updateNodes = new ArrayList<>();
         updateNodes.add(nodes.get(vmNumaNode1));
@@ -329,15 +362,15 @@ public class VmNumaNodeDAOTest extends BaseDAOTestCase {
         assertTrue(nodes.containsKey(vmNumaNode1));
         assertTrue(nodes.containsKey(vmNumaNode2));
 
-        assertEquals(1, nodes.get(vmNumaNode1).getVdsNumaNodeList().size());
-        assertEquals(false, nodes.get(vmNumaNode1).getVdsNumaNodeList().get(0).getSecond().getFirst());
-        assertEquals(vdsNumaNode2, nodes.get(vmNumaNode1).getVdsNumaNodeList().get(0).getFirst());
-        assertEquals(1, nodes.get(vmNumaNode1).getVdsNumaNodeList().get(0).getSecond().getSecond().intValue());
+        assertEquals(1, nodes.get(vmNumaNode1).getNumaNodeVdsList().size());
+        assertEquals(false, nodes.get(vmNumaNode1).getNumaNodeVdsList().get(0).isPinned());
+        assertEquals(vdsNumaNode2, nodes.get(vmNumaNode1).getNumaNodeVdsList().get(0).getVdsNumaNode().getId());
+        assertEquals(1, nodes.get(vmNumaNode1).getNumaNodeVdsList().get(0).getNodeIndex().intValue());
 
-        assertEquals(1, nodes.get(vmNumaNode2).getVdsNumaNodeList().size());
-        assertEquals(false, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getSecond().getFirst());
-        assertEquals(vdsNumaNode1, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getFirst());
-        assertEquals(0, nodes.get(vmNumaNode2).getVdsNumaNodeList().get(0).getSecond().getSecond().intValue());
+        assertEquals(1, nodes.get(vmNumaNode2).getNumaNodeVdsList().size());
+        assertEquals(false, nodes.get(vmNumaNode2).getNumaNodeVdsList().get(0).isPinned());
+        assertEquals(vdsNumaNode1, nodes.get(vmNumaNode2).getNumaNodeVdsList().get(0).getVdsNumaNode().getId());
+        assertEquals(0, nodes.get(vmNumaNode2).getNumaNodeVdsList().get(0).getNodeIndex().intValue());
 
         List<Guid> vmNodeList = new ArrayList<Guid>();
         vmNodeList.add(vmNumaNode1);
@@ -365,4 +398,44 @@ public class VmNumaNodeDAOTest extends BaseDAOTestCase {
         return distance;
     }
 
+    @Override
+    protected VdsNumaNodeDAO getDao() {
+        return vmNumaNodeDao;
+    }
+
+    @Override
+    protected VdsNumaNode getExistingEntity() {
+        return existingNode;
+    }
+
+    @Override
+    protected VdsNumaNode getNonExistentEntity() {
+        return newNode;
+    }
+
+    @Override
+    protected int getAllEntitiesCount() {
+        return 4;
+    }
+
+    @Override
+    protected VdsNumaNode modifyEntity(VdsNumaNode entity) {
+        entity.setIndex(15);
+        return entity;
+    }
+
+    @Override
+    protected void verifyEntityModification(VdsNumaNode result) {
+        assertEquals(15, result.getIndex());
+    }
+
+    private NumaNodeVmVds createNumaNodeVmVds(VmNumaNode vmNumaNode, VdsNumaNode vdsNumaNode, boolean pinned, int index) {
+        NumaNodeVmVds nodeMap = new NumaNodeVmVds();
+        nodeMap.setPinned(pinned);
+        nodeMap.setNodeIndex(index);
+        nodeMap.setVmNumaNode(vmNumaNode);
+        nodeMap.setVdsNumaNode(vdsNumaNode);
+
+        return nodeMap;
+    }
 }

@@ -1,25 +1,36 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Objects;
+
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
 
 /**
  * Object which represents a NUMA node statistics information
  *
  */
+@Embeddable
 public class NumaNodeStatistics implements Serializable {
 
     private static final long serialVersionUID = 3274786304152401306L;
 
+    @Column(name = "mem_free")
     private long memFree;
 
+    @Column(name = "cpu_sys")
     private double cpuSys;
 
+    @Column(name = "cpu_user")
     private double cpuUser;
 
+    @Column(name = "cpu_idle")
     private double cpuIdle;
 
+    @Column(name = "usage_mem_percent")
     private int memUsagePercent;
 
+    @Column(name = "usage_cpu_percent")
     private int cpuUsagePercent;
 
     public NumaNodeStatistics() {
@@ -81,43 +92,24 @@ public class NumaNodeStatistics implements Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        long temp;
-        temp = Double.doubleToLongBits(cpuIdle);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(cpuSys);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        result = prime * result + cpuUsagePercent;
-        temp = Double.doubleToLongBits(cpuUser);
-        result = prime * result + (int) (temp ^ (temp >>> 32));
-        result = prime * result + (int) (memFree ^ (memFree >>> 32));
-        result = prime * result + memUsagePercent;
-        return result;
+        return Objects.hash(cpuIdle, cpuSys, cpuUser, cpuUsagePercent, memFree, memUsagePercent);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (!(obj instanceof NumaNodeStatistics)) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+        }
         NumaNodeStatistics other = (NumaNodeStatistics) obj;
-        if (Double.doubleToLongBits(cpuIdle) != Double.doubleToLongBits(other.cpuIdle))
-            return false;
-        if (Double.doubleToLongBits(cpuSys) != Double.doubleToLongBits(other.cpuSys))
-            return false;
-        if (cpuUsagePercent != other.cpuUsagePercent)
-            return false;
-        if (Double.doubleToLongBits(cpuUser) != Double.doubleToLongBits(other.cpuUser))
-            return false;
-        if (memFree != other.memFree)
-            return false;
-        if (memUsagePercent != other.memUsagePercent)
-            return false;
-        return true;
+        return Objects.equals(cpuIdle, other.cpuIdle)
+                && Objects.equals(cpuSys, other.cpuSys)
+                && Objects.equals(cpuUsagePercent, other.cpuUsagePercent)
+                && Objects.equals(cpuUser, other.cpuUser)
+                && Objects.equals(memFree, other.memFree)
+                && Objects.equals(memUsagePercent, other.memUsagePercent);
     }
 
 }

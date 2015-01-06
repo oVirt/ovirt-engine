@@ -148,6 +148,10 @@ public abstract class AbstractJpaDao<T extends BusinessEntity<ID>, ID extends Se
         }
     }
 
+    public void remove(T entity) {
+        entityManager.remove(entity);
+    }
+
     protected void updateQuery(final Query query) {
         query.executeUpdate();
     }

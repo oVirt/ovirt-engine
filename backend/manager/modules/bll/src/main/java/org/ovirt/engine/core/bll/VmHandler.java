@@ -36,8 +36,10 @@ import org.ovirt.engine.core.common.businessentities.EditableOnVmStatusField;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
+import org.ovirt.engine.core.common.businessentities.NumaNodeVmVds;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -91,8 +93,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 
 public class VmHandler {
 
@@ -961,11 +961,10 @@ public class VmHandler {
 
         // check single node pinned
         if (vmNumaNodes != null && vmNumaNodes.size() == 1) {
-            List<Pair<Guid, Pair<Boolean, Integer>>> vdsNumaNodeList = vmNumaNodes.get(0).getVdsNumaNodeList();
+            List<NumaNodeVmVds> vdsNumaNodeList = vmNumaNodes.get(0).getNumaNodeVdsList();
             boolean pinnedToSingleNode = vdsNumaNodeList != null
                     && vdsNumaNodeList.size() == 1
-                    && vdsNumaNodeList.get(0).getSecond() != null
-                    && vdsNumaNodeList.get(0).getSecond().getFirst();
+                    && vdsNumaNodeList.get(0).isPinned();
             if (pinnedToSingleNode) {
                 return ValidationResult.VALID;
             }

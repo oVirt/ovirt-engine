@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.NumaNodeVmVds;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
-import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.compat.Guid;
 
 public class NumaUtils {
     public static VdsNumaNode getVdsNumaNodeByIndex(List<VdsNumaNode> numaNodes, int index) {
@@ -38,14 +37,11 @@ public class NumaUtils {
         return nodeIndexes;
     }
 
-    public static List<Integer> getPinnedNodeIndexList(List<Pair<Guid, Pair<Boolean, Integer>>> nodeList) {
+    public static List<Integer> getPinnedNodeIndexList(List<NumaNodeVmVds> nodeList) {
         List<Integer> nodeIndexes = new ArrayList<>(nodeList.size());
-        for (Pair<Guid, Pair<Boolean, Integer>> item : nodeList) {
-            if (item.getSecond().getFirst() && item.getFirst() != null) {
-                nodeIndexes.add(item.getSecond().getSecond());
-            }
+        for (NumaNodeVmVds item : nodeList) {
+            nodeIndexes.add(item.getNodeIndex());
         }
         return nodeIndexes;
     }
-
 }

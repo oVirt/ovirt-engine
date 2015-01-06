@@ -2,7 +2,6 @@ package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -21,13 +20,15 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.utils.RandomUtils;
 
-public class VdsDynamicDAOTest extends BaseDAOTestCase {
+public class VdsDynamicDAOTest extends BaseHibernateDaoTestCase<VdsDynamicDAO, VdsDynamic, Guid> {
+    private static final String TEST_BUILD_NAME = "test1";
     private VdsDynamicDAO dao;
     private VdsStaticDAO staticDao;
     private VdsStatisticsDAO statisticsDao;
     private VdsStatic existingVds;
     private VdsStatic newStaticVds;
-    private VdsDynamic newDynamicVds;
+    private VdsDynamic newEntity;
+    private VdsDynamic existingEntity;
 
     private static final List<Guid> HOSTS_WITH_UP_STATUS =
             new ArrayList<>(Arrays.asList(new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6"),
@@ -44,12 +45,15 @@ public class VdsDynamicDAOTest extends BaseDAOTestCase {
         staticDao = dbFacade.getVdsStaticDao();
         statisticsDao = dbFacade.getVdsStatisticsDao();
         existingVds = staticDao.get(FixturesTool.VDS_GLUSTER_SERVER2);
+        existingEntity = dao.get(FixturesTool.VDS_GLUSTER_SERVER2);
 
         newStaticVds = new VdsStatic();
         newStaticVds.setHostName("farkle.redhat.com");
         newStaticVds.setVdsGroupId(existingVds.getVdsGroupId());
         newStaticVds.setProtocol(VdsProtocol.STOMP);
-        newDynamicVds = new VdsDynamic();
+
+        newEntity = new VdsDynamic();
+        newEntity.setId(Guid.newGuid());
     }
 
     /**
@@ -62,50 +66,13 @@ public class VdsDynamicDAOTest extends BaseDAOTestCase {
         assertNull(result);
     }
 
-    /**
-     * Ensures that the right object is returned.
-     */
     @Test
-    public void testGet() {
-        VdsDynamic result = dao.get(existingVds.getId());
-
-        assertNotNull(result);
-        assertEquals(existingVds.getId(), result.getId());
-    }
-
-    /**
-     * Ensures saving a VDS instance works.
-     */
-    @Test
-    public void testSave() {
-        staticDao.save(newStaticVds);
-        newDynamicVds.setId(newStaticVds.getId());
-        newDynamicVds.setUpdateAvailable(true);
-        dao.save(newDynamicVds);
-
-        VdsStatic staticResult = staticDao.get(newStaticVds.getId());
-        VdsDynamic dynamicResult = dao.get(newDynamicVds.getId());
-
-        assertNotNull(staticResult);
-        assertEquals(newStaticVds, staticResult);
-        assertNotNull(dynamicResult);
-        assertEquals(newDynamicVds, dynamicResult);
-        assertEquals(newDynamicVds.isUpdateAvailable(), dynamicResult.isUpdateAvailable());
-    }
-
-    /**
-     * Ensures removing a VDS instance works.
-     */
-    @Test
-    public void testRemove() {
-        dao.remove(existingVds.getId());
-        statisticsDao.remove(existingVds.getId());
-        staticDao.remove(existingVds.getId());
-
-        VdsStatic resultStatic = staticDao.get(existingVds.getId());
-        assertNull(resultStatic);
-        VdsDynamic resultDynamic = dao.get(existingVds.getId());
-        assertNull(resultDynamic);
+    public void testUpdateIfNeeded() {
+        VdsDynamic before = dao.get(existingVds.getId());
+        before.setStatus(VDSStatus.Down);
+        dao.updateIfNeeded(before);
+        VdsDynamic after = dao.get(existingVds.getId());
+        assertEquals(before, after);
     }
 
     @Test
@@ -179,5 +146,36 @@ public class VdsDynamicDAOTest extends BaseDAOTestCase {
         dao.updateUpdateAvailable(before.getId(), before.isUpdateAvailable());
         VdsDynamic after = dao.get(existingVds.getId());
         assertEquals(before.isUpdateAvailable(), after.isUpdateAvailable());
+    }
+
+        @Override
+    protected VdsDynamicDAO getDao() {
+        return dao;
+    }
+
+    @Override
+    protected VdsDynamic getExistingEntity() {
+        return existingEntity;
+    }
+
+    @Override
+    protected VdsDynamic getNonExistentEntity() {
+        return newEntity;
+    }
+
+    @Override
+    protected int getAllEntitiesCount() {
+        return 5;
+    }
+
+    @Override
+    protected VdsDynamic modifyEntity(VdsDynamic entity) {
+        entity.setBuildName(TEST_BUILD_NAME);
+        return entity;
+    }
+
+    @Override
+    protected void verifyEntityModification(VdsDynamic result) {
+        assertEquals(TEST_BUILD_NAME, result.getBuildName());
     }
 }

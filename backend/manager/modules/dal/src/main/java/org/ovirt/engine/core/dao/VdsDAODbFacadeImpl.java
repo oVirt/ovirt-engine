@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -41,6 +42,16 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Named
 @Singleton
 public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
+    @Inject
+    private VdsDynamicDAO vdsDynamicDao;
+
+    @Inject
+    private VdsStaticDAO vdsStaticDao;
+
+    @Inject
+    private VdsStatisticsDAO vdsStatisticsDao;
+
+    private final VdsRowMapper mapperInstance = new VdsRowMapper();
 
     @Override
     public VDS get(Guid id) {
@@ -51,7 +62,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     public VDS get(Guid id, Guid userID, boolean isFiltered) {
         // several rows may be returned because of join with fence agents table.
         List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsByVdsId",
-                VdsRowMapper.instance,
+                mapperInstance,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_id", id)
                         .addValue("user_id", userID)
@@ -62,7 +73,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     @Override
     public VDS getByName(String name) {
         List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsByName",
-                VdsRowMapper.instance,
+                mapperInstance,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_name", name));
         return vdsList.size() == 0 ? null : uniteAgentsSingleVds(vdsList);
@@ -71,7 +82,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     @Override
     public List<VDS> getAllForHostname(String hostname) {
         List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsByHostName",
-                VdsRowMapper.instance,
+                mapperInstance,
                 getCustomMapSqlParameterSource()
                         .addValue("host_name", hostname));
         return uniteAgents(vdsList);
@@ -80,7 +91,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     @Override
     public List<VDS> getAllWithUniqueId(String id) {
         List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsByUniqueID",
-                VdsRowMapper.instance,
+                mapperInstance,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_unique_id", id));
         return uniteAgents(vdsList);
@@ -98,7 +109,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     @Override
     public List<VDS> getAllOfType(VDSType type) {
         List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsByType",
-                VdsRowMapper.instance,
+                mapperInstance,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_type", type));
         return uniteAgents(vdsList);
@@ -107,7 +118,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     @Override
     public List<VDS> getAllForVdsGroupWithoutMigrating(Guid id) {
         List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsWithoutMigratingVmsByVdsGroupId",
-                VdsRowMapper.instance,
+                mapperInstance,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_group_id", id));
         return uniteAgents(vdsList);
@@ -115,7 +126,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
 
     @Override
     public List<VDS> getAllWithQuery(String query) {
-        List<VDS> vdsList = getJdbcTemplate().query(query, VdsRowMapper.instance);
+        List<VDS> vdsList = getJdbcTemplate().query(query, mapperInstance);
         return uniteAgents(vdsList);
     }
 
@@ -127,7 +138,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     @Override
     public List<VDS> getAll(Guid userID, boolean isFiltered) {
         List<VDS> vdsList = getCallsHandler().executeReadList("GetAllFromVds",
-                VdsRowMapper.instance,
+                mapperInstance,
                 getCustomMapSqlParameterSource().addValue("user_id", userID).addValue("is_filtered", isFiltered));
         return uniteAgents(vdsList);
     }
@@ -140,7 +151,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     @Override
     public List<VDS> getAllForVdsGroup(Guid vdsGroupID, Guid userID, boolean isFiltered) {
         List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsByVdsGroupId",
-                VdsRowMapper.instance,
+                mapperInstance,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_group_id", vdsGroupID)
                         .addValue("user_id", userID)
@@ -155,7 +166,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             storagePoolId = null;
         }
         List<VDS> vdsList = getCallsHandler().executeReadList("getHostsForStorageOperation",
-                VdsRowMapper.instance,
+                mapperInstance,
                 getCustomMapSqlParameterSource()
                     .addValue("storage_pool_id", storagePoolId)
                     .addValue("local_fs_only", localFsOnly));
@@ -165,7 +176,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     @Override
     public VDS getFirstUpRhelForVdsGroup(Guid vdsGroupId) {
         List<VDS> vds = getCallsHandler().executeReadList("getFirstUpRhelForVdsGroupId",
-                VdsRowMapper.instance,
+                mapperInstance,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_group_id", vdsGroupId));
 
@@ -180,7 +191,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     @Override
     public List<VDS> getAllForStoragePool(Guid storagePool, Guid userID, boolean isFiltered) {
         List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsByStoragePoolId",
-                VdsRowMapper.instance,
+                mapperInstance,
                 getCustomMapSqlParameterSource()
                         .addValue("storage_pool_id", storagePool)
                         .addValue("user_id", userID)
@@ -191,7 +202,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     @Override
     public List<VDS> getAllForVdsGroupWithStatus(Guid vdsGroupId, VDSStatus status) {
         List<VDS> vdsList = getCallsHandler().executeReadList("getVdsForVdsGroupWithStatus",
-                VdsRowMapper.instance,
+                mapperInstance,
                 getCustomMapSqlParameterSource()
                         .addValue("vds_group_id", vdsGroupId)
                         .addValue("status", status.getValue()));
@@ -201,7 +212,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     @Override
     public List<VDS> getAllForStoragePoolAndStatus(Guid storagePool, VDSStatus status) {
         List<VDS> vdsList = getCallsHandler().executeReadList("getVdsByStoragePoolIdWithStatus",
-                VdsRowMapper.instance,
+                mapperInstance,
                 getCustomMapSqlParameterSource()
                         .addValue("storage_pool_id", storagePool)
                         .addValue("status", status != null ? status.getValue() : null));
@@ -211,14 +222,14 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     @Override
     public List<VDS> getListForSpmSelection(Guid storagePoolId) {
         List<VDS> vdsList = getCallsHandler().executeReadList("GetUpAndPrioritizedVds",
-                VdsRowMapper.instance,
+                mapperInstance,
                 getCustomMapSqlParameterSource().addValue("storage_pool_id", storagePoolId));
         return uniteAgentsPreserveSpmPrioritySorting(vdsList);
     }
 
     @Override
     public List<VDS> listFailedAutorecoverables() {
-        List<VDS> vdsList = getCallsHandler().executeReadList("GetFailingVdss", VdsRowMapper.instance, null);
+        List<VDS> vdsList = getCallsHandler().executeReadList("GetFailingVdss", mapperInstance, null);
         return uniteAgents(vdsList);
     }
 
@@ -228,7 +239,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
                 .addValue("network_id", networkId);
 
         List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsByNetworkId",
-                VdsRowMapper.instance,
+                mapperInstance,
                 parameterSource);
         return uniteAgents(vdsList);
     }
@@ -239,14 +250,12 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
                 .addValue("network_id", networkId);
 
         List<VDS> vdsList = getCallsHandler().executeReadList("GetVdsWithoutNetwork",
-                VdsRowMapper.instance,
+                mapperInstance,
                 parameterSource);
         return uniteAgents(vdsList);
     }
 
-    static final class VdsRowMapper implements RowMapper<VDS> {
-        // single instance
-        public final static VdsRowMapper instance = new VdsRowMapper();
+    final class VdsRowMapper implements RowMapper<VDS> {
 
         @Override
         public VDS mapRow(final ResultSet rs, final int rowNum) throws SQLException {
@@ -410,6 +419,9 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             }
             entity.setUpdateAvailable(rs.getBoolean("is_update_available"));
             entity.setHostDevicePassthroughEnabled(rs.getBoolean("is_hostdev_enabled"));
+            entity.setDynamicData(vdsDynamicDao.get(entity.getId()));
+            entity.setStaticData(vdsStaticDao.get(entity.getId()));
+            entity.setStatisticsData(vdsStatisticsDao.get(entity.getId()));
             return entity;
         }
     }

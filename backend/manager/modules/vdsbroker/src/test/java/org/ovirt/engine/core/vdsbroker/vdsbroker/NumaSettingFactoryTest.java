@@ -11,10 +11,10 @@ import java.util.Map;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
+import org.ovirt.engine.core.common.businessentities.NumaNodeVmVds;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 public class NumaSettingFactoryTest {
@@ -73,7 +73,7 @@ public class NumaSettingFactoryTest {
         newVmNumaNode.setId(Guid.newGuid());
         newVmNumaNode.setIndex(0);
         newVmNumaNode.setMemTotal(1024);
-        newVmNumaNode.getVdsNumaNodeList().add(new Pair<>(Guid.newGuid(), new Pair<>(true, 0)));
+        newVmNumaNode.getNumaNodeVdsList().add(new NumaNodeVmVds(Guid.newGuid(), newVmNumaNode, true, 0));
         newVmNodes.add(newVmNumaNode);
 
         newVmNumaNode = new VmNumaNode();
@@ -81,7 +81,7 @@ public class NumaSettingFactoryTest {
         newVmNumaNode.setId(Guid.newGuid());
         newVmNumaNode.setIndex(1);
         newVmNumaNode.setMemTotal(1024);
-        newVmNumaNode.getVdsNumaNodeList().add(new Pair<>(Guid.newGuid(), new Pair<>(true, 1)));
+        newVmNumaNode.getNumaNodeVdsList().add(new NumaNodeVmVds(Guid.newGuid(), newVmNumaNode, true, 1));
         newVmNodes.add(newVmNumaNode);
 
         return newVmNodes;

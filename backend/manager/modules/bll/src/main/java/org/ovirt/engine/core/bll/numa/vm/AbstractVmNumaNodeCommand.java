@@ -7,13 +7,13 @@ import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.NumaNodeVmVds;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsNumaNodeDAO;
 import org.ovirt.engine.core.dao.VmNumaNodeDAO;
@@ -85,12 +85,12 @@ public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationPar
 
         boolean memStrict = getNumaTuneMode() == NumaTuneMode.STRICT;
         for (VmNumaNode vmNumaNode : vmNumaNodes) {
-            for (Pair<Guid, Pair<Boolean, Integer>> pair : vmNumaNode.getVdsNumaNodeList()) {
-                if (pair.getSecond() == null || pair.getSecond().getSecond() == null) {
+            for (NumaNodeVmVds item : vmNumaNode.getNumaNodeVdsList()) {
+                if (item.getNodeIndex() == null) {
                     return failCanDoAction(VdcBllMessages.VM_NUMA_NODE_PINNED_INDEX_ERROR);
                 }
 
-                Integer index = pair.getSecond().getSecond();
+                Integer index = item.getNodeIndex();
                 for (VdsNumaNode vdsNumaNode : hostNumaNodes) {
                     if (vdsNumaNode.getIndex() == index) {
                         if (memStrict && vmNumaNode.getMemTotal() > vdsNumaNode.getMemTotal()) {

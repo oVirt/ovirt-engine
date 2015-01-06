@@ -1126,11 +1126,11 @@ public class VDS implements IVdcQueryable, BusinessEntityWithStatus<Guid, VDSSta
         vdsSpmId = value;
     }
 
-    public long getOtpValidity() {
+    public Long getOtpValidity() {
         return vdsStatic.getOtpValidity();
     }
 
-    public void setOtpValidity(long value) {
+    public void setOtpValidity(Long value) {
         vdsStatic.setOtpValidity(value);
     }
 

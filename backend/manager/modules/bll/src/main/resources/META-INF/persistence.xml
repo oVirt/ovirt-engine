@@ -10,6 +10,14 @@
         <class>org.ovirt.engine.core.common.job.Job</class>
         <class>org.ovirt.engine.core.common.job.Step</class>
         <class>org.ovirt.engine.core.common.job.JobSubjectEntity</class>
+        <class>org.ovirt.engine.core.common.businessentities.VdsStatic</class>
+        <class>org.ovirt.engine.core.common.businessentities.VdsDynamic</class>
+        <class>org.ovirt.engine.core.common.businessentities.VdsStatistics</class>
+        <class>org.ovirt.engine.core.common.businessentities.CpuStatistics</class>
+        <class>org.ovirt.engine.core.common.businessentities.VdsNumaNode</class>
+        <class>org.ovirt.engine.core.common.businessentities.VmNumaNode</class>
+        <class>org.ovirt.engine.core.common.businessentities.NumaNodeCpuMap</class>
+        <class>org.ovirt.engine.core.common.businessentities.NumaNodeVmVds</class>
         <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
