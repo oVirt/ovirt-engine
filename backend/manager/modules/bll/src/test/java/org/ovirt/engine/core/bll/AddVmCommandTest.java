@@ -575,12 +575,13 @@ public class AddVmCommandTest {
     }
 
     private static DiskImage createDiskImage(int size) {
-        DiskImage img = new DiskImage();
-        img.setSizeInGigabytes(size);
-        img.setActualSize(size);
-        img.setId(Guid.newGuid());
-        img.setStorageIds(new ArrayList<Guid>(Arrays.asList(STORAGE_DOMAIN_ID_1)));
-        return img;
+        DiskImage diskImage = new DiskImage();
+        diskImage.setSizeInGigabytes(size);
+        diskImage.setActualSize(size);
+        diskImage.setId(Guid.newGuid());
+        diskImage.setImageId(Guid.newGuid());
+        diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(STORAGE_DOMAIN_ID_1)));
+        return diskImage;
     }
 
     protected StorageDomain createStorageDomain(int availableSpace) {
@@ -667,8 +668,7 @@ public class AddVmCommandTest {
     private static List<DiskImage> generateDisksList(int size) {
         List<DiskImage> disksList = new ArrayList<>();
         for (int i = 0; i < size; ++i) {
-            DiskImage diskImage = new DiskImage();
-            diskImage.setImageId(Guid.newGuid());
+            DiskImage diskImage = createDiskImage(REQUIRED_DISK_SIZE_GB);
             disksList.add(diskImage);
         }
         return disksList;

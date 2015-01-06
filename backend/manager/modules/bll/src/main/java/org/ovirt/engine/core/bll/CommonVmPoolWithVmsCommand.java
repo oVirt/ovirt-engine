@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
@@ -13,6 +15,7 @@ import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -380,7 +383,24 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             }
             validDomains.add(domainId);
         }
-        return true;
+
+        return validateSpaceRequirements();
+    }
+
+    protected boolean validateSpaceRequirements() {
+        int numOfVms = getParameters().getVmsCount();
+        Collection<DiskImage> diskDummies = ImagesHandler.getDisksDummiesForStorageAllocations(diskInfoDestinationMap.values());
+        Collection<DiskImage> disks = new ArrayList<>(numOfVms * diskDummies.size());
+        // Number of added disks multiplies by the vms number
+        for (int i = 0; i < numOfVms; ++i) {
+            disks.addAll(diskDummies);
+        }
+
+        Guid spId = getVmTemplate().getStoragePoolId();
+        Set<Guid> sdIds = destStorages.keySet();
+        MultipleStorageDomainsValidator storageDomainsValidator = getStorageDomainsValidator(spId, sdIds);
+        return validate(storageDomainsValidator.allDomainsWithinThresholds())
+                && validate(storageDomainsValidator.allDomainsHaveSpaceForNewDisks(disks));
     }
 
     private int getBlockSparseInitSizeInGB() {
@@ -422,6 +442,10 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         }
 
         return list;
+    }
+
+    protected MultipleStorageDomainsValidator getStorageDomainsValidator(Guid spId, Set<Guid> sdIds) {
+        return new MultipleStorageDomainsValidator(spId, sdIds);
     }
 
 }

@@ -25,6 +25,7 @@ public class UpdateVmPoolWithVmsCommandTest extends CommonVmPoolWithVmsCommandTe
     @Test
     public void validateCanDoAction() {
         mockVMPoolDAO();
+        setupForStorageTests();
         assertTrue(command.canDoAction());
     }
 

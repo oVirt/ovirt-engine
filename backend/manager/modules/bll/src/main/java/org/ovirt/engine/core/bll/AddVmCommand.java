@@ -381,9 +381,13 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return validate(storageDomainValidator.isDomainWithinThresholds());
     }
 
+    /**
+     * This validation is for thin provisioning, when done differently on other commands, this method should be overridden.
+     */
     protected boolean validateFreeSpace(StorageDomainValidator storageDomainValidator, List<DiskImage> disksList)
     {
-        return validate(storageDomainValidator.hasSpaceForNewDisks(disksList));
+        Collection<DiskImage> disks = ImagesHandler.getDisksDummiesForStorageAllocations(disksList);
+        return validate(storageDomainValidator.hasSpaceForNewDisks(disks));
     }
 
     protected boolean checkSingleQxlDisplay() {

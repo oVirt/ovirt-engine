@@ -859,4 +859,21 @@ public final class ImagesHandler {
         description.put(ImagesHandler.DISK_DESCRIPTION, diskDescription != null ? diskDescription : "");
         return JsonHelper.mapToJson(description, false);
     }
+
+
+    /**
+     * This method is used for storage allocation validations, where the disks are the template's,
+     * which could have another volume type/format than the target disk volume type/format, which is not yet created.
+     * "Real" override for these values is done in CreateSnapshotCommand, when creating the new DiskImages.
+     */
+    public static Collection<DiskImage> getDisksDummiesForStorageAllocations(Collection<DiskImage> originalDisks) {
+        Collection<DiskImage> diskDummies = new HashSet<>();
+        for (DiskImage diskImage : originalDisks) {
+            DiskImage clone = DiskImage.copyOf(diskImage);
+            clone.setVolumeType(VolumeType.Sparse);
+            clone.setvolumeFormat(VolumeFormat.COW);
+            diskDummies.add(clone);
+        }
+        return diskDummies;
+    }
 }

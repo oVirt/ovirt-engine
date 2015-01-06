@@ -5,22 +5,17 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmPool;
-import org.ovirt.engine.core.common.businessentities.VolumeFormat;
-import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -128,39 +123,6 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
 
     @Override
     public boolean checkDestDomains() {
-        return super.checkDestDomains() && validateSpaceRequirements();
-    }
-
-    protected boolean validateSpaceRequirements() {
-        int numOfVms = getParameters().getVmsCount();
-        List<DiskImage> diskDummies = getDiskList();
-        List<DiskImage> disksList = new ArrayList<>();
-        // Number of added disks multiplies by the vms number
-        for (int i = 0; i < numOfVms; ++i) {
-            disksList.addAll(diskDummies);
-        }
-
-        Guid spId = getVmTemplate().getStoragePoolId();
-        Set<Guid> sdIds = destStorages.keySet();
-        MultipleStorageDomainsValidator storageDomainsValidator = getStorageDomainsValidator(spId, sdIds);
-        return validate(storageDomainsValidator.allDomainsWithinThresholds())
-                && validate(storageDomainsValidator.allDomainsHaveSpaceForNewDisks(disksList));
-    }
-
-    protected MultipleStorageDomainsValidator getStorageDomainsValidator(Guid spId, Set<Guid> sdIds) {
-        return new MultipleStorageDomainsValidator(spId, sdIds);
-    }
-
-    private List<DiskImage> getDiskList() {
-        List<DiskImage> disksList = new ArrayList<>();
-        for (DiskImage diskImage : diskInfoDestinationMap.values()) {
-            DiskImage clone = DiskImage.copyOf(diskImage);
-            // At this point the disks are the template's, which could have another volume type/format
-            // This change is for storage allocation validations, "real" override for these values is done in CreateSnapshotCommand.
-            clone.setVolumeType(VolumeType.Sparse);
-            clone.setvolumeFormat(VolumeFormat.COW);
-            disksList.add(clone);
-        }
-        return disksList;
+        return super.checkDestDomains();
     }
 }
