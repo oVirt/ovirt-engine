@@ -210,11 +210,11 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetAllGlusterGeoRepSessions()
-RETURNS SETOF gluster_georep_session STABLE
+RETURNS SETOF gluster_georep_sessions_view STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT *
-    FROM  gluster_georep_session;
+    FROM  gluster_georep_sessions_view;
 END; $procedure$
 LANGUAGE plpgsql;
 
