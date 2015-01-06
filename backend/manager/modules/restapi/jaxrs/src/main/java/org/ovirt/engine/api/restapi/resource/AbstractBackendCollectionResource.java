@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.ActionableResource;
@@ -67,22 +68,26 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         HashMap<String, String> queryConstraints = QueryHelper.getQueryConstraints(getUriInfo(),
                                                                                    FROM_CONSTRAINT_PARAMETER);
 
-        if (matrixConstraints.containsKey(FROM_CONSTRAINT_PARAMETER)) {
+        String fromParameter = matrixConstraints.get(FROM_CONSTRAINT_PARAMETER);
+        if (StringUtils.isNotBlank(fromParameter)) {
             try {
-                searchParams.setSearchFrom(Long.parseLong(matrixConstraints.get(FROM_CONSTRAINT_PARAMETER)));
+                searchParams.setSearchFrom(Long.parseLong(fromParameter));
             } catch (Exception ex) {
                 log.error("Unwrapping of '{}' matrix search parameter failed: {}",
                         FROM_CONSTRAINT_PARAMETER, ex.getMessage());
                 log.error("Exception", ex);
             }
-        } else if (queryConstraints.containsKey(FROM_CONSTRAINT_PARAMETER)) {
+        } else {
             //preserved in sake if backward compatibility until 4.0
-            try {
-                searchParams.setSearchFrom(Long.parseLong(queryConstraints.get(FROM_CONSTRAINT_PARAMETER)));
-            } catch (Exception ex) {
-                log.error("Unwrapping of '{}' query search parameter failed: {}",
-                        FROM_CONSTRAINT_PARAMETER, ex.getMessage());
-                log.error("Exception", ex);
+            fromParameter = queryConstraints.get(FROM_CONSTRAINT_PARAMETER);
+            if (StringUtils.isNotBlank(fromParameter)) {
+                try {
+                    searchParams.setSearchFrom(Long.parseLong(fromParameter));
+                } catch (Exception ex) {
+                    log.error("Unwrapping of '{}' query search parameter failed: {}",
+                            FROM_CONSTRAINT_PARAMETER, ex.getMessage());
+                    log.error("Exception", ex);
+                }
             }
         }
         if (matrixConstraints.containsKey(CASE_SENSITIVE_CONSTRAINT_PARAMETER)) {
