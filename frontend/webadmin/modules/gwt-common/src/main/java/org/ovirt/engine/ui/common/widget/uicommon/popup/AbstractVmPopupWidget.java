@@ -75,6 +75,7 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadChangeableListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.SuggestionMatcher;
 import org.ovirt.engine.ui.common.widget.editor.VncKeyMapRenderer;
 import org.ovirt.engine.ui.common.widget.editor.generic.DetachableLabel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
@@ -1188,7 +1189,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                                         + versionTemplate.getTemplateVersionNumber() + ")"; //$NON-NLS-1$
                     }
                 },
-                new ModeSwitchingVisibilityRenderer());
+                new ModeSwitchingVisibilityRenderer(),
+                new SuggestionMatcher.ContainsSuggestionMatcher());
 
         oSTypeEditor = new ListModelListBoxEditor<Integer>(new AbstractRenderer<Integer>() {
             @Override

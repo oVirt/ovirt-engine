@@ -16,7 +16,7 @@ public class ListModelTypeAheadChangeableListBox extends ListModelTypeAheadListB
     }
 
     public ListModelTypeAheadChangeableListBox(SuggestBoxRenderer<String> renderer, boolean autoAddToValidValues, String nullReplacementText) {
-        super(renderer, autoAddToValidValues);
+        super(renderer, autoAddToValidValues, new SuggestionMatcher.StartWithSuggestionMatcher());
         if (nullReplacementText == null) {
             nullReplacementText = ""; //$NON-NLS-1$
         } else {

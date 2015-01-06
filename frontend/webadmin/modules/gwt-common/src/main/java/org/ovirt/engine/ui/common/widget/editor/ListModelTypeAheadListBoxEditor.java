@@ -29,10 +29,22 @@ public class ListModelTypeAheadListBoxEditor<T> extends AbstractValidatedWidgetW
         this(renderer, true, visibilityRenderer);
     }
 
+    public ListModelTypeAheadListBoxEditor(SuggestBoxRenderer<T> renderer, VisibilityRenderer visibilityRenderer,
+                                           SuggestionMatcher suggestionMatcher) {
+        this(renderer, true, visibilityRenderer, suggestionMatcher);
+    }
+
+    public ListModelTypeAheadListBoxEditor(SuggestBoxRenderer<T> renderer,
+                                           boolean autoAddToValidValues,
+                                           VisibilityRenderer visibilityRenderer) {
+        this(renderer, autoAddToValidValues, visibilityRenderer, new SuggestionMatcher.StartWithSuggestionMatcher());
+    }
+
     public ListModelTypeAheadListBoxEditor(SuggestBoxRenderer<T> renderer,
             boolean autoAddToValidValues,
-            VisibilityRenderer visibilityRenderer) {
-        super(new ListModelTypeAheadListBox<T>(renderer, autoAddToValidValues), visibilityRenderer);
+            VisibilityRenderer visibilityRenderer,
+            SuggestionMatcher suggestionMatcher) {
+        super(new ListModelTypeAheadListBox<T>(renderer, autoAddToValidValues, suggestionMatcher), visibilityRenderer);
         this.editor = WidgetWithLabelEditor.of(getContentWidget().asEditor(), this);
     }
 

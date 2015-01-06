@@ -85,12 +85,9 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
-    public ListModelTypeAheadListBox(SuggestBoxRenderer<T> renderer) {
-        this(renderer, true);
-    }
-
-    public ListModelTypeAheadListBox(SuggestBoxRenderer<T> renderer, boolean autoAddToValidValues) {
-        super(new RenderableSuggestOracle<T>(renderer));
+    public ListModelTypeAheadListBox(SuggestBoxRenderer<T> renderer, boolean autoAddToValidValues,
+                                     SuggestionMatcher suggestionMatcher) {
+        super(new RenderableSuggestOracle<T>(renderer, suggestionMatcher));
         this.renderer = renderer;
         this.autoAddToValidValues = autoAddToValidValues;
 
@@ -390,26 +387,19 @@ class RenderableSuggestion<T> extends MultiWordSuggestion {
     public RenderableSuggestion(T row, SuggestBoxRenderer<T> renderer) {
         super(renderer.getReplacementString(row), renderer.getDisplayString(row));
     }
-
-    public boolean matches(String query) {
-        String replacementString = getReplacementString();
-        if (replacementString == null || query == null) {
-            return false;
-        }
-
-        return replacementString.toLowerCase().startsWith(query.toLowerCase());
-    }
 }
 
 class RenderableSuggestOracle<T> extends MultiWordSuggestOracle {
 
     private SuggestBoxRenderer<T> renderer;
+    final private SuggestionMatcher matcher;
 
     // inited to avoid null checks
     private Collection<T> data = new ArrayList<T>();
 
-    public RenderableSuggestOracle(SuggestBoxRenderer<T> renderer) {
+    public RenderableSuggestOracle(SuggestBoxRenderer<T> renderer, SuggestionMatcher matcher) {
         this.renderer = renderer;
+        this.matcher = matcher;
     }
 
     @Override
@@ -419,7 +409,7 @@ class RenderableSuggestOracle<T> extends MultiWordSuggestOracle {
         String query = request.getQuery();
         for (T row : data) {
             RenderableSuggestion<T> suggestionCandidate = new RenderableSuggestion<T>(row, renderer);
-            if (suggestionCandidate.matches(query)) {
+            if (this.matcher.match(query, suggestionCandidate)) {
                 suggestions.add(suggestionCandidate);
             }
         }
