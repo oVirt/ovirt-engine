@@ -21,7 +21,12 @@ public class VmTypeColumn extends WebAdminImageResourceColumn<VM> {
                 setTitle(config.getTooltip(constants));
                 return config.getImageResource(getApplicationResources());
             } else {
-                return getApplicationResources().manyDesktopsImage();
+                if (!vm.isNextRunConfigurationExists()) {
+                    return getApplicationResources().manyDesktopsImage();
+                } else {
+                    return getApplicationResources().manyDesktopsChangesImage();
+                }
+
             }
     }
 
