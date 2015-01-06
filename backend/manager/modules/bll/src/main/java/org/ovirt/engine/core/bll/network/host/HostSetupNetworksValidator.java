@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
@@ -46,9 +45,12 @@ import org.slf4j.LoggerFactory;
 
 public class HostSetupNetworksValidator {
     private static final Logger log = LoggerFactory.getLogger(HostSetupNetworksValidator.class);
+
+    static final String ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY = "ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY";
+
     private HostSetupNetworksParameters params;
     private VDS host;
-    private Map<String, VdsNetworkInterface> existingIfaces;
+    private Map<String, VdsNetworkInterface> existingInterfaces;
     private Map<Guid, VdsNetworkInterface> existingIfacesById;      //TODO MM: will be removed by latter patch.
     private List<NetworkAttachment> existingAttachments;
     private final ManagementNetworkUtil managementNetworkUtil;
@@ -65,7 +67,7 @@ public class HostSetupNetworksValidator {
 
     public HostSetupNetworksValidator(VDS host,
         HostSetupNetworksParameters params,
-        List<VdsNetworkInterface> existingNics,
+        List<VdsNetworkInterface> existingInterfaces,
         List<NetworkAttachment> existingAttachments,
         BusinessEntityMap<Network> networkBusinessEntityMap,
         ManagementNetworkUtil managementNetworkUtil,
@@ -82,12 +84,12 @@ public class HostSetupNetworksValidator {
         this.networkAttachmentDao = networkAttachmentDao;
         this.networkDao = networkDao;
         this.vdsDao = vdsDao;
-        this.existingIfaces = Entities.entitiesByName(existingNics);
-        this.existingIfacesById = Entities.businessEntitiesById(existingNics);
+        this.existingInterfaces = Entities.entitiesByName(existingInterfaces);
+        this.existingIfacesById = Entities.businessEntitiesById(existingInterfaces);
         this.networkBusinessEntityMap = networkBusinessEntityMap;
 
         this.removedBondVdsNetworkInterface = Entities.filterEntitiesByRequiredIds(params.getRemovedBonds(),
-            existingNics);
+            existingInterfaces);
         this.removedBondVdsNetworkInterfaceMap = new BusinessEntityMap<>(removedBondVdsNetworkInterface);
         this.removedNetworkAttachments = Entities.filterEntitiesByRequiredIds(params.getRemovedNetworkAttachments(),
             existingAttachments);
@@ -102,7 +104,7 @@ public class HostSetupNetworksValidator {
             FeatureSupported.networkCustomProperties(host.getVdsGroupCompatibilityVersion());
     }
 
-    private List<String> translateErrorMessages(List<String> messages) {
+    List<String> translateErrorMessages(List<String> messages) {
         return Backend.getInstance().getErrorsTranslator().TranslateErrorText(messages);
     }
 
@@ -113,7 +115,7 @@ public class HostSetupNetworksValidator {
         vr = skipValidation(vr) ? vr : validNewOrModifiedNetworkAttachments();
         vr = skipValidation(vr) ? vr : validRemovedNetworkAttachments();
         vr = skipValidation(vr) ? vr : validNewOrModifiedBonds();
-        vr = skipValidation(vr) ? vr : validRemovedBonds();
+        vr = skipValidation(vr) ? vr : validRemovedBonds(attachmentsToConfigure);
         vr = skipValidation(vr) ? vr : attachmentsDontReferenceSameNetworkDuplicately(attachmentsToConfigure);
         vr = skipValidation(vr) ? vr : networksUniquelyConfiguredOnHost(attachmentsToConfigure);
         vr = skipValidation(vr) ? vr : validateNetworkExclusiveOnNics(attachmentsToConfigure);
@@ -138,20 +140,21 @@ public class HostSetupNetworksValidator {
         return validator.validateNetworkExclusiveOnNics();
     }
 
-    private ValidationResult networksUniquelyConfiguredOnHost(Collection<NetworkAttachment> attachmentsToConfigure) {
-        Set<Guid> networkIds = new HashSet<>(attachmentsToConfigure.size());
+    ValidationResult networksUniquelyConfiguredOnHost(Collection<NetworkAttachment> attachmentsToConfigure) {
+        Set<Guid> usedNetworkIds = new HashSet<>(attachmentsToConfigure.size());
         for (NetworkAttachment attachment : attachmentsToConfigure) {
-            if (networkIds.contains(attachment.getNetworkId())) {
+            boolean alreadyUsedNetworkId = usedNetworkIds.contains(attachment.getNetworkId());
+            if (alreadyUsedNetworkId) {
                 return new ValidationResult(EngineMessage.NETWORKS_ALREADY_ATTACHED_TO_IFACES);
             } else {
-                networkIds.add(attachment.getNetworkId());
+                usedNetworkIds.add(attachment.getNetworkId());
             }
         }
 
         return ValidationResult.VALID;
     }
 
-    private ValidationResult validateNotRemovingUsedNetworkByVms() {
+    ValidationResult validateNotRemovingUsedNetworkByVms() {
         Collection<String> removedNetworks = new HashSet<>();
         for (NetworkAttachment removedAttachment : removedNetworkAttachments) {
             removedNetworks.add(existingNetworkRelatedToAttachment(removedAttachment).getName());
@@ -166,24 +169,25 @@ public class HostSetupNetworksValidator {
         }
     }
 
-    private ValidationResult validRemovedBonds() {
+    ValidationResult validRemovedBonds(Collection<NetworkAttachment> attachmentsToConfigure) {
         List<Guid> invalidBondIds = Entities.idsNotReferencingExistingRecords(params.getRemovedBonds(),
             existingIfacesById);
         if (!invalidBondIds.isEmpty()) {
             return new ValidationResult(EngineMessage.NETWORK_BOND_NOT_EXISTS, commaSeparated(invalidBondIds));
         }
 
-        Set<String> requiredNicsNames = getRemovedBondsUsedByNetworks();
+        Set<String> requiredInterfaceNames = getNetworkAttachmentInterfaceNames(attachmentsToConfigure);
 
         for (VdsNetworkInterface removedBond : removedBondVdsNetworkInterface) {
             String bondName = removedBond.getName();
-            VdsNetworkInterface existingBond = existingIfaces.get(bondName);
-            ValidationResult interfaceIsBondOrNull = new HostInterfaceValidator(existingBond).interfaceIsBondOrNull();
+            VdsNetworkInterface existingBond = existingInterfaces.get(bondName);
+            ValidationResult interfaceIsBondOrNull = createHostInterfaceValidator(existingBond).interfaceIsBondOrNull();
             if (!interfaceIsBondOrNull.isValid()) {
                 return interfaceIsBondOrNull;
             }
 
-            if (requiredNicsNames.contains(bondName)) {
+            boolean cantRemoveRequiredInterface = requiredInterfaceNames.contains(bondName);
+            if (cantRemoveRequiredInterface) {
                 return new ValidationResult(EngineMessage.BOND_USED_BY_NETWORK_ATTACHMENTS, bondName);
             }
         }
@@ -191,48 +195,51 @@ public class HostSetupNetworksValidator {
         return ValidationResult.VALID;
     }
 
-    private Set<String> getRemovedBondsUsedByNetworks() {
-        Collection<NetworkAttachment> attachmentsToConfigure = getAttachmentsToConfigure();
-        Set<String> requiredNicsNames = new HashSet<>();
-        for (NetworkAttachment attachment : attachmentsToConfigure) {
-            requiredNicsNames.add(attachment.getNicName());
+    private Set<String> getNetworkAttachmentInterfaceNames(Collection<NetworkAttachment> networkAttachments) {
+        Set<String> networkAttachmentNicNames = new HashSet<>();
+        for (NetworkAttachment attachment : networkAttachments) {
+            networkAttachmentNicNames.add(attachment.getNicName());
         }
 
-        return requiredNicsNames;
+        return networkAttachmentNicNames;
     }
 
-    private Collection<NetworkAttachment> getAttachmentsToConfigure() {
-        Map<Guid, NetworkAttachment> attachmentsToConfigure = new HashMap<>(Entities.businessEntitiesById(
-            existingAttachments));
-        // ignore removed attachments
-        for (NetworkAttachment removedAttachment : removedNetworkAttachments) {
-            attachmentsToConfigure.remove(removedAttachment.getId());
-        }
+    /**
+     * @return all attachments passed in {@link HostSetupNetworksParameters#networkAttachments} plus
+     * all previously existing attachments not mentioned in user request, but except for those listed in
+     * {@link org.ovirt.engine.core.common.action.HostSetupNetworksParameters#removedNetworkAttachments}
+     */
+    Collection<NetworkAttachment> getAttachmentsToConfigure() {
+        Map<Guid, NetworkAttachment> networkAttachmentsMap = new HashMap<>(
+            existingAttachments.size() + params.getNetworkAttachments().size());
 
         List<NetworkAttachment> newAttachments = new ArrayList<>();
 
-        // add attachments which planned to be configured on removed bonds and ignore those which aren't
         for (NetworkAttachment attachment : params.getNetworkAttachments()) {
-
-            // new attachment to add
             if (attachment.getId() == null) {
                 newAttachments.add(attachment);
                 continue;
-            }
-
-            if (removedBondVdsNetworkInterfaceMap.containsKey(attachment.getNicName())) {
-                attachmentsToConfigure.put(attachment.getId(), attachment);
             } else {
-                attachmentsToConfigure.remove(attachment.getId());
+                networkAttachmentsMap.put(attachment.getId(), attachment);
             }
         }
 
-        Collection<NetworkAttachment> candidateAttachments = new ArrayList<>(attachmentsToConfigure.values());
-        candidateAttachments.addAll(newAttachments);
-        return candidateAttachments;
+        Map<Guid, NetworkAttachment> removedNetworkAttachments =
+            Entities.businessEntitiesById(this.removedNetworkAttachments);
+        for (NetworkAttachment existingAttachment : existingAttachments) {
+            Guid existingAttachmentId = existingAttachment.getId();
+            if (!networkAttachmentsMap.containsKey(existingAttachmentId) &&
+                !removedNetworkAttachments.containsKey(existingAttachmentId)) {
+                networkAttachmentsMap.put(existingAttachmentId, existingAttachment);
+            }
+        }
+
+        List<NetworkAttachment> result = new ArrayList<>(networkAttachmentsMap.values());
+        result.addAll(newAttachments);
+        return result;
     }
 
-    private ValidationResult validNewOrModifiedBonds() {
+    ValidationResult validNewOrModifiedBonds() {
         for (Bond modifiedOrNewBond : params.getBonds()) {
             String bondName = modifiedOrNewBond.getName();
             ValidationResult validateCoherentNicIdentification = validateCoherentNicIdentification(modifiedOrNewBond);
@@ -240,13 +247,13 @@ public class HostSetupNetworksValidator {
                 return validateCoherentNicIdentification;
             }
 
-            ValidationResult interfaceByNameExists = new HostInterfaceValidator(modifiedOrNewBond).interfaceByNameExists();
+            ValidationResult interfaceByNameExists = createHostInterfaceValidator(modifiedOrNewBond).interfaceByNameExists();
             if (!interfaceByNameExists.isValid()) {
                 return interfaceByNameExists;
             }
 
             //either it's newly create bond, thus non existing, or given name must reference existing bond.
-            ValidationResult interfaceIsBondOrNull = new HostInterfaceValidator(existingIfaces.get(bondName)).interfaceIsBondOrNull();
+            ValidationResult interfaceIsBondOrNull = createHostInterfaceValidator(existingInterfaces.get(bondName)).interfaceIsBondOrNull();
             if (!interfaceIsBondOrNull.isValid()) {
                 return interfaceIsBondOrNull;
             }
@@ -256,35 +263,45 @@ public class HostSetupNetworksValidator {
                 return new ValidationResult(EngineMessage.NETWORK_BONDS_INVALID_SLAVE_COUNT, bondName);
             }
 
-            for (String slaveName : modifiedOrNewBond.getSlaves()) {
-                VdsNetworkInterface potentialSlave = getExistingIfaces().get(slaveName);
-                HostInterfaceValidator slaveHostInterfaceValidator = new HostInterfaceValidator(potentialSlave);
+            ValidationResult validateModifiedBondSlaves = validateModifiedBondSlaves(modifiedOrNewBond);
+            if (!validateModifiedBondSlaves.isValid()) {
+                return validateModifiedBondSlaves;
+            }
+        }
 
-                ValidationResult interfaceExists = slaveHostInterfaceValidator.interfaceExists();
-                if (!interfaceExists.isValid()) {
-                    return interfaceExists;
-                }
+        return ValidationResult.VALID;
+    }
 
-                ValidationResult interfaceIsValidSlave = slaveHostInterfaceValidator.interfaceIsValidSlave();
-                if (!interfaceIsValidSlave.isValid()) {
-                    return interfaceIsValidSlave;
-                }
+    ValidationResult validateModifiedBondSlaves(Bond modifiedOrNewBond) {
+        for (String slaveName : modifiedOrNewBond.getSlaves()) {
+            VdsNetworkInterface potentialSlave = existingInterfaces.get(slaveName);
+            HostInterfaceValidator slaveHostInterfaceValidator = createHostInterfaceValidator(potentialSlave);
 
-                /* definition of currently processed bond references this slave, but this slave already 'slaves' for
+            ValidationResult interfaceExists = slaveHostInterfaceValidator.interfaceExists();
+            if (!interfaceExists.isValid()) {
+                return interfaceExists;
+            }
+
+            ValidationResult interfaceIsValidSlave = slaveHostInterfaceValidator.interfaceIsValidSlave();
+            if (!interfaceIsValidSlave.isValid()) {
+                return interfaceIsValidSlave;
+            }
+
+            /* definition of currently processed bond references this slave, but this slave already 'slaves' for
                 another bond. This is ok only when this bond will be removed as a part of this request
                 or the slave will be removed from its former bond, as a part of this request. */
-                String currentSlavesBondName = potentialSlave.getBondName();
-                if (potentialSlave.isPartOfBond() &&
+            String currentSlavesBondName = potentialSlave.getBondName();
+            if (potentialSlave.isPartOfBond() &&
                         /* we're creating new bond, and it's definition contains reference to slave already assigned
                         to a different bond. */
-                    (!potentialSlave.isPartOfBond(bondName)
-                        //…but this bond is also removed in this request, so it's ok.
-                        && !isBondRemoved(currentSlavesBondName)
+                (!potentialSlave.isPartOfBond(modifiedOrNewBond.getName())
+                    //…but this bond is also removed in this request, so it's ok.
+                    && !isBondRemoved(currentSlavesBondName)
 
-                        //… or slave was removed from its former bond
-                        && !bondIsUpdatedAndDoesNotContainCertainSlave(slaveName, currentSlavesBondName))) {
-                    return new ValidationResult(EngineMessage.NETWORK_INTERFACE_ALREADY_IN_BOND, slaveName);
-                }
+                    //… or slave was removed from its former bond
+                    && !bondIsUpdatedAndDoesNotContainCertainSlave(slaveName, currentSlavesBondName))) {
+                return new ValidationResult(EngineMessage.NETWORK_INTERFACE_ALREADY_IN_BOND, slaveName);
+            }
 
                 if (slaveUsedMultipleTimesInDifferentBonds(slaveName)) {
                     return new ValidationResult(EngineMessage.NETWORK_INTERFACE_REFERENCED_AS_A_SLAVE_MULTIPLE_TIMES,
@@ -296,10 +313,9 @@ public class HostSetupNetworksValidator {
                 /* slave has network assigned and there isn't request for unassigning it;
                 so this check, that nic is part of newly crated bond, and any previously attached network has
                 to be unattached. */
-                if (potentialSlave.getNetworkName() != null && !isNetworkAttachmentRemoved(potentialSlave)) {
-                    return new ValidationResult(EngineMessage.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE,
-                        potentialSlave.getName());
-                }
+            if (potentialSlave.getNetworkName() != null && !isNetworkAttachmentRemoved(potentialSlave)) {
+                return new ValidationResult(EngineMessage.NETWORK_INTERFACE_ATTACHED_TO_NETWORK_CANNOT_BE_SLAVE,
+                    potentialSlave.getName());
             }
         }
 
@@ -317,6 +333,10 @@ public class HostSetupNetworksValidator {
         }
 
         return count >= 2;
+    }
+
+    HostInterfaceValidator createHostInterfaceValidator(VdsNetworkInterface vdsNetworkInterface) {
+        return new HostInterfaceValidator(vdsNetworkInterface);
     }
 
     /**
@@ -352,6 +372,11 @@ public class HostSetupNetworksValidator {
         return false;
     }
 
+    /**
+     * @param bondName name of bonded interface.
+     *
+     * @return true if there's request to remove bond of given name.
+     */
     private boolean isBondRemoved(String bondName) {
         for (VdsNetworkInterface removedBond : removedBondVdsNetworkInterface) {
             if (bondName.equals(removedBond.getName())) {
@@ -381,13 +406,14 @@ public class HostSetupNetworksValidator {
             vr = skipValidation(vr) ? vr : validator.ipConfiguredForStaticBootProtocol();
             vr = skipValidation(vr) ? vr : validator.bootProtocolSetForDisplayNetwork();
             vr = skipValidation(vr) ? vr : validator.nicExists();
-            vr = skipValidation(vr) ? vr : validator.networkIpAddressWasSameAsHostnameAndChanged(getExistingIfaces());
+            vr = skipValidation(vr) ? vr : validator.networkIpAddressWasSameAsHostnameAndChanged(existingInterfaces);
             vr = skipValidation(vr) ? vr : validator.networkNotChanged(attachmentsById.get(attachment.getId()));
             vr = skipValidation(vr) ? vr : validator.validateGateway();
 
             boolean attachmentUpdated = attachment.getId() != null;
             if (attachmentUpdated) {
                 vr = skipValidation(vr) ? vr : validator.networkNotUsedByVms();
+                vr = skipValidation(vr) ? vr : notMovingLabeledNetworkToDifferentNic(attachment);
             }
         }
 
@@ -434,7 +460,7 @@ public class HostSetupNetworksValidator {
 
     private boolean isNicNameAndNicIdIncoherent(Guid nicId, String nicName) {
         VdsNetworkInterface interfaceById = existingIfacesById.get(nicId);
-        VdsNetworkInterface interfaceByName = existingIfaces.get(nicName);
+        VdsNetworkInterface interfaceByName = existingInterfaces.get(nicName);
         return !Objects.equals(interfaceById, interfaceByName);
     }
 
@@ -470,7 +496,7 @@ public class HostSetupNetworksValidator {
             vr = skipValidation(vr) ? vr : validator.networkAttachmentIsSet();
             vr = skipValidation(vr) ? vr : validator.notExternalNetwork();
             vr = skipValidation(vr) ? vr : validator.notRemovingManagementNetwork();
-            vr = skipValidation(vr) ? vr : notRemovingLabeledNetworks(attachment, getExistingIfaces());
+            vr = skipValidation(vr) ? vr : notRemovingLabeledNetworks(attachment, existingInterfaces);
             vr = skipValidation(vr) ? vr : validateNotRemovingUsedNetworkByVms();
         }
 
@@ -488,14 +514,29 @@ public class HostSetupNetworksValidator {
             vdsDao);
     }
 
-    private ValidationResult notRemovingLabeledNetworks(NetworkAttachment attachment,
+    /**
+     * @param attachment attachment obtained from db, record validity is assumed.
+     * @param existingNics nicNameToNic map of existing nics.
+     *
+     * @return removed attachment relates to network and nic. Method returns true such network is not labeled,
+     * such nic is currently being removed bond,
+     * or such nic is not labeled by same label as network is.
+     */
+    ValidationResult notRemovingLabeledNetworks(NetworkAttachment attachment,
         Map<String, VdsNetworkInterface> existingNics) {
+
         Network removedNetwork = existingNetworkRelatedToAttachment(attachment);
         if (!NetworkUtils.isLabeled(removedNetwork)) {
             return ValidationResult.VALID;
         }
 
         VdsNetworkInterface nic = existingNics.get(attachment.getNicName());
+
+        /*
+            When attachment is related to labeled network and bond being removed, it's considered to be valid,
+            because with disappearance of bond its label also disappears, so technically we cannot detach such network,
+            since it shouldn't be present there anyways.
+        * */
         if (nic != null && !removedBondVdsNetworkInterfaceMap.containsKey(nic.getName())) {
             if (NetworkUtils.isLabeled(nic) && nic.getLabels().contains(removedNetwork.getLabel())) {
                 return new ValidationResult(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC,
@@ -510,10 +551,11 @@ public class HostSetupNetworksValidator {
      * Validates there is no differences on MTU value between non-VM network to Vlans over the same interface/bond
      */
     private ValidationResult validateMtu(Collection<NetworkAttachment> attachmentsToConfigure) {
-        Map<String, List<Network>> nicsToNetworks = getNicNameToNetworksMap(attachmentsToConfigure);
+        return validateMtu(getNicNameToNetworksMap(attachmentsToConfigure));
+    }
 
-        for (Entry<String, List<Network>> nicToNetworks : nicsToNetworks.entrySet()) {
-            List<Network> networksOnNic = nicToNetworks.getValue();
+    ValidationResult validateMtu(Map<String, List<Network>> nicsToNetworks) {
+        for (List<Network> networksOnNic : nicsToNetworks.values()) {
             if (!networksOnNicMatchMtu(networksOnNic)) {
                 ValidationResult validationResult = reportMtuDifferences(networksOnNic);
                 if (!validationResult.isValid()) {
@@ -544,7 +586,7 @@ public class HostSetupNetworksValidator {
         return true;
     }
 
-    private Map<String, List<Network>> getNicNameToNetworksMap(Collection<NetworkAttachment> attachmentsToConfigure) {
+    Map<String, List<Network>> getNicNameToNetworksMap(Collection<NetworkAttachment> attachmentsToConfigure) {
         Map<String, List<Network>> nicNameToNetworksMap = new HashMap<>();
         for (NetworkAttachment attachment : attachmentsToConfigure) {
             String mapKey = attachment.getNicName();
@@ -570,15 +612,41 @@ public class HostSetupNetworksValidator {
         return new ValidationResult(EngineMessage.NETWORK_MTU_DIFFERENCES, replacements);
     }
 
+    ValidationResult notMovingLabeledNetworkToDifferentNic(NetworkAttachment attachment) {
+        Network movedNetwork = existingNetworkRelatedToAttachment(attachment);
+
+        if (!NetworkUtils.isLabeled(movedNetwork)) {
+            return ValidationResult.VALID;
+        }
+
+        NetworkAttachment existingAttachment = attachmentsById.get(attachment.getId());
+        boolean movedToDifferentNic = !existingAttachment.getNicId().equals(attachment.getNicId());
+
+        return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC,
+            ReplacementUtils.createSetVariableString(
+                ACTION_TYPE_FAILED_CANNOT_MOVE_LABELED_NETWORK_TO_ANOTHER_NIC_ENTITY, movedNetwork.getLabel()))
+            .when(movedToDifferentNic);
+
+    }
+
     private ValidationResult validateCustomProperties() {
         String version = host.getVdsGroupCompatibilityVersion().getValue();
         SimpleCustomPropertiesUtil util = SimpleCustomPropertiesUtil.getInstance();
-        Map<String, String> validProperties =
+
+        Map<String, String> validPropertiesForVmNetwork =
             util.convertProperties(Config.<String> getValue(ConfigValues.PreDefinedNetworkCustomProperties, version));
-        validProperties.putAll(util.convertProperties(Config.<String> getValue(ConfigValues.UserDefinedNetworkCustomProperties,
+        validPropertiesForVmNetwork.putAll(util.convertProperties(Config.<String> getValue(ConfigValues.UserDefinedNetworkCustomProperties,
             version)));
-        Map<String, String> validPropertiesNonVm = new HashMap<>(validProperties);
-        validPropertiesNonVm.remove("bridge_opts");
+
+        Map<String, String> validPropertiesForNonVm = new HashMap<>(validPropertiesForVmNetwork);
+        validPropertiesForNonVm.remove("bridge_opts");
+
+        return validateCustomProperties(util, validPropertiesForVmNetwork, validPropertiesForNonVm);
+    }
+
+    ValidationResult validateCustomProperties(SimpleCustomPropertiesUtil util,
+        Map<String, String> validPropertiesForVm,
+        Map<String, String> validPropertiesForNonVm) {
         for (NetworkAttachment attachment : params.getNetworkAttachments()) {
             Network network = existingNetworkRelatedToAttachment(attachment);
             if (attachment.hasProperties()) {
@@ -588,7 +656,7 @@ public class HostSetupNetworksValidator {
                 }
 
                 List<ValidationError> errors =
-                    util.validateProperties(network.isVmNetwork() ? validProperties : validPropertiesNonVm,
+                    util.validateProperties(network.isVmNetwork() ? validPropertiesForVm : validPropertiesForNonVm,
                         attachment.getProperties());
                 if (!errors.isEmpty()) {
                     handleCustomPropertiesError(util, errors);
@@ -613,11 +681,7 @@ public class HostSetupNetworksValidator {
         return networkBusinessEntityMap.get(attachment.getNetworkId());
     }
 
-    private Map<String, VdsNetworkInterface> getExistingIfaces() {
-        return existingIfaces;
-    }
-
-    public VmInterfaceManager getVmInterfaceManager() {
+    VmInterfaceManager getVmInterfaceManager() {
         return new VmInterfaceManager();
     }
 
