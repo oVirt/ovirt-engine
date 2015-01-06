@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.frontend.communication;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -23,12 +24,18 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
+import com.google.gwt.event.shared.EventBus;
+
 @RunWith(MockitoJUnitRunner.class)
 public class VdcOperationManagerTest {
     VdcOperationManager testManager;
 
     @Mock
     OperationProcessor mockOperationProcessor;
+
+    @Mock
+    EventBus mockEventBus;
+
     @Captor
     ArgumentCaptor<VdcOperation<VdcActionType, LoginUserParameters>> loginOperationCaptor;
 
@@ -36,7 +43,7 @@ public class VdcOperationManagerTest {
     @Before
     public void setUp() throws Exception {
         final VdcReturnValueBase result = new VdcReturnValueBase();
-        testManager = new VdcOperationManager(mockOperationProcessor);
+        testManager = new VdcOperationManager(mockEventBus, mockOperationProcessor);
         final VdcReturnValueBase loginResult = new VdcReturnValueBase();
         LoginUserParameters params = new LoginUserParameters("test", "test", //$NON-NLS-1$ //$NON-NLS-2$
                 "test"); //$NON-NLS-1$
@@ -70,6 +77,7 @@ public class VdcOperationManagerTest {
                         new VdcActionParametersBase(), null);
         testManager.addOperation(testOperation);
         verify(mockOperationProcessor).processOperation(testManager);
+        verify(mockEventBus).fireEvent(any(EngineSessionRefreshedEvent.class));
         assertEquals("Operations must match", testOperation, testManager.pollOperation()); //$NON-NLS-1$
     }
 
@@ -79,10 +87,12 @@ public class VdcOperationManagerTest {
                 VdcQueryParametersBase>(VdcQueryType.Search, new VdcQueryParametersBase(), null);
         testManager.addOperation(testOperation);
         verify(mockOperationProcessor).processOperation(testManager);
+        verify(mockEventBus).fireEvent(any(EngineSessionRefreshedEvent.class));
         // Second add, shouldn't add and generate an event.
         testManager.addOperation(testOperation);
         // Verify it is only called once (from before)
         verify(mockOperationProcessor).processOperation(testManager);
+        verify(mockEventBus).fireEvent(any(EngineSessionRefreshedEvent.class));
     }
 
     @Test
@@ -101,6 +111,7 @@ public class VdcOperationManagerTest {
         operationList.add(testOperation3);
         testManager.addOperationList(operationList);
         verify(mockOperationProcessor, times(3)).processOperation(testManager);
+        verify(mockEventBus, times(2)).fireEvent(any(EngineSessionRefreshedEvent.class));
         assertEquals("First poll should be action", testManager.pollOperation(), testOperation1); //$NON-NLS-1$
         assertEquals("Second poll should be query", testManager.pollOperation(), testOperation2); //$NON-NLS-1$
         assertNull("Third poll should be null", testManager.pollOperation()); //$NON-NLS-1$

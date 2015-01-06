@@ -5,6 +5,8 @@ import java.util.logging.Logger;
 
 import org.ovirt.engine.ui.common.utils.HttpUtils;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.communication.EngineSessionRefreshedEvent;
+import org.ovirt.engine.ui.frontend.communication.EngineSessionRefreshedEvent.EngineSessionRefreshedHandler;
 import org.ovirt.engine.ui.frontend.communication.StorageCallback;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 
@@ -38,7 +40,7 @@ import com.google.inject.Inject;
  * <p>
  * Triggers {@link RestApiSessionAcquiredEvent} upon acquiring or reusing REST API session.
  */
-public class RestApiSessionManager {
+public class RestApiSessionManager implements EngineSessionRefreshedHandler {
 
     private static class RestApiRequestCallback implements RequestCallback {
 
@@ -81,6 +83,8 @@ public class RestApiSessionManager {
     private String restApiSessionTimeout = DEFAULT_SESSION_TIMEOUT;
     private String restApiSessionId;
 
+    private boolean refreshRestApiSession = false;
+
     @Inject
     public RestApiSessionManager(EventBus eventBus) {
         this.eventBus = eventBus;
@@ -89,6 +93,15 @@ public class RestApiSessionManager {
         // send authentication headers to URLs ending in api/, otherwise it will send them to URLs ending in /, and
         // this causes problems in other applications, for example in the reports application.
         this.restApiBaseUrl = BaseContextPathData.getInstance().getPath() + "api/"; //$NON-NLS-1$
+
+        eventBus.addHandler(EngineSessionRefreshedEvent.getType(), this);
+    }
+
+    @Override
+    public void onEngineSessionRefreshed(EngineSessionRefreshedEvent event) {
+        if (restApiSessionId != null) {
+            refreshRestApiSession = true;
+        }
     }
 
     public void setSessionTimeout(String sessionTimeout) {
@@ -140,18 +153,18 @@ public class RestApiSessionManager {
         Scheduler.get().scheduleFixedDelay(new RepeatingCommand() {
             @Override
             public boolean execute() {
-                String sessionId = getSessionId();
+                boolean sessionInUse = restApiSessionId != null;
 
-                if (sessionId != null) {
+                if (sessionInUse && refreshRestApiSession) {
                     // The browser takes care of sending JSESSIONID cookie for this request automatically
                     sendRequest(createRequest(null), new RestApiRequestCallback());
 
-                    // The session is still in use, proceed with the heartbeat
-                    return true;
-                } else {
-                    // The session has been released, cancel the heartbeat
-                    return false;
+                    // Reset the refresh flag
+                    refreshRestApiSession = false;
                 }
+
+                // Proceed with the heartbeat only when the session is still in use
+                return sessionInUse;
             }
         }, SESSION_HEARTBEAT_MS);
     }
