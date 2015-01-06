@@ -106,6 +106,9 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/many_desktops.png")
     ImageResource manyDesktopsImage();
 
+    @Source("images/many_desktops_changes.png")
+    ImageResource manyDesktopsChangesImage();
+
     @Source("images/minus.png")
     ImageResource minusImage();
 
