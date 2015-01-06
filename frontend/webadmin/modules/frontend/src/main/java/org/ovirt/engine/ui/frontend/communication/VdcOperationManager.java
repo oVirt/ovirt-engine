@@ -6,13 +6,20 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
 /**
  * This class is a singleton and manages how {@code VdcOperation}s are added to the queue to be processed.
  */
 public class VdcOperationManager {
+
+    /**
+     * Event bus to propagate events related to operation processing.
+     */
+    private final EventBus eventBus;
 
     /**
      * The operation queue. It can hold any kind of VdcOperation.
@@ -34,7 +41,8 @@ public class VdcOperationManager {
      * @param operationProcessor the operation processor.
      */
     @Inject
-    public VdcOperationManager(final OperationProcessor operationProcessor) {
+    public VdcOperationManager(final EventBus eventBus, final OperationProcessor operationProcessor) {
+        this.eventBus = eventBus;
         this.processor = operationProcessor;
     }
 
@@ -73,6 +81,10 @@ public class VdcOperationManager {
         if (isAllowedToExecute) {
             if (operationCanBeAdded && operationQueue.add(operation)) {
                 processor.processOperation(this);
+
+                if (engineSessionRefreshed(operation)) {
+                    EngineSessionRefreshedEvent.fire(eventBus);
+                }
             }
         }
 
@@ -169,4 +181,22 @@ public class VdcOperationManager {
     public void retrieveFromHttpSession(final String key, final StorageCallback callback) {
         processor.retrieveFromHttpSession(key, callback);
     }
+
+    /**
+     * Returns {@code true} if execution of given operation caused the Engine session to be refreshed.
+     */
+    boolean engineSessionRefreshed(VdcOperation<?, ?> operation) {
+        // Actions always refresh the Engine session
+        if (operation.isAction()) {
+            return true;
+        }
+
+        // Queries optionally refresh the Engine session
+        else if (((VdcQueryParametersBase) operation.getParameter()).getRefresh()) {
+            return true;
+        }
+
+        return false;
+    }
+
 }

@@ -108,7 +108,7 @@ public class FrontendTest {
         when(mockXsrfRpcRequestBuilder.getXsrfToken()).thenReturn(new XsrfToken("Something")); //$NON-NLS-1$
         OperationProcessor operationProcessor = new OperationProcessor(communicationsProvider);
         operationProcessor.setScheduler(fakeScheduler);
-        VdcOperationManager operationsManager = new VdcOperationManager(operationProcessor);
+        VdcOperationManager operationsManager = new VdcOperationManager(mockEventBus, operationProcessor);
         operationsManager.setLoggedIn(true);
         frontend = new Frontend(operationsManager, mockCanDoActionErrorsTranslator, mockVdsmErrorsTranslator,
                 mockEventBus);
