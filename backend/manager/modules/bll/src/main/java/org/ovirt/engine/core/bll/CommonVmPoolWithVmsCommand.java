@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VmBase;
@@ -195,9 +194,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             parameters.setRngDevice(rngDevice);
         }
 
-        for (GraphicsDevice graphicsDevice : getParameters().getGraphicsDevices()) {
-            parameters.getGraphicsDevices().put(graphicsDevice.getGraphicsType(), graphicsDevice);
-        }
+        parameters.getGraphicsDevices().putAll(getParameters().getGraphicsDevices());
 
         return parameters;
     }

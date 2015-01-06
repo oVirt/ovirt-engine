@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.action;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import javax.validation.Valid;
@@ -107,11 +106,8 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters {
         this.balloonEnabled = isBallonEnabled;
     }
 
-    public Collection<GraphicsDevice> getGraphicsDevices() {
-        return graphicsDevices.values();
+    public Map<GraphicsType, GraphicsDevice> getGraphicsDevices() {
+        return graphicsDevices;
     }
 
-    public void addGraphicsDevice(GraphicsDevice graphicsDevice) {
-        graphicsDevices.put(graphicsDevice.getGraphicsType(), graphicsDevice);
-    }
 }

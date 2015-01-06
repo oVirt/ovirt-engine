@@ -56,6 +56,7 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
     private AddVmParameters buildAddVmParameters(VdcActionType action) {
         AddVmParameters parameters = new AddVmParameters(getParameters().getVmStaticData());
         parameters.setDiskOperatorAuthzPrincipalDbId(getParameters().getDiskOperatorAuthzPrincipalDbId());
+        parameters.getGraphicsDevices().putAll(getParameters().getGraphicsDevices());
 
         if (action == VdcActionType.AddVmFromScratch) {
             parameters.setDiskInfoList(getParameters().getDiskInfoList());

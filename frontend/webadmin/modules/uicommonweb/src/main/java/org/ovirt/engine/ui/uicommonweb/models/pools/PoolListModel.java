@@ -524,9 +524,12 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
             return;
         }
 
-        for (GraphicsType graphicsType : model.getGraphicsType().getSelectedItem().getBackingGraphicsType()) {
-            GraphicsDevice d = new GraphicsDevice(graphicsType.getCorrespondingDeviceType());
-            params.addGraphicsDevice(d);
+        for (GraphicsType graphicsType : GraphicsType.values()) {
+            params.getGraphicsDevices().put(graphicsType, null); // reset
+            if (model.getGraphicsType().getSelectedItem().getBackingGraphicsType().contains(graphicsType)) {
+                GraphicsDevice d = new GraphicsDevice(graphicsType.getCorrespondingDeviceType());
+                params.getGraphicsDevices().put(d.getGraphicsType(), d);
+            }
         }
     }
 
