@@ -83,7 +83,7 @@ public class MultipleStorageDomainsValidator {
      * Validates that all the domains have enough space for the request
      * @return {@link ValidationResult#VALID} if all the domains have enough free space, or a {@link ValidationResult} with the first low-on-space domain encountered.
      */
-    public ValidationResult allDomainsHaveSpaceForNewDisks(List<DiskImage> disksList) {
+    public ValidationResult allDomainsHaveSpaceForNewDisks(Collection<DiskImage> disksList) {
         final Map<Guid, List<DiskImage>> disksMap = getDomainsDisksMap(disksList);
 
         return validOrFirstFailure(new ValidatorPredicate() {

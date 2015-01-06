@@ -1,8 +1,14 @@
 package org.ovirt.engine.core.bll;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anySet;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
@@ -15,10 +21,12 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Rule;
+import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -35,6 +43,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -110,12 +119,49 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
     @Mock
     protected StorageDomainDAO storageDomainDAO;
 
+    @Mock
+    private MultipleStorageDomainsValidator multipleSdValidator;
+
     /**
      * The command under test.
      */
     protected CommonVmPoolWithVmsCommand<AddVmPoolWithVmsParameters> command;
 
     protected abstract CommonVmPoolWithVmsCommand<AddVmPoolWithVmsParameters> createCommand();
+
+    @Test
+    public void validateSufficientSpaceOnDestinationDomains() {
+        setupForStorageTests();
+        assertTrue(command.checkDestDomains());
+        verify(multipleSdValidator).allDomainsWithinThresholds();
+        verify(multipleSdValidator).allDomainsHaveSpaceForNewDisks(anyList());
+    }
+
+    @Test
+    public void validateInsufficientSpaceOnDomains() {
+        setupForStorageTests();
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
+                when(multipleSdValidator).allDomainsHaveSpaceForNewDisks(anyList());
+        assertFalse(command.canDoAction());
+        assertTrue(command.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN.toString()));
+        verify(multipleSdValidator).allDomainsWithinThresholds();
+        verify(multipleSdValidator).allDomainsHaveSpaceForNewDisks(anyList());
+    }
+
+    @Test
+    public void validateDomainNotWithinThreshold() {
+        setupForStorageTests();
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
+                when(multipleSdValidator).allDomainsWithinThresholds();
+        assertFalse(command.canDoAction());
+        assertTrue(command.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN.toString()));
+        verify(multipleSdValidator).allDomainsWithinThresholds();
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForNewDisks(anyList());
+    }
 
     @Before
     public void setupMocks() {
@@ -337,5 +383,12 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         mockVMTemplateDAO();
         mockVmNetworkInterfaceDao();
         mockStoragePoolDAO();
+    }
+
+
+    protected void setupForStorageTests() {
+        doReturn(multipleSdValidator).when(command).getStorageDomainsValidator(any(Guid.class), anySet());
+        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsWithinThresholds();
+        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsHaveSpaceForNewDisks(anyList());
     }
 }
