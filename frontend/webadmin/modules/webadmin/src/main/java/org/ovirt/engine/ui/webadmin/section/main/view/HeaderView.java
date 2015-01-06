@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.AbstractHeaderView;
+import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -52,6 +53,7 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
         this.guideLink = new Anchor(dynamicMessages.guideLinkLabel());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
+        this.logoLink.setHref(FrontendUrlUtils.getWelcomePageLink(GWT.getModuleBaseURL()));
     }
 
     @Override

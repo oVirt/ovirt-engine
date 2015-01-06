@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.userportal.section.main.view;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.AbstractHeaderView;
+import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.userportal.gin.AssetProvider;
@@ -42,6 +43,7 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
         this.aboutLink = new Anchor(constants.aboutLinkLabel());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
+        this.logoLink.setHref(FrontendUrlUtils.getWelcomePageLink(GWT.getModuleBaseURL()));
     }
 
     @Override

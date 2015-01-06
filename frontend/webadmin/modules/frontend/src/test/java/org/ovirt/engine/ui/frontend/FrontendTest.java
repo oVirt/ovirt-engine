@@ -108,7 +108,6 @@ public class FrontendTest {
         OperationProcessor operationProcessor = new OperationProcessor(communicationsProvider);
         operationProcessor.setScheduler(fakeScheduler);
         VdcOperationManager operationsManager = new VdcOperationManager(mockEventBus, operationProcessor);
-        operationsManager.setLoggedIn(true);
         frontend = new Frontend(operationsManager, mockCanDoActionErrorsTranslator, mockVdsmErrorsTranslator,
                 mockEventBus);
         frontend.frontendFailureEvent = mockFrontendFailureEvent;

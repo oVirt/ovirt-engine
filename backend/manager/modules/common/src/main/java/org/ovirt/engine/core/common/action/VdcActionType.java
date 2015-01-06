@@ -187,15 +187,15 @@ public enum VdcActionType {
     RemoveVmFromPool(314, ActionGroup.EDIT_VM_POOL_CONFIGURATION, false, QuotaDependency.NONE),
     AttachUserToVmFromPoolAndRun(318, ActionGroup.VM_POOL_BASIC_OPERATIONS, QuotaDependency.VDS_GROUP),
     // UserAndGroupsCommands
-    LoginUser(406, ActionGroup.LOGIN, false, QuotaDependency.NONE),
     LogoutSession(408, false, QuotaDependency.NONE),
     RemoveUser(409, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
     TerminateSession(410, false, QuotaDependency.NONE),
+    TerminateSessionsForToken(411, false, QuotaDependency.NONE),
     RemoveGroup(415, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
-    LoginAdminUser(418, ActionGroup.LOGIN, false, QuotaDependency.NONE),
     AddUser(419, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
     AddGroup(420, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
     LoginOnBehalf(424, false, QuotaDependency.NONE),
+    CreateUserSession(425, ActionGroup.LOGIN, false, QuotaDependency.NONE),
     // UserProfile
     AddUserProfile(421, ActionGroup.EDIT_PROFILE, false, QuotaDependency.NONE),
     UpdateUserProfile(422, ActionGroup.EDIT_PROFILE, false, QuotaDependency.NONE),

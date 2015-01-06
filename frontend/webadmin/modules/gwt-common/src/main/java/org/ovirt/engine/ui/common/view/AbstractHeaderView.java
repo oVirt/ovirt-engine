@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.view;
 
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import com.google.gwt.dom.client.AnchorElement;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Anchor;
@@ -15,6 +16,9 @@ public abstract class AbstractHeaderView extends AbstractView {
     @UiField
     @WithElementId("userName")
     public InlineLabel userNameLabel;
+
+    @UiField
+    public AnchorElement logoLink;
 
     @UiField(provided = true)
     @WithElementId

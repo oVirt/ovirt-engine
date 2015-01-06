@@ -7,10 +7,8 @@ import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcLoginReturnValueBase;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.constants.SessionConstants;
@@ -158,40 +156,6 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
             // For unknown reason the result was failed be returned.
             return null;
         }
-    }
-
-    @Override
-    public VdcReturnValueBase logOff() {
-        VdcActionParametersBase params = new VdcActionParametersBase();
-        params.setSessionId(getEngineSessionId());
-        VdcReturnValueBase returnValue = getBackend().logoff(params);
-        return returnValue;
-    }
-
-    @Override
-    public VdcReturnValueBase login(String userName, String password, String profileName, VdcActionType loginType) {
-        LoginUserParameters params = new LoginUserParameters(profileName, userName, password);
-        HttpSession originalSession = this.getThreadLocalRequest().getSession(false);
-        // Prevent session fixation.
-        if (originalSession != null) {
-            try {
-                originalSession.invalidate();
-            } catch (IllegalStateException e) {
-                // ignore
-            }
-        }
-        // Calling getSession again after invalidating it should create a new session.
-        HttpSession newSession = getSession();
-        assert !newSession.equals(originalSession) : "new session the same as old session"; //$NON-NLS-1$
-
-        params.setSessionId(getEngineSessionId());
-        params.setActionType(loginType);
-        VdcLoginReturnValueBase returnValue = (VdcLoginReturnValueBase) getBackend().login(params);
-        if (returnValue.getSucceeded()) {
-            this.getThreadLocalResponse().addHeader("OVIRT-SSO-TOKEN", returnValue.getSessionId()); //$NON-NLS-1$
-            newSession.setAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY, returnValue.getSessionId()); //$NON-NLS-1$)
-        }
-        return returnValue;
     }
 
     private HttpSession getSession() {

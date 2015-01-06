@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.bll.aaa;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -9,45 +12,64 @@ import java.util.concurrent.ConcurrentMap;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.ovirt.engine.api.extensions.Base;
-import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Acct;
-import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.core.aaa.AcctUtils;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
+import org.ovirt.engine.core.aaa.SSOOAuthServiceUtils;
 import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dao.EngineSessionDao;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public class SessionDataContainer {
+
+    SSOSessionValidator ssoSessionValidator = new SSOSessionValidator();
 
     private static class SessionInfo {
         private ConcurrentMap<String, Object> contentOfSession = new ConcurrentHashMap<>();
 
     }
 
+    protected Logger log = LoggerFactory.getLogger(getClass());
+
     private ConcurrentMap<String, SessionInfo> sessionInfoMap = new ConcurrentHashMap<>();
 
     private static final String USER_PARAMETER_NAME = "user";
     private static final String PASSWORD_PARAMETER_NAME = "password";
-    private static final String AUTHN_PARAMETER_NAME = "authn";
     private static final String PROFILE_PARAMETER_NAME = "profile";
     private static final String HARD_LIMIT_PARAMETER_NAME = "hard_limit";
     private static final String SOFT_LIMIT_PARAMETER_NAME = "soft_limit";
     private static final String ENGINE_SESSION_SEQ_ID = "engine_session_seq_id";
     private static final String ENGINE_SESSION_ID = "engine_session_id";
-    private static final String AUTH_RECORD_PARAMETER_NAME = "auth_record";
-    private static final String PRINCIPAL_RECORD_PARAMETER_NAME = "principal_record";
+    private static final String PRINCIPAL_PARAMETER_NAME = "username";
+    private static final String SSO_ACCESS_TOKEN_PARAMETER_NAME = "sso_access_token";
+    private static final String SESSION_VALID_PARAMETER_NAME = "session_valid";
     private static final String SOFT_LIMIT_INTERVAL_PARAMETER_NAME = "soft_limit_interval";
 
     @Inject
     private EngineSessionDao engineSessionDao;
+
+    public String generateEngineSessionId() {
+        String engineSessionId;
+        try {
+            byte s[] = new byte[64];
+            SecureRandom.getInstance("SHA1PRNG").nextBytes(s);
+            engineSessionId = new Base64(0).encodeToString(s);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+        return engineSessionId;
+    }
 
     /**
      * Get data by session and internal key
@@ -60,7 +82,7 @@ public class SessionDataContainer {
      *            - if perform refresh of session
      * @return
      */
-    protected final Object getData(String sessionId, String key, boolean refresh) {
+    public final Object getData(String sessionId, String key, boolean refresh) {
         if (sessionId == null) {
             return null;
         }
@@ -76,7 +98,7 @@ public class SessionDataContainer {
         return value;
     }
 
-    protected final void setData(String sessionId, String key, Object value) {
+    public final void setData(String sessionId, String key, Object value) {
         SessionInfo sessionInfo = getSessionInfo(sessionId);
         if (sessionInfo == null) {
             sessionInfo = new SessionInfo();
@@ -86,9 +108,9 @@ public class SessionDataContainer {
                     Config.<Integer> getValue(ConfigValues.UserSessionTimeOutInterval));
             SessionInfo oldSessionInfo = sessionInfoMap.putIfAbsent(sessionId, sessionInfo);
             if (oldSessionInfo != null) {
-               sessionInfo = oldSessionInfo;
+                sessionInfo = oldSessionInfo;
             }
-         }
+        }
         sessionInfo.contentOfSession.put(key, value);
     }
 
@@ -122,8 +144,33 @@ public class SessionDataContainer {
         return sessionId;
     }
 
+    public String getSessionIdBySSOAccessToken(String ssoToken) {
+        String sessionId = null;
+        for (SessionInfo sessionInfo : sessionInfoMap.values()) {
+            if (sessionInfo.contentOfSession.get(SSO_ACCESS_TOKEN_PARAMETER_NAME).equals(ssoToken)) {
+                sessionId = (String) sessionInfo.contentOfSession.get(ENGINE_SESSION_ID);
+                break;
+            }
+        }
+        return sessionId;
+    }
+
     public void cleanupEngineSessionsOnStartup() {
         engineSessionDao.removeAll();
+    }
+
+    public void cleanupEngineSessionsForSsoAccessToken(String ssoAccessToken) {
+        Iterator<Entry<String, SessionInfo>>  iter = sessionInfoMap.entrySet().iterator();
+        while (iter.hasNext()) {
+            Entry<String, SessionInfo> entry = iter.next();
+            ConcurrentMap<String, Object> sessionMap = entry.getValue().contentOfSession;
+            if (ssoAccessToken.equals(sessionMap.get(SSO_ACCESS_TOKEN_PARAMETER_NAME))) {
+                removeSessionImpl(entry.getKey(),
+                        Acct.ReportReason.PRINCIPAL_SESSION_EXPIRED,
+                        "Session has expired for principal %1$s",
+                        getUserName(entry.getKey()));
+            }
+        }
     }
 
     /**
@@ -133,7 +180,10 @@ public class SessionDataContainer {
      *            - id of current session
      */
     public final void removeSessionOnLogout(String sessionId) {
-        removeSessionImpl(sessionId, Acct.ReportReason.PRINCIPAL_LOGOUT, "Prinicial %1$s has performed logout", getUserName(sessionId));
+        removeSessionImpl(sessionId,
+                Acct.ReportReason.PRINCIPAL_LOGOUT,
+                "Prinicial %1$s has performed logout",
+                getUserName(sessionId));
     }
 
     /**
@@ -148,12 +198,16 @@ public class SessionDataContainer {
             ConcurrentMap<String, Object> sessionMap = entry.getValue().contentOfSession;
             Date hardLimit = (Date) sessionMap.get(HARD_LIMIT_PARAMETER_NAME);
             Date softLimit = (Date) sessionMap.get(SOFT_LIMIT_PARAMETER_NAME);
-            if ((hardLimit != null && hardLimit.before(now)) || (softLimit != null && softLimit.before(now))) {
-                removeSessionImpl(entry.getKey(), Acct.ReportReason.PRINCIPAL_SESSION_EXPIRED, "Session has expired for principal %1$s", getUserName(entry.getKey()));
+            if (((hardLimit != null && hardLimit.before(now)) || (softLimit != null && softLimit.before(now))) ||
+                    !(boolean) sessionMap.get(SESSION_VALID_PARAMETER_NAME) ||
+                    !ssoSessionValidator.isSessionValid((String) sessionMap.get(SSO_ACCESS_TOKEN_PARAMETER_NAME))) {
+                removeSessionImpl(entry.getKey(),
+                        Acct.ReportReason.PRINCIPAL_SESSION_EXPIRED,
+                        "Session has expired for principal %1$s",
+                        getUserName(entry.getKey()));
             }
         }
     }
-
 
     /**
      * Sets the user for the given session Id
@@ -162,11 +216,25 @@ public class SessionDataContainer {
      */
     public final void setUser(String sessionId, DbUser user) {
         setData(sessionId, USER_PARAMETER_NAME, user);
+        setSessionValid(sessionId, true);
         persistEngineSession(sessionId);
+    }
+
+    public final void setSessionValid(String sessionId, boolean valid) {
+        setData(sessionId, SESSION_VALID_PARAMETER_NAME, valid);
+    }
+
+    public boolean getSessionValid(String sessionId, boolean refresh) {
+        Object obj = getData(sessionId, SESSION_VALID_PARAMETER_NAME, refresh);
+        return obj == null ? false : (boolean) obj;
     }
 
     public final void setHardLimit(String sessionId, Date hardLimit) {
         setData(sessionId, HARD_LIMIT_PARAMETER_NAME, hardLimit);
+    }
+
+    public final void setSoftLimit(String sessionId, Date softLimit) {
+        setData(sessionId, SOFT_LIMIT_PARAMETER_NAME, softLimit);
     }
 
     public final void setSoftLimitInterval(String sessionId, int softLimitInterval) {
@@ -201,6 +269,8 @@ public class SessionDataContainer {
         return (String) getData(sessionId, PASSWORD_PARAMETER_NAME, false);
     }
 
+
+
     public void refresh(String sessionId) {
         refresh(getSessionInfo(sessionId));
     }
@@ -231,12 +301,7 @@ public class SessionDataContainer {
     }
 
     public String getPrincipalName(String sessionId) {
-        String principal = null;
-        ExtMap authRecord = getAuthRecord(sessionId);
-        if (authRecord != null) {
-            principal = authRecord.<String>get(Authn.AuthRecord.PRINCIPAL);
-        }
-        return principal;
+        return (String) getData(sessionId, PRINCIPAL_PARAMETER_NAME, false);
     }
 
     public String getUserName(String sessionId) {
@@ -246,20 +311,16 @@ public class SessionDataContainer {
                 getProfile(sessionId) != null ? getProfile(sessionId).getName() : "N/A");
     }
 
-    public void setAuthRecord(String engineSessionId, ExtMap authRecord) {
-        setData(engineSessionId, AUTH_RECORD_PARAMETER_NAME, authRecord);
+    public void setPrincipalName(String engineSessionId, String name) {
+        setData(engineSessionId, PRINCIPAL_PARAMETER_NAME, name);
     }
 
-    public ExtMap getAuthRecord(String engineSessionId) {
-        return (ExtMap) getData(engineSessionId, AUTH_RECORD_PARAMETER_NAME, false);
+    public void setSsoAccessToken(String engineSessionId, String ssoToken) {
+        setData(engineSessionId, SSO_ACCESS_TOKEN_PARAMETER_NAME, ssoToken);
     }
 
-    public void setPrincipalRecord(String engineSessionId, ExtMap principalRecord) {
-        setData(engineSessionId, PRINCIPAL_RECORD_PARAMETER_NAME, principalRecord);
-    }
-
-    public ExtMap getPrincipalRecord(String engineSessionId) {
-        return (ExtMap) getData(engineSessionId, PRINCIPAL_RECORD_PARAMETER_NAME, false);
+    public String getSsoAccessToken(String engineSessionId) {
+        return (String) getData(engineSessionId, SSO_ACCESS_TOKEN_PARAMETER_NAME, false);
     }
 
     private void refresh(SessionInfo sessionInfo) {
@@ -274,6 +335,10 @@ public class SessionDataContainer {
         return sessionInfoMap.containsKey(sessionId);
     }
 
+    public void setSSOSessionValidaor(SSOSessionValidator ssoSessionValidator) {
+        this.ssoSessionValidator = ssoSessionValidator;
+    }
+
     private void removeSessionImpl(String sessionId, int reason, String message, Object... msgArgs) {
         /*
          * So we won't need to add profile to tests
@@ -286,12 +351,27 @@ public class SessionDataContainer {
         AcctUtils.reportRecords(reason,
                 authzName,
                 getPrincipalName(sessionId),
-                (ExtMap) getData(sessionId, AUTH_RECORD_PARAMETER_NAME, false),
-                (ExtMap) getData(sessionId, PRINCIPAL_RECORD_PARAMETER_NAME, false),
                 message,
                 msgArgs
                 );
         engineSessionDao.remove(getEngineSessionSeqId(sessionId));
         sessionInfoMap.remove(sessionId);
+    }
+
+    class SSOSessionValidator {
+        public boolean isSessionValid(String token) {
+            boolean isValid = false;
+            if (StringUtils.isNotEmpty(token)) {
+                try {
+                    Map<String, Object> response = SSOOAuthServiceUtils.getTokenInfo(token, "ovirt-ext=token-info:validate");
+                    if (response.get("error") == null) {
+                        isValid = true;
+                    }
+                } catch (Exception e) {
+                    log.error("Session not valid session id = " + token, e.getMessage());
+                }
+            }
+            return isValid;
+        }
     }
 }

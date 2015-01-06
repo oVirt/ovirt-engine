@@ -72,7 +72,18 @@
       <url-pattern>/ReportsNotInstalled.html</url-pattern>
   </servlet-mapping>
 
-    <!-- Welcome page -->
+  <!-- Error Servlet -->
+  <servlet>
+      <servlet-name>ErrorServlet</servlet-name>
+      <jsp-file>/WEB-INF/error.jsp</jsp-file>
+  </servlet>
+
+  <servlet-mapping>
+      <servlet-name>ErrorServlet</servlet-name>
+      <url-pattern>/error.html</url-pattern>
+  </servlet-mapping>
+
+  <!-- Welcome page -->
   <servlet>
     <servlet-name>WelcomeServlet</servlet-name>
     <servlet-class>org.ovirt.engine.core.WelcomeServlet</servlet-class>

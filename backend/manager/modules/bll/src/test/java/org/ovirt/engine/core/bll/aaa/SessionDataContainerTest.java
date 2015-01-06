@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -44,11 +45,16 @@ public class SessionDataContainerTest {
     @InjectMocks
     private SessionDataContainer container;
 
+    @Mock
+    private SessionDataContainer.SSOSessionValidator ssoSessionValidator;
+
     @Before
     public void setUpContainer() {
         when(engineSessionDao.remove(any(Long.class))).thenReturn(1);
+        when(ssoSessionValidator.isSessionValid(anyString())).thenReturn(true);
 
         DbUser user = mock(DbUser.class);
+        container.setSSOSessionValidaor(ssoSessionValidator);
         container.setUser(TEST_SESSION_ID, user);
     }
 
@@ -111,12 +117,13 @@ public class SessionDataContainerTest {
 
     @Test
     public void testRefreshUserSession() {
-        initDataForClearTest(USER);
         // refresh the old session (refresh = true)
         container.getData(TEST_SESSION_ID, USER, true);
 
         // cleared expired session
         container.cleanExpiredUsersSessions();
+
+        Object obj = container.getData(TEST_SESSION_ID, USER, false);
 
         // session should be already refreshed -> not null
         assertNotNull("Get should return null since the session wasn't refresh",

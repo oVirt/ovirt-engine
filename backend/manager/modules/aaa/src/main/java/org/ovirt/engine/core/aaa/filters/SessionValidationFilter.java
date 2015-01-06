@@ -2,8 +2,6 @@ package org.ovirt.engine.core.aaa.filters;
 
 import java.io.IOException;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -15,28 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.ovirt.engine.core.common.constants.SessionConstants;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SessionValidationFilter implements Filter {
 
     private static final Logger log = LoggerFactory.getLogger(SessionValidationFilter.class);
-
-    private boolean isSessionValid(String session) throws NamingException {
-        InitialContext ctx = new InitialContext();
-        try {
-            VdcQueryReturnValue returnValue =
-                    FiltersHelper.getBackend(ctx)
-                            .runPublicQuery(VdcQueryType.ValidateSession,
-                                    new VdcQueryParametersBase(session));
-            return returnValue.getSucceeded();
-        } finally {
-            ctx.close();
-        }
-    }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -49,7 +31,7 @@ public class SessionValidationFilter implements Filter {
         try {
             String requestEngineSession = (String)request.getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
             if (requestEngineSession != null) {
-                if (!isSessionValid(requestEngineSession)) {
+                if (!FiltersHelper.isSessionValid(requestEngineSession)) {
                     request.removeAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
                 }
             }
@@ -58,7 +40,7 @@ public class SessionValidationFilter implements Filter {
             if (httpSession != null) {
                 String engineSession = (String) httpSession.getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
                 if (engineSession != null) {
-                    if (!isSessionValid(engineSession)) {
+                    if (!FiltersHelper.isSessionValid(engineSession)) {
                         try {
                             httpSession.invalidate();
                         } catch (IllegalStateException e) {

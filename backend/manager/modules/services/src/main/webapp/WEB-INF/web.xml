@@ -46,6 +46,15 @@
   </servlet-mapping>
 
   <servlet>
+      <servlet-name>SSOCallbackServlet</servlet-name>
+      <servlet-class>org.ovirt.engine.core.services.SSOCallbackServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>SSOCallbackServlet</servlet-name>
+      <url-pattern>/sso-callback</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>attachment</servlet-name>
     <servlet-class>org.ovirt.engine.core.services.GetAttachmentServlet</servlet-class>
   </servlet>

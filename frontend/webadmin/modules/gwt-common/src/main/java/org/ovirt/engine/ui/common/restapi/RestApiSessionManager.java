@@ -74,7 +74,7 @@ public class RestApiSessionManager implements EngineSessionRefreshedHandler {
     private static final String FILTER_HEADER = "Filter"; //$NON-NLS-1$
     private static final String SESSION_ID_HEADER = "JSESSIONID"; //$NON-NLS-1$
     private static final String CSRF_HEADER = "JSESSIONID"; //$NON-NLS-1$
-    private static final String ENGINE_AUTH_TOKEN_HEADER = "OVIRT-INTERNAL-ENGINE-AUTH-TOKEN"; //$NON-NLS-1$
+    private static final String HEADER_AUTHORIZATION = "Authorization"; //$NON-NLS-1$
 
     private static final String SESSION_ID_KEY = "RestApiSessionId"; //$NON-NLS-1$
     private static final int DEFAULT_ENGINE_SESSION_TIMEOUT = 30;
@@ -185,8 +185,7 @@ public class RestApiSessionManager implements EngineSessionRefreshedHandler {
         builder.setHeader(PREFER_HEADER, preferValue + ", new-auth"); //$NON-NLS-1$
 
         // Map this (physical) REST API session to current user's (logical) Engine session
-        builder.setHeader(ENGINE_AUTH_TOKEN_HEADER, engineAuthToken);
-
+        builder.setHeader(HEADER_AUTHORIZATION, "Bearer " + engineAuthToken); //$NON-NLS-1$
         return builder;
     }
 
@@ -228,7 +227,6 @@ public class RestApiSessionManager implements EngineSessionRefreshedHandler {
                 // Obtain session ID from response header, as we're unable to access the
                 // JSESSIONID cookie directly (cookie is set for REST API specific path)
                 String sessionIdFromHeader = HttpUtils.getHeader(response, SESSION_ID_HEADER);
-
                 if (sessionIdFromHeader != null) {
                     setSessionId(sessionIdFromHeader, true);
                 }

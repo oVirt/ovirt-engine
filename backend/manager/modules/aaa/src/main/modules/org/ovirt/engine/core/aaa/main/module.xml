@@ -15,8 +15,11 @@
     <module name="org.ovirt.engine.core.common"/>
     <module name="org.ovirt.engine.core.extensions-manager"/>
     <module name="org.ovirt.engine.core.utils"/>
+    <module name="org.ovirt.engine.core.uutils"/>
     <module name="org.ovirt.engine.api.ovirt-engine-extensions-api"/>
     <module name="org.slf4j"/>
+    <module name="org.codehaus.jackson.jackson-core-asl"/>
+    <module name="org.codehaus.jackson.jackson-mapper-asl"/>
   </dependencies>
 
 </module>

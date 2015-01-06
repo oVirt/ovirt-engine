@@ -10,7 +10,6 @@ import static org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids.vnicProfileU
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -26,7 +25,6 @@ import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
@@ -90,50 +88,6 @@ public class UserPortalLoginModel extends LoginModel {
         EntityModel<Boolean> tempVar = new EntityModel<Boolean>();
         tempVar.setEntity(true);
         setIsENGINEUser(tempVar);
-    }
-
-    @Override
-    public void login() {
-        // Completely override the base class functionality.
-        if (!validate()) {
-            getLoginFailedEvent().raise(this, EventArgs.EMPTY);
-            return;
-        }
-
-        startProgress();
-
-        getUserName().setIsChangeable(false);
-        getPassword().setIsChangeable(false);
-        getProfile().setIsChangeable(false);
-        getLoginCommand().setIsExecutionAllowed(false);
-
-        AsyncQuery asyncQuery = new AsyncQuery();
-        asyncQuery.setModel(this);
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(final Object model, final Object result) {
-                UserPortalLoginModel loginModel = (UserPortalLoginModel) model;
-                VdcReturnValueBase returnValue = (VdcReturnValueBase) result;
-                boolean success = returnValue != null && returnValue.getSucceeded();
-                if (success) {
-                    loginModel.setLoggedUser((DbUser) returnValue.getActionReturnValue());
-                    loginModel.raiseLoggedInEvent();
-                } else {
-                    loginModel.getPassword().setEntity(""); //$NON-NLS-1$
-                    if (returnValue != null) {
-                        loginModel.setMessages(returnValue.getCanDoActionMessages());
-                    }
-                    loginModel.getUserName().setIsChangeable(true);
-                    loginModel.getPassword().setIsChangeable(true);
-                    loginModel.getProfile().setIsChangeable(true);
-                    loginModel.getLoginCommand().setIsExecutionAllowed(true);
-                    loginModel.getLoginFailedEvent().raise(this, EventArgs.EMPTY);
-                }
-                stopProgress();
-            }
-        };
-        Frontend.getInstance().loginAsync(getUserName().getEntity(), getPassword().getEntity(),
-                                          getProfile().getSelectedItem(), false, asyncQuery);
     }
 
     // Update IsENGINEUser flag.

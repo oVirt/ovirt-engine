@@ -244,6 +244,10 @@ public class EngineLocalConfig extends ShellLikeConfd {
         return getProperty("ENGINE_URI");
     }
 
+    public String getSsoStoreEku() {
+        return getProperty("ENGINE_SSO_ENGINE_STORE_EKU");
+    }
+
     /**
      * Returns the directory for custom/3rd party extension configuration files
      */

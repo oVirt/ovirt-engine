@@ -3,9 +3,6 @@ package org.ovirt.engine.ui.frontend.communication;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.action.LoginUserParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -31,11 +28,6 @@ public class VdcOperationManager {
     private final OperationProcessor processor;
 
     /**
-     * Flag that tells us if we are logged in or not.
-     */
-    private boolean loggedIn = false;
-
-    /**
      * Constructor.
      * @param operationProcessor the operation processor.
      */
@@ -46,48 +38,34 @@ public class VdcOperationManager {
     }
 
     /**
-     * Add operation to the queue. The user needs to be logged in before the operation will be added.
+     * Add operation to the queue.
      * @param operation The {@code VdcOperation} to add.
      * @return {@code true} if the user was allowed to add the operation, {@code false} otherwise
      */
     public boolean addOperation(final VdcOperation<?, ?> operation) {
-        return addOperation(operation, false);
-    }
-
-    /**
-     * Add operation to the queue. The user does not need to be logged in when the operation is added. The added
-     * operation requires that it does not allow duplicates to be added to the queue.
-     * @param operation The {@code VdcOperation} to add.
-     */
-    public void addPublicOperation(final VdcOperation<?, ?> operation) {
-        addOperation(operation, true);
+        return addOperationImpl(operation);
     }
 
     /**
      * Add operation to the queue. Fire event when operation is successfully added if fireEvent is true.
      * If the operation determined by equals is already in the queue, do not add it again.
      * @param operation The {@code VdcOperation} to add.
-     * @param isPublic flag that says this operation does not require the user to be logged in.
      * @return {@code true} if the user was allowed to add the operation, {@code false} otherwise
      */
-    private boolean addOperation(final VdcOperation<?, ?> operation, final boolean isPublic) {
-        // If the user is logged in, or the user is not logged in and the operation does not allow duplicates (aka
-        // it is a query, and not an action). And the operation is not already in the queue || the operation is
-        // an action (allows duplicates). Then add this operation to the queue, and process the queue immediately.
-        final boolean isAllowedToExecute = loggedIn || isPublic;
+    private boolean addOperationImpl(final VdcOperation<?, ?> operation) {
+        // If the operation is not already in the queue || the operation is an action (allows duplicates).
+        // Then add this operation to the queue, and process the queue immediately.
         final boolean operationCanBeAdded = !operationQueue.contains(operation) || operation.allowDuplicates();
 
-        if (isAllowedToExecute) {
-            if (operationCanBeAdded && operationQueue.add(operation)) {
-                processor.processOperation(this);
+        if (operationCanBeAdded && operationQueue.add(operation)) {
+            processor.processOperation(this);
 
-                if (engineSessionRefreshed(operation)) {
-                    EngineSessionRefreshedEvent.fire(eventBus);
-                }
+            if (engineSessionRefreshed(operation)) {
+                EngineSessionRefreshedEvent.fire(eventBus);
             }
         }
 
-        return isAllowedToExecute;
+        return true;
     }
 
     /**
@@ -99,7 +77,7 @@ public class VdcOperationManager {
     public boolean addOperationList(final List<VdcOperation<?, ?>> operationList) {
         boolean allowed = true;
         for (VdcOperation<?, ?> operation: operationList) {
-            if (!addOperation(operation, false)) {
+            if (!addOperationImpl(operation)) {
                 allowed = false;
             }
         }
@@ -118,48 +96,11 @@ public class VdcOperationManager {
     }
 
     /**
-     * Log in the user.
-     * @param loginOperation The login operation.
-     */
-    @SuppressWarnings("unchecked")
-    public void loginUser(final VdcOperation<VdcActionType, LoginUserParameters> loginOperation) {
-        // TODO: should we retry failed logins?
-        processor.loginUser(new VdcOperation<VdcActionType, LoginUserParameters>(loginOperation,
-            new VdcOperationCallback<VdcOperation<VdcActionType, LoginUserParameters>, VdcReturnValueBase>() {
-
-                @Override
-                public void onSuccess(final VdcOperation<VdcActionType, LoginUserParameters> operation,
-                        final VdcReturnValueBase result) {
-                    loggedIn = true;
-                    operation.getSource().getCallback().onSuccess(operation.getSource(), result);
-                }
-
-                @Override
-                public void onFailure(final VdcOperation<VdcActionType, LoginUserParameters> operation,
-                        final Throwable caught) {
-                    loggedIn = false;
-                    operation.getSource().getCallback().onFailure(operation.getSource(), caught);
-                }
-
-            })
-        );
-    }
-
-    /**
      * Log out the user.
      * @param callback The callback to call when the operation is completed.
      */
     public void logoutUser(final UserCallback<?> callback) {
-        loggedIn = false;
         processor.logoutUser(callback);
-    }
-
-    /**
-     * The user logged in status changed externally, and we need to tell the manager that the status changed.
-     * @param isLoggedIn The new logged in status.
-     */
-    public void setLoggedIn(final boolean isLoggedIn) {
-        loggedIn = isLoggedIn;
     }
 
     /**

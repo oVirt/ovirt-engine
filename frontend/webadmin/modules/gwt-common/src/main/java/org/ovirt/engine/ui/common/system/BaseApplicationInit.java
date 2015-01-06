@@ -206,12 +206,20 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         query.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object ReturnValue) {
-                // Reload entire application after the user has logged out successfully on backend.
-                Window.Location.reload();
+                // Redirect to SSO Logout after the user has logged out successfully on backend.
+                Window.Location.assign(GWT.getModuleBaseURL() + "sso/logout"); //$NON-NLS-1$
             }
         };
 
         frontend.logoffAsync(query);
+    }
+
+    @Override
+    public void onSessionExpired() {
+        if (frontend.getLoginHandler() != null) {
+            frontend.getLoginHandler().onLogout();
+        }
+        Window.Location.reload();
     }
 
     protected void performLogin(T loginModel) {
@@ -247,7 +255,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         frontend.getFrontendNotLoggedInEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                user.logout();
+                user.sessionExpired();
             }
         });
 
@@ -279,6 +287,9 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
                 restApiSessionManager.releaseSession();
             }
         });
+
+        // At this point, user is already authenticated via SSO
+        frontend.getLoginHandler().onLoginSuccess();
     }
 
     /**

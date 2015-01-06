@@ -59,10 +59,8 @@ public class GetSessionUser extends HttpServlet {
         backend = (BackendInternal) EjbUtils.findBean(BeanType.BACKEND, BeanProxyType.LOCAL);
         log.debug("Calling ValidateSession query");
 
-        params = new VdcQueryParametersBase();
-        params.setSessionId(sessionID);
-
-        queryReturnValue = backend.runInternalQuery(VdcQueryType.ValidateSession, params);
+        queryReturnValue = backend.runInternalQuery(VdcQueryType.ValidateSession,
+                new VdcQueryParametersBase(sessionID));
 
         if (queryReturnValue != null) {
             returnValue = queryReturnValue.getSucceeded();

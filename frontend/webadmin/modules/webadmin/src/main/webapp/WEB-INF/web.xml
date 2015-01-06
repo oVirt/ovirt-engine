@@ -1,6 +1,6 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-    version="3.0">
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
 
     <display-name>oVirt WebAdmin UI</display-name>
 
@@ -21,61 +21,29 @@
         <param-name>contextToRootModifier</param-name>
         <param-value>..</param-value>
     </context-param>
-    <filter>
-        <filter-name>SessionValidationFilter</filter-name>
-        <filter-class>org.ovirt.engine.core.aaa.filters.SessionValidationFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>SessionValidationFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
+    <context-param>
+        <param-name>post-action-url</param-name>
+        <param-value>/ovirt-engine/webadmin/sso/oauth2-callback</param-value>
+    </context-param>
+    <context-param>
+        <param-name>auth-seq-priority-property-name</param-name>
+        <param-value>ENGINE_SSO_AUTH_SEQUENCE_webadmin</param-value>
+    </context-param>
 
     <filter>
-        <filter-name>BasicAuthenticationFilter</filter-name>
-        <filter-class>org.ovirt.engine.core.aaa.filters.BasicAuthenticationFilter</filter-class>
+        <filter-name>SSOLoginFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.aaa.filters.SSOLoginFilter</filter-class>
         <init-param>
-            <param-name>user-name-format</param-name>
-            <param-value>UPN</param-value>
+            <param-name>login-url</param-name>
+            <param-value>/sso/login?</param-value>
         </init-param>
     </filter>
+
     <filter-mapping>
-        <filter-name>BasicAuthenticationFilter</filter-name>
-        <url-pattern>/*</url-pattern>
+        <filter-name>SSOLoginFilter</filter-name>
+        <url-pattern>/WebAdmin.html</url-pattern>
     </filter-mapping>
 
-    <filter>
-        <filter-name>NegotiationFilter</filter-name>
-        <filter-class>org.ovirt.engine.core.aaa.filters.NegotiationFilter</filter-class>
-        <init-param>
-            <param-name>capabilities</param-name>
-            <param-value>AUTHENTICATE_NEGOTIATE_INTERACTIVE | AUTHENTICATE_NEGOTIATE_NON_INTERACTIVE</param-value>
-        </init-param>
-    </filter>
-    <filter-mapping>
-        <filter-name>NegotiationFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-
-    <filter>
-        <filter-name>LoginFilter</filter-name>
-        <filter-class>org.ovirt.engine.core.aaa.filters.LoginFilter</filter-class>
-        <init-param>
-            <param-name>login-as-admin</param-name>
-            <param-value>true</param-value>
-        </init-param>
-    </filter>
-    <filter-mapping>
-        <filter-name>LoginFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-    <filter>
-        <filter-name>SessionMgmtFilter</filter-name>
-        <filter-class>org.ovirt.engine.core.aaa.filters.SessionMgmtFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>SessionMgmtFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
     <filter-mapping>
         <filter-name>LocaleFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -99,6 +67,37 @@
         <filter-name>HeaderFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
+    <servlet>
+        <servlet-name>login</servlet-name>
+        <servlet-class>org.ovirt.engine.core.aaa.servlet.SSOLoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>login</servlet-name>
+        <url-pattern>/sso/login</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>logout</servlet-name>
+        <servlet-class>org.ovirt.engine.core.aaa.servlet.SSOLogoutServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>logout</servlet-name>
+        <url-pattern>/sso/logout</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>SSOPostLoginServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.aaa.servlet.SSOPostLoginServlet</servlet-class>
+        <init-param>
+            <param-name>login-as-admin</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SSOPostLoginServlet</servlet-name>
+        <url-pattern>/sso/oauth2-callback</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>WebAdminHostPageServlet</servlet-name>

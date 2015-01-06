@@ -47,6 +47,16 @@
                     </div>
 
                     <div class="col-sm-12">
+                        <script type="text/JavaScript">
+                        <!--
+                        document.write('<span class="label"><a href=${requestScope["sso_switch_user_url"]}>Switch User</a></span>')
+                        //-->
+                        </script>
+                    </div>
+
+                    <div style="clear: both;"></div>
+
+                    <div class="col-sm-12">
                         ${requestScope['sections'].toString()}
                     </div>
 

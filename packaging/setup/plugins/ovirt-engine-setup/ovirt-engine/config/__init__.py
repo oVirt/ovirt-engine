@@ -39,6 +39,7 @@ from . import tools
 from . import iso_domain
 from . import public_glance_repository
 from . import storage
+from . import sso
 
 
 @util.export
@@ -60,6 +61,7 @@ def createPlugins(context):
     iso_domain.Plugin(context=context)
     public_glance_repository.Plugin(context=context)
     storage.Plugin(context=context)
+    sso.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

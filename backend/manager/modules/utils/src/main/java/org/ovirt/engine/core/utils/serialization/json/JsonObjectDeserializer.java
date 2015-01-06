@@ -7,6 +7,7 @@ import org.apache.commons.lang.SerializationException;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.DeserializationConfig.Feature;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -44,8 +45,9 @@ public class JsonObjectDeserializer implements Deserializer {
         formattedMapper.getDeserializationConfig().addMixInAnnotations(VmStatic.class, JsonVmStaticMixIn.class);
         formattedMapper.getDeserializationConfig().addMixInAnnotations(RunVmParams.class, JsonRunVmParamsMixIn.class);
         formattedMapper.getDeserializationConfig().addMixInAnnotations(EngineFault.class, JsonEngineFaultMixIn.class);
-
+        formattedMapper.getDeserializationConfig().addMixInAnnotations(ExtMap.class, JsonExtMapMixIn.class);
         formattedMapper.configure(Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        formattedMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE);
         formattedMapper.enableDefaultTyping();
         formattedMapper.setDeserializerProvider(new JsonObjectDeserializerProvider());
     }

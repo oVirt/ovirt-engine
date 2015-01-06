@@ -41,12 +41,6 @@ public interface GenericApiGWTService extends XsrfProtectedRpcService {
 
     public DbUser getLoggedInUser();
 
-    @NoXsrfProtect
-    public VdcReturnValueBase logOff();
-
-    @NoXsrfProtect
-    public VdcReturnValueBase login(String userName, String password, String profileName, VdcActionType loginType);
-
     public void storeInHttpSession(String key, String value);
 
     public String retrieveFromHttpSession(String key);

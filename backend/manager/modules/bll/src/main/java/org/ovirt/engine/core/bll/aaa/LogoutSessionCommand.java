@@ -5,9 +5,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.api.extensions.Base;
-import org.ovirt.engine.api.extensions.ExtMap;
-import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -47,16 +44,7 @@ public class LogoutSessionCommand<T extends VdcActionParametersBase> extends Com
         if (profile == null) {
             setSucceeded(false);
         } else {
-            if ((profile.getAuthn().getContext().<Long> get(Authn.ContextKeys.CAPABILITIES) & Authn.Capabilities.LOGOUT) != 0) {
-                profile.getAuthn().invoke(new ExtMap().mput(
-                        Base.InvokeKeys.COMMAND,
-                        Authn.InvokeCommands.LOGOUT
-                        ).mput(
-                                Authn.InvokeKeys.AUTH_RECORD,
-                                sessionDataContainer.getAuthRecord(getParameters().getSessionId())
-                        ));
-            }
-            sessionDataContainer.removeSessionOnLogout(getParameters().getSessionId());
+            sessionDataContainer.setSessionValid(getParameters().getSessionId(), false);
             setSucceeded(true);
         }
     }

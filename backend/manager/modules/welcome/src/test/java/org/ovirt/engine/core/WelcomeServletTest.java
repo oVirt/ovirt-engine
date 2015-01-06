@@ -78,6 +78,7 @@ public class WelcomeServletTest {
     @Test
     public void testDoGetHttpServletRequestHttpServletResponseNoDispatcher() throws IOException, ServletException {
         when(mockRequest.getAttribute(LocaleFilter.LOCALE)).thenReturn(Locale.JAPANESE);
+        when(mockRequest.getParameter("user")).thenReturn("");
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockRequest).setAttribute("localeKeys", localeKeys);
         //Make sure the content type contains UTF-8 so the characters display properly.
@@ -88,6 +89,7 @@ public class WelcomeServletTest {
     public void testDoGetHttpServletRequestHttpServletResponseWithDispatcher() throws IOException, ServletException {
         when(mockRequest.getAttribute(LocaleFilter.LOCALE)).thenReturn(Locale.JAPANESE);
         when(mockRequest.getRequestDispatcher("/WEB-INF/ovirt-engine.jsp")).thenReturn(mockDispatcher);
+        when(mockRequest.getParameter("user")).thenReturn("");
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockRequest).setAttribute("localeKeys", localeKeys);
         //Make sure the content type contains UTF-8 so the characters display properly.

@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.action.LoginUserParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.inject.Inject;
@@ -247,14 +245,6 @@ public class OperationProcessor {
         }
 
         return originalOperation;
-    }
-
-    /**
-     * Log in the user.
-     * @param loginOperation The operation to log the user in.
-     */
-    public void loginUser(final VdcOperation<VdcActionType, LoginUserParameters> loginOperation) {
-        communicationProvider.login(loginOperation);
     }
 
     /**

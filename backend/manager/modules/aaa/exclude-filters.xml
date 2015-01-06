@@ -4,4 +4,19 @@
        <Method name="isAuthenticated"/>
        <Bug code="Bx"/>
      </Match>
+
+     <Match>
+       <Class name="org.ovirt.engine.core.aaa.filters.SSOLoginFilter" />
+       <Bug code="HRS"/>
+     </Match>
+
+     <Match>
+       <Class name="org.ovirt.engine.core.aaa.servlet.SSOLoginServlet" />
+       <Bug code="HRS"/>
+     </Match>
+
+     <Match>
+       <Class name="org.ovirt.engine.core.aaa.servlet.SSOPostLoginServlet" />
+       <Bug code="HRS"/>
+     </Match>
 </FindBugsFilter>

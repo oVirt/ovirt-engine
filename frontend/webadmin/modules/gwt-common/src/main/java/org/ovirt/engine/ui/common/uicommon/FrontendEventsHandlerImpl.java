@@ -32,8 +32,7 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
 
     @Override
     public Boolean isRaiseErrorModalPanel(VdcActionType actionType, EngineFault fault) {
-        return (actionType != VdcActionType.LoginUser) &&
-                !(actionType == VdcActionType.VmLogon && fault.getError() == EngineError.nonresp);
+        return !(actionType == VdcActionType.VmLogon && fault.getError() == EngineError.nonresp);
     }
 
     @Override

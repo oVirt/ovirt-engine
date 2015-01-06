@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.userportal.gin;
 
 import org.ovirt.engine.ui.common.gin.BaseSystemModule;
-import org.ovirt.engine.ui.common.section.DefaultLoginSectionPlace;
 import org.ovirt.engine.ui.common.section.DefaultMainSectionPlace;
 import org.ovirt.engine.ui.common.system.ClientStorageKeyPrefix;
 import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
@@ -41,8 +40,6 @@ public class SystemModule extends BaseSystemModule {
     }
 
     void bindConfiguration() {
-        bindConstant().annotatedWith(DefaultLoginSectionPlace.class)
-                .to(UserPortalApplicationPlaces.DEFAULT_LOGIN_SECTION_PLACE);
         bindConstant().annotatedWith(DefaultMainSectionPlace.class)
                 .to(UserPortalApplicationPlaces.DEFAULT_MAIN_SECTION_BASIC_PLACE);
         bindConstant().annotatedWith(DefaultMainSectionExtendedPlace.class)

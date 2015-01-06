@@ -57,4 +57,14 @@ public class FrontendUrlUtils {
     public static String stripParameters(String url) {
         return url.indexOf('?') < 0 ? url : url.substring(0, url.indexOf('?'));
     }
+
+    /**
+     * Returns the welcome page url, used for the logo link in webadmin and user portal.
+     * @param moduleBaseURL
+     * @return
+     */
+    public static String getWelcomePageLink(String moduleBaseURL) {
+        String url = moduleBaseURL.substring(0, moduleBaseURL.lastIndexOf("/")); //$NON-NLS-1$
+        return url.substring(0, url.lastIndexOf("/")); //$NON-NLS-1$
+    }
 }

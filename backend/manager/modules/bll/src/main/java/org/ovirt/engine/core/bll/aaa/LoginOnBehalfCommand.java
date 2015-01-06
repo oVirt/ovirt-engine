@@ -125,7 +125,6 @@ public class LoginOnBehalfCommand<T extends LoginOnBehalfParameters> extends Com
         }
         sessionDataContainer.setUser(engineSessionId, dbUser);
         sessionDataContainer.refresh(engineSessionId);
-        sessionDataContainer.setPrincipalRecord(engineSessionId, principalRecord);
         return engineSessionId;
     }
 

@@ -8,6 +8,7 @@
 
   <dependencies>
     <module name="javax.api"/>
+    <module name="org.ovirt.engine.core.aaa"/>
     <module name="org.ovirt.engine.core.common"/>
     <module name="org.jboss.as.domain-management"/>
   </dependencies>

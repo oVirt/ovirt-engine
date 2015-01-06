@@ -5,10 +5,6 @@ package org.ovirt.engine.ui.uicommonweb.place;
  */
 public class WebAdminApplicationPlaces {
 
-    // Login section
-
-    public static final String loginPlace = "login"; //$NON-NLS-1$
-
     // Main section: main tabs
 
     public static final String dataCenterMainTabPlace = "dataCenters"; //$NON-NLS-1$
@@ -407,7 +403,6 @@ public class WebAdminApplicationPlaces {
 
     // Default places
 
-    public static final String DEFAULT_LOGIN_SECTION_PLACE = loginPlace;
     public static final String DEFAULT_MAIN_SECTION_PLACE = virtualMachineMainTabPlace;
 
 }

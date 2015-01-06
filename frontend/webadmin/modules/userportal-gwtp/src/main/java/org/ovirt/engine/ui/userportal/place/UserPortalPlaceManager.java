@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.userportal.place;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.place.ApplicationPlaceManager;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
-import org.ovirt.engine.ui.common.section.DefaultLoginSectionPlace;
 import org.ovirt.engine.ui.common.section.DefaultMainSectionPlace;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
@@ -27,11 +26,9 @@ public class UserPortalPlaceManager extends ApplicationPlaceManager {
             CurrentUser user,
             CurrentUserRole userRole,
             ClientAgentType clientAgentType,
-            @DefaultLoginSectionPlace String defaultLoginSectionPlace,
             @DefaultMainSectionPlace String defaultMainSectionPlace,
             @DefaultMainSectionExtendedPlace String defaultMainSectionExtendedPlace) {
-        super(eventBus, tokenFormatter, user, clientAgentType,
-                PlaceRequestFactory.get(defaultLoginSectionPlace));
+        super(eventBus, tokenFormatter, user, clientAgentType);
         this.userRole = (UserPortalCurrentUserRole) userRole;
         this.defaultMainSectionRequest = PlaceRequestFactory.get(defaultMainSectionPlace);
         this.defaultMainSectionExtendedRequest = PlaceRequestFactory.get(defaultMainSectionExtendedPlace);

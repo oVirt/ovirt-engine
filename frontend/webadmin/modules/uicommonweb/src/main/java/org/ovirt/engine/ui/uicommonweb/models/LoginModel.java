@@ -5,12 +5,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
@@ -45,16 +43,6 @@ public class LoginModel extends Model {
 
     private void setLoginFailedEvent(Event<EventArgs> value) {
         privateLoginFailedEvent = value;
-    }
-
-    private UICommand privateLoginCommand;
-
-    public UICommand getLoginCommand() {
-        return privateLoginCommand;
-    }
-
-    public void setLoginCommand(UICommand value) {
-        privateLoginCommand = value;
     }
 
     private ListModel<String> privateProfile;
@@ -145,12 +133,6 @@ public class LoginModel extends Model {
         setLoggedInEvent(new Event<EventArgs>(loggedInEventDefinition));
         setLoginFailedEvent(new Event<EventArgs>(loginFailedEventDefinition));
 
-        UICommand tempVar = new UICommand("Login", this); //$NON-NLS-1$
-        tempVar.setIsExecutionAllowed(false);
-        tempVar.setIsDefault(true);
-        setLoginCommand(tempVar);
-        getCommands().add(tempVar);
-
         setProfile(new ListModel<String>());
         getProfile().setIsChangeable(false);
         setUserName(new EntityModel<String>());
@@ -184,7 +166,6 @@ public class LoginModel extends Model {
                     // Don't enable the screen when we are in the process of logging in automatically.
                     // If this happens to be executed before the AutoLogin() is executed,
                     // it is not a problem, as the AutoLogin() will disable the screen by itself.
-                    loginModel.getLoginCommand().setIsExecutionAllowed(true);
                     loginModel.getUserName().setIsChangeable(true);
                     loginModel.getPassword().setIsChangeable(true);
                     loginModel.getProfile().setIsChangeable(true);
@@ -197,51 +178,6 @@ public class LoginModel extends Model {
             }
         };
         AsyncDataProvider.getInstance().getAAAProfilesListViaPublic(_asyncQuery, true);
-    }
-
-    public void login() {
-        if (!validate()) {
-            this.setMessages((Arrays.asList(ConstantsManager.getInstance().getConstants().emptyFieldsInvalidReason())));
-            getLoginFailedEvent().raise(this, EventArgs.EMPTY);
-            return;
-        }
-
-        startProgress();
-        disableLoginScreen();
-
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object result) {
-                LoginModel loginModel = (LoginModel) model;
-                DbUser user = null;
-                if (result != null) {
-                    VdcReturnValueBase returnValue = (VdcReturnValueBase) result;
-                    if (returnValue.getSucceeded()) {
-                        user = (DbUser) returnValue.getActionReturnValue();
-                        loginModel.setLoggedUser(user);
-                    }
-                    if (user == null) {
-                        loginModel.getPassword().setEntity(""); //$NON-NLS-1$
-                        loginModel.setMessages(returnValue.getCanDoActionMessages());
-                        loginModel.getUserName().setIsChangeable(true);
-                        loginModel.getPassword().setIsChangeable(true);
-                        loginModel.getProfile().setIsChangeable(true);
-                        loginModel.getLoginCommand().setIsExecutionAllowed(true);
-                        loginModel.getLoginFailedEvent().raise(this, EventArgs.EMPTY);
-                    }
-                    else {
-                        raiseLoggedInEvent();
-                    }
-                    stopProgress();
-                }
-            }
-        };
-
-        // run the login
-        Frontend.getInstance().loginAsync(getUserName().getEntity(), getPassword().getEntity(),
-                getProfile().getSelectedItem(), true, _asyncQuery);
     }
 
     protected void raiseLoggedInEvent() {
@@ -263,7 +199,6 @@ public class LoginModel extends Model {
         getUserName().setIsChangeable(false);
         getPassword().setIsChangeable(false);
         getProfile().setIsChangeable(false);
-        getLoginCommand().setIsExecutionAllowed(false);
     }
 
     protected boolean validate() {
@@ -272,22 +207,6 @@ public class LoginModel extends Model {
         getProfile().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         return getUserName().getIsValid() && getPassword().getIsValid() && getProfile().getIsValid();
-    }
-
-    @Override
-    public void executeCommand(UICommand command) {
-        super.executeCommand(command);
-
-        if (command == getLoginCommand()) {
-            login();
-        }
-        else if ("Cancel".equals(command.getName())) { //$NON-NLS-1$
-            cancel();
-        }
-    }
-
-    public void cancel() {
-        setWindow(null);
     }
 
 }

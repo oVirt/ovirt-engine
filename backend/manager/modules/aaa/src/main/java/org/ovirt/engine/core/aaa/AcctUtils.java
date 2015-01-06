@@ -36,8 +36,6 @@ public class AcctUtils {
             int reportReason,
             String authzName,
             String user,
-            ExtMap authRecord,
-            ExtMap principalRecord,
             String message,
             Object... msgArgs
             ) {
@@ -47,12 +45,6 @@ public class AcctUtils {
                 new ExtMap().mput(
                         Acct.PrincipalRecord.AUTHZ_NAME,
                         authzName
-                        ).mput(
-                                Acct.PrincipalRecord.AUTH_RECORD,
-                                authRecord
-                        ).mput(
-                                Acct.PrincipalRecord.PRINCIPAL_RECORD,
-                                principalRecord
                         ).mput(
                                 Acct.PrincipalRecord.USER,
                                 user

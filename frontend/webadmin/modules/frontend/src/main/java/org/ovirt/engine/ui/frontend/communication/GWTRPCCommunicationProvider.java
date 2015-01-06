@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -468,74 +467,16 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
     }
 
     /**
-     * Log in the user.
-     * @param loginOperation The login operation.
-     */
-    @Override
-    public void login(final VdcOperation<VdcActionType, LoginUserParameters> loginOperation) {
-        getService(new ServiceCallback() {
-            @Override
-            public void serviceFound(GenericApiGWTServiceAsync service) {
-                service.login(loginOperation.getParameter().getLoginName(),
-                        loginOperation.getParameter().getPassword(),
-                        loginOperation.getParameter().getProfileName(), loginOperation.getOperation(),
-                        new AsyncCallback<VdcReturnValueBase>() {
-                    @Override
-                    public void onSuccess(final VdcReturnValueBase result) {
-                        //Remove the rpc token when logging in. Due to session fixation protection we need a new
-                        //token based on the new session.
-                        xsrfRequestBuilder.setXsrfToken(null);
-                        loginOperation.getCallback().onSuccess(loginOperation, result);
-                    }
-
-                    @Override
-                    public void onFailure(final Throwable caught) {
-                        //Clear out the token, and let the retry mechanism try again.
-                        xsrfRequestBuilder.setXsrfToken(null);
-                        loginOperation.getCallback().onFailure(loginOperation, caught);
-                    }
-                });
-            }
-
-            @Override
-            public void onFailure(Throwable exception) {
-                loginOperation.getCallback().onFailure(loginOperation, exception);
-            }
-        });
-    }
-
-    /**
      * Log the user out.
      * @param callback The callback to call when the operation is complete.
      */
     @Override
     public void logout(final UserCallback callback) {
-        getService(new ServiceCallback() {
-
-            @Override
-            public void serviceFound(GenericApiGWTServiceAsync foundService) {
-                foundService.logOff(new AsyncCallback<VdcReturnValueBase>() {
-                    @Override
-                    public void onSuccess(final VdcReturnValueBase result) {
-                        //Remove the rpc token when logging out.
-                        xsrfRequestBuilder.setXsrfToken(null);
-                        callback.onSuccess(result);
-                    }
-
-                    @Override
-                    public void onFailure(final Throwable caught) {
-                        xsrfRequestBuilder.setXsrfToken(null);
-                        callback.onFailure(caught);
-                    }
-                });
-
-            }
-
-            @Override
-            public void onFailure(Throwable exception) {
-                callback.onFailure(exception);
-            }
-        });
+        //Remove the rpc token when logging out.
+        xsrfRequestBuilder.setXsrfToken(null);
+        VdcReturnValueBase retVal = new VdcReturnValueBase();
+        retVal.setSucceeded(true);
+        callback.onSuccess(retVal);
     }
 
     @Override

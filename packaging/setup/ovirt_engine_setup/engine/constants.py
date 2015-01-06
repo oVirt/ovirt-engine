@@ -227,6 +227,10 @@ class FileLocations(object):
         OVIRT_ENGINE_PKIPRIVATEDIR,
         'ca.pem',
     )
+    OVIRT_ENGINE_CRYPTO_TOOL = os.path.join(
+        OVIRT_ENGINE_BINDIR,
+        'ovirt-engine-crypto-tool.sh',
+    )
 
     NFS_RHEL_CONFIG = os.path.join(
         SYSCONFDIR,
@@ -293,6 +297,10 @@ class FileLocations(object):
     OVIRT_ENGINE_SERVICE_CONFIG_PKI = os.path.join(
         OVIRT_ENGINE_SERVICE_CONFIGD,
         '10-setup-pki.conf',
+    )
+    OVIRT_ENGINE_SERVICE_CONFIG_SSO = os.path.join(
+        OVIRT_ENGINE_SERVICE_CONFIGD,
+        '11-setup-sso.conf',
     )
 
     OVIRT_ENGINE_NOTIFIER_SERVICE_CONFIGD = (

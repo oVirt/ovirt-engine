@@ -2,9 +2,6 @@ package org.ovirt.engine.ui.frontend.communication;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.action.LoginUserParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
-
 /**
  * Interface defining the communication options between the client and the server.
  */
@@ -17,12 +14,6 @@ public interface CommunicationProvider {
      * @param operations The list of {@code VdcOperation}s
      */
     void transmitOperationList(List<VdcOperation<?, ?>> operations);
-
-    /**
-     * Log in user, using the communications provider.
-     * @param loginOperation The login operation.
-     */
-    void login(VdcOperation<VdcActionType, LoginUserParameters> loginOperation);
 
     /**
      * Log out user, using the communications provider.

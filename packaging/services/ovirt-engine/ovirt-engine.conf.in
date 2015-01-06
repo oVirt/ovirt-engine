@@ -259,6 +259,45 @@ ENGINE_EXTENSION_PATH="${ENGINE_USR}/extensions.d:${ENGINE_ETC}/extensions.d"
 #
 
 #
+# Engine (client) SSO configuration
+#
+
+SENSITIVE_KEYS="${SENSITIVE_KEYS},ENGINE_SSO_CLIENT_SECRET"
+
+# Error page to display on sso errors
+ENGINE_ERROR_PAGE=${ENGINE_URI}/error.html
+
+# Client id to use.
+ENGINE_SSO_CLIENT_ID=
+
+# Client password to use.
+ENGINE_SSO_CLIENT_SECRET=
+
+# Enable restapi nego using direct access.
+ENGINE_RESTAPI_NEGO=false
+
+# SSO URL visible for user agent.
+ENGINE_SSO_AUTH_URL="https://${ENGINE_FQDN}${ENGINE_URI}/sso"
+
+# SSO service URL for direct communications.
+ENGINE_SSO_SERVICE_URL="${ENGINE_SSO_AUTH_URL}"
+
+# SSL protocol to use.
+ENGINE_SSO_SERVICE_SSL_PROTOCOL=TLSv1
+
+# Enable host verification.
+ENGINE_SSO_SERVICE_SSL_VERIFY_HOST=true
+
+# Enable chain verification
+ENGINE_SSO_SERVICE_SSL_VERIFY_CHAIN=true
+
+# Webadmin auth sequence
+ENGINE_SSO_AUTH_SEQUENCE_webadmin=~
+
+# User Portal auth sequence
+ENGINE_SSO_AUTH_SEQUENCE_userportal=~
+
+#
 # SSO Configuration
 #
 

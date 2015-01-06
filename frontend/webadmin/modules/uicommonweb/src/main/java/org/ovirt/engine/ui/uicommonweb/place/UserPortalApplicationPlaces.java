@@ -5,10 +5,6 @@ package org.ovirt.engine.ui.uicommonweb.place;
  */
 public class UserPortalApplicationPlaces {
 
-    // Login section
-
-    public static final String loginPlace = "login"; //$NON-NLS-1$
-
     // Main section: main tabs
 
     public static final String basicMainTabPlace = "basic"; //$NON-NLS-1$
@@ -85,8 +81,6 @@ public class UserPortalApplicationPlaces {
             + SUB_TAB_PREFIX + "permissions"; //$NON-NLS-1$
 
     // Default places
-
-    public static final String DEFAULT_LOGIN_SECTION_PLACE = loginPlace;
     public static final String DEFAULT_MAIN_SECTION_BASIC_PLACE = basicMainTabPlace;
     public static final String DEFAULT_MAIN_SECTION_EXTENDED_PLACE = extendedVirtualMachineSideTabPlace;
 

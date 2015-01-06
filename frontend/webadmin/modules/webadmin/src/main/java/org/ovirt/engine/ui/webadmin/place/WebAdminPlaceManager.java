@@ -4,7 +4,6 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.place.ApplicationPlaceManager;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
-import org.ovirt.engine.ui.common.section.DefaultLoginSectionPlace;
 import org.ovirt.engine.ui.common.section.DefaultMainSectionPlace;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
@@ -23,10 +22,8 @@ public class WebAdminPlaceManager extends ApplicationPlaceManager {
             TokenFormatter tokenFormatter,
             CurrentUser user,
             ClientAgentType clientAgentType,
-            @DefaultLoginSectionPlace String defaultLoginSectionPlace,
             @DefaultMainSectionPlace String defaultMainSectionPlace) {
-        super(eventBus, tokenFormatter, user, clientAgentType,
-                PlaceRequestFactory.get(defaultLoginSectionPlace));
+        super(eventBus, tokenFormatter, user, clientAgentType);
         this.defaultMainSectionRequest = PlaceRequestFactory.get(defaultMainSectionPlace);
     }
 

@@ -18,6 +18,8 @@ public class CurrentUser implements HasHandlers {
 
         void onLogout();
 
+        void onSessionExpired();
+
     }
 
     private final EventBus eventBus;
@@ -96,6 +98,12 @@ public class CurrentUser implements HasHandlers {
     public void logout() {
         if (isLoggedIn() && logoutHandler != null) {
             logoutHandler.onLogout();
+        }
+    }
+
+    public void sessionExpired() {
+        if (logoutHandler != null) {
+            logoutHandler.onSessionExpired();
         }
     }
 

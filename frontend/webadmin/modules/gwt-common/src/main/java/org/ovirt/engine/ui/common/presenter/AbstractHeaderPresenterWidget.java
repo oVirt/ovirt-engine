@@ -80,7 +80,7 @@ public abstract class AbstractHeaderPresenterWidget<V extends AbstractHeaderPres
     protected void onReset() {
         super.onReset();
 
-        getView().setUserName(user.getUserName());
+        getView().setUserName(user.getFullUserName());
     }
 
 }

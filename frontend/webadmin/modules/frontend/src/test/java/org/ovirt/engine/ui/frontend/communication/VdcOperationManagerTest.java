@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.frontend.communication;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -13,14 +12,10 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import com.google.gwt.event.shared.EventBus;
@@ -35,37 +30,10 @@ public class VdcOperationManagerTest {
     @Mock
     EventBus mockEventBus;
 
-    @Captor
-    ArgumentCaptor<VdcOperation<VdcActionType, LoginUserParameters>> loginOperationCaptor;
-
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
         testManager = new VdcOperationManager(mockEventBus, mockOperationProcessor);
-        final VdcReturnValueBase loginResult = new VdcReturnValueBase();
-        LoginUserParameters params = new LoginUserParameters("test", "test", //$NON-NLS-1$ //$NON-NLS-2$
-                "test"); //$NON-NLS-1$
-        VdcActionType action = VdcActionType.LoginUser;
-        VdcOperation<VdcActionType, LoginUserParameters> loginOperation =
-            new VdcOperation<VdcActionType, LoginUserParameters>(action, params, true, //Public action.
-                    new VdcOperationCallback<VdcOperation<VdcActionType, LoginUserParameters>,
-                    VdcReturnValueBase>() {
-
-                @Override
-                public void onSuccess(final VdcOperation<VdcActionType, LoginUserParameters> operation,
-                        final VdcReturnValueBase result) {
-                    assertEquals("Objects should match", loginResult, result); //$NON-NLS-1$
-                }
-
-                @Override
-                public void onFailure(final VdcOperation<VdcActionType, LoginUserParameters> operation,
-                        final Throwable caught) {
-                    fail("Should not get here"); //$NON-NLS-1$
-                }
-        });
-        testManager.loginUser(loginOperation);
-        verify(mockOperationProcessor).loginUser(loginOperationCaptor.capture());
-        loginOperationCaptor.getValue().getCallback().onSuccess(loginOperationCaptor.getValue(), loginResult);
     }
 
     @Test

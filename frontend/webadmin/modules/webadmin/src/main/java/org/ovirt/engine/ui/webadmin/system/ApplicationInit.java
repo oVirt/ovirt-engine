@@ -100,6 +100,7 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
 
     @Override
     protected void initFrontend() {
+
         super.initFrontend();
 
         ReportInit.getInstance().initHandlers(eventBus);

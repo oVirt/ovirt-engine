@@ -26,17 +26,14 @@ public abstract class ApplicationPlaceManager extends PlaceManagerImpl implement
     private static final Logger logger = Logger.getLogger(ApplicationPlaceManager.class.getName());
 
     private final CurrentUser user;
-    private final PlaceRequest defaultLoginSectionRequest;
     protected final ClientAgentType clientAgentType;
 
     private PlaceRequest autoLoginRequest;
 
     public ApplicationPlaceManager(EventBus eventBus, TokenFormatter tokenFormatter,
-            CurrentUser user, ClientAgentType clientAgentType,
-            PlaceRequest defaultLoginSectionRequest) {
+            CurrentUser user, ClientAgentType clientAgentType) {
         super(eventBus, tokenFormatter);
         this.user = user;
-        this.defaultLoginSectionRequest = defaultLoginSectionRequest;
         this.clientAgentType = clientAgentType;
 
         eventBus.addHandler(UserLoginChangeEvent.getType(), this);
@@ -73,11 +70,7 @@ public abstract class ApplicationPlaceManager extends PlaceManagerImpl implement
     }
 
     protected PlaceRequest getDefaultPlace() {
-        if (user.isLoggedIn()) {
-            return getDefaultMainSectionPlace();
-        } else {
-            return defaultLoginSectionRequest;
-        }
+        return getDefaultMainSectionPlace();
     }
 
     /**

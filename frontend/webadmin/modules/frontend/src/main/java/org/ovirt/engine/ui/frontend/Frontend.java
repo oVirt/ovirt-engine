@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -295,11 +294,7 @@ public class Frontend implements HasHandlers {
 
         // raise the query started event.
         fireAsyncOperationStartedEvent(callback.getModel());
-        if (isPublic) {
-            getOperationManager().addPublicOperation(operation);
-        } else {
-            getOperationManager().addOperation(operation);
-        }
+        getOperationManager().addOperation(operation);
     }
 
     /**
@@ -836,58 +831,6 @@ public class Frontend implements HasHandlers {
     }
 
     /**
-     * ASynchronous user login.
-     * @param userName The name of the user.
-     * @param password The password of the user.
-     * @param profileName The authentication profile used to check the credentials of the user.
-     * @param isAdmin If the user an admin user.
-     * @param callback The callback to call when the operation is finished.
-     */
-    public void loginAsync(final String userName,
-            final String password,
-            final String profileName,
-            final boolean isAdmin,
-            final AsyncQuery callback) {
-        logger.finer("Frontend: Invoking async Login."); //$NON-NLS-1$
-
-        LoginUserParameters params = new LoginUserParameters(profileName, userName, password);
-        VdcActionType action = isAdmin ? VdcActionType.LoginAdminUser : VdcActionType.LoginUser;
-        VdcOperation<VdcActionType, LoginUserParameters> loginOperation =
-            new VdcOperation<VdcActionType, LoginUserParameters>(action, params, true, //Public action.
-                    new VdcOperationCallback<VdcOperation<VdcActionType, LoginUserParameters>,
-                    VdcReturnValueBase>() {
-                @Override
-                public void onSuccess(final VdcOperation<VdcActionType, LoginUserParameters> operation,
-                        final VdcReturnValueBase result) {
-                    logger.finer("Succesful returned result from Login."); //$NON-NLS-1$
-                    setLoggedInUser((DbUser) result.getActionReturnValue());
-                    result.setCanDoActionMessages((ArrayList<String>) translateError(result));
-                    callback.getDel().onSuccess(callback.getModel(), result);
-                    if (getLoginHandler() != null && result.getSucceeded()) {
-                        getLoginHandler().onLoginSuccess();
-                    }
-                }
-
-                @Override
-                public void onFailure(final VdcOperation<VdcActionType, LoginUserParameters> operation,
-                        final Throwable caught) {
-                    if (ignoreFailure(caught)) {
-                        return;
-                    }
-                    logger.log(Level.SEVERE, "Failed to login: " + caught, caught); //$NON-NLS-1$
-                    getEventsHandler().runQueryFailed(null);
-                    failureEventHandler(caught);
-                    if (callback.isHandleFailure()) {
-                        setLoggedInUser(null);
-                        callback.getDel().onSuccess(callback.getModel(), null);
-                    }
-                }
-        });
-
-        getOperationManager().loginUser(loginOperation);
-    }
-
-    /**
      * Log off the currently logged in user.
      * @param callback The callback to call when the user is logged off.
      */
@@ -958,11 +901,6 @@ public class Frontend implements HasHandlers {
      */
     public void setLoggedInUser(final DbUser loggedInUser) {
         this.currentUser = loggedInUser;
-        if (currentUser != null) {
-            getOperationManager().setLoggedIn(true);
-        } else {
-            getOperationManager().setLoggedIn(false);
-        }
     }
 
     public void storeInHttpSession(final String key, final String value) {

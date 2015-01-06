@@ -41,7 +41,6 @@ import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.BackendService;
 import org.ovirt.engine.core.common.EngineWorkingMode;
-import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -608,24 +607,6 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     @ExcludeClassInterceptors
     public ErrorTranslator getVdsErrorsTranslator() {
         return vdsErrorsTranslator;
-    }
-
-    /**
-     * Login in to the system
-     * @param parameters
-     *            The parameters.
-     * @return user if success, else null // //
-     */
-    @Override
-    public VdcReturnValueBase login(LoginUserParameters parameters) {
-        switch (parameters.getActionType()) {
-        case LoginUser:
-        case LoginAdminUser:
-            CommandBase<?> command = CommandsFactory.createCommand(parameters.getActionType(), parameters);
-            return command.executeAction();
-        default:
-            return getErrorCommandReturnValue(EngineMessage.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
-        }
     }
 
     @Override

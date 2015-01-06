@@ -2,7 +2,6 @@ package org.ovirt.engine.core.common.interfaces;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -32,8 +31,6 @@ public interface BackendLocal {
     void initialize();
 
     VdcQueryReturnValue runPublicQuery(VdcQueryType actionType, VdcQueryParametersBase parameters);
-
-    VdcReturnValueBase login(LoginUserParameters parameters);
 
     VdcReturnValueBase logoff(VdcActionParametersBase parameters);
 }
