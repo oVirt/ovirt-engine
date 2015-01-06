@@ -114,6 +114,18 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         privateGuideCommand = value;
     }
 
+    private UICommand resetEmulatedMachineCommand;
+
+    public UICommand getResetEmulatedMachineCommand()
+    {
+        return resetEmulatedMachineCommand;
+    }
+
+    private void setResetEmulatedMachineCommand(UICommand value)
+    {
+        resetEmulatedMachineCommand = value;
+    }
+
     private UICommand privateAddMultipleHostsCommand;
 
     public UICommand getAddMultipleHostsCommand()
@@ -212,6 +224,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setGuideCommand(new UICommand("Guide", this)); //$NON-NLS-1$
+        setResetEmulatedMachineCommand(new UICommand("ResetEmulatedMachine", this)); //$NON-NLS-1$
         setAddMultipleHostsCommand(new UICommand("AddHosts", this)); //$NON-NLS-1$
 
         updateActionAvailability();
@@ -477,6 +490,56 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         model.getCommands().add(tempVar);
         UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
+    }
+
+    public void resetEmulatedMachine() {
+        if (getWindow() != null) {
+            return;
+        }
+
+        ConfirmationModel model = new ConfirmationModel();
+        setWindow(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().resetClusterEmulatedMachineTitle());
+        model.setMessage(ConstantsManager.getInstance().getConstants().resetClusterEmulatedMachineMessage());
+        model.setHelpTag(HelpTag.reset_emulated_machine_cluster);
+        model.setHashName("reset_cluster_emulated_machine"); //$NON-NLS-1$
+
+        ArrayList<String> list = new ArrayList<String>();
+        for (VDSGroup vdsGroup : Linq.<VDSGroup> cast(getSelectedItems())) {
+            list.add(vdsGroup.getName());
+        }
+        model.setItems(list);
+
+        model.getCommands().add(UICommand.createDefaultOkUiCommand("OnResetClusterEmulatedMachine", this)); //$NON-NLS-1$
+        model.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
+    }
+
+    public void onResetClusterEmulatedMachine() {
+        final ConfirmationModel model = (ConfirmationModel) getWindow();
+
+        if (model.getProgress() != null) {
+            return;
+        }
+
+        ArrayList<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
+        for (VDSGroup vdsGroup : getSelectedItems()) {
+            ManagementNetworkOnClusterOperationParameters currentParam = new ManagementNetworkOnClusterOperationParameters(((VDSGroup) vdsGroup));
+            currentParam.setForceResetEmulatedMachine(true);
+            prms.add(currentParam);
+        }
+
+        model.startProgress(null);
+
+        Frontend.getInstance().runMultipleAction(VdcActionType.UpdateVdsGroup, prms,
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void executed(FrontendMultipleActionAsyncResult result) {
+
+                        model.stopProgress();
+                        cancel();
+
+                    }
+                });
     }
 
     public void onRemove()
@@ -1002,6 +1065,9 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
 
         getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0);
 
+        getResetEmulatedMachineCommand().setIsExecutionAllowed(
+                getSelectedItems() != null && getSelectedItems().size() > 0);
+
         // System tree dependent actions.
         boolean isAvailable =
                 !(getSystemTreeSelectedItem() != null &&
@@ -1039,6 +1105,13 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         else if (command == getGuideCommand())
         {
             guide();
+        }
+        else if (command == getResetEmulatedMachineCommand())
+        {
+            resetEmulatedMachine();
+        }
+        else if ("OnResetClusterEmulatedMachine".equals(command.getName())) { //$NON-NLS-1$
+            onResetClusterEmulatedMachine();
         }
         else if ("OnSave".equals(command.getName())) //$NON-NLS-1$
         {

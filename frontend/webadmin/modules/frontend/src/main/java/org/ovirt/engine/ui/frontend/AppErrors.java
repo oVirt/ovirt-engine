@@ -1330,6 +1330,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot Cannot add Cluster. CPU type must be specified.")
     String VDS_GROUP_CPU_TYPE_CANNOT_BE_NULL();
 
+    @DefaultStringValue("Cannot update Cluster. Clusters hosts must be down in order to perform this action.")
+    String VDS_GROUP_HOSTS_MUST_BE_DOWN();
+
     @DefaultStringValue("Cannot ${action} ${type}. Network name already exists.")
     String NETWORK_NAME_ALREADY_EXISTS();
 

@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.resource.AffinityGroupsResource;
 import org.ovirt.engine.api.resource.AssignedCpuProfilesResource;
@@ -18,13 +19,17 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
 import static org.ovirt.engine.api.restapi.resource.BackendClustersResource.SUB_COLLECTIONS;
 
 public class BackendClusterResource<P extends BackendClustersResource>
-        extends AbstractBackendSubResource<Cluster, VDSGroup> implements ClusterResource {
+        extends AbstractBackendActionableResource<Cluster, VDSGroup> implements ClusterResource {
 
     protected final P parent;
     private final ManagementNetworkFinder managementNetworkFinder;
@@ -109,5 +114,18 @@ public class BackendClusterResource<P extends BackendClustersResource>
 
     protected Guid getDataCenterId(VDSGroup cluster) {
         return cluster.getStoragePoolId();
+    }
+
+    @Override
+    public Response resetEmulatedMachine(Action action) {
+        VdcQueryReturnValue result = runQuery(VdcQueryType.GetVdsGroupById, new IdQueryParameters(guid));
+        if (result != null && result.getSucceeded() && result.getReturnValue() != null) {
+            ManagementNetworkOnClusterOperationParameters param = new ManagementNetworkOnClusterOperationParameters((VDSGroup)result.getReturnValue());
+            param.setForceResetEmulatedMachine(true);
+            return doAction(VdcActionType.UpdateVdsGroup, param, action);
+
+        } else {
+            throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build());
+        }
     }
 }

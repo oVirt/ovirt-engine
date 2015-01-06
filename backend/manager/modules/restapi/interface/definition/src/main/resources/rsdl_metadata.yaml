@@ -1613,6 +1613,15 @@ actions:
       signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+- name: /clusters/{cluster:id}/resetemulatedmachine|rel=resetemulatedmachine
+  request:
+    body:
+      parameterType: Action
+      signatures: []
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /clusters/{cluster:id}/networks/{network:id}|rel=get
   description: get the details of the specified network in the cluster
   request:

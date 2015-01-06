@@ -370,6 +370,8 @@ public enum HelpTag {
 
     remove_cluster("remove_cluster", HelpTagType.WEBADMIN, "Cluster Tab > Remove"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    reset_emulated_machine_cluster("reset_emulated_machine_cluster", HelpTagType.WEBADMIN, "Cluster Tab > Reset Emulated Machine"), //$NON-NLS-1$ //$NON-NLS-2$
+
     remove_cluster_policy("remove_cluster_policy", HelpTagType.WEBADMIN, "'Configure' dialog -> 'Scheduling Policy' section -> 'Remove Scheduling Policy' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
     remove_data_center("remove_data_center", HelpTagType.WEBADMIN, "Data Center Tab > Remove Data Center(s)"), //$NON-NLS-1$ //$NON-NLS-2$

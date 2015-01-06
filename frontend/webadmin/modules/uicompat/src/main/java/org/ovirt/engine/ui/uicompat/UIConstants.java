@@ -78,6 +78,12 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Remove Cluster(s)")
     String removeClusterTitle();
 
+    @DefaultStringValue("Reset Cluster(s) Emulated Machine")
+    String resetClusterEmulatedMachineTitle();
+
+    @DefaultStringValue("Are you sure you want to reset the Emulated-Machine of the following clusters?")
+    String resetClusterEmulatedMachineMessage();
+
     @DefaultStringValue("Change Cluster Compatibility Version")
     String changeClusterCompatibilityVersionTitle();
 

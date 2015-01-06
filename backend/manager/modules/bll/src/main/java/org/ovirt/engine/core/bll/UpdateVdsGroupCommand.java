@@ -112,6 +112,10 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
             getParameters().getVdsGroup().setEmulatedMachine(null);
         }
 
+        if (getParameters().isForceResetEmulatedMachine()) {
+            getParameters().getVdsGroup().setDetectEmulatedMachine(true);
+        }
+
         getVdsGroupDAO().update(getParameters().getVdsGroup());
 
         if (isAddedToStoragePool) {
@@ -399,6 +403,15 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
                 && !FeatureSupported.virtIoRngSupported(getVdsGroup().getCompatibilityVersion())) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_RNG_SOURCE_NOT_SUPPORTED);
             result = false;
+        }
+        if (result && getParameters().isForceResetEmulatedMachine()) {
+            for (VDS vds : allForVdsGroup) {
+                if (vds.getStatus() == VDSStatus.Up) {
+                    addCanDoActionMessage(VdcBllMessages.VDS_GROUP_HOSTS_MUST_BE_DOWN);
+                    result = false;
+                    break;
+                }
+            }
         }
         return result;
     }

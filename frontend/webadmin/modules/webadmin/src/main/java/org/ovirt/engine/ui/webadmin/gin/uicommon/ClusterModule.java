@@ -61,7 +61,7 @@ public class ClusterModule extends AbstractGinModule {
     @Provides
     @Singleton
     public MainModelProvider<VDSGroup, ClusterListModel<Void>> getClusterListProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<ClusterPopupPresenterWidget> popupProvider,
             final Provider<GuidePopupPresenterWidget> guidePopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
@@ -91,6 +91,8 @@ public class ClusterModule extends AbstractGinModule {
                     UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getRemoveCommand()) {
                     return removeConfirmPopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getResetEmulatedMachineCommand()) {
+                    return defaultConfirmPopupProvider.get();
                 } else {
                     return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }

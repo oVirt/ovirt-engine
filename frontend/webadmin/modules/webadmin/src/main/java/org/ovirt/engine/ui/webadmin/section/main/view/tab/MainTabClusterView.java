@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
+import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
@@ -167,6 +168,14 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getGuideCommand();
+            }
+        });
+
+        getTable().addActionButton(new WebAdminButtonDefinition<VDSGroup>(constants.resetClusterEmulatedMachine(),
+                CommandLocation.OnlyFromContext) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getResetEmulatedMachineCommand();
             }
         });
     }

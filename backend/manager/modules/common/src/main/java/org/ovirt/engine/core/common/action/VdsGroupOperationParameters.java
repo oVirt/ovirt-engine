@@ -8,6 +8,7 @@ public class VdsGroupOperationParameters extends VdsGroupParametersBase {
     private static final long serialVersionUID = -2184123302248929010L;
     @Valid
     private VDSGroup _vdsGroup;
+    private boolean forceResetEmulatedMachine = false;
 
     public VdsGroupOperationParameters(VDSGroup group) {
         super(group.getId());
@@ -29,5 +30,13 @@ public class VdsGroupOperationParameters extends VdsGroupParametersBase {
     }
 
     public VdsGroupOperationParameters() {
+    }
+
+    public void setForceResetEmulatedMachine(boolean isResetEmulatedMachine) {
+        this.forceResetEmulatedMachine = isResetEmulatedMachine;
+    }
+
+    public boolean isForceResetEmulatedMachine() {
+        return this.forceResetEmulatedMachine;
     }
 }

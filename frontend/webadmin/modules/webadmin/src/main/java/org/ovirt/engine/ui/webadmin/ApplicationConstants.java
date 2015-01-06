@@ -1439,6 +1439,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Guide Me")
     String guideMeCluster();
 
+    @DefaultStringValue("Reset Emulated Machine")
+    String resetClusterEmulatedMachine();
+
     @DefaultStringValue("Used Memory/Total")
     String usedMemoryTotalCluster();
 
