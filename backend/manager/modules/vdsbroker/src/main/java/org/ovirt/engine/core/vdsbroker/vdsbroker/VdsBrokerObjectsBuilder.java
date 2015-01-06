@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.AutoNumaBalanceStatus;
 import org.ovirt.engine.core.common.businessentities.CpuStatistics;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
@@ -347,18 +346,12 @@ public class VdsBrokerObjectsBuilder {
      * @param xmlRpcStruct - data from VDSM
      */
     private static void updateGraphicsInfoFromConf(VmDynamic vm, Map<String, Object> xmlRpcStruct) {
-        DisplayType displayType = parseDisplayType(xmlRpcStruct);
-
-        if (displayType == null) {
-            log.warn("Can't set display type from XML.");
+        GraphicsType vmGraphicsType = parseGraphicsType(xmlRpcStruct);
+        if (vmGraphicsType == null) {
+            log.warn("Can't set graphics data from XML.");
             return;
         }
 
-        vm.setDisplayType(displayType);
-
-        GraphicsType vmGraphicsType = (displayType == DisplayType.qxl)
-                ? GraphicsType.SPICE
-                : GraphicsType.VNC;
         GraphicsInfo graphicsInfo = vm.getGraphicsInfos().get(vmGraphicsType);
 
         if (graphicsInfo != null) {
@@ -392,19 +385,29 @@ public class VdsBrokerObjectsBuilder {
     }
 
     /**
-     * Retrieves display type from xml.
+     * Retrieves graphics type from xml.
      * @param xmlRpcStruct
      * @return
-     *  - display type derived from xml on success
+     *  - graphics type derived from xml on success
      *  - null on error
      */
-    private static DisplayType parseDisplayType(Map<String, Object> xmlRpcStruct) {
+    private static GraphicsType parseGraphicsType(Map<String, Object> xmlRpcStruct) {
+        GraphicsType result = null;
+
         try {
             String displayTypeStr = xmlRpcStruct.get(VdsProperties.displayType).toString();
-            return DisplayType.valueOf(displayTypeStr);
+            switch (displayTypeStr) {
+                case VdsProperties.VNC:
+                    result = GraphicsType.VNC;
+                    break;
+                case VdsProperties.QXL:
+                    result = GraphicsType.SPICE;
+                    break;
+            }
         } catch (Exception e) {
-            return null;
         }
+
+        return result;
     }
 
     private static Integer parseIntegerOrNull(String s) {
