@@ -13,11 +13,13 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.DOM;
 
 /**
+ * TODO remove
  * Decorates a cell with a tooltip which is given from a tooltip provider
  *
  * @param <C>
  *            the type that this Cell represents
  */
+@Deprecated
 public class TooltipCell<T> extends CompositeCell<T> {
 
     private final TooltipProvider<T> provider;
