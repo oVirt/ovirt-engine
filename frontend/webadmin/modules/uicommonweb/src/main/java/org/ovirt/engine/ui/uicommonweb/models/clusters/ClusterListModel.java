@@ -930,7 +930,7 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
             host.setSshUsername("root"); //$NON-NLS-1$
 
             host.setVdsGroupId(hostsModel.getClusterModel().getClusterId());
-            host.setpm_enabled(false);
+            host.setPmEnabled(false);
 
             AddVdsActionParameters parameters = new AddVdsActionParameters();
             parameters.setVdsId(host.getId());

@@ -62,7 +62,7 @@ public class VdsPowerDownCommand<T extends VdsPowerDownParameters> extends VdsCo
                         getVds().getDynamicData().isPowerManagementControlledByPolicy());
             }
 
-        } else if (getParameters().getFallbackToPowerManagement() && getVds().getpm_enabled()) {
+        } else if (getParameters().getFallbackToPowerManagement() && getVds().isPmEnabled()) {
             FenceVdsActionParameters parameters = new FenceVdsActionParameters(getVds().getId(), FenceActionType.Stop);
             parameters.setKeepPolicyPMEnabled(getParameters().getKeepPolicyPMEnabled());
             runInternalAction(VdcActionType.StopVds,

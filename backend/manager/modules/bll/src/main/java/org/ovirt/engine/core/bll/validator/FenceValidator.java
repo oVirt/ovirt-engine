@@ -43,7 +43,7 @@ public class FenceValidator {
     }
 
     public boolean isPowerManagementEnabledAndLegal(VDS vds, VDSGroup vdsGroup, List<String> messages) {
-        if (!(vds.getpm_enabled() && isPowerManagementLegal(vds.getFenceAgents(), vdsGroup, messages))) {
+        if (!(vds.isPmEnabled() && isPowerManagementLegal(vds.getFenceAgents(), vdsGroup, messages))) {
             messages.add(VdcBllMessages.VDS_FENCE_DISABLED.name());
             return false;
         } else {

@@ -531,7 +531,7 @@ public final class Linq
         ArrayList<VDS> ret = new ArrayList<VDS>();
         for (VDS i : items)
         {
-            if (i.getpm_enabled())
+            if (i.isPmEnabled())
             {
                 ret.add(i);
             }

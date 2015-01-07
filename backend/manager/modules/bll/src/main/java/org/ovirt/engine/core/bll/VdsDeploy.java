@@ -581,7 +581,7 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
             return true;
         }},
         new Callable<Boolean>() { public Boolean call() throws Exception {
-            boolean enabled = _vds.getpm_enabled() &&
+            boolean enabled = _vds.isPmEnabled() &&
                     _vds.isPmKdumpDetection() &&
                     fenceKdumpSupported;
             if (!enabled) {

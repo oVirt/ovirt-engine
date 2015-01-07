@@ -79,7 +79,7 @@ public class PmHealthCheckManager {
                     active = true;
                     List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAll();
                     for (VDS host : hosts) {
-                        if (host.getpm_enabled()) {
+                        if (host.isPmEnabled()) {
                             // check health
                             PmHealth pmHealth = checkPMHealth(host);
                             // handle alerts - adding or canceling as necessary
@@ -216,7 +216,7 @@ public class PmHealthCheckManager {
                 new Predicate<VDS>() {
                     @Override
                     public boolean eval(VDS host) {
-                        return (host.getpm_enabled() && host.getStatus() == VDSStatus.Reboot);
+                        return (host.isPmEnabled() && host.getStatus() == VDSStatus.Reboot);
                     }
                 });
         if (hostsWithPMInReboot.size() > 0) {

@@ -85,7 +85,7 @@ public class HostStatusCell extends AbstractCell<VDS> {
         sb.append(statusImageHtml);
         boolean getnet_config_dirty =
                 vds.getNetConfigDirty() == null ? false : vds.getNetConfigDirty().booleanValue();
-        boolean showPMAlert = vds.getVdsGroupSupportsVirtService() && !vds.getpm_enabled();
+        boolean showPMAlert = vds.getVdsGroupSupportsVirtService() && !vds.isPmEnabled();
         if (showPMAlert || getnet_config_dirty) {
             sb.append(alertImageHtml);
         }

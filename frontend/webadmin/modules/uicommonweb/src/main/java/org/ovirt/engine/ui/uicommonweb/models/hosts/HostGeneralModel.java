@@ -1022,12 +1022,12 @@ public class HostGeneralModel extends EntityModel
 
         // Check manual fence alert presense.
         if (getEntity().getStatus() == VDSStatus.NonResponsive
-                && !getEntity().getpm_enabled()
+                && !getEntity().isPmEnabled()
                 && ((getEntity().getVmActive() == null ? 0 : getEntity().getVmActive()) > 0 || getEntity().getSpmStatus() == VdsSpmStatus.SPM))
         {
             setHasManualFenceAlert(true);
         }
-        else if (!getEntity().getpm_enabled())
+        else if (!getEntity().isPmEnabled())
         {
             setHasNoPowerManagementAlert(true);
         }

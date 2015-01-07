@@ -1819,7 +1819,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs
             getIsPm().setEntity(true);
             getIsPm().setIsChangable(false);
         } else {
-            getIsPm().setEntity(vds.getpm_enabled());
+            getIsPm().setEntity(vds.isPmEnabled());
         }
         updateModelDataCenterFromVds(dataCenters, vds);
 

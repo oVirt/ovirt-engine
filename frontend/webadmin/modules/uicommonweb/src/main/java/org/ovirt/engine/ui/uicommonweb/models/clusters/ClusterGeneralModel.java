@@ -508,7 +508,7 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
             host.setSshUsername("root"); //$NON-NLS-1$
 
             host.setVdsGroupId(getEntity().getId());
-            host.setpm_enabled(false);
+            host.setPmEnabled(false);
 
             AddVdsActionParameters parameters = new AddVdsActionParameters();
             parameters.setVdsId(host.getId());

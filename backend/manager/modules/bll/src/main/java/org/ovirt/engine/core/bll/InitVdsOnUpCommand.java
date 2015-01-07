@@ -170,7 +170,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     private void processFence() {
         FenceExecutor executor = new FenceExecutor(getVds());
         vdsProxyFound = new FenceProxyLocator(getVds()).isProxyHostAvailable();
-        if (getVds().getpm_enabled() && vdsProxyFound) {
+        if (getVds().isPmEnabled() && vdsProxyFound) {
             VDSFenceReturnValue returnValue = executor.checkStatus();
             fenceSucceeded = returnValue.getSucceeded(); // potential bug here - if no proxy host found, this variable
                                                          // is still 'true'
@@ -342,15 +342,15 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         if (getVdsGroup().supportsVirtService()) {
             if (!connectPoolSucceeded) {
                 type = AuditLogType.CONNECT_STORAGE_POOL_FAILED;
-            } else if (getVds().getpm_enabled() && fenceSucceeded) {
+            } else if (getVds().isPmEnabled() && fenceSucceeded) {
                 type = AuditLogType.VDS_FENCE_STATUS;
-            } else if (getVds().getpm_enabled() && !fenceSucceeded) {
+            } else if (getVds().isPmEnabled() && !fenceSucceeded) {
                 type = AuditLogType.VDS_FENCE_STATUS_FAILED;
             }
 
             // PM alerts
             AuditLogableBase logable = new AuditLogableBase(getVds().getId());
-            if (getVds().getpm_enabled()) {
+            if (getVds().isPmEnabled()) {
                 if (!vdsProxyFound) {
                     logable.addCustomValue("Reason",
                             AuditLogDirector.getMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST));
@@ -561,7 +561,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         // host is UP, remove kdump status
         getDbFacade().getVdsKdumpStatusDao().remove(getVdsId());
 
-        if (getVds().getpm_enabled() &&
+        if (getVds().isPmEnabled() &&
                 getVds().isPmKdumpDetection() &&
                 getVds().getKdumpStatus() != KdumpStatus.ENABLED) {
             AuditLogableBase base = new AuditLogableBase();

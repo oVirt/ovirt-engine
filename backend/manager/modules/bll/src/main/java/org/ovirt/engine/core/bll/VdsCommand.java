@@ -332,7 +332,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         VDS vds = getVds();
         VDSFenceReturnValue returnValue = null;
         // Check first if Host has configured PM
-        if (vds != null && vds.getpm_enabled()) {
+        if (vds != null && vds.isPmEnabled()) {
             FenceExecutor executor = new FenceExecutor(vds);
             returnValue = executor.checkStatus();
             // !! handle failure

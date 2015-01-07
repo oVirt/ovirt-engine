@@ -376,9 +376,9 @@ public class HostMapper {
             model.setPmProxies(pmProxies);
         }
         model.setKdumpDetection(entity.isPmKdumpDetection());
-        model.setEnabled(entity.getpm_enabled());
+        model.setEnabled(entity.isPmEnabled());
         model.setAutomaticPmEnabled(!entity.isDisablePowerManagementPolicy());
-        if (entity.getpm_enabled()) {
+        if (entity.isPmEnabled()) {
             DeprecatedPowerManagementMapper.map(entity.getFenceAgents(), model);
         }
         return model;

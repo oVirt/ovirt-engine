@@ -983,7 +983,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
 
 
         // Save other PM parameters.
-        host.setpm_enabled(model.getIsPm().getEntity());
+        host.setPmEnabled(model.getIsPm().getEntity());
         host.setDisablePowerManagementPolicy(model.getDisableAutomaticPowerManagement().getEntity());
         host.setPmKdumpDetection(model.getPmKdumpDetection().getEntity());
 

@@ -157,7 +157,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         vds.setServerSslEnabled(isServerSslEnabled());
         vds.setCpuFlags(getCpuFlags());
         vds.setNetConfigDirty(getNetConfigDirty());
-        vds.setpm_enabled(getpm_enabled());
+        vds.setPmEnabled(isPmEnabled());
         vds.setPmKdumpDetection(isPmKdumpDetection());
         vds.setConsoleAddress(getConsoleAddress());
         vds.setHBAs(getHBAs());
@@ -916,11 +916,11 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         mVdsStatic.setPmKdumpDetection(pmKdumpDetection);
     }
 
-    public boolean getpm_enabled() {
+    public boolean isPmEnabled() {
         return mVdsStatic.isPmEnabled();
     }
 
-    public void setpm_enabled(boolean value) {
+    public void setPmEnabled(boolean value) {
         mVdsStatic.setPmEnabled(value);
     }
 

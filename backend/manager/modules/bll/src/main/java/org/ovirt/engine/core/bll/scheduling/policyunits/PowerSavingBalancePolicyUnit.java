@@ -216,7 +216,7 @@ public class PowerSavingBalancePolicyUnit extends EvenDistributionBalancePolicyU
                 public boolean eval(VDS vds) {
                     return !vds.isDisablePowerManagementPolicy()
                             && vds.getSpmStatus() != VdsSpmStatus.SPM
-                            && vds.getpm_enabled();
+                            && vds.isPmEnabled();
                 }
             });
 

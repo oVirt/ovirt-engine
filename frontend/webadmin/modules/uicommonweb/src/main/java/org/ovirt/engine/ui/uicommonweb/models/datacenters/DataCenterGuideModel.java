@@ -1611,7 +1611,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         host.setVdsSpmPriority(model.getSpmPriorityValue());
 
         // Save other PM parameters.
-        host.setpm_enabled(model.getIsPm().getEntity());
+        host.setPmEnabled(model.getIsPm().getEntity());
         host.setDisablePowerManagementPolicy(model.getDisableAutomaticPowerManagement().getEntity());
         host.setPmKdumpDetection(model.getPmKdumpDetection().getEntity());
 
