@@ -84,7 +84,7 @@ public interface StorageServerConnectionDAO extends DAO {
      *          the applicable statuses
      * @return the list of connections
      */
-    public List<StorageServerConnections> getStorageConnectionsByStorageTypeAndStatus(Guid pool,
+    List<StorageServerConnections> getStorageConnectionsByStorageTypeAndStatus(Guid pool,
             StorageType storageType,
             Set<StorageDomainStatus> statuses);
 
