@@ -84,10 +84,11 @@ public class NewHostModel extends HostModel {
     private void hostName_SelectedItemChanged() {
         if (Boolean.FALSE.equals(getIsDiscoveredHosts().getEntity())) {
             VDS vds = (VDS) getExternalHostName().getSelectedItem();
-            if (vds == null) {
-                vds = new VDS();
+            if (vds != null) {
+                setOriginalName(vds.getName());
+                getName().setEntity(vds.getName());
+                getHost().setEntity(vds.getHostName());
             }
-            updateModelFromVds(vds, null, false, null);
         }
     }
 
@@ -95,25 +96,21 @@ public class NewHostModel extends HostModel {
         if (Boolean.TRUE.equals(getIsDiscoveredHosts().getEntity())) {
             ExternalDiscoveredHost dhost = (ExternalDiscoveredHost) getExternalDiscoveredHosts().getSelectedItem();
             ExternalHostGroup dhg = (ExternalHostGroup) getExternalHostGroups().getSelectedItem();
-            VDS vds = new VDS();
             if (dhost != null && dhg != null) {
-                vds.setVdsName(dhost.getName());
-                vds.setHostName(dhost.getName() + "." + //$NON-NLS-1$
+                setOriginalName(dhost.getName());
+                getName().setEntity(dhost.getName());
+                getHost().setEntity(dhost.getName() + "." + //$NON-NLS-1$
                         (dhg.getDomainName() != null ? dhg.getDomainName() : "")); //$NON-NLS-1$
             }
-            updateModelFromVds(vds, null, false, null);
         }
     }
 
     private void externalHostGroups_SelectedItemChanged() {
         ExternalHostGroup dhg = (ExternalHostGroup) getExternalHostGroups().getSelectedItem();
-        VDS vds = new VDS();
         if (dhg != null) {
-            vds.setVdsName(getName().getEntity());
-            vds.setHostName(getName().getEntity() + "." + //$NON-NLS-1$
+            getHost().setEntity(getName().getEntity() + "." + //$NON-NLS-1$
                     (dhg.getDomainName() != null ? dhg.getDomainName() : "")); //$NON-NLS-1$
         }
-        updateModelFromVds(vds, null, false, null);
     }
 
     private void providers_SelectedItemChanged() {
