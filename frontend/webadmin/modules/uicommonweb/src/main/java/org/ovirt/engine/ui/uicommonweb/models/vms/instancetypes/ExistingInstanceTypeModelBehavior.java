@@ -138,6 +138,7 @@ public class ExistingInstanceTypeModelBehavior extends InstanceTypeModelBehavior
        ));
         getModel().getEmulatedMachine().setSelectedItem(instanceType.getCustomEmulatedMachine());
         getModel().getCustomCpu().setSelectedItem(instanceType.getCustomCpuName());
+        getModel().getMigrationMode().setSelectedItem(instanceType.getMigrationSupport());
     }
 
     @Override
