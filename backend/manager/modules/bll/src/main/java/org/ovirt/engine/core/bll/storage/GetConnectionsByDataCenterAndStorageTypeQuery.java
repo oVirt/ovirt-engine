@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.EnumSet;
+
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.queries.GetConnectionsByDataCenterAndStorageTypeParameters;
 
 public class GetConnectionsByDataCenterAndStorageTypeQuery<P extends GetConnectionsByDataCenterAndStorageTypeParameters>
@@ -14,6 +17,8 @@ public class GetConnectionsByDataCenterAndStorageTypeQuery<P extends GetConnecti
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
                 getDbFacade().getStorageServerConnectionDao()
-                        .getConnectableStorageConnectionsByStorageType(getParameters().getId(), getParameters().getStorageType()));
+                        .getStorageConnectionsByStorageTypeAndStatus(getParameters().getId(),
+                                getParameters().getStorageType(),
+                                EnumSet.allOf(StorageDomainStatus.class)));
     }
 }
