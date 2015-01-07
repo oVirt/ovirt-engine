@@ -16,6 +16,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
@@ -720,6 +722,7 @@ public class VmSnapshotListModel extends SearchableListModel
         parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         parameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
         parameters.setBalloonEnabled(model.getMemoryBalloonDeviceEnabled().getEntity());
+        setGraphicsDevicesToParams(model, parameters);
 
         model.startProgress(null);
 
@@ -738,6 +741,20 @@ public class VmSnapshotListModel extends SearchableListModel
                         }
                     }
                 }, this);
+    }
+
+    private void setGraphicsDevicesToParams(final UnitVmModel model, AddVmFromSnapshotParameters  params) {
+        if (model.getDisplayType().getSelectedItem() == null || model.getGraphicsType().getSelectedItem() == null) {
+            return;
+        }
+
+        for (GraphicsType graphicsType : GraphicsType.values()) {
+            params.getGraphicsDevices().put(graphicsType, null); // reset
+            if (model.getGraphicsType().getSelectedItem().getBackingGraphicsType().contains(graphicsType)) {
+                GraphicsDevice d = new GraphicsDevice(graphicsType.getCorrespondingDeviceType());
+                params.getGraphicsDevices().put(d.getGraphicsType(), d);
+            }
+        }
     }
 
     protected static void buildVmOnClone(UnitVmModel model, VM vm) {

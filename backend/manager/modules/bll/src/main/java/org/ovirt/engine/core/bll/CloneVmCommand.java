@@ -17,6 +17,8 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -220,6 +222,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         getParameters().setConsoleEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.CONSOLE));
         getParameters().setVirtioScsiEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.CONTROLLER, VmDeviceType.VIRTIOSCSI));
         getParameters().setBalloonEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.BALLOON));
+        setGraphicsDevices(devices);
 
         VdcQueryReturnValue watchdogs = runInternalQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(oldVmId));
         if (!((List<VmWatchdog>) watchdogs.getReturnValue()).isEmpty()) {
@@ -230,6 +233,19 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
 
 
         fillDisksToParameters();
+    }
+
+    private void setGraphicsDevices(List<VmDevice> devices) {
+        for (GraphicsType graphicsType : GraphicsType.values()) {
+            getParameters().getGraphicsDevices().put(graphicsType, null); // prevent copying from the template
+        }
+
+        for (VmDevice device : devices) {
+            if (device.getType() == VmDeviceGeneralType.GRAPHICS) {
+                GraphicsDevice graphicsDevice = new GraphicsDevice(device);
+                getParameters().getGraphicsDevices().put(graphicsDevice.getGraphicsType(), graphicsDevice);
+            }
+        }
     }
 
     private boolean containsDeviceWithType(List<VmDevice> devices, VmDeviceGeneralType generalType, VmDeviceType deviceType) {
