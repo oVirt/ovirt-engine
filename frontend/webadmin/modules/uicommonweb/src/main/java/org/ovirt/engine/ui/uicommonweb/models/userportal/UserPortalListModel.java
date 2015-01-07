@@ -16,10 +16,7 @@ import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
-import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
-import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -47,6 +44,7 @@ import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.FullUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.KernelParamsVmBaseToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.UnitToGraphicsDeviceParamsBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.UsbPolicyVmBaseToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -670,7 +668,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         addVmTemplateParameters.setCopyVmPermissions(model.getCopyPermissions().getEntity());
         addVmTemplateParameters.setUpdateRngDevice(true);
         addVmTemplateParameters.setRngDevice(model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
-        setGraphicsDevicesToParams(model, addVmTemplateParameters);
+        BuilderExecutor.build(model, addVmTemplateParameters, new UnitToGraphicsDeviceParamsBuilder());
         if (model.getIsSubTemplate().getEntity()) {
             addVmTemplateParameters.setBaseTemplateId(model.getBaseTemplate().getSelectedItem().getId());
             addVmTemplateParameters.setTemplateVersionName(model.getTemplateVersionName().getEntity());
@@ -1137,7 +1135,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
         parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         setRngDeviceToParams(model, parameters);
-        setGraphicsDevicesToParams(model, parameters);
+        BuilderExecutor.build(model, parameters, new UnitToGraphicsDeviceParamsBuilder());
 
         if (!StringHelper.isNullOrEmpty(model.getVmId().getEntity())) {
             parameters.setVmId(new Guid(model.getVmId().getEntity()));
@@ -1183,7 +1181,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         params.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         setRngDeviceToParams(model, params);
         params.setApplyChangesLater(applyCpuChangesLater);
-        setGraphicsDevicesToParams(model, params);
+        BuilderExecutor.build(model, params, new UnitToGraphicsDeviceParamsBuilder());
 
         return params;
     }
@@ -1467,34 +1465,6 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     @Override
     protected ConsoleContext getConsoleContext() {
         return ConsoleContext.UP_EXTENDED;
-    }
-
-    private void setGraphicsDevicesToParams(final UnitVmModel model, VmManagementParametersBase params) {
-        if (model.getDisplayType().getSelectedItem() == null || model.getGraphicsType().getSelectedItem() == null) {
-            return;
-        }
-
-        for (GraphicsType graphicsType : GraphicsType.values()) {
-            params.getGraphicsDevices().put(graphicsType, null); // reset
-            if (model.getGraphicsType().getSelectedItem().getBackingGraphicsType().contains(graphicsType)) {
-                GraphicsDevice d = new GraphicsDevice(graphicsType.getCorrespondingDeviceType());
-                params.getGraphicsDevices().put(d.getGraphicsType(), d);
-            }
-        }
-    }
-
-    private void setGraphicsDevicesToParams(final UnitVmModel model, VmTemplateParametersBase params) {
-        if (model.getDisplayType().getSelectedItem() == null || model.getGraphicsType().getSelectedItem() == null) {
-            return;
-        }
-
-        for (GraphicsType graphicsType : GraphicsType.values()) {
-            params.getGraphicsDevices().put(graphicsType, null); // reset
-            if (model.getGraphicsType().getSelectedItem().getBackingGraphicsType().contains(graphicsType)) {
-                GraphicsDevice d = new GraphicsDevice(graphicsType.getCorrespondingDeviceType());
-                params.getGraphicsDevices().put(d.getGraphicsType(), d);
-            }
-        }
     }
 
 }

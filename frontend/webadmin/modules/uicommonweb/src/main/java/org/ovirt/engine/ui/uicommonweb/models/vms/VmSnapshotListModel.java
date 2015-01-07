@@ -17,8 +17,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
-import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
@@ -40,6 +38,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq.SnapshotByCreationDateCommparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.FullUnitToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.UnitToGraphicsDeviceParamsBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -724,7 +723,8 @@ public class VmSnapshotListModel extends SearchableListModel
         parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         parameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
         parameters.setBalloonEnabled(model.getMemoryBalloonDeviceEnabled().getEntity());
-        setGraphicsDevicesToParams(model, parameters);
+
+        BuilderExecutor.build(model, parameters, new UnitToGraphicsDeviceParamsBuilder());
 
         if (!StringHelper.isNullOrEmpty(model.getVmId().getEntity())) {
             parameters.setVmId(new Guid(model.getVmId().getEntity()));
@@ -747,20 +747,6 @@ public class VmSnapshotListModel extends SearchableListModel
                         }
                     }
                 }, this);
-    }
-
-    private void setGraphicsDevicesToParams(final UnitVmModel model, AddVmFromSnapshotParameters  params) {
-        if (model.getDisplayType().getSelectedItem() == null || model.getGraphicsType().getSelectedItem() == null) {
-            return;
-        }
-
-        for (GraphicsType graphicsType : GraphicsType.values()) {
-            params.getGraphicsDevices().put(graphicsType, null); // reset
-            if (model.getGraphicsType().getSelectedItem().getBackingGraphicsType().contains(graphicsType)) {
-                GraphicsDevice d = new GraphicsDevice(graphicsType.getCorrespondingDeviceType());
-                params.getGraphicsDevices().put(d.getGraphicsType(), d);
-            }
-        }
     }
 
     protected static void buildVmOnClone(UnitVmModel model, VM vm) {

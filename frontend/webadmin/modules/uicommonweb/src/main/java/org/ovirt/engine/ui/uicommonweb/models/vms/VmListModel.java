@@ -34,8 +34,6 @@ import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
-import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -77,6 +75,7 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.DedicatedVmForVdsVmBaseToVmBa
 import org.ovirt.engine.ui.uicommonweb.builders.vm.FullUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.KernelParamsVmBaseToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.MigrationOptionsVmBaseToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.UnitToGraphicsDeviceParamsBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.UsbPolicyVmBaseToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -2112,7 +2111,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         updateVmParams.setApplyChangesLater(applyCpuChangesLater);
         updateVmParams.setUpdateNuma(model.isNumaChanged());
         setRngDeviceToParams(model, updateVmParams);
-        setGraphicsDevicesToParams(model, updateVmParams);
+        BuilderExecutor.build(model, updateVmParams, new UnitToGraphicsDeviceParamsBuilder());
 
         return updateVmParams;
     }
@@ -2138,7 +2137,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         parameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
         setVmWatchdogToParams(model, parameters);
         setRngDeviceToParams(model, parameters);
-        setGraphicsDevicesToParams(model, parameters);
+        BuilderExecutor.build(model, parameters, new UnitToGraphicsDeviceParamsBuilder());
         if (!StringHelper.isNullOrEmpty(model.getVmId().getEntity())) {
             parameters.setVmId(new Guid(model.getVmId().getEntity()));
         }
@@ -2191,20 +2190,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             vmWatchdog.setAction(model.getWatchdogAction().getSelectedItem());
             vmWatchdog.setModel(wdModel);
             updateVmParams.setWatchdog(vmWatchdog);
-        }
-    }
-
-    private void setGraphicsDevicesToParams(final UnitVmModel model, VmManagementParametersBase params) {
-        if (model.getDisplayType().getSelectedItem() == null || model.getGraphicsType().getSelectedItem() == null) {
-            return;
-        }
-
-        for (GraphicsType graphicsType : GraphicsType.values()) {
-            params.getGraphicsDevices().put(graphicsType, null); // reset
-            if (model.getGraphicsType().getSelectedItem().getBackingGraphicsType().contains(graphicsType)) {
-                GraphicsDevice d = new GraphicsDevice(graphicsType.getCorrespondingDeviceType());
-                params.getGraphicsDevices().put(d.getGraphicsType(), d);
-            }
         }
     }
 

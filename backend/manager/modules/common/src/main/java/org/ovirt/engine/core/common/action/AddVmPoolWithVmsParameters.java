@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.Guid;
 
-public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters {
+public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters implements HasGraphicsDevices {
     private static final long serialVersionUID = 4826143612049185740L;
 
     @Valid
@@ -106,6 +106,7 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters {
         this.balloonEnabled = isBallonEnabled;
     }
 
+    @Override
     public Map<GraphicsType, GraphicsDevice> getGraphicsDevices() {
         return graphicsDevices;
     }

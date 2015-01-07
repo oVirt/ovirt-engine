@@ -14,8 +14,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
-import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
@@ -36,6 +34,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.template.VersionNameUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.FullUnitToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.UnitToGraphicsDeviceParamsBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -637,7 +636,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         UpdateVmTemplateParameters parameters = new UpdateVmTemplateParameters(template);
         parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         setVmWatchdogToParams(model, parameters);
-        setGraphicsDevicesToParams(model, parameters);
+        BuilderExecutor.build(model, parameters, new UnitToGraphicsDeviceParamsBuilder());
         parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
         setVmRngDeviceToParams(model, parameters);
 
@@ -651,20 +650,6 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
                     }
                 }, this);
-    }
-
-    private void setGraphicsDevicesToParams(final UnitVmModel model, VmTemplateParametersBase params) {
-        if (model.getDisplayType().getSelectedItem() == null || model.getGraphicsType().getSelectedItem() == null) {
-            return;
-        }
-
-        for (GraphicsType graphicsType : GraphicsType.values()) {
-            params.getGraphicsDevices().put(graphicsType, null); // reset
-            if (model.getGraphicsType().getSelectedItem().getBackingGraphicsType().contains(graphicsType)) {
-                GraphicsDevice d = new GraphicsDevice(graphicsType.getCorrespondingDeviceType());
-                params.getGraphicsDevices().put(d.getGraphicsType(), d);
-            }
-        }
     }
 
     @SuppressWarnings("unchecked")

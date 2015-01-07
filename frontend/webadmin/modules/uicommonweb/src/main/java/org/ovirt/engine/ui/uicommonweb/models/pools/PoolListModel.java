@@ -9,8 +9,6 @@ import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
-import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
-import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
@@ -38,6 +36,7 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.DedicatedVmForVdsUnitToVmBase
 import org.ovirt.engine.ui.uicommonweb.builders.vm.KernelParamsUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.MigrationOptionsUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.NameUnitToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.UnitToGraphicsDeviceParamsBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.UsbPolicyUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -478,7 +477,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
                         param.setBalloonEnabled(model.getMemoryBalloonDeviceEnabled().getEntity());
 
-                        setGraphicsDevicesToParams(model, param);
+                        BuilderExecutor.build(model, param, new UnitToGraphicsDeviceParamsBuilder());
 
                         if (model.getQuota().getSelectedItem() != null) {
                             vm.setQuotaId(model.getQuota().getSelectedItem().getId());
@@ -516,20 +515,6 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                     }
                 }),
                 name);
-    }
-
-    private void setGraphicsDevicesToParams(PoolModel model, AddVmPoolWithVmsParameters params) {
-        if (model.getDisplayType().getSelectedItem() == null || model.getGraphicsType().getSelectedItem() == null) {
-            return;
-        }
-
-        for (GraphicsType graphicsType : GraphicsType.values()) {
-            params.getGraphicsDevices().put(graphicsType, null); // reset
-            if (model.getGraphicsType().getSelectedItem().getBackingGraphicsType().contains(graphicsType)) {
-                GraphicsDevice d = new GraphicsDevice(graphicsType.getCorrespondingDeviceType());
-                params.getGraphicsDevices().put(d.getGraphicsType(), d);
-            }
-        }
     }
 
     protected static VM buildVmOnSave(PoolModel model) {
