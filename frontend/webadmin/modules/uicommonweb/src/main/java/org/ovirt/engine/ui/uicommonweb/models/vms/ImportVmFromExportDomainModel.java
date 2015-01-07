@@ -25,10 +25,8 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -40,18 +38,12 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDiskListModel;
-import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -63,68 +55,20 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.inject.Inject;
 
-public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
+public class ImportVmFromExportDomainModel extends ImportVmModel {
     public static final String ON_DISK_LOAD = "OnDiskLoad"; //$NON-NLS-1$
 
-    ArchitectureType targetArchitecture;
     private final VmImportDiskListModel importDiskListModel;
-    private StoragePool storagePool;
-    private boolean hasQuota;
     private final Map<Guid, List<Disk>> missingTemplateDiskMap = new HashMap<>();
     protected ArrayList<StorageDomain> filteredStorageDomains;
     private Map<Guid, ArrayList<Quota>> storageQuotaMap;
     private final Map<Guid, List<Disk>> templateDiskMap = new HashMap<>();
     private final Map<Guid, ImportDiskData> diskImportDataMap = new HashMap<>();
 
-    public StoragePool getStoragePool() {
-        return storagePool;
-    }
-
-    public void setStoragePool(StoragePool storagePool) {
-        this.storagePool = storagePool;
-    }
-
-    public ArchitectureType getTargetArchitecture() {
-        return targetArchitecture;
-    }
-
-    public void setTargetArchitecture(ArchitectureType targetArchitecture) {
-        this.targetArchitecture = targetArchitecture;
-    }
-
     private final StorageDiskListModel storageDiskListModel;
 
     public StorageDiskListModel getStorage() {
         return storageDiskListModel;
-    }
-
-    private final ClusterListModel<Void> cluster;
-
-    public ClusterListModel<Void> getCluster() {
-        return cluster;
-    }
-
-    private ListModel<CpuProfile> cpuProfiles;
-
-    public ListModel<CpuProfile> getCpuProfiles() {
-        return cpuProfiles;
-    }
-
-    private void setCpuProfiles(ListModel<CpuProfile> value) {
-        cpuProfiles = value;
-    }
-
-// TODO: should the above be a CpuProfileListModel?
-//    private final CpuProfileListModel cpuProfiles;
-//
-//    public CpuProfileListModel getCpuProfiles() {
-//        return cpuProfiles;
-//    }
-
-    private final QuotaListModel<Void> clusterQuota;
-
-    public QuotaListModel<Void> getClusterQuota() {
-        return clusterQuota;
     }
 
     private UICommand closeCommand;
@@ -137,39 +81,6 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
         return closeCommand;
     }
 
-    private final IEventListener<EventArgs> clusterChangedListener = new IEventListener<EventArgs>() {
-
-        @Override
-        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-            if (hasQuota) {
-                Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForVdsGroup,
-                    new IdQueryParameters(getCluster().getSelectedItem().getId()),
-                    new AsyncQuery(ImportVmFromExportDomainModel.this,
-                            new INewAsyncCallback() {
-
-                                @Override
-                                public void onSuccess(Object model, Object returnValue) {
-                                    ImportVmFromExportDomainModel importVmModel = (ImportVmFromExportDomainModel) model;
-                                    ArrayList<Quota> quotaList = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                                    importVmModel.getClusterQuota().setItems(quotaList);
-                                    if (quotaList.isEmpty()
-                                            && QuotaEnforcementTypeEnum.HARD_ENFORCEMENT.equals(storagePool.getQuotaEnforcementType())) {
-                                        setMessage(ConstantsManager.getInstance()
-                                                .getConstants()
-                                                .missingQuotaClusterEnforceMode());
-                                    } else if (getMessage() != null
-                                            && getMessage().equals(ConstantsManager.getInstance()
-                                                    .getConstants()
-                                                    .missingQuotaClusterEnforceMode())) {
-                                        setMessage("");
-                                    }
-                                }
-                            }));
-            }
-            fetchCpuProfiles(getCluster().getSelectedItem().getId());
-        }
-    };
-
     @Override
     public void setSelectedItem(Object value) {
         super.setSelectedItem(value);
@@ -181,24 +92,10 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
             final StorageDiskListModel storageDomain, final ClusterListModel<Void> cluster, final QuotaListModel clusterQuota,
             final VmImportGeneralModel vmImportGeneralModel, final VmImportInterfaceListModel vmImportInterfaceListModel,
             final VmImportAppListModel vmImportAppListModel) {
+        super(cluster, clusterQuota);
         importDiskListModel = vmImportDiskListModel;
         storageDiskListModel = storageDomain;
-        this.cluster = cluster;
-        this.clusterQuota = clusterQuota;
-        setCpuProfiles(new ListModel<CpuProfile>());
-        setDetailList(vmImportGeneralModel, vmImportInterfaceListModel, vmImportAppListModel);
-    }
-
-    private void setDetailList(final VmImportGeneralModel vmImportGeneralModel,
-            final VmImportInterfaceListModel vmImportInterfaceListModel,
-            final VmImportAppListModel vmImportAppListModel) {
-        getClusterQuota().setIsAvailable(false);
-        List<HasEntity> list = new ArrayList<>();
-        list.add(vmImportGeneralModel);
-        list.add(vmImportInterfaceListModel);
-        list.add(importDiskListModel);
-        list.add(vmImportAppListModel);
-        setDetailModels(list);
+        setDetailList(vmImportGeneralModel, vmImportInterfaceListModel, importDiskListModel, vmImportAppListModel);
     }
 
     protected void doInit(final Guid storageDomainId) {
@@ -273,25 +170,11 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
                        }
 
                    }),
-                           dataCenter.getId(), true, false);
+                   dataCenter.getId(), true, false);
                }
            }
        }),
                storageDomainId);
-    }
-
-    private void fetchCpuProfiles(Guid clusterId) {
-        Frontend.getInstance().runQuery(VdcQueryType.GetCpuProfilesByClusterId,
-                new IdQueryParameters(clusterId),
-                new AsyncQuery(new INewAsyncCallback() {
-
-                    @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        List<CpuProfile> cpuProfiles =
-                                ((VdcQueryReturnValue) returnValue).getReturnValue();
-                        getCpuProfiles().setItems(cpuProfiles);
-                    }
-                }));
     }
 
     private void initQuotaForStorageDomains() {
@@ -604,127 +487,15 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
                 && getClusterQuota().getIsValid();
     }
 
-    protected boolean validateNames() {
-        boolean valid = true;
-        for (ImportVmData importVmData : (Iterable<ImportVmData>) getItems()) {
-            if (!validateName(importVmData)) {
-                valid = false;
-            }
-        }
-
-        if (!valid) {
-            onPropertyChanged(new PropertyChangedEventArgs("InvalidVm")); //$NON-NLS-1$
-        }
-        return valid;
-    }
-
-    private boolean validateName(final ImportVmData data) {
-        final int maxNameLength = getMaxNameLength(data.getVm());
-        EntityModel<String> tmp = new EntityModel<>(data.getVm().getName());
-        tmp.validateEntity(
-                new IValidation[] {
-                        new NotEmptyValidation(),
-                        new LengthValidation(maxNameLength),
-                        new I18NNameValidation(),
-                        new UniqueNameValidator(data),
-                        new IValidation() {
-                            @Override
-                            public ValidationResult validate(Object value) {
-                                return data.isNameExistsInTheSystem() && data.getName().equals(data.getVm().getName())?
-                                       ValidationResult.fail(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason())
-                                       : ValidationResult.ok();
-                            }
-                        }
-                });
-
-        data.setError(tmp.getIsValid() ? null : ConstantsManager.getInstance().getConstants().invalidName());
-        return tmp.getIsValid();
-    }
-
-    private class UniqueNameValidator implements IValidation {
-        ImportVmData data;
-
-        UniqueNameValidator(ImportVmData data) {
-            this.data = data;
-        }
-
-        @Override
-        public ValidationResult validate(Object value) {
-            return !isVmNameUnique() ?
-                    ValidationResult.fail(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason())
-                    : ValidationResult.ok();
-        }
-
-        private boolean isVmNameUnique() {
-            for (Object item : getItems()) {
-                ImportVmData data = (ImportVmData) item;
-                if (this.data != data && this.data.getVm().getName().equals(data.getVm().getName())) {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    protected int getMaxNameLength(VM vm) {
-        return AsyncDataProvider.getInstance().isWindowsOsType(vm.getOs()) ?
-                AsyncDataProvider.getInstance().getMaxVmNameLengthWin()
-                : AsyncDataProvider.getInstance().getMaxVmNameLengthNonWin();
-    }
-
-    private String createSearchPattern(Collection<VM> vms) {
-        String vm_guidKey = "ID ="; //$NON-NLS-1$
-        String vm_nameKey = "NAME ="; //$NON-NLS-1$
-        String orKey = " or "; //$NON-NLS-1$
-        StringBuilder searchPattern = new StringBuilder();
-        searchPattern.append("VM: "); //$NON-NLS-1$
-
-        for (VM vm : vms) {
-            searchPattern.append(vm_guidKey);
-            searchPattern.append(vm.getId().toString());
-            searchPattern.append(orKey);
-            searchPattern.append(vm_nameKey);
-            searchPattern.append(vm.getName());
-            searchPattern.append(orKey);
-        }
-
-        return searchPattern.substring(0, searchPattern.length() - orKey.length());
-    }
-
     public void init(final List<VM> externalVms, final Guid storageDomainId) {
-        Frontend.getInstance().runQuery(VdcQueryType.Search,
-                new SearchParameters(createSearchPattern(externalVms), SearchType.VM),
-                new AsyncQuery(this, new INewAsyncCallback() {
-
+        super.setItems(
+                new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        List<VM> vms = ((VdcQueryReturnValue) returnValue).getReturnValue();
-
-                        Set<String> existingNames = new HashSet<>();
-                        for (VM vm : vms) {
-                            existingNames.add(vm.getName());
-                        }
-
-                        List<ImportVmData> vmDataList = new ArrayList<>();
-                        for (VM vm : externalVms) {
-                            ImportVmData vmData = new ImportVmData(vm);
-                            if (vms.contains(vm)) {
-                                vmData.setExistsInSystem(true);
-                                vmData.getClone().setEntity(true);
-                                vmData.getClone().setChangeProhibitionReason(ConstantsManager.getInstance()
-                                        .getConstants()
-                                        .importVMThatExistsInSystemMustClone());
-                                vmData.getClone().setIsChangeable(false);
-                            }
-
-                            vmData.setNameExistsInTheSystem(existingNames.contains(vm.getName()));
-
-                            vmDataList.add(vmData);
-                        }
-                        ImportVmFromExportDomainModel.super.setItems(vmDataList);
                         doInit(storageDomainId);
                     }
-                }));
+                },
+                externalVms);
     }
 
     @Override
@@ -756,6 +527,7 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
                 callback,
                 this);
     }
+
 
     private List<VdcActionParametersBase> buildImportVmParameters() {
         List<VdcActionParametersBase> prms = new ArrayList<>();
@@ -806,7 +578,6 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
             }
 
             prms.add(prm);
-
         }
 
         return prms;

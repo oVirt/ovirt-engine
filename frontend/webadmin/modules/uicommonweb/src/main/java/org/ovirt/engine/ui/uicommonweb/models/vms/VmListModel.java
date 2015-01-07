@@ -2500,7 +2500,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     }
 
     private void onRestoreFromExportDomain() {
-        ImportVmFromExportDomainModel importModel = (ImportVmFromExportDomainModel) getWindow();
+        ImportVmModel importModel = (ImportVmModel) getWindow();
         if (importModel.getProgress() != null) {
             return;
         }
@@ -2509,11 +2509,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             return;
         }
 
-        executeImport(importModel);
-    }
-
-    protected void executeImport(ImportVmFromExportDomainModel importVmModel) {
-        importVmModel.importVms(
+        importModel.importVms(
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
