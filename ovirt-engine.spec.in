@@ -446,6 +446,13 @@ Requires:	%{name} = %{version}-%{release}
 %description userportal
 The user portal interface to %{ovirt_product_name_short}
 
+%package userportal-debuginfo
+Summary:	Debug information for User Portal of %{ovirt_product_name_short}
+Group:		%{ovirt_product_group}
+
+%description userportal-debuginfo
+Debug information for the user portal interface to %{ovirt_product_name_short}
+
 %package webadmin-portal
 Summary:	Web Admin Portal of %{ovirt_product_name_short}
 Group:		%{ovirt_product_group}
@@ -453,6 +460,13 @@ Requires:	%{name} = %{version}-%{release}
 
 %description webadmin-portal
 The web administration interface to %{ovirt_product_name_short}
+
+%package webadmin-portal-debuginfo
+Summary:	Debug information for Web Admin Portal of %{ovirt_product_name_short}
+Group:		%{ovirt_product_group}
+
+%description webadmin-portal-debuginfo
+Debug information for the web administration interface to %{ovirt_product_name_short}
 
 %package tools
 Summary:	%{ovirt_product_name_short} Tools
@@ -914,6 +928,7 @@ fi
 %config %{_sysconfdir}/logrotate.d/ovirt-engine
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_state}
 %dir %{engine_data}/bin
+%dir %{engine_data}/gwt-symbols
 %dir %{engine_data}/ui-plugins
 %dir %{engine_ear}
 %{engine_data}/conf/osinfo-defaults.properties
@@ -1047,9 +1062,17 @@ fi
 %config %{engine_etc}/usbfilter.txt
 %{engine_ear}/userportal.war
 
+%files userportal-debuginfo
+
+%{engine_data}/gwt-symbols/userportal/
+
 %files webadmin-portal
 
 %{engine_ear}/webadmin.war
+
+%files webadmin-portal-debuginfo
+
+%{engine_data}/gwt-symbols/webadmin/
 
 %files websocket-proxy
 
