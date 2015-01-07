@@ -102,9 +102,9 @@ public class VdsDynamicDAOTest extends BaseDAOTestCase {
     @Test
     public void testUpdateNetConfigDirty() {
         VdsDynamic before = dao.get(existingVds.getId());
-        Boolean netConfigDirty = before.getnet_config_dirty();
+        Boolean netConfigDirty = before.getNetConfigDirty();
         netConfigDirty = Boolean.FALSE.equals(netConfigDirty);
-        before.setnet_config_dirty(netConfigDirty);
+        before.setNetConfigDirty(netConfigDirty);
         dao.updateNetConfigDirty(before.getId(), netConfigDirty);
         VdsDynamic after = dao.get(existingVds.getId());
         assertEquals(before, after);
@@ -128,11 +128,11 @@ public class VdsDynamicDAOTest extends BaseDAOTestCase {
         int memCommited = 50;
         int vmsCoresCount = 15;
         VdsDynamic before = dao.get(existingVds.getId());
-        before.setvm_count(before.getvm_count() + vmCount);
-        before.setpending_vcpus_count(before.getpending_vcpus_count() + pendingVcpusCount);
-        before.setpending_vmem_size(before.getpending_vmem_size() + pendingVmemSize);
-        before.setmem_commited(before.getmem_commited() + memCommited + before.getguest_overhead());
-        before.setvms_cores_count(before.getvms_cores_count() + vmsCoresCount);
+        before.setVmCount(before.getVmCount() + vmCount);
+        before.setPendingVcpusCount(before.getPendingVcpusCount() + pendingVcpusCount);
+        before.setPendingVmemSize(before.getPendingVmemSize() + pendingVmemSize);
+        before.setMemCommited(before.getMemCommited() + memCommited + before.getGuestOverhead());
+        before.setVmsCoresCount(before.getVmsCoresCount() + vmsCoresCount);
         dao.updatePartialVdsDynamicCalc(before.getId(),
                 vmCount,
                 pendingVcpusCount,
@@ -142,9 +142,9 @@ public class VdsDynamicDAOTest extends BaseDAOTestCase {
         VdsDynamic after = dao.get(existingVds.getId());
         assertEquals(before, after);
 
-        vmCount = before.getvm_count() + 1;
-        before.setvm_count(0);
-        before.setmem_commited(before.getmem_commited() - memCommited - before.getguest_overhead());
+        vmCount = before.getVmCount() + 1;
+        before.setVmCount(0);
+        before.setMemCommited(before.getMemCommited() - memCommited - before.getGuestOverhead());
         dao.updatePartialVdsDynamicCalc(before.getId(), -vmCount, 0, 0, -memCommited, 0);
         after = dao.get(existingVds.getId());
         assertEquals(before, after);

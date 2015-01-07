@@ -42,46 +42,46 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
         @Override
         public VdsDynamic mapRow(ResultSet rs, int rowNum) throws SQLException {
             VdsDynamic entity = new VdsDynamic();
-            entity.setcpu_cores((Integer) rs.getObject("cpu_cores"));
+            entity.setCpuCores((Integer) rs.getObject("cpu_cores"));
             entity.setCpuThreads((Integer) rs.getObject("cpu_threads"));
-            entity.setcpu_model(rs.getString("cpu_model"));
+            entity.setCpuModel(rs.getString("cpu_model"));
             entity.setOnlineCpus(rs.getString("online_cpus"));
-            entity.setcpu_speed_mh(rs.getDouble("cpu_speed_mh"));
-            entity.setif_total_speed(rs.getString("if_total_speed"));
-            entity.setkvm_enabled((Boolean) rs.getObject("kvm_enabled"));
-            entity.setmem_commited((Integer) rs.getObject("mem_commited"));
-            entity.setphysical_mem_mb((Integer) rs
+            entity.setCpuSpeedMh(rs.getDouble("cpu_speed_mh"));
+            entity.setIfTotalSpeed(rs.getString("if_total_speed"));
+            entity.setKvmEnabled((Boolean) rs.getObject("kvm_enabled"));
+            entity.setMemCommited((Integer) rs.getObject("mem_commited"));
+            entity.setPhysicalMemMb((Integer) rs
                     .getObject("physical_mem_mb"));
             entity.setStatus(VDSStatus.forValue(rs.getInt("status")));
             entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
-            entity.setvm_active((Integer) rs.getObject("vm_active"));
-            entity.setvm_count(rs.getInt("vm_count"));
-            entity.setvms_cores_count(rs.getInt("vms_cores_count"));
-            entity.setvm_migrating((Integer) rs.getObject("vm_migrating"));
-            entity.setreserved_mem((Integer) rs.getObject("reserved_mem"));
-            entity.setguest_overhead(rs.getInt("guest_overhead"));
-            entity.setsoftware_version(rs.getString("software_version"));
-            entity.setversion_name(rs.getString("version_name"));
+            entity.setVmActive((Integer) rs.getObject("vm_active"));
+            entity.setVmCount(rs.getInt("vm_count"));
+            entity.setVmsCoresCount(rs.getInt("vms_cores_count"));
+            entity.setVmMigrating((Integer) rs.getObject("vm_migrating"));
+            entity.setReservedMem((Integer) rs.getObject("reserved_mem"));
+            entity.setGuestOverhead(rs.getInt("guest_overhead"));
+            entity.setSoftwareVersion(rs.getString("software_version"));
+            entity.setVersionName(rs.getString("version_name"));
             entity.setVersion(new RpmVersion(rs.getString("rpm_version")));
-            entity.setbuild_name(rs.getString("build_name"));
-            entity.setprevious_status(VDSStatus.forValue(rs
+            entity.setBuildName(rs.getString("build_name"));
+            entity.setPreviousStatus(VDSStatus.forValue(rs
                     .getInt("previous_status")));
-            entity.setcpu_flags(rs.getString("cpu_flags"));
-            entity.setpending_vcpus_count((Integer) rs
+            entity.setCpuFlags(rs.getString("cpu_flags"));
+            entity.setPendingVcpusCount((Integer) rs
                     .getObject("pending_vcpus_count"));
-            entity.setpending_vmem_size(rs.getInt("pending_vmem_size"));
-            entity.setcpu_sockets((Integer) rs.getObject("cpu_sockets"));
-            entity.setnet_config_dirty((Boolean) rs
+            entity.setPendingVmemSize(rs.getInt("pending_vmem_size"));
+            entity.setCpuSockets((Integer) rs.getObject("cpu_sockets"));
+            entity.setNetConfigDirty((Boolean) rs
                     .getObject("net_config_dirty"));
-            entity.setsupported_cluster_levels(rs
+            entity.setSupportedClusterLevels(rs
                     .getString("supported_cluster_levels"));
-            entity.setsupported_engines(rs.getString("supported_engines"));
-            entity.sethost_os(rs.getString("host_os"));
-            entity.setkvm_version(rs.getString("kvm_version"));
-            entity.setlibvirt_version(new RpmVersion(rs.getString("libvirt_version")));
-            entity.setspice_version(rs.getString("spice_version"));
+            entity.setSupportedEngines(rs.getString("supported_engines"));
+            entity.setHostOs(rs.getString("host_os"));
+            entity.setKvmVersion(rs.getString("kvm_version"));
+            entity.setLibvirtVersion(new RpmVersion(rs.getString("libvirt_version")));
+            entity.setSpiceVersion(rs.getString("spice_version"));
             entity.setGlusterVersion(new RpmVersion(rs.getString("gluster_version")));
-            entity.setkernel_version(rs.getString("kernel_version"));
+            entity.setKernelVersion(rs.getString("kernel_version"));
             entity.setIScsiInitiatorName(rs
                     .getString("iscsi_initiator_name"));
             entity.setTransparentHugePagesState(VdsTransparentHugePagesState
@@ -197,42 +197,42 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
     @Override
     protected MapSqlParameterSource createFullParametersMapper(VdsDynamic vds) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("cpu_cores", vds.getcpu_cores())
+                .addValue("cpu_cores", vds.getCpuCores())
                 .addValue("cpu_threads", vds.getCpuThreads())
-                .addValue("cpu_model", vds.getcpu_model())
+                .addValue("cpu_model", vds.getCpuModel())
                 .addValue("online_cpus", vds.getOnlineCpus())
-                .addValue("cpu_speed_mh", vds.getcpu_speed_mh())
-                .addValue("if_total_speed", vds.getif_total_speed())
-                .addValue("kvm_enabled", vds.getkvm_enabled())
-                .addValue("mem_commited", vds.getmem_commited())
-                .addValue("physical_mem_mb", vds.getphysical_mem_mb())
+                .addValue("cpu_speed_mh", vds.getCpuSpeedMh())
+                .addValue("if_total_speed", vds.getIfTotalSpeed())
+                .addValue("kvm_enabled", vds.getKvmEnabled())
+                .addValue("mem_commited", vds.getMemCommited())
+                .addValue("physical_mem_mb", vds.getPhysicalMemMb())
                 .addValue("status", vds.getStatus())
                 .addValue("vds_id", vds.getId())
-                .addValue("vm_active", vds.getvm_active())
-                .addValue("vm_count", vds.getvm_count())
-                .addValue("vms_cores_count", vds.getvms_cores_count())
-                .addValue("vm_migrating", vds.getvm_migrating())
-                .addValue("reserved_mem", vds.getreserved_mem())
-                .addValue("guest_overhead", vds.getguest_overhead())
+                .addValue("vm_active", vds.getVmActive())
+                .addValue("vm_count", vds.getVmCount())
+                .addValue("vms_cores_count", vds.getVmsCoresCount())
+                .addValue("vm_migrating", vds.getVmMigrating())
+                .addValue("reserved_mem", vds.getReservedMem())
+                .addValue("guest_overhead", vds.getGuestOverhead())
                 .addValue("rpm_version", vds.getVersion().getRpmName())
-                .addValue("software_version", vds.getsoftware_version())
-                .addValue("version_name", vds.getversion_name())
-                .addValue("build_name", vds.getbuild_name())
-                .addValue("previous_status", vds.getprevious_status())
-                .addValue("cpu_flags", vds.getcpu_flags())
-                .addValue("pending_vcpus_count", vds.getpending_vcpus_count())
-                .addValue("pending_vmem_size", vds.getpending_vmem_size())
-                .addValue("cpu_sockets", vds.getcpu_sockets())
-                .addValue("net_config_dirty", vds.getnet_config_dirty())
+                .addValue("software_version", vds.getSoftwareVersion())
+                .addValue("version_name", vds.getVersionName())
+                .addValue("build_name", vds.getBuildName())
+                .addValue("previous_status", vds.getPreviousStatus())
+                .addValue("cpu_flags", vds.getCpuFlags())
+                .addValue("pending_vcpus_count", vds.getPendingVcpusCount())
+                .addValue("pending_vmem_size", vds.getPendingVmemSize())
+                .addValue("cpu_sockets", vds.getCpuSockets())
+                .addValue("net_config_dirty", vds.getNetConfigDirty())
                 .addValue("supported_cluster_levels",
-                        vds.getsupported_cluster_levels())
-                .addValue("supported_engines", vds.getsupported_engines())
-                .addValue("host_os", vds.gethost_os())
-                .addValue("kvm_version", vds.getkvm_version())
-                .addValue("libvirt_version", vds.getlibvirt_version().getRpmName())
-                .addValue("spice_version", vds.getspice_version())
+                        vds.getSupportedClusterLevels())
+                .addValue("supported_engines", vds.getSupportedEngines())
+                .addValue("host_os", vds.getHostOs())
+                .addValue("kvm_version", vds.getKvmVersion())
+                .addValue("libvirt_version", vds.getLibvirtVersion().getRpmName())
+                .addValue("spice_version", vds.getSpiceVersion())
                 .addValue("gluster_version", vds.getGlusterVersion().getRpmName())
-                .addValue("kernel_version", vds.getkernel_version())
+                .addValue("kernel_version", vds.getKernelVersion())
                 .addValue("iscsi_initiator_name", vds.getIScsiInitiatorName())
                 .addValue("transparent_hugepages_state",
                         vds.getTransparentHugePagesState().getValue())

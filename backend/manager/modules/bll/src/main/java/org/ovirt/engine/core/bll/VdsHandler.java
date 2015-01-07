@@ -68,7 +68,7 @@ public class VdsHandler extends BaseHandler {
     }
 
     /**
-     * Extracts the oVirt OS version from raw material of {@code VDS.gethost_os()} field.
+     * Extracts the oVirt OS version from raw material of {@code VDS.getHostOs()} field.
      *
      * @param vds
      *            the ovirt host which its OS version in a format of: [OS Name - OS Version - OS release]

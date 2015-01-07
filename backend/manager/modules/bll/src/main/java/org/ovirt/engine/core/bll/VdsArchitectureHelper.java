@@ -23,7 +23,7 @@ public class VdsArchitectureHelper {
     public ArchitectureType getArchitecture(VdsStatic host) {
         VDSGroup cluster = DbFacade.getInstance().getVdsGroupDao().get(host.getVdsGroupId());
         VdsDynamic vdsDynamic = DbFacade.getInstance().getVdsDynamicDao().get(host.getId());
-        ServerCpu cpu = CpuFlagsManagerHandler.findMaxServerCpuByFlags(vdsDynamic.getcpu_flags(),
+        ServerCpu cpu = CpuFlagsManagerHandler.findMaxServerCpuByFlags(vdsDynamic.getCpuFlags(),
                 cluster.getcompatibility_version());
         if (cpu != null && cpu.getArchitecture() != null) {
             return cpu.getArchitecture();

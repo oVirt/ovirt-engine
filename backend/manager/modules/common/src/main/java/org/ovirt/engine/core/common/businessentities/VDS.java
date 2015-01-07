@@ -377,11 +377,11 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public Integer getCpuCores() {
-        return this.mVdsDynamic.getcpu_cores();
+        return this.mVdsDynamic.getCpuCores();
     }
 
     public void setCpuCores(Integer value) {
-        this.mVdsDynamic.setcpu_cores(value);
+        this.mVdsDynamic.setCpuCores(value);
     }
 
     public Integer getCpuThreads() {
@@ -441,19 +441,19 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public Integer getCpuSockets() {
-        return this.mVdsDynamic.getcpu_sockets();
+        return this.mVdsDynamic.getCpuSockets();
     }
 
     public void setCpuSockets(Integer value) {
-        this.mVdsDynamic.setcpu_sockets(value);
+        this.mVdsDynamic.setCpuSockets(value);
     }
 
     public String getCpuModel() {
-        return this.mVdsDynamic.getcpu_model();
+        return this.mVdsDynamic.getCpuModel();
     }
 
     public void setCpuModel(String value) {
-        this.mVdsDynamic.setcpu_model(value);
+        this.mVdsDynamic.setCpuModel(value);
     }
 
     public String getOnlineCpus() {
@@ -465,43 +465,43 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public Double getCpuSpeedMh() {
-        return this.mVdsDynamic.getcpu_speed_mh();
+        return this.mVdsDynamic.getCpuSpeedMh();
     }
 
     public void setCpuSpeedMh(Double value) {
-        this.mVdsDynamic.setcpu_speed_mh(value);
+        this.mVdsDynamic.setCpuSpeedMh(value);
     }
 
     public String getIfTotalSpeed() {
-        return this.mVdsDynamic.getif_total_speed();
+        return this.mVdsDynamic.getIfTotalSpeed();
     }
 
     public void setIfTotalSpeed(String value) {
-        this.mVdsDynamic.setif_total_speed(value);
+        this.mVdsDynamic.setIfTotalSpeed(value);
     }
 
     public Boolean getKvmEnabled() {
-        return this.mVdsDynamic.getkvm_enabled();
+        return this.mVdsDynamic.getKvmEnabled();
     }
 
     public void setKvmEnabled(Boolean value) {
-        this.mVdsDynamic.setkvm_enabled(value);
+        this.mVdsDynamic.setKvmEnabled(value);
     }
 
     public Integer getPhysicalMemMb() {
-        return this.mVdsDynamic.getphysical_mem_mb();
+        return this.mVdsDynamic.getPhysicalMemMb();
     }
 
     public void setPhysicalMemMb(Integer value) {
-        this.mVdsDynamic.setphysical_mem_mb(value);
+        this.mVdsDynamic.setPhysicalMemMb(value);
     }
 
     public String getSupportedClusterLevels() {
-        return this.mVdsDynamic.getsupported_cluster_levels();
+        return this.mVdsDynamic.getSupportedClusterLevels();
     }
 
     public void setSupportedClusterLevels(String value) {
-        this.mVdsDynamic.setsupported_cluster_levels(value);
+        this.mVdsDynamic.setSupportedClusterLevels(value);
     }
 
     public HashSet<Version> getSupportedClusterVersionsSet() {
@@ -509,15 +509,15 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public String getSupportedEngines() {
-        return this.mVdsDynamic.getsupported_engines();
+        return this.mVdsDynamic.getSupportedEngines();
     }
 
     public void setSupportedEngines(String value) {
-        this.mVdsDynamic.setsupported_engines(value);
+        this.mVdsDynamic.setSupportedEngines(value);
     }
 
     public HashSet<Version> getSupportedENGINESVersionsSet() {
-        return this.mVdsDynamic.getSupportedENGINESVersionsSet();
+        return this.mVdsDynamic.getSupportedEngineVersionsSet();
     }
 
     public Double getCpuIdle() {
@@ -553,20 +553,20 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public Integer getMemCommited() {
-        return this.mVdsDynamic.getmem_commited();
+        return this.mVdsDynamic.getMemCommited();
     }
 
     public void setMemCommited(Integer value) {
-        this.mVdsDynamic.setmem_commited(value);
+        this.mVdsDynamic.setMemCommited(value);
         calculateFreeVirtualMemory();
     }
 
     public Integer getVmActive() {
-        return this.mVdsDynamic.getvm_active();
+        return this.mVdsDynamic.getVmActive();
     }
 
     public void setVmActive(Integer value) {
-        this.mVdsDynamic.setvm_active(value);
+        this.mVdsDynamic.setVmActive(value);
     }
 
     public int getHighlyAvailableScore() {
@@ -610,27 +610,27 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public int getVmCount() {
-        return this.mVdsDynamic.getvm_count();
+        return this.mVdsDynamic.getVmCount();
     }
 
     public void setVmCount(int value) {
-        this.mVdsDynamic.setvm_count(value);
+        this.mVdsDynamic.setVmCount(value);
     }
 
     public Integer getVmsCoresCount() {
-        return this.mVdsDynamic.getvms_cores_count();
+        return this.mVdsDynamic.getVmsCoresCount();
     }
 
     public void setVmsCoresCount(Integer value) {
-        this.mVdsDynamic.setvms_cores_count(value);
+        this.mVdsDynamic.setVmsCoresCount(value);
     }
 
     public Integer getVmMigrating() {
-        return this.mVdsDynamic.getvm_migrating();
+        return this.mVdsDynamic.getVmMigrating();
     }
 
     public void setVmMigrating(Integer value) {
-        this.mVdsDynamic.setvm_migrating(value);
+        this.mVdsDynamic.setVmMigrating(value);
     }
 
     public Integer getUsageMemPercent() {
@@ -658,18 +658,18 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public Integer getGuestOverhead() {
-        return this.mVdsDynamic.getguest_overhead();
+        return this.mVdsDynamic.getGuestOverhead();
     }
 
     public void setGuestOverhead(Integer value) {
-        this.mVdsDynamic.setguest_overhead(value);
+        this.mVdsDynamic.setGuestOverhead(value);
     }
 
     public Integer getReservedMem() {
-        return this.mVdsDynamic.getreserved_mem();
+        return this.mVdsDynamic.getReservedMem();
     }
     public void setReservedMem(Integer value) {
-        this.mVdsDynamic.setreserved_mem(value);
+        this.mVdsDynamic.setReservedMem(value);
     }
 
     public Long getBootTime() {
@@ -681,11 +681,11 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public VDSStatus getPreviousStatus() {
-        return this.mVdsDynamic.getprevious_status();
+        return this.mVdsDynamic.getPreviousStatus();
     }
 
     public void setPreviousStatus(VDSStatus value) {
-        this.mVdsDynamic.setprevious_status(value);
+        this.mVdsDynamic.setPreviousStatus(value);
     }
 
     public Long getMemAvailable() {
@@ -721,8 +721,8 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public Integer getMemCommitedPercent() {
-        Integer commited = mVdsDynamic.getmem_commited();
-        Integer physical = mVdsDynamic.getphysical_mem_mb();
+        Integer commited = mVdsDynamic.getMemCommited();
+        Integer physical = mVdsDynamic.getPhysicalMemMb();
 
         if (commited == null || physical == null || physical == 0) {
             return 0;
@@ -744,7 +744,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
 
     public Integer getMemSharedPercent() {
         Long shared = mVdsStatistics.getMemShared();
-        Integer physical = mVdsDynamic.getphysical_mem_mb();
+        Integer physical = mVdsDynamic.getPhysicalMemMb();
 
         if (shared == null || physical == null || physical == 0) {
             return 0;
@@ -805,35 +805,35 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public String getSoftwareVersion() {
-        return this.mVdsDynamic.getsoftware_version();
+        return this.mVdsDynamic.getSoftwareVersion();
     }
 
     public void setSoftwareVersion(String value) {
-        this.mVdsDynamic.setsoftware_version(value);
+        this.mVdsDynamic.setSoftwareVersion(value);
     }
 
     public String getVersionName() {
-        return this.mVdsDynamic.getversion_name();
+        return this.mVdsDynamic.getVersionName();
     }
 
     public void setVersionName(String value) {
-        this.mVdsDynamic.setversion_name(value);
+        this.mVdsDynamic.setVersionName(value);
     }
 
     public String getBuildName() {
-        return this.mVdsDynamic.getbuild_name();
+        return this.mVdsDynamic.getBuildName();
     }
 
     public void setBuildName(String value) {
-        this.mVdsDynamic.setbuild_name(value);
+        this.mVdsDynamic.setBuildName(value);
     }
 
     public String getCpuFlags() {
-        return mVdsDynamic.getcpu_flags();
+        return mVdsDynamic.getCpuFlags();
     }
 
     public void setCpuFlags(String value) {
-        mVdsDynamic.setcpu_flags(value);
+        mVdsDynamic.setCpuFlags(value);
     }
 
     public Date getCpuOverCommitTimestamp() {
@@ -885,27 +885,27 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public Integer getPendingVcpusCount() {
-        return mVdsDynamic.getpending_vcpus_count();
+        return mVdsDynamic.getPendingVcpusCount();
     }
 
     public void setPendingVcpusCount(Integer value) {
-        mVdsDynamic.setpending_vcpus_count(value);
+        mVdsDynamic.setPendingVcpusCount(value);
     }
 
     public int getPendingVmemSize() {
-        return mVdsDynamic.getpending_vmem_size();
+        return mVdsDynamic.getPendingVmemSize();
     }
 
     public void setPendingVmemSize(int value) {
-        mVdsDynamic.setpending_vmem_size(value);
+        mVdsDynamic.setPendingVmemSize(value);
     }
 
     public Boolean getNetConfigDirty() {
-        return mVdsDynamic.getnet_config_dirty();
+        return mVdsDynamic.getNetConfigDirty();
     }
 
     public void setNetConfigDirty(Boolean value) {
-        mVdsDynamic.setnet_config_dirty(value);
+        mVdsDynamic.setNetConfigDirty(value);
     }
 
     public boolean isPmKdumpDetection() {
@@ -933,35 +933,35 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public String getHostOs() {
-        return this.mVdsDynamic.gethost_os();
+        return this.mVdsDynamic.getHostOs();
     }
 
     public void setHostOs(String value) {
-        this.mVdsDynamic.sethost_os(value);
+        this.mVdsDynamic.setHostOs(value);
     }
 
     public String getKvmVersion() {
-        return this.mVdsDynamic.getkvm_version();
+        return this.mVdsDynamic.getKvmVersion();
     }
 
     public void setKvmVersion(String value) {
-        this.mVdsDynamic.setkvm_version(value);
+        this.mVdsDynamic.setKvmVersion(value);
     }
 
     public RpmVersion getLibvirtVersion() {
-        return this.mVdsDynamic.getlibvirt_version();
+        return this.mVdsDynamic.getLibvirtVersion();
     }
 
     public void setLibvirtVersion(RpmVersion value) {
-        this.mVdsDynamic.setlibvirt_version(value);
+        this.mVdsDynamic.setLibvirtVersion(value);
     }
 
     public String getSpiceVersion() {
-        return this.mVdsDynamic.getspice_version();
+        return this.mVdsDynamic.getSpiceVersion();
     }
 
     public void setSpiceVersion(String value) {
-        this.mVdsDynamic.setspice_version(value);
+        this.mVdsDynamic.setSpiceVersion(value);
     }
 
     public RpmVersion getGlusterVersion() {
@@ -973,11 +973,11 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public String getKernelVersion() {
-        return this.mVdsDynamic.getkernel_version();
+        return this.mVdsDynamic.getKernelVersion();
     }
 
     public void setKernelVersion(String value) {
-        this.mVdsDynamic.setkernel_version(value);
+        this.mVdsDynamic.setKernelVersion(value);
     }
 
     public void setIScsiInitiatorName(String value) {

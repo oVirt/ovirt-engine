@@ -24,7 +24,7 @@ public class CollectVdsNetworkDataAfterInstallationVDSCommand extends CollectVds
         super.persistCollectedData();
         VdsDynamicDAO vdsDynamicDao = DbFacade.getInstance().getVdsDynamicDao();
         VdsDynamic hostFromDb = vdsDynamicDao.get(getVds().getId());
-        hostFromDb.setsupported_cluster_levels(getVds().getDynamicData().getsupported_cluster_levels());
+        hostFromDb.setSupportedClusterLevels(getVds().getDynamicData().getSupportedClusterLevels());
         vdsDynamicDao.update(hostFromDb);
     }
 }
