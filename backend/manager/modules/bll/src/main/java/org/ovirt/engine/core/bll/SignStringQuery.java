@@ -20,7 +20,8 @@ public class SignStringQuery<P extends SignStringParameters> extends QueriesComm
 
             getQueryReturnValue().setSucceeded(true);
         } catch (Exception e) {
-            log.error("Error when signing string: " + e.getMessage());
+            log.error("Error when signing string: {}", e.getMessage());
+            log.debug("Exception", e);
         }
     }
 

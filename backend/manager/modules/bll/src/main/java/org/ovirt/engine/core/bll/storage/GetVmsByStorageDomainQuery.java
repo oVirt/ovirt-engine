@@ -55,8 +55,9 @@ public class GetVmsByStorageDomainQuery<P extends IdQueryParameters>
             getQueryReturnValue().setReturnValue(vms);
         }
         else {
-            log.error("Failed to retrieve disks by storage domain id " + domainId + " due to exception "
-                    + queryReturnValue.getExceptionString());
+            log.error("Failed to retrieve disks by storage domain id '{}': {}",
+                    domainId,
+                    queryReturnValue.getExceptionString());
             getQueryReturnValue().setSucceeded(false);
             getQueryReturnValue().setExceptionString(queryReturnValue.getExceptionString());
         }

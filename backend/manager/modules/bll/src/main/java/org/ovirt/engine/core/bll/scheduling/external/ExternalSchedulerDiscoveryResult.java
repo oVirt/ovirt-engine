@@ -52,8 +52,9 @@ public class ExternalSchedulerDiscoveryResult {
                     String customPropertiesRegex = singleModule[1].toString();
                     if (!StringUtils.isEmpty(customPropertiesRegex) && SimpleCustomPropertiesUtil.getInstance()
                             .syntaxErrorInProperties(customPropertiesRegex)) {
-                        log.error("module " + moduleName + " will not be loaded, wrong custom properties format ("
-                                + customPropertiesRegex + ")");
+                        log.error("Module '{}' will not be loaded, wrong custom properties format ({})",
+                                moduleName,
+                                customPropertiesRegex);
                         continue;
                     }
                     ExternalSchedulerDiscoveryUnit currentUnit = new ExternalSchedulerDiscoveryUnit(moduleName,

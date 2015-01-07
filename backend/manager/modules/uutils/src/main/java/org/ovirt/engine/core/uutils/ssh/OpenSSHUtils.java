@@ -35,7 +35,7 @@ public class OpenSSHUtils {
     public static byte[] getKeyBytes(final PublicKey key) {
         // We only support RSA at the moment:
         if (!(key instanceof RSAPublicKey)) {
-            log.error("The key algorithm \"" + key.getAlgorithm() + "\" is not supported, will return null.");
+            log.error("The key algorithm '{}' is not supported, will return null.", key.getAlgorithm());
             return null;
         }
 
@@ -109,7 +109,7 @@ public class OpenSSHUtils {
         final Base64 encoder = new Base64(0);
         final String encoding = encoder.encodeToString(keyBytes);
         if (log.isDebugEnabled()) {
-            log.debug("Key encoding is \"{}\".", encoding);
+            log.debug("Key encoding is '{}'.", encoding);
         }
 
         // Return the generated SSH public key:
@@ -124,7 +124,7 @@ public class OpenSSHUtils {
         buffer.append('\n');
         final String keyString = buffer.toString();
         if (log.isDebugEnabled()) {
-            log.debug("Key string is \"{}\".", keyString);
+            log.debug("Key string is '{}'.", keyString);
         }
 
         return keyString;
@@ -138,7 +138,7 @@ public class OpenSSHUtils {
      */
     public static final byte[] getKeyFingerprintBytes(final PublicKey key) {
         if (key == null) {
-            log.error("Public key is null, failed to retreive fingerprint.");
+            log.error("Public key is null, failed to retrieve fingerprint.");
             return null;
         }
 
@@ -186,7 +186,7 @@ public class OpenSSHUtils {
         }
         final String fingerprintString = buffer.toString();
         if (log.isDebugEnabled()) {
-            log.debug("Fingerprint string is \"{}\".", fingerprintString);
+            log.debug("Fingerprint string is '{}'.", fingerprintString);
         }
 
         return fingerprintString;

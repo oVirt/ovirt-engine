@@ -302,7 +302,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         boolean isDisconnectSucceeded =
                 runVdsCommand(VDSCommandType.DisconnectStorageServer, connectionParametersForVdsm).getSucceeded();
         if (!isDisconnectSucceeded) {
-            log.warn("Failed to disconnect storage connection " + getConnection());
+            log.warn("Failed to disconnect storage connection {}", getConnection());
         }
     }
 

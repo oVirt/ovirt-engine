@@ -45,8 +45,8 @@ public class GetProviderCertificateChainQuery<P extends ProviderQueryParameters>
                 getQueryReturnValue().setReturnValue(results);
             }
         } catch (Exception e) {
-            log.error("Error in encoding certificate. Error is {} " + e.getMessage());
-            log.debug("Exeption:", e);
+            log.error("Error in encoding certificate: {}", e.getMessage());
+            log.debug("Exception", e);
         }
     }
 

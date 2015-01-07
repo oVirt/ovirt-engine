@@ -87,8 +87,10 @@ public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVd
                     break;
                 }
             } catch (ExecutionException | InterruptedException e) {
-                log.warn("Attempt to start host: " + getVdsName()
-                        + " using one of its agents has failed.", e);
+                log.warn("Attempt to start host '{}' using one of its agents has failed: {}",
+                        getVdsName(),
+                        e.getMessage());
+                log.debug("Exception", e);
             }
         }
         if (result != null && !result.getSucceeded()) {
@@ -99,13 +101,14 @@ public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVd
 
     private void cancelFutureTasks(List<Future<VDSFenceReturnValue>> futures, Guid agentId) {
         if (!futures.isEmpty()) {
-            log.info("Start of host: " + getVdsName()
-                    + " succeeded using fencing agent: " + agentId
-                    + ", canelling concurrent attempts by other agents to start the host");
+            log.info("Start of host '{}' succeeded using fencing agent '{}',"
+                            + " cancelling concurrent attempts by other agents to start the host",
+                    getVdsName(),
+                    agentId);
         }
         for (Future<VDSFenceReturnValue> future : futures) {
             try {
-                log.info("Cancelling agent: " + future.get().getFenceAgentUsed().getId());
+                log.info("Cancelling agent '{}' ", future.get().getFenceAgentUsed().getId());
             } catch (InterruptedException | ExecutionException e) {
                 // do nothing
             }
@@ -136,7 +139,7 @@ public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVd
         addCanDoActionMessage(VdcBllMessages.VDS_FENCE_OPERATION_FAILED);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__START);
-        log.error("Failed to run StartVdsCommand on vds '{}'", getVdsName());
+        log.error("Failed to run StartVdsCommand on host '{}'", getVdsName());
     }
 
     @Override

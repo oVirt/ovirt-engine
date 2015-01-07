@@ -23,7 +23,7 @@ public class CommandEntityCleanupManager {
     }
 
     private CommandEntityCleanupManager() {
-        log.info("Start initializing " + getClass().getSimpleName());
+        log.info("Start initializing {}", getClass().getSimpleName());
         Calendar calendar = new GregorianCalendar();
         Date mCommandEntityCleanupTime = Config.<DateTime> getValue(ConfigValues.CommandEntityCleanupTime);
         calendar.setTimeInMillis(mCommandEntityCleanupTime.getTime());

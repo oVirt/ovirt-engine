@@ -485,7 +485,7 @@ public class HostMonitoring {
         checkVdsInterfaces();
 
         if (Config.<Boolean> getValue(ConfigValues.DebugTimerLogging)) {
-            log.debug("vds::refreshVdsStats\n{0}", this);
+            log.debug("vds::refreshVdsStats\n{}", this);
         }
     }
 

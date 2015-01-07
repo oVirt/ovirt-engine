@@ -95,7 +95,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
 
     @Override
     protected void executeCommand() {
-        log.info("Power-Management: " + getAction() + " of Host " + getVdsName() + " initiated.");
+        log.info("Power-Management: {} of host '{}' initiated.", getAction(), getVdsName());
         audit(AuditLogType.FENCE_OPERATION_STARTED);
         VDSStatus lastStatus = getVds().getStatus();
         VDSFenceReturnValue result = null;
@@ -104,10 +104,10 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             result = fence();
             handleResult(result);
             if (getSucceeded()) {
-                log.info("Power-Management: " + getAction() + " Host " + getVdsName() + " succeeded.");
+                log.info("Power-Management: {} host '{}' succeeded.", getAction(), getVdsName());
                 audit(AuditLogType.FENCE_OPERATION_SUCCEEDED);
             } else {
-                log.info("Power-Management: " + getAction() + " Host " + getVdsName() + " failed.");
+                log.info("Power-Management: {} host '{}' failed.", getAction(), getVdsName());
                 audit(AuditLogType.FENCE_OPERATION_FAILED);
             }
         } finally {
@@ -200,7 +200,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         FenceExecutor fenceExecutor = createFenceExecutor();
         VDSFenceReturnValue fenceExecutionResult = fenceExecutor.fence(getAction(), fenceAgent);
         if (wasSkippedDueToStatus(fenceExecutionResult)) {
-            log.info("Attemp to {} VDS using fence agent{} skipped: Host is already at the requested state.",
+            log.info("Attemp to {} host using fence agent '{}' skipped, host is already at the requested state.",
                     getAction().name().toLowerCase(),
                     fenceAgent.getId());
         }
@@ -228,7 +228,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
 
     private void logAgentFailure(final VDSFenceReturnValue result) {
         if (!wasSkippedDueToPolicy(result)) {
-            log.error("Failed to {} VDS using fence agent {} (if other agents are running, {} may still succeed).",
+            log.error("Failed to {} host using fence agent {} (if other agents are running, {} may still succeed).",
                     getAction().name().toLowerCase(),
                     result.getFenceAgentUsed().getId() == null ? "New Agent (no ID)" : result.getFenceAgentUsed()
                             .getId(),
@@ -266,7 +266,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         boolean requiredStatusReached = false;
         String requiredStatus = getRequiredStatus();
         String hostName = getVds().getName();
-        log.info("Waiting for vds {} to reach status {}", hostName, requiredStatus);
+        log.info("Waiting for host '{}' to reach status '{}'", hostName, requiredStatus);
         // Waiting before first attempt to check the host status.
         // This is done because if we will attempt to get host status immediately
         // in most cases it will not turn from on/off to off/on and we will need
@@ -274,7 +274,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         ThreadUtils.sleep(SLEEP_BEFORE_FIRST_ATTEMPT);
         int retries = getWaitForStatusRerties();
         while (!requiredStatusReached && i <= retries) {
-            log.info("Attempt {} to get vds {} status", i, hostName);
+            log.info("Attempt {} to get host '{}' status", i, hostName);
             VDSFenceReturnValue returnValue = executor.checkStatus();
             if (returnValue != null && returnValue.getSucceeded()) {
                 String status = ((FenceStatusReturnValue) returnValue.getReturnValue()).getStatus();
@@ -286,14 +286,14 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                         j++;
                     } else {
                         // No need to retry , agent definitions are corrupted
-                        log.error("Host {} PM Agent definitions are corrupted, aborting fence operation.", hostName);
+                        log.error("Host '{}' PM Agent definitions are corrupted, aborting fence operation.", hostName);
                         break;
                     }
                 }
                 else {
                     if (requiredStatus.equalsIgnoreCase(status)) {
                         requiredStatusReached = true;
-                        log.info("vds {} status is {}", hostName, requiredStatus);
+                        log.info("Host '{}' status is '{}'", hostName, requiredStatus);
                     } else {
                         i++;
                         if (i <= retries) {
@@ -302,7 +302,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                     }
                 }
             } else {
-                log.error("Failed to get host {} status.", hostName);
+                log.error("Failed to get host '{}' status.", hostName);
                 break;
             }
         }
@@ -318,7 +318,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         auditLogable.addCustomValue("Status", actionName);
         auditLogable.setVdsId(getVds().getId());
         AuditLogDirector.log(auditLogable, AuditLogType.VDS_ALERT_FENCE_STATUS_VERIFICATION_FAILED);
-        log.error("Failed to verify host {} {} status. Have retried {} times with delay of {} seconds between each retry.",
+        log.error("Failed to verify host '{}' {} status. Have retried {} times with delay of {} seconds between each retry.",
                 getVds().getName(),
                 getAction().name(),
                 getWaitForStatusRerties(),
@@ -346,7 +346,8 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         }
         String agentIds = builder.toString();
         agentIds = agentIds.substring(0, agentIds.length() - 2);
-        log.error("Failed to {} VDS using fence agents {} concurrently: ",
+        log.error("Failed to {} host using fence agents '{}' concurrently: {}",
+                action.name(),
                 agentIds,
                 result.getExceptionString());
 

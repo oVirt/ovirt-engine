@@ -59,7 +59,7 @@ public class TagsDirector {
      */
 
     protected void init() {
-        log.info("Start initializing " + getClass().getSimpleName());
+        log.info("Start initializing {}", getClass().getSimpleName());
         tagsMapByID.clear();
         tagsMapByName.clear();
         Tags root = new Tags("root", null, true, ROOT_TAG_ID, "root");
