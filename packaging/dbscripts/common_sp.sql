@@ -281,7 +281,7 @@ BEGIN
    select roles.id into input_role_id from roles where roles.name = v_role_name;
    -- The external identifier is the user identifier converted to an array of
    -- bytes:
-   insert into users(user_id,external_id,name,domain,username,groups,active,last_admin_check_status) select gen_user_id, v_domain_entry_id, v_user_name, v_domain, v_user_name,'',true,true where not exists (select gen_user_id,name,domain,username,groups,active from users where external_id = v_domain_entry_id);
+   insert into users(user_id,external_id,name,domain,username,last_admin_check_status) select gen_user_id, v_domain_entry_id, v_user_name, v_domain, v_user_name,true where not exists (select 1 from users where external_id = v_domain_entry_id);
    insert into permissions(id,role_id,ad_element_id,object_id,object_type_id) select uuid_generate_v1(),  input_role_id, gen_user_id, getGlobalIds('system'), 1 where not exists(select role_id,ad_element_id,object_id,object_type_id from permissions where role_id = input_role_id and ad_element_id = gen_user_id and object_id= getGlobalIds('system') and object_type_id = 1);
 END; $BODY$
 LANGUAGE plpgsql;
