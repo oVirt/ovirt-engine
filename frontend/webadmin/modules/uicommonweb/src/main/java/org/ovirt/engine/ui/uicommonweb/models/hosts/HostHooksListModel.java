@@ -76,7 +76,7 @@ public class HostHooksListModel extends SearchableListModel
             return;
         }
 
-        if (!getEntity().getContainingHooks())
+        if (!getEntity().isContainingHooks())
         {
             setIsEmpty(true);
             setItems(new ArrayList<HashMap<String, String>>());
