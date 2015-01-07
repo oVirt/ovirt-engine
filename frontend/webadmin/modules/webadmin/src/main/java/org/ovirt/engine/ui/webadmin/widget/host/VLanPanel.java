@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.host;
 
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.widget.TogglePanel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
@@ -19,11 +21,13 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+
 public class VLanPanel extends VerticalPanel {
 
     public static final String CHECK_BOX_COLUMN_WIDTH = "200px"; //$NON-NLS-1$
     public static final String NETWORK_NAME_COLUMN_WIDTH = "200px"; //$NON-NLS-1$
     public static final String ADDRESS_COLUMN_WIDTH = "120px"; //$NON-NLS-1$
+    public static final String OUT_OF_SYNC_WIDTH = "75px"; //$NON-NLS-1$
 
     private final boolean isSelectionAvailable;
 
@@ -76,6 +80,7 @@ class VLanElementPanel extends TogglePanel {
         Grid row = createBaseVlanRow(checkboxPanel,
                 hostVLan.getInterface().getIsManagement(),
                 hostVLan.getNetworkName(),
+                hostVLan.getInterface().getNetworkImplementationDetails(),
                 hostVLan.getAddress());
 
         Style gridStyle = row.getElement().getStyle();
@@ -87,20 +92,25 @@ class VLanElementPanel extends TogglePanel {
     }
 
     Grid createBlankRow(final HostInterfaceLineModel lineModel) {
+        VdsNetworkInterface iface =
+                lineModel.getIsBonded() ? lineModel.getInterface() : lineModel.getInterfaces().get(0).getInterface();
         return createBaseVlanRow(new Label(),
                 lineModel.getIsManagement(),
                 lineModel.getNetworkName(),
+                iface.getNetworkImplementationDetails(),
                 lineModel.getAddress());
     }
 
     private Grid createBaseVlanRow(Widget checkBoxWidget,
             boolean networkManagementFlag,
             String networkName,
+            final NetworkImplementationDetails networkImplementationDetails,
             String address) {
-        Grid row = new Grid(1, 3);
+        Grid row = new Grid(1, 4);
         row.getColumnFormatter().setWidth(0, VLanPanel.CHECK_BOX_COLUMN_WIDTH);
-        row.getColumnFormatter().setWidth(1, VLanPanel.NETWORK_NAME_COLUMN_WIDTH);
-        row.getColumnFormatter().setWidth(2, VLanPanel.ADDRESS_COLUMN_WIDTH);
+        row.getColumnFormatter().setWidth(1, VLanPanel.OUT_OF_SYNC_WIDTH);
+        row.getColumnFormatter().setWidth(2, VLanPanel.NETWORK_NAME_COLUMN_WIDTH);
+        row.getColumnFormatter().setWidth(3, VLanPanel.ADDRESS_COLUMN_WIDTH);
         row.setWidth("100%"); //$NON-NLS-1$
         row.setHeight("100%"); //$NON-NLS-1$
         row.setWidget(0, 0, checkBoxWidget);
@@ -109,9 +119,21 @@ class VLanElementPanel extends TogglePanel {
             networkNameLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
             networkNameLabel.setText("* " + networkName); //$NON-NLS-1$
         }
-        row.setWidget(0, 1, networkNameLabel);
-        row.setWidget(0, 2, new Label(address));
+
+        row.setWidget(0, 1, createSyncPanel(networkImplementationDetails));
+        row.setWidget(0, 2, networkNameLabel);
+        row.setWidget(0, 3, new Label(address));
         return row;
+    }
+
+    private HorizontalPanel createSyncPanel(final NetworkImplementationDetails networkImplementationDetails) {
+        HorizontalPanel output = new HorizontalPanel();
+        boolean sync = networkImplementationDetails == null ? true : networkImplementationDetails.isInSync();
+        if (!sync) {
+            output.add(new Image(resources.networkNotSyncImage()));
+        }
+
+        return output;
     }
 
 }

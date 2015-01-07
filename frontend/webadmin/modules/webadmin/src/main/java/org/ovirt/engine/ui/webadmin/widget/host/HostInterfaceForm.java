@@ -1,7 +1,8 @@
 package org.ovirt.engine.ui.webadmin.widget.host;
 
-import java.util.List;
-
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.Widget;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -9,9 +10,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.Widget;
+import java.util.List;
 
 public class HostInterfaceForm extends Composite {
 
@@ -24,7 +23,7 @@ public class HostInterfaceForm extends Composite {
         grid = new Grid(1, 4);
         grid.getColumnFormatter().setWidth(0, "230px"); //$NON-NLS-1$
         grid.getColumnFormatter().setWidth(1, "200px"); //$NON-NLS-1$
-        grid.getColumnFormatter().setWidth(2, "520px"); //$NON-NLS-1$
+        grid.getColumnFormatter().setWidth(2, "595px"); //$NON-NLS-1$
         grid.getColumnFormatter().setWidth(3, "820px"); //$NON-NLS-1$
         grid.setWidth("100%"); //$NON-NLS-1$
         grid.setHeight("100%"); //$NON-NLS-1$
