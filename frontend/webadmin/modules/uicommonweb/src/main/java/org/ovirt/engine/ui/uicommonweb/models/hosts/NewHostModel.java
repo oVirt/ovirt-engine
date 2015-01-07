@@ -83,31 +83,28 @@ public class NewHostModel extends HostModel {
 
     private void hostName_SelectedItemChanged() {
         VDS vds = (VDS) getExternalHostName().getSelectedItem();
-        if (vds == null) {
-            vds = new VDS();
+        if (vds != null) {
+            setOriginalName(vds.getName());
+            getName().setEntity(vds.getName());
+            getHost().setEntity(vds.getHostName());
         }
-        updateModelFromVds(vds, null, false, null);
     }
 
     private void discoverHostName_SelectedItemChanged() {
         ExternalDiscoveredHost dhost = (ExternalDiscoveredHost) getExternalDiscoveredHosts().getSelectedItem();
         ExternalHostGroup dhg = (ExternalHostGroup) getExternalHostGroups().getSelectedItem();
-        VDS vds = new VDS();
         if (dhost != null && dhg != null) {
-            vds.setVdsName(dhost.getName());
-            vds.setHostName(dhost.getName() + "." + dhg.getDomainName()); //$NON-NLS-1$
+            setOriginalName(dhost.getName());
+            getName().setEntity(dhost.getName());
+            getHost().setEntity(dhost.getName() + "." + dhg.getDomainName()); //$NON-NLS-1$
         }
-        updateModelFromVds(vds, null, false, null);
     }
 
     private void externalHostGroups_SelectedItemChanged() {
         ExternalHostGroup dhg = (ExternalHostGroup) getExternalHostGroups().getSelectedItem();
-        VDS vds = new VDS();
         if (dhg != null) {
-            vds.setVdsName(getName().getEntity());
-            vds.setHostName(getName().getEntity() + "." + dhg.getDomainName()); //$NON-NLS-1$
+            getHost().setEntity(getName().getEntity() + "." + dhg.getDomainName()); //$NON-NLS-1$
         }
-        updateModelFromVds(vds, null, false, null);
     }
 
     private void providers_SelectedItemChanged() {
