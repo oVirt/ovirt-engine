@@ -126,7 +126,7 @@ public class ExecutionHandler {
                     if (context.getExecutionMethod() == ExecutionMethod.AsStep
                             && parentStep != null) {
                         context.setCompleted(true);
-                        if (!exitStatus) {
+                        if (job != null && !exitStatus) {
                             job.markJobEnded(false);
                             JobRepositoryFactory.getJobRepository()
                                     .updateCompletedJobAndSteps(job);
