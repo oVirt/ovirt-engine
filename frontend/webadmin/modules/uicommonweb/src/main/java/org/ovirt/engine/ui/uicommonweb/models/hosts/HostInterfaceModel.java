@@ -381,7 +381,8 @@ public class HostInterfaceModel extends EntityModel
     }
 
     private void updateQosChangeability() {
-        getQosModel().setIsChangable(getQosOverridden().getEntity() && getQosOverridden().getIsChangable());
+        getQosModel().setIsChangable(getQosOverridden().getIsAvailable() && getQosOverridden().getIsChangable()
+                && getQosOverridden().getEntity());
     }
 
     private void bootProtocolChanged()
