@@ -409,6 +409,7 @@ public abstract class InstanceTypeManager {
     private void updateVirtioScsi(VmBase vmBase) {
         if (isNextRunConfigurationExists()) {
             getModel().getIsVirtioScsiEnabled().setEntity(isVmDeviceExists(vmBase.getManagedDeviceMap(), VmDeviceType.VIRTIOSCSI.getName()));
+            model.stopProgress();
             return;
         }
 
