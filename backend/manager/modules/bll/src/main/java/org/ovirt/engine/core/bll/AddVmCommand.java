@@ -636,7 +636,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
-        if (vmFromParams.getId() != null &&  getVmStaticDao().get(vmFromParams.getId()) != null) {
+        if (getVmId() != null && getVmStaticDao().get(getVmId()) != null) {
             return failCanDoAction(VdcBllMessages.VM_ID_EXISTS);
         }
 

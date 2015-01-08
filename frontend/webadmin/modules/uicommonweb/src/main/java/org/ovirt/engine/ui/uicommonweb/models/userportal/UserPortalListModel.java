@@ -1140,7 +1140,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         setGraphicsDevicesToParams(model, parameters);
 
         if (!StringHelper.isNullOrEmpty(model.getVmId().getEntity())) {
-            vm.setId(new Guid(model.getVmId().getEntity()));
+            parameters.setVmId(new Guid(model.getVmId().getEntity()));
         }
 
         Frontend.getInstance().runAction(

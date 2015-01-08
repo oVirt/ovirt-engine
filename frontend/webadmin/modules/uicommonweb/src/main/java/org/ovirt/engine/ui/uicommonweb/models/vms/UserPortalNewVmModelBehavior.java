@@ -45,6 +45,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
 
         getModel().getIsSoundcardEnabled().setIsChangable(true);
         getModel().getVmType().setIsChangable(true);
+        getModel().getVmId().setIsAvailable(true);
 
         // Get datacenters with permitted create action
         AsyncDataProvider.getInstance().getDataCentersWithPermittedActionOnClusters(new AsyncQuery(getModel(),

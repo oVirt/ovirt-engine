@@ -2129,7 +2129,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             vm.setId(new Guid(model.getVmId().getEntity()));
         }
         vm.setUseLatestVersion(model.getTemplateWithVersion().getSelectedItem().isLatest());
-
         AddVmParameters parameters = new AddVmParameters(vm);
         parameters.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
         parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
@@ -2140,6 +2139,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         setVmWatchdogToParams(model, parameters);
         setRngDeviceToParams(model, parameters);
         setGraphicsDevicesToParams(model, parameters);
+        if (!StringHelper.isNullOrEmpty(model.getVmId().getEntity())) {
+            parameters.setVmId(new Guid(model.getVmId().getEntity()));
+        }
 
         Frontend.getInstance().runAction(
                 model.getProvisioning().getEntity() ? VdcActionType.AddVmFromTemplate : VdcActionType.AddVm,

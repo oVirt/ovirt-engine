@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
+
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
@@ -29,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -723,6 +725,10 @@ public class VmSnapshotListModel extends SearchableListModel
         parameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
         parameters.setBalloonEnabled(model.getMemoryBalloonDeviceEnabled().getEntity());
         setGraphicsDevicesToParams(model, parameters);
+
+        if (!StringHelper.isNullOrEmpty(model.getVmId().getEntity())) {
+            parameters.setVmId(new Guid(model.getVmId().getEntity()));
+        }
 
         model.startProgress(null);
 
