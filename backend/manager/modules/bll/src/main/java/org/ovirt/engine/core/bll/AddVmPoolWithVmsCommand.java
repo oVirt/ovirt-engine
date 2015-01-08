@@ -120,9 +120,4 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
         addValidationGroup(CreateEntity.class);
         return super.getValidationGroups();
     }
-
-    @Override
-    public boolean checkDestDomains() {
-        return super.checkDestDomains();
-    }
 }
