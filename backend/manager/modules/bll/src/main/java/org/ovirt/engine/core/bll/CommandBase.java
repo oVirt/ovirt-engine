@@ -883,7 +883,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         // if actionVersionMap not null check cluster level
         // cluster level ok check storage_pool level
         if (actionVersionMap != null
-                && ((getVdsGroup() != null && getVdsGroup().getcompatibility_version().compareTo(
+                && ((getVdsGroup() != null && getVdsGroup().getCompatibilityVersion().compareTo(
                         new Version(actionVersionMap.getcluster_minimal_version())) < 0) ||
                 (!"*".equals(actionVersionMap.getstorage_pool_minimal_version()) && getStoragePool() != null && getStoragePool()
                         .getCompatibilityVersion().compareTo(

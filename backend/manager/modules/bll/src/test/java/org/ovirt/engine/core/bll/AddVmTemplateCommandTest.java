@@ -85,11 +85,11 @@ public class AddVmTemplateCommandTest {
 
         // The cluster to use
         vdsGroup = new VDSGroup();
-        vdsGroup.setcpu_name("Intel Conroe Family");
+        vdsGroup.setCpuName("Intel Conroe Family");
         vdsGroup.setArchitecture(ArchitectureType.x86_64);
         vdsGroup.setId(vdsGroupId);
         vdsGroup.setStoragePoolId(spId);
-        vdsGroup.setcompatibility_version(Version.v3_2);
+        vdsGroup.setCompatibilityVersion(Version.v3_2);
         when(vdsGroupDao.get(vdsGroupId)).thenReturn(vdsGroup);
         AddVmTemplateParameters params = new AddVmTemplateParameters(vm, "templateName", "Template for testing");
 

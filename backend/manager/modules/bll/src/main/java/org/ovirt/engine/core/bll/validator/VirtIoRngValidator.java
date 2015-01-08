@@ -13,7 +13,7 @@ public class VirtIoRngValidator {
     public ValidationResult canAddRngDevice(VDSGroup cluster, VmRngDevice rngDevice) {
         VmRngDevice.Source source = rngDevice.getSource();
         boolean supported = cluster != null &&
-                isFeatureSupported(cluster.getcompatibility_version()) &&
+                isFeatureSupported(cluster.getCompatibilityVersion()) &&
                 cluster.getRequiredRngSources().contains(source);
 
         if (!supported) {

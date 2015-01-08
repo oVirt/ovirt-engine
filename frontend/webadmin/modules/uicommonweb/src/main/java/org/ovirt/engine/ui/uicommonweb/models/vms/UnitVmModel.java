@@ -1958,7 +1958,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         UsbPolicy prevSelectedUsbPolicy = getUsbPolicy().getSelectedItem();
 
-        if (Version.v3_1.compareTo(cluster.getcompatibility_version()) > 0) {
+        if (Version.v3_1.compareTo(cluster.getCompatibilityVersion()) > 0) {
             if (AsyncDataProvider.getInstance().isWindowsOsType(osType)) {
                 getUsbPolicy().setItems(Arrays.asList(
                         UsbPolicy.DISABLED,
@@ -1970,7 +1970,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             }
         }
 
-        if (Version.v3_1.compareTo(cluster.getcompatibility_version()) <= 0) {
+        if (Version.v3_1.compareTo(cluster.getCompatibilityVersion()) <= 0) {
             if (AsyncDataProvider.getInstance().isLinuxOsType(osType)) {
                 getUsbPolicy().setItems(Arrays.asList(
                         UsbPolicy.DISABLED,
@@ -2009,7 +2009,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
 
         VDSGroup cluster = dataCenterWithCluster.getCluster();
-        Version version = cluster.getcompatibility_version();
+        Version version = cluster.getCompatibilityVersion();
 
         Boolean isMigrationSupported =
                 AsyncDataProvider.getInstance().isMigrationSupported(cluster.getArchitecture(), version);
@@ -2037,7 +2037,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             return;
         }
 
-        List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays = AsyncDataProvider.getInstance().getGraphicsAndDisplays(osType, cluster.getcompatibility_version());
+        List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays = AsyncDataProvider.getInstance().getGraphicsAndDisplays(osType, cluster.getCompatibilityVersion());
         initDisplayModels(graphicsAndDisplays);
     }
 
@@ -2082,7 +2082,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
 
         boolean isBalloonEnabled = AsyncDataProvider.getInstance().isBalloonEnabled(osType,
-                        cluster.getcompatibility_version());
+                        cluster.getCompatibilityVersion());
 
         getMemoryBalloonDeviceEnabled().setIsChangable(isBalloonEnabled);
 
@@ -2150,7 +2150,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private void updateBootMenu() {
         if (getSelectedCluster() != null) {
-            Version version = getSelectedCluster().getcompatibility_version();
+            Version version = getSelectedCluster().getCompatibilityVersion();
             final boolean supported = AsyncDataProvider.getInstance().isBootMenuSupported(version.toString());
             if (!supported) {
                 getBootMenuEnabled().setEntity(false);
@@ -2166,7 +2166,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         boolean isQxl = extractSelectedDisplayTypeEntity() == DisplayType.qxl;
         boolean isSpice = getGraphicsType().getSelectedItem() == GraphicsTypes.SPICE;
         boolean clusterSupportsSinglePci = getSelectedCluster() != null &&
-        Version.v3_3.compareTo(getSelectedCluster().getcompatibility_version()) <= 0;
+        Version.v3_3.compareTo(getSelectedCluster().getCompatibilityVersion()) <= 0;
 
         return isLinux && isQxl && isSpice && clusterSupportsSinglePci;
     }
@@ -2177,18 +2177,18 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         if (getSelectedCluster() != null) {
             boolean isQxl = extractSelectedDisplayTypeEntity() == DisplayType.qxl;
             boolean spiceFileTransferToggle = isQxl
-                    && AsyncDataProvider.getInstance().isSpiceFileTransferToggleSupported(getSelectedCluster().getcompatibility_version().toString());
+                    && AsyncDataProvider.getInstance().isSpiceFileTransferToggleSupported(getSelectedCluster().getCompatibilityVersion().toString());
             if (!spiceFileTransferToggle) {
-                handleQxlChangeProhibitionReason(getSpiceFileTransferEnabled(), getSelectedCluster().getcompatibility_version().toString(), isQxl);
+                handleQxlChangeProhibitionReason(getSpiceFileTransferEnabled(), getSelectedCluster().getCompatibilityVersion().toString(), isQxl);
             }
             getSpiceFileTransferEnabled().setIsChangable(spiceFileTransferToggle);
 
             GraphicsTypes selectedGraphics = getGraphicsType().getSelectedItem();
             boolean spiceCopyPasteToggle = selectedGraphics != null
                     && selectedGraphics.getBackingGraphicsType().contains(GraphicsType.SPICE)
-                    && AsyncDataProvider.getInstance().isSpiceCopyPasteToggleSupported(getSelectedCluster().getcompatibility_version().toString());
+                    && AsyncDataProvider.getInstance().isSpiceCopyPasteToggleSupported(getSelectedCluster().getCompatibilityVersion().toString());
             if (!spiceCopyPasteToggle) {
-                handleQxlChangeProhibitionReason(getSpiceCopyPasteEnabled(), getSelectedCluster().getcompatibility_version().toString(), isQxl);
+                handleQxlChangeProhibitionReason(getSpiceCopyPasteEnabled(), getSelectedCluster().getCompatibilityVersion().toString(), isQxl);
             }
             getSpiceCopyPasteEnabled().setIsChangable(spiceCopyPasteToggle);
         }
@@ -2264,7 +2264,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 }
             };
             AsyncDataProvider.getInstance().getVmWatchdogTypes(osType,
-                                                               cluster.getcompatibility_version(), asyncQuery);
+                                                               cluster.getCompatibilityVersion(), asyncQuery);
         }
     }
 
@@ -2347,7 +2347,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
 
         SortedSet<GraphicsTypes> graphicsTypes = new TreeSet<GraphicsTypes>();
-        List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays = AsyncDataProvider.getInstance().getGraphicsAndDisplays(osType, cluster.getcompatibility_version());
+        List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays = AsyncDataProvider.getInstance().getGraphicsAndDisplays(osType, cluster.getCompatibilityVersion());
         for (Pair<GraphicsType, DisplayType> graphicsAndDisplay : graphicsAndDisplays) {
             if (graphicsAndDisplay.getSecond() == getDisplayType().getSelectedItem().getEntity()) {
                 graphicsTypes.add(GraphicsTypes.fromGraphicsType(graphicsAndDisplay.getFirst()));

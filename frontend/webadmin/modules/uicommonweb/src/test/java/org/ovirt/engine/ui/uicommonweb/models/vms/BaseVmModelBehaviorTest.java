@@ -69,7 +69,7 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
 
     protected UnitVmModel createModel(VmModelBehaviorBase behavior) {
         final VDSGroup cluster = new VDSGroup();
-        cluster.setcompatibility_version(Version.v3_5);
+        cluster.setCompatibilityVersion(Version.v3_5);
 
         UnitVmModel model = new UnitVmModel(behavior) {
             @Override

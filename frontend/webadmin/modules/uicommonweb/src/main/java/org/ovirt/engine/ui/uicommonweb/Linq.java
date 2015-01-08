@@ -357,14 +357,14 @@ public final class Linq
      */
     public static Version getMinVersionByClusters(List<VDSGroup> source)
     {
-        Version minVersion = source != null && source.size() > 0 ? source.get(0).getcompatibility_version() : null;
+        Version minVersion = source != null && source.size() > 0 ? source.get(0).getCompatibilityVersion() : null;
 
         if (minVersion != null)
         {
             for (VDSGroup cluster : source)
             {
                 minVersion =
-                        cluster.getcompatibility_version().compareTo(minVersion) < 0 ? (Version) cluster.getcompatibility_version()
+                        cluster.getCompatibilityVersion().compareTo(minVersion) < 0 ? (Version) cluster.getCompatibilityVersion()
                                 : minVersion;
             }
         }

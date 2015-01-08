@@ -73,7 +73,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
         TextColumnWithTooltip<VDSGroup> versionColumn = new TextColumnWithTooltip<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
-                return object.getcompatibility_version().getValue();
+                return object.getCompatibilityVersion().getValue();
             }
         };
         getTable().addColumn(versionColumn, constants.comptVersCluster(), "150px"); //$NON-NLS-1$
@@ -81,7 +81,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
         TextColumnWithTooltip<VDSGroup> descColumn = new TextColumnWithTooltip<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
-                return object.getdescription();
+                return object.getDescription();
             }
         };
         descColumn.makeSortable(ClusterConditionFieldAutoCompleter.DESCRIPTION);
@@ -91,7 +91,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
             TextColumnWithTooltip<VDSGroup> cpuTypeColumn = new TextColumnWithTooltip<VDSGroup>() {
                 @Override
                 public String getValue(VDSGroup object) {
-                    return object.getcpu_name();
+                    return object.getCpuName();
                 }
             };
             getTable().addColumn(cpuTypeColumn, constants.cpuTypeCluster(), "150px"); //$NON-NLS-1$

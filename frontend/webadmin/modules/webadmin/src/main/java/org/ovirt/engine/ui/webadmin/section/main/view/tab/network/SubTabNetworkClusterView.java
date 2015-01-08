@@ -83,7 +83,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         TextColumnWithTooltip<PairQueryable<VDSGroup, NetworkCluster>> versionColumn = new TextColumnWithTooltip<PairQueryable<VDSGroup, NetworkCluster>>() {
             @Override
             public String getValue(PairQueryable<VDSGroup, NetworkCluster> object) {
-                return object.getFirst().getcompatibility_version().getValue();
+                return object.getFirst().getCompatibilityVersion().getValue();
             }
         };
         versionColumn.makeSortable();
@@ -191,7 +191,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         TextColumnWithTooltip<PairQueryable<VDSGroup, NetworkCluster>> descriptionColumn = new TextColumnWithTooltip<PairQueryable<VDSGroup, NetworkCluster>>() {
             @Override
             public String getValue(PairQueryable<VDSGroup, NetworkCluster> object) {
-                return object.getFirst().getdescription();
+                return object.getFirst().getDescription();
             }
         };
         descriptionColumn.makeSortable();

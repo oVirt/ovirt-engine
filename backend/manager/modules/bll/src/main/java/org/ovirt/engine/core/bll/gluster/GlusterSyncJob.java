@@ -793,7 +793,7 @@ public class GlusterSyncJob extends GlusterJob {
         log.debug("Refreshing Gluster Data [heavyweight]");
 
         for (VDSGroup cluster : getClusterDao().getAll()) {
-            if (GlusterFeatureSupported.refreshHeavyWeight(cluster.getcompatibility_version())
+            if (GlusterFeatureSupported.refreshHeavyWeight(cluster.getCompatibilityVersion())
                     && cluster.supportsGlusterService()) {
                 try {
                     refreshClusterHeavyWeightData(cluster);

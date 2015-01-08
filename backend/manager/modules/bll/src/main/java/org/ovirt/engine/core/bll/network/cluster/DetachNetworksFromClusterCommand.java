@@ -53,7 +53,7 @@ public class DetachNetworksFromClusterCommand<T extends ClusterNetworksParameter
             }
         });
 
-        if (NetworkHelper.setupNetworkSupported(getVdsGroup().getcompatibility_version())) {
+        if (NetworkHelper.setupNetworkSupported(getVdsGroup().getCompatibilityVersion())) {
             Set<Network> networks = new HashSet<>();
             Map<Guid, List<Network>> networksByHost = new HashMap<>();
             Map<Guid, List<VdsNetworkInterface>> nicsByHost = new HashMap<>();

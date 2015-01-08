@@ -165,7 +165,7 @@ public class GlusterServiceSyncJobTest {
         VDSGroup cluster = new VDSGroup();
         cluster.setId(CLUSTER_ID);
         cluster.setGlusterService(true);
-        cluster.setcompatibility_version(Version.v3_3);
+        cluster.setCompatibilityVersion(Version.v3_3);
         return cluster;
     }
 

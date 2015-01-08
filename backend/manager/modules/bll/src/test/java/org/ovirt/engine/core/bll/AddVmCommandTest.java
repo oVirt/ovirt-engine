@@ -265,7 +265,7 @@ public class AddVmCommandTest {
         mockMaxPciSlots();
         mockStorageDomainDaoGetAllStoragesForPool(20);
         mockUninterestingMethods(cmd);
-        mockDisplayTypes(vm.getOs(), vdsGroup.getcompatibility_version());
+        mockDisplayTypes(vm.getOs(), vdsGroup.getCompatibilityVersion());
         mockGraphicsDevices(vm.getId());
         doReturn(true).when(cmd).checkCpuSockets();
 
@@ -338,7 +338,7 @@ public class AddVmCommandTest {
         mockConfigSizeDefaults();
         mockMaxPciSlots();
         mockStorageDomainDaoGetAllStoragesForPool(20);
-        mockDisplayTypes(vm.getOs(), vdsGroup.getcompatibility_version());
+        mockDisplayTypes(vm.getOs(), vdsGroup.getCompatibilityVersion());
         mockUninterestingMethods(cmd);
         mockGetAllSnapshots(cmd);
         when(osRepository.getArchitectureFromOS(0)).thenReturn(ArchitectureType.x86_64);
@@ -348,9 +348,9 @@ public class AddVmCommandTest {
         HashMap<Pair<Integer, Version>, Set<String>> unsupported = new HashMap<>();
         HashSet<String> value = new HashSet<>();
         value.add(null);
-        unsupported.put(new Pair<>(vm.getVmOsId(), vdsGroup.getcompatibility_version()), value);
+        unsupported.put(new Pair<>(vm.getVmOsId(), vdsGroup.getCompatibilityVersion()), value);
 
-        when(osRepository.isCpuSupported(vm.getVmOsId(), vdsGroup.getcompatibility_version(), null)).thenReturn(false);
+        when(osRepository.isCpuSupported(vm.getVmOsId(), vdsGroup.getCompatibilityVersion(), null)).thenReturn(false);
         when(osRepository.getUnsupportedCpus()).thenReturn(unsupported);
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(
@@ -542,9 +542,9 @@ public class AddVmCommandTest {
     private VDSGroup createVdsGroup() {
         if (vdsGroup == null) {
             vdsGroup = new VDSGroup();
-            vdsGroup.setvds_group_id(Guid.newGuid());
-            vdsGroup.setcompatibility_version(Version.v3_3);
-            vdsGroup.setcpu_name("Intel Conroe Family");
+            vdsGroup.setVdsGroupId(Guid.newGuid());
+            vdsGroup.setCompatibilityVersion(Version.v3_3);
+            vdsGroup.setCpuName("Intel Conroe Family");
             vdsGroup.setArchitecture(ArchitectureType.x86_64);
         }
 
@@ -749,10 +749,10 @@ public class AddVmCommandTest {
         cmd.getParameters().getVm().setClusterArch(ArchitectureType.ppc64);
         VDSGroup cluster = new VDSGroup();
         cluster.setArchitecture(ArchitectureType.ppc64);
-        cluster.setcompatibility_version(Version.getLast());
+        cluster.setCompatibilityVersion(Version.getLast());
         doReturn(cluster).when(cmd).getVdsGroup();
         doReturn(true).when(cmd).buildAndCheckDestStorageDomains();
-        when(osRepository.isBalloonEnabled(cmd.getParameters().getVm().getVmOsId(), cluster.getcompatibility_version())).thenReturn(false);
+        when(osRepository.isBalloonEnabled(cmd.getParameters().getVm().getVmOsId(), cluster.getCompatibilityVersion())).thenReturn(false);
         assertFalse(cmd.canDoAction());
         assertTrue(cmd.getReturnValue()
                 .getCanDoActionMessages()

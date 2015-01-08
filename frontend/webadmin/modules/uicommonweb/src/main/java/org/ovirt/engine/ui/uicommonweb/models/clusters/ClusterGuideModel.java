@@ -166,7 +166,7 @@ public class ClusterGuideModel extends GuideModel
             if (!getEntity().getId().equals(vds.getVdsGroupId())
                     && (vds.getStatus() == VDSStatus.Maintenance || vds.getStatus() == VDSStatus.PendingApproval)
                     && vds.getSupportedClusterVersionsSet() != null &&
-                    vds.getSupportedClusterVersionsSet().contains(getEntity().getcompatibility_version()))
+                    vds.getSupportedClusterVersionsSet().contains(getEntity().getCompatibilityVersion()))
             {
                 availableHosts.add(vds);
             }
@@ -427,7 +427,7 @@ public class ClusterGuideModel extends GuideModel
             VDSGroup cluster = clusterModel.getSelectedItem();
             Boolean jsonSupported =
                     (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.JsonProtocolSupported,
-                            cluster.getcompatibility_version().toString());
+                            cluster.getCompatibilityVersion().toString());
             if (jsonSupported) {
                 model.getProtocol().setEntity(true);
             } else {

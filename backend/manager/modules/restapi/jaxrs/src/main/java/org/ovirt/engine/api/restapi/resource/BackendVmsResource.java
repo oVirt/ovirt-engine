@@ -142,7 +142,7 @@ public class BackendVmsResource extends
                 }
 
                 staticVm.setUsbPolicy(VmMapper.getUsbPolicyOnCreate(vm.getUsb(),
-                        cluster.getcompatibility_version()));
+                        cluster.getCompatibilityVersion()));
 
                 if (!isFiltered()) {
                     // if the user set the host-name within placement-policy, rather than the host-id (legal) -
@@ -367,7 +367,7 @@ public class BackendVmsResource extends
 
         if (vm.isSetMemoryPolicy()) {
             params.setBalloonEnabled(vm.getMemoryPolicy().isBallooning());
-        } else if (shouldCopyDevice(SimpleDependecyInjector.getInstance().get(OsRepository.class).isBalloonEnabled(osId, cluster.getcompatibility_version()), templateId, instanceTypeId)) {
+        } else if (shouldCopyDevice(SimpleDependecyInjector.getInstance().get(OsRepository.class).isBalloonEnabled(osId, cluster.getCompatibilityVersion()), templateId, instanceTypeId)) {
             // it is not defined on the template
             params.setBalloonEnabled(instanceTypeId != null ? !VmHelper.isMemoryBalloonEnabledForEntity(this, instanceTypeId) : null);
         }
@@ -384,7 +384,7 @@ public class BackendVmsResource extends
         } else if (instanceTypeId != null || templateId != null) {
             List<VmRngDevice> devices = VmHelper.getRngDevicesForEntity(this, instanceTypeId != null ? instanceTypeId : templateId);
             if (devices != null && !devices.isEmpty()) {
-                boolean supported = cluster.getRequiredRngSources().contains(devices.get(0).getSource()) && FeatureSupported.virtIoRngSupported(cluster.getcompatibility_version());
+                boolean supported = cluster.getRequiredRngSources().contains(devices.get(0).getSource()) && FeatureSupported.virtIoRngSupported(cluster.getCompatibilityVersion());
                 if (shouldCopyDevice(supported, templateId, instanceTypeId)) {
                     params.setUpdateRngDevice(true);
                     params.setRngDevice(!devices.isEmpty() ? devices.iterator().next() : null);

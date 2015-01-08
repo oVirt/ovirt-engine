@@ -1110,7 +1110,7 @@ public class AuditLogableBaseTest {
         public VdsGroupDAO getVdsGroupDAO() {
             final VdsGroupDAO v = mock(VdsGroupDAO.class);
             final VDSGroup g = new VDSGroup();
-            g.setvds_group_id(GUID);
+            g.setVdsGroupId(GUID);
             when(v.get(GUID)).thenReturn(g);
             return v;
         }

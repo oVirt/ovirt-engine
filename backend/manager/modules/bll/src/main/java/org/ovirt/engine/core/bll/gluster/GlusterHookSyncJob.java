@@ -350,7 +350,7 @@ public class GlusterHookSyncJob extends GlusterJob {
     }
 
     private boolean supportsGlusterHookFeature(VDSGroup cluster) {
-        return cluster.supportsGlusterService() && GlusterFeatureSupported.glusterHooks(cluster.getcompatibility_version());
+        return cluster.supportsGlusterService() && GlusterFeatureSupported.glusterHooks(cluster.getCompatibilityVersion());
     }
 
 }

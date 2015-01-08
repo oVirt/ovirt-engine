@@ -49,7 +49,7 @@ public class ChangeVmClusterValidator {
 
             List<VmNic> interfaces = DbFacade.getInstance().getVmNicDao().getAllForVm(vm.getId());
 
-            Version clusterCompatibilityVersion = targetCluster.getcompatibility_version();
+            Version clusterCompatibilityVersion = targetCluster.getCompatibilityVersion();
             if (!validateDestinationClusterContainsNetworks(interfaces)
                     || !validateNics(interfaces, clusterCompatibilityVersion)) {
                 return false;
@@ -81,12 +81,12 @@ public class ChangeVmClusterValidator {
 
             if (VmDeviceUtils.isVirtioScsiControllerAttached(vm.getId())) {
                 // Verify cluster compatibility
-                if (!FeatureSupported.virtIoScsi(targetCluster.getcompatibility_version())) {
+                if (!FeatureSupported.virtIoScsi(targetCluster.getCompatibilityVersion())) {
                     return parentCommand.failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
                 }
 
                 // Verify OS compatibility
-                if (!VmHandler.isOsTypeSupportedForVirtioScsi(vm.getOs(), targetCluster.getcompatibility_version(),
+                if (!VmHandler.isOsTypeSupportedForVirtioScsi(vm.getOs(), targetCluster.getCompatibilityVersion(),
                         parentCommand.getReturnValue().getCanDoActionMessages())) {
                     return false;
                 }

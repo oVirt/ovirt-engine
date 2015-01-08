@@ -44,19 +44,19 @@ public class ClusterValidator {
     }
 
     protected boolean cpuExists() {
-        return CpuFlagsManagerHandler.checkIfCpusExist(cluster.getcpu_name(), cluster.getcompatibility_version());
+        return CpuFlagsManagerHandler.checkIfCpusExist(cluster.getCpuName(), cluster.getCompatibilityVersion());
     }
 
     public ValidationResult versionSupported() {
         return ValidationResult.failWith(VersionSupport.getUnsupportedVersionMessage())
-                .unless(VersionSupport.checkVersionSupported(cluster.getcompatibility_version()));
+                .unless(VersionSupport.checkVersionSupported(cluster.getCompatibilityVersion()));
     }
 
     public ValidationResult dataCenterVersionMismatch() {
         StoragePool dataCenter = getDataCenter();
         return ValidationResult.failWith(VdcBllMessages.VDS_GROUP_CANNOT_ADD_COMPATIBILITY_VERSION_WITH_LOWER_STORAGE_POOL)
                 .when(dataCenter != null
-                        && dataCenter.getCompatibilityVersion().compareTo(cluster.getcompatibility_version()) > 0);
+                        && dataCenter.getCompatibilityVersion().compareTo(cluster.getCompatibilityVersion()) > 0);
     }
 
     public ValidationResult dataCenterExists() {
@@ -72,19 +72,19 @@ public class ClusterValidator {
     }
 
     public ValidationResult qosBaloonSupported() {
-        Version version = cluster.getcompatibility_version();
+        Version version = cluster.getCompatibilityVersion();
         return ValidationResult.failWith(VdcBllMessages.QOS_BALLOON_NOT_SUPPORTED).when(version != null
                 && Version.v3_3.compareTo(version) > 0 && cluster.isEnableBallooning());
     }
 
     public ValidationResult glusterServiceSupported() {
         return ValidationResult.failWith(VdcBllMessages.GLUSTER_NOT_SUPPORTED,
-                "compatibilityVersion", cluster.getcompatibility_version().getValue())
+                "compatibilityVersion", cluster.getCompatibilityVersion().getValue())
                 .when(cluster.supportsGlusterService() && !glusterFeatureEnabled());
     }
 
     protected boolean glusterFeatureEnabled() {
-        return GlusterFeatureSupported.gluster(cluster.getcompatibility_version());
+        return GlusterFeatureSupported.gluster(cluster.getCompatibilityVersion());
     }
 
     public ValidationResult clusterServiceDefined() {
@@ -109,7 +109,7 @@ public class ClusterValidator {
     }
 
     protected boolean migrationSupportedForArch(ArchitectureType arch) {
-        return FeatureSupported.isMigrationSupported(arch, cluster.getcompatibility_version());
+        return FeatureSupported.isMigrationSupported(arch, cluster.getCompatibilityVersion());
     }
 
     public ValidationResult virtIoRngSupported() {
@@ -118,7 +118,7 @@ public class ClusterValidator {
     }
 
     protected boolean virtIoRngSupportedInCluster() {
-        return FeatureSupported.virtIoRngSupported(cluster.getcompatibility_version());
+        return FeatureSupported.virtIoRngSupported(cluster.getCompatibilityVersion());
     }
 
     private boolean attestationServerEnabled() {

@@ -75,7 +75,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
 
         // not relevant for instance types - will be checked when a VM will be created out of it
         if (getVmTemplate().getTemplateType() != VmEntityType.INSTANCE_TYPE) {
-            Version clusterCompatibilityVersion = getVdsGroup().getcompatibility_version();
+            Version clusterCompatibilityVersion = getVdsGroup().getCompatibilityVersion();
             VmNicValidator nicValidator = new VmNicValidator(getParameters().getInterface(), clusterCompatibilityVersion, getVmTemplate().getOsId());
             if (!validate(nicValidator.linkedCorrectly())
                     || !validate(nicValidator.isCompatibleWithOs())

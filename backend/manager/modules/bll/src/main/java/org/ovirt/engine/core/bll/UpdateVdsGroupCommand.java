@@ -68,14 +68,14 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
 
         // TODO: This code should be revisited and proper compensation logic should be introduced here
         checkMaxMemoryOverCommitValue();
-        if (!Objects.equals(oldGroup.getcompatibility_version(), getParameters().getVdsGroup().getcompatibility_version())) {
+        if (!Objects.equals(oldGroup.getCompatibilityVersion(), getParameters().getVdsGroup().getCompatibilityVersion())) {
             String emulatedMachine = null;
             // pick an UP host randomly - all should have latest compat version already if we passed the canDo.
             for (VDS vds : allForVdsGroup) {
                 if (vds.getStatus() == VDSStatus.Up) {
                     emulatedMachine = ListUtils.firstMatch(
                             Config.<List<String>>getValue(ConfigValues.ClusterEmulatedMachines,
-                                    getParameters().getVdsGroup().getcompatibility_version().getValue()), vds.getSupportedEmulatedMachines().split(","));
+                                    getParameters().getVdsGroup().getCompatibilityVersion().getValue()), vds.getSupportedEmulatedMachines().split(","));
                     break;
                 }
             }
@@ -87,8 +87,8 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
             // create default CPU profile for cluster that is being upgraded.
             // and set all attached vms and templates with cpu profile
             Guid clusterId = getParameters().getVdsGroupId();
-            if (!FeatureSupported.cpuQoS(oldGroup.getcompatibility_version()) &&
-                    FeatureSupported.cpuQoS(getParameters().getVdsGroup().getcompatibility_version()) &&
+            if (!FeatureSupported.cpuQoS(oldGroup.getCompatibilityVersion()) &&
+                    FeatureSupported.cpuQoS(getParameters().getVdsGroup().getCompatibilityVersion()) &&
                     getCpuProfileDao().getAllForCluster(clusterId).isEmpty()) {
                 CpuProfile cpuProfile = CpuProfileHelper.createCpuProfile(clusterId,
                         getParameters().getVdsGroup().getName());
@@ -168,7 +168,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
             }
         }
         if (result && !VersionSupport.checkVersionSupported(getVdsGroup()
-                .getcompatibility_version())) {
+                .getCompatibilityVersion())) {
             addCanDoActionMessage(VersionSupport.getUnsupportedVersionMessage());
             result = false;
         }
@@ -177,7 +177,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
             allForVdsGroup = getVdsDAO().getAllForVdsGroup(oldGroup.getId());
         }
         // decreasing of compatibility version is only allowed when no hosts exists, and not beneath the DC version
-        if (result && getVdsGroup().getcompatibility_version().compareTo(oldGroup.getcompatibility_version()) < 0) {
+        if (result && getVdsGroup().getCompatibilityVersion().compareTo(oldGroup.getCompatibilityVersion()) < 0) {
             if (!allForVdsGroup.isEmpty()) {
                 result = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
@@ -185,7 +185,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
 
             if (oldGroup.getStoragePoolId() != null) {
                 StoragePool storagePool = getStoragePoolDAO().get(oldGroup.getStoragePoolId());
-                if (storagePool != null && getVdsGroup().getcompatibility_version()
+                if (storagePool != null && getVdsGroup().getCompatibilityVersion()
                     .compareTo(storagePool.getCompatibilityVersion()) < 0) {
                     result = false;
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION_UNDER_DC);
@@ -204,7 +204,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
         }
         // Validate the cpu only if the cluster supports Virt
         if (result && getVdsGroup().supportsVirtService()
-                && (oldGroup.getcpu_name() != null || getVdsGroup().getcpu_name() != null)) {
+                && (oldGroup.getCpuName() != null || getVdsGroup().getCpuName() != null)) {
             // Check that cpu exist
             if (!checkIfCpusExist()) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CPU_NOT_FOUND);
@@ -213,7 +213,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
             } else {
                 // if cpu changed from intel to amd (or backwards) and there are
                 // vds in this cluster, cannot update
-                if (!StringUtils.isEmpty(oldGroup.getcpu_name())
+                if (!StringUtils.isEmpty(oldGroup.getCpuName())
                         && !checkIfCpusSameManufacture(oldGroup)
                         && !allVdssInMaintenance) {
                     addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_CPU_ILLEGAL);
@@ -236,11 +236,11 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
         }
 
         if (result) {
-            sameCpuNames = StringUtils.equals(oldGroup.getcpu_name(), getVdsGroup().getcpu_name());
+            sameCpuNames = StringUtils.equals(oldGroup.getCpuName(), getVdsGroup().getCpuName());
         }
 
         if (result) {
-            boolean isOldCPUEmpty = StringUtils.isEmpty(oldGroup.getcpu_name());
+            boolean isOldCPUEmpty = StringUtils.isEmpty(oldGroup.getCpuName());
 
             if (!isOldCPUEmpty && !sameCpuNames && !isCpuUpdatable(oldGroup) && hasVmOrHost) {
                 addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CPU_IS_NOT_UPDATABLE);
@@ -264,7 +264,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
             }
             for (VDS vds : vdss) {
                 if (!VersionSupport.checkClusterVersionSupported(
-                        getVdsGroup().getcompatibility_version(), vds)) {
+                        getVdsGroup().getCompatibilityVersion(), vds)) {
                     result = false;
                     addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS);
                     break;
@@ -325,8 +325,8 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
             }
         }
 
-        if (getVdsGroup().getcompatibility_version() != null
-                && Version.v3_3.compareTo(getVdsGroup().getcompatibility_version()) > 0
+        if (getVdsGroup().getCompatibilityVersion() != null
+                && Version.v3_3.compareTo(getVdsGroup().getCompatibilityVersion()) > 0
                 && getVdsGroup().isEnableBallooning()) {
             // Members of pre-3.3 clusters don't support ballooning; here we act like a 3.2 engine
             addCanDoActionMessage(VdcBllMessages.QOS_BALLOON_NOT_SUPPORTED);
@@ -334,9 +334,9 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
         }
 
         if (getVdsGroup().supportsGlusterService()
-                && !GlusterFeatureSupported.gluster(getVdsGroup().getcompatibility_version())) {
+                && !GlusterFeatureSupported.gluster(getVdsGroup().getCompatibilityVersion())) {
             addCanDoActionMessage(VdcBllMessages.GLUSTER_NOT_SUPPORTED);
-            addCanDoActionMessageVariable("compatibilityVersion", getVdsGroup().getcompatibility_version().getValue());
+            addCanDoActionMessageVariable("compatibilityVersion", getVdsGroup().getCompatibilityVersion().getValue());
             result = false;
         }
 
@@ -368,7 +368,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
         }
 
         if (result
-                && !FeatureSupported.isMigrationSupported(getArchitecture(), getVdsGroup().getcompatibility_version())
+                && !FeatureSupported.isMigrationSupported(getArchitecture(), getVdsGroup().getCompatibilityVersion())
                 && getVdsGroup().getMigrateOnError() != MigrateOnErrorOptions.NO) {
             return failCanDoAction(VdcBllMessages.MIGRATION_ON_ERROR_IS_NOT_SUPPORTED);
         }
@@ -378,7 +378,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
         }
         // non-empty required sources list and rng-unsupported cluster version
         if (result && !getVdsGroup().getRequiredRngSources().isEmpty()
-                && !FeatureSupported.virtIoRngSupported(getVdsGroup().getcompatibility_version())) {
+                && !FeatureSupported.virtIoRngSupported(getVdsGroup().getCompatibilityVersion())) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_RNG_SOURCE_NOT_SUPPORTED);
             result = false;
         }
@@ -397,25 +397,25 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
     }
 
     protected boolean checkIfCpusSameManufacture(VDSGroup group) {
-        return CpuFlagsManagerHandler.checkIfCpusSameManufacture(group.getcpu_name(),
-                getVdsGroup().getcpu_name(),
-                getVdsGroup().getcompatibility_version());
+        return CpuFlagsManagerHandler.checkIfCpusSameManufacture(group.getCpuName(),
+                getVdsGroup().getCpuName(),
+                getVdsGroup().getCompatibilityVersion());
     }
 
     protected boolean checkIfCpusExist() {
-        return CpuFlagsManagerHandler.checkIfCpusExist(getVdsGroup().getcpu_name(),
-                getVdsGroup().getcompatibility_version());
+        return CpuFlagsManagerHandler.checkIfCpusExist(getVdsGroup().getCpuName(),
+                getVdsGroup().getCompatibilityVersion());
     }
 
     protected List<String> missingServerCpuFlags(VDS vds) {
         return CpuFlagsManagerHandler.missingServerCpuFlags(
-                getVdsGroup().getcpu_name(),
+                getVdsGroup().getCpuName(),
                 vds.getCpuFlags(),
-                getVdsGroup().getcompatibility_version());
+                getVdsGroup().getCompatibilityVersion());
     }
 
     protected boolean isCpuUpdatable(VDSGroup cluster) {
-        return CpuFlagsManagerHandler.isCpuUpdatable(cluster.getcpu_name(), cluster.getcompatibility_version());
+        return CpuFlagsManagerHandler.isCpuUpdatable(cluster.getCpuName(), cluster.getCompatibilityVersion());
     }
 
     private boolean areAllVdssInMaintenance(List<VDS> vdss) {
@@ -430,9 +430,9 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
     }
 
     protected int compareCpuLevels(VDSGroup otherGroup) {
-        return CpuFlagsManagerHandler.compareCpuLevels(getVdsGroup().getcpu_name(),
-                otherGroup.getcpu_name(),
-                otherGroup.getcompatibility_version());
+        return CpuFlagsManagerHandler.compareCpuLevels(getVdsGroup().getCpuName(),
+                otherGroup.getCpuName(),
+                otherGroup.getCompatibilityVersion());
     }
 
     @Override

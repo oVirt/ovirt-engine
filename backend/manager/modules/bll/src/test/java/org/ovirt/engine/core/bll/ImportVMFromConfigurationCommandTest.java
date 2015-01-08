@@ -234,7 +234,7 @@ public class ImportVMFromConfigurationCommandTest {
         doReturn(clusterId).when(vdsGroup).getId();
         doReturn(storagePoolId).when(vdsGroup).getStoragePoolId();
         doReturn(ArchitectureType.x86_64).when(vdsGroup).getArchitecture();
-        doReturn(null).when(vdsGroup).getcompatibility_version();
+        doReturn(null).when(vdsGroup).getCompatibilityVersion();
     }
 
     private void mockStoragePool() {

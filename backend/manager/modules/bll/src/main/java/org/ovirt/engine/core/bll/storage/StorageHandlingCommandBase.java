@@ -248,7 +248,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                                 vmTemplate.getName(),
                                 VmEntityType.TEMPLATE,
                                 vmTemplate.getClusterArch(),
-                                getVdsGroupDAO().get(vmTemplate.getVdsGroupId()).getcompatibility_version(),
+                                getVdsGroupDAO().get(vmTemplate.getVdsGroupId()).getCompatibilityVersion(),
                                 storageDomainId,
                                 null,
                                 null));

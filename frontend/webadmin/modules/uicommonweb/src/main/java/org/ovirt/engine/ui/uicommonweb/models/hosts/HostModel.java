@@ -1362,7 +1362,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs
                     updatePmTypeList(pmTypes, getPmType());
                     updatePmTypeList(pmTypes, getPmSecondaryType());
                 }
-            }), cluster.getcompatibility_version());
+            }), cluster.getCompatibilityVersion());
         }
     }
 
@@ -1470,7 +1470,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         VDSGroup cluster = getCluster().getSelectedItem();
         String version = AsyncDataProvider.getInstance().getDefaultConfigurationVersion();
         if (cluster != null) {
-            version = cluster.getcompatibility_version().toString();
+            version = cluster.getCompatibilityVersion().toString();
         }
         String pmType = getPmType().getSelectedItem();
         if (!StringHelper.isNullOrEmpty(pmType)) {
@@ -1829,7 +1829,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs
             VDSGroup tempVar = new VDSGroup();
             tempVar.setName(vds.getVdsGroupName());
             tempVar.setId(vds.getVdsGroupId());
-            tempVar.setcompatibility_version(vds.getVdsGroupCompatibilityVersion());
+            tempVar.setCompatibilityVersion(vds.getVdsGroupCompatibilityVersion());
             getCluster()
                     .setItems(new ArrayList<VDSGroup>(Arrays.asList(new VDSGroup[] { tempVar })));
         }

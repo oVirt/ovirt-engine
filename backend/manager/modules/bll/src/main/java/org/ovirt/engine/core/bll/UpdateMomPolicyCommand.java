@@ -48,7 +48,7 @@ public class UpdateMomPolicyCommand extends VdsCommand<VdsActionParameters> {
     }
 
     private ValidationResult validateMinimumVersionSupport() {
-        return FeatureSupported.momPolicyOnHost(getVdsGroup().getcompatibility_version())
+        return FeatureSupported.momPolicyOnHost(getVdsGroup().getCompatibilityVersion())
                 ? ValidationResult.VALID
                 : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_MOM_UPDATE_VDS_VERSION);
     }

@@ -21,7 +21,8 @@ import org.ovirt.engine.core.compat.Version;
 
 @ValidVdsGroup(groups = { CreateEntity.class })
 @ValidSerialNumberPolicy(groups = {CreateEntity.class, UpdateEntity.class})
-public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid>, Nameable, Commented, HasSerialNumberPolicy, HasMigrationOptions {
+public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid>,
+        Nameable, Commented, HasSerialNumberPolicy, HasMigrationOptions {
 
     private static final long serialVersionUID = 5659359762655478095L;
 
@@ -40,14 +41,14 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
     private String comment;
 
     @Size(max = BusinessEntitiesDefinitions.CLUSTER_CPU_NAME_SIZE)
-    private String cpu_name;
+    private String cpuName;
 
     private Guid storagePoolId;
 
     @Size(max = BusinessEntitiesDefinitions.DATACENTER_NAME_SIZE)
     private String storagePoolName;
 
-    private int max_vds_memory_over_commit;
+    private int maxVdsMemoryOverCommit;
 
     private boolean enableBallooning;
 
@@ -56,7 +57,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
     private boolean countThreadsAsCores;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_VERSION_SIZE)
-    private String compatibility_version;
+    private String compatibilityVersion;
 
     private Version compatVersion;
 
@@ -112,7 +113,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         name = "";
         virtService = true;
         optimizationType = OptimizationType.NONE;
-        requiredRngSources = new HashSet<VmRngDevice.Source>();
+        requiredRngSources = new HashSet<>();
         fencingPolicy = new FencingPolicy();
     }
 
@@ -126,7 +127,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         id = value;
     }
 
-    public void setvds_group_id(Guid value) {
+    public void setVdsGroupId(Guid value) {
         setId(value);
     }
 
@@ -139,11 +140,11 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         name = value;
     }
 
-    public String getdescription() {
+    public String getDescription() {
         return description;
     }
 
-    public void setdescription(String value) {
+    public void setDescription(String value) {
         description = value;
     }
 
@@ -157,12 +158,12 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         comment = value;
     }
 
-    public String getcpu_name() {
-        return this.cpu_name;
+    public String getCpuName() {
+        return cpuName;
     }
 
-    public void setcpu_name(String value) {
-        this.cpu_name = value;
+    public void setCpuName(String value) {
+        cpuName = value;
     }
 
     @Override
@@ -171,49 +172,49 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
     }
 
     @Override
-    public void setStoragePoolId(Guid storagePool) {
-        this.storagePoolId = storagePool;
+    public void setStoragePoolId(Guid storagePoolId) {
+        this.storagePoolId = storagePoolId;
     }
 
     public String getStoragePoolName() {
-        return this.storagePoolName;
+        return storagePoolName;
     }
 
     public void setStoragePoolName(String value) {
-        this.storagePoolName = value;
+        storagePoolName = value;
     }
 
-    public int getmax_vds_memory_over_commit() {
-        return this.max_vds_memory_over_commit;
+    public int getMaxVdsMemoryOverCommit() {
+        return maxVdsMemoryOverCommit;
     }
 
-    public void setmax_vds_memory_over_commit(int value) {
-        this.max_vds_memory_over_commit = value;
+    public void setMaxVdsMemoryOverCommit(int value) {
+        maxVdsMemoryOverCommit = value;
     }
 
     public boolean getCountThreadsAsCores() {
-        return this.countThreadsAsCores;
+        return countThreadsAsCores;
     }
 
     public void setCountThreadsAsCores(boolean value) {
-        this.countThreadsAsCores = value;
+        countThreadsAsCores = value;
     }
 
-    public Version getcompatibility_version() {
+    public Version getCompatibilityVersion() {
         return compatVersion;
     }
 
+    public void setCompatibilityVersion(Version value) {
+        compatibilityVersion = value.getValue();
+        compatVersion = value;
+    }
+
     public boolean getTransparentHugepages() {
-        return this.transparentHugepages;
+        return transparentHugepages;
     }
 
     public void setTransparentHugepages(boolean value) {
-        this.transparentHugepages = value;
-    }
-
-    public void setcompatibility_version(Version value) {
-        compatibility_version = value.getValue();
-        compatVersion = value;
+        transparentHugepages = value;
     }
 
     @Override
@@ -334,7 +335,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
     }
 
     public ArchitectureType getArchitecture() {
-        return this.architecture;
+        return architecture;
     }
 
     public void setArchitecture (ArchitectureType architecture) {
@@ -405,43 +406,6 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         this.migrateCompressed = migrateCompressed;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((compatVersion == null) ? 0 : compatVersion.hashCode());
-        result = prime * result + ((compatibility_version == null) ? 0 : compatibility_version.hashCode());
-        result = prime * result + ((cpu_name == null) ? 0 : cpu_name.hashCode());
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + max_vds_memory_over_commit;
-        result = prime * result + (countThreadsAsCores ? 1231 : 1237);
-        result = prime * result + ((migrateOnError == null) ? 0 : migrateOnError.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
-        result = prime * result + ((storagePoolName == null) ? 0 : storagePoolName.hashCode());
-        result = prime * result + (transparentHugepages ? 1231 : 1237);
-        result = prime * result + (virtService ? 1231 : 1237);
-        result = prime * result + (glusterService ? 1231 : 1237);
-        result = prime * result + (tunnelMigration ? 1231 : 1237);
-        result = prime * result + (emulatedMachine == null ? 0 : emulatedMachine.hashCode());
-        result = prime * result + (trustedService ? 1231 : 1237);
-        result = prime * result + (haReservation ? 1231 : 1237);
-        result = prime * result + ((clusterPolicyName == null) ? 0 : clusterPolicyName.hashCode());
-        result = prime * result + (clusterPolicyProperties == null ? 0 : clusterPolicyProperties.hashCode());
-        result = prime * result + (requiredRngSources == null ? 0 : requiredRngSources.hashCode());
-        result = prime * result + (enableKsm ? 1231 : 1237);
-        result = prime * result + (enableBallooning ? 1231 : 1237);
-        result = prime * result + ((optimizationType == null) ? 0 : optimizationType.hashCode());
-        result = prime * result + (serialNumberPolicy == null ? 0 : serialNumberPolicy.hashCode());
-        result = prime * result + (customSerialNumber == null ? 0 : customSerialNumber.hashCode());
-        result = prime * result + (groupHostsAndVms == null ? 0 : groupHostsAndVms.hashCode());
-        result = prime * result + (fencingPolicy == null ? 0 : fencingPolicy.hashCode());
-        result = prime * result + (autoConverge == null ? 0 : autoConverge.hashCode());
-        result = prime * result + (migrateCompressed == null ? 0 : migrateCompressed.hashCode());
-        return result;
-    }
-
     public VDSGroupHostsAndVMs getGroupHostsAndVms() {
         return groupHostsAndVms;
     }
@@ -451,14 +415,48 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
     }
 
     @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (id == null ? 0 : id.hashCode());
+        result = prime * result + (compatVersion == null ? 0 : compatVersion.hashCode());
+        result = prime * result + (compatibilityVersion == null ? 0 : compatibilityVersion.hashCode());
+        result = prime * result + (cpuName == null ? 0 : cpuName.hashCode());
+        result = prime * result + (description == null ? 0 : description.hashCode());
+        result = prime * result + maxVdsMemoryOverCommit;
+        result = prime * result + (countThreadsAsCores ? 1231 : 1237);
+        result = prime * result + (migrateOnError == null ? 0 : migrateOnError.hashCode());
+        result = prime * result + (name == null ? 0 : name.hashCode());
+        result = prime * result + (storagePoolId == null ? 0 : storagePoolId.hashCode());
+        result = prime * result + (storagePoolName == null ? 0 : storagePoolName.hashCode());
+        result = prime * result + (transparentHugepages ? 1231 : 1237);
+        result = prime * result + (virtService ? 1231 : 1237);
+        result = prime * result + (glusterService ? 1231 : 1237);
+        result = prime * result + (tunnelMigration ? 1231 : 1237);
+        result = prime * result + (emulatedMachine == null ? 0 : emulatedMachine.hashCode());
+        result = prime * result + (trustedService ? 1231 : 1237);
+        result = prime * result + (haReservation ? 1231 : 1237);
+        result = prime * result + (clusterPolicyName == null ? 0 : clusterPolicyName.hashCode());
+        result = prime * result + (clusterPolicyProperties == null ? 0 : clusterPolicyProperties.hashCode());
+        result = prime * result + (requiredRngSources == null ? 0 : requiredRngSources.hashCode());
+        result = prime * result + (enableKsm ? 1231 : 1237);
+        result = prime * result + (enableBallooning ? 1231 : 1237);
+        result = prime * result + (optimizationType == null ? 0 : optimizationType.hashCode());
+        result = prime * result + (serialNumberPolicy == null ? 0 : serialNumberPolicy.hashCode());
+        result = prime * result + (customSerialNumber == null ? 0 : customSerialNumber.hashCode());
+        result = prime * result + (groupHostsAndVms == null ? 0 : groupHostsAndVms.hashCode());
+        result = prime * result + (fencingPolicy == null ? 0 : fencingPolicy.hashCode());
+        result = prime * result + (autoConverge == null ? 0 : autoConverge.hashCode());
+        result = prime * result + (migrateCompressed == null ? 0 : migrateCompressed.hashCode());
+        return result;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof VDSGroup)) {
             return false;
         }
         VDSGroup other = (VDSGroup) obj;
@@ -466,10 +464,10 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         // cause all kinds of havoc in the UI when clusters are refreshed.
         return (ObjectUtils.objectsEqual(id, other.id)
                 && ObjectUtils.objectsEqual(compatVersion, other.compatVersion)
-                && ObjectUtils.objectsEqual(compatibility_version, other.compatibility_version)
-                && ObjectUtils.objectsEqual(cpu_name, other.cpu_name)
+                && ObjectUtils.objectsEqual(compatibilityVersion, other.compatibilityVersion)
+                && ObjectUtils.objectsEqual(cpuName, other.cpuName)
                 && ObjectUtils.objectsEqual(description, other.description)
-                && max_vds_memory_over_commit == other.max_vds_memory_over_commit
+                && maxVdsMemoryOverCommit == other.maxVdsMemoryOverCommit
                 && countThreadsAsCores == other.countThreadsAsCores
                 && migrateOnError == other.migrateOnError
                 && ObjectUtils.objectsEqual(name, other.name)

@@ -287,7 +287,7 @@ public class ImportNetworksModel extends Model {
                         @Override
                         public boolean match(VDSGroup source) {
                                     return (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.SupportCustomDeviceProperties,
-                                            source.getcompatibility_version().getValue());
+                                            source.getCompatibilityVersion().getValue());
                         }
                     });
                     dcClusters.put(dcId, clusters);

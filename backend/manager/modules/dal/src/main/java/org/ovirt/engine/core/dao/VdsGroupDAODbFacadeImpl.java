@@ -189,20 +189,20 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
 
     private MapSqlParameterSource getVdsGroupParamSource(VDSGroup group) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("description", group.getdescription())
+                .addValue("description", group.getDescription())
                 .addValue("name", group.getName())
                 .addValue("free_text_comment", group.getComment())
                 .addValue("vds_group_id", group.getId())
-                .addValue("cpu_name", group.getcpu_name())
+                .addValue("cpu_name", group.getCpuName())
                 .addValue("storage_pool_id", group.getStoragePoolId())
                 .addValue("max_vds_memory_over_commit",
-                        group.getmax_vds_memory_over_commit())
+                        group.getMaxVdsMemoryOverCommit())
                 .addValue("count_threads_as_cores",
                         group.getCountThreadsAsCores())
                 .addValue("transparent_hugepages",
                         group.getTransparentHugepages())
                 .addValue("compatibility_version",
-                        group.getcompatibility_version())
+                        group.getCompatibilityVersion())
                 .addValue("migrate_on_error", group.getMigrateOnError())
                 .addValue("virt_service", group.supportsVirtService())
                 .addValue("gluster_service", group.supportsGlusterService())
@@ -252,21 +252,21 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
         public VDSGroup mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
             VDSGroup entity = new VDSGroup();
-            entity.setdescription(rs.getString("description"));
+            entity.setDescription(rs.getString("description"));
             entity.setName(rs.getString("name"));
             entity.setId(getGuidDefaultEmpty(rs, "vds_group_id"));
             entity.setComment(rs.getString("free_text_comment"));
-            entity.setcpu_name(rs.getString("cpu_name"));
+            entity.setCpuName(rs.getString("cpu_name"));
             entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
             entity.setStoragePoolName(rs
                     .getString("storage_pool_name"));
-            entity.setmax_vds_memory_over_commit(rs
+            entity.setMaxVdsMemoryOverCommit(rs
                     .getInt("max_vds_memory_over_commit"));
             entity.setCountThreadsAsCores(rs
                     .getBoolean("count_threads_as_cores"));
             entity.setTransparentHugepages(rs
                     .getBoolean("transparent_hugepages"));
-            entity.setcompatibility_version(new Version(rs
+            entity.setCompatibilityVersion(new Version(rs
                     .getString("compatibility_version")));
             entity.setMigrateOnError(MigrateOnErrorOptions.forValue(rs.getInt("migrate_on_error")));
             entity.setVirtService(rs.getBoolean("virt_service"));

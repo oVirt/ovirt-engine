@@ -83,7 +83,7 @@ public class CreateGlusterVolumeCommandTest {
         vdsGroup.setId(clusterId);
         vdsGroup.setVirtService(false);
         vdsGroup.setGlusterService(glusterEnabled);
-        vdsGroup.setcompatibility_version(Version.v3_1);
+        vdsGroup.setCompatibilityVersion(Version.v3_1);
         return vdsGroup;
     }
 

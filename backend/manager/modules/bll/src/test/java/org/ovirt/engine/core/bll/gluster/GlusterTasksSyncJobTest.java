@@ -307,7 +307,7 @@ public class GlusterTasksSyncJobTest {
         cluster.setName("cluster");
         cluster.setGlusterService(true);
         cluster.setVirtService(false);
-        cluster.setcompatibility_version(v);
+        cluster.setCompatibilityVersion(v);
         return cluster;
     }
 }

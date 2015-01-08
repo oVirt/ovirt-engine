@@ -87,7 +87,7 @@ public abstract class AbstractVmWatchdogCommand<T extends WatchdogParameters> ex
         } else {
             if (getVmTemplate().getVdsGroupId() != null) {
                 vmWatchdogValidator = new VmWatchdogValidator(getVmTemplate().getOsId(), watchdog,
-                        (getVdsGroupDAO().get(getVmTemplate().getVdsGroupId())).getcompatibility_version());
+                        (getVdsGroupDAO().get(getVmTemplate().getVdsGroupId())).getCompatibilityVersion());
             }
         }
 

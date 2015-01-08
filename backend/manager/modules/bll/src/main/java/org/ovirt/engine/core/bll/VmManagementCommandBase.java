@@ -222,7 +222,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
 
     protected boolean setAndValidateCpuProfile() {
         return validate(CpuProfileHelper.setAndValidateCpuProfile(getParameters().getVm().getStaticData(),
-                getVdsGroup().getcompatibility_version()));
+                getVdsGroup().getCompatibilityVersion()));
     }
 
     protected void updateParametersVmFromInstanceType() {
@@ -234,7 +234,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
             vmStatic.setCpuPerSocket(instanceType.getCpuPerSocket());
             vmStatic.setAutoStartup(instanceType.isAutoStartup());
 
-            if (FeatureSupported.isMigrationSupported(getVdsGroup().getArchitecture(), getVdsGroup().getcompatibility_version())) {
+            if (FeatureSupported.isMigrationSupported(getVdsGroup().getArchitecture(), getVdsGroup().getCompatibilityVersion())) {
                 vmStatic.setMigrationSupport(instanceType.getMigrationSupport());
             }
 
@@ -246,7 +246,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
             vmStatic.setMinAllocatedMem(instanceType.getMinAllocatedMem());
             if (vmDevices.isEmpty()) {
                 getParameters().setBalloonEnabled(false);
-            } else if (osRepository.isBalloonEnabled(getParameters().getVmStaticData().getOsId(), getVdsGroup().getcompatibility_version())) {
+            } else if (osRepository.isBalloonEnabled(getParameters().getVmStaticData().getOsId(), getVdsGroup().getCompatibilityVersion())) {
                 getParameters().setBalloonEnabled(true);
             }
         }
@@ -262,7 +262,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
         DisplayType defaultDisplayType = DisplayType.qxl;
         List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays = osRepository.getGraphicsAndDisplays(
                 getParameters().getVmStaticData().getOsId(),
-                getVdsGroup().getcompatibility_version());
+                getVdsGroup().getCompatibilityVersion());
 
         // map holding display type -> set of supported graphics types for this display type
         Map<DisplayType, Set<GraphicsType>> displayGraphicsSupport = new HashMap<>();

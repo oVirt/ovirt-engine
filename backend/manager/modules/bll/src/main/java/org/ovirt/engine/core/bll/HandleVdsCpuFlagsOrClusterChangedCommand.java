@@ -85,7 +85,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
                 if (StringUtils.isEmpty(vdsGroupCpuName)) {
                     // update group with the cpu name
 
-                    grp.setcpu_name(sc.getCpuName());
+                    grp.setCpuName(sc.getCpuName());
                     grp.setArchitecture(sc.getArchitecture());
 
                     updateMigrateOnError(grp);
@@ -132,7 +132,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
     private void updateMigrateOnError(VDSGroup group) {
         ArchitectureType arch = getArchitecture(group);
 
-        boolean isMigrationSupported = FeatureSupported.isMigrationSupported(arch, group.getcompatibility_version());
+        boolean isMigrationSupported = FeatureSupported.isMigrationSupported(arch, group.getCompatibilityVersion());
 
         if (!isMigrationSupported) {
             group.setMigrateOnError(MigrateOnErrorOptions.NO);
@@ -140,9 +140,9 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
     }
 
     protected ArchitectureType getArchitecture(VDSGroup group) {
-        if (StringUtils.isNotEmpty(group.getcpu_name())) {
-            return CpuFlagsManagerHandler.getArchitectureByCpuName(group.getcpu_name(),
-                    group.getcompatibility_version());
+        if (StringUtils.isNotEmpty(group.getCpuName())) {
+            return CpuFlagsManagerHandler.getArchitectureByCpuName(group.getCpuName(),
+                    group.getCompatibilityVersion());
         }
 
         return group.getArchitecture();

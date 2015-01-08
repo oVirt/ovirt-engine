@@ -377,7 +377,7 @@ public class UpdateVdsGroupCommandTest {
         doReturn(vmDao).when(cmd).getVmDAO();
         doReturn(true).when(cmd).validateClusterPolicy();
 
-        if (StringUtils.isEmpty(group.getcpu_name())) {
+        if (StringUtils.isEmpty(group.getCpuName())) {
             doReturn(ArchitectureType.undefined).when(cmd).getArchitecture();
         } else {
             doReturn(ArchitectureType.x86_64).when(cmd).getArchitecture();
@@ -397,13 +397,13 @@ public class UpdateVdsGroupCommandTest {
     private static VDSGroup createVdsGroupWithDifferentName() {
         VDSGroup group = new VDSGroup();
         group.setName("BadName");
-        group.setcompatibility_version(VERSION_1_1);
+        group.setCompatibilityVersion(VERSION_1_1);
         return group;
     }
 
     private static VDSGroup createNewVdsGroup() {
         VDSGroup group = new VDSGroup();
-        group.setcompatibility_version(VERSION_1_1);
+        group.setCompatibilityVersion(VERSION_1_1);
         group.setName("Default");
         return group;
     }
@@ -412,8 +412,8 @@ public class UpdateVdsGroupCommandTest {
         VDSGroup group = new VDSGroup();
         group.setName("Default");
         group.setId(DEFAULT_VDS_GROUP_ID);
-        group.setcpu_name("Intel Conroe");
-        group.setcompatibility_version(VERSION_1_1);
+        group.setCpuName("Intel Conroe");
+        group.setCompatibilityVersion(VERSION_1_1);
         group.setStoragePoolId(STORAGE_POOL_ID);
         group.setArchitecture(ArchitectureType.x86_64);
         return group;
@@ -422,7 +422,7 @@ public class UpdateVdsGroupCommandTest {
     private static VDSGroup createDefaultVdsGroupWithDifferentCpuName() {
         VDSGroup group = createDefaultVdsGroup();
 
-        group.setcpu_name("Another CPU name");
+        group.setCpuName("Another CPU name");
 
         return group;
     }
@@ -431,7 +431,7 @@ public class UpdateVdsGroupCommandTest {
         VDSGroup group = new VDSGroup();
         group.setName("Default");
         group.setId(DEFAULT_VDS_GROUP_ID);
-        group.setcompatibility_version(VERSION_1_1);
+        group.setCompatibilityVersion(VERSION_1_1);
         group.setStoragePoolId(STORAGE_POOL_ID);
         group.setArchitecture(ArchitectureType.undefined);
         return group;
@@ -445,14 +445,14 @@ public class UpdateVdsGroupCommandTest {
 
     private static VDSGroup createVdsGroupWithOlderVersion() {
         VDSGroup group = createNewVdsGroup();
-        group.setcompatibility_version(VERSION_1_0);
+        group.setCompatibilityVersion(VERSION_1_0);
         group.setStoragePoolId(STORAGE_POOL_ID);
         return group;
     }
 
     private static VDSGroup createVdsGroupWithBadVersion() {
         VDSGroup group = createNewVdsGroup();
-        group.setcompatibility_version(new Version(5, 0));
+        group.setCompatibilityVersion(new Version(5, 0));
         return group;
     }
 
@@ -466,7 +466,7 @@ public class UpdateVdsGroupCommandTest {
         VDSGroup group = createDefaultVdsGroup();
         group.setVirtService(virtService);
         group.setGlusterService(glusterService);
-        group.setcompatibility_version(VERSION_1_1);
+        group.setCompatibilityVersion(VERSION_1_1);
         return group;
     }
 

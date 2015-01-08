@@ -214,7 +214,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         List<VDSGroup> clusters = getVdsGroupDAO().getAllForStoragePool(getStoragePool().getId());
         List<String> lowLevelClusters = new ArrayList<String>();
         for (VDSGroup cluster : clusters) {
-            if (getStoragePool().getCompatibilityVersion().compareTo(cluster.getcompatibility_version()) > 0) {
+            if (getStoragePool().getCompatibilityVersion().compareTo(cluster.getCompatibilityVersion()) > 0) {
                 lowLevelClusters.add(cluster.getName());
             }
         }

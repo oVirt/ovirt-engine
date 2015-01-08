@@ -76,7 +76,7 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     private VDSGroup getVdsGroup(Version ver) {
         VDSGroup vdsGroup = new VDSGroup();
         vdsGroup.setId(CLUSTER_ID);
-        vdsGroup.setcompatibility_version(ver);
+        vdsGroup.setCompatibilityVersion(ver);
 
         return vdsGroup;
     }

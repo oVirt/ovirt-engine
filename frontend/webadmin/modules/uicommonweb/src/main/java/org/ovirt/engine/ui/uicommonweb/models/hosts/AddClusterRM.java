@@ -90,14 +90,14 @@ public class AddClusterRM extends IEnlistmentNotification {
 
                 cluster = new VDSGroup();
                 cluster.setName(clusterName);
-                cluster.setdescription(clusterModel.getDescription().getEntity());
+                cluster.setDescription(clusterModel.getDescription().getEntity());
                 cluster.setStoragePoolId(enlistmentContext.getDataCenterId());
-                cluster.setcpu_name(clusterModel.getCPU().getSelectedItem().getCpuName());
-                cluster.setmax_vds_memory_over_commit(clusterModel.getMemoryOverCommit());
+                cluster.setCpuName(clusterModel.getCPU().getSelectedItem().getCpuName());
+                cluster.setMaxVdsMemoryOverCommit(clusterModel.getMemoryOverCommit());
                 cluster.setCountThreadsAsCores(Boolean.TRUE.equals(clusterModel.getVersionSupportsCpuThreads().getEntity())
                         && Boolean.TRUE.equals(clusterModel.getCountThreadsAsCores().getEntity()));
                 cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$
-                cluster.setcompatibility_version(version);
+                cluster.setCompatibilityVersion(version);
                 cluster.setMigrateOnError(clusterModel.getMigrateOnErrorOption());
                 VdsGroupOperationParameters parameters = new VdsGroupOperationParameters(cluster);
                 parameters.setCorrelationId(getCorrelationId());

@@ -368,7 +368,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
 
     private boolean supportsGlusterServicesFeature(VDSGroup cluster) {
         return cluster.supportsGlusterService()
-                && GlusterFeatureSupported.glusterServices(cluster.getcompatibility_version());
+                && GlusterFeatureSupported.glusterServices(cluster.getCompatibilityVersion());
     }
 
     private void populateServiceMap() {

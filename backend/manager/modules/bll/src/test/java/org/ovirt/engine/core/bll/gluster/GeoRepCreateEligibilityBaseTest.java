@@ -66,7 +66,7 @@ public class GeoRepCreateEligibilityBaseTest {
     protected VDSGroup getVdsGroup(Guid vdsGroupId, Version compatibilityVersion) {
         VDSGroup vdsGroup = new VDSGroup();
         vdsGroup.setId(vdsGroupId);
-        vdsGroup.setcompatibility_version(compatibilityVersion);
+        vdsGroup.setCompatibilityVersion(compatibilityVersion);
         return vdsGroup;
     }
 

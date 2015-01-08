@@ -356,14 +356,14 @@ public class VmMapperTest extends
     public void getUsbPolicyNullUsb() {
         Usb usb = null;
         VDSGroup vdsGroup = new VDSGroup();
-        assertEquals(VmMapper.getUsbPolicyOnCreate(usb, vdsGroup.getcompatibility_version()), UsbPolicy.DISABLED);
+        assertEquals(VmMapper.getUsbPolicyOnCreate(usb, vdsGroup.getCompatibilityVersion()), UsbPolicy.DISABLED);
     }
 
     @Test
     public void getUsbPolicyIsSetDisabled() {
         Usb usb = new Usb();
         VDSGroup vdsGroup = new VDSGroup();
-        assertEquals(VmMapper.getUsbPolicyOnCreate(usb, vdsGroup.getcompatibility_version()), UsbPolicy.DISABLED);
+        assertEquals(VmMapper.getUsbPolicyOnCreate(usb, vdsGroup.getCompatibilityVersion()), UsbPolicy.DISABLED);
     }
 
     @Test
@@ -371,7 +371,7 @@ public class VmMapperTest extends
         Usb usb = new Usb();
         usb.setEnabled(false);
         VDSGroup vdsGroup = new VDSGroup();
-        assertEquals(VmMapper.getUsbPolicyOnCreate(usb, vdsGroup.getcompatibility_version()), UsbPolicy.DISABLED);
+        assertEquals(VmMapper.getUsbPolicyOnCreate(usb, vdsGroup.getCompatibilityVersion()), UsbPolicy.DISABLED);
     }
 
     @Test
@@ -380,7 +380,7 @@ public class VmMapperTest extends
         usb.setEnabled(true);
         usb.setType("native");
         VDSGroup vdsGroup = new VDSGroup();
-        assertEquals(VmMapper.getUsbPolicyOnCreate(usb, vdsGroup.getcompatibility_version()), UsbPolicy.ENABLED_NATIVE);
+        assertEquals(VmMapper.getUsbPolicyOnCreate(usb, vdsGroup.getCompatibilityVersion()), UsbPolicy.ENABLED_NATIVE);
     }
 
     @Test
@@ -389,7 +389,7 @@ public class VmMapperTest extends
         usb.setEnabled(true);
         usb.setType("legacy");
         VDSGroup vdsGroup = new VDSGroup();
-        assertEquals(VmMapper.getUsbPolicyOnCreate(usb, vdsGroup.getcompatibility_version()), UsbPolicy.ENABLED_LEGACY);
+        assertEquals(VmMapper.getUsbPolicyOnCreate(usb, vdsGroup.getCompatibilityVersion()), UsbPolicy.ENABLED_LEGACY);
     }
 
     @Test
@@ -397,8 +397,8 @@ public class VmMapperTest extends
         Usb usb = new Usb();
         usb.setEnabled(true);
         VDSGroup vdsGroup = new VDSGroup();
-        vdsGroup.setcompatibility_version(Version.v3_1);
-        assertEquals(VmMapper.getUsbPolicyOnCreate(usb, vdsGroup.getcompatibility_version()), UsbPolicy.ENABLED_NATIVE);
+        vdsGroup.setCompatibilityVersion(Version.v3_1);
+        assertEquals(VmMapper.getUsbPolicyOnCreate(usb, vdsGroup.getCompatibilityVersion()), UsbPolicy.ENABLED_NATIVE);
     }
 
     @Test
@@ -406,8 +406,8 @@ public class VmMapperTest extends
         Usb usb = new Usb();
         usb.setEnabled(true);
         VDSGroup vdsGroup = new VDSGroup();
-        vdsGroup.setcompatibility_version(Version.v3_0);
-        assertEquals(VmMapper.getUsbPolicyOnCreate(usb, vdsGroup.getcompatibility_version()), UsbPolicy.ENABLED_LEGACY);
+        vdsGroup.setCompatibilityVersion(Version.v3_0);
+        assertEquals(VmMapper.getUsbPolicyOnCreate(usb, vdsGroup.getCompatibilityVersion()), UsbPolicy.ENABLED_LEGACY);
     }
 
     @Test
@@ -531,8 +531,8 @@ public class VmMapperTest extends
         Usb usb = new Usb();
         usb.setEnabled(true);
         VDSGroup vdsGroup = new VDSGroup();
-        vdsGroup.setcompatibility_version(Version.v3_0);
-        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED, vdsGroup.getcompatibility_version()), UsbPolicy.ENABLED_LEGACY);
+        vdsGroup.setCompatibilityVersion(Version.v3_0);
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED, vdsGroup.getCompatibilityVersion()), UsbPolicy.ENABLED_LEGACY);
     }
 
     @Test
@@ -540,8 +540,8 @@ public class VmMapperTest extends
         Usb usb = new Usb();
         usb.setEnabled(true);
         VDSGroup vdsGroup = new VDSGroup();
-        vdsGroup.setcompatibility_version(Version.v3_1);
-        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED, vdsGroup.getcompatibility_version()), UsbPolicy.ENABLED_NATIVE);
+        vdsGroup.setCompatibilityVersion(Version.v3_1);
+        assertEquals(VmMapper.getUsbPolicyOnUpdate(usb, UsbPolicy.DISABLED, vdsGroup.getCompatibilityVersion()), UsbPolicy.ENABLED_NATIVE);
     }
 
     @Test

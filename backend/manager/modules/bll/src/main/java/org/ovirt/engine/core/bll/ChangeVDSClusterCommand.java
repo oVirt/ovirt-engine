@@ -117,7 +117,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         }
 
         vds.setCpuName(CpuFlagsManagerHandler.findMaxServerCpuByFlags(vds.getCpuFlags(),
-                getTargetCluster().getcompatibility_version()));
+                getTargetCluster().getCompatibilityVersion()));
 
 
         // CPU flags are null if oVirt node cluster is changed during approve process.
@@ -132,8 +132,8 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             }
         }
 
-        if (FeatureSupported.hostNetworkQos(getSourceCluster().getcompatibility_version())
-                && !FeatureSupported.hostNetworkQos(getTargetCluster().getcompatibility_version())) {
+        if (FeatureSupported.hostNetworkQos(getSourceCluster().getCompatibilityVersion())
+                && !FeatureSupported.hostNetworkQos(getTargetCluster().getCompatibilityVersion())) {
             for (VdsNetworkInterface iface : getHostNics()) {
                 if (iface.getQos() != null) {
                     return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED,
@@ -143,8 +143,8 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             }
         }
 
-        if (FeatureSupported.networkCustomProperties(getSourceCluster().getcompatibility_version())
-                && !FeatureSupported.networkCustomProperties(getTargetCluster().getcompatibility_version())) {
+        if (FeatureSupported.networkCustomProperties(getSourceCluster().getCompatibilityVersion())
+                && !FeatureSupported.networkCustomProperties(getTargetCluster().getCompatibilityVersion())) {
             for (VdsNetworkInterface iface : getHostNics()) {
                 if (iface.hasCustomProperties()) {
                     return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED,
@@ -270,7 +270,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
     }
 
     private boolean targetClusterSupportsSetupNetworks() {
-        return NetworkHelper.setupNetworkSupported(getTargetCluster().getcompatibility_version());
+        return NetworkHelper.setupNetworkSupported(getTargetCluster().getCompatibilityVersion());
     }
 
     private void configureNetworks() {

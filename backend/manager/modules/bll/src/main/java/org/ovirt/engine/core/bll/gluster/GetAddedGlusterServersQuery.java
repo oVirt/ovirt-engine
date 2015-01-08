@@ -75,7 +75,7 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
 
     public boolean serverExists(GlusterServerInfo glusterServer) {
         VDSGroup cluster = getVdsGroupDao().get(getParameters().getClusterId());
-        if (GlusterFeatureSupported.glusterHostUuidSupported(cluster.getcompatibility_version())) {
+        if (GlusterFeatureSupported.glusterHostUuidSupported(cluster.getCompatibilityVersion())) {
             return getDbUtils().serverExists(glusterServer.getUuid());
         } else {
             return getDbUtils().serverExists(getParameters().getClusterId(), glusterServer.getHostnameOrIp());

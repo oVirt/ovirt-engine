@@ -131,7 +131,7 @@ public class ImportRepoImageCopyTaskHandler
             VDSGroup vdsGroup = getVdsGroup(masterVm.getVdsGroupId());
             masterVm.setOsId(osRepository.getDefaultOSes().get(vdsGroup.getArchitecture()));
             Pair<GraphicsType, DisplayType> defaultDisplayType =
-                    osRepository.getGraphicsAndDisplays(masterVm.getOsId(), vdsGroup.getcompatibility_version()).get(0);
+                    osRepository.getGraphicsAndDisplays(masterVm.getOsId(), vdsGroup.getCompatibilityVersion()).get(0);
             masterVm.setDefaultDisplayType(defaultDisplayType.getSecond());
         }
 

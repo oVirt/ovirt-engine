@@ -288,7 +288,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
     private VDSReturnValue runUpdateMomPolicy(final VDSGroup cluster, final VDS vds) {
         VDSReturnValue returnValue = new VDSReturnValue();
-        if (cluster.getcompatibility_version().compareTo(Version.v3_3) >= 0) {
+        if (cluster.getCompatibilityVersion().compareTo(Version.v3_3) >= 0) {
             try {
                 returnValue = runVdsCommand(VDSCommandType.SetMOMPolicyParameters,
                         new MomPolicyVDSParameters(vds, cluster.isEnableBallooning(), cluster.isEnableKsm())
@@ -379,7 +379,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
     private boolean initGlusterHost() {
         glusterHostUuidFound = true;
-        if (GlusterFeatureSupported.glusterHostUuidSupported(getVdsGroup().getcompatibility_version())) {
+        if (GlusterFeatureSupported.glusterHostUuidSupported(getVdsGroup().getCompatibilityVersion())) {
             VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GetGlusterHostUUID,
                     new VdsIdVDSCommandParametersBase(getVds().getId()));
             if (returnValue.getSucceeded() && returnValue.getReturnValue() != null) {

@@ -129,7 +129,7 @@ public class BackendTemplateResource
         public VdcActionParametersBase getParameters(Template incoming, VmTemplate entity) {
             VmTemplate updated = getMapper(modelType, VmTemplate.class).map(incoming, entity);
             updated.setUsbPolicy(VmMapper.getUsbPolicyOnUpdate(incoming.getUsb(), entity.getUsbPolicy(),
-                    lookupCluster(updated.getVdsGroupId()).getcompatibility_version()));
+                    lookupCluster(updated.getVdsGroupId()).getCompatibilityVersion()));
             UpdateVmTemplateParameters params = new UpdateVmTemplateParameters(updated);
             if (incoming.isSetRngDevice()) {
                 params.setUpdateRngDevice(true);

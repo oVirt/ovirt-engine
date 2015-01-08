@@ -71,7 +71,7 @@ public class FenceValidator {
 
     private boolean isCompatibleAgentExists(List<FenceAgent> fenceAgents, VDSGroup vdsGroup, List<String> messages) {
         for (FenceAgent agent : fenceAgents) {
-            if (isFenceAgentVersionCompatible(agent, vdsGroup.getcompatibility_version().toString(), messages)) {
+            if (isFenceAgentVersionCompatible(agent, vdsGroup.getCompatibilityVersion().toString(), messages)) {
                 return true;
             }
         }

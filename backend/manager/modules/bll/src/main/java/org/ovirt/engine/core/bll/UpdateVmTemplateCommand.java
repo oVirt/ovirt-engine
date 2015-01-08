@@ -54,10 +54,10 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         if (getVdsGroup() != null) {
             setStoragePoolId(getVdsGroup().getStoragePoolId() != null ? getVdsGroup().getStoragePoolId()
                     : Guid.Empty);
-            getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(getVdsGroup().getcompatibility_version(),
+            getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(getVdsGroup().getCompatibilityVersion(),
                     parameters.getVmTemplateData());
             if (mOldTemplate != null) {
-                getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(getVdsGroup().getcompatibility_version(),
+                getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(getVdsGroup().getCompatibilityVersion(),
                         mOldTemplate);
             }
         }
@@ -134,7 +134,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         if (returnValue && getParameters().getWatchdog() != null) {
             returnValue = validate((new VmWatchdogValidator(getParameters().getVmTemplateData().getOsId(),
                     getParameters().getWatchdog(),
-                    getVdsGroup().getcompatibility_version())).isModelCompatibleWithOs());
+                    getVdsGroup().getCompatibilityVersion())).isModelCompatibleWithOs());
         }
 
         // Check if the display type is supported
@@ -143,12 +143,12 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(getVmTemplateId()), getParameters().getGraphicsDevices()),
                     getParameters().getVmTemplateData().getDefaultDisplayType(),
                     getReturnValue().getCanDoActionMessages(),
-                    getVdsGroup().getcompatibility_version());
+                    getVdsGroup().getCompatibilityVersion());
         }
 
         if (returnValue) {
             returnValue = AddVmCommand.checkCpuSockets(getParameters().getVmTemplateData().getNumOfSockets(),
-                    getParameters().getVmTemplateData().getCpuPerSocket(), getVdsGroup().getcompatibility_version()
+                    getParameters().getVmTemplateData().getCpuPerSocket(), getVdsGroup().getCompatibilityVersion()
                     .toString(), getReturnValue().getCanDoActionMessages());
         }
 
@@ -156,7 +156,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                 !VmHandler.isSingleQxlDeviceLegal(getParameters().getVmTemplateData().getDefaultDisplayType(),
                         getParameters().getVmTemplateData().getOsId(),
                         getReturnValue().getCanDoActionMessages(),
-                        getVdsGroup().getcompatibility_version())) {
+                        getVdsGroup().getCompatibilityVersion())) {
             returnValue = false;
         }
 
@@ -166,7 +166,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             List<VmNic> interfaces = getVmNicDao().getAllForTemplate(getParameters().getVmTemplateData().getId());
 
             if (!VmCommand.checkPciAndIdeLimit(getParameters().getVmTemplateData().getOsId(),
-                    getVdsGroup().getcompatibility_version(),
+                    getVdsGroup().getCompatibilityVersion(),
                     getParameters().getVmTemplateData().getNumOfMonitors(),
                     interfaces,
                     new ArrayList<DiskImageBase>(getParameters().getVmTemplateData().getDiskList()),
@@ -184,7 +184,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
 
         if (!getVmPropertiesUtils().validateVmProperties(
-                getVdsGroup().getcompatibility_version(),
+                getVdsGroup().getCompatibilityVersion(),
                 getParameters().getVmTemplateData().getCustomProperties(),
                 getReturnValue().getCanDoActionMessages())) {
             return false;
@@ -216,7 +216,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     protected void executeCommand() {
         if (getVmTemplate().getTemplateType() != VmEntityType.INSTANCE_TYPE) {
             VmHandler.warnMemorySizeLegal(getParameters().getVmTemplateData(),
-                    getVdsGroup().getcompatibility_version());
+                    getVdsGroup().getCompatibilityVersion());
         }
 
         getVmStaticDAO().incrementDbGeneration(getVmTemplate().getId());
@@ -281,7 +281,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         // update audio device
         VmDeviceUtils.updateAudioDevice(mOldTemplate,
                 getVmTemplate(),
-                getVdsGroup() != null ? getVdsGroup().getcompatibility_version() : null,
+                getVdsGroup() != null ? getVdsGroup().getCompatibilityVersion() : null,
                 getParameters().isSoundDeviceEnabled());
 
         VmDeviceUtils.updateConsoleDevice(getVmTemplateId(), getParameters().isConsoleEnabled());
@@ -370,7 +370,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             return true;
         }
         return validate(CpuProfileHelper.setAndValidateCpuProfile(getVmTemplate(),
-                getVdsGroup().getcompatibility_version()));
+                getVdsGroup().getCompatibilityVersion()));
     }
 
     private VmPropertiesUtils getVmPropertiesUtils() {

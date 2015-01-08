@@ -82,7 +82,7 @@ public class ClusterUtils {
 
     public static Version getCompatibilityVersion(VmBase vmBase) {
         return vmBase.getVdsGroupId() != null ?
-                getInstance().getVdsGroupDao().get(vmBase.getVdsGroupId()).getcompatibility_version()
+                getInstance().getVdsGroupDao().get(vmBase.getVdsGroupId()).getCompatibilityVersion()
                 : Version.v3_0;
     }
 

@@ -46,7 +46,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
 
     @Override
     protected Version getClusterVersion() {
-        return getVdsGroupDAO().get(getNetworkCluster().getClusterId()).getcompatibility_version();
+        return getVdsGroupDAO().get(getNetworkCluster().getClusterId()).getCompatibilityVersion();
     }
 
     @Override

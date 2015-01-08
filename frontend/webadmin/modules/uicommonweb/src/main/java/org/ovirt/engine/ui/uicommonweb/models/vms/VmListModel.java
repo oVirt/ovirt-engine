@@ -2179,7 +2179,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     private boolean balloonEnabled(UnitVmModel model) {
         return model.getMemoryBalloonDeviceEnabled().getEntity()
-                && model.getSelectedCluster().getcompatibility_version().compareTo(BALLOON_DEVICE_MIN_VERSION) >= 0;
+                && model.getSelectedCluster().getCompatibilityVersion().compareTo(BALLOON_DEVICE_MIN_VERSION) >= 0;
     }
 
     private void setVmWatchdogToParams(final UnitVmModel model, VmManagementParametersBase updateVmParams) {

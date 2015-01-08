@@ -428,7 +428,7 @@ public class VmDeviceUtils {
             if (isVm) {
                 addSoundCard(vm.getStaticData(), vm.getVdsGroupCompatibilityVersion());
             } else {
-                addSoundCard(vmBase, cluster != null ? cluster.getcompatibility_version() : null);
+                addSoundCard(vmBase, cluster != null ? cluster.getCompatibilityVersion() : null);
             }
         }
 

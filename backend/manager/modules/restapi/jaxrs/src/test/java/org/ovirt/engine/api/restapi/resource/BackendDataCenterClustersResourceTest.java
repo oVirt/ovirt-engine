@@ -114,7 +114,7 @@ public class BackendDataCenterClustersResourceTest extends
 
         setUpCreationExpectations(VdcActionType.AddVdsGroup,
                                   VdsGroupOperationParameters.class,
-                                  new String[] { "VdsGroup.compatibility_version" },
+                                  new String[] { "VdsGroup.CompatibilityVersion" },
                                   new Object[] { new org.ovirt.engine.core.compat.Version(2, 2) },
                                   true,
                                   true,
@@ -145,7 +145,7 @@ public class BackendDataCenterClustersResourceTest extends
 
         setUpCreationExpectations(VdcActionType.AddVdsGroup,
                                   VdsGroupOperationParameters.class,
-                                  new String[] { "VdsGroup.compatibility_version" },
+                                  new String[] { "VdsGroup.CompatibilityVersion" },
                                   new Object[] { new org.ovirt.engine.core.compat.Version(2, 3) },
                                   true,
                                   true,
@@ -225,7 +225,7 @@ public class BackendDataCenterClustersResourceTest extends
     static VDSGroup setUpEntityExpectations(VDSGroup entity, int index) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.getdescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
+        expect(entity.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
         return entity;
     }
 

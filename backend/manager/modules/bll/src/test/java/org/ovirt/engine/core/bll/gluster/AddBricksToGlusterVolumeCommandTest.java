@@ -146,7 +146,7 @@ public class AddBricksToGlusterVolumeCommandTest {
         vdsGroup.setId(clusterId);
         vdsGroup.setVirtService(false);
         vdsGroup.setGlusterService(true);
-        vdsGroup.setcompatibility_version(Version.v3_1);
+        vdsGroup.setCompatibilityVersion(Version.v3_1);
         return vdsGroup;
     }
 

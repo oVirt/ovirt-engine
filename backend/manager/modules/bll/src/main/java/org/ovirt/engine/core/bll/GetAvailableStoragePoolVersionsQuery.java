@@ -39,7 +39,7 @@ public class GetAvailableStoragePoolVersionsQuery<P extends IdQueryParameters>
                     boolean versionOk = true;
                     // check all clusters are not grater than this ver
                     for (VDSGroup cluster : clusters) {
-                        if (supportedVer.compareTo(cluster.getcompatibility_version()) > 0) {
+                        if (supportedVer.compareTo(cluster.getCompatibilityVersion()) > 0) {
                             versionOk = false;
                             break;
                         }

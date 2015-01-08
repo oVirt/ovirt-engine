@@ -241,7 +241,7 @@ public class GlusterTaskUtils {
 
     public boolean supportsGlusterAsyncTasksFeature(VDSGroup cluster) {
         return cluster.supportsGlusterService()
-                && GlusterFeatureSupported.glusterAsyncTasks(cluster.getcompatibility_version());
+                && GlusterFeatureSupported.glusterAsyncTasks(cluster.getCompatibilityVersion());
     }
 
     public GlusterVolumeDao getVolumeDao() {

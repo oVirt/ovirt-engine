@@ -272,7 +272,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         VdsStatic vdsStatic = getParameters().getVdsStaticData();
         if (vdsStatic.getProtocol() == null) {
             VDSGroup cluster = getVdsGroup();
-            if (cluster != null && FeatureSupported.jsonProtocol(cluster.getcompatibility_version())) {
+            if (cluster != null && FeatureSupported.jsonProtocol(cluster.getCompatibilityVersion())) {
                 vdsStatic.setProtocol(VdsProtocol.STOMP);
             } else {
                 vdsStatic.setProtocol(VdsProtocol.XML);
@@ -341,7 +341,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         if (!(returnValue
                 && isPowerManagementLegal(getParameters().getVdsStaticData().isPmEnabled(),
                         getParameters().getFenceAgents(),
-                        getVdsGroup().getcompatibility_version().toString())
+                        getVdsGroup().getCompatibilityVersion().toString())
                 && canConnect(getParameters().getvds()))) {
             return false;
         }

@@ -349,7 +349,7 @@ public class VolumeBrickListModel extends SearchableListModel {
             {
                 VDSGroup cluster = (VDSGroup) result;
                 volumeBrickModel.getForce()
-                        .setIsAvailable(GlusterFeaturesUtil.isGlusterForceAddBricksSupported(cluster.getcompatibility_version()));
+                        .setIsAvailable(GlusterFeaturesUtil.isGlusterForceAddBricksSupported(cluster.getCompatibilityVersion()));
 
                 AsyncQuery _asyncQueryInner = new AsyncQuery();
                 _asyncQueryInner.setModel(model);
@@ -1275,7 +1275,7 @@ public class VolumeBrickListModel extends SearchableListModel {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 VDSGroup vdsGroup = (VDSGroup) returnValue;
-                if (Version.v3_2.compareTo(vdsGroup.getcompatibility_version()) <= 0) {
+                if (Version.v3_2.compareTo(vdsGroup.getCompatibilityVersion()) <= 0) {
                     onShowBrickAdvancedDetails(volumeEntity);
                 }
                 else {
@@ -1284,7 +1284,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                     model.setTitle(ConstantsManager.getInstance().getConstants().advancedDetailsBrickTitle());
                     model.setMessage(ConstantsManager.getInstance()
                             .getMessages()
-                            .brickDetailsNotSupportedInClusterCompatibilityVersion(vdsGroup.getcompatibility_version() != null ? vdsGroup.getcompatibility_version()
+                            .brickDetailsNotSupportedInClusterCompatibilityVersion(vdsGroup.getCompatibilityVersion() != null ? vdsGroup.getCompatibilityVersion()
                                     .toString()
                                     : "")); //$NON-NLS-1$
                     model.setHelpTag(HelpTag.brick_details_not_supported);

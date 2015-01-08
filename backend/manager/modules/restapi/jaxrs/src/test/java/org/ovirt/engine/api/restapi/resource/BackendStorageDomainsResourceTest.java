@@ -736,7 +736,7 @@ public class BackendStorageDomainsResourceTest
         expect(entity.getId()).andReturn(getSafeEntry(index, GUIDS)).anyTimes();
         expect(entity.getStorageName()).andReturn(getSafeEntry(index, NAMES)).anyTimes();
         // REVIST No descriptions for storage domains
-        // expect(entity.getdescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
+        // expect(entity.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
         expect(entity.getStorageDomainType()).andReturn(getSafeEntry(index, TYPES_MAPPED)).anyTimes();
         expect(entity.getStorageType()).andReturn(getSafeEntry(index, STORAGE_TYPES_MAPPED)).anyTimes();
         expect(entity.getStorage()).andReturn(getSafeEntry(index, GUIDS).toString()).anyTimes();

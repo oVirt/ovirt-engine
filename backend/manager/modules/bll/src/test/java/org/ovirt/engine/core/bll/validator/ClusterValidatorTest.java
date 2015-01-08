@@ -104,14 +104,14 @@ public class ClusterValidatorTest {
 
     @Test
     public void versionSupported() {
-        when(cluster.getcompatibility_version()).thenReturn(SUPPORTED_VERSION);
+        when(cluster.getCompatibilityVersion()).thenReturn(SUPPORTED_VERSION);
 
         assertThat(validator.versionSupported(), isValid());
     }
 
     @Test
     public void versionNotSupported() {
-        when(cluster.getcompatibility_version()).thenReturn(mock(Version.class));
+        when(cluster.getCompatibilityVersion()).thenReturn(mock(Version.class));
 
         assertThat(validator.versionSupported(), failsWith(VersionSupport.getUnsupportedVersionMessage()));
     }
@@ -124,7 +124,7 @@ public class ClusterValidatorTest {
     @Test
     public void dataCenterVersionMatches() {
         when(cluster.getStoragePoolId()).thenReturn(mock(Guid.class));
-        when(cluster.getcompatibility_version()).thenReturn(SUPPORTED_VERSION);
+        when(cluster.getCompatibilityVersion()).thenReturn(SUPPORTED_VERSION);
         StoragePool dataCenter = mock(StoragePool.class);
         when(dataCenter.getCompatibilityVersion()).thenReturn(SUPPORTED_VERSION);
         when(dataCenterDao.get(any(Guid.class))).thenReturn(dataCenter);
@@ -137,7 +137,7 @@ public class ClusterValidatorTest {
     @Test
     public void dataCenterVersionMismatches() {
         when(cluster.getStoragePoolId()).thenReturn(mock(Guid.class));
-        when(cluster.getcompatibility_version()).thenReturn(mock(Version.class));
+        when(cluster.getCompatibilityVersion()).thenReturn(mock(Version.class));
         StoragePool dataCenter = mock(StoragePool.class);
         when(dataCenter.getCompatibilityVersion()).thenReturn(SUPPORTED_VERSION);
         when(dataCenterDao.get(any(Guid.class))).thenReturn(dataCenter);
@@ -223,7 +223,7 @@ public class ClusterValidatorTest {
 
     @Test
     public void qosBaloonSupported() {
-        when(cluster.getcompatibility_version()).thenReturn(Version.v3_3);
+        when(cluster.getCompatibilityVersion()).thenReturn(Version.v3_3);
         when(cluster.isEnableBallooning()).thenReturn(true);
         validator = new ClusterValidator(dbFacade, cluster);
 
@@ -232,7 +232,7 @@ public class ClusterValidatorTest {
 
     @Test
     public void qosBaloonNotSupported() {
-        when(cluster.getcompatibility_version()).thenReturn(mock(Version.class));
+        when(cluster.getCompatibilityVersion()).thenReturn(mock(Version.class));
         when(cluster.isEnableBallooning()).thenReturn(true);
         validator = new ClusterValidator(dbFacade, cluster);
 
@@ -241,7 +241,7 @@ public class ClusterValidatorTest {
 
     @Test
     public void glusterServiceSupported() {
-        when(cluster.getcompatibility_version()).thenReturn(mock(Version.class));
+        when(cluster.getCompatibilityVersion()).thenReturn(mock(Version.class));
         when(cluster.supportsGlusterService()).thenReturn(true);
         validator = spy(new ClusterValidator(dbFacade, cluster));
         doReturn(true).when(validator).glusterFeatureEnabled();
@@ -251,7 +251,7 @@ public class ClusterValidatorTest {
 
     @Test
     public void glusterServiceNotRequired() {
-        when(cluster.getcompatibility_version()).thenReturn(mock(Version.class));
+        when(cluster.getCompatibilityVersion()).thenReturn(mock(Version.class));
         when(cluster.supportsGlusterService()).thenReturn(false);
         validator = new ClusterValidator(dbFacade, cluster);
 
@@ -260,7 +260,7 @@ public class ClusterValidatorTest {
 
     @Test
     public void glusterServiceNotSupported() {
-        when(cluster.getcompatibility_version()).thenReturn(mock(Version.class));
+        when(cluster.getCompatibilityVersion()).thenReturn(mock(Version.class));
         when(cluster.supportsGlusterService()).thenReturn(true);
         validator = spy(new ClusterValidator(dbFacade, cluster));
         doReturn(false).when(validator).glusterFeatureEnabled();
@@ -340,7 +340,7 @@ public class ClusterValidatorTest {
 
     @Test
     public void migrationSupported() {
-        when(cluster.getcompatibility_version()).thenReturn(mock(Version.class));
+        when(cluster.getCompatibilityVersion()).thenReturn(mock(Version.class));
         validator = spy(new ClusterValidator(dbFacade, cluster));
         doReturn(true).when(validator).migrationSupportedForArch(any(ArchitectureType.class));
 
@@ -349,7 +349,7 @@ public class ClusterValidatorTest {
 
     @Test
     public void migrationNotSupported() {
-        when(cluster.getcompatibility_version()).thenReturn(mock(Version.class));
+        when(cluster.getCompatibilityVersion()).thenReturn(mock(Version.class));
         validator = spy(new ClusterValidator(dbFacade, cluster));
         doReturn(false).when(validator).migrationSupportedForArch(any(ArchitectureType.class));
 

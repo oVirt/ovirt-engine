@@ -72,7 +72,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
         Version clusterVersion = getVdsGroup() == null
                 ? null
-                : getVdsGroup().getcompatibility_version();
+                : getVdsGroup().getCompatibilityVersion();
         ImportUtils.updateGraphicsDevices(getVmTemplate(), clusterVersion);
     }
 
@@ -434,7 +434,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         VnicProfileHelper vnicProfileHelper =
                 new VnicProfileHelper(getVmTemplate().getVdsGroupId(),
                         getStoragePoolId(),
-                        getVdsGroup().getcompatibility_version(),
+                        getVdsGroup().getCompatibilityVersion(),
                         AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_INVALID_INTERFACES);
 
         for (VmNetworkInterface iface : getVmTemplate().getInterfaces()) {
@@ -568,7 +568,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         getVmTemplate().setVdsGroupId(getVdsGroupId());
         getVmTemplate().setCpuProfileId(getParameters().getCpuProfileId());
         return validate(CpuProfileHelper.setAndValidateCpuProfile(getVmTemplate(),
-                getVdsGroup().getcompatibility_version()));
+                getVdsGroup().getCompatibilityVersion()));
     }
 
     @Override

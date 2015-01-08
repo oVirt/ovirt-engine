@@ -129,7 +129,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             isVmInDb = true;
         } else if (getVdsGroup() != null && parameterMasterVm != null) {
             VM vm = new VM(parameterMasterVm, new VmDynamic(), null);
-            vm.setVdsGroupCompatibilityVersion(getVdsGroup().getcompatibility_version());
+            vm.setVdsGroupCompatibilityVersion(getVdsGroup().getCompatibilityVersion());
             setVm(vm);
             setStoragePoolId(getVdsGroup().getStoragePoolId());
         }
@@ -141,7 +141,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             // Parses the custom properties field that was filled by frontend to
             // predefined and user defined fields
             VmPropertiesUtils.getInstance().separateCustomPropertiesToUserAndPredefined(
-                    getVdsGroup().getcompatibility_version(), parameterMasterVm);
+                    getVdsGroup().getCompatibilityVersion(), parameterMasterVm);
         }
     }
 
@@ -312,7 +312,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         });
 
         if (getParameters().getTemplateType() != VmEntityType.INSTANCE_TYPE) {
-            VmHandler.warnMemorySizeLegal(getVmTemplate(), getVdsGroup().getcompatibility_version());
+            VmHandler.warnMemorySizeLegal(getVmTemplate(), getVdsGroup().getCompatibilityVersion());
         }
 
         // means that there are no asynchronous tasks to execute and that we can
@@ -348,7 +348,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(srcId), getParameters().getGraphicsDevices()),
                 getParameters().getMasterVm().getDefaultDisplayType(),
                 getReturnValue().getCanDoActionMessages(),
-                getVdsGroup().getcompatibility_version())) {
+                getVdsGroup().getCompatibilityVersion())) {
             return false;
         }
 
@@ -356,12 +356,12 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 !VmHandler.isSingleQxlDeviceLegal(getParameters().getVm().getDefaultDisplayType(),
                         getParameters().getVm().getOs(),
                         getReturnValue().getCanDoActionMessages(),
-                        getVdsGroup().getcompatibility_version())) {
+                        getVdsGroup().getCompatibilityVersion())) {
             return false;
         }
 
         if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled()) &&
-                !FeatureSupported.virtIoScsi(getVdsGroup().getcompatibility_version())) {
+                !FeatureSupported.virtIoScsi(getVdsGroup().getCompatibilityVersion())) {
             return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
         }
 
@@ -369,7 +369,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (getParameters().getWatchdog() != null) {
             if (!validate((new VmWatchdogValidator(getParameters().getMasterVm().getOsId(),
                     getParameters().getWatchdog(),
-                    getVdsGroup().getcompatibility_version())).isModelCompatibleWithOs())) {
+                    getVdsGroup().getCompatibilityVersion())).isModelCompatibleWithOs())) {
                 return false;
             }
         }
@@ -381,7 +381,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
 
         if (!VmPropertiesUtils.getInstance().validateVmProperties(
-                getVdsGroup().getcompatibility_version(),
+                getVdsGroup().getCompatibilityVersion(),
                 getParameters().getMasterVm().getCustomProperties(),
                 getReturnValue().getCanDoActionMessages())) {
             return false;
@@ -389,7 +389,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         return imagesRelatedChecks() && AddVmCommand.checkCpuSockets(getParameters().getMasterVm().getNumOfSockets(),
                 getParameters().getMasterVm().getCpuPerSocket(), getVdsGroup()
-                .getcompatibility_version().toString(), getReturnValue().getCanDoActionMessages());
+                .getCompatibilityVersion().toString(), getReturnValue().getCanDoActionMessages());
     }
 
     @Override
@@ -932,6 +932,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return true;
         }
         return validate(CpuProfileHelper.setAndValidateCpuProfile(getParameters().getMasterVm(),
-                getVdsGroup().getcompatibility_version()));
+                getVdsGroup().getCompatibilityVersion()));
     }
 }

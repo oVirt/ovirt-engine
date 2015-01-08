@@ -1031,7 +1031,7 @@ public abstract class RunOnceModel extends Model
                                 VDSGroup cluster = (VDSGroup) returnValue;
 
                                 // update cpu names list
-                                if (cluster.getcpu_name() != null) {
+                                if (cluster.getCpuName() != null) {
                                     AsyncDataProvider.getInstance().getSupportedCpuList(new AsyncQuery(this,
                                             new INewAsyncCallback() {
                                                 @Override
@@ -1054,7 +1054,7 @@ public abstract class RunOnceModel extends Model
                                                         }
                                                     }
                                                 }
-                                            }), cluster.getcpu_name());
+                                            }), cluster.getCpuName());
                                 }
                             }
                         }

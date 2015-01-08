@@ -41,13 +41,13 @@ public class ClusterMapper {
             entity.setName(model.getName());
         }
         if (model.isSetDescription()) {
-            entity.setdescription(model.getDescription());
+            entity.setDescription(model.getDescription());
         }
         if (model.isSetComment()) {
             entity.setComment(model.getComment());
         }
         if (model.isSetCpu() && model.getCpu().isSetId()) {
-            entity.setcpu_name(model.getCpu().getId());
+            entity.setCpuName(model.getCpu().getId());
         }
         if (model.isSetCpu() && model.getCpu().isSetArchitecture()) {
             Architecture archType = Architecture.fromValue(model.getCpu().getArchitecture());
@@ -60,8 +60,8 @@ public class ClusterMapper {
             entity.setStoragePoolId(GuidUtils.asGuid(model.getDataCenter().getId()));
         }
         if (model.isSetVersion() && model.getVersion().getMajor()!=null && model.getVersion().getMinor()!=null) {
-            entity.setcompatibility_version(new org.ovirt.engine.core.compat.Version(model.getVersion().getMajor(),
-                                                                                model.getVersion().getMinor()));
+            entity.setCompatibilityVersion(new org.ovirt.engine.core.compat.Version(model.getVersion().getMajor(),
+                    model.getVersion().getMinor()));
         }
         if (model.isSetMemoryPolicy()) {
             entity = map(model.getMemoryPolicy(), entity);
@@ -127,11 +127,11 @@ public class ClusterMapper {
         Cluster model = template != null ? template : new Cluster();
         model.setId(entity.getId().toString());
         model.setName(entity.getName());
-        model.setDescription(entity.getdescription());
+        model.setDescription(entity.getDescription());
         model.setComment(entity.getComment());
-        if (entity.getcpu_name() != null) {
+        if (entity.getCpuName() != null) {
             CPU cpu = new CPU();
-            cpu.setId(entity.getcpu_name());
+            cpu.setId(entity.getCpuName());
 
             cpu.setArchitecture(CPUMapper.map(entity.getArchitecture(), null));
 
@@ -142,10 +142,10 @@ public class ClusterMapper {
             dataCenter.setId(entity.getStoragePoolId().toString());
             model.setDataCenter(dataCenter);
         }
-        if (entity.getcompatibility_version() != null) {
+        if (entity.getCompatibilityVersion() != null) {
             model.setVersion(new Version());
-            model.getVersion().setMajor(entity.getcompatibility_version().getMajor());
-            model.getVersion().setMinor(entity.getcompatibility_version().getMinor());
+            model.getVersion().setMajor(entity.getCompatibilityVersion().getMajor());
+            model.getVersion().setMinor(entity.getCompatibilityVersion().getMinor());
         }
         model.setMemoryPolicy(map(entity, (MemoryPolicy)null));
         model.setSchedulingPolicy(map(entity, (SchedulingPolicy) null));
@@ -184,12 +184,12 @@ public class ClusterMapper {
     public static VDSGroup map(MemoryPolicy model, VDSGroup template) {
         VDSGroup entity = template != null ? template : new VDSGroup();
         if (model.isSetOverCommit() && model.getOverCommit().getPercent()!=null) {
-            entity.setmax_vds_memory_over_commit(model.getOverCommit().getPercent());
+            entity.setMaxVdsMemoryOverCommit(model.getOverCommit().getPercent());
         }
         if (model.isSetTransparentHugepages() &&
             model.getTransparentHugepages().isSetEnabled()) {
             entity.setTransparentHugepages(model.getTransparentHugepages().isEnabled());
-        } else if (template != null && greaterOrEqual(template.getcompatibility_version(), min_thp_version)){
+        } else if (template != null && greaterOrEqual(template.getCompatibilityVersion(), min_thp_version)){
             entity.setTransparentHugepages(true);
         }
         return entity;
@@ -199,7 +199,7 @@ public class ClusterMapper {
     public static MemoryPolicy map(VDSGroup entity, MemoryPolicy template) {
         MemoryPolicy model = template != null ? template : new MemoryPolicy();
         model.setOverCommit(new MemoryOverCommit());
-        model.getOverCommit().setPercent(entity.getmax_vds_memory_over_commit());
+        model.getOverCommit().setPercent(entity.getMaxVdsMemoryOverCommit());
         model.setTransparentHugepages(new TransparentHugePages());
         model.getTransparentHugepages().setEnabled(entity.getTransparentHugepages());
         return model;
@@ -274,7 +274,7 @@ public class ClusterMapper {
     public static VDSGroup map(StoragePool pool, VDSGroup template) {
         VDSGroup entity = template != null ? template : new VDSGroup();
         if (pool.getCompatibilityVersion() != null) {
-            entity.setcompatibility_version(pool.getCompatibilityVersion());
+            entity.setCompatibilityVersion(pool.getCompatibilityVersion());
         }
         return entity;
     }

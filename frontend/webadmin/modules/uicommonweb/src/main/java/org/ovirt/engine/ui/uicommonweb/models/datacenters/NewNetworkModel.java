@@ -116,7 +116,7 @@ public class NewNetworkModel extends NetworkModel {
         if (networkClusters != null) {
             for (NetworkClusterModel networkCluster : networkClusters) {
                 if (!(Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.SupportCustomDeviceProperties,
-                        networkCluster.getEntity().getcompatibility_version().getValue())) {
+                        networkCluster.getEntity().getCompatibilityVersion().getValue())) {
                     networkCluster.setIsChangable(!externalNetwork);
                     networkCluster.setAttached(!externalNetwork);
                 }

@@ -701,7 +701,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
                     Version v3 = new Version(3, 0);
                     VDSGroup cluster = (VDSGroup) clusterModel.getSelectedItem();
 
-                    boolean isLessThan3 = cluster.getcompatibility_version().compareTo(v3) < 0;
+                    boolean isLessThan3 = cluster.getCompatibilityVersion().compareTo(v3) < 0;
 
                     hostModel.getOverrideIpTables().setIsAvailable(!isLessThan3);
                     hostModel.getOverrideIpTables().setEntity(!isLessThan3 && updateOverrideIpTables);
@@ -720,7 +720,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
                     VDSGroup cluster = clusterModel.getSelectedItem();
                     Boolean jsonSupported =
                             (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.JsonProtocolSupported,
-                                    cluster.getcompatibility_version().toString());
+                                    cluster.getCompatibilityVersion().toString());
                     if (jsonSupported) {
                         hostModel.getProtocol().setEntity(true);
                     } else {

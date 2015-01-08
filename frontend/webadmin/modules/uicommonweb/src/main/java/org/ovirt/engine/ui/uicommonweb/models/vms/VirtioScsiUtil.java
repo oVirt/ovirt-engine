@@ -32,7 +32,7 @@ public class VirtioScsiUtil {
             return;
         }
 
-        AsyncDataProvider.getInstance().getDiskInterfaceList(osId, cluster.getcompatibility_version(),
+        AsyncDataProvider.getInstance().getDiskInterfaceList(osId, cluster.getCompatibilityVersion(),
                 new AsyncQuery(model, new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object parentModel, Object returnValue) {
@@ -50,7 +50,7 @@ public class VirtioScsiUtil {
                             if (Guid.isNullOrEmpty(vmId)) {
                                 VDSGroup cluster = model.getSelectedCluster();
                                 boolean isVirtioScsiEnabled = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                                        ConfigurationValues.VirtIoScsiEnabled, cluster.getcompatibility_version().getValue());
+                                        ConfigurationValues.VirtIoScsiEnabled, cluster.getCompatibilityVersion().getValue());
                                 model.getIsVirtioScsiEnabled().setEntity(isVirtioScsiEnabled);
                                 callAfterUpdates();
                             } else {

@@ -1299,7 +1299,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
 
     private void postInit()
     {
-        getDescription().setEntity(getEntity().getdescription());
+        getDescription().setEntity(getEntity().getDescription());
         getComment().setEntity(getEntity().getComment());
 
         initSpiceProxy();
@@ -1308,7 +1308,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         getSkipFencingIfConnectivityBrokenEnabled().setEntity(getEntity().getFencingPolicy().isSkipFencingIfConnectivityBroken());
         getHostsWithBrokenConnectivityThreshold().setSelectedItem(getEntity().getFencingPolicy().getHostsWithBrokenConnectivityThreshold());
 
-        setMemoryOverCommit(getEntity().getmax_vds_memory_over_commit());
+        setMemoryOverCommit(getEntity().getMaxVdsMemoryOverCommit());
 
         getCountThreadsAsCores().setEntity(getEntity().getCountThreadsAsCores());
         getEnableBallooning().setEntity(getEntity().isEnableBallooning());
@@ -1681,7 +1681,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
             getCPU().setSelectedItem(null);
             for (ServerCpu a : getCPU().getItems())
             {
-                if (ObjectUtils.objectsEqual(a.getCpuName(), getEntity().getcpu_name()))
+                if (ObjectUtils.objectsEqual(a.getCpuName(), getEntity().getCpuName()))
                 {
                     getCPU().setSelectedItem(a);
                     break;
@@ -1742,7 +1742,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                 }
                 else if (clusterModel.getIsEdit()) {
                     clusterModel.getVersion().setSelectedItem(Linq.firstOrDefault(versions,
-                            new Linq.VersionPredicate(clusterModel.getEntity().getcompatibility_version())));
+                            new Linq.VersionPredicate(clusterModel.getEntity().getCompatibilityVersion())));
                 }
                 else {
                     clusterModel.getVersion().setSelectedItem(selectedVersion);

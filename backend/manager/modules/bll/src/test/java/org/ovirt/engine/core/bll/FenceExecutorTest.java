@@ -122,7 +122,7 @@ public class FenceExecutorTest {
     private VDSGroup mockCluster() {
         VDSGroup cluster = new VDSGroup();
         cluster.setId(FENCECD_HOST_CLUSTER_ID);
-        cluster.setcompatibility_version(CLUSTER_VERSION);
+        cluster.setCompatibilityVersion(CLUSTER_VERSION);
         cluster.setArchitecture(CLUSTER_ARCHITECTURE_TYPE);
         return cluster;
     }

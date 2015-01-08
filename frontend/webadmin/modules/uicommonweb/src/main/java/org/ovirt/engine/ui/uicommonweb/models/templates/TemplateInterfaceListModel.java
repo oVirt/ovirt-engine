@@ -121,7 +121,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
         VmInterfaceModel model =
                 NewTemplateInterfaceModel.createInstance(getEntityStronglyTyped(),
                         getEntityStronglyTyped().getStoragePoolId(),
-                        cluster.getcompatibility_version(),
+                        cluster.getCompatibilityVersion(),
                         (ArrayList<VmNetworkInterface>) getItems(),
                         this);
         setWindow(model);
@@ -139,7 +139,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
         VmInterfaceModel model =
                 EditTemplateInterfaceModel.createInstance(getEntityStronglyTyped(),
                         getEntityStronglyTyped().getStoragePoolId(),
-                        cluster.getcompatibility_version(),
+                        cluster.getCompatibilityVersion(),
                         (ArrayList<VmNetworkInterface>) getItems(),
                         (VmNetworkInterface) getSelectedItem(),
                         this);

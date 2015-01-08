@@ -62,7 +62,7 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
         }
 
         // create default CPU profile for supported clusters.
-        if (FeatureSupported.cpuQoS(getParameters().getVdsGroup().getcompatibility_version())) {
+        if (FeatureSupported.cpuQoS(getParameters().getVdsGroup().getCompatibilityVersion())) {
             getCpuProfileDao().save(CpuProfileHelper.createCpuProfile(getParameters().getVdsGroup().getId(),
                     getParameters().getVdsGroup().getName()));
         }

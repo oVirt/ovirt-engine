@@ -110,7 +110,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
             return false;
         }
 
-        if (!validate(createVolumeValidator().isForceCreateVolumeAllowed(getVdsGroup().getcompatibility_version(),
+        if (!validate(createVolumeValidator().isForceCreateVolumeAllowed(getVdsGroup().getCompatibilityVersion(),
                 getParameters().isForce()))) {
             return false;
         }

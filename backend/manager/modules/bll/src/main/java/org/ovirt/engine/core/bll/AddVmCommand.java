@@ -320,7 +320,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         if (getVdsGroup() != null) {
             boolean isMigrationSupported =
                     FeatureSupported.isMigrationSupported(getVdsGroup().getArchitecture(),
-                            getVdsGroup().getcompatibility_version());
+                            getVdsGroup().getCompatibilityVersion());
 
             MigrationSupport migrationSupport =
                     isMigrationSupported ? MigrationSupport.MIGRATABLE : MigrationSupport.PINNED_TO_HOST;
@@ -342,7 +342,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         returnValue =
                 returnValue
                         && checkPciAndIdeLimit(getParameters().getVm().getOs(),
-                                getVdsGroup().getcompatibility_version(),
+                                getVdsGroup().getCompatibilityVersion(),
                                 getParameters().getVmStaticData().getNumOfMonitors(),
                                 getVmInterfaces(),
                                 getVmDisks(),
@@ -397,7 +397,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         return (VmHandler.isSingleQxlDeviceLegal(getParameters().getVm().getDefaultDisplayType(),
                         getParameters().getVm().getOs(),
                         getReturnValue().getCanDoActionMessages(),
-                        getVdsGroup().getcompatibility_version()));
+                        getVdsGroup().getCompatibilityVersion()));
     }
 
     protected boolean hostToRunExist() {
@@ -490,7 +490,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         if (isBalloonEnabled() && !osRepository.isBalloonEnabled(getParameters().getVmStaticData().getOsId(),
-                getVdsGroup().getcompatibility_version())) {
+                getVdsGroup().getCompatibilityVersion())) {
             addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
             return failCanDoAction(VdcBllMessages.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
@@ -538,7 +538,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         if (getParameters().getWatchdog() != null) {
             if (!validate((new VmWatchdogValidator(vmFromParams.getOs(),
                     getParameters().getWatchdog(),
-                    getVdsGroup().getcompatibility_version())).isModelCompatibleWithOs())) {
+                    getVdsGroup().getCompatibilityVersion())).isModelCompatibleWithOs())) {
                 return false;
             }
         }
@@ -557,8 +557,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         if (!VmHandler.isCpuSupported(
                 vmFromParams.getVmOsId(),
-                getVdsGroup().getcompatibility_version(),
-                getVdsGroup().getcpu_name(),
+                getVdsGroup().getCompatibilityVersion(),
+                getVdsGroup().getCpuName(),
                 getReturnValue().getCanDoActionMessages())) {
             return false;
         }
@@ -568,11 +568,11 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(getVmTemplateId()), getParameters().getGraphicsDevices()),
                 vmFromParams.getDefaultDisplayType(),
                 getReturnValue().getCanDoActionMessages(),
-                getVdsGroup().getcompatibility_version())) {
+                getVdsGroup().getCompatibilityVersion())) {
             return false;
         }
 
-        if (!FeatureSupported.isMigrationSupported(getVdsGroup().getArchitecture(), getVdsGroup().getcompatibility_version())
+        if (!FeatureSupported.isMigrationSupported(getVdsGroup().getArchitecture(), getVdsGroup().getCompatibilityVersion())
                 && vmFromParams.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
             return failCanDoAction(VdcBllMessages.VM_MIGRATION_IS_NOT_SUPPORTED);
         }
@@ -607,12 +607,12 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
         if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled())) {
             // Verify cluster compatibility
-            if (!FeatureSupported.virtIoScsi(getVdsGroup().getcompatibility_version())) {
+            if (!FeatureSupported.virtIoScsi(getVdsGroup().getCompatibilityVersion())) {
                 return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
             }
 
             // Verify OS compatibility
-            if (!VmHandler.isOsTypeSupportedForVirtioScsi(vmFromParams.getOs(), getVdsGroup().getcompatibility_version(),
+            if (!VmHandler.isOsTypeSupportedForVirtioScsi(vmFromParams.getOs(), getVdsGroup().getCompatibilityVersion(),
                     getReturnValue().getCanDoActionMessages())) {
                 return false;
             }
@@ -672,7 +672,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     protected boolean checkCpuSockets() {
         return AddVmCommand.checkCpuSockets(getParameters().getVmStaticData().getNumOfSockets(),
-                getParameters().getVmStaticData().getCpuPerSocket(), getVdsGroup().getcompatibility_version()
+                getParameters().getVmStaticData().getCpuPerSocket(), getVdsGroup().getCompatibilityVersion()
                 .toString(), getReturnValue().getCanDoActionMessages());
     }
 
@@ -800,7 +800,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     @Override
     protected void executeVmCommand() {
-        VmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getVdsGroup().getcompatibility_version());
+        VmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getVdsGroup().getCompatibilityVersion());
 
         ArrayList<String> errorMessages = new ArrayList<String>();
         if (canAddVm(errorMessages, destStorages.values())) {
@@ -1019,7 +1019,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         // Parses the custom properties field that was filled by frontend to
         // predefined and user defined fields
         VmPropertiesUtils.getInstance().separateCustomPropertiesToUserAndPredefined(
-                getVdsGroup().getcompatibility_version(), vmStatic);
+                getVdsGroup().getCompatibilityVersion(), vmStatic);
 
         updateOriginalTemplate(vmStatic);
 
@@ -1355,17 +1355,17 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     protected boolean isVirtioScsiEnabled() {
         Boolean virtioScsiEnabled = getParameters().isVirtioScsiEnabled();
         boolean isOsSupportedForVirtIoScsi = VmValidationUtils.isDiskInterfaceSupportedByOs(
-                getParameters().getVm().getOs(), getVdsGroup().getcompatibility_version(), DiskInterface.VirtIO_SCSI);
+                getParameters().getVm().getOs(), getVdsGroup().getCompatibilityVersion(), DiskInterface.VirtIO_SCSI);
 
         return virtioScsiEnabled != null ? virtioScsiEnabled :
-                FeatureSupported.virtIoScsi(getVdsGroup().getcompatibility_version()) && isOsSupportedForVirtIoScsi;
+                FeatureSupported.virtIoScsi(getVdsGroup().getCompatibilityVersion()) && isOsSupportedForVirtIoScsi;
     }
 
     protected boolean isBalloonEnabled() {
         Boolean balloonEnabled = getParameters().isBalloonEnabled();
         return balloonEnabled != null ? balloonEnabled :
             osRepository.isBalloonEnabled(getParameters().getVmStaticData().getOsId(),
-                    getVdsGroup().getcompatibility_version());
+                    getVdsGroup().getCompatibilityVersion());
     }
 
     protected boolean hasWatchdog() {

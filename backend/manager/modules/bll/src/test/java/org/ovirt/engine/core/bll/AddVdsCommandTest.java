@@ -109,7 +109,7 @@ public class AddVdsCommandTest {
         when(commandMock.getSSHClient()).thenReturn(sshClient);
         Version version = new Version("1.2.3");
         VDSGroup vdsGroup = new VDSGroup();
-        vdsGroup.setcompatibility_version(version);
+        vdsGroup.setCompatibilityVersion(version);
         when(commandMock.getVdsGroup()).thenReturn(vdsGroup);
         when(commandMock.isPowerManagementLegal(parameters.getVdsStaticData().isPmEnabled(),
                 parameters.getFenceAgents(),

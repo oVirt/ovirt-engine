@@ -512,7 +512,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
         VDSGroup cluster = getModel().getSelectedCluster();
-        updateCustomPropertySheet(cluster.getcompatibility_version());
+        updateCustomPropertySheet(cluster.getCompatibilityVersion());
     }
 
     protected void updateCustomPropertySheet(Version clusterVersion) {
@@ -741,7 +741,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected void updateMemoryBalloon() {
         if (getModel().getSelectedCluster() != null) {
-            updateMemoryBalloon(getModel().getSelectedCluster().getcompatibility_version());
+            updateMemoryBalloon(getModel().getSelectedCluster().getCompatibilityVersion());
         }
     }
 
@@ -759,17 +759,17 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     private Version clusterVersionOrNull(UnitVmModel model) {
         VDSGroup vdsGroup = model.getSelectedCluster();
 
-        if (vdsGroup == null || vdsGroup.getcompatibility_version() == null) {
+        if (vdsGroup == null || vdsGroup.getCompatibilityVersion() == null) {
             return null;
         }
 
-        return vdsGroup.getcompatibility_version();
+        return vdsGroup.getCompatibilityVersion();
     }
 
     protected void updateCpuSharesAvailability() {
         if (getModel().getSelectedCluster() != null) {
             VDSGroup cluster = getModel().getSelectedCluster();
-            boolean availableCpuShares = cluster.getcompatibility_version()
+            boolean availableCpuShares = cluster.getCompatibilityVersion()
                     .compareTo(Version.v3_3) >= 0;
             getModel().getCpuSharesAmountSelection().setIsAvailable(availableCpuShares);
             getModel().getCpuSharesAmount().setIsAvailable(availableCpuShares);
@@ -779,7 +779,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     protected void updateVirtioScsiAvailability() {
         VDSGroup cluster = getModel().getSelectedCluster();
         boolean isVirtioScsiEnabled = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                ConfigurationValues.VirtIoScsiEnabled, cluster.getcompatibility_version().getValue());
+                ConfigurationValues.VirtIoScsiEnabled, cluster.getCompatibilityVersion().getValue());
         getModel().getIsVirtioScsiEnabled().setIsAvailable(isVirtioScsiEnabled);
     }
 
@@ -826,7 +826,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     protected void updateCpuPinningVisibility() {
         if (getModel().getSelectedCluster() != null) {
             VDSGroup cluster = getModel().getSelectedCluster();
-            String compatibilityVersion = cluster.getcompatibility_version().toString();
+            String compatibilityVersion = cluster.getCompatibilityVersion().toString();
             boolean isLocalSD = getModel().getSelectedDataCenter() != null
                     && getModel().getSelectedDataCenter().isLocal();
 
@@ -1147,7 +1147,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     protected void updateCustomCpu() {
         VDSGroup cluster = getModel().getSelectedCluster();
 
-        if (cluster == null || cluster.getcpu_name() == null) {
+        if (cluster == null || cluster.getCpuName() == null) {
             return;
         }
 
@@ -1166,7 +1166,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                             getModel().getCustomCpu().setSelectedItem(oldVal);
                         }
                     }
-                }), cluster.getcpu_name());
+                }), cluster.getCpuName());
     }
 
     protected void updateSelectedCdImage(VmBase vmBase) {
@@ -1261,7 +1261,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return null;
         }
 
-        return cluster.getcompatibility_version();
+        return cluster.getCompatibilityVersion();
     }
 
     protected boolean basedOnCustomInstanceType() {

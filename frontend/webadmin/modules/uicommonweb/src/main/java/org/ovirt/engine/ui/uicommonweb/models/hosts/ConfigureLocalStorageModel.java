@@ -247,10 +247,10 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
                 VDSGroup cluster = context.hostCluster;
                 if (cluster != null) {
 
-                    getCluster().getDescription().setEntity(cluster.getdescription());
+                    getCluster().getDescription().setEntity(cluster.getDescription());
 
                     ServerCpu cpu = new ServerCpu();
-                    cpu.setCpuName(cluster.getcpu_name());
+                    cpu.setCpuName(cluster.getCpuName());
 
                     getCluster().getCPU().setSelectedItem(cpu);
                 }
@@ -281,7 +281,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
 
                     getCluster().setClusterId(cluster.getId());
                     getCluster().getName().setEntity(cluster.getName());
-                    getCluster().getDescription().setEntity(cluster.getdescription());
+                    getCluster().getDescription().setEntity(cluster.getDescription());
 
                     cluster =
                             Linq.firstOrDefault(context.clusterList,
@@ -289,7 +289,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
                     if (cluster != null) {
 
                         ServerCpu cpu = new ServerCpu();
-                        cpu.setCpuName(cluster.getcpu_name());
+                        cpu.setCpuName(cluster.getCpuName());
 
                         getCluster().getCPU().setSelectedItem(cpu);
                     }

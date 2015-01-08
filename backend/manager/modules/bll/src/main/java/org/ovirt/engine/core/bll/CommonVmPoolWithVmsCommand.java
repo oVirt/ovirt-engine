@@ -120,7 +120,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     @Override
     protected void executeCommand() {
         updateVmInitPassword();
-        VmHandler.warnMemorySizeLegal(getParameters().getVmStaticData(), getVdsGroup().getcompatibility_version());
+        VmHandler.warnMemorySizeLegal(getParameters().getVmStaticData(), getVdsGroup().getCompatibilityVersion());
 
         Guid poolId = getPoolId();
         setActionReturnValue(poolId);
@@ -303,7 +303,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         }
 
         if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled()) &&
-                !FeatureSupported.virtIoScsi(getVdsGroup().getcompatibility_version())) {
+                !FeatureSupported.virtIoScsi(getVdsGroup().getCompatibilityVersion())) {
             return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
         }
         if (!setAndValidateDiskProfiles()) {
@@ -425,7 +425,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     protected boolean setAndValidateCpuProfile() {
         return validate(CpuProfileHelper.setAndValidateCpuProfile(getParameters().getVmStaticData(),
-                getVdsGroup().getcompatibility_version()));
+                getVdsGroup().getCompatibilityVersion()));
     }
 
     @Override

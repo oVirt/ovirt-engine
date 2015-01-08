@@ -174,7 +174,7 @@ public class GlusterSyncJobTest {
         existingCluster.setName("cluster");
         existingCluster.setGlusterService(true);
         existingCluster.setVirtService(false);
-        existingCluster.setcompatibility_version(version);
+        existingCluster.setCompatibilityVersion(version);
         createObjects(version);
     }
 
@@ -626,7 +626,7 @@ public class GlusterSyncJobTest {
         inOrder.verify(clusterDao, times(1)).getAll();
 
         VerificationMode mode = times(1);
-        if (existingCluster.getcompatibility_version() == Version.v3_1) {
+        if (existingCluster.getCompatibilityVersion() == Version.v3_1) {
             // nothing else should happen if the cluster has compatibility level 3.1
             mode = Mockito.never();
         }

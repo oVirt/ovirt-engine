@@ -52,7 +52,7 @@ public class AttachNetworkToVdsGroupCommandTest {
 
     @Before
     public void setup() {
-        existingGroup.setcompatibility_version(Version.v3_1);
+        existingGroup.setCompatibilityVersion(Version.v3_1);
         createCommand();
     }
 

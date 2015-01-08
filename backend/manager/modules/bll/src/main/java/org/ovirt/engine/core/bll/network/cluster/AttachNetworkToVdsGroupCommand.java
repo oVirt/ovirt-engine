@@ -44,7 +44,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     @Override
     protected Version getClusterVersion() {
-        return getVdsGroup().getcompatibility_version();
+        return getVdsGroup().getCompatibilityVersion();
     }
 
     @Override
@@ -73,7 +73,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         });
 
         if (!getPersistedNetwork().isExternal() && NetworkUtils.isLabeled(getPersistedNetwork())
-                && NetworkHelper.setupNetworkSupported(getVdsGroup().getcompatibility_version())) {
+                && NetworkHelper.setupNetworkSupported(getVdsGroup().getCompatibilityVersion())) {
             addNetworkToHosts();
         }
 
@@ -113,7 +113,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     private boolean changesAreClusterCompatible() {
         if (getParameters().getNetwork().isVmNetwork() == false) {
-            if (!FeatureSupported.nonVmNetwork(getVdsGroup().getcompatibility_version())) {
+            if (!FeatureSupported.nonVmNetwork(getVdsGroup().getCompatibilityVersion())) {
                 addCanDoActionMessage(VdcBllMessages.NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL);
                 return false;
             }

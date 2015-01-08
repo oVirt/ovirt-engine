@@ -282,7 +282,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         VnicProfileHelper vnicProfileHelper =
                 new VnicProfileHelper(getVdsGroupId(),
                         getStoragePoolId(),
-                        getVdsGroup().getcompatibility_version(),
+                        getVdsGroup().getCompatibilityVersion(),
                         AuditLogType.IMPORTEXPORT_IMPORT_VM_INVALID_INTERFACES);
 
         List<VmNetworkInterface> nics = getVm().getInterfaces();
@@ -305,7 +305,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
                                    getCompensationContext(),
                                    !getParameters().isImportAsNewEntity(),
                                    getVm().getOs(),
-                                   getVdsGroup().getcompatibility_version());
+                                   getVdsGroup().getCompatibilityVersion());
             macsAdded.add(iface.getMacAddress());
         }
 
@@ -355,8 +355,8 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         }
 
         VDSGroup vdsGroup = getVdsGroup();
-        if (vdsGroup != null && vdsGroup.getmax_vds_memory_over_commit() > 0) {
-            return (getVm().getMemSizeMb() * 100) / vdsGroup.getmax_vds_memory_over_commit();
+        if (vdsGroup != null && vdsGroup.getMaxVdsMemoryOverCommit() > 0) {
+            return (getVm().getMemSizeMb() * 100) / vdsGroup.getMaxVdsMemoryOverCommit();
         }
 
         return getVm().getMemSizeMb();

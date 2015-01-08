@@ -191,13 +191,13 @@ public class UpdateStoragePoolCommandTest {
         List<VDSGroup> clusterList = createClusterList();
         // Create new supported cluster.
         VDSGroup secondCluster = new VDSGroup();
-        secondCluster.setcompatibility_version(VERSION_1_2);
+        secondCluster.setCompatibilityVersion(VERSION_1_2);
         secondCluster.setName("secondCluster");
         clusterList.add(secondCluster);
 
         // Create new unsupported cluster.
         VDSGroup thirdCluster = new VDSGroup();
-        thirdCluster.setcompatibility_version(VERSION_1_1);
+        thirdCluster.setCompatibilityVersion(VERSION_1_1);
         thirdCluster.setName("thirdCluster");
         clusterList.add(thirdCluster);
 
@@ -300,7 +300,7 @@ public class UpdateStoragePoolCommandTest {
     private static List<VDSGroup> createClusterList() {
         List<VDSGroup> clusters = new ArrayList<VDSGroup>();
         VDSGroup cluster = new VDSGroup();
-        cluster.setcompatibility_version(VERSION_1_0);
+        cluster.setCompatibilityVersion(VERSION_1_0);
         cluster.setName("firstCluster");
         clusters.add(cluster);
         return clusters;
@@ -308,7 +308,7 @@ public class UpdateStoragePoolCommandTest {
 
     private void addDefaultClusterToPool() {
         VDSGroup defaultCluster = new VDSGroup();
-        defaultCluster.setcompatibility_version(VERSION_1_1);
+        defaultCluster.setCompatibilityVersion(VERSION_1_1);
         defaultCluster.setId(DEFAULT_VDS_GROUP_ID);
         List<VDSGroup> clusters = new ArrayList<VDSGroup>();
         clusters.add(defaultCluster);
@@ -317,7 +317,7 @@ public class UpdateStoragePoolCommandTest {
 
     private void addNonDefaultClusterToPool() {
         VDSGroup defaultCluster = new VDSGroup();
-        defaultCluster.setcompatibility_version(VERSION_1_1);
+        defaultCluster.setCompatibilityVersion(VERSION_1_1);
         defaultCluster.setId(NON_DEFAULT_VDS_GROUP_ID);
         List<VDSGroup> clusters = new ArrayList<VDSGroup>();
         clusters.add(defaultCluster);

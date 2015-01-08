@@ -271,7 +271,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         updateNumOfSockets();
         if(getModel().getSelectedCluster() != null) {
             updateCpuProfile(getModel().getSelectedCluster().getId(), getModel().getSelectedCluster()
-                    .getcompatibility_version(), vm.getCpuProfileId());
+                    .getCompatibilityVersion(), vm.getCpuProfileId());
         }
         updateCustomPropertySheet();
         getModel().getCustomPropertySheet().deserialize(vm.getCustomProperties());

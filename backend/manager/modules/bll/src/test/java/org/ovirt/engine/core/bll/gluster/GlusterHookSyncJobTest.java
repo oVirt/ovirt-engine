@@ -203,7 +203,7 @@ public class GlusterHookSyncJobTest {
         cluster.setName("cluster");
         cluster.setGlusterService(true);
         cluster.setVirtService(false);
-        cluster.setcompatibility_version(Version.v3_2);
+        cluster.setCompatibilityVersion(Version.v3_2);
         return cluster;
     }
 

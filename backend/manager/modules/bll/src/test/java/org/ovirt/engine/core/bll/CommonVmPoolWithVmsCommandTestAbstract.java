@@ -289,10 +289,10 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
      */
     private VDSGroup mockVdsGroup() {
         VDSGroup group = new VDSGroup();
-        group.setvds_group_id(vdsGroupId);
-        group.setcompatibility_version(new Version());
+        group.setVdsGroupId(vdsGroupId);
+        group.setCompatibilityVersion(new Version());
         group.setStoragePoolId(storagePoolId);
-        group.setcpu_name("Intel Conroe Family");
+        group.setCpuName("Intel Conroe Family");
         group.setArchitecture(ArchitectureType.x86_64);
         return group;
     }

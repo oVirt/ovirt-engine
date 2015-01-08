@@ -358,7 +358,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
 
     private boolean supportsGlusterGeoRepFeature(VDSGroup cluster) {
         return cluster.supportsGlusterService()
-                && GlusterFeatureSupported.glusterGeoReplication(cluster.getcompatibility_version());
+                && GlusterFeatureSupported.glusterGeoReplication(cluster.getCompatibilityVersion());
     }
 
 }

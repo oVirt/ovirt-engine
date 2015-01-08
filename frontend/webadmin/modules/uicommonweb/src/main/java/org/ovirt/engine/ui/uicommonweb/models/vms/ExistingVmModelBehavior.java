@@ -108,7 +108,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                                     VDSGroup tempVar = new VDSGroup();
                                     tempVar.setId(currentVm.getVdsGroupId());
                                     tempVar.setName(currentVm.getVdsGroupName());
-                                    tempVar.setcompatibility_version(currentVm.getVdsGroupCompatibilityVersion());
+                                    tempVar.setCompatibilityVersion(currentVm.getVdsGroupCompatibilityVersion());
                                     tempVar.setStoragePoolId(currentVm.getStoragePoolId());
                                     VDSGroup cluster = tempVar;
                                     DataCenterWithCluster dataCenterWithCluster =
@@ -302,7 +302,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
 
         if (getModel().getMemSize().getEntity() < vm.getVmMemSizeMb())
         {
-            double overCommitFactor = 100.0 / cluster.getmax_vds_memory_over_commit();
+            double overCommitFactor = 100.0 / cluster.getMaxVdsMemoryOverCommit();
             getModel().getMinAllocatedMemory()
                     .setEntity((int) (getModel().getMemSize().getEntity() * overCommitFactor));
         }
@@ -379,7 +379,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
 
     public boolean isHotSetCpuSupported() {
         VDSGroup selectedCluster = getModel().getSelectedCluster();
-        Version clusterVersion = selectedCluster.getcompatibility_version();
+        Version clusterVersion = selectedCluster.getCompatibilityVersion();
         Boolean hotplugEnabled = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.HotPlugEnabled, clusterVersion.getValue());
         boolean hotplugCpuSupported = Boolean.parseBoolean(((Map<String, String>) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.HotPlugCpuSupported,
                 clusterVersion.getValue())).get(selectedCluster.getArchitecture().name()));

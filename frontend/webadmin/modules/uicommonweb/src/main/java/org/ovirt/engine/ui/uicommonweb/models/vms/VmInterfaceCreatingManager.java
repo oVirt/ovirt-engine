@@ -45,7 +45,7 @@ public class VmInterfaceCreatingManager extends BaseInterfaceCreatingManager {
                    }
            });
        AsyncDataProvider.getInstance().getNicTypeList(unitVmModel.getOSType().getSelectedItem(),
-                       unitVmModel.getDataCenterWithClustersList().getSelectedItem().getCluster().getcompatibility_version(),
+                       unitVmModel.getDataCenterWithClustersList().getSelectedItem().getCluster().getCompatibilityVersion(),
                        osInfoQuery);
     }
 

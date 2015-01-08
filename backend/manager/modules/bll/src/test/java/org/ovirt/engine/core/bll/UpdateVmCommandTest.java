@@ -144,9 +144,9 @@ public class UpdateVmCommandTest {
         vm = new VM();
         vmStatic = new VmStatic();
         group = new VDSGroup();
-        group.setcpu_name("Intel Conroe Family");
+        group.setCpuName("Intel Conroe Family");
         group.setId(Guid.newGuid());
-        group.setcompatibility_version(version);
+        group.setCompatibilityVersion(version);
         group.setArchitecture(ArchitectureType.x86_64);
 
         vm.setVdsGroupId(group.getId());
@@ -168,7 +168,7 @@ public class UpdateVmCommandTest {
 
         doReturn(false).when(command).isVirtioScsiEnabledForVm(any(Guid.class));
         doReturn(true).when(command).isBalloonEnabled();
-        doReturn(true).when(osRepository).isBalloonEnabled(vm.getVmOsId(), group.getcompatibility_version());
+        doReturn(true).when(osRepository).isBalloonEnabled(vm.getVmOsId(), group.getCompatibilityVersion());
     }
 
     @Test
@@ -337,7 +337,7 @@ public class UpdateVmCommandTest {
 
     public void testCannotUpdateOSNotSupportVirtioScsi() {
         prepareVmToPassCanDoAction();
-        group.setcompatibility_version(Version.v3_3);
+        group.setCompatibilityVersion(Version.v3_3);
 
         when(command.isVirtioScsiEnabledForVm(any(Guid.class))).thenReturn(true);
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(

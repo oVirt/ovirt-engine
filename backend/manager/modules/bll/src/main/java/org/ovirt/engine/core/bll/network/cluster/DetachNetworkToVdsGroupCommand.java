@@ -43,7 +43,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
             }
         });
 
-        if (NetworkHelper.shouldRemoveNetworkFromHostUponNetworkRemoval(getPersistedNetwork(), getVdsGroup().getcompatibility_version())) {
+        if (NetworkHelper.shouldRemoveNetworkFromHostUponNetworkRemoval(getPersistedNetwork(), getVdsGroup().getCompatibilityVersion())) {
             removeNetworkFromHosts();
         }
 

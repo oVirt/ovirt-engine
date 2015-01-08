@@ -435,7 +435,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
     private boolean doesHostSupportAnyCluster(List<VDSGroup> clusterList, VDS host){
         for (VDSGroup cluster : clusterList){
-            if (host.getSupportedClusterVersionsSet().contains(cluster.getcompatibility_version())){
+            if (host.getSupportedClusterVersionsSet().contains(cluster.getCompatibilityVersion())){
                 return true;
             }
         }
@@ -1346,16 +1346,16 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         Version version = model.getVersion().getSelectedItem();
 
         cluster.setName(model.getName().getEntity());
-        cluster.setdescription(model.getDescription().getEntity());
+        cluster.setDescription(model.getDescription().getEntity());
         cluster.setComment(model.getComment().getEntity());
         cluster.setStoragePoolId(model.getDataCenter().getSelectedItem().getId());
         if (model.getCPU().getSelectedItem() != null)
         {
-            cluster.setcpu_name(model.getCPU().getSelectedItem().getCpuName());
+            cluster.setCpuName(model.getCPU().getSelectedItem().getCpuName());
         }
-        cluster.setmax_vds_memory_over_commit(model.getMemoryOverCommit());
+        cluster.setMaxVdsMemoryOverCommit(model.getMemoryOverCommit());
         cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$
-        cluster.setcompatibility_version(version);
+        cluster.setCompatibilityVersion(version);
         cluster.setMigrateOnError(model.getMigrateOnErrorOption());
         cluster.setVirtService(model.getEnableOvirtService().getEntity());
         cluster.setGlusterService(model.getEnableGlusterService().getEntity());
@@ -1533,7 +1533,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     VDSGroup cluster = clusterModel.getSelectedItem();
                     Boolean jsonSupported =
                             (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.JsonProtocolSupported,
-                                    cluster.getcompatibility_version().toString());
+                                    cluster.getCompatibilityVersion().toString());
                     if (jsonSupported) {
                         model.getProtocol().setEntity(true);
                     } else {

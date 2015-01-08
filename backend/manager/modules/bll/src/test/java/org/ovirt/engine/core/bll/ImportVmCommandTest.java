@@ -135,9 +135,9 @@ public class ImportVmCommandTest {
         c.getParameters().getVm().setClusterArch(ArchitectureType.ppc64);
         VDSGroup cluster = new VDSGroup();
         cluster.setArchitecture(ArchitectureType.ppc64);
-        cluster.setcompatibility_version(Version.getLast());
+        cluster.setCompatibilityVersion(Version.getLast());
         doReturn(cluster).when(c).getVdsGroup();
-        when(osRepository.isBalloonEnabled(c.getParameters().getVm().getVmOsId(), cluster.getcompatibility_version())).thenReturn(false);
+        when(osRepository.isBalloonEnabled(c.getParameters().getVm().getVmOsId(), cluster.getCompatibilityVersion())).thenReturn(false);
         assertFalse(c.canDoAction());
         assertTrue(c.getReturnValue()
                 .getCanDoActionMessages()
@@ -153,11 +153,11 @@ public class ImportVmCommandTest {
         c.getParameters().getVm().setClusterArch(ArchitectureType.x86_64);
         VDSGroup cluster = new VDSGroup();
         cluster.setArchitecture(ArchitectureType.x86_64);
-        cluster.setcompatibility_version(Version.getLast());
+        cluster.setCompatibilityVersion(Version.getLast());
         doReturn(cluster).when(c).getVdsGroup();
         osRepository.getGraphicsAndDisplays().get(0).put(Version.getLast(),
                 Arrays.asList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
-        when(osRepository.isBalloonEnabled(c.getParameters().getVm().getVmOsId(), cluster.getcompatibility_version())).thenReturn(true);
+        when(osRepository.isBalloonEnabled(c.getParameters().getVm().getVmOsId(), cluster.getCompatibilityVersion())).thenReturn(true);
         assertTrue(c.validateBallonDevice());
     }
 
@@ -463,7 +463,7 @@ public class ImportVmCommandTest {
     public void testValidateClusterSupportForVirtioScsi() {
         ImportVmCommand<ImportVmParameters> cmd = setupDiskSpaceTest(createParameters());
         cmd.getParameters().getVm().getDiskMap().values().iterator().next().setDiskInterface(DiskInterface.VirtIO_SCSI);
-        cmd.getVdsGroup().setcompatibility_version(Version.v3_2);
+        cmd.getVdsGroup().setCompatibilityVersion(Version.v3_2);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
                 VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
     }

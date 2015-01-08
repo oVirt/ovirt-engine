@@ -141,7 +141,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
         Version clusterVersion = getVdsGroup() == null
                 ? null
-                : getVdsGroup().getcompatibility_version();
+                : getVdsGroup().getCompatibilityVersion();
         VmStatic staticData = getVm() == null
                 ? null
                 : getVm().getStaticData();
@@ -252,7 +252,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
         OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
         if (!osRepository.isBalloonEnabled(getVm().getStaticData().getOsId(),
-                getVdsGroup().getcompatibility_version())) {
+                getVdsGroup().getCompatibilityVersion())) {
             addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
             return failCanDoAction(VdcBllMessages.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
@@ -491,7 +491,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 getGraphicsTypesForVm(),
                 vmFromParams.getDefaultDisplayType(),
                 getReturnValue().getCanDoActionMessages(),
-                getVdsGroup().getcompatibility_version())) {
+                getVdsGroup().getCompatibilityVersion())) {
             return false;
         }
 
@@ -596,7 +596,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     protected boolean validateDiskInterface(Iterable<DiskImage> images) {
         for (DiskImage diskImage : images) {
             if (diskImage.getDiskInterface() == DiskInterface.VirtIO_SCSI &&
-                    !FeatureSupported.virtIoScsi(getVdsGroup().getcompatibility_version())) {
+                    !FeatureSupported.virtIoScsi(getVdsGroup().getCompatibilityVersion())) {
                 return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
             }
         }
@@ -1223,7 +1223,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         getVm().getStaticData().setVdsGroupId(getVdsGroupId());
         getVm().getStaticData().setCpuProfileId(getParameters().getCpuProfileId());
         return validate(CpuProfileHelper.setAndValidateCpuProfile(getVm().getStaticData(),
-                getVdsGroup().getcompatibility_version()));
+                getVdsGroup().getCompatibilityVersion()));
     }
 
     @Override

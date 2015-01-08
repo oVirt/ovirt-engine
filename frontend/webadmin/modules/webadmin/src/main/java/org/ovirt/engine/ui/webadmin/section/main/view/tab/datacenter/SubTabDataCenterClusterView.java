@@ -49,7 +49,7 @@ public class SubTabDataCenterClusterView extends AbstractSubTabTableView<Storage
         TextColumnWithTooltip<VDSGroup> versionColumn = new TextColumnWithTooltip<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
-                return object.getcompatibility_version().getValue();
+                return object.getCompatibilityVersion().getValue();
             }
         };
         versionColumn.makeSortable();
@@ -58,7 +58,7 @@ public class SubTabDataCenterClusterView extends AbstractSubTabTableView<Storage
         TextColumnWithTooltip<VDSGroup> descColumn = new TextColumnWithTooltip<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
-                return object.getdescription();
+                return object.getDescription();
             }
         };
         descColumn.makeSortable();

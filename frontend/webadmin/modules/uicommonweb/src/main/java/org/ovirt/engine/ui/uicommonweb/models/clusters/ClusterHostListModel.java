@@ -97,7 +97,7 @@ public class ClusterHostListModel extends HostListModel {
     }
 
     private void updateActionAvailability() {
-        if (getEntity().getcompatibility_version().compareTo(Version.v3_3) >= 0) {
+        if (getEntity().getCompatibilityVersion().compareTo(Version.v3_3) >= 0) {
             getUpdateMomPolicyCommand().setIsAvailable(true);
             ArrayList<VDS> items =
                     getSelectedItems() != null ? Linq.<VDS> cast(getSelectedItems()) : new ArrayList<VDS>();

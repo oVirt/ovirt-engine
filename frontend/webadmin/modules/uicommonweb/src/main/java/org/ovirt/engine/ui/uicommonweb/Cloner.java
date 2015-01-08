@@ -311,16 +311,16 @@ public final class Cloner
         VDSGroup obj = new VDSGroup();
         obj.setId(instance.getId());
         obj.setName(instance.getName());
-        obj.setdescription(instance.getdescription());
+        obj.setDescription(instance.getDescription());
         obj.setComment(instance.getComment());
-        obj.setcpu_name(instance.getcpu_name());
+        obj.setCpuName(instance.getCpuName());
 
-        obj.setcompatibility_version(instance.getcompatibility_version());
+        obj.setCompatibilityVersion(instance.getCompatibilityVersion());
         obj.setMigrateOnError(instance.getMigrateOnError());
         obj.setTransparentHugepages(instance.getTransparentHugepages());
 
         obj.setStoragePoolId(instance.getStoragePoolId());
-        obj.setmax_vds_memory_over_commit(instance.getmax_vds_memory_over_commit());
+        obj.setMaxVdsMemoryOverCommit(instance.getMaxVdsMemoryOverCommit());
         obj.setCountThreadsAsCores(instance.getCountThreadsAsCores());
         obj.setEmulatedMachine(instance.getEmulatedMachine());
         obj.setDetectEmulatedMachine(instance.isDetectEmulatedMachine());

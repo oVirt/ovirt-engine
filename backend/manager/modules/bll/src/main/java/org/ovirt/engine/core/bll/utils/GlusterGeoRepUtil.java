@@ -79,8 +79,8 @@ public class GlusterGeoRepUtil {
             @Override
             public boolean eval(GlusterVolumeEntity slaveVolume) {
                 VdsGroupDAO vdsGroupDao = getVdsGroupDao();
-                Version slaveCompatibilityVersion = vdsGroupDao.get(slaveVolume.getClusterId()).getcompatibility_version();
-                Version masterCompatibilityVersion = vdsGroupDao.get(masterVolume.getClusterId()).getcompatibility_version();
+                Version slaveCompatibilityVersion = vdsGroupDao.get(slaveVolume.getClusterId()).getCompatibilityVersion();
+                Version masterCompatibilityVersion = vdsGroupDao.get(masterVolume.getClusterId()).getCompatibilityVersion();
                 return masterCompatibilityVersion.equals(slaveCompatibilityVersion);
             }
         });

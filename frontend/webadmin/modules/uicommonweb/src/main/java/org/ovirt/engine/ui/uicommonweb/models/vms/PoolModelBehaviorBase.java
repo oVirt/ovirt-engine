@@ -218,7 +218,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             return;
         }
 
-        double overCommitFactor = 100.0 / cluster.getmax_vds_memory_over_commit();
+        double overCommitFactor = 100.0 / cluster.getMaxVdsMemoryOverCommit();
         getModel().getMinAllocatedMemory()
                 .setEntity((int) (getModel().getMemSize().getEntity() * overCommitFactor));
     }

@@ -55,9 +55,9 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
     }
 
     protected ArchitectureType getArchitecture() {
-        if (StringUtils.isNotEmpty(getVdsGroup().getcpu_name())) {
-            return CpuFlagsManagerHandler.getArchitectureByCpuName(getVdsGroup().getcpu_name(),
-                    getVdsGroup().getcompatibility_version());
+        if (StringUtils.isNotEmpty(getVdsGroup().getCpuName())) {
+            return CpuFlagsManagerHandler.getArchitectureByCpuName(getVdsGroup().getCpuName(),
+                    getVdsGroup().getCompatibilityVersion());
         } else if (getVdsGroup().getArchitecture() == null) {
             return ArchitectureType.undefined;
         }
@@ -69,7 +69,7 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
         if (getVdsGroup() != null && getVdsGroup().getMigrateOnError() == null) {
             boolean isMigrationSupported =
                     FeatureSupported.isMigrationSupported(getArchitecture(),
-                            getVdsGroup().getcompatibility_version());
+                            getVdsGroup().getCompatibilityVersion());
 
             MigrateOnErrorOptions migrateOnError =
                     isMigrationSupported ? MigrateOnErrorOptions.YES : MigrateOnErrorOptions.NO;
@@ -79,9 +79,9 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
     }
 
     protected void checkMaxMemoryOverCommitValue() {
-        if (getVdsGroup().getmax_vds_memory_over_commit() <= 0) {
-            getVdsGroup().setmax_vds_memory_over_commit(
-                    Config.<Integer> getValue(ConfigValues.MaxVdsMemOverCommit));
+        if (getVdsGroup().getMaxVdsMemoryOverCommit() <= 0) {
+            getVdsGroup().setMaxVdsMemoryOverCommit(
+                    Config.<Integer>getValue(ConfigValues.MaxVdsMemOverCommit));
         }
     }
 

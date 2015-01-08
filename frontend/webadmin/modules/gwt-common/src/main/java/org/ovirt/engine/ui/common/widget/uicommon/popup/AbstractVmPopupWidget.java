@@ -1675,8 +1675,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             @Override
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 VDSGroup vdsGroup = object.getSelectedCluster();
-                if (vdsGroup != null && vdsGroup.getcompatibility_version() != null) {
-                    boolean enabled = AsyncDataProvider.getInstance().isSerialNumberPolicySupported(vdsGroup.getcompatibility_version().getValue());
+                if (vdsGroup != null && vdsGroup.getCompatibilityVersion() != null) {
+                    boolean enabled = AsyncDataProvider.getInstance().isSerialNumberPolicySupported(vdsGroup.getCompatibilityVersion().getValue());
                     changeApplicationLevelVisibility(serialNumberPolicyEditor, enabled);
                 }
             }
@@ -1706,11 +1706,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     private Version clusterVersionOrNull(UnitVmModel model) {
         VDSGroup vdsGroup = model.getSelectedCluster();
 
-        if (vdsGroup == null || vdsGroup.getcompatibility_version() == null) {
+        if (vdsGroup == null || vdsGroup.getCompatibilityVersion() == null) {
             return null;
         }
 
-        return vdsGroup.getcompatibility_version();
+        return vdsGroup.getCompatibilityVersion();
     }
 
     private void addDiskAllocation(UnitVmModel model) {

@@ -224,14 +224,14 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
         VDSGroup vdsGroup = getEntity();
 
         setName(vdsGroup.getName());
-        setDescription(vdsGroup.getdescription());
-        setCpuType(vdsGroup.getcpu_name());
+        setDescription(vdsGroup.getDescription());
+        setCpuType(vdsGroup.getCpuName());
         setDataCenterName(vdsGroup.getStoragePoolName());
-        setMemoryOverCommit(vdsGroup.getmax_vds_memory_over_commit());
+        setMemoryOverCommit(vdsGroup.getMaxVdsMemoryOverCommit());
         setCpuThreads(vdsGroup.getCountThreadsAsCores());
         setResiliencePolicy(vdsGroup.getMigrateOnError());
         setEmulatedMachine(vdsGroup.getEmulatedMachine());
-        setCompatibilityVersion(vdsGroup.getcompatibility_version().getValue());
+        setCompatibilityVersion(vdsGroup.getCompatibilityVersion().getValue());
         generateClusterType(vdsGroup.supportsGlusterService(), vdsGroup.supportsVirtService());
         AsyncDataProvider.getInstance().getNumberOfVmsInCluster(new AsyncQuery(this, new INewAsyncCallback() {
             @Override

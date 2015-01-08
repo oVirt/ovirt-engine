@@ -52,7 +52,7 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
 
         newGroup = new VDSGroup();
         newGroup.setName("New VDS Group");
-        newGroup.setcompatibility_version(new Version("3.0"));
+        newGroup.setCompatibilityVersion(new Version("3.0"));
         newGroup.setVirtService(true);
         newGroup.setGlusterService(false);
         newGroup.setClusterPolicyId(existingVdsGroup.getClusterPolicyId());

@@ -38,7 +38,7 @@ public class UpdateRngDeviceTest {
         final VmDeviceDAO vmDeviceDaoMock = Mockito.mock(VmDeviceDAO.class);
         Mockito.when(vmDeviceDaoMock.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.RNG)).thenReturn(Collections.singletonList(new VmDevice()));
         final VDSGroup cluster = Mockito.mock(VDSGroup.class);
-        Mockito.when(cluster.getcompatibility_version()).thenReturn(mockCompatibilityVersion);
+        Mockito.when(cluster.getCompatibilityVersion()).thenReturn(mockCompatibilityVersion);
         Mockito.when(cluster.getRequiredRngSources()).thenReturn(Collections.singleton(VmRngDevice.Source.RANDOM));
         final VdsGroupDAO vdsGroupMock = Mockito.mock(VdsGroupDAO.class);
         Mockito.when(vdsGroupMock.get(clusterId)).thenReturn(cluster);

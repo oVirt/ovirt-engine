@@ -399,7 +399,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected boolean validateCustomProperties(VmStatic vmStaticFromParams, List<String> reasons) {
         return VmPropertiesUtils.getInstance().validateVmProperties(
-                getVdsGroup().getcompatibility_version(),
+                getVdsGroup().getCompatibilityVersion(),
                 vmStaticFromParams.getCustomProperties(),
                 reasons);
     }

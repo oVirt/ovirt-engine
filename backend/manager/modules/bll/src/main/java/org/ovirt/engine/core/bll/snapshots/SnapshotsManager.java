@@ -553,9 +553,9 @@ public class SnapshotsManager {
                 VDSGroup vdsGroup = getVdsGroupDao().get(vmStaticFromDb.getVdsGroupId());
                 if (vdsGroup != null) {
                     vm.setStoragePoolId(vdsGroup.getStoragePoolId());
-                    vm.setVdsGroupCompatibilityVersion(vdsGroup.getcompatibility_version());
+                    vm.setVdsGroupCompatibilityVersion(vdsGroup.getCompatibilityVersion());
                     vm.setVdsGroupName(vdsGroup.getName());
-                    vm.setVdsGroupCpuName(vdsGroup.getcpu_name());
+                    vm.setVdsGroupCpuName(vdsGroup.getCpuName());
                 }
             }
             // if the required dedicated host is invalid -> use current VM dedicated host

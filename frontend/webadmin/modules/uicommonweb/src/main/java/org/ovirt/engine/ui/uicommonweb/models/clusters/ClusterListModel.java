@@ -269,13 +269,13 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
         VDSGroup vdsGroup = (VDSGroup) getSelectedItem();
         getClusterVmListModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsVirtService());
         getClusterServiceModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsGlusterService()
-                && GlusterFeaturesUtil.isGlusterVolumeServicesSupported(vdsGroup.getcompatibility_version()));
+                && GlusterFeaturesUtil.isGlusterVolumeServicesSupported(vdsGroup.getCompatibilityVersion()));
         getClusterGlusterHookListModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsGlusterService()
-                && GlusterFeaturesUtil.isGlusterHookSupported(vdsGroup.getcompatibility_version()));
+                && GlusterFeaturesUtil.isGlusterHookSupported(vdsGroup.getCompatibilityVersion()));
         getAffinityGroupListModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsVirtService());
         getCpuProfileListModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsVirtService()
                 && Boolean.TRUE.equals(AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.CpuQosSupported,
-                        vdsGroup.getcompatibility_version().getValue())));
+                        vdsGroup.getCompatibilityVersion().getValue())));
     }
 
     @Override
@@ -525,7 +525,7 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
 
         boolean validateCpu =
                 (model.getIsNew() && model.getEnableOvirtService().getEntity())
-                        || (model.getIsEdit() && ((VDSGroup) getSelectedItem()).getcpu_name() != null);
+                        || (model.getIsEdit() && ((VDSGroup) getSelectedItem()).getCpuName() != null);
 
         if (!model.validate(validateCpu))
         {
@@ -542,7 +542,7 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
     }
 
     private void onSaveConfirmCV(ClusterModel model) {
-        if (!model.getVersion().getSelectedItem().equals(((VDSGroup) getSelectedItem()).getcompatibility_version())) {
+        if (!model.getVersion().getSelectedItem().equals(((VDSGroup) getSelectedItem()).getCompatibilityVersion())) {
             final ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
             confirmModel.setTitle(ConstantsManager.getInstance()
@@ -601,7 +601,7 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
     private ServerCpu getVdsGroupServerCpu(ClusterModel model, VDSGroup vdsGroup) {
         ServerCpu retVal = null;
         for (ServerCpu cpu : model.getCPU().getItems()) {
-            if (ObjectUtils.objectsEqual(cpu.getCpuName(), vdsGroup.getcpu_name())) {
+            if (ObjectUtils.objectsEqual(cpu.getCpuName(), vdsGroup.getCpuName())) {
                 retVal = cpu;
                 break;
             }
@@ -691,21 +691,21 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
         Version version = model.getVersion().getSelectedItem();
 
         cluster.setName(model.getName().getEntity());
-        cluster.setdescription(model.getDescription().getEntity());
+        cluster.setDescription(model.getDescription().getEntity());
         cluster.setComment(model.getComment().getEntity());
         cluster.setStoragePoolId(model.getDataCenter().getSelectedItem().getId());
         if (model.getCPU().getSelectedItem() != null)
         {
-            cluster.setcpu_name(model.getCPU().getSelectedItem().getCpuName());
+            cluster.setCpuName(model.getCPU().getSelectedItem().getCpuName());
         }
-        cluster.setmax_vds_memory_over_commit(model.getMemoryOverCommit());
+        cluster.setMaxVdsMemoryOverCommit(model.getMemoryOverCommit());
         cluster.setCountThreadsAsCores(Boolean.TRUE.equals(model.getVersionSupportsCpuThreads().getEntity())
                 && Boolean.TRUE.equals(model.getCountThreadsAsCores().getEntity()));
         cluster.setEnableKsm(Boolean.TRUE.equals(model.getEnableKsm().getEntity()));
         cluster.setEnableBallooning(Boolean.TRUE.equals(model.getEnableBallooning().getEntity())
                 && version.compareTo(Version.v3_3) >= 0);
         cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$
-        cluster.setcompatibility_version(version);
+        cluster.setCompatibilityVersion(version);
         cluster.setMigrateOnError(model.getMigrateOnErrorOption());
         cluster.setVirtService(model.getEnableOvirtService().getEntity());
         cluster.setGlusterService(model.getEnableGlusterService().getEntity());

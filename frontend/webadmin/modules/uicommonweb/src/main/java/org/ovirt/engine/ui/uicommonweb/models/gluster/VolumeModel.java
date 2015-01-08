@@ -299,7 +299,7 @@ public class VolumeModel extends Model {
         VDSGroup cluster = getCluster().getSelectedItem();
         if (cluster != null) {
             boolean isForceAddBrickSupported =
-                    GlusterFeaturesUtil.isGlusterForceAddBricksSupported(cluster.getcompatibility_version());
+                    GlusterFeaturesUtil.isGlusterForceAddBricksSupported(cluster.getCompatibilityVersion());
             volumeBrickModel.getForce().setIsAvailable(isForceAddBrickSupported);
             volumeBrickModel.getForce().setEntity(isForceAddBricks() && isForceAddBrickSupported);
         }

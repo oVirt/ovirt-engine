@@ -153,7 +153,7 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
         driver.edit(getDetailModel());
         form.update();
         glusterSwiftPanel.setVisible(selectedItem.supportsGlusterService()
-                && GlusterFeaturesUtil.isGlusterSwiftSupported(selectedItem.getcompatibility_version()));
+                && GlusterFeaturesUtil.isGlusterSwiftSupported(selectedItem.getCompatibilityVersion()));
     }
 
     @Override

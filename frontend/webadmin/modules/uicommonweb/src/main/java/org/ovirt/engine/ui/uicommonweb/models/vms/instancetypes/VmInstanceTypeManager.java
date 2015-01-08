@@ -62,7 +62,7 @@ public abstract class VmInstanceTypeManager extends InstanceTypeManager {
     private void updateNetworkInterfaces(final ProfileBehavior behavior, final List<VmNetworkInterface> argNics) {
         boolean hotUpdateSupported =
                 (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.NetworkLinkingSupported,
-                        getModel().getSelectedCluster().getcompatibility_version().toString());
+                        getModel().getSelectedCluster().getCompatibilityVersion().toString());
 
         AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
 
