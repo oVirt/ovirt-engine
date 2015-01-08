@@ -1,9 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -124,36 +121,36 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     public VdsStatic() {
         serverSslEnabled = false;
         vdsStrength = 100;
-        this.vdsSpmPriority = HOST_DEFAULT_SPM_PRIORITY;
-        this.sshPort = DEFAULT_SSH_PORT;
-        this.sshUsername = DEFAULT_SSH_USERNAME;
+        vdsSpmPriority = HOST_DEFAULT_SPM_PRIORITY;
+        sshPort = DEFAULT_SSH_PORT;
+        sshUsername = DEFAULT_SSH_USERNAME;
         name = "";
         comment = "";
         vdsType = VDSType.VDS;
         autoRecoverable = true;
         disablePowerManagementPolicy = false;
         pmKdumpDetection = true;
-        this.hostProviderId = null;
+        hostProviderId = null;
     }
 
-    public VdsStatic(String host_name, String uniqueId, int port, int ssh_port, String ssh_username, Guid vds_group_id, Guid vds_id,
-            String vds_name, boolean server_SSL_enabled, VDSType vds_type, Guid host_provider_id) {
+    public VdsStatic(String hostName, String uniqueId, int port, int sshPort, String sshUsername, Guid vdsGroupId,
+            Guid vdsId, String vdsName, boolean serverSslEnabled, VDSType vdsType, Guid hostProviderId) {
         this();
-        this.hostName = host_name;
+        this.hostName = hostName;
         this.uniqueId = uniqueId;
         this.port = port;
-        if (ssh_port > 0) {
-            this.sshPort = ssh_port;
+        if (sshPort > 0) {
+            this.sshPort = sshPort;
         }
-        if (ssh_username != null) {
-            this.sshUsername = ssh_username;
+        if (sshUsername != null) {
+            this.sshUsername = sshUsername;
         }
-        this.vdsGroupId = vds_group_id;
-        this.id = vds_id;
-        this.name = vds_name;
-        this.serverSslEnabled = server_SSL_enabled;
-        this.setVdsType(vds_type);
-        this.hostProviderId = host_provider_id;
+        this.vdsGroupId = vdsGroupId;
+        this.id = vdsId;
+        this.name = vdsName;
+        this.serverSslEnabled = serverSslEnabled;
+        this.setVdsType(vdsType);
+        this.hostProviderId = hostProviderId;
     }
 
     public boolean isServerSslEnabled() {
@@ -165,11 +162,11 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     }
 
     public String getHostName() {
-        return this.hostName;
+        return hostName;
     }
 
     public void setHostName(String value) {
-        this.hostName = value;
+        hostName = value;
     }
 
     public String getComment() {
@@ -189,48 +186,48 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     }
 
     public int getPort() {
-        return this.port;
+        return port;
     }
 
     public void setPort(int value) {
-        this.port = value;
+        port = value;
     }
 
     public VdsProtocol getProtocol() {
-        return this.protocol;
+        return protocol;
     }
 
     public void setProtocol(VdsProtocol value) {
-        this.protocol = value;
+        protocol = value;
     }
 
     public int getSshPort() {
-        return this.sshPort;
+        return sshPort;
     }
 
     public void setSshPort(int value) {
-        this.sshPort = value;
+        sshPort = value;
     }
 
     public String getSshUsername() {
-        return this.sshUsername;
+        return sshUsername;
     }
 
     public void setSshUsername(String value) {
-        this.sshUsername = value;
+        sshUsername = value;
     }
 
     public Guid getVdsGroupId() {
-        return this.vdsGroupId;
+        return vdsGroupId;
     }
 
     public void setVdsGroupId(Guid value) {
-        this.vdsGroupId = value;
+        vdsGroupId = value;
     }
 
     @Override
     public Guid getId() {
-        return this.id;
+        return id;
     }
 
     @Override
@@ -239,28 +236,28 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     }
 
     public String getName() {
-        return this.name;
+        return name;
     }
 
     public void setVdsName(String value) {
-        this.name = value;
+        name = value;
     }
 
     public VDSType getVdsType() {
-        return this.vdsType;
+        return vdsType;
     }
 
     public void setVdsType(VDSType value) {
-        this.vdsType = value;
+        vdsType = value;
     }
 
     public int getVdsStrength() {
-        return this.vdsStrength;
+        return vdsStrength;
     }
 
     public void setVdsStrength(int value) {
         // strength should be between 1 and 100
-        this.vdsStrength = value < 1 ? 1 : value > 100 ? 100 : value;
+        vdsStrength = value < 1 ? 1 : value > 100 ? 100 : value;
     }
 
     public boolean isPmEnabled() {
@@ -308,7 +305,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     }
 
     public void setVdsSpmPriority(int value) {
-        this.vdsSpmPriority = value;
+        vdsSpmPriority = value;
     }
 
     public String getSshKeyFingerprint() {
@@ -327,29 +324,12 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         this.consoleAddress = consoleAddress;
     }
 
-    public void setHostProviderId (Guid hostProviderId) { this.hostProviderId = hostProviderId; }
+    public void setHostProviderId (Guid hostProviderId) {
+        this.hostProviderId = hostProviderId;
+    }
 
-    public Guid getHostProviderId () { return hostProviderId; }
-
-    /**
-     * Converts a PM Options map to string
-     *
-     * @param map
-     * @return
-     */
-    public static String pmOptionsMapToString(HashMap<String, String> map) {
-        String result = "";
-        String seperator = "";
-        Iterator<Map.Entry<String, String>> it = map.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, String> pairs = it.next();
-            String value = pairs.getValue();
-            result +=
-                    seperator + pairs.getKey()
-                            + ((value != null && value.length() > 0) ? "=" + value : "");
-            seperator = ",";
-        }
-        return result;
+    public Guid getHostProviderId () {
+        return hostProviderId;
     }
 
     /**
@@ -363,7 +343,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
      * @return A parsed map
      */
     public static HashMap<String, String> pmOptionsStringToMap(String pmOptions) {
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         if (pmOptions == null || pmOptions.equals("")) {
             return map;
         }
@@ -386,24 +366,24 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((hostName == null) ? 0 : hostName.hashCode());
-        result = prime * result + ((consoleAddress == null) ? 0 : consoleAddress.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + (id == null ? 0 : id.hashCode());
+        result = prime * result + (hostName == null ? 0 : hostName.hashCode());
+        result = prime * result + (consoleAddress == null ? 0 : consoleAddress.hashCode());
+        result = prime * result + (name == null ? 0 : name.hashCode());
         result = prime * result + (int) (otpValidity ^ (otpValidity >>> 32));
         result = prime * result + (pmEnabled ? 1231 : 1237);
         result = prime * result + (pmKdumpDetection ? 1 : 0);
         result = prime * result + port;
-        result = prime * result + ((protocol == null) ? 0 : protocol.hashCode());
+        result = prime * result + (protocol == null ? 0 : protocol.hashCode());
         result = prime * result + sshPort;
-        result = prime * result + ((sshUsername == null) ? 0 : sshUsername.hashCode());
-        result = prime * result + ((serverSslEnabled == null) ? 0 : serverSslEnabled.hashCode());
-        result = prime * result + ((uniqueId == null) ? 0 : uniqueId.hashCode());
-        result = prime * result + ((vdsGroupId == null) ? 0 : vdsGroupId.hashCode());
-        result = prime * result + ((vdsStrength == null) ? 0 : vdsStrength.hashCode());
-        result = prime * result + ((vdsType == null) ? 0 : vdsType.hashCode());
+        result = prime * result + (sshUsername == null ? 0 : sshUsername.hashCode());
+        result = prime * result + (serverSslEnabled == null ? 0 : serverSslEnabled.hashCode());
+        result = prime * result + (uniqueId == null ? 0 : uniqueId.hashCode());
+        result = prime * result + (vdsGroupId == null ? 0 : vdsGroupId.hashCode());
+        result = prime * result + (vdsStrength == null ? 0 : vdsStrength.hashCode());
+        result = prime * result + (vdsType == null ? 0 : vdsType.hashCode());
         result = prime * result + (disablePowerManagementPolicy ? 0 : 1);
-        result = prime * result + ((hostProviderId == null) ? 0 : hostProviderId.hashCode());
+        result = prime * result + (hostProviderId == null ? 0 : hostProviderId.hashCode());
         return result;
     }
 
@@ -412,10 +392,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof VdsStatic)) {
             return false;
         }
         VdsStatic other = (VdsStatic) obj;
