@@ -1703,6 +1703,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Down")
     String down();
 
+    @DefaultStringValue("New guest tools are available")
+    String newtools();
+
     @DefaultStringValue("Up but one or more bricks are down")
     String volumeBricksDown();
 

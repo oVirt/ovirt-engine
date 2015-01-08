@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
+import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
@@ -119,8 +120,8 @@ public class VmStatusCell extends AbstractCell<VM> {
     }
 
     SafeHtml getResourceImage(VM vm) {
-
-        if (vm.getVmPauseStatus() != VmPauseStatus.NONE || vm.getVmPauseStatus() != VmPauseStatus.NOERR) {
+        boolean updateNeeded = vm.getStatus() == VMStatus.Up && vm.getGuestAgentStatus() == GuestAgentStatus.UpdateNeeded;
+        if (!updateNeeded && (vm.getVmPauseStatus() != VmPauseStatus.NONE || vm.getVmPauseStatus() != VmPauseStatus.NOERR)) {
             return null;
         }
         else {
@@ -133,7 +134,7 @@ public class VmStatusCell extends AbstractCell<VM> {
 
             // Append tooltip
             Translator translator = EnumTranslator.getInstance();
-            String toolTip = translator.get(vm.getVmPauseStatus());
+            String toolTip = updateNeeded ? constants.newtools() : translator.get(vm.getVmPauseStatus());
             html = html.replaceFirst("img", "img " + "title='" + toolTip + "' "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
             return SafeHtmlUtils.fromTrustedString(html);

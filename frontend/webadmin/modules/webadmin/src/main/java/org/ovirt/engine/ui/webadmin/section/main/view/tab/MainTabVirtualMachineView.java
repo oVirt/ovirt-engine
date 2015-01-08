@@ -75,7 +75,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
 
         VmStatusColumn<VM> vmStatusColumn = new VmStatusColumn<VM>();
         vmStatusColumn.makeSortable(VmConditionFieldAutoCompleter.STATUS);
-        getTable().addColumn(vmStatusColumn, constants.empty(), "30px"); //$NON-NLS-1$
+        getTable().addColumn(vmStatusColumn, constants.empty(), "35px"); //$NON-NLS-1$
 
         VmTypeColumn vmTypeColumn = new VmTypeColumn();
         vmTypeColumn.makeSortable(VmConditionFieldAutoCompleter.TYPE);
