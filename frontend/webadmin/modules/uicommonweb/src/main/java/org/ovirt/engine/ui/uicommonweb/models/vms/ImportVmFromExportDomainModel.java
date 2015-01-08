@@ -209,7 +209,7 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
 
            @Override
            public void onSuccess(Object model, Object returnValue) {
-               ArrayList<StoragePool> pools = (ArrayList<StoragePool>) returnValue;
+               List<StoragePool> pools = (List<StoragePool>) returnValue;
                if (pools == null || pools.size() != 1) {
                    return;
                }
@@ -289,7 +289,7 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
                         List<CpuProfile> cpuProfiles =
-                                (List<CpuProfile>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                ((VdcQueryReturnValue) returnValue).getReturnValue();
                         getCpuProfiles().setItems(cpuProfiles);
                     }
                 }));
@@ -623,7 +623,7 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
                         List<VM> vmList =
-                                (List<VM>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                ((VdcQueryReturnValue) returnValue).getReturnValue();
 
                         List<ImportVmData> vmDataList = new ArrayList<ImportVmData>();
 

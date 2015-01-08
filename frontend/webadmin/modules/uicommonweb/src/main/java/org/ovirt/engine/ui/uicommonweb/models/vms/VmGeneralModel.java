@@ -526,6 +526,11 @@ public class VmGeneralModel extends AbstractGeneralModel {
     }
 
     @Override
+    public VM getEntity() {
+        return (VM) super.getEntity();
+    }
+
+    @Override
     protected void onEntityChanged()
     {
         super.onEntityChanged();
@@ -545,7 +550,7 @@ public class VmGeneralModel extends AbstractGeneralModel {
     }
 
     private void updateProperties() {
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
 
         super.updateProperties(vm.getId());
 
@@ -619,7 +624,7 @@ public class VmGeneralModel extends AbstractGeneralModel {
                         public void onSuccess(Object target, Object returnValue) {
 
                             VmGeneralModel model = (VmGeneralModel) target;
-                            VM localVm = (VM) model.getEntity();
+                            VM localVm = model.getEntity();
                             if (localVm == null)
                             {
                                 return;
