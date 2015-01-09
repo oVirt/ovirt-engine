@@ -4,7 +4,7 @@ public class GetConfigurationValueParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = -5889171970595969719L;
 
     public GetConfigurationValueParameters(ConfigurationValues cVal) {
-        _configValue = cVal;
+        this(cVal, null);
     }
 
     private ConfigurationValues _configValue;
@@ -26,10 +26,11 @@ public class GetConfigurationValueParameters extends VdcQueryParametersBase {
     public GetConfigurationValueParameters(ConfigurationValues cVal, String version) {
         _configValue = cVal;
         privateVersion = version;
+        setRefresh(false);
     }
 
     public GetConfigurationValueParameters() {
-        _configValue = ConfigurationValues.MaxNumOfVmCpus;
+        this(ConfigurationValues.MaxNumOfVmCpus);
     }
 
     @Override
