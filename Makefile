@@ -34,6 +34,8 @@ BUILD_UT=1
 EXTRA_BUILD_FLAGS=
 BUILD_VALIDATION=1
 BUILD_ENV_VALIDATION=1
+BUILD_JAVA_OPTS_MAVEN?=-XX:MaxPermSize=512M
+BUILD_JAVA_OPTS_GWT?=
 DEV_REBUILD=1
 DEV_BUILD_GWT_DRAFT=0
 DEV_EXTRA_BUILD_FLAGS=
@@ -114,6 +116,9 @@ BUILD_FLAGS:=$(BUILD_FLAGS) -D skipTests
 endif
 ifneq ($(BUILD_DEV),0)
 BUILD_FLAGS:=$(BUILD_FLAGS) $(DEV_BUILD_FLAGS)
+endif
+ifneq ($(BUILD_JAVA_OPTS_GWT),)
+BUILD_FLAGS:=$(BUILD_FLAGS) -D gwt.jvmArgs="$(BUILD_JAVA_OPTS_GWT)"
 endif
 BUILD_FLAGS:=$(BUILD_FLAGS) $(EXTRA_BUILD_FLAGS)
 
@@ -227,10 +232,10 @@ generated-files:	$(GENERATED)
 
 # support force run of maven
 maven:
-	export MAVEN_OPTS="${MAVEN_OPTS} -XX:MaxPermSize=512m"
-	$(MVN) \
-		$(BUILD_FLAGS) \
-		$(BUILD_TARGET)
+	MAVEN_OPTS="${MAVEN_OPTS} $(BUILD_JAVA_OPTS_MAVEN)" \
+		$(MVN) \
+			$(BUILD_FLAGS) \
+			$(BUILD_TARGET)
 	touch "$(BUILD_FILE)"
 
 $(BUILD_FILE):
@@ -496,13 +501,12 @@ install-layout: \
 
 gwt-debug:
 	[ -n "$(DEBUG_MODULE)" ] || ( echo "Please specify DEBUG_MODULE" && false )
-	cd "frontend/webadmin/modules/$(DEBUG_MODULE)" && \
-		$(MVN) \
-			$(DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS) \
-			$(DEV_EXTRA_BUILD_FLAGS) \
-			-Dgwt.noserver=true \
-			-Pgwtdev,gwt-admin,gwt-user \
-			gwt:debug
+	$(MVN) -pl "frontend/webadmin/modules/$(DEBUG_MODULE)" \
+		$(DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS) \
+		$(DEV_EXTRA_BUILD_FLAGS) \
+		-Dgwt.noserver=true \
+		-Pgwtdev,gwt-admin,gwt-user \
+		gwt:debug
 
 all-dev:
 	[ "$(DEV_REBUILD)" != 0 ] && rm -f "$(BUILD_FILE)" || :

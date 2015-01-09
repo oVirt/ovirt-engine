@@ -6,7 +6,6 @@
     <artifactId>webadmin-all</artifactId>
     <version>3.6.0-SNAPSHOT</version>
   </parent>
-  <groupId>org.ovirt.engine.ui</groupId>
   <artifactId>webadmin-modules</artifactId>
   <packaging>pom</packaging>
   <name>oVirt Modules - ui</name>
@@ -42,14 +41,19 @@
     <gwt.logLevel>INFO</gwt.logLevel>
     <!-- Regular expression that matches types that GWT compiler shouldn't prune (avoid dead code optimization) -->
     <gwt.dontPrune>-Dgwt.dontPrune=org\.ovirt\.engine\.core\.(common|compat)\..*</gwt.dontPrune>
-    <!-- This can be overridden by setting this property in your personal settings.xml -->
+    <!-- Custom JVM arguments for GWT compiler and Dev Mode -->
+    <gwt.jvmArgs>-Xms1024M -Xmx8192M -XX:PermSize=512M -XX:MaxPermSize=1024M</gwt.jvmArgs>
+    <!-- GWT compiler and Dev Mode JVM arguments, these override any Maven JVM arguments -->
+    <!-- * use thread-based workers with maximum of 4 simultaneous threads, this value be lowered via gwt.compiler.localWorkers -->
+    <!-- * scope Java temp directory and Java Preference subsystem files into project's build directory -->
+    <!-- Do not override this property, use gwt.jvmArgs instead! -->
     <gwt-plugin.extraJvmArgs>
-      -Xms1024M -Xmx8192M -XX:PermSize=512M -XX:MaxPermSize=1024M \
       -Dgwt.jjs.permutationWorkerFactory=com.google.gwt.dev.ThreadedPermutationWorkerFactory \
       -Dgwt.jjs.maxThreads=4 \
       -Djava.io.tmpdir="${project.build.directory}/tmp" \
-      -Djava.util.prefs.systemRoot="${project.build.directory}/tmp/.java" \
-      -Djava.util.prefs.userRoot="${project.build.directory}/tmp/.java"
+      -Djava.util.prefs.systemRoot="${project.build.directory}/tmp" \
+      -Djava.util.prefs.userRoot="${project.build.directory}/tmp" \
+      ${gwt.jvmArgs}
     </gwt-plugin.extraJvmArgs>
     <!-- Control target browsers for GWT compilation, maps to 'user.agent' deferred binding property in *.gwt.xml -->
     <!-- By default, compile for Firefox browser only, use 'all-user-agents' profile to compile for all browsers -->

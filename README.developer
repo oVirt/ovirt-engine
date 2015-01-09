@@ -140,6 +140,18 @@ BUILD_DEV [0]
 BUILD_UT [0]
     Perform unit tests during build.
 
+BUILD_JAVA_OPTS_MAVEN [-XX:MaxPermSize=512M]
+    Maven JVM options.
+    Can be defined as environment variable.
+
+BUILD_JAVA_OPTS_GWT []
+    GWT compiler and Dev Mode JVM options.
+    Can be defined as environment variable.
+
+    Note that BUILD_JAVA_OPTS_GWT overrides BUILD_JAVA_OPTS_MAVEN
+    when building GWT applications (BUILD_JAVA_OPTS_MAVEN settings
+    still apply, unless overridden).
+
 DEV_BUILD_GWT_DRAFT [0]
     Build draft GWT application without optimizations, this is
     useful when profiling compiled application in web browser.
@@ -151,8 +163,9 @@ DEV_BUILD_GWT_DRAFT [0]
 DEV_EXTRA_BUILD_FLAGS
     Any maven build flags requires for building.
 
-    For example, if your machine is low on memory, use:
-    DEV_EXTRA_BUILD_FLAGS="-Dgwt.compiler.localWorkers=2"
+    For example, if your machine is low on memory, limit
+    maximum simultaneous GWT permutation worker threads:
+    DEV_EXTRA_BUILD_FLAGS="-Dgwt.compiler.localWorkers=1"
 
 DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS
     By default, GWT applications are built for Firefox only.
