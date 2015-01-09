@@ -339,11 +339,7 @@ public class VdsEventListener implements IVdsEventListener {
         final VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(vmId);
         final AuditLogableBase event = new AuditLogableBase();
         event.setVmId(vmId);
-        String username = vmDynamic.getConsoleCurrentUserName();
-        if(username!= null && username.contains("@")){
-            username = username.substring(0, username.indexOf("@"));
-        }
-        event.setUserName(username);
+        event.setUserName(vmDynamic.getConsoleCurrentUserName());
 
         // in case of empty clientIp we clear the logged in user.
         // (this happened when user close the console to spice/vnc)

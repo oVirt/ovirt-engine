@@ -6,13 +6,13 @@ import java.util.List;
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authn;
+import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 
 public class LogoutUserCommand<T extends LogoutUserParameters> extends CommandBase<T> {
     public LogoutUserCommand(T parameters) {
@@ -30,21 +30,22 @@ public class LogoutUserCommand<T extends LogoutUserParameters> extends CommandBa
 
     @Override
     protected void executeCommand() {
-        ExtensionProxy authn = SessionDataContainer.getInstance().getAuthn(getParameters().getSessionId());
-
-        if (authn != null) {
-            if ((authn.getContext().<Long> get(Authn.ContextKeys.CAPABILITIES) & Authn.Capabilities.LOGOUT) != 0) {
-                authn.invoke(new ExtMap().mput(
+        AuthenticationProfile profile = SessionDataContainer.getInstance().getProfile(getParameters().getSessionId());
+        if (profile == null) {
+            setSucceeded(false);
+        } else {
+            if ((profile.getAuthn().getContext().<Long> get(Authn.ContextKeys.CAPABILITIES) & Authn.Capabilities.LOGOUT) != 0) {
+                profile.getAuthn().invoke(new ExtMap().mput(
                         Base.InvokeKeys.COMMAND,
                         Authn.InvokeCommands.LOGOUT
                         ).mput(
                                 Authn.InvokeKeys.PRINCIPAL,
-                                SessionDataContainer.getInstance().getPrincipal(getParameters().getSessionId())
+                                SessionDataContainer.getInstance().getPrincipalName(getParameters().getSessionId())
                         ));
             }
             SessionDataContainer.getInstance().removeSessionOnLogout(getParameters().getSessionId());
+            setSucceeded(true);
         }
-        setSucceeded(true);
     }
 
     @Override

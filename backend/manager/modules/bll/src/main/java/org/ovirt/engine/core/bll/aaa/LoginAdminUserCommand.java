@@ -12,18 +12,15 @@ public class LoginAdminUserCommand<T extends LoginUserParameters> extends LoginU
 
     @Override
     protected boolean canDoAction() {
-        boolean autheticated = isUserCanBeAuthenticated();
+        boolean autheticated = super.canDoAction();
 
         // only admin users can use LoginAdmin command
         if (autheticated) {
             autheticated = getCurrentUser().isAdmin();
-
             if (!autheticated) {
                 addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
+                logAutheticationFailure();
             }
-        }
-        if (! autheticated) {
-            logAutheticationFailure();
         }
         return autheticated;
     }

@@ -26,10 +26,9 @@ public class LogoutBySessionCommand<T extends VdcActionParametersBase> extends C
 
     @Override
     protected void executeCommand() {
-        setReturnValue(Backend.getInstance().logoff(
-                new LogoutUserParameters(user.getId()
-                )
-                ));
+        LogoutUserParameters params = new LogoutUserParameters(user.getId());
+        params.setSessionId(getParameters().getSessionId());
+        setReturnValue(Backend.getInstance().logoff(params));
     }
 
     @Override

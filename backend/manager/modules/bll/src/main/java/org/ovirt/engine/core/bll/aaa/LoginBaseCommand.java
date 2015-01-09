@@ -106,6 +106,19 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     }
    @Override
     protected boolean canDoAction() {
+        String user = getParameters().getLoginName();
+        if (StringUtils.isEmpty(user)) {
+            ExtMap authRecord = (ExtMap) getParameters().getAuthRecord();
+            if (authRecord != null) {
+                user = authRecord.get(AuthRecord.PRINCIPAL);
+            }
+        }
+        String profile = getParameters().getProfileName();
+        if (StringUtils.isEmpty(profile)) {
+            profile = "N/A";
+        }
+        setUserName(String.format("%s@%s", user, profile));
+
         boolean result = isUserCanBeAuthenticated();
         if (! result) {
             logAutheticationFailure();
@@ -123,9 +136,8 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         }
         SessionDataContainer.getInstance().setUser(engineSessionId, getCurrentUser());
         SessionDataContainer.getInstance().refresh(engineSessionId);
-        SessionDataContainer.getInstance().setAuthn(engineSessionId, profile.getAuthn());
+        SessionDataContainer.getInstance().setProfile(engineSessionId, profile);
         SessionDataContainer.getInstance().setAuthRecord(engineSessionId, authRecord);
-        SessionDataContainer.getInstance().setPrincipal(engineSessionId, authRecord.<String>get(Authn.AuthRecord.PRINCIPAL));
         SessionDataContainer.getInstance().setPrincipalRecord(engineSessionId, principalRecord);
 
         // Add the user password to the session, as it will be needed later
@@ -227,6 +239,12 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             return false;
         }
 
+        /*
+         * set principal based on what we
+         * have so far
+         */
+        setUserName(String.format("%s@%s", authRecord.get(Authn.AuthRecord.PRINCIPAL), profile.getName()));
+
         ExtensionProxy mapper = profile.getMapper();
         if (mapper != null) {
             authRecord = mapper.invoke(
@@ -256,6 +274,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
             AcctUtils.reportRecords(
                     Acct.ReportReason.PRINCIPAL_NOT_FOUND,
+                    profile.getAuthzName(),
                     loginName,
                     authRecord,
                     null,
@@ -290,6 +309,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                 true)) {
             AcctUtils.reportRecords(
                     Acct.ReportReason.PRINCIPAL_LOGIN_NO_PERMISSION,
+                    profile.getAuthzName(),
                     dbUser.getLoginName(),
                     authRecord,
                     principalRecord,
@@ -310,6 +330,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         setCurrentUser(dbUser);
         AcctUtils.reportRecords(
                 reportReason,
+                profile.getAuthzName(),
                 dbUser.getLoginName(),
                 authRecord,
                 principalRecord,
@@ -353,7 +374,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
     protected void logAutheticationFailure() {
         AuditLogableBase logable = new AuditLogableBase();
-        logable.setUserName(getParameters().getLoginName());
+        logable.setUserName(getUserName());
         AuditLogDirector.log(logable, AuditLogType.USER_VDC_LOGIN_FAILED);
     }
 
@@ -389,6 +410,14 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                         Authn.InvokeKeys.CREDENTIALS,
                         password
                 ));
+
+        /*
+         * set principal based on what we
+         * have so far
+         */
+        if (outputMap.get(Authn.InvokeKeys.PRINCIPAL) != null) {
+            setUserName(String.format("%s@%s", outputMap.get(Authn.InvokeKeys.PRINCIPAL), profile.getName()));
+        }
 
         int authResult = outputMap.<Integer>get(Authn.InvokeKeys.RESULT);
         if (authResult != Authn.AuthResult.SUCCESS) {

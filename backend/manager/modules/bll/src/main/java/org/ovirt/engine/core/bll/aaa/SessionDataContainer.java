@@ -8,12 +8,14 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.ovirt.engine.api.extensions.ExtMap;
+import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.aaa.Acct;
+import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.core.aaa.AcctUtils;
+import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 
 public class SessionDataContainer {
@@ -28,7 +30,7 @@ public class SessionDataContainer {
     private static final String USER_PARAMETER_NAME = "user";
     private static final String PASSWORD_PARAMETER_NAME = "password";
     private static final String AUTHN_PARAMETER_NAME = "authn";
-    private static final String PRINCIPAL_PARAMETER_NAME = "principal";
+    private static final String PROFILE_PARAMETER_NAME = "profile";
     private static final String HARD_LIMIT_PARAMETER_NAME = "hard_limit";
     private static final String SOFT_LIMIT_PARAMETER_NAME = "soft_limit";
 
@@ -96,7 +98,7 @@ public class SessionDataContainer {
      *            - id of current session
      */
     public final void removeSessionOnLogout(String sessionId) {
-        removeSessionImpl(sessionId, Acct.ReportReason.PRINCIPAL_LOGOUT, "Prinicial %1$s has performed logout", getPrincipalName(sessionId));
+        removeSessionImpl(sessionId, Acct.ReportReason.PRINCIPAL_LOGOUT, "Prinicial %1$s has performed logout", getUserName(sessionId));
     }
 
     /**
@@ -112,7 +114,7 @@ public class SessionDataContainer {
             Date hardLimit = (Date) sessionMap.get(HARD_LIMIT_PARAMETER_NAME);
             Date softLimit = (Date) sessionMap.get(SOFT_LIMIT_PARAMETER_NAME);
             if ((hardLimit != null && hardLimit.before(now)) || (softLimit != null && softLimit.before(now))) {
-                removeSessionImpl(entry.getKey(), Acct.ReportReason.PRINCIPAL_SESSION_EXPIRED, "Session has expired for principal %1$s", getPrincipal(entry.getKey()));
+                removeSessionImpl(entry.getKey(), Acct.ReportReason.PRINCIPAL_SESSION_EXPIRED, "Session has expired for principal %1$s", getUserName(entry.getKey()));
             }
         }
     }
@@ -169,20 +171,28 @@ public class SessionDataContainer {
         refresh(getSessionInfo(sessionId));
     }
 
-    public ExtensionProxy getAuthn(String sessionId) {
-        return (ExtensionProxy) getData(sessionId, AUTHN_PARAMETER_NAME, false);
+    public void setProfile(String sessionId, AuthenticationProfile profile) {
+        setData(sessionId, PROFILE_PARAMETER_NAME, profile);
     }
 
-    public void setAuthn(String sessionId, ExtensionProxy authn) {
-        setData(sessionId, AUTHN_PARAMETER_NAME, authn);
+    public AuthenticationProfile getProfile(String sessionId) {
+        return (AuthenticationProfile) getData(sessionId, PROFILE_PARAMETER_NAME, false);
     }
 
-    public void setPrincipal(String sessionId, String principal) {
-        setData(sessionId, PRINCIPAL_PARAMETER_NAME, principal);
+    public String getPrincipalName(String sessionId) {
+        String principal = null;
+        ExtMap authRecord = getAuthRecord(sessionId);
+        if (authRecord != null) {
+            principal = authRecord.<String>get(Authn.AuthRecord.PRINCIPAL);
+        }
+        return principal;
     }
 
-    public String getPrincipal(String sessionId) {
-        return getPrincipalName(sessionId);
+    public String getUserName(String sessionId) {
+        return String.format(
+                "%s@%s",
+                getPrincipalName(sessionId),
+                getProfile(sessionId) != null ? getProfile(sessionId).getName() : "N/A");
     }
 
     public void setAuthRecord(String engineSessionId, ExtMap authRecord) {
@@ -214,7 +224,16 @@ public class SessionDataContainer {
     }
 
     private void removeSessionImpl(String sessionId, int reason, String message, Object... msgArgs) {
+        /*
+         * So we won't need to add profile to tests
+         */
+        String authzName = null;
+        if (getProfile(sessionId) != null) {
+            authzName = getProfile(sessionId).getAuthz().getContext().<String>get(Base.ContextKeys.INSTANCE_NAME);
+        }
+
         AcctUtils.reportRecords(reason,
+                authzName,
                 getPrincipalName(sessionId),
                 (ExtMap) getData(sessionId, AUTH_RECORD_PARAMETER_NAME, false),
                 (ExtMap) getData(sessionId, PRINCIPAL_RECORD_PARAMETER_NAME, false),
@@ -222,9 +241,5 @@ public class SessionDataContainer {
                 msgArgs
                 );
         sessionInfoMap.remove(sessionId);
-    }
-
-    private String getPrincipalName(String sessionId) {
-        return (String) getData(sessionId, PRINCIPAL_PARAMETER_NAME, false);
     }
 }

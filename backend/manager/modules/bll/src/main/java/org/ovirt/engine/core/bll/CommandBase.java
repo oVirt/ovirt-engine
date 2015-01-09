@@ -185,6 +185,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         if (user != null) {
             setCurrentUser(user);
         }
+        setUserName(SessionDataContainer.getInstance().getUserName(cmdContext.getEngineContext().getSessionId()));
         ExecutionContext executionContext = cmdContext.getExecutionContext();
         if (executionContext.getJob() != null) {
             setJobId(executionContext.getJob().getId());
@@ -769,7 +770,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                                 && canDoAction()
                                 && internalValidateAndSetQuota();
                 if (!returnValue && getReturnValue().getCanDoActionMessages().size() > 0) {
-                    log.warnFormat("CanDoAction of action {0} failed. Reasons:{1}", getActionType(),
+                    log.warnFormat("CanDoAction of action '{0}' failed for user {1}. Reasons: {2}",
+                            getActionType(), getUserName(),
                             StringUtils.join(getReturnValue().getCanDoActionMessages(), ','));
                 }
             } finally {
