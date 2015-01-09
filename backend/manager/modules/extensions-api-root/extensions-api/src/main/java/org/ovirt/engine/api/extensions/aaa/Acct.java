@@ -15,8 +15,10 @@ public class Acct {
      * Invoke keys.
      */
     public static class InvokeKeys {
+        /** Authz name. */
+        public static final ExtKey AUTHZ_NAME = new ExtKey("AAA_ACCT_AUTHZ_NAME", String.class, "27aea820-60c7-4390-9953-1f2a254e314b");
         /** Principal name. */
-        public static final ExtKey PRINCIPAL_NAME = new ExtKey("AAA_ACCT_PRINCIPAL_NAME", String.class, "c34f7381-5c15-4666-b8b5-39cca36eca78");
+        public static final ExtKey PRINCIPAL_NAME = new ExtKey("AAA_ACCT_PRINCIPAL_NAME", String.class, "3dfc4089-d2ec-40ec-89a5-71188ab89a4c");
         /** Principal id.*/
         public static final ExtKey PRINCIPAL_ID = new ExtKey("AAA_ACCT_PRINCIPAL_ID", String.class, "c34f7381-5c15-4666-b8b5-39cca36eca78");
         /** Message. */
@@ -144,6 +146,10 @@ public class Acct {
          * In case no #PRINCIPAL available, this happens if login fails.
          */
         public static final ExtKey USER = new ExtKey("AAA_ACCT_PRINCIPAL_RECORD_USER", String.class, "3e1a1639-0812-4bf6-9c86-d1435ed5d569");
+        /**
+         * Authz name.
+         */
+        public static final ExtKey AUTHZ_NAME = new ExtKey("AAA_ACCT_AUTHZ_NAME", String.class, "019133aa-4425-48b7-bfd6-7fff160dab70");
         /**
          * Principal.
          * Optional.

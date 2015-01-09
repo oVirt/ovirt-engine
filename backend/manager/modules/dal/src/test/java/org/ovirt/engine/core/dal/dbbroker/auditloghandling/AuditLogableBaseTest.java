@@ -35,6 +35,7 @@ public class AuditLogableBaseTest {
     protected static final Guid GUID2 = new Guid("11111111-1111-1111-1111-111111111112");
     protected static final Guid GUID3 = new Guid("11111111-1111-1111-1111-111111111113");
     protected static final String NAME = "testName";
+    protected static final String DOMAIN = "testDomain";
 
     @Test
     public void nGuidCtor() {
@@ -149,9 +150,10 @@ public class AuditLogableBaseTest {
         final AuditLogableBase b = new AuditLogableBase();
         final DbUser u = new DbUser();
         u.setLoginName(NAME);
+        u.setDomain(DOMAIN);
         b.setCurrentUser(u);
         final String un = b.getUserName();
-        assertEquals(NAME, un);
+        assertEquals(String.format("%s[%s]", NAME, DOMAIN), un);
     }
 
     @Test

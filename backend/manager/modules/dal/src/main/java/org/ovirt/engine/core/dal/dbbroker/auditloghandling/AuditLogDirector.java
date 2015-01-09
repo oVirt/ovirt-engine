@@ -123,7 +123,7 @@ public final class AuditLogDirector {
                     severity,
                     resolvedMessage,
                     auditLogable.getUserId(),
-                    auditLogable.getUserId() != null ? getDbFacadeInstance().getDbUserDao().get(auditLogable.getUserId()).getLoginName() : null,
+                    auditLogable.getUserName(),
                     auditLogable.getVmIdRef(),
                     auditLogable.getVmIdRef() != null ? getDbFacadeInstance().getVmDao().get(auditLogable.getVmIdRef()).getName() : null,
                     auditLogable.getVdsIdRef(),

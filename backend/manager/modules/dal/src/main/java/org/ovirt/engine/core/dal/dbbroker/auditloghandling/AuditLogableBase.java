@@ -155,7 +155,7 @@ public class AuditLogableBase extends TimeoutBase {
 
     public String getUserName() {
         if (StringUtils.isEmpty(mUserName) && getCurrentUser() != null) {
-            mUserName = getCurrentUser().getLoginName();
+            mUserName = String.format("%s[%s]", getCurrentUser().getLoginName(), getCurrentUser().getDomain());
         }
         return mUserName;
     }

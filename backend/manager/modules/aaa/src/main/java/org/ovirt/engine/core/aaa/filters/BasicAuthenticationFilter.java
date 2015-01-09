@@ -157,6 +157,7 @@ public class BasicAuthenticationFilter implements Filter {
                 }
                 AcctUtils.reportRecords(
                         Acct.ReportReason.PRINCIPAL_LOGIN_FAILED,
+                        userProfile.profile.getAuthzName(),
                         userProfile.userName,
                         null,
                         null,

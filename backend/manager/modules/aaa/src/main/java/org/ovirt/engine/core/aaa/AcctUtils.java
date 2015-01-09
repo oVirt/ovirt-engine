@@ -34,6 +34,7 @@ public class AcctUtils {
 
     public static void reportRecords(
             int reportReason,
+            String authzName,
             String user,
             ExtMap authRecord,
             ExtMap principalRecord,
@@ -44,8 +45,11 @@ public class AcctUtils {
         input.put(Acct.InvokeKeys.REASON, reportReason);
         input.put(Acct.InvokeKeys.PRINCIPAL_RECORD,
                 new ExtMap().mput(
-                        Acct.PrincipalRecord.AUTH_RECORD,
-                        authRecord
+                        Acct.PrincipalRecord.AUTHZ_NAME,
+                        authzName
+                        ).mput(
+                                Acct.PrincipalRecord.AUTH_RECORD,
+                                authRecord
                         ).mput(
                                 Acct.PrincipalRecord.PRINCIPAL_RECORD,
                                 principalRecord
