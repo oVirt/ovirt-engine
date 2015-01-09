@@ -6,14 +6,14 @@ import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ClusterPolicyClusterModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ClusterPolicyModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.WebAdminImageResourceColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractWebAdminImageResourceColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -87,7 +87,7 @@ public class ClusterPolicyView extends Composite {
         table = new SimpleActionTable<ClusterPolicy>(clusterPolicyModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
-        table.addColumn(new WebAdminImageResourceColumn<ClusterPolicy>() {
+        table.addColumn(new AbstractWebAdminImageResourceColumn<ClusterPolicy>() {
             @Override
             public ImageResource getValue(ClusterPolicy object) {
                 if (object.isLocked()) {
@@ -98,7 +98,7 @@ public class ClusterPolicyView extends Composite {
 
         }, constants.empty(), "20px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<ClusterPolicy> nameColumn = new TextColumnWithTooltip<ClusterPolicy>() {
+        AbstractTextColumnWithTooltip<ClusterPolicy> nameColumn = new AbstractTextColumnWithTooltip<ClusterPolicy>() {
             @Override
             public String getValue(ClusterPolicy object) {
                 return object.getName();
@@ -106,7 +106,7 @@ public class ClusterPolicyView extends Composite {
         };
         table.addColumn(nameColumn, constants.clusterPolicyNameLabel(), "100px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<ClusterPolicy> descColumn = new TextColumnWithTooltip<ClusterPolicy>() {
+        AbstractTextColumnWithTooltip<ClusterPolicy> descColumn = new AbstractTextColumnWithTooltip<ClusterPolicy>() {
             @Override
             public String getValue(ClusterPolicy object) {
                 return object.getDescription();
@@ -170,7 +170,7 @@ public class ClusterPolicyView extends Composite {
         clusterTable = new SimpleActionTable<VDSGroup>(clusterPolicyClusterModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
-        TextColumnWithTooltip<VDSGroup> clusterColumn = new TextColumnWithTooltip<VDSGroup>() {
+        AbstractTextColumnWithTooltip<VDSGroup> clusterColumn = new AbstractTextColumnWithTooltip<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
                 return object.getName();

@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBricksListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -42,7 +42,7 @@ public class SubTabHostBrickView extends AbstractSubTabTableView<VDS, GlusterBri
         brickStatusColumn.makeSortable();
         getTable().addColumn(brickStatusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<GlusterBrickEntity> volNameColumn = new TextColumnWithTooltip<GlusterBrickEntity>() {
+        AbstractTextColumnWithTooltip<GlusterBrickEntity> volNameColumn = new AbstractTextColumnWithTooltip<GlusterBrickEntity>() {
             @Override
             public String getValue(GlusterBrickEntity object) {
                 return object.getVolumeName();
@@ -51,7 +51,7 @@ public class SubTabHostBrickView extends AbstractSubTabTableView<VDS, GlusterBri
         volNameColumn.makeSortable();
         getTable().addColumn(volNameColumn, constants.volumeName()); //$NON-NLS-1$
 
-        TextColumnWithTooltip<GlusterBrickEntity> brickDirColumn = new TextColumnWithTooltip<GlusterBrickEntity>() {
+        AbstractTextColumnWithTooltip<GlusterBrickEntity> brickDirColumn = new AbstractTextColumnWithTooltip<GlusterBrickEntity>() {
             @Override
             public String getValue(GlusterBrickEntity object) {
                 return object.getBrickDirectory();

@@ -7,10 +7,10 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.widget.renderer.FullDateTimeRenderer;
-import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -27,7 +27,7 @@ public class SnapshotsViewColumns {
     private static final CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
     private static final CommonApplicationMessages messages = GWT.create(CommonApplicationMessages.class);
 
-    public static final TextColumnWithTooltip<Snapshot> dateColumn = new TextColumnWithTooltip<Snapshot>() {
+    public static final AbstractTextColumnWithTooltip<Snapshot> dateColumn = new AbstractTextColumnWithTooltip<Snapshot>() {
         @Override
         public String getValue(Snapshot snapshot) {
             if (snapshot.getType() == SnapshotType.ACTIVE) {
@@ -37,14 +37,14 @@ public class SnapshotsViewColumns {
         }
     };
 
-    public static final TextColumnWithTooltip<Snapshot> statusColumn = new EnumColumn<Snapshot, SnapshotStatus>() {
+    public static final AbstractTextColumnWithTooltip<Snapshot> statusColumn = new AbstractEnumColumn<Snapshot, SnapshotStatus>() {
         @Override
         protected SnapshotStatus getRawValue(Snapshot snapshot) {
             return snapshot.getStatus();
         }
     };
 
-    public static final CheckboxColumn<Snapshot> memoryColumn = new CheckboxColumn<Snapshot>() {
+    public static final AbstractCheckboxColumn<Snapshot> memoryColumn = new AbstractCheckboxColumn<Snapshot>() {
         @Override
         public Boolean getValue(Snapshot object) {
             return !object.getMemoryVolume().isEmpty();
@@ -56,7 +56,7 @@ public class SnapshotsViewColumns {
         }
     };
 
-    public static final SafeHtmlColumn<Snapshot> descriptionColumn = new SafeHtmlColumn<Snapshot>() {
+    public static final AbstractSafeHtmlColumn<Snapshot> descriptionColumn = new AbstractSafeHtmlColumn<Snapshot>() {
         @Override
         public final SafeHtml getValue(Snapshot snapshot) {
             // Get raw description string (ignore < and > characters).

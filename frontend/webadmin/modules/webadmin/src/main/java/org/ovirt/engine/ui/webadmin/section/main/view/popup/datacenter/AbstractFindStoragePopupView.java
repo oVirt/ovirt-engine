@@ -5,8 +5,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.table.column.EntityModelEnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -35,14 +35,14 @@ public class AbstractFindStoragePopupView extends AbstractModelBoundPopupView<Li
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         // Table Entity Columns
-        table.addEntityModelColumn(new EntityModelTextColumn<StorageDomain>() {
+        table.addEntityModelColumn(new AbstractEntityModelTextColumn<StorageDomain>() {
             @Override
             public String getText(StorageDomain storage) {
                 return storage.getStorageName();
             }
         }, constants.nameStorage());
 
-        table.addEntityModelColumn(new EntityModelEnumColumn<StorageDomain, StorageDomainType>() {
+        table.addEntityModelColumn(new AbstractEntityModelEnumColumn<StorageDomain, StorageDomainType>() {
 
             @Override
             protected StorageDomainType getEnum(StorageDomain storage) {
@@ -50,7 +50,7 @@ public class AbstractFindStoragePopupView extends AbstractModelBoundPopupView<Li
             }
         }, constants.typeStorage());
 
-        table.addEntityModelColumn(new EntityModelTextColumn<StorageDomain>() {
+        table.addEntityModelColumn(new AbstractEntityModelTextColumn<StorageDomain>() {
 
             @Override
             public String getText(StorageDomain storage) {

@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskSupport;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeBrickListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
@@ -22,7 +22,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.cell.MenuCell;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.VolumeActivityCompositeCell;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.VolumeActivitySeperatorCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.BrickStatusColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractPercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityStatusColumn;
 
@@ -56,7 +56,7 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
         brickStatusColumn.makeSortable();
         getTable().addColumn(brickStatusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<GlusterBrickEntity> serverColumn = new TextColumnWithTooltip<GlusterBrickEntity>() {
+        AbstractTextColumnWithTooltip<GlusterBrickEntity> serverColumn = new AbstractTextColumnWithTooltip<GlusterBrickEntity>() {
             @Override
             public String getValue(GlusterBrickEntity brick) {
                 return brick.getServerName();
@@ -65,7 +65,7 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
         serverColumn.makeSortable();
         getTable().addColumn(serverColumn, constants.serverVolumeBrick(), "300px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<GlusterBrickEntity> directoryColumn = new TextColumnWithTooltip<GlusterBrickEntity>() {
+        AbstractTextColumnWithTooltip<GlusterBrickEntity> directoryColumn = new AbstractTextColumnWithTooltip<GlusterBrickEntity>() {
             @Override
             public String getValue(GlusterBrickEntity brick) {
                 return brick.getBrickDirectory();
@@ -75,7 +75,7 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
 
         getTable().addColumn(directoryColumn, constants.brickDirectoryVolumeBrick(), "400px"); //$NON-NLS-1$
 
-        getTable().addColumn(new PercentColumn<GlusterBrickEntity>() {
+        getTable().addColumn(new AbstractPercentColumn<GlusterBrickEntity>() {
             @Override
             protected Integer getProgressValue(GlusterBrickEntity object) {
                 if(object.getBrickProperties() == null) {

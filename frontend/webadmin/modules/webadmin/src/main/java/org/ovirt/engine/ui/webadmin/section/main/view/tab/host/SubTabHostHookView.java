@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHooksListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -45,7 +45,7 @@ public class SubTabHostHookView extends AbstractSubTabTableView<VDS, Map<String,
     void initTable(ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        TextColumnWithTooltip<Map<String, String>> eventColumn = new TextColumnWithTooltip<Map<String, String>>() {
+        AbstractTextColumnWithTooltip<Map<String, String>> eventColumn = new AbstractTextColumnWithTooltip<Map<String, String>>() {
             @Override
             public String getValue(Map<String, String> object) {
                 return object.get(EVENT_NAME);
@@ -54,7 +54,7 @@ public class SubTabHostHookView extends AbstractSubTabTableView<VDS, Map<String,
         eventColumn.makeSortable(new HostHookComparator(EVENT_NAME));
         getTable().addColumn(eventColumn, constants.eventNameHook(), "220px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Map<String, String>> scriptColumn = new TextColumnWithTooltip<Map<String, String>>() {
+        AbstractTextColumnWithTooltip<Map<String, String>> scriptColumn = new AbstractTextColumnWithTooltip<Map<String, String>>() {
             @Override
             public String getValue(Map<String, String> object) {
                 return object.get(SCRIPT_NAME);
@@ -63,7 +63,7 @@ public class SubTabHostHookView extends AbstractSubTabTableView<VDS, Map<String,
         scriptColumn.makeSortable(new HostHookComparator(SCRIPT_NAME));
         getTable().addColumn(scriptColumn, constants.scriptNameHook(), "220px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Map<String, String>> propNameColumn = new TextColumnWithTooltip<Map<String, String>>() {
+        AbstractTextColumnWithTooltip<Map<String, String>> propNameColumn = new AbstractTextColumnWithTooltip<Map<String, String>>() {
             @Override
             public String getValue(Map<String, String> object) {
                 return object.get(PROPERTY_NAME);
@@ -72,7 +72,7 @@ public class SubTabHostHookView extends AbstractSubTabTableView<VDS, Map<String,
         propNameColumn.makeSortable(new HostHookComparator(PROPERTY_NAME));
         getTable().addColumn(propNameColumn, constants.propertyNameHook(), "220px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Map<String, String>> propValueColumn = new TextColumnWithTooltip<Map<String, String>>() {
+        AbstractTextColumnWithTooltip<Map<String, String>> propValueColumn = new AbstractTextColumnWithTooltip<Map<String, String>>() {
             @Override
             public String getValue(Map<String, String> object) {
                 return object.get(PROPERTY_VALUE);

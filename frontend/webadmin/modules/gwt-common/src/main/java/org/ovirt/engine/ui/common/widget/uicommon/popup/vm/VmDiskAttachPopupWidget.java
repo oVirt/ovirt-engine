@@ -16,10 +16,10 @@ import org.ovirt.engine.ui.common.widget.RadioButtonsHorizontalPanel;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.ImageResourceColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -130,7 +130,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
             final CommonApplicationTemplates templates) {
         imageDiskTable.enableColumnResizing();
 
-        TextColumnWithTooltip<EntityModel> aliasColumn = new TextColumnWithTooltip<EntityModel>() {
+        AbstractTextColumnWithTooltip<EntityModel> aliasColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
                 DiskImage diskImage = (DiskImage) (((DiskModel) (object.getEntity())).getDisk());
@@ -139,7 +139,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         imageDiskTable.addColumn(aliasColumn, constants.aliasVmDiskTable(), "85px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<EntityModel> descriptionColumn = new TextColumnWithTooltip<EntityModel>() {
+        AbstractTextColumnWithTooltip<EntityModel> descriptionColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
                 DiskImage diskImage = (DiskImage) (((DiskModel) (object.getEntity())).getDisk());
@@ -148,7 +148,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         imageDiskTable.addColumn(descriptionColumn, constants.descriptionVmDiskTable(), "85px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<EntityModel> idColumn = new TextColumnWithTooltip<EntityModel>() {
+        AbstractTextColumnWithTooltip<EntityModel> idColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
                 DiskImage diskImage = (DiskImage) (((DiskModel) (object.getEntity())).getDisk());
@@ -157,7 +157,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         imageDiskTable.addColumn(idColumn, constants.idVmDiskTable(), "85px"); //$NON-NLS-1$
 
-        DiskSizeColumn<EntityModel> sizeColumn = new DiskSizeColumn<EntityModel>() {
+        AbstractDiskSizeColumn<EntityModel> sizeColumn = new AbstractDiskSizeColumn<EntityModel>() {
             @Override
             protected Long getRawValue(EntityModel object) {
                 DiskImage diskImage = (DiskImage) (((DiskModel) (object.getEntity())).getDisk());
@@ -166,7 +166,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         imageDiskTable.addColumn(sizeColumn, constants.provisionedSizeVmDiskTable(), "105px"); //$NON-NLS-1$
 
-        DiskSizeColumn<EntityModel> actualSizeColumn = new DiskSizeColumn<EntityModel>() {
+        AbstractDiskSizeColumn<EntityModel> actualSizeColumn = new AbstractDiskSizeColumn<EntityModel>() {
             @Override
             protected Long getRawValue(EntityModel object) {
                 DiskImage diskImage = (DiskImage) (((DiskModel) (object.getEntity())).getDisk());
@@ -175,7 +175,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         imageDiskTable.addColumn(actualSizeColumn, constants.sizeVmDiskTable(), "105px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<EntityModel> storageDomainColumn = new TextColumnWithTooltip<EntityModel>() {
+        AbstractTextColumnWithTooltip<EntityModel> storageDomainColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
                 DiskImage diskImage = (DiskImage) (((DiskModel) (object.getEntity())).getDisk());
@@ -184,7 +184,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         imageDiskTable.addColumn(storageDomainColumn, constants.storageDomainVmDiskTable(), "115px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<EntityModel> interfaceColumn = new EnumColumn<EntityModel, DiskInterface>() {
+        AbstractTextColumnWithTooltip<EntityModel> interfaceColumn = new AbstractEnumColumn<EntityModel, DiskInterface>() {
             @Override
             protected DiskInterface getRawValue(EntityModel object) {
                 Disk disk = (((DiskModel) (object.getEntity())).getDisk());
@@ -201,7 +201,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         SafeHtml bootableColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
                 AbstractImagePrototype.create(resources.bootableDiskIcon()).getHTML()), constants.bootable()
         );
-        imageDiskTable.addColumn(new ImageResourceColumn<EntityModel>() {
+        imageDiskTable.addColumn(new AbstractImageResourceColumn<EntityModel>() {
             @Override
             public ImageResource getValue(EntityModel object) {
                 Disk disk = (((DiskModel) (object.getEntity())).getDisk());
@@ -213,7 +213,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         SafeHtml shareableColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
                 AbstractImagePrototype.create(resources.shareableDiskIcon()).getHTML()), constants.shareable()
         );
-        imageDiskTable.addColumn(new ImageResourceColumn<EntityModel>() {
+        imageDiskTable.addColumn(new AbstractImageResourceColumn<EntityModel>() {
             @Override
             public ImageResource getValue(EntityModel object) {
                 Disk disk = (((DiskModel) (object.getEntity())).getDisk());
@@ -231,7 +231,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
             final CommonApplicationTemplates templates) {
         lunDiskTable.enableColumnResizing();
 
-        TextColumnWithTooltip<EntityModel> aliasColumn = new TextColumnWithTooltip<EntityModel>() {
+        AbstractTextColumnWithTooltip<EntityModel> aliasColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
                 LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());
@@ -240,7 +240,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         lunDiskTable.addColumn(aliasColumn, constants.aliasVmDiskTable(), "60px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<EntityModel> descriptionColumn = new TextColumnWithTooltip<EntityModel>() {
+        AbstractTextColumnWithTooltip<EntityModel> descriptionColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
                 LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());
@@ -249,7 +249,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         lunDiskTable.addColumn(descriptionColumn, constants.descriptionVmDiskTable(), "85px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<EntityModel> lunIdColumn = new TextColumnWithTooltip<EntityModel>() {
+        AbstractTextColumnWithTooltip<EntityModel> lunIdColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
                 LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());
@@ -258,7 +258,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         lunDiskTable.addColumn(lunIdColumn, constants.lunIdSanStorage(), "60px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<EntityModel> idColumn = new TextColumnWithTooltip<EntityModel>() {
+        AbstractTextColumnWithTooltip<EntityModel> idColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
                 LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());
@@ -267,7 +267,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         lunDiskTable.addColumn(idColumn, constants.idVmDiskTable(), "60px"); //$NON-NLS-1$
 
-        DiskSizeColumn<EntityModel> sizeColumn = new DiskSizeColumn<EntityModel>(SizeConverter.SizeUnit.GB) {
+        AbstractDiskSizeColumn<EntityModel> sizeColumn = new AbstractDiskSizeColumn<EntityModel>(SizeConverter.SizeUnit.GB) {
             @Override
             protected Long getRawValue(EntityModel object) {
                 LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());
@@ -276,7 +276,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         lunDiskTable.addColumn(sizeColumn, constants.devSizeSanStorage(), "70px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<EntityModel> pathColumn = new TextColumnWithTooltip<EntityModel>() {
+        AbstractTextColumnWithTooltip<EntityModel> pathColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
                 LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());
@@ -285,7 +285,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         lunDiskTable.addColumn(pathColumn, constants.pathSanStorage(), "40px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<EntityModel> vendorIdColumn = new TextColumnWithTooltip<EntityModel>() {
+        AbstractTextColumnWithTooltip<EntityModel> vendorIdColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
                 LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());
@@ -294,7 +294,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         lunDiskTable.addColumn(vendorIdColumn, constants.vendorIdSanStorage(), "70px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<EntityModel> productIdColumn = new TextColumnWithTooltip<EntityModel>() {
+        AbstractTextColumnWithTooltip<EntityModel> productIdColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
                 LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());
@@ -303,7 +303,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         lunDiskTable.addColumn(productIdColumn, constants.productIdSanStorage(), "70px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<EntityModel> serialColumn = new TextColumnWithTooltip<EntityModel>() {
+        AbstractTextColumnWithTooltip<EntityModel> serialColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
                 LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());
@@ -312,7 +312,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         lunDiskTable.addColumn(serialColumn, constants.serialSanStorage(), "70px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<EntityModel> interfaceColumn = new EnumColumn<EntityModel, DiskInterface>() {
+        AbstractTextColumnWithTooltip<EntityModel> interfaceColumn = new AbstractEnumColumn<EntityModel, DiskInterface>() {
             @Override
             protected DiskInterface getRawValue(EntityModel object) {
                 Disk disk = (((DiskModel) (object.getEntity())).getDisk());
@@ -329,7 +329,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         SafeHtml bootableColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
                 AbstractImagePrototype.create(resources.bootableDiskIcon()).getHTML()), constants.bootable()
         );
-        lunDiskTable.addColumn(new ImageResourceColumn<EntityModel>() {
+        lunDiskTable.addColumn(new AbstractImageResourceColumn<EntityModel>() {
             @Override
             public ImageResource getValue(EntityModel object) {
                 Disk disk = (((DiskModel) (object.getEntity())).getDisk());
@@ -341,7 +341,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         SafeHtml shareableColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
                 AbstractImagePrototype.create(resources.shareableDiskIcon()).getHTML()), constants.shareable()
         );
-        lunDiskTable.addColumn(new ImageResourceColumn<EntityModel>() {
+        lunDiskTable.addColumn(new AbstractImageResourceColumn<EntityModel>() {
             @Override
             public ImageResource getValue(EntityModel object) {
                 Disk disk = (((DiskModel) (object.getEntity())).getDisk());

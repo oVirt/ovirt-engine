@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.vm;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 
@@ -19,7 +19,7 @@ public class VmAppListModelTable extends AbstractModelBoundTableWidget<String, V
 
     @Override
     public void initTable(CommonApplicationConstants constants) {
-        TextColumnWithTooltip<String> appNameColumn = new TextColumnWithTooltip<String>() {
+        AbstractTextColumnWithTooltip<String> appNameColumn = new AbstractTextColumnWithTooltip<String>() {
             @Override
             public String getValue(String appName) {
                 return appName;

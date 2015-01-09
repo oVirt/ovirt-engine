@@ -6,8 +6,8 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.LinkColumnWithTooltip;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderNetworkListModel;
@@ -29,7 +29,7 @@ public class SubTabProviderNetworkView extends AbstractSubTabTableView<Provider,
 
     private final ApplicationConstants constants;
 
-    private LinkColumnWithTooltip<NetworkView> nameColumn;
+    private AbstractLinkColumnWithTooltip<NetworkView> nameColumn;
 
     @Inject
     public SubTabProviderNetworkView(SearchableDetailModelProvider<NetworkView, ProviderListModel, ProviderNetworkListModel> modelProvider,
@@ -49,7 +49,7 @@ public class SubTabProviderNetworkView extends AbstractSubTabTableView<Provider,
     void initTable() {
         getTable().enableColumnResizing();
 
-        nameColumn = new LinkColumnWithTooltip<NetworkView>() {
+        nameColumn = new AbstractLinkColumnWithTooltip<NetworkView>() {
             @Override
             public String getValue(NetworkView object) {
                 return object.getName();
@@ -58,8 +58,8 @@ public class SubTabProviderNetworkView extends AbstractSubTabTableView<Provider,
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameNetwork(), "200px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<NetworkView> externalIdColumn =
-                new TextColumnWithTooltip<NetworkView>() {
+        AbstractTextColumnWithTooltip<NetworkView> externalIdColumn =
+                new AbstractTextColumnWithTooltip<NetworkView>() {
                     @Override
                     public String getValue(NetworkView object) {
                         return object.getProvidedBy().getExternalId();
@@ -68,7 +68,7 @@ public class SubTabProviderNetworkView extends AbstractSubTabTableView<Provider,
         externalIdColumn.makeSortable();
         getTable().addColumn(externalIdColumn, constants.externalIdProviderNetwork(), "300px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<NetworkView> dcColumn = new TextColumnWithTooltip<NetworkView>() {
+        AbstractTextColumnWithTooltip<NetworkView> dcColumn = new AbstractTextColumnWithTooltip<NetworkView>() {
             @Override
             public String getValue(NetworkView object) {
                 return object.getDataCenterName();

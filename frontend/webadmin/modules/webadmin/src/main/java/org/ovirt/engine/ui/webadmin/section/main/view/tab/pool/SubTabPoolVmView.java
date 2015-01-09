@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolVmListModel;
@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractUptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
@@ -48,7 +48,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
 
         getTable().addColumn(new VmStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> nameColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getName();
@@ -58,7 +58,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
 
         getTable().addColumn(new VmTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> hostColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> hostColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getRunOnVdsName();
@@ -66,7 +66,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
         };
         getTable().addColumn(hostColumn, constants.hostVm(), "200px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> ipColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> ipColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getVmIp();
@@ -74,7 +74,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
         };
         getTable().addColumn(ipColumn, constants.ipVm(), "200px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> fqdnColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> fqdnColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getVmFQDN();
@@ -82,7 +82,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
         };
         getTable().addColumn(fqdnColumn, constants.fqdn(), "200px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
+        AbstractTextColumnWithTooltip<VM> statusColumn = new AbstractEnumColumn<VM, VMStatus>() {
             @Override
             protected VMStatus getRawValue(VM object) {
                 return object.getStatus();
@@ -90,7 +90,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
         };
         getTable().addColumn(statusColumn, constants.statusVm(), "200px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> uptimeColumn = new UptimeColumn<VM>() {
+        AbstractTextColumnWithTooltip<VM> uptimeColumn = new AbstractUptimeColumn<VM>() {
             @Override
             protected Double getRawValue(VM object) {
                 return object.getRoundedElapsedTime();
@@ -98,7 +98,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
         };
         getTable().addColumn(uptimeColumn, constants.uptimeVm(), "200px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> consoleConnectedUserColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> consoleConnectedUserColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getConsoleCurentUserName();
@@ -106,7 +106,7 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
         };
         getTable().addColumn(consoleConnectedUserColumn, constants.consoleConnectedUserVm(), "200px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> loggedInUserColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> loggedInUserColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getGuestCurentUserName();

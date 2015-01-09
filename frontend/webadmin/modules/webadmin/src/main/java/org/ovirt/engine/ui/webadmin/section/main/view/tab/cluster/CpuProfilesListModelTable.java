@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.permissions.PermissionWithInheritedPermissionListModelTable;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -85,8 +85,8 @@ public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<Cpu
     public void initTable(final CommonApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        TextColumnWithTooltip<CpuProfile> nameColumn =
-                new TextColumnWithTooltip<CpuProfile>() {
+        AbstractTextColumnWithTooltip<CpuProfile> nameColumn =
+                new AbstractTextColumnWithTooltip<CpuProfile>() {
                     @Override
                     public String getValue(CpuProfile object) {
                         return object.getName();
@@ -95,8 +95,8 @@ public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<Cpu
         getTable().addColumn(nameColumn, constants.profileNameLabel(), "200px"); //$NON-NLS-1$
         nameColumn.makeSortable();
 
-        TextColumnWithTooltip<CpuProfile> descriptionColumn =
-                new TextColumnWithTooltip<CpuProfile>() {
+        AbstractTextColumnWithTooltip<CpuProfile> descriptionColumn =
+                new AbstractTextColumnWithTooltip<CpuProfile>() {
                     @Override
                     public String getValue(CpuProfile object) {
                         return object.getDescription();
@@ -105,7 +105,7 @@ public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<Cpu
         getTable().addColumn(descriptionColumn, constants.profileDescriptionLabel(), "200px"); //$NON-NLS-1$
         descriptionColumn.makeSortable();
 
-        TextColumnWithTooltip<CpuProfile> qosColumn = new TextColumnWithTooltip<CpuProfile>() {
+        AbstractTextColumnWithTooltip<CpuProfile> qosColumn = new AbstractTextColumnWithTooltip<CpuProfile>() {
             @Override
             public String getValue(CpuProfile object) {
                 String name = constants.unlimitedQos();

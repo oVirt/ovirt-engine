@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
 import com.google.gwt.resources.client.ImageResource;
 
-public class QuotaUtilizationStatusColumn<IVdcQueryable> extends WebAdminImageResourceColumn<IVdcQueryable> {
+public class QuotaUtilizationStatusColumn<IVdcQueryable> extends AbstractWebAdminImageResourceColumn<IVdcQueryable> {
 
     private static final ApplicationConstants applicationConstants = ClientGinjectorProvider.getApplicationConstants();
 

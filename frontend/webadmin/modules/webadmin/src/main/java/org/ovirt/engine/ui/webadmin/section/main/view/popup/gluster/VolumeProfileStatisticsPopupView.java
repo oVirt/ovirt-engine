@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
-import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeProfileStatisticsModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -174,35 +174,35 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
         });
         volumeProfileStats = new EntityModelCellTable<ListModel>(false, true);
 
-        volumeProfileStats.addEntityModelColumn(new EntityModelTextColumn<FopStats>() {
+        volumeProfileStats.addEntityModelColumn(new AbstractEntityModelTextColumn<FopStats>() {
             @Override
             protected String getText(FopStats entity) {
                 return entity.getName();
             }
         }, constants.fileOperation());
 
-        volumeProfileStats.addEntityModelColumn(new EntityModelTextColumn<FopStats>() {
+        volumeProfileStats.addEntityModelColumn(new AbstractEntityModelTextColumn<FopStats>() {
             @Override
             protected String getText(FopStats entity) {
                 return entity.getHits() + "";
             }
         }, constants.fOpInvocationCount());
 
-        volumeProfileStats.addEntityModelColumn(new EntityModelTextColumn<FopStats>() {
+        volumeProfileStats.addEntityModelColumn(new AbstractEntityModelTextColumn<FopStats>() {
             @Override
             protected String getText(FopStats entity) {
                 return entity.getMaxLatencyFormatted().getFirst() + " " + entity.getMaxLatencyFormatted().getSecond();//$NON-NLS-1$
             }
         }, constants.fOpMaxLatency());
 
-        volumeProfileStats.addEntityModelColumn(new EntityModelTextColumn<FopStats>() {
+        volumeProfileStats.addEntityModelColumn(new AbstractEntityModelTextColumn<FopStats>() {
             @Override
             protected String getText(FopStats entity) {
                 return entity.getMinLatencyFormatted().getFirst() + " " + entity.getMinLatencyFormatted().getSecond();//$NON-NLS-1$
             }
         }, constants.fOpMinLatency());
 
-        volumeProfileStats.addEntityModelColumn(new EntityModelTextColumn<FopStats>() {
+        volumeProfileStats.addEntityModelColumn(new AbstractEntityModelTextColumn<FopStats>() {
             @Override
             protected String getText(FopStats entity) {
                 return entity.getAvgLatencyFormatted().getFirst() + " " + entity.getAvgLatencyFormatted().getSecond();//$NON-NLS-1$
@@ -211,35 +211,35 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
 
         nfsServerProfileStats = new EntityModelCellTable<ListModel>(false, true);
 
-        nfsServerProfileStats.addEntityModelColumn(new EntityModelTextColumn<FopStats>() {
+        nfsServerProfileStats.addEntityModelColumn(new AbstractEntityModelTextColumn<FopStats>() {
             @Override
             protected String getText(FopStats entity) {
                 return entity.getName();
             }
         }, constants.fileOperation());
 
-        nfsServerProfileStats.addEntityModelColumn(new EntityModelTextColumn<FopStats>() {
+        nfsServerProfileStats.addEntityModelColumn(new AbstractEntityModelTextColumn<FopStats>() {
             @Override
             protected String getText(FopStats entity) {
                 return entity.getHits() + "";
             }
         }, constants.fOpInvocationCount());
 
-        nfsServerProfileStats.addEntityModelColumn(new EntityModelTextColumn<FopStats>() {
+        nfsServerProfileStats.addEntityModelColumn(new AbstractEntityModelTextColumn<FopStats>() {
             @Override
             protected String getText(FopStats entity) {
                 return entity.getMaxLatencyFormatted().getFirst() + " " + entity.getMaxLatencyFormatted().getSecond();//$NON-NLS-1$
             }
         }, constants.fOpMaxLatency());
 
-        nfsServerProfileStats.addEntityModelColumn(new EntityModelTextColumn<FopStats>() {
+        nfsServerProfileStats.addEntityModelColumn(new AbstractEntityModelTextColumn<FopStats>() {
             @Override
             protected String getText(FopStats entity) {
                 return entity.getMinLatencyFormatted().getFirst() + " " + entity.getMinLatencyFormatted().getSecond();//$NON-NLS-1$
             }
         }, constants.fOpMinLatency());
 
-        nfsServerProfileStats.addEntityModelColumn(new EntityModelTextColumn<FopStats>() {
+        nfsServerProfileStats.addEntityModelColumn(new AbstractEntityModelTextColumn<FopStats>() {
             @Override
             protected String getText(FopStats entity) {
                 return entity.getAvgLatencyFormatted().getFirst() + " " + entity.getAvgLatencyFormatted().getSecond();//$NON-NLS-1$

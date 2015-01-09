@@ -4,7 +4,7 @@ import java.util.Comparator;
 
 import com.google.gwt.text.shared.Renderer;
 
-public abstract class AbstractSizeColumn<T> extends RenderedTextColumn<T, Long> {
+public abstract class AbstractSizeColumn<T> extends AbstractRenderedTextColumn<T, Long> {
 
     public AbstractSizeColumn(Renderer<Long> renderer) {
         super(renderer);

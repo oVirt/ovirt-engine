@@ -15,7 +15,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class NicActivateStatusColumn<T> extends SafeHtmlWithSafeHtmlTooltipColumn<T> {
+public class NicActivateStatusColumn<T> extends AbstractSafeHtmlWithSafeHtmlTooltipColumn<T> {
     CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
     CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
     CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);

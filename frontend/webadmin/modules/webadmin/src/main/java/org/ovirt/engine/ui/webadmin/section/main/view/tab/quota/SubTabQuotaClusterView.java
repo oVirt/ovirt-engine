@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -39,7 +39,7 @@ public class SubTabQuotaClusterView extends AbstractSubTabTableView<Quota, Quota
     private void initTable(final ApplicationConstants constants, final ApplicationMessages messages) {
         getTable().enableColumnResizing();
 
-        TextColumnWithTooltip<QuotaVdsGroup> nameColumn = new TextColumnWithTooltip<QuotaVdsGroup>() {
+        AbstractTextColumnWithTooltip<QuotaVdsGroup> nameColumn = new AbstractTextColumnWithTooltip<QuotaVdsGroup>() {
             @Override
             public String getValue(QuotaVdsGroup object) {
                 return object.getVdsGroupName() == null || object.getVdsGroupName().equals("") ?
@@ -49,7 +49,7 @@ public class SubTabQuotaClusterView extends AbstractSubTabTableView<Quota, Quota
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameCluster(), "300px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<QuotaVdsGroup> usedMemColumn = new TextColumnWithTooltip<QuotaVdsGroup>() {
+        AbstractTextColumnWithTooltip<QuotaVdsGroup> usedMemColumn = new AbstractTextColumnWithTooltip<QuotaVdsGroup>() {
             @Override
             public String getValue(QuotaVdsGroup object) {
                 if (object.getMemSizeMB() == null) {
@@ -64,7 +64,7 @@ public class SubTabQuotaClusterView extends AbstractSubTabTableView<Quota, Quota
         usedMemColumn.makeSortable();
         getTable().addColumn(usedMemColumn, constants.usedMemoryTotalCluster(), "300px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<QuotaVdsGroup> virtualCpuColumn = new TextColumnWithTooltip<QuotaVdsGroup>() {
+        AbstractTextColumnWithTooltip<QuotaVdsGroup> virtualCpuColumn = new AbstractTextColumnWithTooltip<QuotaVdsGroup>() {
             @Override
             public String getValue(QuotaVdsGroup object) {
                 if (object.getVirtualCpu() == null) {

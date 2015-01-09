@@ -25,8 +25,8 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMo
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
-import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ImportExportRepoImageBaseModel;
@@ -127,7 +127,7 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
         imageListPanel = new SimplePanel();
 
         imageList = new EntityModelCellTable<ListModel>(SelectionMode.NONE, true);
-        imageList.addEntityModelColumn(new EntityModelTextColumn<Object>() {
+        imageList.addEntityModelColumn(new AbstractEntityModelTextColumn<Object>() {
             @Override
             public String getText(Object image) {
                 if (image instanceof RepoImage) {
@@ -138,7 +138,7 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
                 return constants.unknown();
             }
         }, constants.fileNameIso());
-        imageList.addEntityModelColumn(new EntityModelTextColumn<Object>() {
+        imageList.addEntityModelColumn(new AbstractEntityModelTextColumn<Object>() {
             @Override
             public String getText(Object image) {
                 if (image instanceof RepoImage) {
@@ -149,7 +149,7 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
                 return constants.unknown();
             }
         }, constants.typeIso());
-        imageList.addEntityModelColumn(new DiskSizeColumn<EntityModel>() {
+        imageList.addEntityModelColumn(new AbstractDiskSizeColumn<EntityModel>() {
             @Override
             protected Long getRawValue(EntityModel object) {
                 if (object.getEntity() instanceof RepoImage) {

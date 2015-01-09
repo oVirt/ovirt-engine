@@ -16,8 +16,8 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEd
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
-import org.ovirt.engine.ui.common.widget.table.column.EntityModelEnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.GlusterHookResolveConflictsModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -233,14 +233,14 @@ public class GlusterHookResolveConflictsPopupView extends AbstractModelBoundPopu
     }
 
     private void initTableColumns(ApplicationConstants constants) {
-        contentSourcesTable.addEntityModelColumn(new EntityModelTextColumn<GlusterServerHook>() {
+        contentSourcesTable.addEntityModelColumn(new AbstractEntityModelTextColumn<GlusterServerHook>() {
             @Override
             public String getText(GlusterServerHook entity) {
                 return entity.getServerName();
             }
         }, constants.sourceGlusterHook());
 
-        contentSourcesTable.addEntityModelColumn(new EntityModelEnumColumn<GlusterServerHook, GlusterHookStatus>() {
+        contentSourcesTable.addEntityModelColumn(new AbstractEntityModelEnumColumn<GlusterServerHook, GlusterHookStatus>() {
             @Override
             protected GlusterHookStatus getEnum(GlusterServerHook entity) {
                 return entity.getStatus();

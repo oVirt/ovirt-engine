@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 
 import com.google.gwt.resources.client.ImageResource;
 
-public class DcStatusColumn extends WebAdminImageResourceColumn<StoragePool> {
+public class DcStatusColumn extends AbstractWebAdminImageResourceColumn<StoragePool> {
 
     @Override
     public ImageResource getValue(StoragePool dc) {

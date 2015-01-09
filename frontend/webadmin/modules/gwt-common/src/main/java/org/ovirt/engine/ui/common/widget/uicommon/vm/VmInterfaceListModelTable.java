@@ -9,11 +9,11 @@ import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
-import org.ovirt.engine.ui.common.widget.table.column.BooleanColumn;
-import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractBooleanColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.NicActivateStatusColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
@@ -78,7 +78,7 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
         statusColumn.makeSortable();
         getTable().addColumn(statusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmNetworkInterface> nameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> nameColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getName();
@@ -87,7 +87,7 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameInterface(), "150px"); //$NON-NLS-1$
 
-        CheckboxColumn<VmNetworkInterface> pluggedColumn = new CheckboxColumn<VmNetworkInterface>() {
+        AbstractCheckboxColumn<VmNetworkInterface> pluggedColumn = new AbstractCheckboxColumn<VmNetworkInterface>() {
             @Override
             public Boolean getValue(VmNetworkInterface object) {
                 return object.isPlugged();
@@ -101,7 +101,7 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
         pluggedColumn.makeSortable();
         getTable().addColumnWithHtmlHeader(pluggedColumn, constants.plugged(), "60px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmNetworkInterface> networkNameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> networkNameColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getNetworkName();
@@ -110,7 +110,7 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
         networkNameColumn.makeSortable();
         getTable().addColumn(networkNameColumn, constants.networkNameInterface(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmNetworkInterface> profileNameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> profileNameColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getVnicProfileName();
@@ -119,7 +119,7 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
         profileNameColumn.makeSortable();
         getTable().addColumn(profileNameColumn, constants.profileNameInterface(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmNetworkInterface> qosName = new TextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> qosName = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getQosName();
@@ -128,8 +128,8 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
         qosName.makeSortable();
         getTable().addColumn(qosName, constants.vmNetworkQosName(), "150px"); //$NON-NLS-1$
 
-        BooleanColumn<VmNetworkInterface> linkStateColumn =
-                new BooleanColumn<VmNetworkInterface>(constants.linkedNetworkInterface(),
+        AbstractBooleanColumn<VmNetworkInterface> linkStateColumn =
+                new AbstractBooleanColumn<VmNetworkInterface>(constants.linkedNetworkInterface(),
                         constants.unlinkedNetworkInterface()) {
                     @Override
                     protected Boolean getRawValue(VmNetworkInterface object) {
@@ -139,7 +139,7 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
         linkStateColumn.makeSortable();
         getTable().addColumnWithHtmlHeader(linkStateColumn, constants.linkStateNetworkInterface(), "65px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmNetworkInterface> typeColumn = new EnumColumn<VmNetworkInterface, VmInterfaceType>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> typeColumn = new AbstractEnumColumn<VmNetworkInterface, VmInterfaceType>() {
             @Override
             protected VmInterfaceType getRawValue(VmNetworkInterface object) {
                 return VmInterfaceType.forValue(object.getType());
@@ -148,7 +148,7 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
         typeColumn.makeSortable();
         getTable().addColumn(typeColumn, constants.typeInterface(), "100px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmNetworkInterface> macColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> macColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getMacAddress();
@@ -157,7 +157,7 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
         macColumn.makeSortable();
         getTable().addColumn(macColumn, constants.macInterface(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmNetworkInterface> speedColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> speedColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 if (object.getSpeed() != null) {

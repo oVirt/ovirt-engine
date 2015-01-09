@@ -13,11 +13,11 @@ import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.ViewRadioGroup;
-import org.ovirt.engine.ui.common.widget.table.column.NullableNumberColumn;
-import org.ovirt.engine.ui.common.widget.table.column.RxTxRateColumn;
-import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlWithSafeHtmlTooltipColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractNullableNumberColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlWithSafeHtmlTooltipColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.table.column.SimpleStatusColumnComparator;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkHostFilter;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkHostListModel;
@@ -29,8 +29,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNet
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.host.InterfaceStatusImage;
+import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractWebAdminImageResourceColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.WebAdminImageResourceColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -92,28 +92,28 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
 
     private final HostStatusColumn<PairQueryable<VdsNetworkInterface, VDS>> hostStatus = new HostStatusColumn<PairQueryable<VdsNetworkInterface, VDS>>();
 
-    private final TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> nameColumn = new TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>>() {
+    private final AbstractTextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> nameColumn = new AbstractTextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>>() {
         @Override
         public String getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
             return object.getSecond().getName();
         }
     };
 
-    private final TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> clusterColumn = new TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>>() {
+    private final AbstractTextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> clusterColumn = new AbstractTextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>>() {
         @Override
         public String getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
             return object.getSecond().getVdsGroupName();
         }
     };
 
-    private final TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> dcColumn = new TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>>() {
+    private final AbstractTextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> dcColumn = new AbstractTextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>>() {
         @Override
         public String getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
             return object.getSecond().getStoragePoolName();
         }
     };
 
-    WebAdminImageResourceColumn<PairQueryable<VdsNetworkInterface, VDS>> nicStatusColumn = new WebAdminImageResourceColumn<PairQueryable<VdsNetworkInterface, VDS>>(){
+    AbstractWebAdminImageResourceColumn<PairQueryable<VdsNetworkInterface, VDS>> nicStatusColumn = new AbstractWebAdminImageResourceColumn<PairQueryable<VdsNetworkInterface, VDS>>(){
 
         @Override
         public ImageResource getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
@@ -124,8 +124,8 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         }
     };
 
-    private final SafeHtmlWithSafeHtmlTooltipColumn<PairQueryable<VdsNetworkInterface, VDS>> nicColumn =
-            new SafeHtmlWithSafeHtmlTooltipColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
+    private final AbstractSafeHtmlWithSafeHtmlTooltipColumn<PairQueryable<VdsNetworkInterface, VDS>> nicColumn =
+            new AbstractSafeHtmlWithSafeHtmlTooltipColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
                 @Override
                 public SafeHtml getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
                     if (object.getFirst() != null) {
@@ -146,8 +146,8 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
                 }
             };
 
-    private final TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> speedColumn =
-            new TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>>() {
+    private final AbstractTextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> speedColumn =
+            new AbstractTextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>>() {
                 @Override
                 public String getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
                     if (object.getFirst() != null && object.getFirst().getSpeed() != null) {
@@ -157,7 +157,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
                 }
             };
 
-    private final TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> nicRxColumn = new RxTxRateColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
+    private final AbstractTextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> nicRxColumn = new AbstractRxTxRateColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
         @Override
         protected Double getRate(PairQueryable<VdsNetworkInterface, VDS> object) {
             if (object.getFirst() != null){
@@ -176,7 +176,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         }
     };
 
-    private final TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> nicTxColumn = new RxTxRateColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
+    private final AbstractTextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> nicTxColumn = new AbstractRxTxRateColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
         @Override
         protected Double getRate(PairQueryable<VdsNetworkInterface, VDS> object) {
             if (object.getFirst() != null){
@@ -196,16 +196,16 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         }
     };
 
-    private final TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> totalRxColumn =
-            new NullableNumberColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
+    private final AbstractTextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> totalRxColumn =
+            new AbstractNullableNumberColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
                 @Override
                 protected Number getRawValue(PairQueryable<VdsNetworkInterface, VDS> object) {
                     return object.getFirst() == null ? null : object.getFirst().getStatistics().getReceivedBytes();
                 }
             };
 
-    private final TextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> totalTxColumn =
-            new NullableNumberColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
+    private final AbstractTextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> totalTxColumn =
+            new AbstractNullableNumberColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
                 @Override
                 protected Number getRawValue(PairQueryable<VdsNetworkInterface, VDS> object) {
                     return object.getFirst() == null ? null : object.getFirst().getStatistics().getTransmittedBytes();

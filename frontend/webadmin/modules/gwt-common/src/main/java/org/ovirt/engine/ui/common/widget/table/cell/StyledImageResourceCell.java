@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 /**
  * ImageResourceCell that supports setting a style and displaying a tooltip in a DecoratedPopupPanel.
  */
-public class StyledImageResourceCell extends TitlePanelCell<ImageResource> implements HasStyleClass {
+public class StyledImageResourceCell extends AbstractTitlePanelCell<ImageResource> implements HasStyleClass {
 
     interface CellTemplate extends SafeHtmlTemplates {
         @Template("<div style=\"{0}\" class=\"{1}\">{2}</div>")

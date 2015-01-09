@@ -10,8 +10,8 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MoveHost;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -78,7 +78,7 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
         table = new EntityModelCellTable<MoveHost>(true);
         table.setWidth("100%", true); //$NON-NLS-1$
 
-        TextColumnWithTooltip<EntityModel> nameColumn = new TextColumnWithTooltip<EntityModel>() {
+        AbstractTextColumnWithTooltip<EntityModel> nameColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
                 return ((VDS) object.getEntity()).getName();
@@ -86,7 +86,7 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
         };
         table.addColumn(nameColumn, constants.nameHost());
 
-        TextColumnWithTooltip<EntityModel> hostColumn = new TextColumnWithTooltip<EntityModel>() {
+        AbstractTextColumnWithTooltip<EntityModel> hostColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel object) {
                 return ((VDS) object.getEntity()).getHostName();
@@ -94,7 +94,7 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
         };
         table.addColumn(hostColumn, constants.ipHost());
 
-        TextColumnWithTooltip<EntityModel> statusColumn = new EnumColumn<EntityModel, VDSStatus>() {
+        AbstractTextColumnWithTooltip<EntityModel> statusColumn = new AbstractEnumColumn<EntityModel, VDSStatus>() {
             @Override
             public VDSStatus getRawValue(EntityModel object) {
                 return ((VDS) object.getEntity()).getStatus();

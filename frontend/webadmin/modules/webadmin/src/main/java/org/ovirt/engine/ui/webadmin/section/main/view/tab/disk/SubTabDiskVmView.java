@@ -7,16 +7,16 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.ImageResourceColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskVmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractPercentColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractUptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
 import com.google.gwt.core.client.GWT;
@@ -44,7 +44,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
     void initTable(final ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        ImageResourceColumn<VM> pluggedColumn = new ImageResourceColumn<VM>() {
+        AbstractImageResourceColumn<VM> pluggedColumn = new AbstractImageResourceColumn<VM>() {
             @Override
             public ImageResource getValue(VM object) {
                 boolean isDiskPlugged = getDetailModel().isDiskPluggedToVm(object);
@@ -54,7 +54,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         };
         getTable().addColumn(pluggedColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> nameColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getName();
@@ -65,7 +65,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
 
         getTable().addColumn(new VmTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> clusterColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> clusterColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getVdsGroupName();
@@ -74,7 +74,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         clusterColumn.makeSortable();
         getTable().addColumn(clusterColumn, constants.clusterVm(), "140px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> ipColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> ipColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getVmIp();
@@ -83,7 +83,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         ipColumn.makeSortable();
         getTable().addColumn(ipColumn, constants.ipVm(), "140px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> fqdnColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> fqdnColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getVmFQDN();
@@ -92,7 +92,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         fqdnColumn.makeSortable();
         getTable().addColumn(fqdnColumn, constants.fqdn(), "140px"); //$NON-NLS-1$
 
-        PercentColumn<VM> memColumn = new PercentColumn<VM>() {
+        AbstractPercentColumn<VM> memColumn = new AbstractPercentColumn<VM>() {
             @Override
             public Integer getProgressValue(VM object) {
                 return object.getUsageMemPercent();
@@ -100,7 +100,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         };
         getTable().addColumn(memColumn, constants.memoryVm(), "140px"); //$NON-NLS-1$
 
-        PercentColumn<VM> cpuColumn = new PercentColumn<VM>() {
+        AbstractPercentColumn<VM> cpuColumn = new AbstractPercentColumn<VM>() {
             @Override
             public Integer getProgressValue(VM object) {
                 return object.getUsageCpuPercent();
@@ -108,7 +108,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         };
         getTable().addColumn(cpuColumn, constants.cpuVm(), "140px"); //$NON-NLS-1$
 
-        PercentColumn<VM> netColumn = new PercentColumn<VM>() {
+        AbstractPercentColumn<VM> netColumn = new AbstractPercentColumn<VM>() {
             @Override
             public Integer getProgressValue(VM object) {
                 return object.getUsageNetworkPercent();
@@ -116,7 +116,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         };
         getTable().addColumn(netColumn, constants.networkVm(), "140px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
+        AbstractTextColumnWithTooltip<VM> statusColumn = new AbstractEnumColumn<VM, VMStatus>() {
             @Override
             protected VMStatus getRawValue(VM object) {
                 return object.getStatus();
@@ -125,7 +125,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         statusColumn.makeSortable();
         getTable().addColumn(statusColumn, constants.statusVm(), "140px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> hostColumn = new UptimeColumn<VM>() {
+        AbstractTextColumnWithTooltip<VM> hostColumn = new AbstractUptimeColumn<VM>() {
             @Override
             protected Double getRawValue(VM object) {
                 return object.getRoundedElapsedTime();

@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.common.uicommon.model.DeferredModelCommandInvoker;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.AbstractActionPanel;
 import org.ovirt.engine.ui.common.widget.label.NoItemsLabel;
-import org.ovirt.engine.ui.common.widget.table.column.SortableColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractSortableColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -470,8 +470,8 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
                 SearchableListModel<?> model = getDataProvider().getModel();
                 Column<?, ?> column = event.getColumn();
 
-                if (column instanceof SortableColumn) {
-                    SortableColumn<T, ?> sortedColumn = (SortableColumn<T, ?>) column;
+                if (column instanceof AbstractSortableColumn) {
+                    AbstractSortableColumn<T, ?> sortedColumn = (AbstractSortableColumn<T, ?>) column;
                     boolean sortApplied = false;
 
                     // Apply server-side sorting, if supported by the model

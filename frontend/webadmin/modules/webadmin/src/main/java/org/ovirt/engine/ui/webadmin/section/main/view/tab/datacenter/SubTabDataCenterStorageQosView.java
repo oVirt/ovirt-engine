@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterStorageQosListModel;
@@ -42,7 +42,7 @@ public class SubTabDataCenterStorageQosView extends AbstractSubTabTableView<Stor
     void initTable(final ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        TextColumnWithTooltip<StorageQos> nameColumn = new TextColumnWithTooltip<StorageQos>() {
+        AbstractTextColumnWithTooltip<StorageQos> nameColumn = new AbstractTextColumnWithTooltip<StorageQos>() {
             @Override
             public String getValue(StorageQos object) {
                 return object.getName() == null ? "" : object.getName(); //$NON-NLS-1$
@@ -51,7 +51,7 @@ public class SubTabDataCenterStorageQosView extends AbstractSubTabTableView<Stor
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.qosName(), "200px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<StorageQos> descColumn = new TextColumnWithTooltip<StorageQos>() {
+        AbstractTextColumnWithTooltip<StorageQos> descColumn = new AbstractTextColumnWithTooltip<StorageQos>() {
             @Override
             public String getValue(StorageQos object) {
                 return object.getDescription() == null ? "" : object.getDescription(); //$NON-NLS-1$
@@ -60,7 +60,7 @@ public class SubTabDataCenterStorageQosView extends AbstractSubTabTableView<Stor
         descColumn.makeSortable();
         getTable().addColumn(descColumn, constants.qosDescription(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<StorageQos> throughputColumn = new TextColumnWithTooltip<StorageQos>() {
+        AbstractTextColumnWithTooltip<StorageQos> throughputColumn = new AbstractTextColumnWithTooltip<StorageQos>() {
             @Override
             public String getValue(StorageQos object) {
                 return object.getMaxThroughput() == null ? constants.unlimitedQos()
@@ -70,7 +70,7 @@ public class SubTabDataCenterStorageQosView extends AbstractSubTabTableView<Stor
         throughputColumn.makeSortable();
         getTable().addColumn(throughputColumn, constants.storageQosThroughputTotal(), "105px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<StorageQos> readThroughputColumn = new TextColumnWithTooltip<StorageQos>() {
+        AbstractTextColumnWithTooltip<StorageQos> readThroughputColumn = new AbstractTextColumnWithTooltip<StorageQos>() {
             @Override
             public String getValue(StorageQos object) {
                 return object.getMaxReadThroughput() == null ? constants.unlimitedQos()
@@ -80,7 +80,7 @@ public class SubTabDataCenterStorageQosView extends AbstractSubTabTableView<Stor
         readThroughputColumn.makeSortable();
         getTable().addColumn(readThroughputColumn, constants.storageQosThroughputRead(), "105px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<StorageQos> writeThroughputColumn = new TextColumnWithTooltip<StorageQos>() {
+        AbstractTextColumnWithTooltip<StorageQos> writeThroughputColumn = new AbstractTextColumnWithTooltip<StorageQos>() {
             @Override
             public String getValue(StorageQos object) {
                 return object.getMaxWriteThroughput() == null ? constants.unlimitedQos()
@@ -90,7 +90,7 @@ public class SubTabDataCenterStorageQosView extends AbstractSubTabTableView<Stor
         writeThroughputColumn.makeSortable();
         getTable().addColumn(writeThroughputColumn, constants.storageQosThroughputWrite(), "105px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<StorageQos> iopsColumn = new TextColumnWithTooltip<StorageQos>() {
+        AbstractTextColumnWithTooltip<StorageQos> iopsColumn = new AbstractTextColumnWithTooltip<StorageQos>() {
             @Override
             public String getValue(StorageQos object) {
                 return object.getMaxIops() == null ? constants.unlimitedQos()
@@ -100,7 +100,7 @@ public class SubTabDataCenterStorageQosView extends AbstractSubTabTableView<Stor
         iopsColumn.makeSortable();
         getTable().addColumn(iopsColumn, constants.storageQosIopsTotal(), "105px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<StorageQos> readIopsColumn = new TextColumnWithTooltip<StorageQos>() {
+        AbstractTextColumnWithTooltip<StorageQos> readIopsColumn = new AbstractTextColumnWithTooltip<StorageQos>() {
             @Override
             public String getValue(StorageQos object) {
                 return object.getMaxReadIops() == null ? constants.unlimitedQos()
@@ -110,7 +110,7 @@ public class SubTabDataCenterStorageQosView extends AbstractSubTabTableView<Stor
         readIopsColumn.makeSortable();
         getTable().addColumn(readIopsColumn, constants.storageQosIopsRead(), "105px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<StorageQos> writeIopsColumn = new TextColumnWithTooltip<StorageQos>() {
+        AbstractTextColumnWithTooltip<StorageQos> writeIopsColumn = new AbstractTextColumnWithTooltip<StorageQos>() {
             @Override
             public String getValue(StorageQos object) {
                 return object.getMaxWriteIops() == null ? constants.unlimitedQos()

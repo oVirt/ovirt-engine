@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.table.column.LunSelectionColumn;
-import org.ovirt.engine.ui.common.widget.table.column.LunTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLunSelectionColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLunTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
@@ -142,7 +142,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         initRootNodeTable(table);
 
         // Set custom selection column
-        LunSelectionColumn lunSelectionColumn = new LunSelectionColumn(multiSelection) {
+        AbstractLunSelectionColumn lunSelectionColumn = new AbstractLunSelectionColumn(multiSelection) {
             @Override
             public LunModel getValue(LunModel object) {
                 return object;
@@ -199,42 +199,42 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
 
     private void initRootNodeTable(EntityModelCellTable<ListModel<LunModel>> table) {
 
-        table.addColumn(new LunTextColumn() {
+        table.addColumn(new AbstractLunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return model.getLunId();
             }
         }, constants.lunIdSanStorage());
 
-        table.addColumn(new LunTextColumn() {
+        table.addColumn(new AbstractLunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return String.valueOf(model.getSize()) + "GB"; //$NON-NLS-1$
             }
         }, constants.devSizeSanStorage(), "70px"); //$NON-NLS-1$
 
-        table.addColumn(new LunTextColumn() {
+        table.addColumn(new AbstractLunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return String.valueOf(model.getMultipathing());
             }
         }, constants.pathSanStorage(), "55px"); //$NON-NLS-1$
 
-        table.addColumn(new LunTextColumn() {
+        table.addColumn(new AbstractLunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return model.getVendorId();
             }
         }, constants.vendorIdSanStorage(), "100px"); //$NON-NLS-1$
 
-        table.addColumn(new LunTextColumn() {
+        table.addColumn(new AbstractLunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return model.getProductId();
             }
         }, constants.productIdSanStorage(), "100px"); //$NON-NLS-1$
 
-        table.addColumn(new LunTextColumn() {
+        table.addColumn(new AbstractLunTextColumn() {
             @Override
             public String getRawValue(LunModel model) {
                 return model.getSerial();

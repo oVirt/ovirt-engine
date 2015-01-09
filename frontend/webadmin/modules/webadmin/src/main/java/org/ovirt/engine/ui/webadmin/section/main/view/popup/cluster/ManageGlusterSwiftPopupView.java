@@ -13,8 +13,8 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.table.cell.RadioboxCell;
-import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.GlusterSwiftServiceModel;
@@ -101,21 +101,21 @@ public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<Man
         manageSwiftServerLevel = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         hostServicesTable = new EntityModelCellTable<ListModel>(false, true);
-        hostServicesTable.addEntityModelColumn(new EntityModelTextColumn<GlusterServerService>() {
+        hostServicesTable.addEntityModelColumn(new AbstractEntityModelTextColumn<GlusterServerService>() {
             @Override
             public String getText(GlusterServerService entity) {
                 return entity.getHostName();
             }
         }, constants.hostGlusterSwift());
 
-        hostServicesTable.addColumn(new EnumColumn<EntityModel, ServiceType>() {
+        hostServicesTable.addColumn(new AbstractEnumColumn<EntityModel, ServiceType>() {
             @Override
             protected ServiceType getRawValue(EntityModel object) {
                 return ((GlusterSwiftServiceModel) object).getEntity().getServiceType();
             }
         }, constants.serviceNameGlusterSwift());
 
-        hostServicesTable.addColumn(new EnumColumn<EntityModel, GlusterServiceStatus>() {
+        hostServicesTable.addColumn(new AbstractEnumColumn<EntityModel, GlusterServiceStatus>() {
             @Override
             protected GlusterServiceStatus getRawValue(EntityModel object) {
                 return ((GlusterSwiftServiceModel) object).getEntity().getStatus();

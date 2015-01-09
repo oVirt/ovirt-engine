@@ -7,8 +7,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerServic
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
@@ -42,7 +42,7 @@ public class SubTabHostGlusterSwiftView extends AbstractSubTabTableView<VDS, Glu
     void initTable(ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        TextColumnWithTooltip<GlusterServerService> serviceColumn = new TextColumnWithTooltip<GlusterServerService>() {
+        AbstractTextColumnWithTooltip<GlusterServerService> serviceColumn = new AbstractTextColumnWithTooltip<GlusterServerService>() {
             @Override
             public String getValue(GlusterServerService object) {
                 return object.getServiceName();
@@ -51,8 +51,8 @@ public class SubTabHostGlusterSwiftView extends AbstractSubTabTableView<VDS, Glu
         serviceColumn.makeSortable();
         getTable().addColumn(serviceColumn, constants.serviceGlusterSwift(), "250px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<GlusterServerService> statusColumn =
-            new EnumColumn<GlusterServerService, GlusterServiceStatus>() {
+        AbstractTextColumnWithTooltip<GlusterServerService> statusColumn =
+            new AbstractEnumColumn<GlusterServerService, GlusterServiceStatus>() {
                 @Override
                 protected GlusterServiceStatus getRawValue(GlusterServerService object) {
                     return object.getStatus();

@@ -6,11 +6,11 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
-import org.ovirt.engine.ui.common.widget.table.column.BooleanColumn;
-import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractBooleanColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.NicActivateStatusColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateInterfaceListModel;
@@ -29,7 +29,7 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
     public void initTable(CommonApplicationConstants constants) {
         getTable().addColumn(new NicActivateStatusColumn<VmNetworkInterface>(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmNetworkInterface> nameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> nameColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getName();
@@ -37,7 +37,7 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
         };
         getTable().addColumn(nameColumn, constants.nameInterface(), "200px"); //$NON-NLS-1$
 
-        CheckboxColumn<VmNetworkInterface> pluggedColumn = new CheckboxColumn<VmNetworkInterface>() {
+        AbstractCheckboxColumn<VmNetworkInterface> pluggedColumn = new AbstractCheckboxColumn<VmNetworkInterface>() {
             @Override
             public Boolean getValue(VmNetworkInterface object) {
                 return object.isPlugged();
@@ -51,7 +51,7 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
 
         getTable().addColumnWithHtmlHeader(pluggedColumn, constants.plugged(), "90px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmNetworkInterface> networkNameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> networkNameColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getNetworkName();
@@ -59,7 +59,7 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
         };
         getTable().addColumn(networkNameColumn, constants.networkNameInterface(), "200px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmNetworkInterface> profileNameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> profileNameColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getVnicProfileName();
@@ -67,8 +67,8 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
         };
         getTable().addColumn(profileNameColumn, constants.profileNameInterface(), "150px"); //$NON-NLS-1$
 
-        BooleanColumn<VmNetworkInterface> linkStateColumn =
-                new BooleanColumn<VmNetworkInterface>(constants.linkedNetworkInterface(),
+        AbstractBooleanColumn<VmNetworkInterface> linkStateColumn =
+                new AbstractBooleanColumn<VmNetworkInterface>(constants.linkedNetworkInterface(),
                         constants.unlinkedNetworkInterface()) {
                     @Override
                     protected Boolean getRawValue(VmNetworkInterface object) {
@@ -78,7 +78,7 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
 
         getTable().addColumnWithHtmlHeader(linkStateColumn, constants.linkStateNetworkInterface(), "90px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmNetworkInterface> typeColumn = new EnumColumn<VmNetworkInterface, VmInterfaceType>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> typeColumn = new AbstractEnumColumn<VmNetworkInterface, VmInterfaceType>() {
             @Override
             protected VmInterfaceType getRawValue(VmNetworkInterface object) {
                 return VmInterfaceType.forValue(object.getType());

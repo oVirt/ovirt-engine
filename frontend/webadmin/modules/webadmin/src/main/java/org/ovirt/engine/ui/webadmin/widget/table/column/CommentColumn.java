@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.Commented;
 
 import com.google.gwt.resources.client.ImageResource;
 
-public class CommentColumn<T extends Commented> extends WebAdminImageResourceColumn<T> {
+public class CommentColumn<T extends Commented> extends AbstractWebAdminImageResourceColumn<T> {
 
     @Override
     public ImageResource getValue(T value) {

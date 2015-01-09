@@ -4,8 +4,8 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewRadioGroup;
@@ -24,18 +24,18 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase> extends Abs
     private CommonApplicationConstants constants;
     private DisksViewRadioGroup disksViewRadioGroup;
 
-    private static TextColumnWithTooltip<Disk> aliasColumn;
-    private static DiskSizeColumn sizeColumn;
-    private static DiskSizeColumn actualSizeColumn;
-    private static TextColumnWithTooltip<Disk> allocationColumn;
-    private static TextColumnWithTooltip<Disk> dateCreatedColumn;
-    private static TextColumnWithTooltip<Disk> statusColumn;
-    private static TextColumnWithTooltip<Disk> lunIdColumn;
-    private static TextColumnWithTooltip<Disk> lunSerialColumn;
-    private static TextColumnWithTooltip<Disk> lunVendorIdColumn;
-    private static TextColumnWithTooltip<Disk> lunProductIdColumn;
-    private static TextColumnWithTooltip<Disk> interfaceColumn;
-    private static TextColumnWithTooltip<Disk> descriptionColumn;
+    private static AbstractTextColumnWithTooltip<Disk> aliasColumn;
+    private static AbstractDiskSizeColumn sizeColumn;
+    private static AbstractDiskSizeColumn actualSizeColumn;
+    private static AbstractTextColumnWithTooltip<Disk> allocationColumn;
+    private static AbstractTextColumnWithTooltip<Disk> dateCreatedColumn;
+    private static AbstractTextColumnWithTooltip<Disk> statusColumn;
+    private static AbstractTextColumnWithTooltip<Disk> lunIdColumn;
+    private static AbstractTextColumnWithTooltip<Disk> lunSerialColumn;
+    private static AbstractTextColumnWithTooltip<Disk> lunVendorIdColumn;
+    private static AbstractTextColumnWithTooltip<Disk> lunProductIdColumn;
+    private static AbstractTextColumnWithTooltip<Disk> interfaceColumn;
+    private static AbstractTextColumnWithTooltip<Disk> descriptionColumn;
 
     public BaseVmDiskListModelTable(
             SearchableTableModelProvider<Disk, T> modelProvider,

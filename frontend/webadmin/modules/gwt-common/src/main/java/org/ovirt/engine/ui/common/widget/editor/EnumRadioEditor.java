@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.ovirt.engine.ui.common.editor.UiCommonEditor;
 import org.ovirt.engine.ui.common.widget.table.cell.RadioboxCell;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.LeafValueEditor;
@@ -147,7 +147,7 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
             };
 
             // Text Column
-            EnumColumn<E, E> nameColumn = new EnumColumn<E, E>() {
+            AbstractEnumColumn<E, E> nameColumn = new AbstractEnumColumn<E, E>() {
                 @Override
                 protected E getRawValue(E object) {
                     return object;

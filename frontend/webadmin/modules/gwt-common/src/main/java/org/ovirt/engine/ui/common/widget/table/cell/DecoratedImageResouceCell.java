@@ -9,7 +9,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class DecoratedImageResouceCell extends TitlePanelCell<ImageWithDecorator> {
+public class DecoratedImageResouceCell extends AbstractTitlePanelCell<ImageWithDecorator> {
 
     interface CellTemplate extends SafeHtmlTemplates {
         @Template("<div style=\"position: relative; left: 0; top: 0;\"><span style=\"position: relative; left: 0px; top: 0px;\">{0}</span><span style=\"position: absolute; left: {2}px; top: {3}px;\">{1}</span></div>")

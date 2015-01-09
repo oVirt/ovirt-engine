@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.widget.table.column;
 import com.google.gwt.resources.client.ImageResource;
 import org.ovirt.engine.core.common.businessentities.Reasoned;
 
-public class ReasonColumn<T extends Reasoned> extends WebAdminImageResourceColumn<T> {
+public class ReasonColumn<T extends Reasoned> extends AbstractWebAdminImageResourceColumn<T> {
 
     @Override
     public ImageResource getValue(T value) {

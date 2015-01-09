@@ -4,8 +4,8 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.BooleanColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractBooleanColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkProfileListModel;
@@ -40,8 +40,8 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
     void initTable(ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        TextColumnWithTooltip<VnicProfileView> nameColumn =
-                new TextColumnWithTooltip<VnicProfileView>() {
+        AbstractTextColumnWithTooltip<VnicProfileView> nameColumn =
+                new AbstractTextColumnWithTooltip<VnicProfileView>() {
                     @Override
                     public String getValue(VnicProfileView object) {
                         return object.getName();
@@ -50,7 +50,7 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameVnicProfile(), "400px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VnicProfileView> networkColumn = new TextColumnWithTooltip<VnicProfileView>() {
+        AbstractTextColumnWithTooltip<VnicProfileView> networkColumn = new AbstractTextColumnWithTooltip<VnicProfileView>() {
             @Override
             public String getValue(VnicProfileView object) {
                 return object.getNetworkName();
@@ -59,7 +59,7 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
         networkColumn.makeSortable();
         getTable().addColumn(networkColumn, constants.networkVnicProfile(), "200px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VnicProfileView> dcColumn = new TextColumnWithTooltip<VnicProfileView>() {
+        AbstractTextColumnWithTooltip<VnicProfileView> dcColumn = new AbstractTextColumnWithTooltip<VnicProfileView>() {
             @Override
             public String getValue(VnicProfileView object) {
                 return object.getDataCenterName();
@@ -68,8 +68,8 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
         dcColumn.makeSortable();
         getTable().addColumn(dcColumn, constants.dcVnicProfile(), "200px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VnicProfileView> compatibilityVersionColumn =
-                new TextColumnWithTooltip<VnicProfileView>() {
+        AbstractTextColumnWithTooltip<VnicProfileView> compatibilityVersionColumn =
+                new AbstractTextColumnWithTooltip<VnicProfileView>() {
                     @Override
                     public String getValue(VnicProfileView object) {
                         return object.getCompatibilityVersion().toString();
@@ -78,7 +78,7 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
         compatibilityVersionColumn.makeSortable();
         getTable().addColumn(compatibilityVersionColumn, constants.compatibilityVersionVnicProfile(), "200px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VnicProfileView> qosColumn = new TextColumnWithTooltip<VnicProfileView>() {
+        AbstractTextColumnWithTooltip<VnicProfileView> qosColumn = new AbstractTextColumnWithTooltip<VnicProfileView>() {
             @Override
             public String getValue(VnicProfileView object) {
                 return object.getNetworkQosName();
@@ -87,8 +87,8 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
         qosColumn.makeSortable();
         getTable().addColumn(qosColumn, constants.qosNameVnicProfile(), "200px"); //$NON-NLS-1$
 
-        BooleanColumn<VnicProfileView> portMirroringColumn =
-                new BooleanColumn<VnicProfileView>(constants.portMirroringEnabled()) {
+        AbstractBooleanColumn<VnicProfileView> portMirroringColumn =
+                new AbstractBooleanColumn<VnicProfileView>(constants.portMirroringEnabled()) {
                     @Override
                     public Boolean getRawValue(VnicProfileView object) {
                         return object.isPortMirroring();
@@ -97,8 +97,8 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
         portMirroringColumn.makeSortable();
         getTable().addColumnWithHtmlHeader(portMirroringColumn, constants.portMirroringVnicProfile(), "85px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VnicProfileView> descriptionColumn =
-                new TextColumnWithTooltip<VnicProfileView>() {
+        AbstractTextColumnWithTooltip<VnicProfileView> descriptionColumn =
+                new AbstractTextColumnWithTooltip<VnicProfileView>() {
                     @Override
                     public String getValue(VnicProfileView object) {
                         return object.getDescription();

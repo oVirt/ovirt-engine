@@ -18,12 +18,12 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.DiskImageStatusColumn;
-import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.RxTxRateColumn;
-import org.ovirt.engine.ui.common.widget.table.column.SumUpColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractSumUpColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterEntityModel;
@@ -72,7 +72,7 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
 
         disksTable.addColumn(new DiskImageStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<DiskImage> aliasColumn = new TextColumnWithTooltip<DiskImage>() {
+        AbstractTextColumnWithTooltip<DiskImage> aliasColumn = new AbstractTextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
                 return object.getDiskAlias();
@@ -80,7 +80,7 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
         };
         disksTable.addColumn(aliasColumn, constants.aliasDisk(), "80px"); //$NON-NLS-1$
 
-        DiskSizeColumn<DiskImage> sizeColumn = new DiskSizeColumn<DiskImage>() {
+        AbstractDiskSizeColumn<DiskImage> sizeColumn = new AbstractDiskSizeColumn<DiskImage>() {
             @Override
             protected Long getRawValue(DiskImage object) {
                 return object.getSize();
@@ -88,7 +88,7 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
         };
         disksTable.addColumn(sizeColumn, constants.provisionedSizeDisk(), "80px"); //$NON-NLS-1$
 
-        DiskSizeColumn<DiskImage> actualSizeColumn = new DiskSizeColumn<DiskImage>() {
+        AbstractDiskSizeColumn<DiskImage> actualSizeColumn = new AbstractDiskSizeColumn<DiskImage>() {
             @Override
             protected Long getRawValue(DiskImage object) {
                 return object.getActualSizeInBytes();
@@ -96,7 +96,7 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
         };
         disksTable.addColumn(actualSizeColumn, constants.sizeDisk(), "80px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<DiskImage> allocationColumn = new EnumColumn<DiskImage, VolumeType>() {
+        AbstractTextColumnWithTooltip<DiskImage> allocationColumn = new AbstractEnumColumn<DiskImage, VolumeType>() {
             @Override
             protected VolumeType getRawValue(DiskImage object) {
                 return VolumeType.forValue(object.getVolumeType().getValue());
@@ -104,7 +104,7 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
         };
         disksTable.addColumn(allocationColumn, constants.allocationDisk(), "110px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<DiskImage> interfaceColumn = new TextColumnWithTooltip<DiskImage>() {
+        AbstractTextColumnWithTooltip<DiskImage> interfaceColumn = new AbstractTextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
                 return object.getDiskInterface().toString();
@@ -112,7 +112,7 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
         };
         disksTable.addColumn(interfaceColumn, constants.interfaceDisk(), "95px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<DiskImage> statusColumn = new EnumColumn<DiskImage, ImageStatus>() {
+        AbstractTextColumnWithTooltip<DiskImage> statusColumn = new AbstractEnumColumn<DiskImage, ImageStatus>() {
             @Override
             protected ImageStatus getRawValue(DiskImage object) {
                 return object.getImageStatus();
@@ -120,7 +120,7 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
         };
         disksTable.addColumn(statusColumn, constants.statusDisk(), "65px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<DiskImage> dateCreatedColumn = new FullDateTimeColumn<DiskImage>() {
+        AbstractTextColumnWithTooltip<DiskImage> dateCreatedColumn = new AbstractFullDateTimeColumn<DiskImage>() {
             @Override
             protected Date getRawValue(DiskImage object) {
                 return object.getCreationDate();
@@ -128,7 +128,7 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
         };
         disksTable.addColumn(dateCreatedColumn, constants.creationDateDisk(), "100px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<DiskImage> descriptionColumn = new TextColumnWithTooltip<DiskImage>() {
+        AbstractTextColumnWithTooltip<DiskImage> descriptionColumn = new AbstractTextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
                 return object.getDiskDescription();
@@ -181,7 +181,7 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
         nicsTable = new EntityModelCellTable<ListModel>(false, true);
         nicsTable.enableColumnResizing();
 
-        TextColumnWithTooltip<VmNetworkInterface> nameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> nameColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getName();
@@ -189,7 +189,7 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
         };
         nicsTable.addColumn(nameColumn, constants.nameInterface(), "90px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmNetworkInterface> networkNameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> networkNameColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getNetworkName();
@@ -197,7 +197,7 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
         };
         nicsTable.addColumn(networkNameColumn, constants.networkNameInterface(), "90px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmNetworkInterface> profileNameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> profileNameColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getVnicProfileName();
@@ -205,7 +205,7 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
         };
         nicsTable.addColumn(profileNameColumn, constants.profileNameInterface(), "90px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmNetworkInterface> typeColumn = new EnumColumn<VmNetworkInterface, VmInterfaceType>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> typeColumn = new AbstractEnumColumn<VmNetworkInterface, VmInterfaceType>() {
             @Override
             protected VmInterfaceType getRawValue(VmNetworkInterface object) {
                 return VmInterfaceType.forValue(object.getType());
@@ -213,7 +213,7 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
         };
         nicsTable.addColumn(typeColumn, constants.typeInterface(), "90px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmNetworkInterface> macColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> macColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getMacAddress();
@@ -221,7 +221,7 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
         };
         nicsTable.addColumn(macColumn, constants.macInterface(), "90px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmNetworkInterface> speedColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> speedColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 if (object.getSpeed() != null) {
@@ -233,7 +233,7 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
         };
         nicsTable.addColumn(speedColumn, templates.sub(constants.speedInterface(), constants.mbps()), "90px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmNetworkInterface> rxColumn = new RxTxRateColumn<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> rxColumn = new AbstractRxTxRateColumn<VmNetworkInterface>() {
             @Override
             protected Double getRate(VmNetworkInterface object) {
                 return object.getStatistics().getReceiveRate();
@@ -250,7 +250,7 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
         };
         nicsTable.addColumn(rxColumn, templates.sub(constants.rxRate(), constants.mbps()), "90px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmNetworkInterface> txColumn = new RxTxRateColumn<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> txColumn = new AbstractRxTxRateColumn<VmNetworkInterface>() {
             @Override
             protected Double getRate(VmNetworkInterface object) {
                 return object.getStatistics().getTransmitRate();
@@ -267,7 +267,7 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
         };
         nicsTable.addColumn(txColumn, templates.sub(constants.txRate(), constants.mbps()), "90px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmNetworkInterface> dropsColumn = new SumUpColumn<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> dropsColumn = new AbstractSumUpColumn<VmNetworkInterface>() {
             @Override
             protected Double[] getRawValue(VmNetworkInterface object) {
                 Double receiveDropRate = object != null ? object.getStatistics().getReceiveDropRate() : null;
@@ -285,7 +285,7 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
     protected void initAppsTable() {
         appsTable = new EntityModelCellTable<ListModel>(false, true);
 
-        TextColumnWithTooltip<String> appNameColumn = new TextColumnWithTooltip<String>() {
+        AbstractTextColumnWithTooltip<String> appNameColumn = new AbstractTextColumnWithTooltip<String>() {
             @Override
             public String getValue(String appName) {
                 return appName;

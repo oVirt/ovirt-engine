@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -139,7 +139,7 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
     }
 
     private void initTable() {
-        EntityModelTextColumn<StorageDomain> nameColumn = new EntityModelTextColumn<StorageDomain>() {
+        AbstractEntityModelTextColumn<StorageDomain> nameColumn = new AbstractEntityModelTextColumn<StorageDomain>() {
             @Override
             public String getText(StorageDomain storage) {
                 return storage.getStorageName();
@@ -149,7 +149,7 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
         storageDomainItems.setColumnWidth(nameColumn, "280px"); //$NON-NLS-1$
         storageDomainItems.addEntityModelColumn(nameColumn, applicationConstants.nameStorage());
 
-        EntityModelTextColumn<StorageDomain> freeSpaceColumn = new EntityModelTextColumn<StorageDomain>() {
+        AbstractEntityModelTextColumn<StorageDomain> freeSpaceColumn = new AbstractEntityModelTextColumn<StorageDomain>() {
             @Override
             public String getText(StorageDomain storage) {
                 if (storage.getAvailableDiskSize() == null || storage.getAvailableDiskSize() < 1) {

@@ -8,8 +8,8 @@ import org.ovirt.engine.core.searchbackend.AuditLogConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.AuditLogSeverityColumn;
-import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
@@ -47,7 +47,7 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
 
     private static final String BASIC_VIEW_MSG_COLUMN_WIDTH = "600px"; //$NON-NLS-1$
     private static final String ADV_VIEW_MSG_COLUMN_WIDTH = "150px"; //$NON-NLS-1$
-    private TextColumnWithTooltip<AuditLog> messageColumn;
+    private AbstractTextColumnWithTooltip<AuditLog> messageColumn;
 
     @Inject
     public MainTabEventView(MainModelProvider<AuditLog, EventListModel> modelProvider,
@@ -118,7 +118,7 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
 
         getTable().addColumn(new AuditLogSeverityColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<AuditLog> logTimeColumn = new FullDateTimeColumn<AuditLog>() {
+        AbstractTextColumnWithTooltip<AuditLog> logTimeColumn = new AbstractFullDateTimeColumn<AuditLog>() {
             @Override
             protected Date getRawValue(AuditLog object) {
                 return object.getLogTime();
@@ -127,7 +127,7 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
         logTimeColumn.makeSortable(AuditLogConditionFieldAutoCompleter.TIME);
         getTable().addColumn(logTimeColumn, constants.timeEvent(), "150px"); //$NON-NLS-1$
 
-        messageColumn = new TextColumnWithTooltip<AuditLog>() {
+        messageColumn = new AbstractTextColumnWithTooltip<AuditLog>() {
             @Override
             public String getValue(AuditLog object) {
                 return object.getMessage();
@@ -149,14 +149,14 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
 
 class AdvancedViewColumns {
 
-    public static final TextColumnWithTooltip<AuditLog> logTypeColumn = new TextColumnWithTooltip<AuditLog>() {
+    public static final AbstractTextColumnWithTooltip<AuditLog> logTypeColumn = new AbstractTextColumnWithTooltip<AuditLog>() {
         @Override
         public String getValue(AuditLog object) {
             return String.valueOf(object.getLogTypeValue());
         }
     };
 
-    public static final TextColumnWithTooltip<AuditLog> userColumn = new TextColumnWithTooltip<AuditLog>() {
+    public static final AbstractTextColumnWithTooltip<AuditLog> userColumn = new AbstractTextColumnWithTooltip<AuditLog>() {
         {
             makeSortable(AuditLogConditionFieldAutoCompleter.USER_NAME);
         }
@@ -167,7 +167,7 @@ class AdvancedViewColumns {
         }
     };
 
-    public static final TextColumnWithTooltip<AuditLog> hostColumn = new TextColumnWithTooltip<AuditLog>() {
+    public static final AbstractTextColumnWithTooltip<AuditLog> hostColumn = new AbstractTextColumnWithTooltip<AuditLog>() {
         {
             makeSortable(AuditLogConditionFieldAutoCompleter.EVENT_HOST);
         }
@@ -178,7 +178,7 @@ class AdvancedViewColumns {
         }
     };
 
-    public static final TextColumnWithTooltip<AuditLog> virtualMachineColumn = new TextColumnWithTooltip<AuditLog>() {
+    public static final AbstractTextColumnWithTooltip<AuditLog> virtualMachineColumn = new AbstractTextColumnWithTooltip<AuditLog>() {
         {
             makeSortable(AuditLogConditionFieldAutoCompleter.EVENT_VM);
         }
@@ -189,7 +189,7 @@ class AdvancedViewColumns {
         }
     };
 
-    public static final TextColumnWithTooltip<AuditLog> templateColumn = new TextColumnWithTooltip<AuditLog>() {
+    public static final AbstractTextColumnWithTooltip<AuditLog> templateColumn = new AbstractTextColumnWithTooltip<AuditLog>() {
         {
             makeSortable(AuditLogConditionFieldAutoCompleter.EVENT_TEMPLATE);
         }
@@ -200,7 +200,7 @@ class AdvancedViewColumns {
         }
     };
 
-    public static final TextColumnWithTooltip<AuditLog> dataCenterColumn = new TextColumnWithTooltip<AuditLog>() {
+    public static final AbstractTextColumnWithTooltip<AuditLog> dataCenterColumn = new AbstractTextColumnWithTooltip<AuditLog>() {
         {
             makeSortable(AuditLogConditionFieldAutoCompleter.EVENT_DATACENTER);
         }
@@ -211,7 +211,7 @@ class AdvancedViewColumns {
         }
     };
 
-    public static final TextColumnWithTooltip<AuditLog> storageColumn = new TextColumnWithTooltip<AuditLog>() {
+    public static final AbstractTextColumnWithTooltip<AuditLog> storageColumn = new AbstractTextColumnWithTooltip<AuditLog>() {
         {
             makeSortable(AuditLogConditionFieldAutoCompleter.EVENT_STORAGE);
         }
@@ -222,14 +222,14 @@ class AdvancedViewColumns {
         }
     };
 
-    public static final TextColumnWithTooltip<AuditLog> clusterColumn = new TextColumnWithTooltip<AuditLog>() {
+    public static final AbstractTextColumnWithTooltip<AuditLog> clusterColumn = new AbstractTextColumnWithTooltip<AuditLog>() {
         @Override
         public String getValue(AuditLog object) {
             return object.getVdsGroupName();
         }
     };
 
-    public static final TextColumnWithTooltip<AuditLog> volumeColumn = new TextColumnWithTooltip<AuditLog>() {
+    public static final AbstractTextColumnWithTooltip<AuditLog> volumeColumn = new AbstractTextColumnWithTooltip<AuditLog>() {
         {
             makeSortable(AuditLogConditionFieldAutoCompleter.EVENT_VOLUME);
         }
@@ -240,7 +240,7 @@ class AdvancedViewColumns {
         }
     };
 
-    public static final TextColumnWithTooltip<AuditLog> corrIdColumn = new TextColumnWithTooltip<AuditLog>() {
+    public static final AbstractTextColumnWithTooltip<AuditLog> corrIdColumn = new AbstractTextColumnWithTooltip<AuditLog>() {
         {
             makeSortable(AuditLogConditionFieldAutoCompleter.CORRELATION_ID);
         }
@@ -251,7 +251,7 @@ class AdvancedViewColumns {
         }
     };
 
-    public static final TextColumnWithTooltip<AuditLog> originColumn = new TextColumnWithTooltip<AuditLog>() {
+    public static final AbstractTextColumnWithTooltip<AuditLog> originColumn = new AbstractTextColumnWithTooltip<AuditLog>() {
         {
             makeSortable(AuditLogConditionFieldAutoCompleter.ORIGIN);
         }
@@ -261,7 +261,7 @@ class AdvancedViewColumns {
         }
     };
 
-    public static final TextColumnWithTooltip<AuditLog> customEventIdColumn = new TextColumnWithTooltip<AuditLog>() {
+    public static final AbstractTextColumnWithTooltip<AuditLog> customEventIdColumn = new AbstractTextColumnWithTooltip<AuditLog>() {
         {
             makeSortable(AuditLogConditionFieldAutoCompleter.CUSTOM_EVENT_ID);
         }

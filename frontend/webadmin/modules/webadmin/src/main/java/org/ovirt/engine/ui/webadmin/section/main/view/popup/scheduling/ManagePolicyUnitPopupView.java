@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.ManagePolicyUnitModel;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.ManagePolicyUnitPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.NullableButtonCell;
-import org.ovirt.engine.ui.webadmin.widget.table.column.WebAdminImageResourceColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractWebAdminImageResourceColumn;
 
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
@@ -72,7 +72,7 @@ public class ManagePolicyUnitPopupView extends AbstractModelBoundPopupView<Manag
         policyUnitTable.enableColumnResizing();
         policyUnitTableContainer.add(policyUnitTable);
 
-        policyUnitTable.addColumn(new WebAdminImageResourceColumn<PolicyUnit>() {
+        policyUnitTable.addColumn(new AbstractWebAdminImageResourceColumn<PolicyUnit>() {
             @Override
             public ImageResource getValue(PolicyUnit object) {
                 if (object.isInternal()) {
@@ -83,21 +83,21 @@ public class ManagePolicyUnitPopupView extends AbstractModelBoundPopupView<Manag
                 return resources.exteranlPolicyUnitImage();
             }
         }, constants.empty(), "20px"); //$NON-NLS-1$
-        policyUnitTable.addColumn(new TextColumnWithTooltip<PolicyUnit>() {
+        policyUnitTable.addColumn(new AbstractTextColumnWithTooltip<PolicyUnit>() {
             @Override
             public String getValue(PolicyUnit object) {
                 return object.getName();
             }
         }, constants.policyUnitName(), "180px"); //$NON-NLS-1$
 
-        policyUnitTable.addColumn(new TextColumnWithTooltip<PolicyUnit>() {
+        policyUnitTable.addColumn(new AbstractTextColumnWithTooltip<PolicyUnit>() {
             @Override
             public String getValue(PolicyUnit object) {
                 return EnumTranslator.getInstance().get(object.getPolicyUnitType());
             }
         }, constants.policyUnitType(), "100px"); //$NON-NLS-1$
 
-        policyUnitTable.addColumn(new TextColumnWithTooltip<PolicyUnit>() {
+        policyUnitTable.addColumn(new AbstractTextColumnWithTooltip<PolicyUnit>() {
             @Override
             public String getValue(PolicyUnit object) {
                 if (!object.isEnabled()) {

@@ -5,8 +5,8 @@ import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.searchbackend.PoolConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -35,7 +35,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<VmPool,
     void initTable(ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        TextColumnWithTooltip<VmPool> nameColumn = new TextColumnWithTooltip<VmPool>() {
+        AbstractTextColumnWithTooltip<VmPool> nameColumn = new AbstractTextColumnWithTooltip<VmPool>() {
             @Override
             public String getValue(VmPool object) {
                 return object.getName();
@@ -47,7 +47,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<VmPool,
         CommentColumn<VmPool> commentColumn = new CommentColumn<VmPool>();
         getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmPool> assignedColumn = new TextColumnWithTooltip<VmPool>() {
+        AbstractTextColumnWithTooltip<VmPool> assignedColumn = new AbstractTextColumnWithTooltip<VmPool>() {
             @Override
             public String getValue(VmPool object) {
                 return Integer.toString(object.getAssignedVmsCount());
@@ -56,7 +56,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<VmPool,
         assignedColumn.makeSortable(PoolConditionFieldAutoCompleter.ASSIGNED_VM_COUNT);
         getTable().addColumn(assignedColumn, constants.assignVmsPool(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmPool> runningColumn = new TextColumnWithTooltip<VmPool>() {
+        AbstractTextColumnWithTooltip<VmPool> runningColumn = new AbstractTextColumnWithTooltip<VmPool>() {
             @Override
             public String getValue(VmPool object) {
                 return Integer.toString(object.getRunningVmsCount());
@@ -65,7 +65,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<VmPool,
         runningColumn.makeSortable(PoolConditionFieldAutoCompleter.RUNNING_VM_COUNT);
         getTable().addColumn(runningColumn, constants.runningVmsPool(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmPool> typeColumn = new EnumColumn<VmPool, VmPoolType>() {
+        AbstractTextColumnWithTooltip<VmPool> typeColumn = new AbstractEnumColumn<VmPool, VmPoolType>() {
             @Override
             public VmPoolType getRawValue(VmPool object) {
                 return object.getVmPoolType();
@@ -74,7 +74,7 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<VmPool,
         typeColumn.makeSortable(PoolConditionFieldAutoCompleter.TYPE);
         getTable().addColumn(typeColumn, constants.typePool(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmPool> descColumn = new TextColumnWithTooltip<VmPool>() {
+        AbstractTextColumnWithTooltip<VmPool> descColumn = new AbstractTextColumnWithTooltip<VmPool>() {
             @Override
             public String getValue(VmPool object) {
                 return object.getVmPoolDescription();

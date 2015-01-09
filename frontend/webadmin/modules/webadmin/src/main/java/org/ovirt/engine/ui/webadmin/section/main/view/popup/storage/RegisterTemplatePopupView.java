@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterEntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -28,7 +28,7 @@ public class RegisterTemplatePopupView extends RegisterEntityPopupView
 
     @Override
     protected void createEntityTable(RegisterEntityModel model) {
-        TextColumnWithTooltip<Object> nameColumn = new TextColumnWithTooltip<Object>() {
+        AbstractTextColumnWithTooltip<Object> nameColumn = new AbstractTextColumnWithTooltip<Object>() {
             @Override
             public String getValue(Object object) {
                 return getEntity(object).getName();
@@ -36,7 +36,7 @@ public class RegisterTemplatePopupView extends RegisterEntityPopupView
         };
         entityTable.addColumn(nameColumn, constants.nameVm(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Object> originColumn = new EnumColumn<Object, OriginType>() {
+        AbstractTextColumnWithTooltip<Object> originColumn = new AbstractEnumColumn<Object, OriginType>() {
             @Override
             protected OriginType getRawValue(Object object) {
                 return getEntity(object).getOrigin();
@@ -44,7 +44,7 @@ public class RegisterTemplatePopupView extends RegisterEntityPopupView
         };
         entityTable.addColumn(originColumn, constants.originVm(), "100px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Object> memoryColumn = new TextColumnWithTooltip<Object>() {
+        AbstractTextColumnWithTooltip<Object> memoryColumn = new AbstractTextColumnWithTooltip<Object>() {
             @Override
             public String getValue(Object object) {
                 int size = getEntity(object).getMemSizeMb();
@@ -53,7 +53,7 @@ public class RegisterTemplatePopupView extends RegisterEntityPopupView
         };
         entityTable.addColumn(memoryColumn, constants.memoryVm(), "100px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Object> cpuColumn = new TextColumnWithTooltip<Object>() {
+        AbstractTextColumnWithTooltip<Object> cpuColumn = new AbstractTextColumnWithTooltip<Object>() {
             @Override
             public String getValue(Object object) {
                 int numOfCpus = getEntity(object).getNumOfCpus();
@@ -62,7 +62,7 @@ public class RegisterTemplatePopupView extends RegisterEntityPopupView
         };
         entityTable.addColumn(cpuColumn, constants.cpusVm(), "50px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Object> archColumn = new TextColumnWithTooltip<Object>() {
+        AbstractTextColumnWithTooltip<Object> archColumn = new AbstractTextColumnWithTooltip<Object>() {
             @Override
             public String getValue(Object object) {
                 ArchitectureType clusterArch = getEntity(object).getClusterArch();
@@ -71,7 +71,7 @@ public class RegisterTemplatePopupView extends RegisterEntityPopupView
         };
         entityTable.addColumn(archColumn, constants.architectureVm(), "100px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Object> diskColumn = new TextColumnWithTooltip<Object>() {
+        AbstractTextColumnWithTooltip<Object> diskColumn = new AbstractTextColumnWithTooltip<Object>() {
             @Override
             public String getValue(Object object) {
                 int numOfDisks = getEntity(object).getDiskTemplateMap().size();

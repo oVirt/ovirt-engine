@@ -15,9 +15,9 @@ import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.cell.RadioboxCell;
-import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
-import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.VmSnapshotInfoPanel;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -122,14 +122,14 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
     }
 
     private void createPreviewTable() {
-        previewTable.addColumn(new FullDateTimeColumn<SnapshotModel>() {
+        previewTable.addColumn(new AbstractFullDateTimeColumn<SnapshotModel>() {
             @Override
             protected Date getRawValue(SnapshotModel snapshotModel) {
                 return snapshotModel.getEntity().getCreationDate();
             }
         }, constants.dateSnapshot(), "140px"); //$NON-NLS-1$
 
-        previewTable.addColumn(new TextColumnWithTooltip<SnapshotModel>() {
+        previewTable.addColumn(new AbstractTextColumnWithTooltip<SnapshotModel>() {
             @Override
             public String getValue(SnapshotModel snapshotModel) {
                 return snapshotModel.getEntity().getDescription();
@@ -175,7 +175,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
         previewTable.addColumn(vmConfColumn, templates.imageWithTitle(imageResourceToSafeHtml(resources.vmConfIcon()),
                 constants.vmConfiguration()), "30px"); //$NON-NLS-1$
 
-        previewTable.addColumn(new CheckboxColumn<SnapshotModel>(new FieldUpdater<SnapshotModel, Boolean>() {
+        previewTable.addColumn(new AbstractCheckboxColumn<SnapshotModel>(new FieldUpdater<SnapshotModel, Boolean>() {
             @Override
             public void update(int index, SnapshotModel snapshotModel, Boolean value) {
                 previewSnapshotModel.getSnapshotModel().getMemory().setEntity(value);
@@ -211,7 +211,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
         Collections.sort(disks, new Linq.DiskByAliasComparer());
 
         for (final DiskImage disk : disks) {
-            previewTable.addColumn(new CheckboxColumn<SnapshotModel>(new FieldUpdater<SnapshotModel, Boolean>() {
+            previewTable.addColumn(new AbstractCheckboxColumn<SnapshotModel>(new FieldUpdater<SnapshotModel, Boolean>() {
                 @Override
                 public void update(int index, SnapshotModel snapshotModel, Boolean value) {
                     ListModel diskListModel = previewSnapshotModel.getDiskSnapshotsMap().get(disk.getId());

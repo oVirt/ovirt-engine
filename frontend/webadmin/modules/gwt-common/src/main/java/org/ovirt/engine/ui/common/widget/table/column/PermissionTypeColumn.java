@@ -9,7 +9,7 @@ import com.google.gwt.resources.client.ImageResource;
 /**
  * Image column that corresponds to XAML {@code PermissionTypeDataTemplate}.
  */
-public class PermissionTypeColumn extends ImageResourceColumn<Permissions> {
+public class PermissionTypeColumn extends AbstractImageResourceColumn<Permissions> {
 
     public PermissionTypeColumn() {
         makeSortable(new Comparator<Permissions>() {

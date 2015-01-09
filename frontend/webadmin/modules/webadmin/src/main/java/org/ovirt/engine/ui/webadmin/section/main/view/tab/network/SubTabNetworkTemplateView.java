@@ -9,8 +9,8 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkTemplateListModel;
@@ -43,7 +43,7 @@ public class SubTabNetworkTemplateView extends AbstractSubTabTableView<NetworkVi
     void initTable(ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>> nameColumn = new TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>>() {
+        AbstractTextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>> nameColumn = new AbstractTextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>>() {
             @Override
             public String getValue(PairQueryable<VmNetworkInterface, VmTemplate> object) {
                 return object.getSecond().getName();
@@ -52,7 +52,7 @@ public class SubTabNetworkTemplateView extends AbstractSubTabTableView<NetworkVi
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameTemplate(), "400px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>> statusColumn = new EnumColumn<PairQueryable<VmNetworkInterface, VmTemplate>, VmTemplateStatus>() {
+        AbstractTextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>> statusColumn = new AbstractEnumColumn<PairQueryable<VmNetworkInterface, VmTemplate>, VmTemplateStatus>() {
             @Override
             protected VmTemplateStatus getRawValue(PairQueryable<VmNetworkInterface, VmTemplate> object) {
                 return object.getSecond().getStatus();
@@ -61,7 +61,7 @@ public class SubTabNetworkTemplateView extends AbstractSubTabTableView<NetworkVi
         statusColumn.makeSortable();
         getTable().addColumn(statusColumn, constants.statusTemplate(), "100px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>> clusterColumn = new TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>>() {
+        AbstractTextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>> clusterColumn = new AbstractTextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>>() {
             @Override
             public String getValue(PairQueryable<VmNetworkInterface, VmTemplate> object) {
                 return object.getSecond().getVdsGroupName();
@@ -70,7 +70,7 @@ public class SubTabNetworkTemplateView extends AbstractSubTabTableView<NetworkVi
         clusterColumn.makeSortable();
         getTable().addColumn(clusterColumn, constants.clusterTemplate(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>> vnicNameColumn = new TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>>() {
+        AbstractTextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>> vnicNameColumn = new AbstractTextColumnWithTooltip<PairQueryable<VmNetworkInterface, VmTemplate>>() {
             @Override
             public String getValue(PairQueryable<VmNetworkInterface, VmTemplate> object) {
                 return object.getFirst().getName();

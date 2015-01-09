@@ -12,10 +12,10 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
-import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
-import org.ovirt.engine.ui.common.widget.table.column.EditTextColumnWithTooltip;
-import org.ovirt.engine.ui.common.widget.table.column.ListModelListBoxColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEditTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractListModelListBoxColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.table.header.CheckboxHeader;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.ImportNetworksModel;
@@ -70,7 +70,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
     @Ignore
     EntityModelCellTable<ListModel<ExternalNetwork>> importedNetworks;
 
-    private ListModelListBoxColumn<ExternalNetwork, StoragePool> dcColumn;
+    private AbstractListModelListBoxColumn<ExternalNetwork, StoragePool> dcColumn;
 
     @Inject
     public ImportNetworksPopupView(EventBus eventBus, ApplicationResources resources,
@@ -112,14 +112,14 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
             final ApplicationTemplates templates,
             final ApplicationResources resources) {
 
-        providerNetworks.addColumn(new TextColumnWithTooltip<ExternalNetwork>() {
+        providerNetworks.addColumn(new AbstractTextColumnWithTooltip<ExternalNetwork>() {
             @Override
             public String getValue(ExternalNetwork model) {
                 return model.getDisplayName();
             }
         }, constants.nameNetworkHeader());
 
-        importedNetworks.addColumn(new EditTextColumnWithTooltip<ExternalNetwork>(new FieldUpdater<ExternalNetwork, String>() {
+        importedNetworks.addColumn(new AbstractEditTextColumnWithTooltip<ExternalNetwork>(new FieldUpdater<ExternalNetwork, String>() {
             @Override
             public void update(int index, ExternalNetwork model, String value) {
                 model.setDisplayName(value);
@@ -131,7 +131,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
             }
         }, constants.nameNetworkHeader());
 
-        Column<ExternalNetwork, String> idColumn = new TextColumnWithTooltip<ExternalNetwork>() {
+        Column<ExternalNetwork, String> idColumn = new AbstractTextColumnWithTooltip<ExternalNetwork>() {
             @Override
             public String getValue(ExternalNetwork model) {
                 return model.getNetwork().getProvidedBy().getExternalId();
@@ -140,7 +140,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
         providerNetworks.addColumn(idColumn, constants.idNetworkHeader());
         importedNetworks.addColumn(idColumn, constants.idNetworkHeader());
 
-        dcColumn = new ListModelListBoxColumn<ExternalNetwork, StoragePool>(new NullSafeRenderer<StoragePool>() {
+        dcColumn = new AbstractListModelListBoxColumn<ExternalNetwork, StoragePool>(new NullSafeRenderer<StoragePool>() {
             @Override
             public String renderNullSafe(StoragePool dc) {
                 return dc.getName();
@@ -188,7 +188,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
                     }
                 };
 
-        importedNetworks.addColumn(new CheckboxColumn<ExternalNetwork>(new FieldUpdater<ExternalNetwork, Boolean>() {
+        importedNetworks.addColumn(new AbstractCheckboxColumn<ExternalNetwork>(new FieldUpdater<ExternalNetwork, Boolean>() {
             @Override
             public void update(int index, ExternalNetwork model, Boolean value) {
                 model.setPublicUse(value);

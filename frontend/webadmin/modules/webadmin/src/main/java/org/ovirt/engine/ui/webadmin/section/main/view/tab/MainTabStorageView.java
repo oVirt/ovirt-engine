@@ -11,9 +11,9 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.StorageSizeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractStorageSizeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
@@ -53,7 +53,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
 
         getTable().addColumn(new StorageDomainSharedStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<StorageDomain> nameColumn = new TextColumnWithTooltip<StorageDomain>() {
+        AbstractTextColumnWithTooltip<StorageDomain> nameColumn = new AbstractTextColumnWithTooltip<StorageDomain>() {
             @Override
             public String getValue(StorageDomain object) {
                 return object.getStorageName();
@@ -65,7 +65,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         CommentColumn<StorageDomain> commentColumn = new CommentColumn<StorageDomain>();
         getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<StorageDomain> domainTypeColumn = new EnumColumn<StorageDomain, StorageDomainType>() {
+        AbstractTextColumnWithTooltip<StorageDomain> domainTypeColumn = new AbstractEnumColumn<StorageDomain, StorageDomainType>() {
             @Override
             protected StorageDomainType getRawValue(StorageDomain object) {
                 return object.getStorageDomainType();
@@ -73,7 +73,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         };
         getTable().addColumn(domainTypeColumn, constants.domainTypeStorage(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<StorageDomain> storageTypeColumn = new EnumColumn<StorageDomain, StorageType>() {
+        AbstractTextColumnWithTooltip<StorageDomain> storageTypeColumn = new AbstractEnumColumn<StorageDomain, StorageType>() {
             @Override
             protected StorageType getRawValue(StorageDomain object) {
                 return object.getStorageType();
@@ -82,7 +82,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         storageTypeColumn.makeSortable(StorageDomainFieldAutoCompleter.TYPE);
         getTable().addColumn(storageTypeColumn, constants.storageTypeStorage(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<StorageDomain> formatColumn = new EnumColumn<StorageDomain, StorageFormatType>() {
+        AbstractTextColumnWithTooltip<StorageDomain> formatColumn = new AbstractEnumColumn<StorageDomain, StorageFormatType>() {
             @Override
             protected StorageFormatType getRawValue(StorageDomain object) {
                 return object.getStorageFormat();
@@ -90,8 +90,8 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         };
         getTable().addColumn(formatColumn, constants.formatStorage(), "140px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<StorageDomain> crossDataCenterStatusColumn =
-                new TextColumnWithTooltip<StorageDomain>() {
+        AbstractTextColumnWithTooltip<StorageDomain> crossDataCenterStatusColumn =
+                new AbstractTextColumnWithTooltip<StorageDomain>() {
                     @Override
                     public String getValue(StorageDomain object) {
                         if (object.getStorageDomainType() == StorageDomainType.ISO) {
@@ -104,7 +104,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         crossDataCenterStatusColumn.makeSortable(StorageDomainFieldAutoCompleter.STATUS);
         getTable().addColumn(crossDataCenterStatusColumn, constants.crossDcStatusStorage(), "210px"); //$NON-NLS-1$
 
-        StorageSizeColumn<StorageDomain> totalSpaceColumn = new StorageSizeColumn<StorageDomain>() {
+        AbstractStorageSizeColumn<StorageDomain> totalSpaceColumn = new AbstractStorageSizeColumn<StorageDomain>() {
             @Override
             public Long getRawValue(StorageDomain object) {
                 long totalSpace = object.getTotalDiskSize() != null ? object.getTotalDiskSize() : 0;
@@ -113,7 +113,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         };
         getTable().addColumn(totalSpaceColumn, constants.totalSpaceStorage(), "130px"); //$NON-NLS-1$
 
-        StorageSizeColumn<StorageDomain> freeSpaceColumn = new StorageSizeColumn<StorageDomain>() {
+        AbstractStorageSizeColumn<StorageDomain> freeSpaceColumn = new AbstractStorageSizeColumn<StorageDomain>() {
             @Override
             public Long getRawValue(StorageDomain object) {
                 long availableDiskSize = object.getAvailableDiskSize() != null ? object.getAvailableDiskSize() : 0;
@@ -123,7 +123,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         freeSpaceColumn.makeSortable(StorageDomainFieldAutoCompleter.SIZE);
         getTable().addColumn(freeSpaceColumn, constants.freeSpaceStorage(), "130px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<StorageDomain> descriptionColumn = new TextColumnWithTooltip<StorageDomain>() {
+        AbstractTextColumnWithTooltip<StorageDomain> descriptionColumn = new AbstractTextColumnWithTooltip<StorageDomain>() {
             @Override
             public String getValue(StorageDomain object) {
                 return object.getDescription();

@@ -7,7 +7,7 @@ import com.google.gwt.resources.client.ImageResource;
 /**
  * Image column that corresponds to XAML {@code QuotaDcStatusColumn}.
  */
-public class QuotaDcStatusColumn extends WebAdminImageResourceColumn<Quota> {
+public class QuotaDcStatusColumn extends AbstractWebAdminImageResourceColumn<Quota> {
 
     @Override
     public ImageResource getValue(Quota quota) {

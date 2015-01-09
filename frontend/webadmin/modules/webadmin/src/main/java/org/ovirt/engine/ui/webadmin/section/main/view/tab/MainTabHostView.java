@@ -13,8 +13,8 @@ import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
@@ -33,7 +33,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractPercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmCountColumn;
 
 import com.google.gwt.core.client.GWT;
@@ -96,7 +96,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
 
         getTable().addColumn(new HostStatusColumn<VDS>(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VDS> nameColumn = new TextColumnWithTooltip<VDS>() {
+        AbstractTextColumnWithTooltip<VDS> nameColumn = new AbstractTextColumnWithTooltip<VDS>() {
             @Override
             public String getValue(VDS object) {
                 return object.getName();
@@ -108,7 +108,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         CommentColumn<VDS> commentColumn = new CommentColumn<VDS>();
         getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VDS> hostColumn = new TextColumnWithTooltip<VDS>() {
+        AbstractTextColumnWithTooltip<VDS> hostColumn = new AbstractTextColumnWithTooltip<VDS>() {
             @Override
             public String getValue(VDS object) {
                 return object.getHostName();
@@ -117,7 +117,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         hostColumn.makeSortable(VdsConditionFieldAutoCompleter.ADDRESS);
         getTable().addColumn(hostColumn, constants.ipHost(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VDS> clusterColumn = new TextColumnWithTooltip<VDS>() {
+        AbstractTextColumnWithTooltip<VDS> clusterColumn = new AbstractTextColumnWithTooltip<VDS>() {
             @Override
             public String getValue(VDS object) {
                 return object.getVdsGroupName();
@@ -127,7 +127,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         getTable().addColumn(clusterColumn, constants.clusterHost(), "150px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-            TextColumnWithTooltip<VDS> dcColumn = new TextColumnWithTooltip<VDS>() {
+            AbstractTextColumnWithTooltip<VDS> dcColumn = new AbstractTextColumnWithTooltip<VDS>() {
                 @Override
                 public String getValue(VDS object) {
                     return object.getStoragePoolName();
@@ -137,7 +137,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             getTable().addColumn(dcColumn, constants.dcHost(), "150px"); //$NON-NLS-1$
         }
 
-        TextColumnWithTooltip<VDS> statusColumn = new EnumColumn<VDS, VDSStatus>() {
+        AbstractTextColumnWithTooltip<VDS> statusColumn = new AbstractEnumColumn<VDS, VDSStatus>() {
             @Override
             public VDSStatus getRawValue(VDS object) {
                 return object.getStatus();
@@ -152,7 +152,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             getTable().addColumn(vmCountColumn, constants.vmsCount(), "110px"); //$NON-NLS-1$
         }
 
-        PercentColumn<VDS> memColumn = new PercentColumn<VDS>() {
+        AbstractPercentColumn<VDS> memColumn = new AbstractPercentColumn<VDS>() {
             @Override
             public Integer getProgressValue(VDS object) {
                 return object.getUsageMemPercent();
@@ -161,7 +161,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         memColumn.makeSortable(VdsConditionFieldAutoCompleter.MEM_USAGE);
         getTable().addColumn(memColumn, constants.memoryHost(), "60px"); //$NON-NLS-1$
 
-        PercentColumn<VDS> cpuColumn = new PercentColumn<VDS>() {
+        AbstractPercentColumn<VDS> cpuColumn = new AbstractPercentColumn<VDS>() {
             @Override
             public Integer getProgressValue(VDS object) {
                 return object.getUsageCpuPercent();
@@ -170,7 +170,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         cpuColumn.makeSortable(VdsConditionFieldAutoCompleter.CPU_USAGE);
         getTable().addColumn(cpuColumn, constants.cpuHost(), "60px"); //$NON-NLS-1$
 
-        PercentColumn<VDS> netColumn = new PercentColumn<VDS>() {
+        AbstractPercentColumn<VDS> netColumn = new AbstractPercentColumn<VDS>() {
             @Override
             public Integer getProgressValue(VDS object) {
                 return object.getUsageNetworkPercent();
@@ -180,7 +180,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         getTable().addColumn(netColumn, constants.networkHost(), "60px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-            TextColumnWithTooltip<VDS> spmColumn = new TextColumnWithTooltip<VDS>() {
+            AbstractTextColumnWithTooltip<VDS> spmColumn = new AbstractTextColumnWithTooltip<VDS>() {
                 @Override
                 public String getValue(VDS object) {
                     int value = object.getVdsSpmPriority();

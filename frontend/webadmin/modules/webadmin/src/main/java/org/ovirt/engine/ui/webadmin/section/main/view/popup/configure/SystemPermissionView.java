@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.PermissionTypeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemPermissionModelProvider;
@@ -73,7 +73,7 @@ public class SystemPermissionView extends Composite {
 
         table.addColumn(new PermissionTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Permissions> userColumn = new TextColumnWithTooltip<Permissions>() {
+        AbstractTextColumnWithTooltip<Permissions> userColumn = new AbstractTextColumnWithTooltip<Permissions>() {
             @Override
             public String getValue(Permissions object) {
                 return object.getOwnerName();
@@ -81,7 +81,7 @@ public class SystemPermissionView extends Composite {
         };
         table.addColumn(userColumn, constants.userPermission(), "300px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Permissions> authzColumn = new TextColumnWithTooltip<Permissions>() {
+        AbstractTextColumnWithTooltip<Permissions> authzColumn = new AbstractTextColumnWithTooltip<Permissions>() {
             @Override
             public String getValue(Permissions object) {
                 return object.getAuthz();
@@ -89,7 +89,7 @@ public class SystemPermissionView extends Composite {
         };
         table.addColumn(authzColumn, constants.authz(), "200px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Permissions> namespaceColumn = new TextColumnWithTooltip<Permissions>() {
+        AbstractTextColumnWithTooltip<Permissions> namespaceColumn = new AbstractTextColumnWithTooltip<Permissions>() {
             @Override
             public String getValue(Permissions object) {
                 return object.getNamespace();
@@ -97,7 +97,7 @@ public class SystemPermissionView extends Composite {
         };
         table.addColumn(namespaceColumn, constants.namespace(), "200px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Permissions> roleColumn = new TextColumnWithTooltip<Permissions>() {
+        AbstractTextColumnWithTooltip<Permissions> roleColumn = new AbstractTextColumnWithTooltip<Permissions>() {
             @Override
             public String getValue(Permissions object) {
                 return object.getRoleName();

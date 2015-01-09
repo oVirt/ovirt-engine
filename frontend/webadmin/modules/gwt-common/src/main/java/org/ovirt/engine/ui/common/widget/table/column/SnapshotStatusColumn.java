@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import com.google.gwt.resources.client.ImageResource;
 
 
-public class SnapshotStatusColumn extends ImageResourceColumn<Snapshot> {
+public class SnapshotStatusColumn extends AbstractImageResourceColumn<Snapshot> {
 
     @Override
     public ImageResource getValue(Snapshot snapshot) {

@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 /**
  * Image column that corresponds to XAML {@code VmTypeTemplate}.
  */
-public class VmTypeColumn extends WebAdminImageResourceColumn<VM> {
+public class VmTypeColumn extends AbstractWebAdminImageResourceColumn<VM> {
 
     private static final CommonApplicationConstants constants = ClientGinjectorProvider.getApplicationConstants();
 

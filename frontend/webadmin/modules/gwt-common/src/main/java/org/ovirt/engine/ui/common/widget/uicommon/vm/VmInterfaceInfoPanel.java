@@ -10,11 +10,11 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.table.column.NullableNumberColumn;
-import org.ovirt.engine.ui.common.widget.table.column.RxTxRateColumn;
-import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlWithSafeHtmlTooltipColumn;
-import org.ovirt.engine.ui.common.widget.table.column.SumUpColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractNullableNumberColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlWithSafeHtmlTooltipColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractSumUpColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
@@ -84,7 +84,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
         statisticsTable = new EntityModelCellTable<ListModel>(false, true);
         statisticsTable.enableColumnResizing();
 
-        TextColumnWithTooltip<VmNetworkInterface> rxColumn = new RxTxRateColumn<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> rxColumn = new AbstractRxTxRateColumn<VmNetworkInterface>() {
             @Override
             protected Double getRate(VmNetworkInterface object) {
                 return object.getStatistics().getReceiveRate();
@@ -103,7 +103,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
         statisticsTable.addColumn(rxColumn,
                 templates.sub(constants.rxRate(), constants.mbps()), "100px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmNetworkInterface> txColumn = new RxTxRateColumn<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> txColumn = new AbstractRxTxRateColumn<VmNetworkInterface>() {
             @Override
             protected Double getRate(VmNetworkInterface object) {
                 return object.getStatistics().getTransmitRate();
@@ -122,7 +122,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
         statisticsTable.addColumn(txColumn,
                 templates.sub(constants.txRate(), constants.mbps()), "100px"); //$NON-NLS-1$
 
-        NullableNumberColumn<VmNetworkInterface> totalRxColumn = new NullableNumberColumn<VmNetworkInterface>() {
+        AbstractNullableNumberColumn<VmNetworkInterface> totalRxColumn = new AbstractNullableNumberColumn<VmNetworkInterface>() {
             @Override
             protected Number getRawValue(VmNetworkInterface object) {
                 return object.getStatistics().getReceivedBytes();
@@ -131,7 +131,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
 
         statisticsTable.addColumn(totalRxColumn, templates.sub(constants.rxTotal(), constants.bytes()), "150px"); //$NON-NLS-1$
 
-        NullableNumberColumn<VmNetworkInterface> totalTxColumn = new NullableNumberColumn<VmNetworkInterface>() {
+        AbstractNullableNumberColumn<VmNetworkInterface> totalTxColumn = new AbstractNullableNumberColumn<VmNetworkInterface>() {
             @Override
             protected Number getRawValue(VmNetworkInterface object) {
                 return object.getStatistics().getTransmittedBytes();
@@ -140,7 +140,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
 
         statisticsTable.addColumn(totalTxColumn, templates.sub(constants.txTotal(), constants.bytes()), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmNetworkInterface> dropsColumn = new SumUpColumn<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> dropsColumn = new AbstractSumUpColumn<VmNetworkInterface>() {
             @Override
             protected Double[] getRawValue(VmNetworkInterface object) {
                 Double receiveDropRate = object != null ? object.getStatistics().getReceiveDropRate() : null;
@@ -160,7 +160,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
         guestAgentDataTable = new EntityModelCellTable<ListModel>(false, true);
         guestAgentDataTable.enableColumnResizing();
 
-        TextColumnWithTooltip<VmGuestAgentInterface> nameColumn = new TextColumnWithTooltip<VmGuestAgentInterface>() {
+        AbstractTextColumnWithTooltip<VmGuestAgentInterface> nameColumn = new AbstractTextColumnWithTooltip<VmGuestAgentInterface>() {
 
             @Override
             public String getValue(VmGuestAgentInterface object) {
@@ -171,8 +171,8 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
         guestAgentDataTable.addColumn(nameColumn,
                 constants.nameVmGuestAgent(), "100px"); //$NON-NLS-1$
 
-        SafeHtmlWithSafeHtmlTooltipColumn<VmGuestAgentInterface> ipv4Column =
-                new SafeHtmlWithSafeHtmlTooltipColumn<VmGuestAgentInterface>() {
+        AbstractSafeHtmlWithSafeHtmlTooltipColumn<VmGuestAgentInterface> ipv4Column =
+                new AbstractSafeHtmlWithSafeHtmlTooltipColumn<VmGuestAgentInterface>() {
                     @Override
                     public SafeHtml getValue(VmGuestAgentInterface object) {
 
@@ -196,8 +196,8 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
         guestAgentDataTable.addColumn(ipv4Column,
                 constants.ipv4VmGuestAgent(), "100px"); //$NON-NLS-1$
 
-        SafeHtmlWithSafeHtmlTooltipColumn<VmGuestAgentInterface> ipv6Column =
-                new SafeHtmlWithSafeHtmlTooltipColumn<VmGuestAgentInterface>() {
+        AbstractSafeHtmlWithSafeHtmlTooltipColumn<VmGuestAgentInterface> ipv6Column =
+                new AbstractSafeHtmlWithSafeHtmlTooltipColumn<VmGuestAgentInterface>() {
                     @Override
                     public SafeHtml getValue(VmGuestAgentInterface object) {
 
@@ -222,7 +222,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
         guestAgentDataTable.addColumn(ipv6Column,
                 constants.ipv6VmGuestAgent(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmGuestAgentInterface> macColumn = new TextColumnWithTooltip<VmGuestAgentInterface>() {
+        AbstractTextColumnWithTooltip<VmGuestAgentInterface> macColumn = new AbstractTextColumnWithTooltip<VmGuestAgentInterface>() {
 
             @Override
             public String getValue(VmGuestAgentInterface object) {

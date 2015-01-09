@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMo
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.table.cell.PasswordTextInputCell;
-import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostDetailModel;
@@ -119,7 +119,7 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
             }
         });
 
-        hostsTable.addColumn(new EntityModelTextColumn<HostDetailModel>() {
+        hostsTable.addColumn(new AbstractEntityModelTextColumn<HostDetailModel>() {
             @Override
             public String getText(HostDetailModel hostModel) {
                 return hostModel.getAddress();
@@ -142,7 +142,7 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
             }
         });
 
-        hostsTable.addColumn(new EntityModelTextColumn<HostDetailModel>() {
+        hostsTable.addColumn(new AbstractEntityModelTextColumn<HostDetailModel>() {
             @Override
             public String getText(HostDetailModel hostModel) {
                 return hostModel.getFingerprint();

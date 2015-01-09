@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -33,14 +33,14 @@ public class AbstractFindDcPopupView extends AbstractModelBoundPopupView<ListMod
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         // Table Entity Columns
-        table.addEntityModelColumn(new EntityModelTextColumn<StoragePool>() {
+        table.addEntityModelColumn(new AbstractEntityModelTextColumn<StoragePool>() {
             @Override
             public String getText(StoragePool storage) {
                 return storage.getName();
             }
         }, constants.nameDc());
 
-        table.addEntityModelColumn(new EntityModelTextColumn<StoragePool>() {
+        table.addEntityModelColumn(new AbstractEntityModelTextColumn<StoragePool>() {
             @Override
             protected String getText(StoragePool entity) {
                 return entity.isLocal() ? constants.storageTypeLocal() : constants.storageTypeShared();

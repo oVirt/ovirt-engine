@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.utils.PairQueryable;
 
 import com.google.gwt.resources.client.ImageResource;
 
-public class NetworkClusterStatusColumn extends WebAdminImageResourceColumn<PairQueryable<VDSGroup, NetworkCluster>>{
+public class NetworkClusterStatusColumn extends AbstractWebAdminImageResourceColumn<PairQueryable<VDSGroup, NetworkCluster>>{
 
     private final NetworkStatusColumn networkStatusColumn = new NetworkStatusColumn();
 

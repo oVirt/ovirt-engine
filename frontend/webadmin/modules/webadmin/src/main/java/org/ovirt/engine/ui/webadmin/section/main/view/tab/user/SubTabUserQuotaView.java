@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.comparators.QuotaComparator;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserQuotaListModel;
@@ -41,7 +41,7 @@ public class SubTabUserQuotaView extends AbstractSubTabTableView<DbUser, Quota, 
 
         getTable().addColumn(new QuotaDcStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Quota> nameColumn = new TextColumnWithTooltip<Quota>() {
+        AbstractTextColumnWithTooltip<Quota> nameColumn = new AbstractTextColumnWithTooltip<Quota>() {
             @Override
             public String getValue(Quota object) {
                 return object.getQuotaName() == null ? "" : object.getQuotaName(); //$NON-NLS-1$
@@ -50,7 +50,7 @@ public class SubTabUserQuotaView extends AbstractSubTabTableView<DbUser, Quota, 
         nameColumn.makeSortable(QuotaComparator.NAME);
         getTable().addColumn(nameColumn, constants.nameQuota(), "300px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Quota> descriptionColumn = new TextColumnWithTooltip<Quota>() {
+        AbstractTextColumnWithTooltip<Quota> descriptionColumn = new AbstractTextColumnWithTooltip<Quota>() {
             @Override
             public String getValue(Quota object) {
                 return object.getDescription() == null ? "" : object.getDescription(); //$NON-NLS-1$
@@ -59,7 +59,7 @@ public class SubTabUserQuotaView extends AbstractSubTabTableView<DbUser, Quota, 
         descriptionColumn.makeSortable(QuotaComparator.DESCRIPTION);
         getTable().addColumn(descriptionColumn, constants.descriptionQuota(), "300px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Quota> datacenterColumn = new TextColumnWithTooltip<Quota>() {
+        AbstractTextColumnWithTooltip<Quota> datacenterColumn = new AbstractTextColumnWithTooltip<Quota>() {
             @Override
             public String getValue(Quota object) {
                 return object.getStoragePoolName() == null ? "" : object.getStoragePoolName(); //$NON-NLS-1$

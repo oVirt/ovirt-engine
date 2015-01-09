@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.DetachGlusterHostsModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -65,7 +65,7 @@ public class DetachGlusterHostsPopupView extends AbstractModelBoundPopupView<Det
 
     protected void initTableColumns(ApplicationConstants constants){
         // Table Entity Columns
-        hostsTable.addEntityModelColumn(new EntityModelTextColumn<String>() {
+        hostsTable.addEntityModelColumn(new AbstractEntityModelTextColumn<String>() {
             @Override
             public String getText(String hostAddress) {
                 return hostAddress;

@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import com.google.gwt.resources.client.ImageResource;
 
 
-public class GlusterHookSyncStatusColumn extends WebAdminImageResourceColumn<GlusterHookEntity> {
+public class GlusterHookSyncStatusColumn extends AbstractWebAdminImageResourceColumn<GlusterHookEntity> {
 
     @Override
     public ImageResource getValue(GlusterHookEntity hookEntity) {

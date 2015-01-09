@@ -8,14 +8,14 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.searchbackend.VmConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterVmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractUptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
@@ -47,7 +47,7 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
         statusIconColumn.makeSortable(VmConditionFieldAutoCompleter.STATUS);
         getTable().addColumn(statusIconColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> nameColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getName();
@@ -60,7 +60,7 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
         typeColumn.makeSortable(VmConditionFieldAutoCompleter.TYPE);
         getTable().addColumn(typeColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
+        AbstractTextColumnWithTooltip<VM> statusColumn = new AbstractEnumColumn<VM, VMStatus>() {
             @Override
             protected VMStatus getRawValue(VM object) {
                 return object.getStatus();
@@ -69,7 +69,7 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
         statusColumn.makeSortable(VmConditionFieldAutoCompleter.STATUS);
         getTable().addColumn(statusColumn, constants.statusVm(), "220px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> uptimeColumn = new UptimeColumn<VM>() {
+        AbstractTextColumnWithTooltip<VM> uptimeColumn = new AbstractUptimeColumn<VM>() {
             @Override
             protected Double getRawValue(VM object) {
                 return object.getRoundedElapsedTime();

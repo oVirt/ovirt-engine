@@ -6,8 +6,8 @@ import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
-import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageIsoListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
@@ -43,7 +43,7 @@ public class SubTabStorageIsoView extends AbstractSubTabTableView<StorageDomain,
     void initTable(ApplicationResources resources, final ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        TextColumnWithTooltip<RepoImage> fileNameColumn = new TextColumnWithTooltip<RepoImage>() {
+        AbstractTextColumnWithTooltip<RepoImage> fileNameColumn = new AbstractTextColumnWithTooltip<RepoImage>() {
             @Override
             public String getValue(RepoImage object) {
                 return object.getRepoImageTitle();
@@ -52,7 +52,7 @@ public class SubTabStorageIsoView extends AbstractSubTabTableView<StorageDomain,
         fileNameColumn.makeSortable();
         getTable().addColumn(fileNameColumn, constants.fileNameIso(), "500px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<RepoImage> typeColumn = new TextColumnWithTooltip<RepoImage>() {
+        AbstractTextColumnWithTooltip<RepoImage> typeColumn = new AbstractTextColumnWithTooltip<RepoImage>() {
             @Override
             public String getValue(RepoImage object) {
                 return object.getFileType().toString();
@@ -61,7 +61,7 @@ public class SubTabStorageIsoView extends AbstractSubTabTableView<StorageDomain,
         typeColumn.makeSortable();
         getTable().addColumn(typeColumn, constants.typeIso(), "200px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<RepoImage> sizeColumn = new DiskSizeColumn<RepoImage>(SizeConverter.SizeUnit.BYTES,
+        AbstractTextColumnWithTooltip<RepoImage> sizeColumn = new AbstractDiskSizeColumn<RepoImage>(SizeConverter.SizeUnit.BYTES,
                 DiskSizeRenderer.Format.HUMAN_READABLE) {
             @Override
             protected Long getRawValue(RepoImage object) {

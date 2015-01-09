@@ -97,7 +97,7 @@ import org.ovirt.engine.ui.common.widget.renderer.BooleanRendererWithNullText;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.MemorySizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.SerialNumberPolicyWidget;
@@ -969,7 +969,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         generateIds();
 
-        priorityEditor.addEntityModelColumn(new TextColumnWithTooltip<EntityModel>() {
+        priorityEditor.addEntityModelColumn(new AbstractTextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel model) {
                 return model.getTitle();

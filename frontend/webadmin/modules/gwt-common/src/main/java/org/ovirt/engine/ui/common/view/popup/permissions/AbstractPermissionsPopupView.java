@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.TextBoxChanger;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
-import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
@@ -151,21 +151,21 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
 
     private void initTable(CommonApplicationConstants constants) {
         // Table Entity Columns
-        searchItems.addColumn(new EntityModelTextColumn<DbUser>() {
+        searchItems.addColumn(new AbstractEntityModelTextColumn<DbUser>() {
             @Override
             public String getText(DbUser user) {
                 return user.getFirstName();
             }
         }, constants.firsNamePermissionsPopup(), MAX_COL_WIDTH);
 
-        searchItems.addColumn(new EntityModelTextColumn<DbUser>() {
+        searchItems.addColumn(new AbstractEntityModelTextColumn<DbUser>() {
             @Override
             public String getText(DbUser user) {
                 return user.getLastName();
             }
         }, constants.lastNamePermissionsPopup(), MAX_COL_WIDTH);
 
-        searchItems.addColumn(new EntityModelTextColumn<DbUser>() {
+        searchItems.addColumn(new AbstractEntityModelTextColumn<DbUser>() {
             @Override
             public String getText(DbUser user) {
                 return user.getLoginName();

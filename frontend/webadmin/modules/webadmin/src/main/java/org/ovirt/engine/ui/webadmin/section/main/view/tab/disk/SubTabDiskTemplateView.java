@@ -8,9 +8,9 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskTemplateListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -41,7 +41,7 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<Disk, VmTemp
     void initTable(ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        TextColumnWithTooltip<VmTemplate> nameColumn = new TextColumnWithTooltip<VmTemplate>() {
+        AbstractTextColumnWithTooltip<VmTemplate> nameColumn = new AbstractTextColumnWithTooltip<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
                 return object.getName();
@@ -50,7 +50,7 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<Disk, VmTemp
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameTemplate(), "200px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmTemplate> disksColumn = new TextColumnWithTooltip<VmTemplate>() {
+        AbstractTextColumnWithTooltip<VmTemplate> disksColumn = new AbstractTextColumnWithTooltip<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
                 return String.valueOf(object.getDiskTemplateMap().size());
@@ -59,7 +59,7 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<Disk, VmTemp
         disksColumn.makeSortable();
         getTable().addColumn(disksColumn, constants.disksTemplate(), "200px"); //$NON-NLS-1$
 
-        DiskSizeColumn<VmTemplate> sizeColumn = new DiskSizeColumn<VmTemplate>() {
+        AbstractDiskSizeColumn<VmTemplate> sizeColumn = new AbstractDiskSizeColumn<VmTemplate>() {
             @Override
             protected Long getRawValue(VmTemplate object) {
                 return Double.valueOf(object.getActualDiskSize()).longValue();
@@ -68,7 +68,7 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<Disk, VmTemp
         sizeColumn.makeSortable();
         getTable().addColumn(sizeColumn, constants.actualSizeTemplate(), "200px"); //$NON-NLS-1$
 
-        FullDateTimeColumn<VmTemplate> dateColumn = new FullDateTimeColumn<VmTemplate>() {
+        AbstractFullDateTimeColumn<VmTemplate> dateColumn = new AbstractFullDateTimeColumn<VmTemplate>() {
             @Override
             protected Date getRawValue(VmTemplate object) {
                 return object.getCreationDate();

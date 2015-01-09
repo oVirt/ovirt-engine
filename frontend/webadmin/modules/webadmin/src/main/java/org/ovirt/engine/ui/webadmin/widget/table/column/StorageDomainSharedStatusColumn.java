@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 
 import com.google.gwt.resources.client.ImageResource;
 
-public class StorageDomainSharedStatusColumn extends WebAdminImageResourceColumn<StorageDomain> {
+public class StorageDomainSharedStatusColumn extends AbstractWebAdminImageResourceColumn<StorageDomain> {
 
     @Override
     public ImageResource getValue(StorageDomain sp) {

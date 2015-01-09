@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterIscsiBondListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
@@ -39,14 +39,14 @@ public class SubTabDataCenterIscsiBondView extends AbstractSubTabTableView<Stora
     void initTable(ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        getTable().addColumn(new TextColumnWithTooltip<IscsiBond>() {
+        getTable().addColumn(new AbstractTextColumnWithTooltip<IscsiBond>() {
             @Override
             public String getValue(IscsiBond object) {
                 return object.getName();
             }
         }, constants.name(), "400px"); //$NON-NLS-1$
 
-        getTable().addColumn(new TextColumnWithTooltip<IscsiBond>() {
+        getTable().addColumn(new AbstractTextColumnWithTooltip<IscsiBond>() {
             @Override
             public String getValue(IscsiBond object) {
                 return object.getDescription();

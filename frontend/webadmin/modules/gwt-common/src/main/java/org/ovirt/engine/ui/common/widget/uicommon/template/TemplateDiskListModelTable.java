@@ -10,10 +10,10 @@ import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateDiskListModel;
 
@@ -31,7 +31,7 @@ public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends
     public void initTable(CommonApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        TextColumnWithTooltip<DiskImage> aliasColumn = new TextColumnWithTooltip<DiskImage>() {
+        AbstractTextColumnWithTooltip<DiskImage> aliasColumn = new AbstractTextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
                 return object.getDiskAlias();
@@ -39,7 +39,7 @@ public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends
         };
         getTable().addColumn(aliasColumn, constants.aliasDisk(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<DiskImage> provisionedSizeColumn = new TextColumnWithTooltip<DiskImage>() {
+        AbstractTextColumnWithTooltip<DiskImage> provisionedSizeColumn = new AbstractTextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
                 return String.valueOf(object.getSizeInGigabytes()) + " GB"; //$NON-NLS-1$
@@ -47,7 +47,7 @@ public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends
         };
         getTable().addColumn(provisionedSizeColumn, constants.provisionedSizeDisk(), "150px"); //$NON-NLS-1$
 
-        DiskSizeColumn<DiskImage> actualSizeColumn = new DiskSizeColumn<DiskImage>(SizeConverter.SizeUnit.GB) {
+        AbstractDiskSizeColumn<DiskImage> actualSizeColumn = new AbstractDiskSizeColumn<DiskImage>(SizeConverter.SizeUnit.GB) {
             @Override
             protected Long getRawValue(DiskImage object) {
                        return Math.round((object.getActualDiskWithSnapshotsSize()));
@@ -56,7 +56,7 @@ public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends
 
         getTable().addColumn(actualSizeColumn, constants.sizeDisk(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<DiskImage> statusColumn = new EnumColumn<DiskImage, ImageStatus>() {
+        AbstractTextColumnWithTooltip<DiskImage> statusColumn = new AbstractEnumColumn<DiskImage, ImageStatus>() {
             @Override
             protected ImageStatus getRawValue(DiskImage object) {
                 return object.getImageStatus();
@@ -65,7 +65,7 @@ public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends
 
         getTable().addColumn(statusColumn, constants.statusDisk(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<DiskImage> allocationColumn = new EnumColumn<DiskImage, VolumeType>() {
+        AbstractTextColumnWithTooltip<DiskImage> allocationColumn = new AbstractEnumColumn<DiskImage, VolumeType>() {
             @Override
             protected VolumeType getRawValue(DiskImage object) {
                 return VolumeType.forValue(object.getVolumeType().getValue());
@@ -73,7 +73,7 @@ public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends
         };
         getTable().addColumn(allocationColumn, constants.allocationDisk(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<DiskImage> interfaceColumn = new EnumColumn<DiskImage, DiskInterface>() {
+        AbstractTextColumnWithTooltip<DiskImage> interfaceColumn = new AbstractEnumColumn<DiskImage, DiskInterface>() {
             @Override
             protected DiskInterface getRawValue(DiskImage object) {
                 return object.getDiskInterface();
@@ -81,7 +81,7 @@ public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends
         };
         getTable().addColumn(interfaceColumn, constants.interfaceDisk(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<DiskImage> dateCreatedColumn = new FullDateTimeColumn<DiskImage>() {
+        AbstractTextColumnWithTooltip<DiskImage> dateCreatedColumn = new AbstractFullDateTimeColumn<DiskImage>() {
             @Override
             protected Date getRawValue(DiskImage object) {
                 return object.getCreationDate();
@@ -90,7 +90,7 @@ public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends
 
         getTable().addColumn(dateCreatedColumn, constants.creationDateDisk(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<DiskImage> descriptionColumn = new TextColumnWithTooltip<DiskImage>() {
+        AbstractTextColumnWithTooltip<DiskImage> descriptionColumn = new AbstractTextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
                 return object.getDescription();

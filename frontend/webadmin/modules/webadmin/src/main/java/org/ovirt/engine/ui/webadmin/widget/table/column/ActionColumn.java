@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.widget.table.column;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
@@ -152,7 +152,7 @@ public class ActionColumn<T> extends IdentityColumn<T> {
         List<HasCell<S, ?>> cells = new ArrayList<HasCell<S, ?>>();
 
         // text cell
-        SafeHtmlColumn<S> textColumn = new SafeHtmlColumn<S>() {
+        AbstractSafeHtmlColumn<S> textColumn = new AbstractSafeHtmlColumn<S>() {
             @Override
             public SafeHtml getValue(S object) {
                 return getter.getValue(object);

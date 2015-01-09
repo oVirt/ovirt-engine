@@ -7,7 +7,7 @@ import com.google.gwt.resources.client.ImageResource;
 /**
  * Image column that corresponds to XAML {@code PermissionTypeDataTemplate}.
  */
-public class RoleTypeColumn extends WebAdminImageResourceColumn<Role> {
+public class RoleTypeColumn extends AbstractWebAdminImageResourceColumn<Role> {
 
     @Override
     public ImageResource getValue(Role role) {

@@ -21,8 +21,8 @@ import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBo
 import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
-import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.table.header.CheckboxHeader;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
@@ -351,14 +351,14 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
             }
         };
 
-        clustersTable.addColumn(new TextColumnWithTooltip<NetworkClusterModel>() {
+        clustersTable.addColumn(new AbstractTextColumnWithTooltip<NetworkClusterModel>() {
             @Override
             public String getValue(NetworkClusterModel model) {
                 return model.getName();
             }
         }, constants.nameClusterHeader());
 
-        clustersTable.addColumn(new CheckboxColumn<NetworkClusterModel>(new FieldUpdater<NetworkClusterModel, Boolean>() {
+        clustersTable.addColumn(new AbstractCheckboxColumn<NetworkClusterModel>(new FieldUpdater<NetworkClusterModel, Boolean>() {
             @Override
             public void update(int index, NetworkClusterModel model, Boolean value) {
                 model.setAttached(value);
@@ -382,7 +382,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
             }
 
         }, assignAllHeader, "80px"); //$NON-NLS-1$
-        clustersTable.addColumn(new CheckboxColumn<NetworkClusterModel>(new FieldUpdater<NetworkClusterModel, Boolean>() {
+        clustersTable.addColumn(new AbstractCheckboxColumn<NetworkClusterModel>(new FieldUpdater<NetworkClusterModel, Boolean>() {
             @Override
             public void update(int index, NetworkClusterModel model, Boolean value) {
                 model.setRequired(value);

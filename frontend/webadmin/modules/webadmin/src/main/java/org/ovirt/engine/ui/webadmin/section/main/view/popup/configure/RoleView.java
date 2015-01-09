@@ -7,8 +7,8 @@ import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
-import org.ovirt.engine.ui.common.widget.table.column.ObjectNameColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractObjectNameColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RoleModelProvider;
@@ -148,7 +148,7 @@ public class RoleView extends Composite {
         this.table = new SimpleActionTable<Role>(roleModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
-        TextColumnWithTooltip<Role> nameColumn = new TextColumnWithTooltip<Role>() {
+        AbstractTextColumnWithTooltip<Role> nameColumn = new AbstractTextColumnWithTooltip<Role>() {
             @Override
             public String getValue(Role object) {
                 return object.getname();
@@ -161,7 +161,7 @@ public class RoleView extends Composite {
 
         table.addColumn(nameColumn, constants.nameRole(), "100px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Role> descColumn = new TextColumnWithTooltip<Role>() {
+        AbstractTextColumnWithTooltip<Role> descColumn = new AbstractTextColumnWithTooltip<Role>() {
             @Override
             public String getValue(Role object) {
                 return object.getdescription();
@@ -218,7 +218,7 @@ public class RoleView extends Composite {
         permissionTable = new SimpleActionTable<Permissions>(permissionModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
-        TextColumnWithTooltip<Permissions> userColumn = new TextColumnWithTooltip<Permissions>() {
+        AbstractTextColumnWithTooltip<Permissions> userColumn = new AbstractTextColumnWithTooltip<Permissions>() {
             @Override
             public String getValue(Permissions object) {
                 return object.getOwnerName();
@@ -226,7 +226,7 @@ public class RoleView extends Composite {
         };
         permissionTable.addColumn(userColumn, constants.userPermission());
 
-        TextColumnWithTooltip<Permissions> permissionColumn = new ObjectNameColumn<Permissions>() {
+        AbstractTextColumnWithTooltip<Permissions> permissionColumn = new AbstractObjectNameColumn<Permissions>() {
             @Override
             protected Object[] getRawValue(Permissions object) {
                 return new Object[] { object.getObjectType(), object.getObjectName() };

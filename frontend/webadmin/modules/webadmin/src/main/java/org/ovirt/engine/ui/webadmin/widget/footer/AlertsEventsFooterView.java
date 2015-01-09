@@ -10,11 +10,11 @@ import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTabModelProvider;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
-import org.ovirt.engine.ui.common.widget.table.cell.ImageButtonCell;
+import org.ovirt.engine.ui.common.widget.table.cell.AbstractImageButtonCell;
 import org.ovirt.engine.ui.common.widget.table.column.AuditLogSeverityColumn;
-import org.ovirt.engine.ui.common.widget.table.column.FullDateTimeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.ImageResourceColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -365,7 +365,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
     void initTable(SimpleActionTable<AuditLog> table) {
         table.addColumn(new AuditLogSeverityColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<AuditLog> logTimeColumn = new FullDateTimeColumn<AuditLog>() {
+        AbstractTextColumnWithTooltip<AuditLog> logTimeColumn = new AbstractFullDateTimeColumn<AuditLog>() {
             @Override
             protected Date getRawValue(AuditLog object) {
                 return object.getLogTime();
@@ -373,7 +373,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         };
         table.addColumn(logTimeColumn, constants.timeEvent(), "160px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<AuditLog> messageColumn = new TextColumnWithTooltip<AuditLog>() {
+        AbstractTextColumnWithTooltip<AuditLog> messageColumn = new AbstractTextColumnWithTooltip<AuditLog>() {
             @Override
             public String getValue(AuditLog object) {
                 return object.getMessage();
@@ -385,7 +385,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
     void initAlertTable(final SimpleActionTable<AuditLog> table, final AlertModelProvider alertModelProvider) {
         table.addColumn(new AuditLogSeverityColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<AuditLog> logTimeColumn = new FullDateTimeColumn<AuditLog>() {
+        AbstractTextColumnWithTooltip<AuditLog> logTimeColumn = new AbstractFullDateTimeColumn<AuditLog>() {
             @Override
             protected Date getRawValue(AuditLog object) {
                 return object.getLogTime();
@@ -395,7 +395,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
 
         table.addColumn(new DismissColumn(alertModelProvider), constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<AuditLog> messageColumn = new TextColumnWithTooltip<AuditLog>() {
+        AbstractTextColumnWithTooltip<AuditLog> messageColumn = new AbstractTextColumnWithTooltip<AuditLog>() {
             @Override
             public String getValue(AuditLog object) {
                 return object.getMessage();
@@ -431,7 +431,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
     }
 
     void initTaskTable(SimpleActionTable<Job> taskTable) {
-        ImageResourceColumn<Job> taskStatusColumn = new ImageResourceColumn<Job>() {
+        AbstractImageResourceColumn<Job> taskStatusColumn = new AbstractImageResourceColumn<Job>() {
             @Override
             public ImageResource getValue(Job object) {
                 EntityModel entityModel = new EntityModel();
@@ -442,7 +442,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
 
         taskTable.addColumn(taskStatusColumn, constants.statusTask(), "30px"); //$NON-NLS-1$
 
-        FullDateTimeColumn<Job> timeColumn = new FullDateTimeColumn<Job>() {
+        AbstractFullDateTimeColumn<Job> timeColumn = new AbstractFullDateTimeColumn<Job>() {
             @Override
             protected Date getRawValue(Job object) {
                 return object.getEndTime() == null ? object.getStartTime() : object.getEndTime();
@@ -450,7 +450,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         };
         taskTable.addColumn(timeColumn, constants.timeTask(), "160px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Job> descriptionColumn = new TextColumnWithTooltip<Job>() {
+        AbstractTextColumnWithTooltip<Job> descriptionColumn = new AbstractTextColumnWithTooltip<Job>() {
             @Override
             public String getValue(Job object) {
                 return object.getDescription();
@@ -507,7 +507,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         }
     }
 
-    class DismissAuditLogImageButtonCell extends ImageButtonCell<AuditLog> {
+    class DismissAuditLogImageButtonCell extends AbstractImageButtonCell<AuditLog> {
 
         AlertModelProvider alertModelProvider;
 

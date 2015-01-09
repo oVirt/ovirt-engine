@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
@@ -19,8 +19,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostVm
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractPercentColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractUptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
@@ -51,7 +51,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
 
         getTable().addColumn(new VmStatusColumn<VM>(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> nameColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getName();
@@ -63,7 +63,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         VmTypeColumn typeColumn = new VmTypeColumn();
         getTable().addColumn(typeColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> clusterColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> clusterColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getVdsGroupName();
@@ -72,7 +72,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         clusterColumn.makeSortable();
         getTable().addColumn(clusterColumn, constants.clusterVm(), "160px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> ipColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> ipColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getVmIp();
@@ -81,7 +81,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         ipColumn.makeSortable();
         getTable().addColumn(ipColumn, constants.ipVm(), "200px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> fqdnColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> fqdnColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getVmFQDN();
@@ -90,7 +90,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         fqdnColumn.makeSortable();
         getTable().addColumn(fqdnColumn, constants.fqdn(), "200px"); //$NON-NLS-1$
 
-        PercentColumn<VM> memColumn = new PercentColumn<VM>() {
+        AbstractPercentColumn<VM> memColumn = new AbstractPercentColumn<VM>() {
             @Override
             public Integer getProgressValue(VM object) {
                 return object.getUsageMemPercent();
@@ -99,7 +99,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         memColumn.makeSortable();
         getTable().addColumn(memColumn, constants.memoryVm(), "120px"); //$NON-NLS-1$
 
-        PercentColumn<VM> cpuColumn = new PercentColumn<VM>() {
+        AbstractPercentColumn<VM> cpuColumn = new AbstractPercentColumn<VM>() {
             @Override
             public Integer getProgressValue(VM object) {
                 return object.getUsageCpuPercent();
@@ -108,7 +108,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         cpuColumn.makeSortable();
         getTable().addColumn(cpuColumn, constants.cpuVm(), "120px"); //$NON-NLS-1$
 
-        PercentColumn<VM> netColumn = new PercentColumn<VM>() {
+        AbstractPercentColumn<VM> netColumn = new AbstractPercentColumn<VM>() {
             @Override
             public Integer getProgressValue(VM object) {
                 return object.getUsageNetworkPercent();
@@ -117,7 +117,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         netColumn.makeSortable();
         getTable().addColumn(netColumn, constants.networkVm(), "120px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
+        AbstractTextColumnWithTooltip<VM> statusColumn = new AbstractEnumColumn<VM, VMStatus>() {
             @Override
             protected VMStatus getRawValue(VM object) {
                 // check, if the current host is a target for the migration, then override status
@@ -132,7 +132,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         statusColumn.makeSortable();
         getTable().addColumn(statusColumn, constants.statusVm(), "130px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> uptimeColumn = new UptimeColumn<VM>() {
+        AbstractTextColumnWithTooltip<VM> uptimeColumn = new AbstractUptimeColumn<VM>() {
             @Override
             protected Double getRawValue(VM object) {
                 return object.getRoundedElapsedTime();

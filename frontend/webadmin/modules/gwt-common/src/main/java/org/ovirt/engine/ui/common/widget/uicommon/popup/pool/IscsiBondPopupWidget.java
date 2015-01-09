@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.IscsiBondModel;
@@ -89,7 +89,7 @@ public class IscsiBondPopupWidget extends AbstractModelBoundPopupWidget<IscsiBon
     private void initNetworksTable(CommonApplicationConstants constants) {
         networksTable.enableColumnResizing();
 
-        TextColumnWithTooltip<Network> nameColumn = new TextColumnWithTooltip<Network>() {
+        AbstractTextColumnWithTooltip<Network> nameColumn = new AbstractTextColumnWithTooltip<Network>() {
             @Override
             public String getValue(Network network) {
                 return network.getName();
@@ -97,7 +97,7 @@ public class IscsiBondPopupWidget extends AbstractModelBoundPopupWidget<IscsiBon
         };
         networksTable.addColumn(nameColumn, constants.name(), "40%"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Network> descriptionColumn = new TextColumnWithTooltip<Network>() {
+        AbstractTextColumnWithTooltip<Network> descriptionColumn = new AbstractTextColumnWithTooltip<Network>() {
             @Override
             public String getValue(Network network) {
                 return network.getDescription();
@@ -111,7 +111,7 @@ public class IscsiBondPopupWidget extends AbstractModelBoundPopupWidget<IscsiBon
     private void initConnectionsTable(CommonApplicationConstants constants) {
         connectionsTable.enableColumnResizing();
 
-        TextColumnWithTooltip<StorageServerConnections> iqnColumn = new TextColumnWithTooltip<StorageServerConnections>() {
+        AbstractTextColumnWithTooltip<StorageServerConnections> iqnColumn = new AbstractTextColumnWithTooltip<StorageServerConnections>() {
             @Override
             public String getValue(StorageServerConnections conn) {
                 return conn.getiqn();
@@ -119,7 +119,7 @@ public class IscsiBondPopupWidget extends AbstractModelBoundPopupWidget<IscsiBon
         };
         connectionsTable.addColumn(iqnColumn, constants.iqn(), "40%"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<StorageServerConnections> addressColumn = new TextColumnWithTooltip<StorageServerConnections>() {
+        AbstractTextColumnWithTooltip<StorageServerConnections> addressColumn = new AbstractTextColumnWithTooltip<StorageServerConnections>() {
             @Override
             public String getValue(StorageServerConnections conn) {
                 return conn.getconnection();
@@ -127,7 +127,7 @@ public class IscsiBondPopupWidget extends AbstractModelBoundPopupWidget<IscsiBon
         };
         connectionsTable.addColumn(addressColumn, constants.addressSanStorage(), "30%"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<StorageServerConnections> portColumn = new TextColumnWithTooltip<StorageServerConnections>() {
+        AbstractTextColumnWithTooltip<StorageServerConnections> portColumn = new AbstractTextColumnWithTooltip<StorageServerConnections>() {
             @Override
             public String getValue(StorageServerConnections conn) {
                 return conn.getport();

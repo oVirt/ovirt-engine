@@ -5,7 +5,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.resources.client.ResourcePrototype;
 
-public class VmImageColumn<T> extends UserPortalImageResourceColumn<T> {
+public class VmImageColumn<T> extends AbstractUserPortalImageResourceColumn<T> {
 
     public interface OsTypeExtractor<T> {
         int extractOsType(T item);

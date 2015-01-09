@@ -7,7 +7,7 @@ import com.google.gwt.resources.client.ImageResource;
 /**
  * Image column that corresponds to XAML {@code HistorySeverityTemplate}.
  */
-public class AuditLogSeverityColumn extends ImageResourceColumn<AuditLog> {
+public class AuditLogSeverityColumn extends AbstractImageResourceColumn<AuditLog> {
 
     @Override
     public ImageResource getValue(AuditLog log) {

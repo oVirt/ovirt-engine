@@ -8,7 +8,7 @@ import org.ovirt.engine.core.searchbackend.ClusterConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
@@ -48,7 +48,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
     void initTable(final ApplicationResources resources, final ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        TextColumnWithTooltip<VDSGroup> nameColumn = new TextColumnWithTooltip<VDSGroup>() {
+        AbstractTextColumnWithTooltip<VDSGroup> nameColumn = new AbstractTextColumnWithTooltip<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
                 return object.getName();
@@ -61,7 +61,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
         getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-            TextColumnWithTooltip<VDSGroup> dataCenterColumn = new TextColumnWithTooltip<VDSGroup>() {
+            AbstractTextColumnWithTooltip<VDSGroup> dataCenterColumn = new AbstractTextColumnWithTooltip<VDSGroup>() {
                 @Override
                 public String getValue(VDSGroup object) {
                     return object.getStoragePoolName();
@@ -70,7 +70,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
             getTable().addColumn(dataCenterColumn, constants.dcCluster(), "150px"); //$NON-NLS-1$
         }
 
-        TextColumnWithTooltip<VDSGroup> versionColumn = new TextColumnWithTooltip<VDSGroup>() {
+        AbstractTextColumnWithTooltip<VDSGroup> versionColumn = new AbstractTextColumnWithTooltip<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
                 return object.getCompatibilityVersion().getValue();
@@ -78,7 +78,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
         };
         getTable().addColumn(versionColumn, constants.comptVersCluster(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VDSGroup> descColumn = new TextColumnWithTooltip<VDSGroup>() {
+        AbstractTextColumnWithTooltip<VDSGroup> descColumn = new AbstractTextColumnWithTooltip<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
                 return object.getDescription();
@@ -88,7 +88,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
         getTable().addColumn(descColumn, constants.descriptionCluster(), "300px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-            TextColumnWithTooltip<VDSGroup> cpuTypeColumn = new TextColumnWithTooltip<VDSGroup>() {
+            AbstractTextColumnWithTooltip<VDSGroup> cpuTypeColumn = new AbstractTextColumnWithTooltip<VDSGroup>() {
                 @Override
                 public String getValue(VDSGroup object) {
                     return object.getCpuName();
@@ -97,7 +97,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
             getTable().addColumn(cpuTypeColumn, constants.cpuTypeCluster(), "150px"); //$NON-NLS-1$
         }
 
-        TextColumnWithTooltip<VDSGroup> hostCountColumn = new TextColumnWithTooltip<VDSGroup>() {
+        AbstractTextColumnWithTooltip<VDSGroup> hostCountColumn = new AbstractTextColumnWithTooltip<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
                 if (object.getGroupHostsAndVms() == null) {
@@ -109,7 +109,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
 
         getTable().addColumn(hostCountColumn, constants.hostCount(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VDSGroup> vmCountColumn = new TextColumnWithTooltip<VDSGroup>() {
+        AbstractTextColumnWithTooltip<VDSGroup> vmCountColumn = new AbstractTextColumnWithTooltip<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
                 if (object.getGroupHostsAndVms() == null) {

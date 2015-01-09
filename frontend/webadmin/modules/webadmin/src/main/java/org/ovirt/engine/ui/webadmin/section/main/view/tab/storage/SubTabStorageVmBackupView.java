@@ -10,8 +10,8 @@ import org.ovirt.engine.ui.common.SubTableResources;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.ActionCellTable;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
@@ -24,7 +24,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageVmBackupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.GeneralDateTimeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractGeneralDateTimeColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -83,7 +83,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
     void initVmTable(ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> nameColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getName();
@@ -92,7 +92,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameVm(), "95px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> templateColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> templateColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return vmTemplateNameRenderer.render(object);
@@ -101,7 +101,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         templateColumn.makeSortable();
         getTable().addColumn(templateColumn, constants.templateVm(), "95px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> originColumn = new EnumColumn<VM, OriginType>() {
+        AbstractTextColumnWithTooltip<VM> originColumn = new AbstractEnumColumn<VM, OriginType>() {
             @Override
             protected OriginType getRawValue(VM object) {
                 return object.getOrigin();
@@ -110,7 +110,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         originColumn.makeSortable();
         getTable().addColumn(originColumn, constants.originVm(), "95px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> memoryColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> memoryColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return String.valueOf(object.getVmMemSizeMb()) + " MB"; //$NON-NLS-1$
@@ -119,7 +119,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         memoryColumn.makeSortable();
         getTable().addColumn(memoryColumn, constants.memoryVm(), "95px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> cpuColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> cpuColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return String.valueOf(object.getNumOfCpus());
@@ -128,7 +128,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         cpuColumn.makeSortable();
         getTable().addColumn(cpuColumn, constants.cpusVm(), "95px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> archColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> archColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return String.valueOf(object.getClusterArch());
@@ -137,7 +137,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         archColumn.makeSortable();
         getTable().addColumn(archColumn, constants.architectureVm(), "95px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> diskColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> diskColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return String.valueOf(object.getDiskMap().size());
@@ -146,7 +146,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         diskColumn.makeSortable();
         getTable().addColumn(diskColumn, constants.disksVm(), "95px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> creationDateColumn = new GeneralDateTimeColumn<VM>() {
+        AbstractTextColumnWithTooltip<VM> creationDateColumn = new AbstractGeneralDateTimeColumn<VM>() {
             @Override
             protected Date getRawValue(VM object) {
                 return object.getVmCreationDate();
@@ -155,7 +155,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         creationDateColumn.makeSortable();
         getTable().addColumn(creationDateColumn, constants.creationDateVm(), "95px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> exportDateColumn = new GeneralDateTimeColumn<VM>() {
+        AbstractTextColumnWithTooltip<VM> exportDateColumn = new AbstractGeneralDateTimeColumn<VM>() {
             @Override
             protected Date getRawValue(VM object) {
                 return object.getExportDate();
@@ -188,7 +188,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
             }
         }, GWT.<Resources> create(SubTableResources.class));
 
-        TextColumnWithTooltip<String> nameColumn = new TextColumnWithTooltip<String>() {
+        AbstractTextColumnWithTooltip<String> nameColumn = new AbstractTextColumnWithTooltip<String>() {
             @Override
             public String getValue(String object) {
                 return object;

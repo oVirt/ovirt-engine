@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.renderer.GlusterRebalanceDateTimeRenderer;
-import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeRebalanceStatusModel;
@@ -22,8 +22,8 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeRebalanceStatusPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.widget.table.column.HumanReadableTimeColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.RebalanceFileSizeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractHumanReadableTimeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractRebalanceFileSizeColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -133,21 +133,21 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
 
         stopTimeEditor = getInstanceOfDateEditor();
 
-        rebalanceHostsTable.addEntityModelColumn(new EntityModelTextColumn<GlusterVolumeTaskStatusForHost>() {
+        rebalanceHostsTable.addEntityModelColumn(new AbstractEntityModelTextColumn<GlusterVolumeTaskStatusForHost>() {
             @Override
             protected String getText(GlusterVolumeTaskStatusForHost entity) {
                 return entity.getHostName();
             }
         }, constants.rebalanceSessionHost());
 
-        rebalanceHostsTable.addEntityModelColumn(new EntityModelTextColumn<GlusterVolumeTaskStatusForHost>() {
+        rebalanceHostsTable.addEntityModelColumn(new AbstractEntityModelTextColumn<GlusterVolumeTaskStatusForHost>() {
             @Override
             protected String getText(GlusterVolumeTaskStatusForHost entity) {
                 return entity.getFilesMoved() + "";
             }
         }, getColumnHeaderForFilesMoved());
 
-        rebalanceHostsTable.addEntityModelColumn(new RebalanceFileSizeColumn<EntityModel>(messages) {
+        rebalanceHostsTable.addEntityModelColumn(new AbstractRebalanceFileSizeColumn<EntityModel>(messages) {
 
             @Override
             protected Long getRawValue(EntityModel object) {
@@ -155,7 +155,7 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
             }
         }, constants.rebalanceSize());
 
-        rebalanceHostsTable.addEntityModelColumn(new EntityModelTextColumn<GlusterVolumeTaskStatusForHost>() {
+        rebalanceHostsTable.addEntityModelColumn(new AbstractEntityModelTextColumn<GlusterVolumeTaskStatusForHost>() {
 
             @Override
             protected String getText(GlusterVolumeTaskStatusForHost entity) {
@@ -163,7 +163,7 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
             }
         }, constants.rebalanceScannedFileCount());
 
-        rebalanceHostsTable.addEntityModelColumn(new EntityModelTextColumn<GlusterVolumeTaskStatusForHost>() {
+        rebalanceHostsTable.addEntityModelColumn(new AbstractEntityModelTextColumn<GlusterVolumeTaskStatusForHost>() {
             @Override
             protected String getText(GlusterVolumeTaskStatusForHost entity) {
                 return String.valueOf(entity.getFilesFailed());
@@ -171,7 +171,7 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
         }, constants.rebalanceFailedFileCount());
 
         if (isSkippedFileCountNeeded()){
-            rebalanceHostsTable.addEntityModelColumn(new EntityModelTextColumn<GlusterVolumeTaskStatusForHost>() {
+            rebalanceHostsTable.addEntityModelColumn(new AbstractEntityModelTextColumn<GlusterVolumeTaskStatusForHost>() {
                 @Override
                 protected String getText(GlusterVolumeTaskStatusForHost entity) {
                     return String.valueOf(entity.getFilesSkipped());
@@ -179,14 +179,14 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
             }, constants.rebalanceSkippedFileCount());
         }
 
-        rebalanceHostsTable.addEntityModelColumn(new EntityModelTextColumn<GlusterVolumeTaskStatusForHost>() {
+        rebalanceHostsTable.addEntityModelColumn(new AbstractEntityModelTextColumn<GlusterVolumeTaskStatusForHost>() {
             @Override
             protected String getText(GlusterVolumeTaskStatusForHost entity) {
                 return entity.getStatus().toString();
             }
         }, constants.rebalanceStatus());
 
-        rebalanceHostsTable.addEntityModelColumn(new HumanReadableTimeColumn<EntityModel>() {
+        rebalanceHostsTable.addEntityModelColumn(new AbstractHumanReadableTimeColumn<EntityModel>() {
 
             @Override
             protected Double getRawValue(EntityModel object) {

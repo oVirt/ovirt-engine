@@ -17,9 +17,9 @@ import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.cell.CellWithElementId;
 import org.ovirt.engine.ui.common.widget.table.cell.StatusCompositeCellWithElementId;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.SortableColumnWithElementId;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractSortableColumnWithElementId;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
@@ -36,12 +36,12 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.LineChartProgressBarColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.OneColorPercentColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.ProgressBarColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractLineChartProgressBarColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractOneColorPercentColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractPercentColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractProgressBarColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ReasonColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractUptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
@@ -81,7 +81,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         vmTypeColumn.makeSortable(VmConditionFieldAutoCompleter.TYPE);
         getTable().addColumn(vmTypeColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> nameColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> nameColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getName();
@@ -93,7 +93,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         CommentColumn<VM> commentColumn = new CommentColumn<VM>();
         getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> hostColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> hostColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getRunOnVdsName();
@@ -102,7 +102,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         hostColumn.makeSortable(VmConditionFieldAutoCompleter.HOST);
         getTable().addColumn(hostColumn, constants.hostVm(), "120px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> ipColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> ipColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getVmIp();
@@ -111,7 +111,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         ipColumn.makeSortable(VmConditionFieldAutoCompleter.IP);
         getTable().addColumn(ipColumn, constants.ipVm(), "120px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> fqdnColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> fqdnColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getVmFQDN();
@@ -121,7 +121,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         fqdnColumn.makeSortable(VmConditionFieldAutoCompleter.FQDN);
         getTable().addColumn(fqdnColumn, constants.fqdn(), "120px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> clusterColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> clusterColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getVdsGroupName();
@@ -130,7 +130,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         clusterColumn.makeSortable(VmConditionFieldAutoCompleter.CLUSTER);
         getTable().addColumn(clusterColumn, constants.clusterVm(), "120px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> dcColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> dcColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getStoragePoolName();
@@ -170,7 +170,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         networkColumn.makeSortable(VmConditionFieldAutoCompleter.NETWORK_USAGE);
         getTable().addColumn(networkColumn, constants.networkVm(), "70px"); //$NON-NLS-1$
 
-        PercentColumn<VM> migrationProgressColumn = new OneColorPercentColumn<VM>(ProgressBarColumn.ProgressBarColors.GREEN) {
+        AbstractPercentColumn<VM> migrationProgressColumn = new AbstractOneColorPercentColumn<VM>(AbstractProgressBarColumn.ProgressBarColors.GREEN) {
 
             @Override
             public Integer getProgressValue(VM object) {
@@ -180,7 +180,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         migrationProgressColumn.makeSortable(VmConditionFieldAutoCompleter.MIGRATION_PROGRESS_PERCENT);
         getTable().addColumn(migrationProgressColumn, constants.migrationProgress(), "70px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> displayColumn = new EnumColumn<VM, UnitVmModel.GraphicsTypes>() {
+        AbstractTextColumnWithTooltip<VM> displayColumn = new AbstractEnumColumn<VM, UnitVmModel.GraphicsTypes>() {
             @Override
             protected UnitVmModel.GraphicsTypes getRawValue(VM vm) {
                 if ((vm.getStatus() == VMStatus.Down) || (vm.getStatus() == VMStatus.ImageLocked)) {
@@ -193,7 +193,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         };
         getTable().addColumn(displayColumn, constants.displayVm(), "70px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
+        AbstractTextColumnWithTooltip<VM> statusColumn = new AbstractEnumColumn<VM, VMStatus>() {
             @Override
             public VMStatus getRawValue(VM object) {
                 return object.getStatus();
@@ -207,7 +207,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                         statusColumn,
                         reasonColumn)));
 
-        SortableColumnWithElementId<VM, VM> statusTextColumn = new SortableColumnWithElementId<VM, VM>(compositeCell) {
+        AbstractSortableColumnWithElementId<VM, VM> statusTextColumn = new AbstractSortableColumnWithElementId<VM, VM>(compositeCell) {
             @Override
             public VM getValue(VM object) {
                 return object;
@@ -216,7 +216,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         statusTextColumn.makeSortable(VmConditionFieldAutoCompleter.STATUS);
         getTable().addColumn(statusTextColumn, constants.statusVm(), "80px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> uptimeColumn = new UptimeColumn<VM>() {
+        AbstractTextColumnWithTooltip<VM> uptimeColumn = new AbstractUptimeColumn<VM>() {
             @Override
             public Double getRawValue(VM object) {
                 return object.getRoundedElapsedTime();
@@ -225,7 +225,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         uptimeColumn.makeSortable(VmConditionFieldAutoCompleter.UPTIME);
         getTable().addColumn(uptimeColumn, constants.uptimeVm(), "100px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VM> descriptionColumn = new TextColumnWithTooltip<VM>() {
+        AbstractTextColumnWithTooltip<VM> descriptionColumn = new AbstractTextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getDescription();
@@ -413,7 +413,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         }
     }
 
-    abstract class ColumnResizeTableLineChartProgressBar extends LineChartProgressBarColumn<VM> {
+    abstract class ColumnResizeTableLineChartProgressBar extends AbstractLineChartProgressBarColumn<VM> {
 
         @Override
         protected String getActualWidth() {

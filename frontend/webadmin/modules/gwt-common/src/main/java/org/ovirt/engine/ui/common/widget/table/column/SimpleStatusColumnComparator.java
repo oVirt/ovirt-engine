@@ -3,14 +3,14 @@ package org.ovirt.engine.ui.common.widget.table.column;
 import java.util.Comparator;
 
 /**
- * A wrapper for {@link SimpleStatusImageComparator} that uses an {@link ImageResourceColumn} to extract image values.
+ * A wrapper for {@link SimpleStatusImageComparator} that uses an {@link AbstractImageResourceColumn} to extract image values.
  */
 public class SimpleStatusColumnComparator<T> implements Comparator<T> {
 
-    private final ImageResourceColumn<T> renderingColumn;
+    private final AbstractImageResourceColumn<T> renderingColumn;
     private final SimpleStatusImageComparator imageComparator;
 
-    public SimpleStatusColumnComparator(ImageResourceColumn<T> renderingColumn) {
+    public SimpleStatusColumnComparator(AbstractImageResourceColumn<T> renderingColumn) {
         this.renderingColumn = renderingColumn;
         imageComparator = new SimpleStatusImageComparator();
     }

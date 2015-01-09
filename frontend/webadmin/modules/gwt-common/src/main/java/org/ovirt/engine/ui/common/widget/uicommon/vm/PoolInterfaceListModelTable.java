@@ -6,13 +6,13 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.BooleanColumn;
-import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractBooleanColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.NicActivateStatusColumn;
-import org.ovirt.engine.ui.common.widget.table.column.RxTxRateColumn;
-import org.ovirt.engine.ui.common.widget.table.column.SumUpColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractSumUpColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
@@ -33,7 +33,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
     public void initTable(final CommonApplicationConstants constants) {
         getTable().addColumn(new NicActivateStatusColumn<VmNetworkInterface>(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmNetworkInterface> nameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> nameColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getName();
@@ -41,7 +41,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
         };
         getTable().addColumn(nameColumn, constants.nameInterface());
 
-        CheckboxColumn<VmNetworkInterface> pluggedColumn = new CheckboxColumn<VmNetworkInterface>() {
+        AbstractCheckboxColumn<VmNetworkInterface> pluggedColumn = new AbstractCheckboxColumn<VmNetworkInterface>() {
             @Override
             public Boolean getValue(VmNetworkInterface object) {
                 return object.isPlugged();
@@ -55,7 +55,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
 
         getTable().addColumnWithHtmlHeader(pluggedColumn, constants.plugged(), "60px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmNetworkInterface> networkNameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> networkNameColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getNetworkName();
@@ -63,7 +63,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
         };
         getTable().addColumn(networkNameColumn, constants.networkNameInterface());
 
-        TextColumnWithTooltip<VmNetworkInterface> profileNameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> profileNameColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getVnicProfileName();
@@ -72,8 +72,8 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
 
         getTable().addColumn(profileNameColumn, constants.profileNameInterface());
 
-        BooleanColumn<VmNetworkInterface> linkStateColumn =
-                new BooleanColumn<VmNetworkInterface>(constants.linkedNetworkInterface(),
+        AbstractBooleanColumn<VmNetworkInterface> linkStateColumn =
+                new AbstractBooleanColumn<VmNetworkInterface>(constants.linkedNetworkInterface(),
                         constants.unlinkedNetworkInterface()) {
                     @Override
                     protected Boolean getRawValue(VmNetworkInterface object) {
@@ -83,7 +83,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
 
         getTable().addColumnWithHtmlHeader(linkStateColumn, constants.linkStateNetworkInterface(), "65px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VmNetworkInterface> typeColumn = new EnumColumn<VmNetworkInterface, VmInterfaceType>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> typeColumn = new AbstractEnumColumn<VmNetworkInterface, VmInterfaceType>() {
             @Override
             protected VmInterfaceType getRawValue(VmNetworkInterface object) {
                 return VmInterfaceType.forValue(object.getType());
@@ -91,7 +91,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
         };
         getTable().addColumn(typeColumn, constants.typeInterface());
 
-        TextColumnWithTooltip<VmNetworkInterface> macColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> macColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getMacAddress();
@@ -99,7 +99,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
         };
         getTable().addColumn(macColumn, constants.macInterface());
 
-        TextColumnWithTooltip<VmNetworkInterface> speedColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> speedColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 if (object.getSpeed() != null) {
@@ -112,7 +112,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
         getTable().addColumnWithHtmlHeader(speedColumn,
                 templates.sub(constants.speedInterface(), constants.mbps()).asString());
 
-        TextColumnWithTooltip<VmNetworkInterface> rxColumn = new RxTxRateColumn<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> rxColumn = new AbstractRxTxRateColumn<VmNetworkInterface>() {
             @Override
             protected Double getRate(VmNetworkInterface object) {
                 return object.getStatistics().getReceiveRate();
@@ -130,7 +130,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
         getTable().addColumnWithHtmlHeader(rxColumn,
                 templates.sub(constants.rxRate(), constants.mbps()).asString());
 
-        TextColumnWithTooltip<VmNetworkInterface> txColumn = new RxTxRateColumn<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> txColumn = new AbstractRxTxRateColumn<VmNetworkInterface>() {
             @Override
             protected Double getRate(VmNetworkInterface object) {
                 return object.getStatistics().getTransmitRate();
@@ -148,7 +148,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
         getTable().addColumnWithHtmlHeader(txColumn,
                 templates.sub(constants.txRate(), constants.mbps()).asString());
 
-        TextColumnWithTooltip<VmNetworkInterface> dropsColumn = new SumUpColumn<VmNetworkInterface>() {
+        AbstractTextColumnWithTooltip<VmNetworkInterface> dropsColumn = new AbstractSumUpColumn<VmNetworkInterface>() {
             @Override
             protected Double[] getRawValue(VmNetworkInterface object) {
                 Double receiveDropRate = object != null ? object.getStatistics().getReceiveDropRate() : null;

@@ -9,7 +9,7 @@ import com.google.gwt.resources.client.ImageResource;
 /**
  * Image column that corresponds to XAML {@code PermissionTypeDataTemplate}.
  */
-public class IsProblematicImportVmColumn extends WebAdminImageResourceColumn<Object> {
+public class IsProblematicImportVmColumn extends AbstractWebAdminImageResourceColumn<Object> {
 
     private final List<VM> problematicItems;
 

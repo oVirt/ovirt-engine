@@ -7,7 +7,7 @@ import com.google.gwt.resources.client.ImageResource;
 /**
  * Image column that corresponds to XAML {@code UserStatusTemplate}.
  */
-public class UserStatusColumn extends WebAdminImageResourceColumn<DbUser> {
+public class UserStatusColumn extends AbstractWebAdminImageResourceColumn<DbUser> {
 
     @Override
     public ImageResource getValue(DbUser user) {

@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
@@ -12,7 +12,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class VmCountColumn extends SafeHtmlColumn<VDS> {
+public class VmCountColumn extends AbstractSafeHtmlColumn<VDS> {
     private static ApplicationTemplates templates = GWT.create(ApplicationTemplates.class);
     private static final ApplicationMessages messages = GWT.create(ApplicationMessages.class);
     private static final ApplicationResources resources = GWT.create(ApplicationResources.class);

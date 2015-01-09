@@ -11,10 +11,10 @@ import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.ViewRadioGroup;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractNullableNumberColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.table.column.NicActivateStatusColumn;
-import org.ovirt.engine.ui.common.widget.table.column.NullableNumberColumn;
-import org.ovirt.engine.ui.common.widget.table.column.RxTxRateColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkVmFilter;
@@ -115,30 +115,30 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
 
     private final VmStatusColumn<PairQueryable<VmNetworkInterface, VM>> vmStatusColumn =
             new VmStatusColumn<PairQueryable<VmNetworkInterface, VM>>();
-    private final TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>> nameColumn =
-            new TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>>() {
+    private final AbstractTextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>> nameColumn =
+            new AbstractTextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>>() {
                 @Override
                 public String getValue(PairQueryable<VmNetworkInterface, VM> object) {
                     return object.getSecond().getName();
                 }
             };
-    private final TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>> clusterColumn =
-            new TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>>() {
+    private final AbstractTextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>> clusterColumn =
+            new AbstractTextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>>() {
                 @Override
                 public String getValue(PairQueryable<VmNetworkInterface, VM> object) {
                     return object.getSecond().getVdsGroupName();
                 }
             };
-    private final TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>> ipColumn =
-            new TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>>() {
+    private final AbstractTextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>> ipColumn =
+            new AbstractTextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>>() {
                 @Override
                 public String getValue(PairQueryable<VmNetworkInterface, VM> object) {
                     return object.getSecond().getVmIp();
                 }
             };
 
-    private final TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>> fqdnColumn =
-            new TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>>() {
+    private final AbstractTextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>> fqdnColumn =
+            new AbstractTextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>>() {
                 @Override
                 public String getValue(PairQueryable<VmNetworkInterface, VM> object) {
                     setTitle(object.getSecond().getVmFQDN());
@@ -149,16 +149,16 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
     private final NicActivateStatusColumn<PairQueryable<VmNetworkInterface, VM>> nicActivateStatusColumn =
             new NicActivateStatusColumn<PairQueryable<VmNetworkInterface, VM>>();
 
-    private final TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>> vnicNameColumn =
-            new TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>>() {
+    private final AbstractTextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>> vnicNameColumn =
+            new AbstractTextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>>() {
                 @Override
                 public String getValue(PairQueryable<VmNetworkInterface, VM> object) {
                     return object.getFirst().getName();
                 }
             };
 
-    private final TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>> rxColumn =
-            new RxTxRateColumn<PairQueryable<VmNetworkInterface, VM>>() {
+    private final AbstractTextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>> rxColumn =
+            new AbstractRxTxRateColumn<PairQueryable<VmNetworkInterface, VM>>() {
                 @Override
                 protected Double getRate(PairQueryable<VmNetworkInterface, VM> object) {
                     return object.getFirst().getStatistics().getReceiveRate();
@@ -174,8 +174,8 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
                 }
             };
 
-    private final TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>> txColumn =
-            new RxTxRateColumn<PairQueryable<VmNetworkInterface, VM>>() {
+    private final AbstractTextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>> txColumn =
+            new AbstractRxTxRateColumn<PairQueryable<VmNetworkInterface, VM>>() {
                 @Override
                 protected Double getRate(PairQueryable<VmNetworkInterface, VM> object) {
                     return object.getFirst().getStatistics().getTransmitRate();
@@ -191,24 +191,24 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
                 }
             };
 
-    private final NullableNumberColumn<PairQueryable<VmNetworkInterface, VM>> totalRxColumn =
-            new NullableNumberColumn<PairQueryable<VmNetworkInterface, VM>>() {
+    private final AbstractNullableNumberColumn<PairQueryable<VmNetworkInterface, VM>> totalRxColumn =
+            new AbstractNullableNumberColumn<PairQueryable<VmNetworkInterface, VM>>() {
         @Override
         protected Number getRawValue(PairQueryable<VmNetworkInterface, VM> object) {
             return object.getFirst() == null ? null : object.getFirst().getStatistics().getReceivedBytes();
         }
     };
 
-    private final NullableNumberColumn<PairQueryable<VmNetworkInterface, VM>> totalTxColumn =
-            new NullableNumberColumn<PairQueryable<VmNetworkInterface, VM>>() {
+    private final AbstractNullableNumberColumn<PairQueryable<VmNetworkInterface, VM>> totalTxColumn =
+            new AbstractNullableNumberColumn<PairQueryable<VmNetworkInterface, VM>>() {
         @Override
         protected Number getRawValue(PairQueryable<VmNetworkInterface, VM> object) {
             return object.getFirst() == null ? null : object.getFirst().getStatistics().getTransmittedBytes();
         }
     };
 
-    private final TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>> descriptionColumn =
-            new TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>>() {
+    private final AbstractTextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>> descriptionColumn =
+            new AbstractTextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>>() {
                 @Override
                 public String getValue(PairQueryable<VmNetworkInterface, VM> object) {
                     return object.getSecond().getDescription();

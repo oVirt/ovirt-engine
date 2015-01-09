@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.common.widget.table.column.PermissionTypeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -27,7 +27,7 @@ public class PermissionListModelTable<P extends PermissionListModel> extends Abs
 
         getTable().addColumn(new PermissionTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Permissions> userColumn = new TextColumnWithTooltip<Permissions>() {
+        AbstractTextColumnWithTooltip<Permissions> userColumn = new AbstractTextColumnWithTooltip<Permissions>() {
             @Override
             public String getValue(Permissions object) {
                 return object.getOwnerName();
@@ -37,7 +37,7 @@ public class PermissionListModelTable<P extends PermissionListModel> extends Abs
         getTable().addColumn(userColumn, constants.userPermission(), "300px"); //$NON-NLS-1$
 
 
-        TextColumnWithTooltip<Permissions> authzColumn = new TextColumnWithTooltip<Permissions>() {
+        AbstractTextColumnWithTooltip<Permissions> authzColumn = new AbstractTextColumnWithTooltip<Permissions>() {
             @Override
             public String getValue(Permissions object) {
                 return object.getAuthz();
@@ -46,7 +46,7 @@ public class PermissionListModelTable<P extends PermissionListModel> extends Abs
         authzColumn.makeSortable();
         getTable().addColumn(authzColumn, constants.authz(), "300px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Permissions> namespaceColumn = new TextColumnWithTooltip<Permissions>() {
+        AbstractTextColumnWithTooltip<Permissions> namespaceColumn = new AbstractTextColumnWithTooltip<Permissions>() {
             @Override
             public String getValue(Permissions object) {
                 return object.getNamespace();
@@ -55,7 +55,7 @@ public class PermissionListModelTable<P extends PermissionListModel> extends Abs
         namespaceColumn.makeSortable();
         getTable().addColumn(namespaceColumn, constants.namespace(), "300px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Permissions> roleColumn = new TextColumnWithTooltip<Permissions>() {
+        AbstractTextColumnWithTooltip<Permissions> roleColumn = new AbstractTextColumnWithTooltip<Permissions>() {
             @Override
             public String getValue(Permissions object) {
                 return object.getRoleName();

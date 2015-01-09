@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportSource;
@@ -128,14 +128,14 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     void initEntityModelCellTables(final ApplicationConstants constants,
             final ApplicationTemplates templates,
             final ApplicationResources resources) {
-        externalVms.addColumn(new TextColumnWithTooltip<EntityModel<VM>>() {
+        externalVms.addColumn(new AbstractTextColumnWithTooltip<EntityModel<VM>>() {
             @Override
             public String getValue(EntityModel<VM> externalVmModel) {
                 return externalVmModel.getEntity().getName();
             }
         }, constants.name());
 
-        importedVms.addColumn(new TextColumnWithTooltip<EntityModel<VM>>() {
+        importedVms.addColumn(new AbstractTextColumnWithTooltip<EntityModel<VM>>() {
             @Override
             public String getValue(EntityModel<VM> externalVmModel) {
                 return externalVmModel.getEntity().getName();

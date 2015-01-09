@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;
-import org.ovirt.engine.ui.common.widget.table.column.BooleanColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractBooleanColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.VmInterfaceListModelTable;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
@@ -41,8 +41,8 @@ public class SubTabVirtualMachineNetworkInterfaceView extends AbstractSubTabTabl
 
                 getTable().enableColumnResizing();
 
-                BooleanColumn<VmNetworkInterface> portMirroringColumn =
-                        new BooleanColumn<VmNetworkInterface>(constants.portMirroringEnabled()) {
+                AbstractBooleanColumn<VmNetworkInterface> portMirroringColumn =
+                        new AbstractBooleanColumn<VmNetworkInterface>(constants.portMirroringEnabled()) {
                             @Override
                             public Boolean getRawValue(VmNetworkInterface object) {
                                 return object.isPortMirroring();

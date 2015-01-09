@@ -19,9 +19,9 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMode;
-import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
-import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlWithSafeHtmlTooltipColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlWithSafeHtmlTooltipColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.table.header.CheckboxHeader;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkManageModel;
@@ -143,7 +143,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
                 && !clusterNetworkModel.isExternal();
     }
 
-    private static final class NetworkNameTextColumnWithTooltip extends TextColumnWithTooltip<ClusterNetworkModel> {
+    private static final class NetworkNameTextColumnWithTooltip extends AbstractTextColumnWithTooltip<ClusterNetworkModel> {
         @Override
         public String getValue(ClusterNetworkModel clusterNetworkModel) {
             return clusterNetworkModel.getDisplayedName();
@@ -151,7 +151,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
     }
 
     private final class VmNetworkImageSafeHtmlWithSafeHtmlTooltipColumn
-            extends SafeHtmlWithSafeHtmlTooltipColumn<ClusterNetworkModel> {
+            extends AbstractSafeHtmlWithSafeHtmlTooltipColumn<ClusterNetworkModel> {
         private final ApplicationConstants constants;
 
         private VmNetworkImageSafeHtmlWithSafeHtmlTooltipColumn(ApplicationConstants constants) {
@@ -172,7 +172,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         }
     }
 
-    private final class RequiredIndicatorCheckboxColumn extends CheckboxColumn<ClusterNetworkModel> {
+    private final class RequiredIndicatorCheckboxColumn extends AbstractCheckboxColumn<ClusterNetworkModel> {
 
         private RequiredIndicatorCheckboxColumn(RequiredIndicatorFieldUpdater requiredIndicatorFieldUpdater) {
             super(requiredIndicatorFieldUpdater);
@@ -242,7 +242,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         }
     }
 
-    private final class AttachedIndicatorCheckboxColumn extends CheckboxColumn<ClusterNetworkModel> {
+    private final class AttachedIndicatorCheckboxColumn extends AbstractCheckboxColumn<ClusterNetworkModel> {
         private AttachedIndicatorCheckboxColumn(AttachedIndicatorFieldUpdater attachedIndicatorFieldUpdater) {
             super(attachedIndicatorFieldUpdater);
         }
@@ -311,7 +311,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         }
     }
 
-    private static final class MigrationNetworkIndicatorCheckboxColumn extends CheckboxColumn<ClusterNetworkModel> {
+    private static final class MigrationNetworkIndicatorCheckboxColumn extends AbstractCheckboxColumn<ClusterNetworkModel> {
         private MigrationNetworkIndicatorCheckboxColumn(boolean multipleSelectionAllowed,
                 MigrationNetworkIndicatorFieldUpdater migrationNetworkIndicatorFieldUpdater) {
             super(multipleSelectionAllowed, migrationNetworkIndicatorFieldUpdater);
@@ -343,7 +343,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         networks.asEditor().flush().setMigrationNetwork(clusterNetworkModel, value);
     }
 
-    private static final class ManagementNetworkIndicatorCheckboxColumn extends CheckboxColumn<ClusterNetworkModel> {
+    private static final class ManagementNetworkIndicatorCheckboxColumn extends AbstractCheckboxColumn<ClusterNetworkModel> {
         private final boolean multiCluster;
 
         private ManagementNetworkIndicatorCheckboxColumn(boolean multiCluster,
@@ -393,7 +393,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         networks.asEditor().flush().setDisplayNetwork(clusterNetworkModel, value);
     }
 
-    private final static class DisplayNetworkIndicatorCheckboxColumn extends CheckboxColumn<ClusterNetworkModel> {
+    private final static class DisplayNetworkIndicatorCheckboxColumn extends AbstractCheckboxColumn<ClusterNetworkModel> {
         private DisplayNetworkIndicatorCheckboxColumn(boolean multipleSelectionAllowed,
                 DisplayNetworkIndicatorFieldUpdater displayNetworkIndicatorFieldUpdater) {
             super(multipleSelectionAllowed, displayNetworkIndicatorFieldUpdater);

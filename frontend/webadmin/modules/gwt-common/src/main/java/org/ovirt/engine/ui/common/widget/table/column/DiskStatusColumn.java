@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 
 import com.google.gwt.resources.client.ImageResource;
 
-public class DiskStatusColumn extends ImageResourceColumn<Disk> {
+public class DiskStatusColumn extends AbstractImageResourceColumn<Disk> {
     @Override
     public ImageResource getValue(Disk disk) {
         if (disk.getDiskStorageType().equals(DiskStorageType.IMAGE)) {

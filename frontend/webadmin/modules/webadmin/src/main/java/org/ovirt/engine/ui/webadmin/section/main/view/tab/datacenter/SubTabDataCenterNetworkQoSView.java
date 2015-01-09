@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkQoSListModel;
@@ -42,7 +42,7 @@ public class SubTabDataCenterNetworkQoSView extends AbstractSubTabTableView<Stor
     void initTable(final ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        TextColumnWithTooltip<NetworkQoS> nameColumn = new TextColumnWithTooltip<NetworkQoS>() {
+        AbstractTextColumnWithTooltip<NetworkQoS> nameColumn = new AbstractTextColumnWithTooltip<NetworkQoS>() {
             @Override
             public String getValue(NetworkQoS object) {
                 return object.getName() == null ? "" : object.getName(); //$NON-NLS-1$
@@ -51,7 +51,7 @@ public class SubTabDataCenterNetworkQoSView extends AbstractSubTabTableView<Stor
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.networkQoSName(), "200px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<NetworkQoS> inAverageColumn = new TextColumnWithTooltip<NetworkQoS>() {
+        AbstractTextColumnWithTooltip<NetworkQoS> inAverageColumn = new AbstractTextColumnWithTooltip<NetworkQoS>() {
             @Override
             public String getValue(NetworkQoS object) {
                 return object.getInboundAverage() == null ? constants.UnlimitedNetworkQoS()
@@ -61,7 +61,7 @@ public class SubTabDataCenterNetworkQoSView extends AbstractSubTabTableView<Stor
         inAverageColumn.makeSortable();
         getTable().addColumn(inAverageColumn, constants.networkQoSInboundAverage(), "100px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<NetworkQoS> inPeakColumn = new TextColumnWithTooltip<NetworkQoS>() {
+        AbstractTextColumnWithTooltip<NetworkQoS> inPeakColumn = new AbstractTextColumnWithTooltip<NetworkQoS>() {
             @Override
             public String getValue(NetworkQoS object) {
                 return object.getInboundPeak() == null ? constants.UnlimitedNetworkQoS()
@@ -71,7 +71,7 @@ public class SubTabDataCenterNetworkQoSView extends AbstractSubTabTableView<Stor
         inPeakColumn.makeSortable();
         getTable().addColumn(inPeakColumn, constants.networkQoSInboundPeak(), "100px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<NetworkQoS> inBurstColumn = new TextColumnWithTooltip<NetworkQoS>() {
+        AbstractTextColumnWithTooltip<NetworkQoS> inBurstColumn = new AbstractTextColumnWithTooltip<NetworkQoS>() {
             @Override
             public String getValue(NetworkQoS object) {
                 return object.getInboundBurst() == null ? constants.UnlimitedNetworkQoS()
@@ -81,7 +81,7 @@ public class SubTabDataCenterNetworkQoSView extends AbstractSubTabTableView<Stor
         inBurstColumn.makeSortable();
         getTable().addColumn(inBurstColumn, constants.networkQoSInboundBurst(), "100px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<NetworkQoS> outAverageColumn = new TextColumnWithTooltip<NetworkQoS>() {
+        AbstractTextColumnWithTooltip<NetworkQoS> outAverageColumn = new AbstractTextColumnWithTooltip<NetworkQoS>() {
             @Override
             public String getValue(NetworkQoS object) {
                 return object.getOutboundAverage() == null ? constants.UnlimitedNetworkQoS()
@@ -91,7 +91,7 @@ public class SubTabDataCenterNetworkQoSView extends AbstractSubTabTableView<Stor
         outAverageColumn.makeSortable();
         getTable().addColumn(outAverageColumn, constants.networkQoSOutboundAverage(), "100px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<NetworkQoS> outPeakColumn = new TextColumnWithTooltip<NetworkQoS>() {
+        AbstractTextColumnWithTooltip<NetworkQoS> outPeakColumn = new AbstractTextColumnWithTooltip<NetworkQoS>() {
             @Override
             public String getValue(NetworkQoS object) {
                 return object.getOutboundPeak() == null ? constants.UnlimitedNetworkQoS()
@@ -101,7 +101,7 @@ public class SubTabDataCenterNetworkQoSView extends AbstractSubTabTableView<Stor
         outPeakColumn.makeSortable();
         getTable().addColumn(outPeakColumn, constants.networkQoSOutboundPeak(), "100px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<NetworkQoS> outBurstColumn = new TextColumnWithTooltip<NetworkQoS>() {
+        AbstractTextColumnWithTooltip<NetworkQoS> outBurstColumn = new AbstractTextColumnWithTooltip<NetworkQoS>() {
             @Override
             public String getValue(NetworkQoS object) {
                 return object.getOutboundBurst() == null ? constants.UnlimitedNetworkQoS()

@@ -5,7 +5,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotDetailModel;
 import com.google.gwt.resources.client.ImageResource;
 
 
-public class SnapshotDetailColumn extends ImageResourceColumn<SnapshotDetailModel> {
+public class SnapshotDetailColumn extends AbstractImageResourceColumn<SnapshotDetailModel> {
 
     @Override
     public ImageResource getValue(SnapshotDetailModel snapshotDetailModel) {

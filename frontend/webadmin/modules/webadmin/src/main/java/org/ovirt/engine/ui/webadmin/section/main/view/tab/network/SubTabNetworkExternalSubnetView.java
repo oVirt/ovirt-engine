@@ -5,8 +5,8 @@ import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet.IpVe
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkExternalSubnetListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
@@ -42,8 +42,8 @@ public class SubTabNetworkExternalSubnetView extends AbstractSubTabTableView<Net
     void initTable(ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        TextColumnWithTooltip<ExternalSubnet> nameColumn =
-                new TextColumnWithTooltip<ExternalSubnet>() {
+        AbstractTextColumnWithTooltip<ExternalSubnet> nameColumn =
+                new AbstractTextColumnWithTooltip<ExternalSubnet>() {
                     @Override
                     public String getValue(ExternalSubnet object) {
                         return object.getName();
@@ -52,8 +52,8 @@ public class SubTabNetworkExternalSubnetView extends AbstractSubTabTableView<Net
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameExternalSubnet(), "200px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<ExternalSubnet> cidrColumn =
-                new TextColumnWithTooltip<ExternalSubnet>() {
+        AbstractTextColumnWithTooltip<ExternalSubnet> cidrColumn =
+                new AbstractTextColumnWithTooltip<ExternalSubnet>() {
             @Override
             public String getValue(ExternalSubnet object) {
                 return object.getCidr();
@@ -62,8 +62,8 @@ public class SubTabNetworkExternalSubnetView extends AbstractSubTabTableView<Net
         cidrColumn.makeSortable();
         getTable().addColumn(cidrColumn, constants.cidrExternalSubnet(), "100px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<ExternalSubnet> ipVersionColumn =
-                new EnumColumn<ExternalSubnet, IpVersion>() {
+        AbstractTextColumnWithTooltip<ExternalSubnet> ipVersionColumn =
+                new AbstractEnumColumn<ExternalSubnet, IpVersion>() {
             @Override
             protected IpVersion getRawValue(ExternalSubnet object) {
                 return object.getIpVersion();
@@ -72,8 +72,8 @@ public class SubTabNetworkExternalSubnetView extends AbstractSubTabTableView<Net
         ipVersionColumn.makeSortable();
         getTable().addColumn(ipVersionColumn, constants.ipVersionExternalSubnet(), "80px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<ExternalSubnet> gatewayColumn =
-                new TextColumnWithTooltip<ExternalSubnet>() {
+        AbstractTextColumnWithTooltip<ExternalSubnet> gatewayColumn =
+                new AbstractTextColumnWithTooltip<ExternalSubnet>() {
                     @Override
                     public String getValue(ExternalSubnet object) {
                         return object.getGateway();
@@ -82,8 +82,8 @@ public class SubTabNetworkExternalSubnetView extends AbstractSubTabTableView<Net
         gatewayColumn.makeSortable();
         getTable().addColumn(gatewayColumn, constants.gatewayExternalSubnet(), "100px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<ExternalSubnet> dnsServersColumn =
-                new TextColumnWithTooltip<ExternalSubnet>() {
+        AbstractTextColumnWithTooltip<ExternalSubnet> dnsServersColumn =
+                new AbstractTextColumnWithTooltip<ExternalSubnet>() {
                     @Override
                     public String getValue(ExternalSubnet object) {
                         return StringUtils.join(object.getDnsServers(), ", "); //$NON-NLS-1$
@@ -92,8 +92,8 @@ public class SubTabNetworkExternalSubnetView extends AbstractSubTabTableView<Net
         dnsServersColumn.makeSortable();
         getTable().addColumn(dnsServersColumn, constants.dnsServersExternalSubnet(), "200px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<ExternalSubnet> externalIdColumn =
-                new TextColumnWithTooltip<ExternalSubnet>() {
+        AbstractTextColumnWithTooltip<ExternalSubnet> externalIdColumn =
+                new AbstractTextColumnWithTooltip<ExternalSubnet>() {
             @Override
             public String getValue(ExternalSubnet object) {
                 return object.getId();

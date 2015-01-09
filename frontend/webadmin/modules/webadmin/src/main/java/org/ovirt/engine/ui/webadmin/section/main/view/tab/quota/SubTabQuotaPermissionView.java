@@ -6,9 +6,9 @@ import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.ObjectNameColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractObjectNameColumn;
 import org.ovirt.engine.ui.common.widget.table.column.PermissionTypeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaPermissionListModel;
@@ -41,7 +41,7 @@ public class SubTabQuotaPermissionView extends AbstractSubTabTableView<Quota, Pe
     private void initTable(ApplicationConstants constants) {
         getTable().addColumn(new PermissionTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Permissions> userColumn = new TextColumnWithTooltip<Permissions>() {
+        AbstractTextColumnWithTooltip<Permissions> userColumn = new AbstractTextColumnWithTooltip<Permissions>() {
             @Override
             public String getValue(Permissions object) {
                 return object.getOwnerName();
@@ -50,7 +50,7 @@ public class SubTabQuotaPermissionView extends AbstractSubTabTableView<Quota, Pe
         userColumn.makeSortable();
         getTable().addColumn(userColumn, constants.userPermission());
 
-        TextColumnWithTooltip<Permissions> roleColumn = new TextColumnWithTooltip<Permissions>() {
+        AbstractTextColumnWithTooltip<Permissions> roleColumn = new AbstractTextColumnWithTooltip<Permissions>() {
             @Override
             public String getValue(Permissions object) {
                 return object.getRoleName();
@@ -59,7 +59,7 @@ public class SubTabQuotaPermissionView extends AbstractSubTabTableView<Quota, Pe
         roleColumn.makeSortable();
         getTable().addColumn(roleColumn, constants.rolePermission());
 
-        TextColumnWithTooltip<Permissions> permissionColumn = new ObjectNameColumn<Permissions>() {
+        AbstractTextColumnWithTooltip<Permissions> permissionColumn = new AbstractObjectNameColumn<Permissions>() {
             @Override
             protected Object[] getRawValue(Permissions object) {
                 return new Object[] { object.getObjectType(), object.getObjectName(), getDetailModel().getEntity(),

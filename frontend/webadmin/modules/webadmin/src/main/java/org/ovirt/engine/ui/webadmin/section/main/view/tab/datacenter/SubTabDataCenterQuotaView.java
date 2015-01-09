@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterQuotaListModel;
@@ -42,7 +42,7 @@ public class SubTabDataCenterQuotaView extends AbstractSubTabTableView<StoragePo
 
         getTable().addColumn(new QuotaDcStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Quota> nameColumn = new TextColumnWithTooltip<Quota>() {
+        AbstractTextColumnWithTooltip<Quota> nameColumn = new AbstractTextColumnWithTooltip<Quota>() {
             @Override
             public String getValue(Quota object) {
                 return object.getQuotaName() == null ? "" : object.getQuotaName(); //$NON-NLS-1$
@@ -51,7 +51,7 @@ public class SubTabDataCenterQuotaView extends AbstractSubTabTableView<StoragePo
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameQuota(), "400px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Quota> descriptionColumn = new TextColumnWithTooltip<Quota>() {
+        AbstractTextColumnWithTooltip<Quota> descriptionColumn = new AbstractTextColumnWithTooltip<Quota>() {
             @Override
             public String getValue(Quota object) {
                 return object.getDescription() == null ? "" : object.getDescription(); //$NON-NLS-1$
