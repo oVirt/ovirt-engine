@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
+import org.ovirt.engine.ui.common.widget.table.cell.ScrollableTextCell;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 
 import com.google.gwt.core.client.GWT;

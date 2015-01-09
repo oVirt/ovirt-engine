@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
+import org.ovirt.engine.ui.common.widget.table.cell.EditTextCellWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.cell.TextCellWithTooltip;
+
 import com.google.gwt.cell.client.FieldUpdater;
 
 /**

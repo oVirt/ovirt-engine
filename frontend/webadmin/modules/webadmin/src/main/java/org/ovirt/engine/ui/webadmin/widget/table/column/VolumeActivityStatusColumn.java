@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskSupport;
+import org.ovirt.engine.ui.webadmin.widget.table.cell.VolumeActivityStatusCell;
 
 import com.google.gwt.user.cellview.client.Column;
 

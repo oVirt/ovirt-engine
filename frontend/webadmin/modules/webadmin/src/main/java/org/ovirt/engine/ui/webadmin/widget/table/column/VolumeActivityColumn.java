@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.widget.table.column;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskSupport;
+import org.ovirt.engine.ui.webadmin.widget.table.cell.VolumeActivityCompositeCell;
 
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.user.cellview.client.Column;

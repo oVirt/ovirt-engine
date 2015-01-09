@@ -8,9 +8,10 @@ import java.util.Map;
 
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.system.ClientStorage;
+import org.ovirt.engine.ui.common.widget.table.cell.SafeHtmlCellWithTooltip;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
-import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlCellWithTooltip;
 import org.ovirt.engine.ui.common.widget.table.header.CheckboxHeader;
+import org.ovirt.engine.ui.common.widget.table.header.ResizableHeader;
 import org.ovirt.engine.ui.common.widget.table.header.ResizeableCheckboxHeader;
 import org.ovirt.engine.ui.uicommonweb.models.GridController;
 

@@ -6,10 +6,10 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.utils.PairQueryable;
-
 import org.ovirt.engine.ui.common.widget.table.column.SortableColumn;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.IdentifiableComparator;
+import org.ovirt.engine.ui.webadmin.widget.table.cell.VmStatusCell;
 
 /**
  * Image column that corresponds to XAML {@code VmStatusTemplate}.

@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
+import org.ovirt.engine.ui.common.widget.table.cell.TextCellWithEditableTooltip;
+
 
 /**
  * Column for displaying text using {@link TextCellWithEditableTooltip}.

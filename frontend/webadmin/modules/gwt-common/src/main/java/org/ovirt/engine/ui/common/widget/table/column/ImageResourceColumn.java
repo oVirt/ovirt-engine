@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.table.column;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.widget.table.cell.StyledImageResourceCell;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 
 import com.google.gwt.core.client.GWT;

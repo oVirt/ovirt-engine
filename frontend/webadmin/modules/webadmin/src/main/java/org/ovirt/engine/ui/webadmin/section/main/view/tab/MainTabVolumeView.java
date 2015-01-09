@@ -23,15 +23,15 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVolumePres
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.MenuCell;
+import org.ovirt.engine.ui.webadmin.widget.table.cell.MenuCell;
+import org.ovirt.engine.ui.webadmin.widget.table.cell.VolumeActivityCompositeCell;
+import org.ovirt.engine.ui.webadmin.widget.table.cell.VolumeActivitySeperatorCell;
+import org.ovirt.engine.ui.webadmin.widget.table.cell.VolumeCapacityCell;
+import org.ovirt.engine.ui.webadmin.widget.table.cell.VolumeTaskWaitingCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityCompositeCell;
-import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivitySeperatorCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeBrickStatusColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeCapacityCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeStatusColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeTaskWaitingCell;
 
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.table.column;
 import java.util.Comparator;
 
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
+import org.ovirt.engine.ui.common.widget.table.cell.TextCellWithTooltip;
 
 
 /**

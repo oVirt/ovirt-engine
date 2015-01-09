@@ -1,11 +1,12 @@
 package org.ovirt.engine.ui.userportal.widget.table.column;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.ui.common.widget.table.column.ImageWithDecorator;
+import org.ovirt.engine.ui.common.widget.ImageWithDecorator;
 import org.ovirt.engine.ui.common.widget.table.column.ImageWithDecoratorColumn;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 
 import com.google.gwt.resources.client.ImageResource;
+
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
 

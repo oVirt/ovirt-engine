@@ -167,15 +167,15 @@
        <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" />
      </Match>
      <Match>
-       <Class name="org.ovirt.engine.ui.common.widget.table.column.PasswordTextInputCell" />
+       <Class name="org.ovirt.engine.ui.common.widget.table.cell.PasswordTextInputCell" />
        <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" />
      </Match>
      <Match>
-       <Class name="org.ovirt.engine.ui.common.widget.table.column.StyledImageResourceCell" />
+       <Class name="org.ovirt.engine.ui.common.widget.table.cell.StyledImageResourceCell" />
        <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" />
      </Match>
      <Match>
-       <Class name="org.ovirt.engine.ui.common.widget.table.column.TextCellWithTooltip" />
+       <Class name="org.ovirt.engine.ui.common.widget.table.cell.TextCellWithTooltip" />
        <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" />
      </Match>
 

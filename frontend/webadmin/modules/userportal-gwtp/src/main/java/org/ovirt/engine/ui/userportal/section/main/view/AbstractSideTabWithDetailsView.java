@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.AbstractSideTabWithDetailsPresenter;
 import org.ovirt.engine.ui.userportal.widget.extended.ExtendedViewSplitLayoutPanel;
-import org.ovirt.engine.ui.userportal.widget.table.column.UserPortalSimpleActionTable;
+import org.ovirt.engine.ui.userportal.widget.table.UserPortalSimpleActionTable;
 
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.ui.IsWidget;

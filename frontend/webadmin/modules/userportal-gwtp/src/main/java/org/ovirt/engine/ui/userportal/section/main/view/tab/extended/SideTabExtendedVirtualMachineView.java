@@ -34,7 +34,7 @@ import org.ovirt.engine.ui.userportal.widget.extended.vm.TooltipCell;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.TooltipCell.TooltipProvider;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.UserPortalItemSimpleColumn;
 import org.ovirt.engine.ui.userportal.widget.refresh.UserPortalRefreshManager;
-import org.ovirt.engine.ui.userportal.widget.table.column.UserPortalSimpleActionTable;
+import org.ovirt.engine.ui.userportal.widget.table.UserPortalSimpleActionTable;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn.OsTypeExtractor;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmStatusColumn;

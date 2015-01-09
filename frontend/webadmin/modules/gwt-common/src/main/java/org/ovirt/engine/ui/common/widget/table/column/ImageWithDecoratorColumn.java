@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
+import org.ovirt.engine.ui.common.widget.ImageWithDecorator;
+import org.ovirt.engine.ui.common.widget.table.cell.DecoratedImageResouceCell;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 
 import com.google.gwt.user.cellview.client.Column;

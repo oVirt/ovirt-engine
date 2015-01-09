@@ -19,7 +19,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.RegisterVmPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.widget.table.column.CustomSelectionCell;
+import org.ovirt.engine.ui.webadmin.widget.table.cell.CustomSelectionCell;
 
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;

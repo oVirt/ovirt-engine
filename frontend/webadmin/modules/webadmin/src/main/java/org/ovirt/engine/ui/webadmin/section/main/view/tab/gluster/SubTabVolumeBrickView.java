@@ -18,12 +18,12 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeBrickPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.table.cell.MenuCell;
+import org.ovirt.engine.ui.webadmin.widget.table.cell.VolumeActivityCompositeCell;
+import org.ovirt.engine.ui.webadmin.widget.table.cell.VolumeActivitySeperatorCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.BrickStatusColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.MenuCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityCompositeCell;
-import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivitySeperatorCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityStatusColumn;
 
 import com.google.gwt.cell.client.HasCell;

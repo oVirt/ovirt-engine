@@ -1,8 +1,7 @@
 package org.ovirt.engine.ui.common.widget.table.header;
 
-import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlCellWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.cell.SafeHtmlCellWithTooltip;
 import org.ovirt.engine.ui.common.widget.table.resize.HasResizableColumns;
-import org.ovirt.engine.ui.common.widget.table.resize.ResizableHeader;
 
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.dom.client.BrowserEvents;

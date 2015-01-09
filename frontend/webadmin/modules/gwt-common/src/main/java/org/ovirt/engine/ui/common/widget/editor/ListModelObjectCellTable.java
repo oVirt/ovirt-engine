@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.PopupTableResources;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.IsEditorDriver;
-import org.ovirt.engine.ui.common.widget.table.column.RadioboxCell;
+import org.ovirt.engine.ui.common.widget.table.cell.RadioboxCell;
 import org.ovirt.engine.ui.common.widget.table.header.SelectAllCheckBoxHeader;
 import org.ovirt.engine.ui.common.widget.table.resize.ColumnResizeCellTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;

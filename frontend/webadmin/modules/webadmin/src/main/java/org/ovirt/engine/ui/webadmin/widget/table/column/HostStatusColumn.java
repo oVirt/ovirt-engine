@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.widget.table.column.SortableColumn;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.IdentifiableComparator;
+import org.ovirt.engine.ui.webadmin.widget.table.cell.HostStatusCell;
 
 public class HostStatusColumn<S> extends SortableColumn<S, VDS> {
 

@@ -8,6 +8,7 @@ import java.util.Map;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.view.client.NoSelectionModel;
+
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -34,7 +35,8 @@ import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.TabLayoutPanel;
-import org.ovirt.engine.ui.webadmin.widget.table.column.CustomSelectionCell;
+
+import org.ovirt.engine.ui.webadmin.widget.table.cell.CustomSelectionCell;
 
 public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
 

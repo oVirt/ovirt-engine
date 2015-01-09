@@ -275,7 +275,7 @@
        <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" />
      </Match>
      <Match>
-       <Class name="org.ovirt.engine.ui.webadmin.widget.table.column.CustomSelectionCell" />
+       <Class name="org.ovirt.engine.ui.webadmin.widget.table.cell.CustomSelectionCell" />
        <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" />
      </Match>
      <Match>
