@@ -71,8 +71,9 @@ public class RestApiSessionManager implements EngineSessionRefreshedHandler {
 
     private static final String SESSION_ID_HEADER = "JSESSIONID"; //$NON-NLS-1$
     private static final String SESSION_ID_KEY = "RestApiSessionId"; //$NON-NLS-1$
-    private static final String DEFAULT_SESSION_TIMEOUT = "30"; //$NON-NLS-1$
     private static final String ENGINE_AUTH_TOKEN_HEADER = "OVIRT-INTERNAL-ENGINE-AUTH-TOKEN"; //$NON-NLS-1$
+
+    private static final int DEFAULT_ENGINE_SESSION_TIMEOUT = 30;
 
     // Heartbeat (delay) between REST API keep-alive requests
     private static final int SESSION_HEARTBEAT_MS = 1000 * 60; // 1 minute
@@ -80,7 +81,7 @@ public class RestApiSessionManager implements EngineSessionRefreshedHandler {
     private final EventBus eventBus;
     private final String restApiBaseUrl;
 
-    private String restApiSessionTimeout = DEFAULT_SESSION_TIMEOUT;
+    private int restApiSessionTimeout;
     private String restApiSessionId;
 
     private boolean refreshRestApiSession = false;
@@ -94,6 +95,7 @@ public class RestApiSessionManager implements EngineSessionRefreshedHandler {
         // this causes problems in other applications, for example in the reports application.
         this.restApiBaseUrl = BaseContextPathData.getInstance().getPath() + "api/"; //$NON-NLS-1$
 
+        setSessionTimeout(DEFAULT_ENGINE_SESSION_TIMEOUT);
         eventBus.addHandler(EngineSessionRefreshedEvent.getType(), this);
     }
 
@@ -104,8 +106,20 @@ public class RestApiSessionManager implements EngineSessionRefreshedHandler {
         }
     }
 
-    public void setSessionTimeout(String sessionTimeout) {
-        this.restApiSessionTimeout = sessionTimeout;
+    public void setSessionTimeout(String engineSessionTimeout) {
+        try {
+            setSessionTimeout(Integer.valueOf(engineSessionTimeout));
+        } catch (NumberFormatException ex) {
+            setSessionTimeout(DEFAULT_ENGINE_SESSION_TIMEOUT);
+        }
+    }
+
+    public void setSessionTimeout(int engineSessionTimeout) {
+        // Engine session expiration happens through periodic "cleanExpiredUsersSessions" job
+        // whose periodicity is same as Engine session timeout (UserSessionTimeOutInterval).
+        // Because of that, Engine sessions can stay active up to 2 * UserSessionTimeOutInterval
+        // so we adapt REST API session timeout accordingly.
+        restApiSessionTimeout = 2 * engineSessionTimeout;
     }
 
     /**
@@ -119,7 +133,7 @@ public class RestApiSessionManager implements EngineSessionRefreshedHandler {
         RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, restApiBaseUrl);
 
         // Control REST API session timeout
-        builder.setHeader("Session-TTL", restApiSessionTimeout); //$NON-NLS-1$
+        builder.setHeader("Session-TTL", String.valueOf(restApiSessionTimeout)); //$NON-NLS-1$
 
         // Express additional preferences for serving this request
         String preferValue = "persistent-auth, csrf-protection"; //$NON-NLS-1$
