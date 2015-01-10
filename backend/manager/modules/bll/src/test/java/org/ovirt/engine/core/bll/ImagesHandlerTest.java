@@ -122,8 +122,7 @@ public class ImagesHandlerTest {
 
     @Test
     public void testJsonDiskDescription() throws IOException {
-        String jsonDescription = null;
-        jsonDescription = ImagesHandler.getJsonDiskDescription("DiskAlias", "DiskDescription");
+        String jsonDescription = ImagesHandler.getJsonDiskDescription("DiskAlias", "DiskDescription");
         assertEquals("Should be map of disk alias and disk description",
                 "{\"DiskAlias\":\"DiskAlias\",\"DiskDescription\":\"DiskDescription\"}", jsonDescription);
     }
