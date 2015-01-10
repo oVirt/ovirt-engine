@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
@@ -853,7 +854,7 @@ public final class ImagesHandler {
      * UpdateVmDiskCommand should be changed accordingly.
      */
     public static String getJsonDiskDescription(String diskAlias, String diskDescription) throws IOException {
-        Map<String, Object> description = new HashMap<>();
+        Map<String, Object> description = new TreeMap<>();
         description.put(DISK_ALIAS, diskAlias);
         description.put(DISK_DESCRIPTION, diskDescription != null ? diskDescription : "");
         return JsonHelper.mapToJson(description, false);

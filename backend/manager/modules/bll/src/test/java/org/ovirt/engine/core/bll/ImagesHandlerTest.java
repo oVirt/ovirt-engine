@@ -125,20 +125,20 @@ public class ImagesHandlerTest {
         String jsonDescription = null;
         jsonDescription = ImagesHandler.getJsonDiskDescription("DiskAlias", "DiskDescription");
         assertTrue("Should be map of disk alias and disk description",
-                jsonDescription.equals("{\"DiskDescription\":\"DiskDescription\",\"DiskAlias\":\"DiskAlias\"}"));
+                jsonDescription.equals("{\"DiskAlias\":\"DiskAlias\",\"DiskDescription\":\"DiskDescription\"}"));
     }
 
     @Test
     public void testJsonNullDiskDescription() throws IOException {
         String jsonDescription = ImagesHandler.getJsonDiskDescription("DiskAlias", null);
         assertTrue("Should be map of disk alias and disk description",
-                jsonDescription.equals("{\"DiskDescription\":\"\",\"DiskAlias\":\"DiskAlias\"}"));
+                jsonDescription.equals("{\"DiskAlias\":\"DiskAlias\",\"DiskDescription\":\"\"}"));
     }
 
     @Test
     public void testJsonEmptyDiskDescription() throws IOException {
         String jsonDescription = ImagesHandler.getJsonDiskDescription("DiskAlias", "");
         assertTrue("Should be map of disk alias and disk description",
-                jsonDescription.equals("{\"DiskDescription\":\"\",\"DiskAlias\":\"DiskAlias\"}"));
+                jsonDescription.equals("{\"DiskAlias\":\"DiskAlias\",\"DiskDescription\":\"\"}"));
     }
 }
