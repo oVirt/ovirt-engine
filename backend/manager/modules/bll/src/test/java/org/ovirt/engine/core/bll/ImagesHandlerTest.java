@@ -102,7 +102,7 @@ public class ImagesHandlerTest {
 
         List<DiskImage> intersection = ImagesHandler.imagesSubtract(list1, list2);
 
-        assertEquals("Intersection should contain only one disk", intersection.size(), 1);
+        assertEquals("Intersection should contain only one disk", 1, intersection.size());
         assertTrue("Intersection should contains disk1", intersection.contains(disk1));
     }
 
@@ -124,21 +124,21 @@ public class ImagesHandlerTest {
     public void testJsonDiskDescription() throws IOException {
         String jsonDescription = null;
         jsonDescription = ImagesHandler.getJsonDiskDescription("DiskAlias", "DiskDescription");
-        assertTrue("Should be map of disk alias and disk description",
-                jsonDescription.equals("{\"DiskAlias\":\"DiskAlias\",\"DiskDescription\":\"DiskDescription\"}"));
+        assertEquals("Should be map of disk alias and disk description",
+                "{\"DiskAlias\":\"DiskAlias\",\"DiskDescription\":\"DiskDescription\"}", jsonDescription);
     }
 
     @Test
     public void testJsonNullDiskDescription() throws IOException {
         String jsonDescription = ImagesHandler.getJsonDiskDescription("DiskAlias", null);
-        assertTrue("Should be map of disk alias and disk description",
-                jsonDescription.equals("{\"DiskAlias\":\"DiskAlias\",\"DiskDescription\":\"\"}"));
+        assertEquals("Should be map of disk alias and disk description",
+                "{\"DiskAlias\":\"DiskAlias\",\"DiskDescription\":\"\"}", jsonDescription);
     }
 
     @Test
     public void testJsonEmptyDiskDescription() throws IOException {
         String jsonDescription = ImagesHandler.getJsonDiskDescription("DiskAlias", "");
-        assertTrue("Should be map of disk alias and disk description",
-                jsonDescription.equals("{\"DiskAlias\":\"DiskAlias\",\"DiskDescription\":\"\"}"));
+        assertEquals("Should be map of disk alias and disk description",
+                "{\"DiskAlias\":\"DiskAlias\",\"DiskDescription\":\"\"}", jsonDescription);
     }
 }
