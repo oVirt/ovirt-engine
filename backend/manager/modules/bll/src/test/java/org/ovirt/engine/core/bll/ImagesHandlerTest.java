@@ -72,8 +72,8 @@ public class ImagesHandlerTest {
         Guid sdId1 = Guid.newGuid();
         Guid sdId2 = Guid.newGuid();
 
-        disk1.setStorageIds(new ArrayList<Guid>(Arrays.asList(sdId1, sdIdShared)));
-        disk2.setStorageIds(new ArrayList<Guid>(Arrays.asList(sdId2, sdIdShared)));
+        disk1.setStorageIds(new ArrayList<>(Arrays.asList(sdId1, sdIdShared)));
+        disk2.setStorageIds(new ArrayList<>(Arrays.asList(sdId2, sdIdShared)));
 
         Set<Guid> result = ImagesHandler.getAllStorageIdsForImageIds(Arrays.asList(disk1, disk2));
 
