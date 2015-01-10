@@ -537,8 +537,7 @@ public final class ImagesHandler {
         for (Disk disk : vm.getDiskMap().values()) {
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                 DiskImage diskImage = (DiskImage) disk;
-                diskImage.getSnapshots().addAll(
-                        ImagesHandler.getAllImageSnapshots(diskImage.getImageId()));
+                diskImage.getSnapshots().addAll(getAllImageSnapshots(diskImage.getImageId()));
             }
         }
     }
@@ -767,7 +766,7 @@ public final class ImagesHandler {
     public static List<DiskImage> imagesSubtract(Iterable<DiskImage> images, Iterable<DiskImage> imagesToSubtract) {
         List<DiskImage> subtract = new ArrayList<>();
         for (DiskImage image : images) {
-            if (ImagesHandler.getDiskImageById(image.getId(), imagesToSubtract) == null) {
+            if (getDiskImageById(image.getId(), imagesToSubtract) == null) {
                 subtract.add(image);
             }
         }
@@ -783,7 +782,7 @@ public final class ImagesHandler {
     public static List<DiskImage> imagesIntersection(Iterable<DiskImage> images1, Iterable<DiskImage> images2) {
         List<DiskImage> intersection = new ArrayList<>();
         for (DiskImage image : images1) {
-            if (ImagesHandler.getDiskImageById(image.getId(), images2) != null) {
+            if (getDiskImageById(image.getId(), images2) != null) {
                 intersection.add(image);
             }
         }
@@ -844,7 +843,7 @@ public final class ImagesHandler {
     public static DiskImage createDiskImageWithExcessData(DiskImage diskImage, Guid sdId) {
         DiskImage dummy = DiskImage.copyOf(diskImage);
         dummy.setStorageIds(new ArrayList<Guid>(Collections.singletonList(sdId)));
-        dummy.getSnapshots().addAll(ImagesHandler.getAllImageSnapshots(dummy.getImageId()));
+        dummy.getSnapshots().addAll(getAllImageSnapshots(dummy.getImageId()));
         return dummy;
     }
 
@@ -855,8 +854,8 @@ public final class ImagesHandler {
      */
     public static String getJsonDiskDescription(String diskAlias, String diskDescription) throws IOException {
         Map<String, Object> description = new HashMap<>();
-        description.put(ImagesHandler.DISK_ALIAS, diskAlias);
-        description.put(ImagesHandler.DISK_DESCRIPTION, diskDescription != null ? diskDescription : "");
+        description.put(DISK_ALIAS, diskAlias);
+        description.put(DISK_DESCRIPTION, diskDescription != null ? diskDescription : "");
         return JsonHelper.mapToJson(description, false);
     }
 
