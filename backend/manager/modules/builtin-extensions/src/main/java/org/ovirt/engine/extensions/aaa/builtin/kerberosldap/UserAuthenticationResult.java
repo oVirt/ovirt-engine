@@ -7,12 +7,6 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.aaa.LdapUser;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
-/**
- *
- * @author yzaslavs
- *
- */
-
 public class UserAuthenticationResult {
     private List<VdcBllMessages> errorMessages = new ArrayList<VdcBllMessages>();
     private LdapUser user;

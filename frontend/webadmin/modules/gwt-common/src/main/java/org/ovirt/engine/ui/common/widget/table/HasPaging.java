@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.common.widget.table;
 /**
  * Classes that implement this interface support forward/back paging functionality.
  *
- * @author drankevi
  */
 public interface HasPaging {
 

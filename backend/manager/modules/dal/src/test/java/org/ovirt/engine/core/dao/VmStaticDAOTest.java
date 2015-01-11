@@ -1,6 +1,3 @@
-/**
- *
- */
 package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertEquals;
@@ -30,10 +27,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author yzaslavs
- *
- */
 public class VmStaticDAOTest extends BaseDAOTestCase {
     private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
     private static final Guid VDS_STATIC_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");

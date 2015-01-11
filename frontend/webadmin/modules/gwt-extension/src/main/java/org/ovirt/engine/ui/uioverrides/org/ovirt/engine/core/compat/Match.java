@@ -4,11 +4,7 @@ import java.util.ArrayList;
 import com.google.gwt.regexp.shared.MatchResult;
 
 /**
- *
  * Replacement for System.Text.RegularExpressions.Match
- *
- * @author drankevi
- *
  */
 public class Match {
 

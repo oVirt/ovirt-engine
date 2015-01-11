@@ -3,9 +3,6 @@ package org.ovirt.engine.core.compat;
 /**
  * copied from .NET enum: System.Text.RegularExpressions.RegexOptions
  * Provides enumerated values to use to set regular expression options.
- *
- * @author drankevi
- *
  */
 public class RegexOptions {
 
