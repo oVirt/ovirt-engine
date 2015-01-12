@@ -4,6 +4,7 @@ import java.util.Collections;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.ovirt.engine.core.bll.validator.VirtIoRngValidator;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -65,8 +66,13 @@ public class UpdateRngDeviceTest {
             }
 
             @Override
-            boolean isFeatureSupported(Version clusterVersion) {
-                return mockCompatibilityVersion.compareTo(Version.v3_5) >= 0;
+            protected VirtIoRngValidator getVirtioRngValidator() {
+                return new VirtIoRngValidator() {
+                    @Override
+                    protected boolean isFeatureSupported(Version clusterVersion) {
+                        return mockCompatibilityVersion.compareTo(Version.v3_5) >= 0;
+                    }
+                };
             }
         };
 

@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.smartcard.SmartcardSpecParams;
+import org.ovirt.engine.core.bll.validator.VirtIoRngValidator;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -18,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -292,6 +294,8 @@ public class VmDeviceUtils {
         boolean hasAlreadyConsoleDevice = false;
         boolean hasVirtioScsiController = false;
 
+        VDSGroup cluster = vmBase.getVdsGroupId() != null ? DbFacade.getInstance().getVdsGroupDao().get(vmBase.getVdsGroupId()) : null;
+
         for (VmDevice device : devicesDataToUse) {
             if (device.getSnapshotId() != null && !copySnapshotDevices) {
                 continue;
@@ -376,6 +380,9 @@ public class VmDeviceUtils {
                     if (hasVmRngDevice(dstId)) {
                         continue; // don't copy rng device if we already have it
                     }
+                    if (!new VirtIoRngValidator().canAddRngDevice(cluster, new VmRngDevice(device)).isValid()) {
+                        continue;
+                    }
                     specParams.putAll(device.getSpecParams());
                     break;
 
@@ -421,7 +428,6 @@ public class VmDeviceUtils {
             if (isVm) {
                 addSoundCard(vm.getStaticData(), vm.getVdsGroupCompatibilityVersion());
             } else {
-                VDSGroup cluster = vmBase.getVdsGroupId() != null ? DbFacade.getInstance().getVdsGroupDao().get(vmBase.getVdsGroupId()) : null;
                 addSoundCard(vmBase, cluster != null ? cluster.getcompatibility_version() : null);
             }
         }
