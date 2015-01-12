@@ -2921,6 +2921,18 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
+- name: /hosts/{host:id}/unregisteredstoragedomainsdiscover|rel=unregisteredstoragedomainsdiscover
+  description: Discover the Storage Domains which are candidiates to be imported to the setup
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {action.iscsi.address: 'xs:string', action.target: 'xs:string'}
+        description: Discover the Storage Domains which are candidiates to be imported to the setup
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /hosts/{host:id}/nics|rel=get
   description: get the list of network interfaces for the host
   request:

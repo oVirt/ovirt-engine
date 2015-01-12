@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.ovirt.engine.api.restapi.resource.BackendHostsResource.SUB_COLLECTIONS;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Path;
@@ -18,6 +19,7 @@ import org.ovirt.engine.api.model.IscsiDetails;
 import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.PowerManagementStatus;
+import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
@@ -42,17 +44,21 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.queries.DiscoverSendTargetsQueryParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
+import org.ovirt.engine.core.common.queries.GetUnregisteredBlockStorageDomainsParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -223,6 +229,33 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     }
 
     @Override
+    public Response unregisteredStorageDomainsDiscover(Action action) {
+        validateParameters(action, "iscsi.address");
+
+        List<StorageServerConnections> storageServerConnections = new ArrayList<>();
+        for (String iscsiTarget : action.getIscsiTargets()) {
+            StorageServerConnections connectionDetails = getInitializedConnectionIscsiDetails(action);
+            connectionDetails.setiqn(iscsiTarget);
+            storageServerConnections.add(connectionDetails);
+        }
+        GetUnregisteredBlockStorageDomainsParameters unregisteredBlockStorageDomainsParameters =
+                new GetUnregisteredBlockStorageDomainsParameters(guid, StorageType.ISCSI, storageServerConnections);
+
+        try {
+            Pair<List<StorageDomain>, List<StorageServerConnections>> pair =
+                    getEntity(Pair.class,
+                        VdcQueryType.GetUnregisteredBlockStorageDomains,
+                        unregisteredBlockStorageDomainsParameters,
+                        "GetUnregisteredBlockStorageDomains", true);
+
+            List<StorageDomain> storageDomains = pair.getFirst();
+            return actionSuccess(mapToStorageDomains(action, storageDomains));
+        } catch (Exception e) {
+            return handleError(e, false);
+        }
+    }
+
+    @Override
     public Response iscsiDiscover(Action action) {
         validateParameters(action, "iscsi.address");
 
@@ -242,11 +275,30 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         return action;
     }
 
+    private Action mapToStorageDomains(Action action, List<StorageDomain> storageDomains) {
+        if (storageDomains != null) {
+            action.setStorageDomains(new StorageDomains());
+            for (StorageDomain storageDomain : storageDomains) {
+                action.getStorageDomains().getStorageDomains().add(map(storageDomain));
+            }
+        }
+        return action;
+    }
+
     protected LogicalUnit map(StorageServerConnections cnx) {
         return getMapper(StorageServerConnections.class, LogicalUnit.class).map(cnx, null);
     }
 
+    protected org.ovirt.engine.api.model.StorageDomain map(StorageDomain storageDomain) {
+        return getMapper(StorageDomain.class, org.ovirt.engine.api.model.StorageDomain.class).map(storageDomain, null);
+    }
+
     private DiscoverSendTargetsQueryParameters createDiscoveryQueryParams(Action action) {
+        StorageServerConnections connectionDetails = getInitializedConnectionIscsiDetails(action);
+        return new DiscoverSendTargetsQueryParameters(guid, connectionDetails);
+    }
+
+    private StorageServerConnections getInitializedConnectionIscsiDetails(Action action) {
         StorageServerConnections connectionDetails = new StorageServerConnections();
         IscsiDetails iscsiDetails = action.getIscsi();
         connectionDetails.setconnection(iscsiDetails.getAddress());
@@ -262,7 +314,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         if (iscsiDetails.isSetPassword()) {
             connectionDetails.setpassword(iscsiDetails.getPassword());
         }
-        return new DiscoverSendTargetsQueryParameters(guid, connectionDetails);
+        return connectionDetails;
     }
 
     @Override
