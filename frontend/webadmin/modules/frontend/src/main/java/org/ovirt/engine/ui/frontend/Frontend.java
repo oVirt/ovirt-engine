@@ -474,7 +474,7 @@ public class Frontend implements HasHandlers {
      * @param state A state object.
      */
     public void runMultipleAction(final VdcActionType actionType,
-            final ArrayList<VdcActionParametersBase> parameters,
+            final List<VdcActionParametersBase> parameters,
             final IFrontendMultipleActionAsyncCallback callback,
             final Object state) {
         runMultipleAction(actionType, parameters, false, callback, state);
@@ -486,7 +486,7 @@ public class Frontend implements HasHandlers {
      * @param parameters The parameters of the action.
      */
     public void runMultipleAction(final VdcActionType actionType,
-            final ArrayList<VdcActionParametersBase> parameters,
+            final List<VdcActionParametersBase> parameters,
             final IFrontendMultipleActionAsyncCallback callback) {
         runMultipleAction(actionType, parameters, callback, null);
     }
@@ -497,7 +497,7 @@ public class Frontend implements HasHandlers {
      * @param parameters The parameters of the action.
      */
     public void runMultipleAction(final VdcActionType actionType,
-            final ArrayList<VdcActionParametersBase> parameters) {
+            final List<VdcActionParametersBase> parameters) {
         runMultipleAction(actionType, parameters, null, null);
     }
 
