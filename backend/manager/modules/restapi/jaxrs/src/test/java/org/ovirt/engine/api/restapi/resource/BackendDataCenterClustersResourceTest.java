@@ -213,7 +213,7 @@ public class BackendDataCenterClustersResourceTest extends
         if (index != -1) {
             expect(pool.getId()).andReturn(GUIDS[index]).anyTimes();
         }
-        expect(pool.getcompatibility_version()).andReturn(version).anyTimes();
+        expect(pool.getCompatibilityVersion()).andReturn(version).anyTimes();
         return pool;
     }
 

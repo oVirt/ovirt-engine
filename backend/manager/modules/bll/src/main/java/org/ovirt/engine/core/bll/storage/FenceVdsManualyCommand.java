@@ -174,10 +174,10 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
     }
 
     private void resetIrs() {
-        if (getStoragePool().getspm_vds_id() != null) {
+        if (getStoragePool().getSpmVdsId() != null) {
             ResetIrsVDSCommandParameters tempVar =
                     new ResetIrsVDSCommandParameters(getStoragePool()
-                            .getId(), getStoragePool().getspm_vds_id());
+                            .getId(), getStoragePool().getSpmVdsId());
             tempVar.setVdsAlreadyRebooted(true);
             runVdsCommand(VDSCommandType.ResetIrs, tempVar);
         }

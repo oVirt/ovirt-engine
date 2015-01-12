@@ -126,7 +126,7 @@ public class ClusterValidatorTest {
         when(cluster.getStoragePoolId()).thenReturn(mock(Guid.class));
         when(cluster.getcompatibility_version()).thenReturn(SUPPORTED_VERSION);
         StoragePool dataCenter = mock(StoragePool.class);
-        when(dataCenter.getcompatibility_version()).thenReturn(SUPPORTED_VERSION);
+        when(dataCenter.getCompatibilityVersion()).thenReturn(SUPPORTED_VERSION);
         when(dataCenterDao.get(any(Guid.class))).thenReturn(dataCenter);
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
         validator = new ClusterValidator(dbFacade, cluster);
@@ -139,7 +139,7 @@ public class ClusterValidatorTest {
         when(cluster.getStoragePoolId()).thenReturn(mock(Guid.class));
         when(cluster.getcompatibility_version()).thenReturn(mock(Version.class));
         StoragePool dataCenter = mock(StoragePool.class);
-        when(dataCenter.getcompatibility_version()).thenReturn(SUPPORTED_VERSION);
+        when(dataCenter.getCompatibilityVersion()).thenReturn(SUPPORTED_VERSION);
         when(dataCenterDao.get(any(Guid.class))).thenReturn(dataCenter);
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
         validator = new ClusterValidator(dbFacade, cluster);

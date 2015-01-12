@@ -141,7 +141,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                 new ReconstructMasterVDSCommandParameters(getVds().getId(),
                         getVds().getVdsSpmId(), getStoragePool().getId(),
                         getStoragePool().getName(), _newMasterStorageDomainId, domains,
-                        getStoragePool().getmaster_domain_version())).getSucceeded();
+                        getStoragePool().getMasterDomainVersion())).getSucceeded();
 
     }
 
@@ -150,7 +150,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         boolean reconstructOpSucceeded = reconstructMaster();
         setActionReturnValue(reconstructOpSucceeded);
         connectAndRefreshAllUpHosts(reconstructOpSucceeded);
-        if (!_isLastMaster && reconstructOpSucceeded && !FeatureSupported.ovfStoreOnAnyDomain(getStoragePool().getcompatibility_version())) {
+        if (!_isLastMaster && reconstructOpSucceeded && !FeatureSupported.ovfStoreOnAnyDomain(getStoragePool().getCompatibilityVersion())) {
             // all vms/templates metadata should be copied to the new master domain, so we need
             // to perform increment of the db version for all the vms in the storage pool.
             // currently this method is used for both templates and vms.
@@ -169,16 +169,16 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
 
     protected boolean stopSpm() {
         boolean commandSucceeded = true;
-        if (getStoragePool().getspm_vds_id() != null) {
+        if (getStoragePool().getSpmVdsId() != null) {
             // if spm host id is different from selected host get the spm
             // in order to try and perform stop spm
             VDS spm = null;
-            if (getStoragePool().getspm_vds_id().equals(getVds().getId())) {
+            if (getStoragePool().getSpmVdsId().equals(getVds().getId())) {
                 spm = getVds();
             } else {
                 spm = DbFacade.getInstance()
                         .getVdsDao()
-                        .get(getStoragePool().getspm_vds_id());
+                        .get(getStoragePool().getSpmVdsId());
             }
             if (spm != null) {
                 ResetIrsVDSCommandParameters tempVar2 = new ResetIrsVDSCommandParameters(

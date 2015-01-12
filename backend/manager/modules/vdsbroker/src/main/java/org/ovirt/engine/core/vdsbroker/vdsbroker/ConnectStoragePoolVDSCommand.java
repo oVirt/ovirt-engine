@@ -16,7 +16,7 @@ public class ConnectStoragePoolVDSCommand<P extends ConnectStoragePoolVDSCommand
 
     private boolean isStoragePoolMemoryBackend() {
         return FeatureSupported.storagePoolMemoryBackend(
-                getParameters().getStoragePool().getcompatibility_version());
+                getParameters().getStoragePool().getCompatibilityVersion());
     }
 
     public void connectStoragePool() {
@@ -32,7 +32,7 @@ public class ConnectStoragePoolVDSCommand<P extends ConnectStoragePoolVDSCommand
                 getParameters().getVds().getVdsSpmId(),
                 getParameters().getStoragePoolId().toString(),
                 getParameters().getMasterDomainId().toString(),
-                getParameters().getStoragePool().getmaster_domain_version(),
+                getParameters().getStoragePool().getMasterDomainVersion(),
                 storageDomains);
     }
 
@@ -40,7 +40,7 @@ public class ConnectStoragePoolVDSCommand<P extends ConnectStoragePoolVDSCommand
         status = getBroker().refreshStoragePool(
                 getParameters().getStoragePoolId().toString(),
                 getParameters().getMasterDomainId().toString(),
-                getParameters().getStoragePool().getmaster_domain_version());
+                getParameters().getStoragePool().getMasterDomainVersion());
     }
 
     protected boolean isRefreshStoragePool() {

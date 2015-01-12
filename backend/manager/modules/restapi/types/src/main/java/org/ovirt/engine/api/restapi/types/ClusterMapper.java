@@ -273,8 +273,8 @@ public class ClusterMapper {
     @Mapping(from = StoragePool.class, to = VDSGroup.class)
     public static VDSGroup map(StoragePool pool, VDSGroup template) {
         VDSGroup entity = template != null ? template : new VDSGroup();
-        if (pool.getcompatibility_version() != null) {
-            entity.setcompatibility_version(pool.getcompatibility_version());
+        if (pool.getCompatibilityVersion() != null) {
+            entity.setcompatibility_version(pool.getCompatibilityVersion());
         }
         return entity;
     }

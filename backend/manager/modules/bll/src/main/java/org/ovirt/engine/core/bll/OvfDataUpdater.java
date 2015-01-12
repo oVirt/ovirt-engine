@@ -86,6 +86,6 @@ public class OvfDataUpdater {
     }
 
     protected boolean ovfOnAnyDomainSupported(StoragePool pool) {
-        return FeatureSupported.ovfStoreOnAnyDomain(pool.getcompatibility_version());
+        return FeatureSupported.ovfStoreOnAnyDomain(pool.getCompatibilityVersion());
     }
 }

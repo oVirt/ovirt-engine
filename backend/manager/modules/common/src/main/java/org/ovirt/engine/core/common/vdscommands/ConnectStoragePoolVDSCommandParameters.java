@@ -77,6 +77,6 @@ public class ConnectStoragePoolVDSCommandParameters extends VdsIdVDSCommandParam
     public String toString() {
         return String.format("%s, vdsId = %s, storagePoolId = %s, masterVersion = %d",
                 super.toString(), vds.getId().toString(), storagePool.getId().toString(),
-                storagePool.getmaster_domain_version());
+                storagePool.getMasterDomainVersion());
     }
 }

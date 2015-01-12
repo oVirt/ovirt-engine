@@ -375,7 +375,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
         if (!isSupportBridgesReportByVDSM) {
             getIsVmNetwork().setEntity(true);
             getIsVmNetwork().setChangeProhibitionReason(ConstantsManager.getInstance().getMessages()
-                    .bridlessNetworkNotSupported(getSelectedDc().getcompatibility_version().toString()));
+                    .bridlessNetworkNotSupported(getSelectedDc().getCompatibilityVersion().toString()));
             getIsVmNetwork().setIsChangable(false);
         } else {
             if (this.isSupportBridgesReportByVDSM != isSupportBridgesReportByVDSM) {
@@ -546,13 +546,13 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
         // Get IsSupportBridgesReportByVDSM
         boolean isSupportBridgesReportByVDSM =
                 (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.SupportBridgesReportByVDSM,
-                        dc.getcompatibility_version().toString());
+                        dc.getCompatibilityVersion().toString());
         setSupportBridgesReportByVDSM(isSupportBridgesReportByVDSM);
 
         // Get IsMTUOverrideSupported
         boolean isMTUOverrideSupported =
                 (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.MTUOverrideSupported,
-                        dc.getcompatibility_version().toString());
+                        dc.getCompatibilityVersion().toString());
 
         setMTUOverrideSupported(isMTUOverrideSupported);
 
@@ -801,7 +801,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
 
         if (getSelectedDc() != null && !isMTUOverrideSupported()) {
             setMtuSelectorsChangeability(false, ConstantsManager.getInstance().getMessages()
-                    .mtuOverrideNotSupported(getSelectedDc().getcompatibility_version().toString()));
+                    .mtuOverrideNotSupported(getSelectedDc().getCompatibilityVersion().toString()));
             return;
         }
 

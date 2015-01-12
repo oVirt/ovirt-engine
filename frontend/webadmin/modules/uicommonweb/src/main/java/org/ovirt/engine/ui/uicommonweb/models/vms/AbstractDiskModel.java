@@ -448,7 +448,7 @@ public abstract class AbstractDiskModel extends DiskModel
 
     private void updateShareableDiskEnabled(StoragePool datacenter) {
         boolean isShareableDiskEnabled = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                ConfigurationValues.ShareableDiskEnabled, datacenter.getcompatibility_version().getValue());
+                ConfigurationValues.ShareableDiskEnabled, datacenter.getCompatibilityVersion().getValue());
 
         getIsShareable().setChangeProhibitionReason(CONSTANTS.shareableDiskNotSupported());
         getIsShareable().setIsChangable(isShareableDiskEnabled && isEditEnabled());
@@ -460,7 +460,7 @@ public abstract class AbstractDiskModel extends DiskModel
         }
 
         boolean isDirectLUNDiskkEnabled = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
-                ConfigurationValues.DirectLUNDiskEnabled, datacenter.getcompatibility_version().getValue());
+                ConfigurationValues.DirectLUNDiskEnabled, datacenter.getCompatibilityVersion().getValue());
 
         getIsDirectLunDiskAvaialable().setEntity(isDirectLUNDiskkEnabled);
         setMessage(!isDirectLUNDiskkEnabled ? CONSTANTS.directLUNDiskNotSupported() : ""); //$NON-NLS-1$

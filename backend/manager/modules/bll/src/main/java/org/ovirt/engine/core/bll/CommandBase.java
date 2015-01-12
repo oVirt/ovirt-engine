@@ -886,7 +886,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 && ((getVdsGroup() != null && getVdsGroup().getcompatibility_version().compareTo(
                         new Version(actionVersionMap.getcluster_minimal_version())) < 0) ||
                 (!"*".equals(actionVersionMap.getstorage_pool_minimal_version()) && getStoragePool() != null && getStoragePool()
-                        .getcompatibility_version().compareTo(
+                        .getCompatibilityVersion().compareTo(
                                 new Version(actionVersionMap.getstorage_pool_minimal_version())) < 0))) {
             result = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);

@@ -119,7 +119,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
 
         if (disk.isShareable()
                 && !isVersionSupportedForShareable(disk, getStoragePoolDAO().get(getVm().getStoragePoolId())
-                        .getcompatibility_version()
+                        .getCompatibilityVersion()
                         .getValue())) {
             return failCanDoAction(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
         }

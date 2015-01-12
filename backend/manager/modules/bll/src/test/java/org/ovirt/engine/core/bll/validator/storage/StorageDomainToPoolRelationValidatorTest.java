@@ -66,7 +66,7 @@ public class StorageDomainToPoolRelationValidatorTest {
         // Create the storage pool.
         storagePool = new StoragePool();
         storagePool.setId(Guid.newGuid());
-        storagePool.setcompatibility_version(Version.v3_5);
+        storagePool.setCompatibilityVersion(Version.v3_5);
 
         when(storagePoolIsoMapDAO.getAllForStorage(any(Guid.class))).thenReturn(new ArrayList<StoragePoolIsoMap>());
         spyValidator();
@@ -130,7 +130,7 @@ public class StorageDomainToPoolRelationValidatorTest {
     }
 
     private void testAddingMixedTypes(Version version, boolean addingMixedTypesShouldSucceed) {
-        storagePool.setcompatibility_version(version);
+        storagePool.setCompatibilityVersion(version);
 
         ValidationResult attachDomainResult = validator.validateDomainCanBeAttachedToPool();
         if (addingMixedTypesShouldSucceed) {
@@ -147,14 +147,14 @@ public class StorageDomainToPoolRelationValidatorTest {
 
     @Test
     public void testPosixDcAndMatchingCompatiblityVersion() {
-        storagePool.setcompatibility_version(SUPPORTED_VERSION);
+        storagePool.setCompatibilityVersion(SUPPORTED_VERSION);
         storagePool.setIsLocal(false);
         assertThat(validator.isPosixSupportedInDC(), isValid());
     }
 
     @Test
     public void testPosixDcAndNotMatchingCompatiblityVersion() {
-        storagePool.setcompatibility_version(UNSUPPORTED_VERSION);
+        storagePool.setCompatibilityVersion(UNSUPPORTED_VERSION);
         storagePool.setIsLocal(false);
         assertThat(validator.isPosixSupportedInDC(),
                 failsWith(VdcBllMessages.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION));
@@ -162,14 +162,14 @@ public class StorageDomainToPoolRelationValidatorTest {
 
     @Test
     public void testGlusterDcAndMatchingCompatiblityVersion() {
-        storagePool.setcompatibility_version(SUPPORTED_VERSION);
+        storagePool.setCompatibilityVersion(SUPPORTED_VERSION);
         storagePool.setIsLocal(false);
         assertThat(validator.isGlusterSupportedInDC(), isValid());
     }
 
     @Test
     public void testGlusterDcAndNotMatchingCompatiblityVersion() {
-        storagePool.setcompatibility_version(UNSUPPORTED_VERSION);
+        storagePool.setCompatibilityVersion(UNSUPPORTED_VERSION);
         storagePool.setIsLocal(false);
         assertThat(validator.isGlusterSupportedInDC(),
                 failsWith(VdcBllMessages.DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION));
@@ -177,7 +177,7 @@ public class StorageDomainToPoolRelationValidatorTest {
 
     @Test
     public void testLocalDcAndMatchingCompatiblityVersion() {
-        storagePool.setcompatibility_version(UNSUPPORTED_VERSION);
+        storagePool.setCompatibilityVersion(UNSUPPORTED_VERSION);
         storagePool.setIsLocal(true);
         assertThat(validator.isPosixSupportedInDC(), isValid());
     }
@@ -191,7 +191,7 @@ public class StorageDomainToPoolRelationValidatorTest {
 
     @Test
     public void testAttachPosixCompatibilityOnLowVersion() {
-        storagePool.setcompatibility_version(Version.v3_0);
+        storagePool.setCompatibilityVersion(Version.v3_0);
 
         storageDomain.setStorageType(StorageType.POSIXFS);
         storageDomain.setStorageFormat(StorageFormatType.V1);
@@ -212,7 +212,7 @@ public class StorageDomainToPoolRelationValidatorTest {
 
     @Test
     public void testGlusterCompatibilityOnLowVersion() {
-        storagePool.setcompatibility_version(Version.v3_0);
+        storagePool.setCompatibilityVersion(Version.v3_0);
 
         storageDomain.setStorageFormat(StorageFormatType.V1);
         storageDomain.setStorageType(StorageType.GLUSTERFS);
@@ -251,7 +251,7 @@ public class StorageDomainToPoolRelationValidatorTest {
     @Test
     public void testAttachFailFormatType() {
         storageDomain.setStorageFormat(StorageFormatType.V3);
-        storagePool.setcompatibility_version(Version.v3_0);
+        storagePool.setCompatibilityVersion(Version.v3_0);
 
         ValidationResult invalidFormatAttachingResult = validator.validateDomainCanBeAttachedToPool();
         assertFalse("Attaching domain with unsupported version succeeded while it should have failed", invalidFormatAttachingResult.isValid());

@@ -123,7 +123,7 @@ public class VdsBrokerObjectsBuilder {
         sPool.setName(AssignStringValue(xmlRpcStruct, "name"));
         Integer masterVersion = AssignIntValue(xmlRpcStruct, "master_ver");
         if (masterVersion != null) {
-            sPool.setmaster_domain_version(masterVersion);
+            sPool.setMasterDomainVersion(masterVersion);
         }
         return sPool;
     }

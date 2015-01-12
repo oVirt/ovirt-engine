@@ -63,7 +63,7 @@ public class StorageDomainToPoolRelationValidator {
      */
     public ValidationResult isPosixSupportedInDC() {
         if (!storagePool.isLocal() &&
-                !Config.<Boolean> getValue(ConfigValues.PosixStorageEnabled, storagePool.getcompatibility_version().toString())) {
+                !Config.<Boolean> getValue(ConfigValues.PosixStorageEnabled, storagePool.getCompatibilityVersion().toString())) {
             return new ValidationResult(VdcBllMessages.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
         }
         return ValidationResult.VALID;
@@ -78,7 +78,7 @@ public class StorageDomainToPoolRelationValidator {
     public ValidationResult isGlusterSupportedInDC() {
         if (!storagePool.isLocal() &&
                 !Config.<Boolean> getValue(ConfigValues.GlusterFsStorageEnabled,
-                        storagePool.getcompatibility_version().toString())) {
+                        storagePool.getCompatibilityVersion().toString())) {
             return new ValidationResult(VdcBllMessages.DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
         }
         return ValidationResult.VALID;
@@ -133,7 +133,7 @@ public class StorageDomainToPoolRelationValidator {
         }
 
         if (storagePool != null) {
-            if (VersionStorageFormatUtil.getPreferredForVersion(storagePool.getcompatibility_version(),
+            if (VersionStorageFormatUtil.getPreferredForVersion(storagePool.getCompatibilityVersion(),
                     storageDomainStatic.getStorageType()).compareTo(storageDomainStatic.getStorageFormat()) < 0) {
 
                 return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL, String.format("$storageFormat %1$s", storageDomainStatic
@@ -170,7 +170,7 @@ public class StorageDomainToPoolRelationValidator {
     // to mix NFS domains with block domains on 3.0 pools since block domains on 3.0 pools can be in V2 format while NFS
     // domains on 3.0 can only be in V1 format
     public boolean isMixedTypesAllowedInDC() {
-        return FeatureSupported.mixedDomainTypesOnDataCenter(storagePool.getcompatibility_version());
+        return FeatureSupported.mixedDomainTypesOnDataCenter(storagePool.getCompatibilityVersion());
     }
 
     public ValidationResult isStorageDomainNotInAnyPool() {

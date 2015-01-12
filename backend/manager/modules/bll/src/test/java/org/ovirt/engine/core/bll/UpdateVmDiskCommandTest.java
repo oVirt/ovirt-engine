@@ -774,7 +774,7 @@ public class UpdateVmDiskCommandTest {
         Guid storagePoolId = Guid.newGuid();
         StoragePool storagePool = new StoragePool();
         storagePool.setId(storagePoolId);
-        storagePool.setcompatibility_version(compatibilityVersion);
+        storagePool.setCompatibilityVersion(compatibilityVersion);
         when(storagePoolDao.get(storagePoolId)).thenReturn(storagePool);
 
         return storagePool;

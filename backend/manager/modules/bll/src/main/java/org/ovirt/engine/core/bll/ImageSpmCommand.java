@@ -36,7 +36,7 @@ public abstract class ImageSpmCommand<T extends ImagesContainterParametersBase> 
 
     private Guid getPoolSpmId() {
         if (cachedSpmId == null) {
-            cachedSpmId = getStoragePool().getspm_vds_id();
+            cachedSpmId = getStoragePool().getSpmVdsId();
         }
         return cachedSpmId;
     }
@@ -52,7 +52,7 @@ public abstract class ImageSpmCommand<T extends ImagesContainterParametersBase> 
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
         }
 
-        if (!getPoolSpmId().equals(getStoragePool().getspm_vds_id())) {
+        if (!getPoolSpmId().equals(getStoragePool().getSpmVdsId())) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_SPM_CHANGED);
         }
 

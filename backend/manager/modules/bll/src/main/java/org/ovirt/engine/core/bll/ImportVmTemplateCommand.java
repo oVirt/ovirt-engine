@@ -559,7 +559,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                 map.put(diskImage, imageToDestinationDomainMap.get(diskImage.getId()));
             }
             return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
-                    getStoragePool().getcompatibility_version()));
+                    getStoragePool().getCompatibilityVersion()));
         }
         return true;
     }

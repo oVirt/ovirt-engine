@@ -134,7 +134,7 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
                 return;
             }
 
-            if (AsyncDataProvider.getInstance().isMixedStorageDomainsSupported(dataCenter.getcompatibility_version())) {
+            if (AsyncDataProvider.getInstance().isMixedStorageDomainsSupported(dataCenter.getCompatibilityVersion())) {
                 updateItemSelectability(item, true);
                 return;
             } else {

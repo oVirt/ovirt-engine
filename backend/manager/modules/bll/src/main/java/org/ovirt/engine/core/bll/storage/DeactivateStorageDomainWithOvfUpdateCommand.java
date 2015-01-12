@@ -80,7 +80,7 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
     }
 
     private boolean ovfOnAnyDomainSupported() {
-        return FeatureSupported.ovfStoreOnAnyDomain(getStoragePool().getcompatibility_version());
+        return FeatureSupported.ovfStoreOnAnyDomain(getStoragePool().getCompatibilityVersion());
     }
 
     private ProcessOvfUpdateForStorageDomainCommandParameters createProcessOvfUpdateForDomainParams() {

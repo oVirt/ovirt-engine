@@ -104,7 +104,7 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
         Guid vdsId, vmId;
 
         if (vm.getStatus().isDownOrSuspended()) {
-            vdsId = getStoragePool().getspm_vds_id();
+            vdsId = getStoragePool().getSpmVdsId();
             vmId = Guid.Empty;
         } else {
             vdsId = vm.getRunOnVds();

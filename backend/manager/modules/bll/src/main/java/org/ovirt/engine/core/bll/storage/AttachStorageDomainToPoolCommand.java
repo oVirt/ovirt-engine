@@ -135,7 +135,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                         // If the storage domain is already related to another Storage Pool, detach it by force.
                         Guid storagePoolId = domainFromIrs.getSecond();
                         if (storagePoolId != null) {
-                            if (FeatureSupported.importDataStorageDomain(getStoragePool().getcompatibility_version())) {
+                            if (FeatureSupported.importDataStorageDomain(getStoragePool().getCompatibilityVersion())) {
                                 // Master domain version is not relevant since force remove at
                                 // DetachStorageDomainVdsCommand does not use it.
                                 // Storage pool id can be empty
@@ -211,7 +211,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
      * Creating default disk profile for existing storage domain.
      */
     private void createDefaultDiskProfile() {
-        if (FeatureSupported.storageQoS(getStoragePool().getcompatibility_version())
+        if (FeatureSupported.storageQoS(getStoragePool().getCompatibilityVersion())
                 && getDiskProfileDao().getAllForStorageDomain(getStorageDomain().getId()).isEmpty()) {
             final DiskProfile diskProfile =
                     DiskProfileHelper.createDiskProfile(getStorageDomain().getId(),
@@ -234,7 +234,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
         // ovfDisks cache list updated.
         List<DiskImage> ovfStoreDiskImages = new ArrayList(getAllOVFDisks());
         if (!ovfStoreDiskImages.isEmpty()) {
-            if (!FeatureSupported.ovfStoreOnAnyDomain(getStoragePool().getcompatibility_version())) {
+            if (!FeatureSupported.ovfStoreOnAnyDomain(getStoragePool().getCompatibilityVersion())) {
                 AuditLogDirector.log(this, AuditLogType.RETRIEVE_UNREGISTERED_ENTITIES_NOT_SUPPORTED_IN_DC_VERSION);
                 return Collections.emptyList();
             }

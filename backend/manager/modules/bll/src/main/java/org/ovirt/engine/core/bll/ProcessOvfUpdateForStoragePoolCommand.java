@@ -362,7 +362,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
     }
 
     protected boolean ovfOnAnyDomainSupported(StoragePool pool) {
-        return FeatureSupported.ovfStoreOnAnyDomain(pool.getcompatibility_version());
+        return FeatureSupported.ovfStoreOnAnyDomain(pool.getCompatibilityVersion());
     }
 
     protected LockProperties applyLockProperties(LockProperties lockProperties) {

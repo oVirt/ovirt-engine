@@ -73,7 +73,7 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
                 VDSCommandType.DetachStorageDomain,
                 new DetachStorageDomainVDSCommandParameters(getParameters().getStoragePoolId(),
                         getParameters().getStorageDomainId(), Guid.Empty, getStoragePool()
-                                .getmaster_domain_version()));
+                                .getMasterDomainVersion()));
         log.info(" Detach storage domain: after detach in vds");
         disconnectAllHostsInPool();
 

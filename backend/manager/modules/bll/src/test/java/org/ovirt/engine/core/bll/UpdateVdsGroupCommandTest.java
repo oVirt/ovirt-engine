@@ -473,7 +473,7 @@ public class UpdateVdsGroupCommandTest {
     private static StoragePool createStoragePoolLocalFSOldVersion() {
         StoragePool pool = new StoragePool();
         pool.setIsLocal(true);
-        pool.setcompatibility_version(VERSION_1_2);
+        pool.setCompatibilityVersion(VERSION_1_2);
         return pool;
     }
 

@@ -135,7 +135,7 @@ public class StorageHandlingCommandBaseTest {
         pool.setName("DefaultStoragePool");
         pool.setId(Guid.newGuid());
         pool.setIsLocal(false);
-        pool.setcompatibility_version(compatibilityVersion);
+        pool.setCompatibilityVersion(compatibilityVersion);
         return pool;
     }
 

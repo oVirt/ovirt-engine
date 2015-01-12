@@ -91,7 +91,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             @Override
             public Void runInTransaction() {
                 int master_domain_version = getStoragePoolDAO().increaseStoragePoolMasterVersion(getStoragePool().getId());
-                getStoragePool().setmaster_domain_version(master_domain_version);
+                getStoragePool().setMasterDomainVersion(master_domain_version);
                 return null;
             }
         });
@@ -322,13 +322,13 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             getCompensationContext().snapshotEntity(getStoragePool());
             getStoragePool().setStatus(newStatus);
             StoragePool poolFromDb = getStoragePoolDAO().get(getStoragePool().getId());
-            if ((getStoragePool().getspm_vds_id() == null && poolFromDb.getspm_vds_id() != null)
-                    || (getStoragePool().getspm_vds_id() != null && !getStoragePool().getspm_vds_id().equals(
-                            poolFromDb.getspm_vds_id()))) {
-                getStoragePool().setspm_vds_id(poolFromDb.getspm_vds_id());
+            if ((getStoragePool().getSpmVdsId() == null && poolFromDb.getSpmVdsId() != null)
+                    || (getStoragePool().getSpmVdsId() != null && !getStoragePool().getSpmVdsId().equals(
+                            poolFromDb.getSpmVdsId()))) {
+                getStoragePool().setSpmVdsId(poolFromDb.getSpmVdsId());
             }
             if (getStoragePool().getStatus() == StoragePoolStatus.Uninitialized) {
-                getStoragePool().setspm_vds_id(null);
+                getStoragePool().setSpmVdsId(null);
             }
 
             executeInScope(TransactionScopeOption.Required, new TransactionMethod<StoragePool>() {

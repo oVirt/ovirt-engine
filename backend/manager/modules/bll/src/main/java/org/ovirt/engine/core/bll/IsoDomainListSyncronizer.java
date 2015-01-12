@@ -655,7 +655,7 @@ public class IsoDomainListSyncronizer {
         if (repoStorageDomainId != null) {
             try {
                 StoragePool dc = getStoragePoolDAO().get(repoStoragePoolId);
-                if (FeatureSupported.getFileStats(dc.getcompatibility_version())) {
+                if (FeatureSupported.getFileStats(dc.getCompatibilityVersion())) {
                     returnValue = Backend
                             .getInstance()
                             .getResourceManager()
@@ -710,7 +710,7 @@ public class IsoDomainListSyncronizer {
         if (repoStorageDomainId != null) {
             try {
                 StoragePool dc = getStoragePoolDAO().get(repoStoragePoolId);
-                if (FeatureSupported.getFileStats(dc.getcompatibility_version())) {
+                if (FeatureSupported.getFileStats(dc.getCompatibilityVersion())) {
                     returnValue = Backend
                             .getInstance()
                             .getResourceManager()

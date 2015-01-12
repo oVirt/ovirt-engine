@@ -61,7 +61,7 @@ public class NetworkValidator {
     public ValidationResult vmNetworkSetCorrectly() {
         return ValidationResult.failWith(VdcBllMessages.NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL)
                 .unless(network.isVmNetwork()
-                        || FeatureSupported.nonVmNetwork(getDataCenter().getcompatibility_version()));
+                        || FeatureSupported.nonVmNetwork(getDataCenter().getCompatibilityVersion()));
     }
 
     /**
@@ -78,7 +78,7 @@ public class NetworkValidator {
     public ValidationResult mtuValid() {
         return ValidationResult.failWith(VdcBllMessages.NETWORK_MTU_OVERRIDE_NOT_SUPPORTED)
                 .unless(network.getMtu() == 0
-                        || FeatureSupported.mtuSpecification(getDataCenter().getcompatibility_version()));
+                        || FeatureSupported.mtuSpecification(getDataCenter().getCompatibilityVersion()));
     }
 
     /**

@@ -91,8 +91,8 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     private void updateStoragePoolFormatType() {
         final StoragePool storagePool = getStoragePool();
         final Guid spId = storagePool.getId();
-        final Version spVersion = storagePool.getcompatibility_version();
-        final Version oldSpVersion = getOldStoragePool().getcompatibility_version();
+        final Version spVersion = storagePool.getCompatibilityVersion();
+        final Version oldSpVersion = getOldStoragePool().getCompatibilityVersion();
 
         if (oldSpVersion.equals(spVersion)) {
             return;
@@ -181,13 +181,13 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         if ( getOldStoragePool().isLocal() != getStoragePool().isLocal() && !poolDomains.isEmpty() ) {
             return failCanDoAction(VdcBllMessages.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_DOMAINS);
         }
-        if ( !getOldStoragePool().getcompatibility_version().equals(getStoragePool()
-                .getcompatibility_version())) {
+        if ( !getOldStoragePool().getCompatibilityVersion().equals(getStoragePool()
+                .getCompatibilityVersion())) {
             if (!isStoragePoolVersionSupported()) {
                 return failCanDoAction(VersionSupport.getUnsupportedVersionMessage());
             }
             // decreasing of compatibility version is allowed under conditions
-            else if (getStoragePool().getcompatibility_version().compareTo(getOldStoragePool().getcompatibility_version()) < 0) {
+            else if (getStoragePool().getCompatibilityVersion().compareTo(getOldStoragePool().getCompatibilityVersion()) < 0) {
                 List<Network> networks = getNetworkDAO().getAllForDataCenter(getStoragePoolId());
                 if (networks.size() == 1) {
                     Network network = networks.get(0);
@@ -214,7 +214,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         List<VDSGroup> clusters = getVdsGroupDAO().getAllForStoragePool(getStoragePool().getId());
         List<String> lowLevelClusters = new ArrayList<String>();
         for (VDSGroup cluster : clusters) {
-            if (getStoragePool().getcompatibility_version().compareTo(cluster.getcompatibility_version()) > 0) {
+            if (getStoragePool().getCompatibilityVersion().compareTo(cluster.getcompatibility_version()) > 0) {
                 lowLevelClusters.add(cluster.getName());
             }
         }
@@ -254,7 +254,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     }
 
     protected boolean isStoragePoolVersionSupported() {
-        return VersionSupport.checkVersionSupported(getStoragePool().getcompatibility_version());
+        return VersionSupport.checkVersionSupported(getStoragePool().getCompatibilityVersion());
     }
 
     /**

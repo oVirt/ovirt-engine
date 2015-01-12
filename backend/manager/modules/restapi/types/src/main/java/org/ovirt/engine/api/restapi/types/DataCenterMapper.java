@@ -45,8 +45,8 @@ public class DataCenterMapper {
             }
         }
         if (model.isSetVersion() && model.getVersion().getMajor()!=null && model.getVersion().getMinor()!=null) {
-            entity.setcompatibility_version(new org.ovirt.engine.core.compat.Version(model.getVersion().getMajor(),
-                                                                                model.getVersion().getMinor()));
+            entity.setCompatibilityVersion(new org.ovirt.engine.core.compat.Version(model.getVersion().getMajor(),
+                    model.getVersion().getMinor()));
         }
 
         if (model.isSetMacPool() && model.getMacPool().isSetId()) {
@@ -72,10 +72,10 @@ public class DataCenterMapper {
         if (entity.getStatus()!=null) {
             model.setStatus(StatusUtils.create(map(entity.getStatus(), null)));
         }
-        if (entity.getcompatibility_version() != null) {
+        if (entity.getCompatibilityVersion() != null) {
             model.setVersion(new Version());
-            model.getVersion().setMajor(entity.getcompatibility_version().getMajor());
-            model.getVersion().setMinor(entity.getcompatibility_version().getMinor());
+            model.getVersion().setMajor(entity.getCompatibilityVersion().getMajor());
+            model.getVersion().setMinor(entity.getCompatibilityVersion().getMinor());
         }
         if (entity.getStoragePoolFormatType()!=null) {
             StorageFormat storageFormat = StorageFormatMapper.map(entity.getStoragePoolFormatType(), null);

@@ -265,7 +265,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
             map.put(diskImage, diskImage.getStorageIds().get(0));
         }
         return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
-                getStoragePool().getcompatibility_version()));
+                getStoragePool().getCompatibilityVersion()));
     }
 
     @Override
@@ -298,7 +298,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     protected boolean canDoAction() {
         setStoragePoolId(getVm().getStoragePoolId());
 
-        LiveSnapshotValidator validator = new LiveSnapshotValidator(getStoragePool().getcompatibility_version(), getVds());
+        LiveSnapshotValidator validator = new LiveSnapshotValidator(getStoragePool().getCompatibilityVersion(), getVds());
         if (!validate(validator.canDoSnapshot())) {
             return false;
         }

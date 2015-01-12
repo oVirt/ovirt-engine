@@ -874,7 +874,7 @@ public class VmSnapshotListModel extends SearchableListModel
                 VM vm = (VM) model.getEntity();
 
                 Version minClusterVersion = vm.getVdsGroupCompatibilityVersion();
-                Version minDcVersion = dataCenter.getcompatibility_version();
+                Version minDcVersion = dataCenter.getCompatibilityVersion();
 
                 AsyncDataProvider.getInstance().isCommandCompatible(new AsyncQuery(model, new INewAsyncCallback() {
                     @Override

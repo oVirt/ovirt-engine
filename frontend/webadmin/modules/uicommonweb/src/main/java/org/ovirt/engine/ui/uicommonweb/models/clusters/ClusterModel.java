@@ -1460,7 +1460,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         }
         else
         {
-            version = getDataCenter().getSelectedItem().getcompatibility_version();
+            version = getDataCenter().getSelectedItem().getCompatibilityVersion();
         }
 
         AsyncQuery _asyncQuery = new AsyncQuery();
@@ -1731,13 +1731,13 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                 clusterModel.getVersion().setItems(versions);
                 if (selectedVersion == null ||
                         !versions.contains(selectedVersion) ||
-                        selectedVersion.compareTo(selectedDataCenter.getcompatibility_version()) > 0)
+                        selectedVersion.compareTo(selectedDataCenter.getCompatibilityVersion()) > 0)
                 {
                     if(ApplicationModeHelper.getUiMode().equals(ApplicationMode.GlusterOnly)){
                         clusterModel.getVersion().setSelectedItem(Linq.selectHighestVersion(versions));
                     }
                     else {
-                        clusterModel.getVersion().setSelectedItem(selectedDataCenter.getcompatibility_version());
+                        clusterModel.getVersion().setSelectedItem(selectedDataCenter.getCompatibilityVersion());
                     }
                 }
                 else if (clusterModel.getIsEdit()) {

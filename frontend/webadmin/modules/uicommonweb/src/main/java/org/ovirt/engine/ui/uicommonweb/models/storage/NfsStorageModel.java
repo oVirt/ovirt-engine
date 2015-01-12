@@ -259,7 +259,7 @@ public class NfsStorageModel extends Model implements IStorageModel {
         StoragePool dataCenter = getContainer().getDataCenter().getSelectedItem();
         Version ver31 = new Version(3, 1);
 
-        boolean available = dataCenter != null && (dataCenter.getcompatibility_version().compareTo(ver31) >= 0 || dataCenter.getId().equals(Guid.Empty));
+        boolean available = dataCenter != null && (dataCenter.getCompatibilityVersion().compareTo(ver31) >= 0 || dataCenter.getId().equals(Guid.Empty));
 
         getVersion().setIsAvailable(available);
         getRetransmissions().setIsAvailable(available);

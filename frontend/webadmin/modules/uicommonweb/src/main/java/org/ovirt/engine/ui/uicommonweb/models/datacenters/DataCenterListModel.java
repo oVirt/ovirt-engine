@@ -672,7 +672,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
         }
         else if (!dcModel.getIsNew()
                 && getSelectedItem() != null
-                && !dcModel.getVersion().getSelectedItem().equals(((StoragePool) getSelectedItem()).getcompatibility_version())) {
+                && !dcModel.getVersion().getSelectedItem().equals(((StoragePool) getSelectedItem()).getCompatibilityVersion())) {
             final ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
             confirmModel.setTitle(ConstantsManager.getInstance()
@@ -706,7 +706,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
                         newFormat = VersionStorageFormatUtil.getPreferredForVersion(
                             dcModel.getVersion().getSelectedItem(), storage.getStorageType());
                         oldFormat = VersionStorageFormatUtil.getPreferredForVersion(
-                            sp.getcompatibility_version(), storage.getStorageType());
+                            sp.getCompatibilityVersion(), storage.getStorageType());
                     }
 
                     if (newFormat == oldFormat) {
@@ -807,7 +807,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
         dataCenter.setdescription(model.getDescription().getEntity());
         dataCenter.setComment(model.getComment().getEntity());
         dataCenter.setIsLocal(model.getStoragePoolType().getSelectedItem());
-        dataCenter.setcompatibility_version(model.getVersion().getSelectedItem());
+        dataCenter.setCompatibilityVersion(model.getVersion().getSelectedItem());
         dataCenter.setQuotaEnforcementType(model.getQuotaEnforceTypeListModel()
                 .getSelectedItem());
         dataCenter.setMacPoolId(model.getMacPoolListModel().getSelectedItem().getId());
@@ -960,7 +960,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
     private void updateIscsiBondListAvailability(StoragePool storagePool) {
         boolean iscsiBondSupported = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
                 ConfigurationValues.IscsiMultipathingSupported,
-                storagePool.getcompatibility_version().getValue()
+                storagePool.getCompatibilityVersion().getValue()
         );
 
         if (iscsiBondSupported) {

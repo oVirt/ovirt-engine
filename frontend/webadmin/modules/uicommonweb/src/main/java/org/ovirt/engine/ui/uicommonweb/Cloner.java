@@ -297,11 +297,11 @@ public final class Cloner
         obj.setIsLocal(instance.isLocal());
         obj.setStatus(instance.getStatus());
 
-        obj.setmaster_domain_version(instance.getmaster_domain_version());
+        obj.setMasterDomainVersion(instance.getMasterDomainVersion());
         obj.setLVER(instance.getLVER());
-        obj.setrecovery_mode(instance.getrecovery_mode());
-        obj.setspm_vds_id(instance.getspm_vds_id());
-        obj.setcompatibility_version(instance.getcompatibility_version());
+        obj.setRecoveryMode(instance.getRecoveryMode());
+        obj.setSpmVdsId(instance.getSpmVdsId());
+        obj.setCompatibilityVersion(instance.getCompatibilityVersion());
 
         return obj;
     }

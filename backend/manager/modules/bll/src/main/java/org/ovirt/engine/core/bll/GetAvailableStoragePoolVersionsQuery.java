@@ -32,7 +32,7 @@ public class GetAvailableStoragePoolVersionsQuery<P extends IdQueryParameters>
                         .<HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels)) {
                     // if version lower than current skip because cannot
                     // decrease version
-                    if (supportedVer.compareTo(storagePool.getcompatibility_version()) < 0) {
+                    if (supportedVer.compareTo(storagePool.getCompatibilityVersion()) < 0) {
                         continue;
                     }
 

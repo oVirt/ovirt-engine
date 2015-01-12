@@ -43,7 +43,7 @@ public class StoragePool extends IVdcQueryable implements BusinessEntityWithStat
 
     private String LVER;
 
-    private RecoveryMode recovery_mode;
+    private RecoveryMode recoveryMode;
 
     private Version version;
 
@@ -55,7 +55,7 @@ public class StoragePool extends IVdcQueryable implements BusinessEntityWithStat
         id = Guid.Empty;
         status = StoragePoolStatus.Uninitialized;
         spmVdsId = Guid.Empty;
-        recovery_mode = RecoveryMode.Manual;
+        recoveryMode = RecoveryMode.Manual;
         quotaEnforcementType = QuotaEnforcementTypeEnum.DISABLED;
         name = "";
         description = "";
@@ -132,22 +132,22 @@ public class StoragePool extends IVdcQueryable implements BusinessEntityWithStat
         status = value;
     }
 
-    public int getmaster_domain_version() {
+    public int getMasterDomainVersion() {
         return masterDomainVersion;
     }
 
-    public void setmaster_domain_version(int value) {
+    public void setMasterDomainVersion(int value) {
         this.masterDomainVersion = value;
     }
 
-    public Version getcompatibility_version() {
+    public Version getCompatibilityVersion() {
         if (version == null) {
             version = new Version(compatibilityVersion);
         }
         return version;
     }
 
-    public void setcompatibility_version(Version value) {
+    public void setCompatibilityVersion(Version value) {
         compatibilityVersion = value.toString();
         version = null;
     }
@@ -165,19 +165,19 @@ public class StoragePool extends IVdcQueryable implements BusinessEntityWithStat
         LVER = value;
     }
 
-    public RecoveryMode getrecovery_mode() {
-        return recovery_mode;
+    public RecoveryMode getRecoveryMode() {
+        return recoveryMode;
     }
 
-    public void setrecovery_mode(RecoveryMode value) {
-        recovery_mode = value;
+    public void setRecoveryMode(RecoveryMode value) {
+        recoveryMode = value;
     }
 
-    public Guid getspm_vds_id() {
+    public Guid getSpmVdsId() {
         return spmVdsId;
     }
 
-    public void setspm_vds_id(Guid value) {
+    public void setSpmVdsId(Guid value) {
         spmVdsId = value;
     }
 
@@ -185,19 +185,19 @@ public class StoragePool extends IVdcQueryable implements BusinessEntityWithStat
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((LVER == null) ? 0 : LVER.hashCode());
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((comment == null) ? 0 : comment.hashCode());
-        result = prime * result + ((compatibilityVersion == null) ? 0 : compatibilityVersion.hashCode());
+        result = prime * result + (id == null ? 0 : id.hashCode());
+        result = prime * result + (LVER == null ? 0 : LVER.hashCode());
+        result = prime * result + (description == null ? 0 : description.hashCode());
+        result = prime * result + (comment == null ? 0 : comment.hashCode());
+        result = prime * result + (compatibilityVersion == null ? 0 : compatibilityVersion.hashCode());
         result = prime * result + masterDomainVersion;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((recovery_mode == null) ? 0 : recovery_mode.hashCode());
-        result = prime * result + ((spmVdsId == null) ? 0 : spmVdsId.hashCode());
-        result = prime * result + ((status == null) ? 0 : status.hashCode());
+        result = prime * result + (name == null ? 0 : name.hashCode());
+        result = prime * result + (recoveryMode == null ? 0 : recoveryMode.hashCode());
+        result = prime * result + (spmVdsId == null ? 0 : spmVdsId.hashCode());
+        result = prime * result + (status == null ? 0 : status.hashCode());
         result = prime * result + (local ? 1231 : 1237);
-        result = prime * result + ((storagePoolFormatType == null) ? 0 : storagePoolFormatType.hashCode());
-        result = prime * result + ((quotaEnforcementType == null) ? 0 : quotaEnforcementType.hashCode());
+        result = prime * result + (storagePoolFormatType == null ? 0 : storagePoolFormatType.hashCode());
+        result = prime * result + (quotaEnforcementType == null ? 0 : quotaEnforcementType.hashCode());
         return result;
     }
 
@@ -206,10 +206,7 @@ public class StoragePool extends IVdcQueryable implements BusinessEntityWithStat
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof StoragePool)) {
             return false;
         }
         StoragePool other = (StoragePool) obj;
@@ -217,10 +214,10 @@ public class StoragePool extends IVdcQueryable implements BusinessEntityWithStat
                 && ObjectUtils.objectsEqual(LVER, other.LVER)
                 && ObjectUtils.objectsEqual(description, other.description)
                 && ObjectUtils.objectsEqual(comment, other.comment)
-                && ObjectUtils.objectsEqual(getcompatibility_version(), other.getcompatibility_version())
+                && ObjectUtils.objectsEqual(getCompatibilityVersion(), other.getCompatibilityVersion())
                 && masterDomainVersion == other.masterDomainVersion
                 && ObjectUtils.objectsEqual(name, other.name)
-                && recovery_mode == other.recovery_mode
+                && recoveryMode == other.recoveryMode
                 && ObjectUtils.objectsEqual(spmVdsId, other.spmVdsId)
                 && status == other.status
                 && local == other.local

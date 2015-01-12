@@ -79,7 +79,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         });
 
         if (!getNetwork().isExternal()) {
-            if (NetworkHelper.setupNetworkSupported(getStoragePool().getcompatibility_version())) {
+            if (NetworkHelper.setupNetworkSupported(getStoragePool().getCompatibilityVersion())) {
                 applyNetworkChangesToHosts();
             } else if (!onlyPermittedFieldsChanged() || !allowedNetworkLabelManipulation()) {
                 List<VdsNetworkInterface> nics =

@@ -88,7 +88,7 @@ public class AddStorageDomainCommonTest {
 
         sp = new StoragePool();
         sp.setId(spId);
-        sp.setcompatibility_version(Version.v3_5);
+        sp.setCompatibilityVersion(Version.v3_5);
         when(spDao.get(spId)).thenReturn(sp);
 
         StorageServerConnections conn = new StorageServerConnections();
@@ -123,7 +123,7 @@ public class AddStorageDomainCommonTest {
     @Test
     public void canDoActionSucceedsInitFormatDataDomain30() {
         sd.setStorageFormat(null);
-        sp.setcompatibility_version(Version.v3_0);
+        sp.setCompatibilityVersion(Version.v3_0);
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
         assertEquals("Format not initialized correctly", StorageFormatType.V1, sd.getStorageFormat());
     }
@@ -199,7 +199,7 @@ public class AddStorageDomainCommonTest {
 
     @Test
     public void canDoActionFailsUnsupportedFormat() {
-        sp.setcompatibility_version(Version.v3_0);
+        sp.setCompatibilityVersion(Version.v3_0);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
                 (cmd, VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL);
     }

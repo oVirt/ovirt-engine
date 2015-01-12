@@ -539,7 +539,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     protected boolean validateVM(VmValidator vmValidator) {
-        LiveSnapshotValidator validator = new LiveSnapshotValidator(getStoragePool().getcompatibility_version(), getVds());
+        LiveSnapshotValidator validator = new LiveSnapshotValidator(getStoragePool().getCompatibilityVersion(), getVds());
         return (getVm().isDown() || validate(validator.canDoSnapshot())) &&
                 validate(vmValidator.vmNotSavingRestoring()) &&
                 validate(vmValidator.validateVmStatusUsingMatrix(VdcActionType.CreateAllSnapshotsFromVm));

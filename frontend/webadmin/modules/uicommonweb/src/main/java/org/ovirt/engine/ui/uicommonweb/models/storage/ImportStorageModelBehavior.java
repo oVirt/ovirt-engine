@@ -154,7 +154,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
     private boolean isImportDataDomainEnabled(StoragePool dataCenter) {
         boolean ovfStoreOnAnyDomainEnabled = (Boolean) AsyncDataProvider.getInstance().
                 getConfigValuePreConverted(ConfigurationValues.ImportDataStorageDomain,
-                        dataCenter.getcompatibility_version().getValue());
+                        dataCenter.getCompatibilityVersion().getValue());
         return ovfStoreOnAnyDomainEnabled;
     }
 }

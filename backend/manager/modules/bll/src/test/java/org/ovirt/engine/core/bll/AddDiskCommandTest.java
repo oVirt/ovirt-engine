@@ -473,7 +473,7 @@ public class AddDiskCommandTest {
         Guid storagePoolId = Guid.newGuid();
         StoragePool storagePool = new StoragePool();
         storagePool.setId(storagePoolId);
-        storagePool.setcompatibility_version(compatibilityVersion);
+        storagePool.setCompatibilityVersion(compatibilityVersion);
         storagePool.setStatus(StoragePoolStatus.Up);
         when(storagePoolDAO.get(storagePoolId)).thenReturn(storagePool);
 

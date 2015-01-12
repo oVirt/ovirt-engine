@@ -849,8 +849,8 @@ public class VmDiskListModel extends VmDiskListModelBase
                 VmDiskListModel model = (VmDiskListModel) target;
 
                 StoragePool dataCenter = (StoragePool) returnValue;
-                Version dcCompatibilityVersion = dataCenter.getcompatibility_version() != null
-                        ? dataCenter.getcompatibility_version() : new Version();
+                Version dcCompatibilityVersion = dataCenter.getCompatibilityVersion() != null
+                        ? dataCenter.getCompatibilityVersion() : new Version();
 
                 AsyncDataProvider.getInstance().isCommandCompatible(new AsyncQuery(model,
                         new INewAsyncCallback() {
@@ -888,7 +888,7 @@ public class VmDiskListModel extends VmDiskListModelBase
             public void onSuccess(Object target, Object returnValue) {
                 VmDiskListModel model = (VmDiskListModel) target;
                 StoragePool storagePool = (StoragePool) returnValue;
-                model.setDataCenterVersion(storagePool.getcompatibility_version());
+                model.setDataCenterVersion(storagePool.getCompatibilityVersion());
             }
         });
         AsyncDataProvider.getInstance().getDataCenterById(query, getEntity().getStoragePoolId());

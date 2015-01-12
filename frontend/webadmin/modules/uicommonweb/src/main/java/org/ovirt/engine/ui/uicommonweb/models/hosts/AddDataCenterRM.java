@@ -96,7 +96,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
                 dataCenter.setdescription(dataCenterModel.getDescription().getEntity());
                 dataCenter.setComment(dataCenterModel.getComment().getEntity());
                 dataCenter.setIsLocal(dataCenterModel.getStoragePoolType().getSelectedItem());
-                dataCenter.setcompatibility_version(dataCenterModel.getVersion().getSelectedItem());
+                dataCenter.setCompatibilityVersion(dataCenterModel.getVersion().getSelectedItem());
 
                 StoragePoolManagementParameter parameters = new StoragePoolManagementParameter(dataCenter);
                 parameters.setCorrelationId(getCorrelationId());

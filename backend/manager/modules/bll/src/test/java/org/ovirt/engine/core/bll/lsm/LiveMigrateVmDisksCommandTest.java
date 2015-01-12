@@ -370,7 +370,7 @@ public class LiveMigrateVmDisksCommandTest {
 
     private void initStoragePool() {
         StoragePool storagePool = new StoragePool();
-        storagePool.setcompatibility_version(Version.v3_1);
+        storagePool.setCompatibilityVersion(Version.v3_1);
 
         when(storagePoolDao.get(any(Guid.class))).thenReturn(storagePool);
         when(command.getStoragePoolId()).thenReturn(storagePoolId);

@@ -188,7 +188,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
                 StoragePool sp = getTargetStoragePool();
                 if (sp != null) {
                     sd.setStorageFormat(VersionStorageFormatUtil.getPreferredForVersion(
-                            sp.getcompatibility_version(), sd.getStorageType())
+                            sp.getCompatibilityVersion(), sd.getStorageType())
                     );
                 }
             } else {

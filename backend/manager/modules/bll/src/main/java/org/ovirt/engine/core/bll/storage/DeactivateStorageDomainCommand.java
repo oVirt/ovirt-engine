@@ -157,7 +157,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                         .isEmpty()) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DETECTED_ACTIVE_VMS);
         }
-        if (getStoragePool().getspm_vds_id() != null) {
+        if (getStoragePool().getSpmVdsId() != null) {
             // In case there are running tasks in the pool, it is impossible to deactivate the master storage domain
             if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master &&
                     getAsyncTaskDao().getAsyncTaskIdsByStoragePoolId(getStorageDomain().getStoragePoolId()).size() > 0) {
@@ -248,13 +248,13 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                             getStorageDomain()
                                     .getId(),
                             _newMasterStorageDomainId,
-                            getStoragePool().getmaster_domain_version()));
+                            getStoragePool().getMasterDomainVersion()));
         }
         freeLock();
 
         VDS spm = null;
-        if (getStoragePool().getspm_vds_id() != null) {
-            spm = getVdsDAO().get(getStoragePool().getspm_vds_id());
+        if (getStoragePool().getSpmVdsId() != null) {
+            spm = getVdsDAO().get(getStoragePool().getSpmVdsId());
         }
 
         if (_isLastMaster) {

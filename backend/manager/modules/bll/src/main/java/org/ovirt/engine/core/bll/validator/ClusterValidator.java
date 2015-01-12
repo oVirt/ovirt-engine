@@ -56,7 +56,7 @@ public class ClusterValidator {
         StoragePool dataCenter = getDataCenter();
         return ValidationResult.failWith(VdcBllMessages.VDS_GROUP_CANNOT_ADD_COMPATIBILITY_VERSION_WITH_LOWER_STORAGE_POOL)
                 .when(dataCenter != null
-                        && dataCenter.getcompatibility_version().compareTo(cluster.getcompatibility_version()) > 0);
+                        && dataCenter.getCompatibilityVersion().compareTo(cluster.getcompatibility_version()) > 0);
     }
 
     public ValidationResult dataCenterExists() {

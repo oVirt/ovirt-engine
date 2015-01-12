@@ -109,7 +109,7 @@ public class VnicProfileValidator {
     public boolean validateCustomProperties(List<String> messages) {
         StoragePool dataCenter = getDbFacade().getStoragePoolDao().get(getNetwork().getDataCenterId());
         List<ValidationError> errors =
-                DevicePropertiesUtils.getInstance().validateProperties(dataCenter.getcompatibility_version(),
+                DevicePropertiesUtils.getInstance().validateProperties(dataCenter.getCompatibilityVersion(),
                         VmDeviceGeneralType.INTERFACE,
                         vnicProfile.getCustomProperties());
 

@@ -33,10 +33,10 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
             entity.setName(rs.getString("name"));
             entity.setIsLocal(rs.getBoolean("is_local"));
             entity.setStatus(StoragePoolStatus.forValue(rs.getInt("status")));
-            entity.setmaster_domain_version(rs
+            entity.setMasterDomainVersion(rs
                     .getInt("master_domain_version"));
-            entity.setspm_vds_id(getGuid(rs, "spm_vds_id"));
-            entity.setcompatibility_version(new Version(rs
+            entity.setSpmVdsId(getGuid(rs, "spm_vds_id"));
+            entity.setCompatibilityVersion(new Version(rs
                     .getString("compatibility_version")));
             entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
             entity.setStoragePoolFormatType(StorageFormatType.forValue(rs.getString("storage_pool_format_type")));
@@ -133,11 +133,11 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                 .addValue("is_local", pool.isLocal())
                 .addValue("status", pool.getStatus())
                 .addValue("master_domain_version",
-                        pool.getmaster_domain_version())
-                .addValue("spm_vds_id", pool.getspm_vds_id())
+                        pool.getMasterDomainVersion())
+                .addValue("spm_vds_id", pool.getSpmVdsId())
                 .addValue("quota_enforcement_type", pool.getQuotaEnforcementType())
                 .addValue("compatibility_version",
-                        pool.getcompatibility_version())
+                        pool.getCompatibilityVersion())
                 .addValue("mac_pool_id", pool.getMacPoolId());
 
         getCallsHandler().executeModification("Insertstorage_pool",
@@ -155,10 +155,10 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                 .addValue("is_local", pool.isLocal())
                 .addValue("storage_pool_format_type", pool.getStoragePoolFormatType())
                 .addValue("master_domain_version",
-                        pool.getmaster_domain_version())
-                .addValue("spm_vds_id", pool.getspm_vds_id())
+                        pool.getMasterDomainVersion())
+                .addValue("spm_vds_id", pool.getSpmVdsId())
                 .addValue("compatibility_version",
-                        pool.getcompatibility_version())
+                        pool.getCompatibilityVersion())
                 .addValue("quota_enforcement_type",
                         pool.getQuotaEnforcementType().getValue())
                 .addValue("mac_pool_id", pool.getMacPoolId());
@@ -176,7 +176,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                 .addValue("is_local", pool.isLocal())
                 .addValue("storage_pool_format_type", pool.getStoragePoolFormatType())
                 .addValue("compatibility_version",
-                        pool.getcompatibility_version())
+                        pool.getCompatibilityVersion())
                 .addValue("quota_enforcement_type",
                         pool.getQuotaEnforcementType().getValue())
                 .addValue("mac_pool_id", pool.getMacPoolId());

@@ -232,7 +232,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
             getDataCenter().getName().setEntity(candidate.getName());
             getDataCenter().getDescription().setEntity(candidate.getdescription());
 
-            Version version = candidate.getcompatibility_version();
+            Version version = candidate.getCompatibilityVersion();
             getDataCenter().getVersion().setSelectedItem(version);
             getCluster().getVersion().setSelectedItem(version);
 

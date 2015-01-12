@@ -1278,7 +1278,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                                                                                 // compat logic: in case its not v1 and the version is less than 3.0 continue.
                                                                                                 if (item.getStorageStaticData().getStorageFormat() != StorageFormatType.V1
                                                                                                         && dataCenterGuideModel.getEntity()
-                                                                                                        .getcompatibility_version()
+                                                                                                        .getCompatibilityVersion()
                                                                                                         .compareTo(version3_0) < 0) {
                                                                                                     continue;
                                                                                                 }

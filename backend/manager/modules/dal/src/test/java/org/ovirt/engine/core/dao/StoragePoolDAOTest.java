@@ -46,7 +46,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
         newPool = new StoragePool();
         newPool.setName("newPoolDude");
         newPool.setMacPoolId(FixturesTool.DEFAULT_MAC_POOL_ID);
-        newPool.setcompatibility_version(new Version("3.0"));
+        newPool.setCompatibilityVersion(new Version("3.0"));
 
     }
 
@@ -286,8 +286,8 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
     public void testIncreaseStoragePoolMasterVersion() {
         int result = dao.increaseStoragePoolMasterVersion(existingPool.getId());
         StoragePool dbPool = dao.get(existingPool.getId());
-        assertEquals(result, existingPool.getmaster_domain_version() + 1);
-        assertEquals(result, dbPool.getmaster_domain_version());
+        assertEquals(result, existingPool.getMasterDomainVersion() + 1);
+        assertEquals(result, dbPool.getMasterDomainVersion());
     }
 
     /**

@@ -556,22 +556,22 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
                 }
                 else if ((getSelectedItem().getType() == StorageType.NFS
                         || getSelectedItem().getType() == StorageType.LOCALFS)
-                        && (dataCenter.getcompatibility_version().compareTo(Version.v3_1) < 0))
+                        && (dataCenter.getCompatibilityVersion().compareTo(Version.v3_1) < 0))
                 {
                     formats.add(StorageFormatType.V1);
                 }
                 else if (getSelectedItem().getType().isBlockDomain()
-                        && dataCenter.getcompatibility_version().compareTo(Version.v3_0) < 0)
+                        && dataCenter.getCompatibilityVersion().compareTo(Version.v3_0) < 0)
                 {
                     formats.add(StorageFormatType.V1);
                 }
                 else if (getSelectedItem().getType().isBlockDomain()
-                        && dataCenter.getcompatibility_version().compareTo(Version.v3_0) == 0)
+                        && dataCenter.getCompatibilityVersion().compareTo(Version.v3_0) == 0)
                 {
                     formats.add(StorageFormatType.V2);
                     selectItem = StorageFormatType.V2;
                 }
-                else if (dataCenter.getcompatibility_version().compareTo(Version.v3_1) >= 0)
+                else if (dataCenter.getCompatibilityVersion().compareTo(Version.v3_1) >= 0)
                 {
                     formats.add(StorageFormatType.V3);
                     selectItem = StorageFormatType.V3;

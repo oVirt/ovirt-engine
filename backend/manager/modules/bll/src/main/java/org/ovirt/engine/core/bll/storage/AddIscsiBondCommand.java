@@ -27,7 +27,7 @@ public class AddIscsiBondCommand<T extends AddIscsiBondParameters> extends BaseI
 
     @Override
     protected boolean canDoAction() {
-        if (!FeatureSupported.isIscsiMultipathingSupported(getStoragePool().getcompatibility_version())) {
+        if (!FeatureSupported.isIscsiMultipathingSupported(getStoragePool().getCompatibilityVersion())) {
             return failCanDoAction(VdcBllMessages.ISCSI_BOND_NOT_SUPPORTED);
         }
 

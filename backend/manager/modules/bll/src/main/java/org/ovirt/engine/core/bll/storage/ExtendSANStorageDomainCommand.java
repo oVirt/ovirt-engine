@@ -40,7 +40,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
             }
         });
         boolean supportForceExtendVG = Config.<Boolean> getValue(
-                ConfigValues.SupportForceExtendVG, getStoragePool().getcompatibility_version().toString());
+                ConfigValues.SupportForceExtendVG, getStoragePool().getCompatibilityVersion().toString());
 
         runVdsCommand(VDSCommandType.ExtendStorageDomain,
                 new ExtendStorageDomainVDSCommandParameters(getStoragePoolId(), getStorageDomain()

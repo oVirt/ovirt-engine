@@ -155,7 +155,7 @@ public class AddExistingFileStorageDomainCommandTest {
     private static StoragePool getStoragePool() {
         StoragePool storagePool = new StoragePool();
         storagePool.setId(Guid.newGuid());
-        storagePool.setcompatibility_version(Version.v3_5);
+        storagePool.setCompatibilityVersion(Version.v3_5);
         return storagePool;
     }
 

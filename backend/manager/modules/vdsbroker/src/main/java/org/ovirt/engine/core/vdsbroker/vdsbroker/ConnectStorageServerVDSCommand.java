@@ -84,7 +84,7 @@ public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionMan
         // storage_pool can be null when discovering iscsi send targets or when connecting
         // through vds which has no storage pool
         if (storagePool == null || Config.<Boolean> getValue(ConfigValues.AdvancedNFSOptionsEnabled,
-                storagePool.getcompatibility_version().getValue())) {
+                storagePool.getCompatibilityVersion().getValue())) {
             // For mnt_options, vfs_type, and protocol_version - if they are null
             // or empty we should not send a key with an empty value
             con.putIfNotEmpty("mnt_options", connection.getMountOptions());

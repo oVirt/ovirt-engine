@@ -52,7 +52,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
 
     private void setDataCenterDetails() {
         StoragePool dc = getParameters().getStoragePool();
-        setCompatibilityVersion(dc.getcompatibility_version().toString());
+        setCompatibilityVersion(dc.getCompatibilityVersion().toString());
         setQuotaEnforcementType(dc.getQuotaEnforcementType().name());
     }
 
@@ -85,15 +85,15 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
     protected boolean canDoAction() {
         boolean result = true;
         // set version to latest supported version if not given
-        if (getStoragePool().getcompatibility_version().isNotValid()) {
-            getStoragePool().setcompatibility_version(Version.getLast());
+        if (getStoragePool().getCompatibilityVersion().isNotValid()) {
+            getStoragePool().setCompatibilityVersion(Version.getLast());
         }
         if (result && !(isStoragePoolUnique(getStoragePool().getName()))) {
             result = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
         } else if (!checkStoragePoolNameLengthValid()) {
             result = false;
-        } else if (!VersionSupport.checkVersionSupported(getStoragePool().getcompatibility_version())) {
+        } else if (!VersionSupport.checkVersionSupported(getStoragePool().getCompatibilityVersion())) {
             addCanDoActionMessage(VersionSupport.getUnsupportedVersionMessage());
             result = false;
         }

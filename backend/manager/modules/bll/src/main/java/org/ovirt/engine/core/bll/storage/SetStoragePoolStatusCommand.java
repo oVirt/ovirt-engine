@@ -25,7 +25,7 @@ public class SetStoragePoolStatusCommand<T extends SetStoragePoolStatusParameter
     @Override
     protected void executeCommand() {
         getStoragePool().setStatus(getParameters().getStatus());
-        setVdsIdRef(getStoragePool().getspm_vds_id());
+        setVdsIdRef(getStoragePool().getSpmVdsId());
         DbFacade.getInstance().getStoragePoolDao().updateStatus(getStoragePool().getId(), getStoragePool().getStatus());
         if (getParameters().getStatus() == StoragePoolStatus.NonResponsive
                 || getParameters().getStatus() == StoragePoolStatus.NotOperational) {

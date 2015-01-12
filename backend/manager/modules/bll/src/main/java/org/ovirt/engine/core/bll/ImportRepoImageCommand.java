@@ -220,7 +220,7 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
             }
 
             setStoragePoolId(getParameters().getStoragePoolId());
-            if (!FeatureSupported.importGlanceImageAsTemplate(getStoragePool().getcompatibility_version())) {
+            if (!FeatureSupported.importGlanceImageAsTemplate(getStoragePool().getCompatibilityVersion())) {
                 return failCanDoAction(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
             }
         }

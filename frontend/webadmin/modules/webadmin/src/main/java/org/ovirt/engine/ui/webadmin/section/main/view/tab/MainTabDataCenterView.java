@@ -86,7 +86,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         TextColumnWithTooltip<StoragePool> versionColumn = new TextColumnWithTooltip<StoragePool>() {
             @Override
             public String getValue(StoragePool object) {
-                return object.getcompatibility_version().getValue();
+                return object.getCompatibilityVersion().getValue();
             }
         };
         versionColumn.makeSortable(StoragePoolFieldAutoCompleter.COMPATIBILITY_VERSION);

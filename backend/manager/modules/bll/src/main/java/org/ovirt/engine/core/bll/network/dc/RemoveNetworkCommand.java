@@ -69,7 +69,7 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
             }
         }
 
-        if (NetworkHelper.shouldRemoveNetworkFromHostUponNetworkRemoval(getNetwork(), getStoragePool().getcompatibility_version())) {
+        if (NetworkHelper.shouldRemoveNetworkFromHostUponNetworkRemoval(getNetwork(), getStoragePool().getCompatibilityVersion())) {
             removeNetworkFromHosts();
         }
 

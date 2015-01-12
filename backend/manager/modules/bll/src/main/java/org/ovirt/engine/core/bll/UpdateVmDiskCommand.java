@@ -269,7 +269,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             }
 
             if (!isVersionSupportedForShareable(getOldDisk(), getStoragePoolDAO().get(getVm().getStoragePoolId())
-                    .getcompatibility_version()
+                    .getCompatibilityVersion()
                     .getValue())) {
                 return failCanDoAction(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
             }
@@ -596,7 +596,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             Map<DiskImage, Guid> map = new HashMap<>();
             map.put(diskImage, diskImage.getStorageIds().get(0));
             return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
-                    getStoragePool().getcompatibility_version()));
+                    getStoragePool().getCompatibilityVersion()));
         }
         return true;
     }

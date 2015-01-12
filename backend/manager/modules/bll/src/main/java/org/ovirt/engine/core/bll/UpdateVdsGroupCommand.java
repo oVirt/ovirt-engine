@@ -186,7 +186,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
             if (oldGroup.getStoragePoolId() != null) {
                 StoragePool storagePool = getStoragePoolDAO().get(oldGroup.getStoragePoolId());
                 if (storagePool != null && getVdsGroup().getcompatibility_version()
-                    .compareTo(storagePool.getcompatibility_version()) < 0) {
+                    .compareTo(storagePool.getCompatibilityVersion()) < 0) {
                     result = false;
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION_UNDER_DC);
                 }

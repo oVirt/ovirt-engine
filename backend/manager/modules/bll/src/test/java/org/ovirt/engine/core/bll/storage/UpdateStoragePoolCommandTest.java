@@ -89,7 +89,7 @@ public class UpdateStoragePoolCommandTest {
 
         cmd = spy(realCommand);
         doReturn(10).when(cmd).getStoragePoolNameSizeLimit();
-        doReturn(createVersionSet().contains(cmd.getStoragePool().getcompatibility_version())).when(cmd)
+        doReturn(createVersionSet().contains(cmd.getStoragePool().getCompatibilityVersion())).when(cmd)
                 .isStoragePoolVersionSupported();
         doReturn(spDao).when(cmd).getStoragePoolDAO();
         doReturn(sdDao).when(cmd).getStorageDomainStaticDAO();
@@ -258,21 +258,21 @@ public class UpdateStoragePoolCommandTest {
     private static StoragePool createNewStoragePool() {
         StoragePool pool = createBasicPool();
         pool.setIsLocal(false);
-        pool.setcompatibility_version(VERSION_1_1);
+        pool.setCompatibilityVersion(VERSION_1_1);
         return pool;
     }
 
     private static StoragePool createDefaultStoragePool() {
         StoragePool pool = createBasicPool();
         pool.setIsLocal(true);
-        pool.setcompatibility_version(VERSION_1_1);
+        pool.setCompatibilityVersion(VERSION_1_1);
         return pool;
     }
 
     private static StoragePool createLowerVersionStoragePool() {
         StoragePool pool = createBasicPool();
         pool.setIsLocal(true);
-        pool.setcompatibility_version(VERSION_1_0);
+        pool.setCompatibilityVersion(VERSION_1_0);
         return pool;
     }
 
@@ -286,14 +286,14 @@ public class UpdateStoragePoolCommandTest {
     private static StoragePool createHigherVersionStoragePool() {
         StoragePool pool = createBasicPool();
         pool.setIsLocal(true);
-        pool.setcompatibility_version(VERSION_1_2);
+        pool.setCompatibilityVersion(VERSION_1_2);
         return pool;
     }
 
     private static StoragePool createInvalidVersionStoragePool() {
         StoragePool pool = createBasicPool();
         pool.setIsLocal(true);
-        pool.setcompatibility_version(VERSION_2_0);
+        pool.setCompatibilityVersion(VERSION_2_0);
         return pool;
     }
 

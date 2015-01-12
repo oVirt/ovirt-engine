@@ -299,7 +299,7 @@ public class IrsProxyData {
             KeyValuePairCompat<StoragePool, List<StorageDomain>> data =
                     (KeyValuePairCompat<StoragePool, List<StorageDomain>>) storagePoolInfoResult
                             .getReturnValue();
-            int masterVersion = data.getKey().getmaster_domain_version();
+            int masterVersion = data.getKey().getMasterDomainVersion();
             HashSet<Guid> domainsInVds = new HashSet<Guid>();
             for (StorageDomain domainData : data.getValue()) {
                 domainsInVds.add(domainData.getId());
@@ -375,14 +375,14 @@ public class IrsProxyData {
                                     domainFromDb.getStorageName()));
                 } // or master in DB and VDSM but there is a version
                   // mismatch
-                else if (dataMasterVersion != storagePool.getmaster_domain_version()) {
+                else if (dataMasterVersion != storagePool.getMasterDomainVersion()) {
                     reconstructMasterDomainNotInSync(data.getStoragePoolId(),
                             domainFromDb.getId(),
                             "Mismatch between master version in DB and VDSM",
                             MessageFormat.format("Master domain version is not in sync between DB and VDSM. "
                                     + "Domain {0} marked as master, but the version in DB: {1} and in VDSM: {2}",
                                     domainFromDb.getStorageName(),
-                                    storagePool.getmaster_domain_version(),
+                                    storagePool.getMasterDomainVersion(),
                                     dataMasterVersion));
                 }
             }
@@ -781,7 +781,7 @@ public class IrsProxyData {
         } else {
             init(selectedVds.argvalue);
             storagePool.setLVER(spmStatus.argvalue.getSpmLVER());
-            storagePool.setspm_vds_id(selectedVds.argvalue.getId());
+            storagePool.setSpmVdsId(selectedVds.argvalue.getId());
             // if were problemtaic or not operational and succeeded to find
             // host move pool to up
             if (prevStatus != StoragePoolStatus.NotOperational && prevStatus != StoragePoolStatus.NonResponsive) {
@@ -841,7 +841,7 @@ public class IrsProxyData {
                 .storagePoolStatusChange(storagePool.getId(), StoragePoolStatus.NonResponsive,
                         AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC, VdcBllErrors.ENGINE);
 
-        storagePool.setspm_vds_id(null);
+        storagePool.setSpmVdsId(null);
         DbFacade.getInstance().getStoragePoolDao().update(storagePool);
     }
 
@@ -979,7 +979,7 @@ public class IrsProxyData {
                     }
                 }
                 storagePool.setStatus(StoragePoolStatus.Contend);
-                storagePool.setspm_vds_id(selectedVds.argvalue.getId());
+                storagePool.setSpmVdsId(selectedVds.argvalue.getId());
 
                 TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
                     @Override
@@ -998,7 +998,7 @@ public class IrsProxyData {
                                 VDSCommandType.SpmStart,
                                 new SpmStartVDSCommandParameters(selectedVds.argvalue.getId(), _storagePoolId,
                                         spmStatus.getSpmId(), spmStatus.getSpmLVER(), storagePool
-                                                .getrecovery_mode(), vdsSpmIdToFence != -1, storagePool.getStoragePoolFormatType())).getReturnValue();
+                                                .getRecoveryMode(), vdsSpmIdToFence != -1, storagePool.getStoragePoolFormatType())).getReturnValue();
                 if (spmStatus == null || spmStatus.getSpmStatus() != SpmStatus.SPM) {
                     ResourceManager
                             .getInstance()
@@ -1014,7 +1014,7 @@ public class IrsProxyData {
                             public Object runInTransaction() {
                                 StoragePool pool =
                                         DbFacade.getInstance().getStoragePoolDao().get(storagePool.getId());
-                                pool.setspm_vds_id(null);
+                                pool.setSpmVdsId(null);
                                 DbFacade.getInstance().getStoragePoolDao().update(pool);
                                 return null;
                             }
@@ -1036,7 +1036,7 @@ public class IrsProxyData {
         nullifyInternalProxies();
         StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().get(_storagePoolId);
         if (storagePool != null) {
-            storagePool.setspm_vds_id(null);
+            storagePool.setSpmVdsId(null);
             DbFacade.getInstance().getStoragePoolDao().update(storagePool);
         }
     }

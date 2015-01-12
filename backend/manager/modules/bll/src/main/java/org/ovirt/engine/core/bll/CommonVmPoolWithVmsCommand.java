@@ -418,7 +418,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                 map.put(diskImage, diskImage.getStorageIds().get(0));
             }
             return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
-                    getStoragePool().getcompatibility_version()));
+                    getStoragePool().getCompatibilityVersion()));
         }
         return true;
     }

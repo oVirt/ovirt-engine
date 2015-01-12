@@ -376,7 +376,7 @@ public class DataCenterStorageListModel extends SearchableListModel
                                     // skip V3 format for DC ver <= 3
                                     if (a.getStorageStaticData().getStorageFormat() == StorageFormatType.V3
                                             && dcStorageModel.getEntity()
-                                                    .getcompatibility_version()
+                                                    .getCompatibilityVersion()
                                                     .compareTo(Version.v3_0) <= 0) {
                                         continue;
                                     }
@@ -388,7 +388,7 @@ public class DataCenterStorageListModel extends SearchableListModel
                                 {
                                     addToList = true;
                                 }
-                                else if (dcStorageModel.getEntity().getcompatibility_version().compareTo(Version.v3_1) >= 0)
+                                else if (dcStorageModel.getEntity().getCompatibilityVersion().compareTo(Version.v3_1) >= 0)
                                 {
                                     // if DC is >= 3.1 we support upgrading
                                     if (a.getStorageStaticData().getStorageFormat() == StorageFormatType.V1

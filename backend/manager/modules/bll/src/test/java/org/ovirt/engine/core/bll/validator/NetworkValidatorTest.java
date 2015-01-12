@@ -92,7 +92,7 @@ public class NetworkValidatorTest {
 
         // mock version checking
         Version version = mock(Version.class);
-        when(dataCenter.getcompatibility_version()).thenReturn(version);
+        when(dataCenter.getCompatibilityVersion()).thenReturn(version);
     }
 
     @Test
@@ -119,7 +119,7 @@ public class NetworkValidatorTest {
 
     private void vmNetworkSetupTest(Matcher<ValidationResult> matcher, boolean vmNetwork, boolean featureSupported) {
         mockConfigRule.mockConfigValue(ConfigValues.NonVmNetworkSupported,
-                dataCenter.getcompatibility_version(),
+                dataCenter.getCompatibilityVersion(),
                 featureSupported);
         when(network.isVmNetwork()).thenReturn(vmNetwork);
 
@@ -177,7 +177,7 @@ public class NetworkValidatorTest {
 
     private void mtuValidTest(Matcher<ValidationResult> matcher, int mtu, boolean featureSupported) {
         mockConfigRule.mockConfigValue(ConfigValues.MTUOverrideSupported,
-                dataCenter.getcompatibility_version(),
+                dataCenter.getCompatibilityVersion(),
                 featureSupported);
         when(network.getMtu()).thenReturn(mtu);
 

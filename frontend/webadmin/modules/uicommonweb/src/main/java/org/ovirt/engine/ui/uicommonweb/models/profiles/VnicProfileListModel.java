@@ -93,7 +93,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
 
         StoragePool treeSelectedDc = getSelectedDc();
         final VnicProfileModel profileModel =
-                new NewVnicProfileModel(this, treeSelectedDc.getcompatibility_version(), treeSelectedDc.getId());
+                new NewVnicProfileModel(this, treeSelectedDc.getCompatibilityVersion(), treeSelectedDc.getId());
         setWindow(profileModel);
 
         initNetworkList(profileModel);
