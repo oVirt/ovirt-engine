@@ -135,10 +135,11 @@ public abstract class SanStorageModel extends SanStorageModelBase
         clearItems();
         initializeItems(null, null);
 
-        AsyncQuery asyncQuery = new AsyncQuery(this, new INewAsyncCallback() {
+        final SanStorageModel model = this;
+        Object target = getWidgetModel() != null ? getWidgetModel() : getContainer();
+        AsyncQuery asyncQuery = new AsyncQuery(target, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
-                SanStorageModel model = (SanStorageModel) target;
                 VdcQueryReturnValue response = (VdcQueryReturnValue) returnValue;
                 if (response.getSucceeded()) {
                     model.applyData((ArrayList<LUNs>) response.getReturnValue(), false);

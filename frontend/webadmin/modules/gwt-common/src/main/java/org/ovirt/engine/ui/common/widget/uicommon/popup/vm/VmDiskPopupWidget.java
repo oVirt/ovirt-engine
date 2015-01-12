@@ -1,7 +1,15 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
-import java.util.ArrayList;
-
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.text.shared.AbstractRenderer;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -20,7 +28,6 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.RadioButtonsHorizontalPanel;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
-import org.ovirt.engine.ui.common.widget.dialog.ProgressPopupContent;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
@@ -43,18 +50,8 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractDiskModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.text.shared.AbstractRenderer;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import java.util.ArrayList;
 
 public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDiskModel> {
 
@@ -180,9 +177,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     Label message;
 
     @Ignore
-    ProgressPopupContent progressContent;
-
-    @Ignore
     IscsiStorageView iscsiStorageView;
 
     @Ignore
@@ -207,7 +201,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                              CommonApplicationTemplates templates,
                              boolean isLunDiskEnabled) {
         this.isNewLunDiskEnabled = isLunDiskEnabled;
-        this.progressContent = createProgressContentWidget();
         this.constants = constants;
         initManualWidgets(constants, resources, templates);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -288,12 +281,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         interfaceInfoIcon = new InfoIcon(templates.italicText(constants.diskInterfaceInfo()), resources);
     }
 
-    private ProgressPopupContent createProgressContentWidget() {
-        ProgressPopupContent progressPopupContent = new ProgressPopupContent();
-        progressPopupContent.setHeight("100%"); //$NON-NLS-1$
-        return progressPopupContent;
-    }
-
     @Override
     public void focusInput() {
         sizeEditor.setFocus(true);
@@ -357,7 +344,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         // Create IscsiStorageModel
         iscsiStorageModel = new IscsiStorageModel();
         iscsiStorageModel.setContainer(storageModel);
-        iscsiStorageModel.getPropertyChangedEvent().addListener(progressEventHandler);
         iscsiStorageModel.setIsGrouppedByTarget(true);
         iscsiStorageModel.setIgnoreGrayedOut(true);
 
@@ -367,7 +353,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         // Create FcpStorageModel
         fcpStorageModel = new FcpStorageModel();
         fcpStorageModel.setContainer(storageModel);
-        fcpStorageModel.getPropertyChangedEvent().addListener(progressEventHandler);
         fcpStorageModel.setIsGrouppedByTarget(false);
         fcpStorageModel.setIgnoreGrayedOut(true);
         fcpStorageView = new FcpStorageView(false, 278, 240);
@@ -431,25 +416,15 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
 
         // Execute 'UpdateCommand' to call 'GetDeviceList'
         sanStorageModel.getUpdateCommand().execute();
+
+        sanStorageModel.setWidgetModel(diskModel);
+        externalDiskPanel.clear();
+        externalDiskPanel.add(storageView);
     }
 
     public boolean handleEnterKeyDisabled() {
         return storageView != null && storageView.isSubViewFocused();
     }
-
-    final IEventListener<PropertyChangedEventArgs> progressEventHandler = new IEventListener<PropertyChangedEventArgs>() {
-        @Override
-        public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-            if (PropertyChangedEventArgs.PROGRESS.equals(args.propertyName)) {
-                externalDiskPanel.clear();
-                if (sanStorageModel.getProgress() != null) {
-                    externalDiskPanel.add(progressContent);
-                } else {
-                    externalDiskPanel.add(storageView);
-                }
-            }
-        }
-    };
 
     @Override
     public AbstractDiskModel flush() {

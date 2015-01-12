@@ -287,9 +287,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         }
     }
 
-    private void postLogin(FrontendActionAsyncResult result) {
-        VdcReturnValueBase returnValue = result.getReturnValue();
-        SanStorageModelBase sanStorageModel = (SanStorageModelBase) result.getState();
+    private void postLogin( VdcReturnValueBase returnValue, SanStorageModelBase sanStorageModel) {
         SanTargetModel sanTargetModel = sanStorageModel.targetsToConnect.remove(0);
         boolean success = returnValue != null && returnValue.getSucceeded();
 
@@ -316,11 +314,11 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
         ArrayList<IFrontendActionAsyncCallback> callbacks = new ArrayList<IFrontendActionAsyncCallback>();
 
+        final SanStorageModelBase sanStorageModel = this;
         IFrontendActionAsyncCallback loginCallback = new IFrontendActionAsyncCallback() {
             @Override
             public void executed(FrontendActionAsyncResult result) {
-                SanStorageModelBase sanStorageModel = (SanStorageModelBase) result.getState();
-                sanStorageModel.postLogin(result);
+                sanStorageModel.postLogin(result.getReturnValue(), sanStorageModel);
             }
         };
 
@@ -339,9 +337,8 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             callbacks.add(loginCallback);
         }
 
-        getContainer().startProgress(null);
-
-        Frontend.getInstance().runMultipleActions(actionTypes, parameters, callbacks, null, this);
+        Object target = getWidgetModel() != null ? getWidgetModel() : getContainer();
+        Frontend.getInstance().runMultipleActions(actionTypes, parameters, callbacks, null, target);
     }
 
     private void sanTargetModel_LoggedIn(Object sender, EventArgs args)
@@ -394,10 +391,11 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
         setMessage(null);
 
-        AsyncQuery asyncQuery = new AsyncQuery(this, new INewAsyncCallback() {
+        final SanStorageModelBase model = this;
+        Object target = getWidgetModel() != null ? getWidgetModel() : getContainer();
+        AsyncQuery asyncQuery = new AsyncQuery(target, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
-                SanStorageModelBase model = (SanStorageModelBase) target;
                 Object result = ((VdcQueryReturnValue) returnValue).getReturnValue();
                 model.postDiscoverTargetsInternal(result != null ? (ArrayList<StorageServerConnections>) result
                         : new ArrayList<StorageServerConnections>());
