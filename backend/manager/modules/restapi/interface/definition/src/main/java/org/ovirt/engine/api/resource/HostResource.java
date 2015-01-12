@@ -74,6 +74,11 @@ public interface HostResource extends UpdatableResource<Host>, MeasurableResourc
 
     @POST
     @Actionable
+    @Path("unregisteredstoragedomainsdiscover")
+    public Response unregisteredStorageDomainsDiscover(Action action);
+
+    @POST
+    @Actionable
     @Path("forceselectspm")
     public Response forceSelectSPM(Action action);
 
