@@ -65,4 +65,5 @@ public interface TaskHelper {
 
     SPMTask construct(AsyncTaskType taskType, AsyncTaskParameters asyncTaskParams, boolean duringInit);
 
+    boolean doesCommandContainAsyncTask(Guid cmdId);
 }

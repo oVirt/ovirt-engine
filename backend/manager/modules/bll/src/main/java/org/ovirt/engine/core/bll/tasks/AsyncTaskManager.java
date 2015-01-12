@@ -804,4 +804,13 @@ public final class AsyncTaskManager {
         return users;
     }
 
+    public boolean doesCommandContainAsyncTask(Guid cmdId) {
+        for (SPMTask task : _tasks.values()) {
+            if (task.getParameters().getDbAsyncTask().getCommandId().equals(cmdId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

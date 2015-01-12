@@ -129,6 +129,16 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetCommandEntitiesByParentCmdId (v_root_command_id uuid)
+RETURNS SETOF command_entities STABLE
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT command_entities.*
+      FROM command_entities
+      WHERE root_command_id = v_root_command_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION DeleteCommandEntity(v_command_id uuid)
 RETURNS VOID
    AS $procedure$

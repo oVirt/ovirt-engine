@@ -27,4 +27,5 @@ public interface CommandCRUDOperations {
     public void updateCommandStatus(Guid commandId, CommandStatus status);
     public void updateCommandExecuted(Guid commandId);
     public void updateCallBackNotified(Guid commandId);
+    public List<CommandEntity> getChildCmdsByParentCmdId(Guid cmdId);
 }

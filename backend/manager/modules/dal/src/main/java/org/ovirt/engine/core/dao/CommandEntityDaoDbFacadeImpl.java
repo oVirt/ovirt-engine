@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -135,6 +136,15 @@ public class CommandEntityDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Comm
                 .addValue("date", cutoff);
 
         getCallsHandler().executeModification("DeleteCommandEntitiesOlderThanDate", parameterSource);
+    }
+
+    @Override
+    public List<CommandEntity> getCmdEntitiesByParentCmdId(Guid parentId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("root_command_id", parentId);
+        return getCallsHandler().executeReadList("GetCommandEntitiesByParentCmdId",
+                mapper,
+                parameterSource);
     }
 
 }

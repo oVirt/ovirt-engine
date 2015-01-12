@@ -100,4 +100,9 @@ public class CommandsCacheImpl implements CommandsCache {
             DbFacade.getInstance().getCommandEntityDao().updateNotified(commandId);
         }
     }
+
+    @Override
+    public List<CommandEntity> getChildCmdsByParentCmdId(Guid cmdId) {
+        return DbFacade.getInstance().getCommandEntityDao().getCmdEntitiesByParentCmdId(cmdId);
+    }
 }

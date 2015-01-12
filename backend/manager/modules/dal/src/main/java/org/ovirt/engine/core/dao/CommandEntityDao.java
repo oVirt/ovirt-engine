@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.dao;
 
 import java.util.Date;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.compat.CommandStatus;
@@ -17,5 +18,7 @@ public interface CommandEntityDao extends GenericDao<CommandEntity, Guid> {
     void updateNotified(Guid id);
 
     void removeAllBeforeDate(Date cutoff);
+
+    List<CommandEntity> getCmdEntitiesByParentCmdId(Guid parentId);
 
 }

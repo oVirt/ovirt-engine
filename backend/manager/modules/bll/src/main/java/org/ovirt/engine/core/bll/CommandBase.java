@@ -2354,4 +2354,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
         return SessionDataContainer.getInstance().getEngineSessionSeqId(sessionId);
     }
+
+    protected <P extends VdcActionParametersBase> P withRootCommandInfo(P params, VdcActionType actionType) {
+        VdcActionType parentCommand = getParameters().getParentCommand() != VdcActionType.Unknown ?
+                getParameters().getParentCommand() : actionType;
+        params.setParentParameters(getParametersForTask(parentCommand, getParameters()));
+        params.setParentCommand(parentCommand);
+        return params;
+    }
 }

@@ -62,6 +62,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     @Override
     public void persistCommand(CommandEntity cmdEntity, CommandContext cmdContext) {
+        initChildHierarchy();
         if (Guid.isNullOrEmpty(cmdEntity.getId())) {
             return;
         }
@@ -228,6 +229,10 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         return childIds;
     }
 
+    public List<CommandEntity> getChildCmdsByParentCmdId(Guid cmdId) {
+        return commandsCache.getChildCmdsByParentCmdId(cmdId);
+    }
+
     private void initChildHierarchy() {
         if (!childHierarchyInitialized) {
             synchronized(LOCK) {
@@ -358,6 +363,11 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
     public VDSReturnValue clearTask(Guid storagePoolID, Guid vdsmTaskID) {
         return runVdsCommand(VDSCommandType.SPMClearTask,
                 new SPMTaskGuidBaseVDSCommandParameters(storagePoolID, vdsmTaskID));
+    }
+
+    @Override
+    public boolean doesCommandContainAsyncTask(Guid cmdId) {
+        return AsyncTaskManager.getInstance().doesCommandContainAsyncTask(cmdId);
     }
 
     private VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase parameters) {

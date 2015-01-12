@@ -16,7 +16,9 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.EndedTaskInfo;
 import org.ovirt.engine.core.common.businessentities.AsyncTask;
+import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.slf4j.Logger;
@@ -93,7 +95,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
             clearAsyncTask();
         }
 
-        else if (entityInfo.ShouldEndAction()) {
+        else if (entityInfo.ShouldEndAction() && !hasRunningChildCommands()) {
             log.info(
                     "CommandAsyncTask::endActionIfNecessary: All tasks of command '{}' has ended -> executing 'endAction'",
                     getCommandId());
@@ -111,6 +113,22 @@ public class CommandAsyncTask extends SPMAsyncTask {
                 }
             });
         }
+    }
+
+    private boolean hasRunningChildCommands() {
+        Guid rootCmdId = getParameters().getDbAsyncTask().getRootCommandId();
+        for (CommandEntity entity : coco.getChildCmdsByParentCmdId(rootCmdId)) {
+            if (!hasCompleted(entity) && !coco.doesCommandContainAsyncTask(entity.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean hasCompleted(CommandEntity entity) {
+        return CommandStatus.SUCCEEDED.equals(entity.getCommandStatus()) ||
+                CommandStatus.FAILED.equals(entity.getCommandStatus()) ||
+                CommandStatus.FAILED_RESTARTED.equals(entity.getCommandStatus());
     }
 
     private void endCommandAction() {

@@ -5,6 +5,7 @@ import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 
+import java.util.List;
 import java.util.Set;
 
 public interface CommandsCache {
@@ -25,4 +26,5 @@ public interface CommandsCache {
 
     public void updateCallBackNotified(Guid commandId);
 
+    List<CommandEntity> getChildCmdsByParentCmdId(Guid cmdId);
 }
