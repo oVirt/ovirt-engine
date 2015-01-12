@@ -221,7 +221,7 @@ Requires:	%{name}-websocket-proxy >= %{version}-%{release}
 Requires:	fop
 Requires:	java
 # rhbz#1028966
-Requires:	java-1.7.0-openjdk > 1:1.7.0.45-2.4.3.3.el6
+Requires:	java-openjdk > 1:1.7.0.45-2.4.3.3.el6
 Requires:	jpackage-utils
 Requires:	ovirt-image-uploader >= 3.6.0
 Requires:	ovirt-iso-uploader >= 3.6.0
