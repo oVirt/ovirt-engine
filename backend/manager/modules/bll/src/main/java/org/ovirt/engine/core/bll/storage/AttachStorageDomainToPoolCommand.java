@@ -181,9 +181,8 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                             }
 
                             // upgrade the domain format to the storage pool format
-                            if (sdType == StorageDomainType.Data || sdType == StorageDomainType.Master) {
-                                updateStorageDomainFormat(getStorageDomain());
-                            }
+                            updateStorageDomainFormatIfNeeded(getStorageDomain());
+
                             registerAllOvfDisks(getAllOVFDisks());
                             // Update unregistered entities
                             for (OvfEntityData ovf : unregisteredEntitiesFromOvfDisk) {

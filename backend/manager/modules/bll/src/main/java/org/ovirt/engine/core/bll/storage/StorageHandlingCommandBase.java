@@ -342,18 +342,26 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         }
     }
 
-    protected void updateStorageDomainFormat(StorageDomain domain) {
-        StorageDomainType sdType = domain.getStorageDomainType();
-        if (sdType == StorageDomainType.Data || sdType == StorageDomainType.Master) {
-            final StorageDomainStatic storageStaticData = domain.getStorageStaticData();
-            final StorageFormatType targetFormat = getStoragePool().getStoragePoolFormatType();
+    protected void updateStorageDomainFormatIfNeeded(StorageDomain domain) {
+        final StorageDomainType sdType = domain.getStorageDomainType();
 
-            if (storageStaticData.getStorageFormat() != targetFormat) {
-                log.info("Updating storage domain '{}' (type '{}') to format '{}'",
-                        getStorageDomain().getId(), sdType, targetFormat);
-                storageStaticData.setStorageFormat(targetFormat);
-                getStorageDomainStaticDAO().update(storageStaticData);
-            }
+        if (!sdType.isDataDomain()) {
+            log.debug("Skipping format update for domain '{}' (type '{}')",
+                    getStorageDomain().getId(), sdType);
+            return;
+        }
+
+        final StorageDomainStatic storageStaticData = domain.getStorageStaticData();
+        final StorageFormatType targetFormat = getStoragePool().getStoragePoolFormatType();
+
+        if (storageStaticData.getStorageFormat() != targetFormat) {
+            log.info("Updating storage domain '{}' (type '{}') to format '{}'",
+                    getStorageDomain().getId(), sdType, targetFormat);
+            storageStaticData.setStorageFormat(targetFormat);
+            getStorageDomainStaticDAO().update(storageStaticData);
+        } else {
+            log.debug("Skipping format update for domain '{}' format is '{}'",
+                    getStorageDomain().getId(), storageStaticData.getStorageFormat());
         }
     }
 

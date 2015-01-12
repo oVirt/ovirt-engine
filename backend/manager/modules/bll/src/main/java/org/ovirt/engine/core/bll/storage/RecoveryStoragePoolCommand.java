@@ -128,7 +128,7 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
                             }
 
                             if (returnVal.getSucceeded()) {
-                                updateStorageDomainFormat(loadTargetedMasterDomain());
+                                updateStorageDomainFormatIfNeeded(loadTargetedMasterDomain());
                             }
 
                             setSucceeded(returnVal.getSucceeded());
