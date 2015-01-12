@@ -1544,6 +1544,10 @@ actions:
         optionalArguments: {storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage.override_luns: 'xs:boolean', storagedomain.storage_format: 'xs:string'}
         description: add a new storage domain to the system using a direct lun
       - mandatoryArguments: {storagedomain.host.id|name: 'xs:string',
+          storagedomain.type: 'xs:string', storagedomain.storage.type: 'xs:string', storagedomain.import: 'xs:boolean'}
+        optionalArguments: {storagedomain.storage.address: 'xs:string', storagedomain.format: 'xs:boolean', storagedomain.comment: 'xs:string'}
+        description: Import an existing block storage domain to the system using the targets already connected to the host
+      - mandatoryArguments: {storagedomain.host.id|name: 'xs:string',
           storagedomain.type: 'xs:string', storagedomain.storage.type: 'xs:string',
           storagedomain.format: 'xs:boolean',storagedomain.storage.address: 'xs:string',
           storagedomain.storage.path: 'xs:string'}

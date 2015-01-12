@@ -39,11 +39,13 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
+import org.ovirt.engine.core.common.queries.GetUnregisteredBlockStorageDomainsParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageDomainsResource
@@ -124,6 +126,67 @@ public class BackendStorageDomainsResource
                                ID_RESOLVER);
     }
 
+    private Response addExistingSAN(StorageDomain model, StorageType storageType, Guid hostId) {
+        List<LUNs> existingLuns = getDeviceList(hostId, storageType);
+        List<StorageServerConnections> existingStorageServerConnections =
+                getLunsWithInitializedStorageType(existingLuns, storageType);
+
+        List<org.ovirt.engine.core.common.businessentities.StorageDomain> existingStorageDomains =
+                getExistingBlockStorageDomain(hostId,
+                        storageType,
+                        existingStorageServerConnections);
+
+        StorageDomainStatic storageDomainToImport =
+                getMatchingStorageDomain(asGuid(model.getId()), existingStorageDomains);
+        StorageDomainManagementParameter parameters =
+                new StorageDomainManagementParameter(storageDomainToImport);
+        parameters.setVdsId(hostId);
+        return performCreate(VdcActionType.AddExistingBlockStorageDomain, parameters, ID_RESOLVER);
+    }
+
+    private StorageDomainStatic getMatchingStorageDomain(Guid storageId,
+            List<org.ovirt.engine.core.common.businessentities.StorageDomain> existingStorageDomains) {
+        StorageDomainStatic storageDomainStatic = new StorageDomainStatic();
+        for (org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain : existingStorageDomains) {
+            if (storageDomain.getStorageStaticData().getId().equals(storageId)) {
+                storageDomainStatic = storageDomain.getStorageStaticData();
+                break;
+            }
+        }
+        return storageDomainStatic;
+    }
+
+    private List<StorageServerConnections> getLunsWithInitializedStorageType(List<LUNs> luns, StorageType storageType) {
+        List<StorageServerConnections> existingStorageServerConnections = new ArrayList<>();
+        for (LUNs lun : luns) {
+            for (StorageServerConnections storageServerConnection : lun.getLunConnections()) {
+                storageServerConnection.setstorage_type(storageType);
+                existingStorageServerConnections.add(storageServerConnection);
+            }
+        }
+        return existingStorageServerConnections;
+    }
+
+    private List<org.ovirt.engine.core.common.businessentities.StorageDomain> getExistingBlockStorageDomain(Guid hostId,
+            StorageType storageType,
+            List<StorageServerConnections> cnxList) {
+        Pair<List<org.ovirt.engine.core.common.businessentities.StorageDomain>, List<StorageServerConnections>> pair =
+                getEntity(Pair.class,
+                        VdcQueryType.GetUnregisteredBlockStorageDomains,
+                        new GetUnregisteredBlockStorageDomainsParameters(hostId, storageType, cnxList),
+                        "GetUnregisteredBlockStorageDomains", true);
+
+        List<org.ovirt.engine.core.common.businessentities.StorageDomain> existingStorageDomains = pair.getFirst();
+        return existingStorageDomains;
+    }
+
+    private List<LUNs> getDeviceList(Guid hostId, StorageType storageType) {
+        return getEntity(List.class,
+                VdcQueryType.GetDeviceList,
+                new GetDeviceListQueryParameters(hostId, storageType),
+                "GetDeviceList", true);
+    }
+
     private ArrayList<String> getLunIds(Storage storage, StorageType storageType, Guid hostId) {
         List<LogicalUnit> logicalUnits = new ArrayList<LogicalUnit>();
 
@@ -198,7 +261,11 @@ public class BackendStorageDomainsResource
         switch (entity.getStorageType()) {
         case ISCSI:
         case FCP:
-            resp = addSAN(storageDomain, entity.getStorageType(), entity, hostId);
+            if (storageDomain.isSetImport() && storageDomain.isImport()) {
+                resp = addExistingSAN(storageDomain, entity.getStorageType(), hostId);
+            } else {
+                resp = addSAN(storageDomain, entity.getStorageType(), entity, hostId);
+            }
             break;
         case NFS:
             if (!storageConnectionFromUser.isSetId()) {
