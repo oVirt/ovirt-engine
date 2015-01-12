@@ -177,24 +177,25 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
     @Inject
     public ImportVmFromExportDomainModel(final VmImportDiskListModel vmImportDiskListModel,
             final StorageDiskListModel storageDomain, final ClusterListModel cluster, final QuotaListModel clusterQuota,
-            final VmGeneralModel vmGeneralModel, final VmImportInterfaceListModel vmImportInterfaceListModel,
-            final VmAppListModel vmAppListModel) {
+            final VmImportGeneralModel vmImportGeneralModel, final VmImportInterfaceListModel vmImportInterfaceListModel,
+            final VmImportAppListModel vmImportAppListModel) {
         importDiskListModel = vmImportDiskListModel;
         storageDiskListModel = storageDomain;
         this.cluster = cluster;
         this.clusterQuota = clusterQuota;
         setCpuProfiles(new ListModel<CpuProfile>());
-        setDetailList(vmGeneralModel, vmImportInterfaceListModel, vmAppListModel);
+        setDetailList(vmImportGeneralModel, vmImportInterfaceListModel, vmImportAppListModel);
     }
 
-    private void setDetailList(final VmGeneralModel vmGeneralModel,
-            final VmImportInterfaceListModel vmImportInterfaceListModel, final VmAppListModel vmAppListModel) {
+    private void setDetailList(final VmImportGeneralModel vmImportGeneralModel,
+            final VmImportInterfaceListModel vmImportInterfaceListModel,
+            final VmImportAppListModel vmImportAppListModel) {
         getClusterQuota().setIsAvailable(false);
         List<EntityModel> list = new ArrayList<EntityModel>();
-        list.add(vmGeneralModel);
+        list.add(vmImportGeneralModel);
         list.add(vmImportInterfaceListModel);
         list.add(importDiskListModel);
-        list.add(vmAppListModel);
+        list.add(vmImportAppListModel);
         setDetailModels(list);
     }
 

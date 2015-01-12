@@ -22,7 +22,7 @@ import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportInterfaceListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -37,10 +37,10 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
     public ImportTemplateModel(final VmImportDiskListModel vmImportDiskListModel,
             final StorageDiskListModel storageDomain, final ClusterListModel cluster, final QuotaListModel clusterQuota,
             final TemplateGeneralModel templateGeneralModel, final VmImportInterfaceListModel vmImportInterfaceListModel,
-            final VmAppListModel vmAppListModel, final TemplateImportDiskListModel templateImportDiskListModel,
+            final VmImportAppListModel vmImportAppListModel, final TemplateImportDiskListModel templateImportDiskListModel,
             final TemplateImportInterfaceListModel templateImportInterfaceListModel) {
         super(vmImportDiskListModel, storageDomain, cluster, clusterQuota, null, vmImportInterfaceListModel,
-                vmAppListModel);
+                vmImportAppListModel);
         this.templateImportDiskListModel = templateImportDiskListModel;
         disksToConvert = null;
         setDetailList(templateGeneralModel, templateImportInterfaceListModel);
