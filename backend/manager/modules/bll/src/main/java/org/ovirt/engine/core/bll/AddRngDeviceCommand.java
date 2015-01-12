@@ -22,8 +22,10 @@ public class AddRngDeviceCommand extends AbstractRngDeviceCommand<RngDeviceParam
             return false;
         }
 
-        if (!isRngSupportedByCluster() && getTemplateType() != VmEntityType.INSTANCE_TYPE) {
-            return failCanDoAction(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
+        if (getTemplateType() != VmEntityType.INSTANCE_TYPE) {
+            if (!validate(getVirtioRngValidator().canAddRngDevice(getVdsGroup(), getParameters().getRngDevice()))) {
+                return false;
+            }
         }
 
         if (!getRngDevices().isEmpty()) {

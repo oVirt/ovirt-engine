@@ -5,19 +5,16 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.bll.validator.VirtIoRngValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
-import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 
 /**
@@ -85,15 +82,12 @@ public abstract class AbstractRngDeviceCommand<T extends RngDeviceParameters> ex
         return true;
     }
 
-    protected boolean isRngSupportedByCluster() {
-        VDSGroup cluster = getVdsGroup();
-        VmRngDevice.Source source = getParameters().getRngDevice().getSource();
-        return cluster != null && isFeatureSupported(cluster.getcompatibility_version())
-                && cluster.getRequiredRngSources().contains(source);
-    }
-
-    boolean isFeatureSupported(Version clusterVersion) {
-        return FeatureSupported.virtIoRngSupported(clusterVersion);
+    /**
+     * Provides the new instance of VirtIoRngValidator
+     * This method is here only to make it possible to mock it in tests
+     */
+    protected VirtIoRngValidator getVirtioRngValidator() {
+        return new VirtIoRngValidator();
     }
 
     protected List<VmDevice> getRngDevices() {
