@@ -301,6 +301,7 @@ public class ClusterModule extends AbstractGinModule {
         bind(ClusterAffinityGroupListModel.class).in(Singleton.class);
         bind(CpuProfileListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<ClusterListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<CpuProfileListModel>>(){}).in(Singleton.class);
 
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<ClusterListModel, ClusterServiceModel>>(){})
@@ -315,6 +316,9 @@ public class ClusterModule extends AbstractGinModule {
         // Permission Detail Model
         bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, ClusterListModel, PermissionListModel<ClusterListModel>>>(){})
             .to(new TypeLiteral<PermissionModelProvider<ClusterListModel>>(){}).in(Singleton.class);
+        // Cpu Profile permission list model
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, CpuProfileListModel, PermissionListModel<CpuProfileListModel>>>(){})
+            .to(new TypeLiteral<PermissionModelProvider<CpuProfileListModel>>(){}).in(Singleton.class);
 
     }
 

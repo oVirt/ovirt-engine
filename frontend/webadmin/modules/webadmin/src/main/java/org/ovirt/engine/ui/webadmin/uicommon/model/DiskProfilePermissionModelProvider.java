@@ -16,7 +16,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class DiskProfilePermissionModelProvider extends SearchableDetailTabModelProvider<Permissions, DiskProfileListModel, PermissionListModel> {
+public class DiskProfilePermissionModelProvider extends SearchableDetailTabModelProvider<Permissions, DiskProfileListModel, PermissionListModel<DiskProfileListModel>> {
 
     private final Provider<PermissionsPopupPresenterWidget> popupProvider;
     private final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
@@ -32,7 +32,7 @@ public class DiskProfilePermissionModelProvider extends SearchableDetailTabModel
     }
 
     @Override
-    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(PermissionListModel source,
+    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(PermissionListModel<DiskProfileListModel> source,
             UICommand lastExecutedCommand, Model windowModel) {
         if (lastExecutedCommand.equals(getModel().getAddCommand())) {
             return popupProvider.get();
@@ -42,7 +42,7 @@ public class DiskProfilePermissionModelProvider extends SearchableDetailTabModel
     }
 
     @Override
-    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(PermissionListModel source,
+    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(PermissionListModel<DiskProfileListModel> source,
             UICommand lastExecutedCommand) {
         if (lastExecutedCommand.equals(getModel().getRemoveCommand())) {
             return removeConfirmPopupProvider.get();

@@ -464,6 +464,7 @@ public class StorageModule extends AbstractGinModule {
         bind(StorageEventListModel.class).in(Singleton.class);
         bind(DiskProfileListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<StorageListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<DiskProfileListModel>>(){}).in(Singleton.class);
 
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<StorageListModel, StorageGeneralModel>>(){})
@@ -478,6 +479,9 @@ public class StorageModule extends AbstractGinModule {
         // Permission Detail Model
         bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, StorageListModel, PermissionListModel<StorageListModel>>>(){})
            .to(new TypeLiteral<PermissionModelProvider<StorageListModel>>(){}).in(Singleton.class);
+        // Permission Disk Profiles
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, DiskProfileListModel, PermissionListModel<DiskProfileListModel>>>(){})
+           .to(new TypeLiteral<PermissionModelProvider<DiskProfileListModel>>(){}).in(Singleton.class);
     }
 
 }

@@ -16,7 +16,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class CpuProfilePermissionModelProvider extends SearchableDetailTabModelProvider<Permissions, CpuProfileListModel, PermissionListModel> {
+public class CpuProfilePermissionModelProvider extends SearchableDetailTabModelProvider<Permissions, CpuProfileListModel, PermissionListModel<CpuProfileListModel>> {
 
     private final Provider<PermissionsPopupPresenterWidget> popupProvider;
     private final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
@@ -32,7 +32,7 @@ public class CpuProfilePermissionModelProvider extends SearchableDetailTabModelP
     }
 
     @Override
-    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(PermissionListModel source,
+    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(PermissionListModel<CpuProfileListModel> source,
             UICommand lastExecutedCommand, Model windowModel) {
         if (lastExecutedCommand.equals(getModel().getAddCommand())) {
             return popupProvider.get();
@@ -42,7 +42,7 @@ public class CpuProfilePermissionModelProvider extends SearchableDetailTabModelP
     }
 
     @Override
-    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(PermissionListModel source,
+    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(PermissionListModel<CpuProfileListModel> source,
             UICommand lastExecutedCommand) {
         if (lastExecutedCommand.equals(getModel().getRemoveCommand())) {
             return removeConfirmPopupProvider.get();

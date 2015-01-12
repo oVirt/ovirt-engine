@@ -36,7 +36,7 @@ public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<Di
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    private final PermissionWithInheritedPermissionListModelTable<PermissionListModel> permissionListModelTable;
+    private final PermissionWithInheritedPermissionListModelTable<PermissionListModel<DiskProfileListModel>> permissionListModelTable;
 
     @UiField
     SplitLayoutPanel splitLayoutPanel;
@@ -62,7 +62,7 @@ public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<Di
 
         // Create permission panel
         permissionListModelTable =
-                new PermissionWithInheritedPermissionListModelTable<PermissionListModel>(diskProfilePermissionModelProvider,
+                new PermissionWithInheritedPermissionListModelTable<PermissionListModel<DiskProfileListModel>>(diskProfilePermissionModelProvider,
                         eventBus,
                         clientStorage);
         permissionListModelTable.initTable(constants);

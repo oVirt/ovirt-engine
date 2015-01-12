@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 
 import com.google.gwt.event.shared.EventBus;
 
-public class PermissionWithInheritedPermissionListModelTable<P extends PermissionListModel> extends PermissionListModelTable<P> {
+public class PermissionWithInheritedPermissionListModelTable<P extends PermissionListModel<?>> extends PermissionListModelTable<P> {
 
     public PermissionWithInheritedPermissionListModelTable(
             SearchableTableModelProvider<Permissions, P> modelProvider,

@@ -38,7 +38,7 @@ public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<Cpu
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final PermissionWithInheritedPermissionListModelTable<PermissionListModel> permissionListModelTable;
+    private final PermissionWithInheritedPermissionListModelTable<PermissionListModel<CpuProfileListModel>> permissionListModelTable;
 
     @UiField
     SplitLayoutPanel splitLayoutPanel;
@@ -62,7 +62,7 @@ public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<Cpu
 
         // Create permission panel
         permissionListModelTable =
-                new PermissionWithInheritedPermissionListModelTable<PermissionListModel>(cpuProfilePermissionModelProvider,
+                new PermissionWithInheritedPermissionListModelTable<PermissionListModel<CpuProfileListModel>>(cpuProfilePermissionModelProvider,
                         eventBus,
                         clientStorage);
         permissionListModelTable.initTable(constants);
