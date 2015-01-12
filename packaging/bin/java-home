@@ -13,7 +13,11 @@ validjre() {
 	local ret=1
 
 	if [ -x "${dir}/bin/java" ]; then
-		local version="$("${dir}/bin/java" -version 2>&1 | sed -e 's/^java version "1\.7\.0.*/VERSION_OK/' -e 's/^OpenJDK .*(.*).*/VENDOR_OK/')"
+		local version="$("${dir}/bin/java" -version 2>&1 | sed \
+			-e 's/^openjdk version "1\.8\.0.*/VERSION_OK/' \
+			-e 's/^java version "1\.7\.0.*/VERSION_OK/' \
+			-e 's/^OpenJDK .*(.*).*/VENDOR_OK/' \
+                )"
 		if echo "${version}" | grep -q "VERSION_OK" && echo "${version}" | grep -q "VENDOR_OK"; then
 			ret=0
 		fi
