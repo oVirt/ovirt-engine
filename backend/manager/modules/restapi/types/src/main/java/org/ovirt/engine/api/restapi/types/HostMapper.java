@@ -508,6 +508,11 @@ public class HostMapper {
                 params.setAuthMethod(map(AuthenticationMethod.fromValue(action.getSsh().getAuthenticationMethod()), null));
             }
         }
+        if (action.isSetHost()) {
+            if (action.getHost().isSetOverrideIptables()) {
+                params.setOverrideFirewall(action.getHost().isOverrideIptables());
+            }
+        }
         return params;
     }
 
