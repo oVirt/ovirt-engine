@@ -45,7 +45,7 @@ public final class BatchProcedureExecutionConnectionCallback implements Connecti
     @Override
     public Object doInConnection(Connection con) throws SQLException,
             DataAccessException {
-        log.debug("Executing batch for procedure '{}'", procName);
+        log.debug("Executing batch for procedure " + procName);
         StoredProcedureMetaData procMetaData = getStoredProcedureMetaData(
                 procName, con);
 
