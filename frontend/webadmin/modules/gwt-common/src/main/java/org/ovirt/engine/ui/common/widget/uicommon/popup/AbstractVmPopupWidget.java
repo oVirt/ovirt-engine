@@ -2088,7 +2088,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     protected List<Widget> adminOnlyWidgets() {
         return Arrays.<Widget> asList(
                 // general tab
-                oSTypeEditor,
                 vmIdEditor,
 
                 // system tab
