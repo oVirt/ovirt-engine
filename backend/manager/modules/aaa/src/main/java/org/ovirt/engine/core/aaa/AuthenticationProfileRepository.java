@@ -85,7 +85,16 @@ public class AuthenticationProfileRepository extends Observable {
                         mapperName != null ? EngineExtensionsManager.getInstance().getExtensionByName(mapperName) : null
                         );
 
-                results.put(profile.getName(), profile);
+                if (results.containsKey(profile.getName())) {
+                    log.warn(
+                            "Profile name '{}' already registered for '{}', ignoring for '{}'",
+                            profile.getName(),
+                            results.get(profile.getName()).getAuthnName(),
+                            profile.getAuthnName()
+                    );
+                } else {
+                    results.put(profile.getName(), profile);
+                }
             } catch (ConfigurationException e) {
                 log.debug("Ignoring", e);
             }
