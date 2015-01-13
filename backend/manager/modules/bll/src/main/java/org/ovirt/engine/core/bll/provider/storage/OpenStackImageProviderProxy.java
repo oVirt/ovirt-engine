@@ -8,15 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.woorea.openstack.base.client.HttpMethod;
-import com.woorea.openstack.base.client.OpenStackRequest;
-import com.woorea.openstack.base.client.OpenStackTokenProvider;
-import com.woorea.openstack.glance.Glance;
-import com.woorea.openstack.glance.model.Image;
-import com.woorea.openstack.glance.model.ImageDownload;
-import com.woorea.openstack.glance.model.Images;
-import com.woorea.openstack.keystone.utils.KeystoneTokenProvider;
-
 import org.ovirt.engine.core.bll.provider.ProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -35,6 +26,15 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+
+import com.woorea.openstack.base.client.HttpMethod;
+import com.woorea.openstack.base.client.OpenStackRequest;
+import com.woorea.openstack.base.client.OpenStackTokenProvider;
+import com.woorea.openstack.glance.Glance;
+import com.woorea.openstack.glance.model.Image;
+import com.woorea.openstack.glance.model.ImageDownload;
+import com.woorea.openstack.glance.model.Images;
+import com.woorea.openstack.keystone.utils.KeystoneTokenProvider;
 
 
 public class OpenStackImageProviderProxy implements ProviderProxy {
@@ -116,6 +116,7 @@ public class OpenStackImageProviderProxy implements ProviderProxy {
         domainStaticEntry.setStorageFormat(StorageFormatType.V1);
         domainStaticEntry.setStorageType(StorageType.GLANCE);
         domainStaticEntry.setStorageDomainType(StorageDomainType.Image);
+        domainStaticEntry.setWipeAfterDelete(false);
         getDbFacade().getStorageDomainStaticDao().save(domainStaticEntry);
         // Storage domain dynamic
         StorageDomainDynamic domainDynamicEntry = new StorageDomainDynamic();
