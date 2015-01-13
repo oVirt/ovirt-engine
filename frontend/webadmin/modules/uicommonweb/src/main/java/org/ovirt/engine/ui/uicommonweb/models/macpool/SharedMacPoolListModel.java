@@ -88,6 +88,12 @@ public class SharedMacPoolListModel extends ListWithDetailsModel {
         getRemoveCommand().setIsExecutionAllowed(removeAllowed);
     }
 
+    @Override
+    protected void selectedItemsChanged() {
+        super.selectedItemsChanged();
+        updateActionAvailability();
+    }
+
     private void newMacPool() {
         SharedMacPoolModel model = new NewSharedMacPoolModel(this);
         model.setEntity(new MacPool());

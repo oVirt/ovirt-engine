@@ -612,6 +612,11 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
 
     @Override
     protected void selectedItemsChanged() {
+        /*
+        NOTICE, that there's lot of methods overriding this one, looking 'just like' this one, which seems wrong.
+        But notice that all those 'updateActionAvailability()' are private, and does not extends each other.
+        Making #updateActionAvailability() protected seems not very straightforward, therefore it's not fixed.
+        * */
         super.selectedItemsChanged();
         updateActionAvailability();
     }
