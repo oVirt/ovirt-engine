@@ -352,36 +352,35 @@ public class VdsBrokerObjectsBuilder {
             return;
         }
 
-        GraphicsInfo graphicsInfo = vm.getGraphicsInfos().get(vmGraphicsType);
-
-        if (graphicsInfo != null) {
-            if (xmlRpcStruct.containsKey(VdsProperties.display_port)) {
-                try {
-                    graphicsInfo.setPort(Integer.parseInt(xmlRpcStruct.get(VdsProperties.display_port).toString()));
-                } catch (NumberFormatException e) {
-                    log.error("vm display_port value illegal : {0}", xmlRpcStruct.get(VdsProperties.display_port));
-                }
-            } else if (xmlRpcStruct.containsKey(VdsProperties.display)) {
-                try {
-                    graphicsInfo
-                            .setPort(VNC_START_PORT + Integer.parseInt(xmlRpcStruct.get(VdsProperties.display).toString()));
-                } catch (NumberFormatException e) {
-                    log.error("vm display value illegal : {0}", xmlRpcStruct.get(VdsProperties.display));
-                }
+        GraphicsInfo graphicsInfo = new GraphicsInfo();
+        if (xmlRpcStruct.containsKey(VdsProperties.display_port)) {
+            try {
+                graphicsInfo.setPort(Integer.parseInt(xmlRpcStruct.get(VdsProperties.display_port).toString()));
+            } catch (NumberFormatException e) {
+                log.error("vm display_port value illegal : {0}", xmlRpcStruct.get(VdsProperties.display_port));
             }
-            if (xmlRpcStruct.containsKey(VdsProperties.display_secure_port)) {
-                try {
-                    graphicsInfo
-                            .setTlsPort(Integer.parseInt(xmlRpcStruct.get(VdsProperties.display_secure_port).toString()));
-                } catch (NumberFormatException e) {
-                    log.error("vm display_secure_port value illegal : {0}",
-                            xmlRpcStruct.get(VdsProperties.display_secure_port));
-                }
-            }
-            if (xmlRpcStruct.containsKey((VdsProperties.displayIp))) {
-                graphicsInfo.setIp((String) xmlRpcStruct.get(VdsProperties.displayIp));
+        } else if (xmlRpcStruct.containsKey(VdsProperties.display)) {
+            try {
+                graphicsInfo
+                        .setPort(VNC_START_PORT + Integer.parseInt(xmlRpcStruct.get(VdsProperties.display).toString()));
+            } catch (NumberFormatException e) {
+                log.error("vm display value illegal : {0}", xmlRpcStruct.get(VdsProperties.display));
             }
         }
+        if (xmlRpcStruct.containsKey(VdsProperties.display_secure_port)) {
+            try {
+                graphicsInfo
+                        .setTlsPort(Integer.parseInt(xmlRpcStruct.get(VdsProperties.display_secure_port).toString()));
+            } catch (NumberFormatException e) {
+                log.error("vm display_secure_port value illegal : {0}",
+                        xmlRpcStruct.get(VdsProperties.display_secure_port));
+            }
+        }
+        if (xmlRpcStruct.containsKey((VdsProperties.displayIp))) {
+            graphicsInfo.setIp((String) xmlRpcStruct.get(VdsProperties.displayIp));
+        }
+
+        vm.getGraphicsInfos().put(vmGraphicsType, graphicsInfo);
     }
 
     /**
