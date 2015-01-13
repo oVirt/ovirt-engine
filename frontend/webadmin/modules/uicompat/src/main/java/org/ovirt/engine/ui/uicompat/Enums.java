@@ -190,6 +190,8 @@ public interface Enums extends LocalizedEnums {
 
     String VmInterfaceType___spaprVlan();
 
+    String VmInterfaceType___pciPassthrough();
+
     String VDSType___VDS();
 
     String VDSType___oVirtNode();

@@ -144,7 +144,7 @@ void valueSpecifier() : {} {
 |   < COMMA : "," >
 |   < NETWORK_DEVICE_TYPE
     :
-    ("rtl8139_pv" | "rtl8139" | "e1000" | "pv" | "spaprVlan")
+    ("rtl8139_pv" | "rtl8139" | "e1000" | "pv" | "spaprVlan" | "pciPassthrough")
     >
 |   < HARDWARE_INTERFACE_TYPE
     :

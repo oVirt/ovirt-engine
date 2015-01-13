@@ -14,7 +14,8 @@ public enum VmInterfaceType {
     rtl8139(1, "rtl8139", "rtl8139", 100),
     e1000(2, "e1000", "e1000", 1000),
     pv(3, "VirtIO", "pv", 1000),
-    spaprVlan(4, "sPAPR VLAN", "spapr-vlan", 1000);
+    spaprVlan(4, "sPAPR VLAN", "spapr-vlan", 1000),
+    pciPassthrough(5, "PCI Passthrough", "pci-passthorugh", 1000);
 
     private int value;
     private String description;
