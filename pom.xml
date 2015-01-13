@@ -99,7 +99,7 @@
     <aopalliance.version>1.0</aopalliance.version>
     <snmp4j.version>2.2.2</snmp4j.version>
     <!-- OpenStack -->
-    <openstack-client.version>3.0.5</openstack-client.version>
+    <openstack-client.version>3.0.6</openstack-client.version>
 
     <!-- Plugins Versions -->
     <maven-surefire-plugin.version>2.7.2</maven-surefire-plugin.version>
