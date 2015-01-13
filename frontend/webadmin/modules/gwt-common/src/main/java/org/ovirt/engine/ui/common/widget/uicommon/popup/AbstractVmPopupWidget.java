@@ -2042,9 +2042,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     protected List<Widget> adminOnlyWidgets() {
         return Arrays.<Widget> asList(
-                // general tab
-                oSTypeEditor,
-
                 // system tab
                 detachableMemSizeEditor,
                 totalvCPUsEditorWithInfoIcon,
