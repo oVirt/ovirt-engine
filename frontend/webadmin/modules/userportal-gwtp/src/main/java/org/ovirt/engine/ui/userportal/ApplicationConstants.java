@@ -352,4 +352,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Exceeded")
     String exceededQuota();
+
+    @DefaultStringValue("Console in use")
+    String consoleInUse();
 }

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.userportal.section.main.view.tab.basic;
 
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
@@ -53,7 +54,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
 
         String itemOverStyle();
 
-        String itemNotRunningStyle();
+        String itemNotRunningOrConsoleTakenStyle();
 
         String itemRunningStyle();
 
@@ -91,8 +92,8 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     VmPausedImage vmPausedImage;
 
     @UiField(provided = true)
-    @Path("status")
-    ValueLabel<VMStatus> vmStatus;
+    @Path("statusWithConsoleState")
+    ValueLabel<Pair<VMStatus, Boolean>> vmStatus;
 
     @UiField
     @Path("name")
@@ -133,10 +134,14 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
         this.constants = constants;
         this.errorPopupManager = errorPopupManager;
 
-        vmStatus = new ValueLabel<VMStatus>(new AbstractRenderer<VMStatus>() {
+        final String consoleInUse = constants.consoleInUse();
+        vmStatus = new ValueLabel<>(new AbstractRenderer<Pair<VMStatus, Boolean>> () {
             @Override
-            public String render(VMStatus object) {
-                return translator.translate(object.name());
+            public String render(Pair<VMStatus, Boolean> object) {
+                if (object.getSecond()) {
+                    return consoleInUse;
+                }
+                return translator.translate(object.getFirst().name());
             }
         });
 
@@ -266,7 +271,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
 
     @Override
     public void setVmDownStyle() {
-        mainContainer.setStyleName(style.itemNotRunningStyle());
+        mainContainer.setStyleName(style.itemNotRunningOrConsoleTakenStyle());
     }
 
     @Override
@@ -281,12 +286,12 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     }
 
     @Override
-    public void setNotSelected(boolean vmIsUp) {
+    public void setNotSelected(boolean vmIsUp, boolean consoleInUse) {
         vmStatus.setStyleName(style.machineStatusStyle());
-        if (vmIsUp) {
-            mainContainer.setStyleName(style.itemRunningStyle());
+        if (vmIsUp && !consoleInUse) {
+            setVmUpStyle();
         } else {
-            mainContainer.setStyleName(style.itemNotRunningStyle());
+            setVmDownStyle();
         }
     }
 

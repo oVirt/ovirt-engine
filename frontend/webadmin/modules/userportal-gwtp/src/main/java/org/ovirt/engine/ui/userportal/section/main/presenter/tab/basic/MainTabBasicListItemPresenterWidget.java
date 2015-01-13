@@ -48,7 +48,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
 
         void setSelected();
 
-        void setNotSelected(boolean vmIsUp);
+        void setNotSelected(boolean vmIsUp, boolean consoleInUse);
 
         void showErrorDialog(String message);
 
@@ -98,7 +98,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (!sameEntity(listModel.getSelectedItem(), model)) {
-                    getView().setNotSelected(model.isVmUp());
+                    getView().setNotSelected(model.isVmUp(), consoleInUse());
                 } else {
                     getView().setSelected();
                 }
@@ -223,7 +223,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
 
     void setupDefaultVmStyles() {
         if (!isSelected()) {
-            if (model.isVmUp()) {
+            if (model.isVmUp() && !consoleInUse()) {
                 getView().setVmUpStyle();
             } else {
                 getView().setVmDownStyle();
@@ -267,5 +267,9 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
 
     boolean isSelected() {
         return sameEntity(listModel.getSelectedItem(), model);
+    }
+
+    boolean consoleInUse() {
+        return model.getStatusWithConsoleState().getSecond();
     }
 }

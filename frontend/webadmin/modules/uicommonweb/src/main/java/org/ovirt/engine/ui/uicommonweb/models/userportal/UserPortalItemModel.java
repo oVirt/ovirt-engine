@@ -11,7 +11,9 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
@@ -400,6 +402,15 @@ public class UserPortalItemModel extends EntityModel {
         }
 
         return null;
+    }
+
+    public Pair<VMStatus, Boolean> getStatusWithConsoleState() {
+        boolean consoleTaken = false;
+        if (getVM() != null) {
+            consoleTaken = !StringHelper.isNullOrEmpty(getVM().getConsoleCurentUserName());
+        }
+
+        return new Pair<> (getStatus(), consoleTaken);
     }
 
     public VmConsoles getVmConsoles() {

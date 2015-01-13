@@ -80,7 +80,7 @@
             height: 210px;
         }
 
-        .basicVmViewBoxStyle, .itemSelectedStyle, .itemOverStyle, .itemNotRunningStyle, .itemRunningStyle {
+        .basicVmViewBoxStyle, .itemSelectedStyle, .itemOverStyle, .itemNotRunningOrConsoleTakenStyle, .itemRunningStyle {
             border-style: solid;
             border-width: 2px;
             border-radius: 9px;
@@ -99,7 +99,7 @@
               background-color: #B5C5D7;
         }
 
-        .itemNotRunningStyle {
+        .itemNotRunningOrConsoleTakenStyle {
              background-color: #E1E1E1;
         }
 
