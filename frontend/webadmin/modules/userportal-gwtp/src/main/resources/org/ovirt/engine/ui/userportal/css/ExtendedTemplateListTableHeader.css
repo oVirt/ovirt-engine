@@ -1,0 +1,5 @@
+.cellTableHeader {
+    display: table-cell;
+    border: none;
+    padding-right: 0px;
+}

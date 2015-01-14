@@ -24,10 +24,11 @@ public class UserPortalSimpleActionTable<T> extends SimpleActionTable<T> {
     }
 
     public UserPortalSimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
-            Resources resources,
-            EventBus eventBus,
-            ClientStorage clientStorage) {
-        super(dataProvider, resources, eventBus, clientStorage);
+                                       Resources resources,
+                                       Resources headerResources,
+                                       EventBus eventBus,
+                                       ClientStorage clientStorage) {
+        super(dataProvider, resources, headerResources, eventBus, clientStorage);
     }
 
     public UserPortalSimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,

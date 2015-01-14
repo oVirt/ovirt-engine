@@ -57,11 +57,27 @@ public abstract class AbstractSideTabWithDetailsView<T, M extends SearchableList
     protected SimpleActionTable<T> createActionTable() {
         return new UserPortalSimpleActionTable<T>(modelProvider,
                 getTableResources(),
+                getTableHeaderResources(),
                 ClientGinjectorProvider.getEventBus(),
-                ClientGinjectorProvider.getClientStorage());
+                ClientGinjectorProvider.getClientStorage()) {
+            @Override
+            protected String getTableContainerStyleName() {
+                return AbstractSideTabWithDetailsView.this.getTableContainerStyleName() == null
+                        ? super.getTableContainerStyleName()
+                        : AbstractSideTabWithDetailsView.this.getTableContainerStyleName();
+            }
+        };
     }
 
     protected Resources getTableResources() {
+        return null;
+    }
+
+    protected Resources getTableHeaderResources() {
+        return null;
+    }
+
+    protected String getTableContainerStyleName() {
         return null;
     }
 
