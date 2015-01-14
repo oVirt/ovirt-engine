@@ -392,7 +392,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
     }
 
     private void addMacPool(final DataCenterModel dcModel) {
-        SharedMacPoolModel macPoolModel = new NewSharedMacPoolModel(this) {
+        SharedMacPoolModel macPoolModel = new NewSharedMacPoolModel.ClosingWithSetConfirmWindow(this) {
             @Override
             protected void onActionSucceeded(Guid macPoolId) {
                 MacPool macPool = getEntity();

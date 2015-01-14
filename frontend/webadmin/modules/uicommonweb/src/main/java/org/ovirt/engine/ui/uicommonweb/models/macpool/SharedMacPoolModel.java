@@ -20,7 +20,7 @@ public class SharedMacPoolModel extends MacPoolModel {
     private static final String CMD_SAVE = "OnSave"; //$NON-NLS-1$
     private static final String CMD_CANCEL = "Cancel"; //$NON-NLS-1$
 
-    private final Model sourceModel;
+    protected final Model sourceModel;
     private final VdcActionType actionType;
 
     private final EntityModel<String> name = new EntityModel<String>();

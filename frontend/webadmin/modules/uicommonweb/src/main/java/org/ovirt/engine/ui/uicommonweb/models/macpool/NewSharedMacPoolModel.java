@@ -9,9 +9,20 @@ public class NewSharedMacPoolModel extends SharedMacPoolModel {
 
     public NewSharedMacPoolModel(Model sourceModel) {
         super(sourceModel, VdcActionType.AddMacPool);
-        sourceModel.setTitle(ConstantsManager.getInstance().getConstants().newSharedMacPoolTitle());
-        sourceModel.setHashName("new_shared_mac_pool"); //$NON-NLS-1$
-        sourceModel.setHelpTag(HelpTag.new_shared_mac_pool);
+        setTitle(ConstantsManager.getInstance().getConstants().newSharedMacPoolTitle());
+        setHashName("new_shared_mac_pool"); //$NON-NLS-1$
+        setHelpTag(HelpTag.new_shared_mac_pool);
+    }
+
+    public static class ClosingWithSetConfirmWindow extends NewSharedMacPoolModel {
+        public ClosingWithSetConfirmWindow(Model sourceModel) {
+            super(sourceModel);
+        }
+
+        @Override
+        protected void cancel() {
+            sourceModel.setConfirmWindow(null);
+        }
     }
 
 }
