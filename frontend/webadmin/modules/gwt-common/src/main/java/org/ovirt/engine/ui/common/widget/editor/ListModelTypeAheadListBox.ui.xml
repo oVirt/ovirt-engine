@@ -17,6 +17,7 @@
             width: 100%;
             vertical-align: top;
             height: 15px;
+            padding-left: 4px;
         }
 
         .imagesWrapper {
