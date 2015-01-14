@@ -155,7 +155,7 @@ BEGIN
                         OR EXISTS (SELECT 1
                                    FROM user_vds_groups_permissions_view pv, user_object_permissions_view dpv
                                    WHERE pv.user_id = v_user_id AND pv.entity_id = a.vds_group_id AND pv.entity_id = dpv.entity_id)
-     );
+     ) order by audit_log_id desc;
 END; $procedure$
 LANGUAGE plpgsql;
 
