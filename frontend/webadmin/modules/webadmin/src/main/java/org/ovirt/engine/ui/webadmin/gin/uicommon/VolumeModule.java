@@ -208,6 +208,7 @@ public class VolumeModule extends AbstractGinModule {
         bind(VolumeBrickListModel.class).in(Singleton.class);
         bind(VolumeParameterListModel.class).in(Singleton.class);
         bind(VolumeEventListModel.class).in(Singleton.class);
+        bind(VolumeGeoRepListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<VolumeListModel>>(){}).in(Singleton.class);
 
         // Form Detail Models

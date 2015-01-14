@@ -309,7 +309,7 @@ public class WebAdminApplicationPlaces {
 
     public static final String volumeEventSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "events"; //$NON-NLS-1$
 
-    public static final String volumeGeoRepSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "geo_rep"; //$NON-NLS-1$
+    public static final String volumeGeoRepSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "geo_replication"; //$NON-NLS-1$
 
     // Disk
 
