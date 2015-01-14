@@ -193,19 +193,16 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         return AsyncTaskType.createVolume;
     }
 
-    /**
-     * Note: the treatment for {@link CommandActionState#END_SUCCESS} is the same as for {@link CommandActionState#END_FAILURE}
-     * because if after calling {@link HibernateVmCommand#endSuccessfully()} the method {@link HibernateVmCommand#getSucceeded()}
-     * returns true, the command is set not to be logged and this method is not called
-     *
-     * @see {@link HibernateVmCommand#endSuccessfully()}
-     */
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
         case EXECUTE:
             return getSucceeded() ? AuditLogType.USER_SUSPEND_VM : AuditLogType.USER_FAILED_SUSPEND_VM;
         case END_SUCCESS:
+            if (getSucceeded()) {
+                // no event should be displayed if the command ended successfully, the monitoring will log it
+                return AuditLogType.UNASSIGNED;
+            }
         case END_FAILURE:
         default:
             return isHibernateVdsProblematic ? AuditLogType.USER_SUSPEND_VM_FINISH_FAILURE_WILL_TRY_AGAIN
@@ -273,12 +270,6 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
     @Override
     protected void endSuccessfully() {
-        endSuccessfullyImpl();
-        // no event should be displayed if the command ended successfully
-        setCommandShouldBeLogged(!getSucceeded());
-    }
-
-    private void endSuccessfullyImpl() {
         if (getVm() != null) {
             if (getVm().getStatus() != VMStatus.PreparingForHibernate) {
                 // If the Vm is not PreparingForHibernate, we shouldn't perform Hibernate on it,
