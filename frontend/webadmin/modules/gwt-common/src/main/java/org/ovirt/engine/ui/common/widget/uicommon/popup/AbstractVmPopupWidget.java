@@ -2095,7 +2095,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 detachableMemSizeEditor,
                 totalvCPUsEditorWithInfoIcon,
                 vcpusAdvancedParameterExpander,
-                vcpusAdvancedParameterExpanderContent,
                 serialNumberPolicyEditor,
 
                 // console tab
