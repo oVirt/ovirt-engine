@@ -5,13 +5,11 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 
 public class ClusterNetworkModel extends EntityModel<Network> {
 
     private final NetworkCluster originalNetworkCluster;
 
-    private boolean management;
     private boolean attached = true;
     private VDSGroup cluster = null;
 
@@ -24,9 +22,6 @@ public class ClusterNetworkModel extends EntityModel<Network> {
             getEntity().setCluster(new NetworkCluster(!network.isExternal()));
         } else {
             originalNetworkCluster = (NetworkCluster) Cloner.clone(network.getCluster());
-        }
-        if (HostInterfaceListModel.ENGINE_NETWORK_NAME.equals(network.getName())) {
-            setManagement(true);
         }
     }
 
@@ -55,7 +50,7 @@ public class ClusterNetworkModel extends EntityModel<Network> {
     }
 
     public boolean isManagement() {
-        return management;
+        return getEntity().getCluster().isManagement();
     }
 
     public boolean isRequired() {
@@ -83,7 +78,7 @@ public class ClusterNetworkModel extends EntityModel<Network> {
     }
 
     public void setManagement(boolean management) {
-        this.management = management;
+        getEntity().getCluster().setManagement(management);
     }
 
     public void setRequired(boolean required) {
