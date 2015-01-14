@@ -48,6 +48,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
     private final SafeHtml displayImage;
     private final SafeHtml migrationImage;
     private final SafeHtml emptyImage;
+    private final SafeHtml managementImage;
 
     @Inject
     public SubTabNetworkClusterView(SearchableDetailModelProvider<PairQueryable<VDSGroup, NetworkCluster>, NetworkListModel, NetworkClusterListModel> modelProvider, ApplicationConstants constants, ApplicationTemplates templates, ApplicationResources resources) {
@@ -59,6 +60,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         migrationImage =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.migrationNetwork()).getHTML());
         emptyImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkEmpty()).getHTML());
+        managementImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.mgmtNetwork()).getHTML());
         initTable();
         initWidget(getTable());
     }
@@ -105,7 +107,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         getTable().addColumn(attachedColumn, constants.attachedNetworkCluster(), "120px"); //$NON-NLS-1$
 
         NetworkClusterStatusColumn statusColumn = new NetworkClusterStatusColumn();
-        statusColumn.makeSortable(new SimpleStatusColumnComparator<PairQueryable<VDSGroup, NetworkCluster>>(statusColumn));
+        statusColumn.makeSortable(new SimpleStatusColumnComparator<>(statusColumn));
         getTable().addColumn(statusColumn, constants.networkStatus(), "120px"); //$NON-NLS-1$
 
         CheckboxColumn<PairQueryable<VDSGroup, NetworkCluster>> netRequiredColumn =
@@ -131,20 +133,23 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
 
                     @Override
                     public SafeHtml getValue(PairQueryable<VDSGroup, NetworkCluster> object) {
-                        List<SafeHtml> images = new LinkedList<SafeHtml>();
+                        List<SafeHtml> images = new LinkedList<>();
 
                         if (object.getSecond() != null) {
+                            if (object.getSecond().isManagement()) {
+                                images.add(managementImage);
+                            } else {
+                                images.add(emptyImage);
+                            }
                             if (object.getSecond().isDisplay()) {
                                 images.add(displayImage);
                             } else {
                                 images.add(emptyImage);
-
                             }
                             if (object.getSecond().isMigration()) {
                                 images.add(migrationImage);
                             } else {
                                 images.add(emptyImage);
-
                             }
                         }
                         return NetworkRoleColumnHelper.getValue(images);
@@ -152,8 +157,12 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
 
                     @Override
                     public SafeHtml getTooltip(PairQueryable<VDSGroup, NetworkCluster> object) {
-                        Map<SafeHtml, String> imagesToText = new LinkedHashMap<SafeHtml, String>();
+                        Map<SafeHtml, String> imagesToText = new LinkedHashMap<>();
                         if (object.getSecond() != null) {
+                            if (object.getSecond().isManagement()) {
+                                imagesToText.put(managementImage, constants.managementItemInfo());
+                            }
+
                             if (object.getSecond().isDisplay()) {
                                 imagesToText.put(displayImage, constants.displayItemInfo());
                             }
@@ -171,6 +180,9 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
             private int calculateValue(NetworkCluster networkCluster) {
                 int res = 0;
                 if (networkCluster != null) {
+                    if (networkCluster.isManagement()) {
+                        res += 10;
+                    }
                     if (networkCluster.isDisplay()) {
                         res += 2;
                     }
