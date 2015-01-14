@@ -96,11 +96,11 @@
         }
 
         .itemOverStyle {
-              background-color: #B5C5D7;
+            background-color: #B5C5D7;
         }
 
         .itemNotRunningOrConsoleTakenStyle {
-             background-color: #E1E1E1;
+            background-color: #E1E1E1;
         }
 
         .itemRunningStyle {
@@ -126,9 +126,9 @@
             float: right;
         }
 
-    .rebootButtonAdditionalStyle {
-      float: right;
-    }
+        .rebootButtonAdditionalStyle {
+          float: right;
+        }
 
     </ui:style>
 

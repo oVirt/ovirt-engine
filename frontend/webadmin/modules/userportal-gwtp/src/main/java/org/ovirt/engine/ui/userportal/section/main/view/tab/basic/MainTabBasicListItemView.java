@@ -265,34 +265,29 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     }
 
     @Override
-    public void setVmUpStyle() {
-        mainContainer.setStyleName(style.itemRunningStyle());
-    }
-
-    @Override
-    public void setVmDownStyle() {
-        mainContainer.setStyleName(style.itemNotRunningOrConsoleTakenStyle());
-    }
-
-    @Override
-    public void setMouseOverStyle() {
-        mainContainer.setStyleName(style.itemOverStyle());
-    }
-
-    @Override
-    public void setSelected() {
+    public void setItemSelectedStyle() {
         vmStatus.setStyleName(style.machineStatusSelectedStyle());
         mainContainer.setStyleName(style.itemSelectedStyle());
     }
 
     @Override
-    public void setNotSelected(boolean vmIsUp, boolean consoleInUse) {
+    public void setVmStatusUnselectedStyle() {
         vmStatus.setStyleName(style.machineStatusStyle());
-        if (vmIsUp && !consoleInUse) {
-            setVmUpStyle();
-        } else {
-            setVmDownStyle();
-        }
+    }
+
+    @Override
+    public void setItemMouseOverStyle() {
+        mainContainer.setStyleName(style.itemOverStyle());
+    }
+
+    @Override
+    public void setItemRunningStyle() {
+        mainContainer.setStyleName(style.itemRunningStyle());
+    }
+
+    @Override
+    public void setItemNotRunningOrConsoleTakenStyle() {
+        mainContainer.setStyleName(style.itemNotRunningOrConsoleTakenStyle());
     }
 
     @Override

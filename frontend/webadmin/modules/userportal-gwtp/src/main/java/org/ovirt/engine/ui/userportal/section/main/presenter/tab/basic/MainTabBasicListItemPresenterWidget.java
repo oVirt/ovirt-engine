@@ -32,6 +32,7 @@ import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
 
+
 public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTabBasicListItemPresenterWidget.ViewDef> implements MouseOutHandler, MouseOverHandler, ClickHandler, DoubleClickHandler {
 
     public interface ViewDef extends View, HasEditorDriver<UserPortalItemModel>, HasMouseOutHandlers, HasMouseOverHandlers, HasClickHandlers, HasDoubleClickHandlers, HasElementId {
@@ -39,16 +40,6 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
         void showDoubleClickBanner();
 
         void hideDoubleClickBanner();
-
-        void setVmUpStyle();
-
-        void setVmDownStyle();
-
-        void setMouseOverStyle();
-
-        void setSelected();
-
-        void setNotSelected(boolean vmIsUp, boolean consoleInUse);
 
         void showErrorDialog(String message);
 
@@ -68,6 +59,15 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
 
         void updateRebootButton(UICommand command);
 
+        void setItemSelectedStyle();
+
+        void setVmStatusUnselectedStyle();
+
+        void setItemMouseOverStyle();
+
+        void setItemRunningStyle();
+
+        void setItemNotRunningOrConsoleTakenStyle();
     }
 
     private final UserPortalBasicListProvider listModelProvider;
@@ -97,11 +97,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
         selectedItemChangeListener = new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (!sameEntity(listModel.getSelectedItem(), model)) {
-                    getView().setNotSelected(model.isVmUp(), consoleInUse());
-                } else {
-                    getView().setSelected();
-                }
+                setVmStyle();
             }
         };
         listModel.getSelectedItemChangedEvent().addListener(selectedItemChangeListener);
@@ -194,7 +190,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
     public void setModel(UserPortalItemModel model) {
         this.model = model;
 
-        setupDefaultVmStyles();
+        setVmStyle();
 
         getView().updateRunButton(getRunCommand(), model.isPool());
         getView().updateShutdownButton(getShutdownCommand());
@@ -217,25 +213,13 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
 
     @Override
     public void onMouseOut(MouseOutEvent event) {
+        setVmStyle();
         getView().hideDoubleClickBanner();
-        setupDefaultVmStyles();
-    }
-
-    void setupDefaultVmStyles() {
-        if (!isSelected()) {
-            if (model.isVmUp() && !consoleInUse()) {
-                getView().setVmUpStyle();
-            } else {
-                getView().setVmDownStyle();
-            }
-        }
     }
 
     @Override
     public void onMouseOver(MouseOverEvent event) {
-        if (!isSelected()) {
-            getView().setMouseOverStyle();
-        }
+        setVmStyleMouseOver();
         if (!model.isPool() && model.getVmConsoles().canConnectToConsole()) {
             getView().showDoubleClickBanner();
         }
@@ -262,7 +246,46 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
     void setSelectedItem() {
         listModel.setSelectedItem(model);
         listModelProvider.setSelectedItems(Arrays.asList(model));
-        getView().setSelected();
+        setVmStyle();
+    }
+
+    /**
+     * Helper function for setting vm item style based on state of the vm.
+     */
+    private void setVmStyle() {
+        setVmStyleByStatus(false);
+    }
+
+    /**
+     * Helper function for setting vm item style based on state of the vm when mouse is over the item.
+     */
+    private void setVmStyleMouseOver() {
+        setVmStyleByStatus(true);
+    }
+
+    /**
+     * Method for setting style of a VM item container and VM text status based on state of the VM.
+     * Settings of VM item container style should happen in this method only.
+     * The purpose of this method is to have the decision logic in one place so that it's easy to
+     * determine resulting style of the item.
+     *
+     * @param mouseOver - mouse is over the item
+     */
+    private void setVmStyleByStatus(boolean mouseOver) {
+        if (isSelected()) {
+            getView().setItemSelectedStyle();
+        } else {
+            getView().setVmStatusUnselectedStyle();
+            if (mouseOver) {
+                getView().setItemMouseOverStyle();
+            } else {
+                if (model.isVmUp() && !consoleInUse()) {
+                    getView().setItemRunningStyle();
+                } else {
+                    getView().setItemNotRunningOrConsoleTakenStyle();
+                }
+            }
+        }
     }
 
     boolean isSelected() {
