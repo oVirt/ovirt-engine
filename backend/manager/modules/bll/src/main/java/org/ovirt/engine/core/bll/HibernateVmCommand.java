@@ -60,8 +60,10 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
     public HibernateVmCommand(T parameters) {
         super(parameters);
-        setStoragePoolId(getVm().getStoragePoolId());
-        parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVm().getId()));
+        if (getVm() != null) {
+            setStoragePoolId(getVm().getStoragePoolId());
+            parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVm().getId()));
+        }
     }
 
     @Override
