@@ -34,11 +34,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @DisableInPrepareMode
-@NonTransactiveCommandAttribute(forceCompensation = true)
+@NonTransactiveCommandAttribute
 public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> {
     private static final Logger log = LoggerFactory.getLogger(HibernateVmCommand.class);
 
-    private boolean isHibernateVdsProblematic;
+    private boolean hibernateVdsProblematic;
     private Guid cachedStorageDomainId;
 
     /**
@@ -86,45 +86,32 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
     @Override
     protected void perform() {
-        DiskImage memoryDisk = MemoryUtils.createMemoryDiskForVm(getVm(), getStorageDomain().getStorageType());
-        Guid dumpDiskId = addDisk(memoryDisk);
-
-        DiskImage metaDataDisk = MemoryUtils.createMetadataDiskForVm(getVm());
-        Guid metadataDiskId = addDisk(metaDataDisk);
-
-        DiskImage dumpDisk = getDisk(dumpDiskId);
-        DiskImage metadataDisk = getDisk(metadataDiskId);
-
-        getSnapshotDao().updateHibernationMemory(getVmId(),
-                dumpDisk.getId(), metadataDisk.getId(),
-                createHibernationVolumeString(dumpDisk, metadataDisk));
-
+        addMemoryDisk();
+        addMetadataDisk();
         setSucceeded(true);
     }
 
-    private String createHibernationVolumeString(DiskImage dumpDisk, DiskImage metadataDisk) {
-        return MemoryUtils.createMemoryStateString(
-                getStorageDomainId(), getStoragePoolId(),
-                dumpDisk.getId(), dumpDisk.getImageId(),
-                metadataDisk.getId(), metadataDisk.getImageId());
+    private void addMetadataDisk() {
+        DiskImage metaDataDisk = MemoryUtils.createMetadataDiskForVm(getVm());
+        addDisk(metaDataDisk);
     }
 
-    private DiskImage getDisk(Guid diskId) {
-        return (DiskImage) getDiskDao().get(diskId);
+    private void addMemoryDisk() {
+        DiskImage memoryDisk = MemoryUtils.createMemoryDiskForVm(getVm(), getStorageDomain().getStorageType());
+        addDisk(memoryDisk);
     }
 
-    private Guid addDisk(DiskImage disk) {
+    private void addDisk(DiskImage disk) {
         VdcReturnValueBase returnValue = runInternalActionWithTasksContext(
                 VdcActionType.AddDisk,
                 buildAddDiskParameters(disk));
 
-        if (returnValue.getSucceeded()) {
-            getTaskIdList().addAll(returnValue.getInternalVdsmTaskIdList());
-            return returnValue.getActionReturnValue();
-        } else {
+        if (!returnValue.getSucceeded()) {
             throw new EngineException(returnValue.getFault().getError(),
                     String.format("Failed to create disk! %s", disk.getDiskAlias()));
         }
+
+        getTaskIdList().addAll(returnValue.getInternalVdsmTaskIdList());
     }
 
     private AddDiskParameters buildAddDiskParameters(DiskImage disk) {
@@ -153,7 +140,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
             }
         case END_FAILURE:
         default:
-            return isHibernateVdsProblematic ? AuditLogType.USER_SUSPEND_VM_FINISH_FAILURE_WILL_TRY_AGAIN
+            return hibernateVdsProblematic ? AuditLogType.USER_SUSPEND_VM_FINISH_FAILURE_WILL_TRY_AGAIN
                     : AuditLogType.USER_SUSPEND_VM_FINISH_FAILURE;
         }
     }
@@ -226,47 +213,61 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
     @Override
     protected void endSuccessfully() {
-        endActionOnDisks();
-        if (getVm().getRunOnVds() == null) {
-            log.warn(
-                    "VM '{}' doesn't have 'run_on_vds' value - cannot Hibernate.",
-                    getVm().getName());
-            getReturnValue().setEndActionTryAgain(false);
+        if (getVm().getStatus() != VMStatus.Up) {
+            log.warn("VM '{}' is not up, cannot Hibernate.", getVm().getName());
+            endWithFailure();
+            return;
         }
 
-        else {
-            String hiberVol = getActiveSnapshot().getMemoryVolume();
-            if (hiberVol != null) {
-                try {
-                    runVdsCommand(VDSCommandType.Hibernate,
-                            new HibernateVDSCommandParameters(getVm().getRunOnVds(), getVmId(), hiberVol));
-                } catch (EngineException e) {
-                    isHibernateVdsProblematic = true;
-                    throw e;
-                }
-                setSucceeded(true);
-            } else {
-                log.error("Hibernation volume of VM '{}', is not initialized.", getVm().getName());
-                endWithFailure();
+        List<VdcReturnValueBase> addDiskReturnValues = endActionOnDisks();
+        DiskImage dumpDisk = getMemoryDumpDisk(addDiskReturnValues);
+        DiskImage metadataDisk = getMemoryMetadataDisk(addDiskReturnValues);
+
+        String hiberVol = MemoryUtils.createMemoryStateString(
+                getStorageDomainId(), getStoragePoolId(),
+                dumpDisk.getId(), dumpDisk.getImageId(), metadataDisk.getId(), metadataDisk.getImageId());
+
+        try {
+            runVdsCommand(VDSCommandType.Hibernate,
+                    new HibernateVDSCommandParameters(getVm().getRunOnVds(), getVmId(), hiberVol));
+            getSnapshotDao().updateHibernationMemory(getVmId(),
+                    dumpDisk.getId(), metadataDisk.getId(), hiberVol);
+        } catch (EngineException e) {
+            hibernateVdsProblematic = true;
+            endWithFailure();
+            return;
+        }
+
+        setSucceeded(true);
+    }
+
+    private DiskImage getMemoryDumpDisk(List<VdcReturnValueBase> returnValues) {
+        for (VdcReturnValueBase returnValue : returnValues) {
+            DiskImage disk = returnValue.getActionReturnValue();
+            if (disk.getSize() != MemoryUtils.META_DATA_SIZE_IN_BYTES) {
+                return disk;
             }
         }
+
+        return null;
+    }
+
+    private DiskImage getMemoryMetadataDisk(List<VdcReturnValueBase> returnValues) {
+        for (VdcReturnValueBase returnValue : returnValues) {
+            DiskImage disk = returnValue.getActionReturnValue();
+            if (disk.getSize() == MemoryUtils.META_DATA_SIZE_IN_BYTES) {
+                return disk;
+            }
+        }
+
+        return null;
     }
 
     @Override
     protected void endWithFailure() {
         endActionOnDisks();
+        getSnapshotDao().removeMemoryFromActiveSnapshot(getVmId());
         revertTasks();
-        if (getVm().getRunOnVds() != null) {
-            getSnapshotDao().removeMemoryFromActiveSnapshot(getVmId());
-            setSucceeded(true);
-        }
-
-        else {
-            log.warn(
-                    "VM '{}' doesn't have 'run_on_vds' value - not clearing 'hibernation_vol_handle' info.",
-                    getVm().getName());
-
-            getReturnValue().setEndActionTryAgain(false);
-        }
+        setSucceeded(true);
     }
 }

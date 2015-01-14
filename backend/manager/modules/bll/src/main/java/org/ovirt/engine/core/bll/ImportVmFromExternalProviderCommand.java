@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.ConvertVmParameters;
 import org.ovirt.engine.core.common.action.ImportVmFromExternalProviderParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -300,15 +299,6 @@ implements QuotaStorageDependent {
         runInternalActionWithTasksContext(
                 VdcActionType.RemoveVm,
                 new RemoveVmParameters(getVmId(), true));
-    }
-
-    protected void endActionOnDisks() {
-        for (VdcActionParametersBase parameters : getParametersForChildCommand()) {
-            getBackend().endAction(
-                    parameters.getCommandType(),
-                    parameters,
-                    getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
-        }
     }
 
     protected List<DiskImage> getDisks() {

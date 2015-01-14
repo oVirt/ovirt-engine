@@ -282,17 +282,20 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         setSucceeded(true);
     }
 
-    protected void endActionOnDisks() {
+    protected List<VdcReturnValueBase> endActionOnDisks() {
+        List<VdcReturnValueBase> returnValues = new ArrayList<>();
         for (VdcActionParametersBase p : getParametersForChildCommand()) {
             if (overrideChildCommandSuccess()) {
                 p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
             }
 
-            getBackend().endAction(
+            VdcReturnValueBase returnValue = getBackend().endAction(
                     p.getCommandType() == VdcActionType.Unknown ? getChildActionType() : p.getCommandType(),
                     p,
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
+            returnValues.add(returnValue);
         }
+        return returnValues;
     }
 
     protected List<VdcActionParametersBase> getParametersForChildCommand() {
