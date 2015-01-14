@@ -126,7 +126,7 @@ public class ClusterNetworkListModel extends SearchableListModel
             public void onSuccess(Object model, Object ReturnValue)
             {
                 SearchableListModel searchableListModel = (SearchableListModel) model;
-                ArrayList<Network> newItems = (ArrayList<Network>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                final List<Network> newItems = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 Collections.sort(newItems, new Linq.NetworkComparator());
                 for (Network network : newItems) {
                     network.getCluster().setId(new NetworkClusterId(getEntity().getId(), network.getId()));
@@ -164,7 +164,8 @@ public class ClusterNetworkListModel extends SearchableListModel
             public void onSuccess(Object model, Object result)
             {
                 ClusterNetworkListModel clusterNetworkListModel = (ClusterNetworkListModel) model;
-                ArrayList<Network> dcNetworks = (ArrayList<Network>) result;
+                final List<Network> dcNetworks = (List<Network>) result;
+
                 ClusterNetworkManageModel networkToManage = createNetworkList(dcNetworks);
                 clusterNetworkListModel.setWindow(networkToManage);
                 networkToManage.setTitle(ConstantsManager.getInstance().getConstants().assignDetachNetworksTitle());
@@ -177,8 +178,8 @@ public class ClusterNetworkListModel extends SearchableListModel
     }
 
     private ClusterNetworkManageModel createNetworkList(List<Network> dcNetworks) {
-        List<ClusterNetworkModel> networkList = new ArrayList<ClusterNetworkModel>();
-        ArrayList<Network> clusterNetworks = Linq.<Network> cast(getItems());
+        final List<ClusterNetworkModel> networkList = new ArrayList<>();
+        final List<Network> clusterNetworks = Linq.cast(getItems());
         for (Network network : dcNetworks) {
             ClusterNetworkModel networkManageModel;
             int index = clusterNetworks.indexOf(network);
