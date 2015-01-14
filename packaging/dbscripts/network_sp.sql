@@ -211,7 +211,7 @@ CREATE TYPE networkViewClusterType AS(id uuid,name VARCHAR(50),description VARCH
 	    mtu INTEGER, vm_network BOOLEAN, label TEXT,
 	    provider_network_provider_id UUID, provider_network_external_id TEXT, qos_id UUID,
 	    network_id UUID,cluster_id UUID, status INTEGER, is_display BOOLEAN,
-	    required BOOLEAN, migration BOOLEAN);
+	    required BOOLEAN, migration BOOLEAN, management BOOLEAN);
 Create or replace FUNCTION GetAllNetworkByClusterId(v_id UUID, v_user_id uuid, v_is_filtered boolean)
 RETURNS SETOF networkViewClusterType STABLE
    AS $procedure$
@@ -240,7 +240,8 @@ RETURN QUERY SELECT
     network_cluster.status,
     network_cluster.is_display,
     network_cluster.required,
-    network_cluster.migration
+    network_cluster.migration,
+    network_cluster.management
    FROM network
    INNER JOIN network_cluster
    ON network.id = network_cluster.network_id
