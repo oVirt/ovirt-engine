@@ -9,10 +9,8 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -41,9 +39,6 @@ import com.google.inject.Provider;
 
 public class NetworkListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
 {
-    private static String ENGINE_NETWORK =
-            (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultManagementNetwork);
-
     private UICommand newCommand;
     private UICommand importCommand;
     private UICommand editCommand;
@@ -146,8 +141,6 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
             networkModel.getName().setIsChangable(false);
             networkModel.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
         }
-
-
     }
 
     public void remove() {
@@ -239,22 +232,10 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
 
     private void updateActionAvailability() {
         List tempVar = getSelectedItems();
-        ArrayList selectedItems =
-                (ArrayList) ((tempVar != null) ? tempVar : new ArrayList());
-
-        boolean anyEngine = false;
-        for (Object item : selectedItems)
-        {
-            Network network = (Network) item;
-            if (ObjectUtils.objectsEqual(network.getName(), ENGINE_NETWORK))
-            {
-                anyEngine = true;
-                break;
-            }
-        }
+        List selectedItems = (tempVar != null) ? tempVar : new ArrayList();
 
         getEditCommand().setIsExecutionAllowed(selectedItems.size() == 1);
-        getRemoveCommand().setIsExecutionAllowed(selectedItems.size() > 0 && !anyEngine);
+        getRemoveCommand().setIsExecutionAllowed(selectedItems.size() > 0);
 
         // System tree dependent actions.
         boolean isAvailable =

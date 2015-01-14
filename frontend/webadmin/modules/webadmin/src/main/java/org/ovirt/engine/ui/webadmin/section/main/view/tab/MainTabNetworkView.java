@@ -5,8 +5,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.searchbackend.NetworkConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
@@ -14,7 +19,6 @@ import org.ovirt.engine.ui.common.widget.table.column.LinkColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlWithSafeHtmlTooltipColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -24,25 +28,14 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkRoleColumnHelper;
 
-import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.inject.Inject;
-
 public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<NetworkView, NetworkListModel> implements MainTabNetworkPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<MainTabNetworkView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final String ENGINE_NETWORK_NAME =
-            (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultManagementNetwork);
-
     private final ApplicationConstants constants;
 
-    private final SafeHtml mgmtImage;
     private final SafeHtml vmImage;
     private final SafeHtml emptyImage;
 
@@ -55,7 +48,6 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         super(modelProvider);
         this.constants = constants;
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        mgmtImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.mgmtNetwork()).getHTML());
         vmImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkVm()).getHTML());
         emptyImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkEmpty()).getHTML());
         initTable();
@@ -75,7 +67,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
 
         getTable().addColumn(nameColumn, constants.nameNetwork(), "200px"); //$NON-NLS-1$
 
-        CommentColumn<NetworkView> commentColumn = new CommentColumn<NetworkView>();
+        CommentColumn<NetworkView> commentColumn = new CommentColumn<>();
         getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<NetworkView> dcColumn = new TextColumnWithTooltip<NetworkView>() {
@@ -102,14 +94,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
                     @Override
                     public SafeHtml getValue(NetworkView networkView) {
 
-                        List<SafeHtml> images = new LinkedList<SafeHtml>();
-
-                        if (ENGINE_NETWORK_NAME.equals(networkView.getName())) {
-
-                            images.add(mgmtImage);
-                        } else {
-                            images.add(emptyImage);
-                        }
+                        List<SafeHtml> images = new LinkedList<>();
 
                         if (networkView.isVmNetwork()) {
 
@@ -123,11 +108,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
 
                     @Override
                     public SafeHtml getTooltip(NetworkView networkView) {
-                        Map<SafeHtml, String> imagesToText = new LinkedHashMap<SafeHtml, String>();
-                        if (ENGINE_NETWORK_NAME.equals(networkView.getName())) {
-                            imagesToText.put(mgmtImage, constants.managementItemInfo());
-                        }
-
+                        Map<SafeHtml, String> imagesToText = new LinkedHashMap<>();
                         if (networkView.isVmNetwork()) {
                             imagesToText.put(vmImage, constants.vmItemInfo());
 
