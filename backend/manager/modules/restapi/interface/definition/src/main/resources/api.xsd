@@ -1307,8 +1307,8 @@
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>
-          <xs:element name="allow_duplicates" type="xs:boolean" minOccurs="1"/>
-          <xs:element name="default_pool" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="allow_duplicates" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="default_pool" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="ranges" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
