@@ -462,7 +462,8 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
             StorageDomain sourceDomain = getStorageDomainById(sourceDomainId, storagePoolId);
 
             StorageDomainValidator storageDomainValidator = createStorageDomainValidator(sourceDomain);
-            if (!validate(storageDomainValidator.hasSpaceForNewDisks(disksList))) {
+            List<DiskImage> dummyDisksList = ImagesHandler.getDisksDummiesForStorageAllocations(disksList);
+            if (!validate(storageDomainValidator.hasSpaceForNewDisks(dummyDisksList))) {
                 return false;
             }
         }
