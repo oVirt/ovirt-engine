@@ -667,20 +667,12 @@ public class VdsManager {
     }
 
     private long calcTimeoutToFence(int vmCount, VdsSpmStatus spmStatus) {
-        int spmIndicator = 0;
-        if (spmStatus != VdsSpmStatus.None) {
-            spmIndicator = 1;
-        }
+        int spmIndicator = spmStatus == VdsSpmStatus.None ? 0 : 1;
         int secToFence = (int) (
                 // delay time can be fracture number, casting it to int should be enough
-                Config.<Integer> getValue(ConfigValues.TimeoutToResetVdsInSeconds) +
-                (Config.<Double> getValue(ConfigValues.DelayResetForSpmInSeconds) * spmIndicator) +
-                (Config.<Double> getValue(ConfigValues.DelayResetPerVmInSeconds) * vmCount));
-
-        if (sshSoftFencingExecuted.get()) {
-            // VDSM restart by SSH has been executed, wait more to see if host is OK
-            secToFence = 2 * secToFence;
-        }
+                Config.<Integer> getValue(ConfigValues.TimeoutToResetVdsInSeconds)
+                        + Config.<Double> getValue(ConfigValues.DelayResetForSpmInSeconds) * spmIndicator
+                        + Config.<Double> getValue(ConfigValues.DelayResetPerVmInSeconds) * vmCount);
 
         return TimeUnit.SECONDS.toMillis(secToFence);
     }
@@ -696,7 +688,7 @@ public class VdsManager {
         if (cachedVds.getStatus() != VDSStatus.Down) {
             long timeoutToFence = calcTimeoutToFence(cachedVds.getVmCount(), cachedVds.getSpmStatus());
             logHostNonResponding(timeoutToFence);
-            if (inGracePeriod(timeoutToFence)) {
+            if (isHostInGracePeriod(false)) {
                 if (cachedVds.getStatus() != VDSStatus.Connecting
                         && cachedVds.getStatus() != VDSStatus.PreparingForMaintenance
                         && cachedVds.getStatus() != VDSStatus.NonResponsive) {
@@ -729,8 +721,25 @@ public class VdsManager {
         }
     }
 
-    private boolean inGracePeriod(long timeoutToFence) {
-        return mUnrespondedAttempts.get() < Config.<Integer>getValue(ConfigValues.VDSAttemptsToResetCount)
+    /**
+     * Checks if host is in grace period from last successful communication to fencing attempt
+     *
+     * @param sshSoftFencingExecuted
+     *            if SSH Soft Fencing was already executed we need to raise default timeout to determine if SSH Soft
+     *            Fencing was successful and host became Up
+     * @return <code>true</code> if host is still in grace period, otherwise <code>false</code>
+     */
+    public boolean isHostInGracePeriod(boolean sshSoftFencingExecuted) {
+        long timeoutToFence = calcTimeoutToFence(cachedVds.getVmCount(), cachedVds.getSpmStatus());
+        int unrespondedAttemptsBarrier = Config.<Integer>getValue(ConfigValues.VDSAttemptsToResetCount);
+
+        if (sshSoftFencingExecuted) {
+            // SSH Soft Fencing has already been executed, increase timeout to see if host is OK
+            timeoutToFence = timeoutToFence * 2;
+            unrespondedAttemptsBarrier = unrespondedAttemptsBarrier * 2;
+        }
+
+        return mUnrespondedAttempts.get() < unrespondedAttemptsBarrier
                 || (lastUpdate + timeoutToFence) > System.currentTimeMillis();
     }
 
