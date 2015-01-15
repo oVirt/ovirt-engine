@@ -737,6 +737,9 @@ public class HostMonitoring {
      *                  getVdsCaps
      */
     void refreshCommitedMemory() {
+        if (!vdsManager.getRefreshStatistics()) {
+            return;
+        }
         int memCommited = vds.getGuestOverhead();
         int vmsCoresCount = 0;
 
