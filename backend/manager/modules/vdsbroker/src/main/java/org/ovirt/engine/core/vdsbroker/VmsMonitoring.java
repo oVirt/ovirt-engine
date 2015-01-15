@@ -194,7 +194,7 @@ public class VmsMonitoring {
             }
 
             if (vmUpdater.isSuccededToRun()) {
-                vdsManager.succededToRunVm(vmUpdater.getDbVm().getId());
+                vdsManager.succeededToRunVm(vmUpdater.getDbVm().getId());
                 //TODO change {@IVdsEventListener.updateSlaPolicies}
                 // to varargs version to avoid creating the list
                 // over and over again - updateSlaPolicies(Guid vdsId, Guid... vmIds)

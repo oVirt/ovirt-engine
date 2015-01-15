@@ -241,7 +241,7 @@ public class ResourceManager {
             vds.setPendingVcpusCount(0);
             vdsManager.updateDynamicData(vds.getDynamicData());
         }
-        vdsManager.schedulJobs();
+        vdsManager.scheduleJobs();
         vdsManagersDict.put(vds.getId(), vdsManager);
         log.info("VDS '{}' was added to the Resource Manager", vds.getId());
 

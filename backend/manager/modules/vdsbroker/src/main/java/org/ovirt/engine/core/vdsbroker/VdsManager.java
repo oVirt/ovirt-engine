@@ -133,7 +133,7 @@ public class VdsManager {
         return vdsManager;
     }
 
-    public void schedulJobs() {
+    public void scheduleJobs() {
         SchedulerUtil sched = SchedulerUtilQuartzImpl.getInstance();
         int refreshRate = Config.<Integer> getValue(ConfigValues.VdsRefreshRate) * 1000;
 
@@ -255,7 +255,7 @@ public class VdsManager {
                     IrsBrokerCommand.updateVdsDomainsData(cachedVds, storagePoolId, domainsList);
                 }
             } catch (Exception e) {
-                log.error("Timer update runtimeinfo failed. Exception:", e);
+                log.error("Timer update runtime info failed. Exception:", e);
             } finally {
                 LockManagerFactory.getLockManager().releaseLock(monitoringLock);
             }
@@ -583,7 +583,7 @@ public class VdsManager {
 
     /**
      */
-    public void succededToRunVm(Guid vmId) {
+    public void succeededToRunVm(Guid vmId) {
         mUnrespondedAttempts.set(0);
         sshSoftFencingExecuted.set(false);
         ResourceManager.getInstance().succededToRunVm(vmId, getVdsId());
@@ -712,7 +712,7 @@ public class VdsManager {
                     if (cachedVds.getStatus() != VDSStatus.NonResponsive) {
                         setStatus(VDSStatus.NonResponsive, cachedVds);
                         moveVMsToUnknown();
-                        logHostFailToResponde(ex, timeoutToFence);
+                        logHostFailToRespond(ex, timeoutToFence);
                         ResourceManager.getInstance().getEventListener().vdsNotResponding(
                                 cachedVds,
                                 !sshSoftFencingExecuted.getAndSet(true),
@@ -734,7 +734,7 @@ public class VdsManager {
                 || (lastUpdate + timeoutToFence) > System.currentTimeMillis();
     }
 
-    private void logHostFailToResponde(VDSNetworkException ex, long timeoutToFence) {
+    private void logHostFailToRespond(VDSNetworkException ex, long timeoutToFence) {
         log.info(
                 "Server failed to respond, vds_id='{}', vds_name='{}', vm_count={}, " +
                         "spm_status='{}', non-responsive_timeout (seconds)={}, error: {}",
