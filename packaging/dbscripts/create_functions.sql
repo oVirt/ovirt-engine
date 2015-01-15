@@ -894,10 +894,10 @@ CREATE OR REPLACE FUNCTION fn_get_comparable_ip_list(text) RETURNS inet[] IMMUTA
 AS $procedure$
 BEGIN
 CASE
-    WHEN ($1 IS NULL) OR ($1 ~ E'^\s*$') THEN
+    WHEN ($1 IS NULL) OR ($1 ~ E'^\\s*$') THEN
         RETURN NULL;
     ELSE
-        RETURN regexp_split_to_array(trim(both from $1), E'\s+')::inet[];
+        RETURN regexp_split_to_array(trim(both from $1), E'\\s+')::inet[];
 END CASE;
 END; $procedure$
 LANGUAGE plpgsql;

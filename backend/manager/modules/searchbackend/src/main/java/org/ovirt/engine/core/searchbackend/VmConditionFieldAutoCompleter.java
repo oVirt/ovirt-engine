@@ -130,7 +130,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put(ARCHITECTURE, "architecture");
 
         // Override field names for purpose of sorting, if needed
-        sortableFieldDict.put(IP, StringFormat.format("fn_get_comparable_ip_list(%s)", getDbFieldName(IP)));
+        sortableFieldDict.put(IP, "vm_ip_inet_array");
 
         /**
          */
