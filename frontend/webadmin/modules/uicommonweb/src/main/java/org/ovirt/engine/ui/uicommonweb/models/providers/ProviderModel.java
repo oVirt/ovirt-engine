@@ -342,7 +342,7 @@ public class ProviderModel extends Model {
                         if (!certs.isEmpty()) {
                             certificate = certs.get(certs.size() - 1).getPayload();
                             ConfirmationModel confirmationModel =
-                                    getImportCertificateConfirmationModel(certs.get(0));
+                                    getImportCertificateConfirmationModel(certs.get(certs.size() - 1));
                             sourceListModel.setConfirmWindow(confirmationModel);
                             ok = true;
                         }
