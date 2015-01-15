@@ -125,6 +125,11 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
                 super.endWithFailure();
             }
         }
+    }
 
+    @Override
+    protected void endSuccessfully() {
+        super.endSuccessfully();
+        setActionReturnValue(getDestinationDiskImage());
     }
 }
