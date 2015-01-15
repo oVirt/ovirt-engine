@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
  * BLL command to discover and refresh geo-replication sessions in a volume
  */
 @NonTransactiveCommandAttribute
-public class RefreshGeoRepSessionsCommand<T extends GlusterVolumeParameters> extends GlusterCommandBase<T> {
+public class RefreshGeoRepSessionsCommand<T extends GlusterVolumeParameters> extends GlusterVolumeCommandBase<T> {
 
     public RefreshGeoRepSessionsCommand(T params) {
         super(params);
