@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.bll.validator.FenceValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
@@ -30,6 +31,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.vdsbroker.MonitoringStrategyFactory;
 
 /**
  * @see RestartVdsCommand on why this command is requiring a lock
@@ -74,6 +76,21 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         return false;
     }
 
+    @Override
+    protected boolean canDoAction() {
+        FenceValidator fenceValidator = new FenceValidator();
+        List<String> messages = getReturnValue().getCanDoActionMessages();
+        boolean canDo =
+                fenceValidator.isHostExists(getVds(), messages)
+                        && fenceValidator.isStartupTimeoutPassed(messages)
+                        && isQuietTimeFromLastActionPassed();
+        if (!canDo) {
+            handleError();
+        }
+        getReturnValue().setSucceeded(canDo);
+        return canDo;
+    }
+
     /**
      * Only fence the host if the VDS is down, otherwise it might have gone back up until this command was executed. If
      * the VDS is not fenced then don't send an audit log event.
@@ -98,11 +115,26 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         boolean shouldBeFenced = validator.shouldVdsBeFenced();
         if (shouldBeFenced) {
             getParameters().setParentCommand(VdcActionType.VdsNotRespondingTreatment);
-            VdcReturnValueBase retVal =
-                    runInternalAction(VdcActionType.VdsKdumpDetection,
-                            getParameters(),
-                            getContext());
+            VdcReturnValueBase retVal;
 
+            retVal = runInternalAction(VdcActionType.SshSoftFencing,
+                    getParameters(),
+                    getContext());
+            if (retVal.getSucceeded()) {
+                // SSH Soft Fencing was successful and host is Up, stop non responding treatment
+                getReturnValue().setSucceeded(true);
+                return;
+            }
+
+            // proceed with non responding treatment only if PM action are allowed
+            if (!MonitoringStrategyFactory.getMonitoringStrategyForVds(getVds()).isPowerManagementSupported()) {
+                setSucceeded(false);
+                setCommandShouldBeLogged(false);
+            }
+
+            retVal = runInternalAction(VdcActionType.VdsKdumpDetection,
+                    getParameters(),
+                    getContext());
             if (retVal.getSucceeded()) {
                 // kdump on host detected and finished successfully, stop hard fencing execution
                 getReturnValue().setSucceeded(true);

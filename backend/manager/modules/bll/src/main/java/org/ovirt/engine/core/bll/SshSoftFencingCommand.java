@@ -6,9 +6,12 @@ import java.io.IOException;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.ovirt.engine.core.vdsbroker.VdsManager;
 
 /**
  * Tries to restart VDSM using SSH connection
@@ -52,8 +55,8 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
             if (validator.shouldVdsBeFenced()) {
                 boolean result = executeSshSoftFencingCommand(getVds().getVdsGroupCompatibilityVersion().toString());
                 if (result) {
-                    // SSH Soft Fencing executed without errors, tell VdsManager about it
-                    ResourceManager.getInstance().GetVdsManager(getVds().getId()).finishSshSoftFencingExecution(getVds());
+                    // SSH Soft Fencing executed successfully, check if host become Up
+                    result = checkIfHostBecomeUp();
                 }
                 getReturnValue().setSucceeded(result);
             } else {
@@ -69,9 +72,9 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
     /**
      * Executes SSH Soft Fencing command
      *
-     * @param host
-     *            host to execute SSH Soft Fencing command on
-     * @returns {@code true} if command has been executed successfully, {@code false} otherwise
+     * @param version
+     *            cluster compatibility version to acquire correct command to restart VDSM
+     * @return {@code true} if command has been executed successfully, {@code false} otherwise
      */
     private boolean executeSshSoftFencingCommand(String version) {
         boolean ret = false;
@@ -108,5 +111,29 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
             log.error("IOException", e);
         }
         return ret;
+    }
+
+    /**
+     * Check if host become Up after successful SSH Soft Fencing execution until grace period is over
+     *
+     * @return {@code true} if host became Up during grace period, otherwise {@code false}
+     */
+    private boolean checkIfHostBecomeUp() {
+        VdsManager vdsManager = getResourceManager().GetVdsManager(getVdsId());
+        int sleepInterval = Config.<Integer> getValue(ConfigValues.VdsRefreshRate) * 1000;
+        while (vdsManager.isHostInGracePeriod(true)) {
+            if (vdsManager.getCopyVds().getStatus() == VDSStatus.Up) {
+                // host became Up during grace period
+                return true;
+            }
+            // wait until next host monitoring attempt
+            ThreadUtils.sleep(sleepInterval);
+        }
+        return false;
+    }
+
+    public ResourceManager getResourceManager() {
+        // TODO: fix when ResourceManager could be injected
+        return ResourceManager.getInstance();
     }
 }

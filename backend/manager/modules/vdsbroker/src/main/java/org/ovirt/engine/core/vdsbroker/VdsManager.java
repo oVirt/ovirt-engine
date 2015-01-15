@@ -68,7 +68,6 @@ public class VdsManager {
     private final Object lockObj = new Object();
     private final AtomicInteger mFailedToRunVmAttempts;
     private final AtomicInteger mUnrespondedAttempts;
-    private final AtomicBoolean sshSoftFencingExecuted;
     private final Guid vdsId;
     private final VdsMonitor vdsMonitor = new VdsMonitor();
     private final HostNetworkTopologyPersister hostNetworkTopologyPersister;
@@ -96,7 +95,6 @@ public class VdsManager {
         monitoringStrategy = MonitoringStrategyFactory.getMonitoringStrategyForVds(vds);
         mUnrespondedAttempts = new AtomicInteger();
         mFailedToRunVmAttempts = new AtomicInteger();
-        sshSoftFencingExecuted = new AtomicBoolean(false);
         monitoringLock = new EngineLock(Collections.singletonMap(vdsId.toString(),
                 new Pair<String, String>(LockingGroup.VDS_INIT.name(), "")), null);
         hostNetworkTopologyPersister = HostNetworkTopologyPersisterImpl.getInstance();
@@ -205,7 +203,6 @@ public class VdsManager {
                             hostMonitoring = new HostMonitoring(VdsManager.this, cachedVds, monitoringStrategy);
                             hostMonitoring.refresh();
                             mUnrespondedAttempts.set(0);
-                            sshSoftFencingExecuted.set(false);
                             setLastUpdate();
                         }
                         if (!isInitialized() && cachedVds.getStatus() != VDSStatus.NonResponsive
@@ -585,7 +582,6 @@ public class VdsManager {
      */
     public void succeededToRunVm(Guid vmId) {
         mUnrespondedAttempts.set(0);
-        sshSoftFencingExecuted.set(false);
         ResourceManager.getInstance().succededToRunVm(vmId, getVdsId());
     }
 
@@ -707,7 +703,6 @@ public class VdsManager {
                         logHostFailToRespond(ex, timeoutToFence);
                         ResourceManager.getInstance().getEventListener().vdsNotResponding(
                                 cachedVds,
-                                !sshSoftFencingExecuted.getAndSet(true),
                                 lastUpdate);
                     } else {
                         setStatus(VDSStatus.NonResponsive, cachedVds);
@@ -828,22 +823,6 @@ public class VdsManager {
      */
     public VdsMonitor getVdsMonitor() {
         return vdsMonitor;
-    }
-
-    /**
-     * Resets counter to test VDS response and changes state to Connecting after successful SSH Soft Fencing execution.
-     * Changing state to Connecting tells VdsManager to monitor VDS and if VDS doesn't change state to Up, VdsManager
-     * will execute standard fencing after timeout interval.
-     *
-     * @param vds
-     *            VDS that SSH Soft Fencing has been executed on
-     */
-    public void finishSshSoftFencingExecution(VDS vds) {
-        // reset the unresponded counter to wait if VDSM restart helps
-        mUnrespondedAttempts.set(0);
-        // change VDS state to connecting
-        setStatus(VDSStatus.Connecting, vds);
-        updateDynamicData(vds.getDynamicData());
     }
 
     public void calculateNextMaintenanceAttemptTime() {
