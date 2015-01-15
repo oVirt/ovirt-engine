@@ -683,12 +683,12 @@ public class VdsManager {
         boolean saveToDb = true;
         if (cachedVds.getStatus() != VDSStatus.Down) {
             long timeoutToFence = calcTimeoutToFence(cachedVds.getVmCount(), cachedVds.getSpmStatus());
-            logHostNonResponding(timeoutToFence);
             if (isHostInGracePeriod(false)) {
                 if (cachedVds.getStatus() != VDSStatus.Connecting
                         && cachedVds.getStatus() != VDSStatus.PreparingForMaintenance
                         && cachedVds.getStatus() != VDSStatus.NonResponsive) {
                     setStatus(VDSStatus.Connecting, cachedVds);
+                    logChangeStatusToConnecting(timeoutToFence);
                 } else {
                     saveToDb = false;
                 }
@@ -749,7 +749,7 @@ public class VdsManager {
         AuditLogDirector.log(logable, AuditLogType.VDS_FAILURE);
     }
 
-    private void logHostNonResponding(long timeoutToFence) {
+    private void logChangeStatusToConnecting(long timeoutToFence) {
         log.warn("Host '{}' is not responding. It will stay in Connecting state for a grace period " +
                         "of {} seconds and after that an attempt to fence the host will be issued.",
                 cachedVds.getName(),
