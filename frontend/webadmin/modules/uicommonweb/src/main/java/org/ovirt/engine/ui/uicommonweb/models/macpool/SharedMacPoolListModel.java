@@ -81,6 +81,7 @@ public class SharedMacPoolListModel extends ListWithDetailsModel {
             for (MacPool macPool : (Iterable<MacPool>) getSelectedItems()) {
                 if (macPool.isDefaultPool()) {
                     removeAllowed = false;
+                    break;
                 }
             }
         }
