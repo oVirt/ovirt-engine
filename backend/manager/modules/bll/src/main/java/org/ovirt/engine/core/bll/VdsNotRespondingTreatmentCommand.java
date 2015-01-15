@@ -32,6 +32,7 @@ import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.vdsbroker.MonitoringStrategyFactory;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 /**
  * @see RestartVdsCommand on why this command is requiring a lock
@@ -147,18 +148,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             ).getFencingPolicy();
             getParameters().setFencingPolicy(fencingPolicy);
 
-            if (fencingPolicy.isSkipFencingIfSDActive()) {
-                // host storage lease should be renewed each ConfigValues.HostStorageLeaseAliveInterval
-                // so we need to be sure not to execute fencing before host is non responsive for longer time
-                long interval = TimeUnit.SECONDS.toMillis(
-                        Config.<Integer>getValue(ConfigValues.HostStorageLeaseAliveCheckingInterval));
-                long difference = System.currentTimeMillis() - getParameters().getLastUpdate();
-                if (difference < interval) {
-                    int sleepMs = (int)(interval - difference);
-                    log.info("Sleeping {} ms before proceeding with fence execution", sleepMs);
-                    ThreadUtils.sleep(sleepMs);
-                }
-            }
+            waitUntilSkipFencingIfSDActiveAllowed(fencingPolicy.isSkipFencingIfSDActive());
 
             // Make sure that the StopVdsCommand that runs by the RestartVds
             // don't write over our job, and disrupt marking the job status correctly
@@ -251,5 +241,26 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         auditLogable.setVdsId(host.getId());
         auditLogable.setRepeatable(true);
         AuditLogDirector.log(auditLogable, AuditLogType.VDS_ALERT_FENCE_OPERATION_SKIPPED_BROKEN_CONNECTIVITY);
+    }
+
+    public ResourceManager getResourceManager() {
+        // TODO: fix when ResourceManager could be injected
+        return ResourceManager.getInstance();
+    }
+
+    private void waitUntilSkipFencingIfSDActiveAllowed(boolean skipFencingIfSDActive) {
+        if (skipFencingIfSDActive) {
+            // host storage lease should be renewed each ConfigValues.HostStorageLeaseAliveInterval
+            // so we need to be sure not to execute fencing before host is non responsive for longer time
+            long interval = TimeUnit.SECONDS.toMillis(
+                    Config.<Integer>getValue(ConfigValues.HostStorageLeaseAliveCheckingInterval));
+            long lastUpdate = getResourceManager().GetVdsManager(getVdsId()).getLastUpdate();
+            long difference = System.currentTimeMillis() - lastUpdate;
+            if (difference < interval) {
+                int sleepMs = (int)(interval - difference);
+                log.info("Sleeping {} ms before proceeding with fence execution", sleepMs);
+                ThreadUtils.sleep(sleepMs);
+            }
+        }
     }
 }

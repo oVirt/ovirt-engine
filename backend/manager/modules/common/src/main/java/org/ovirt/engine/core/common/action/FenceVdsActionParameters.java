@@ -20,11 +20,6 @@ public class FenceVdsActionParameters extends VdsActionParameters {
 
     private FencingPolicy fencingPolicy;
 
-    /**
-     * Number milliseconds since last successful connection to host in monitoring
-     */
-    private long lastUpdate;
-
     public FenceVdsActionParameters() {
         this(null, FenceActionType.Restart);
     }
@@ -66,13 +61,4 @@ public class FenceVdsActionParameters extends VdsActionParameters {
     public void setFencingPolicy(FencingPolicy fencingPolicy) {
         this.fencingPolicy = fencingPolicy;
     }
-
-    public long getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(long lastUpdate) {
-        this.lastUpdate = lastUpdate;
-    }
-
 }

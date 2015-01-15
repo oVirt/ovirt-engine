@@ -234,7 +234,7 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void vdsNotResponding(final VDS vds, final long lastUpdate) {
+    public void vdsNotResponding(final VDS vds) {
         ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintenanceVds, false);
         ThreadPoolUtil.execute(new Runnable() {
             @Override
@@ -246,7 +246,6 @@ public class VdsEventListener implements IVdsEventListener {
                 FenceVdsActionParameters params = new FenceVdsActionParameters(
                         vds.getId(),
                         FenceActionType.Restart);
-                params.setLastUpdate(lastUpdate);
                 Backend.getInstance().runInternalAction(VdcActionType.VdsNotRespondingTreatment,
                         params,
                         ExecutionHandler.createInternalJobContext());

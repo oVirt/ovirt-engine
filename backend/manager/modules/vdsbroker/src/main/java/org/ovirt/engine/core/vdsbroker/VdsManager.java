@@ -701,9 +701,7 @@ public class VdsManager {
                         setStatus(VDSStatus.NonResponsive, cachedVds);
                         moveVMsToUnknown();
                         logHostFailToRespond(ex, timeoutToFence);
-                        ResourceManager.getInstance().getEventListener().vdsNotResponding(
-                                cachedVds,
-                                lastUpdate);
+                        ResourceManager.getInstance().getEventListener().vdsNotResponding(cachedVds);
                     } else {
                         setStatus(VDSStatus.NonResponsive, cachedVds);
                     }
@@ -807,6 +805,14 @@ public class VdsManager {
     private void setStartTime() {
         updateStartTime = System.currentTimeMillis();
     }
+
+    /**
+     * Return time of last successful host monitoring communication
+     */
+    public long getLastUpdate() {
+        return lastUpdate;
+    }
+
     private void setLastUpdate() {
         lastUpdate = System.currentTimeMillis();
     }
