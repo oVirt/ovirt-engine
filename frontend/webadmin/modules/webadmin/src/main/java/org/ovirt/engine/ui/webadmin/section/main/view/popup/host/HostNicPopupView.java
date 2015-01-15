@@ -106,6 +106,7 @@ public class HostNicPopupView extends AbstractTabbedModelBoundPopupView<HostNicM
 
     @Override
     public void showOnlyPf() {
+        getTabPanel().switchTab(pfTab);
         tabPanel.setVisible(false);
         contentPanel.setWidget(pfTab.getContent());
         mainPanel.setWidth("400px"); //$NON-NLS-1$
@@ -114,6 +115,7 @@ public class HostNicPopupView extends AbstractTabbedModelBoundPopupView<HostNicM
 
     @Override
     public void showOnlyVfsConfig() {
+        getTabPanel().switchTab(vfsConfigTab);
         tabPanel.setVisible(false);
         contentPanel.setWidget(vfsConfigTab.getContent());
         mainPanel.setWidth("515px"); //$NON-NLS-1$

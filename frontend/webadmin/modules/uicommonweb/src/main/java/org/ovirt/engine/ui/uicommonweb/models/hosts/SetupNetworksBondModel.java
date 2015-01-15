@@ -19,7 +19,8 @@ public class SetupNetworksBondModel extends HostBondInterfaceModel {
 
     @Override
     public boolean validate() {
-        return getLabelsModel().validate();
+        getLabelsModel().validate();
+        return getLabelsModel().getIsValid();
     }
 
 }

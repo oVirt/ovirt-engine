@@ -9,6 +9,9 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public abstract class NicLabelModel extends ListModel<ListModel<String>> {
     private List<String> originalLabels;
@@ -49,5 +52,24 @@ public abstract class NicLabelModel extends ListModel<ListModel<String>> {
             selectedLabels.add(labelModel.getSelectedItem());
         }
         return selectedLabels;
+    }
+
+    public void validate() {
+        boolean res = true;
+        Set<String> editedLabels = new HashSet<String>();
+        for (ListModel<String> labelModel : getItems()) {
+            labelModel.validateSelectedItem(new IValidation[] { new AsciiNameValidation() });
+
+            String label = labelModel.getSelectedItem();
+
+            if (editedLabels.contains(label)) {
+                labelModel.getInvalidityReasons().add(ConstantsManager.getInstance().getConstants().duplicateLabel());
+                labelModel.setIsValid(false);
+            }
+            editedLabels.add(label);
+
+            res &= labelModel.getIsValid();
+        }
+        setIsValid(res);
     }
 }

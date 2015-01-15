@@ -9,8 +9,6 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class PfNicLabelModel extends NicLabelModel {
@@ -51,12 +49,11 @@ public class PfNicLabelModel extends NicLabelModel {
         flushedLabels = new HashSet<String>();
     }
 
-    public boolean validate() {
-        Set<String> editedLabels = new HashSet<String>();
-        boolean res = true;
+    @Override
+    public void validate() {
+        super.validate();
+        boolean res = getIsValid();
         for (ListModel<String> labelModel : getItems()) {
-            labelModel.validateSelectedItem(new IValidation[] { new AsciiNameValidation() });
-
             String label = labelModel.getSelectedItem();
             String usingIface = labelToIface.get(label);
             if (usingIface != null && !containedIfaces.contains(usingIface)) {
@@ -66,15 +63,9 @@ public class PfNicLabelModel extends NicLabelModel {
                 labelModel.setIsValid(false);
             }
 
-            if (editedLabels.contains(label)) {
-                labelModel.getInvalidityReasons().add(ConstantsManager.getInstance().getConstants().duplicateLabel());
-                labelModel.setIsValid(false);
-            }
-            editedLabels.add(label);
-
             res &= labelModel.getIsValid();
         }
-        return res;
+        setIsValid(res);
     }
 
     /**
