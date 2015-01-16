@@ -4,12 +4,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.naming.AuthenticationException;
 
@@ -20,6 +24,8 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotSchedule;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -71,7 +77,8 @@ public class GlusterUtil {
      * @throws AuthenticationException
      *             If SSH authentication with given root password fails
      */
-    public Set<String> getPeers(String server, String username, String password) throws AuthenticationException, IOException {
+    public Set<String> getPeers(String server, String username, String password) throws AuthenticationException,
+            IOException {
 
         try (final SSHClient client = getSSHClient()) {
             connect(client, server);
@@ -222,7 +229,8 @@ public class GlusterUtil {
     public EngineLock acquireGlusterLockWait(Guid clusterId) {
         Map<String, Pair<String, String>> exclusiveLocks = new HashMap<String, Pair<String, String>>();
         exclusiveLocks.put(clusterId.toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER, VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_OPERATION_INPROGRESS));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER,
+                        VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_OPERATION_INPROGRESS));
         EngineLock lock = new EngineLock(exclusiveLocks, null);
         LockManagerFactory.getLockManager().acquireLockWait(lock);
         return lock;
@@ -271,5 +279,49 @@ public class GlusterUtil {
         // as part Gluster Volume Entity which depicts if the volume bricks are thinly provisioned or not.
         // The same flag would be used here to decide accordingly later.
         return true;
+    }
+
+    public String getCronExpression(GlusterVolumeSnapshotSchedule schedule) {
+        String retStr = "";
+
+        switch (schedule.getRecurrence()) {
+        case INTERVAL:
+            int interval = schedule.getInterval();
+            retStr = String.format("0 */%s * * * ? *", interval);
+            break;
+        case HOURLY:
+            retStr = "0 0 0/1 1/1 * ? *";
+            break;
+        case DAILY:
+            Time execTime = schedule.getExecutionTime();
+            retStr = String.format("0 %s %s * * ? *", execTime.getMinutes(), execTime.getHours());
+            break;
+        case WEEKLY:
+            String days = schedule.getDays();
+            Time execTime1 = schedule.getExecutionTime();
+            retStr = String.format("0 %s %s ? * %s *", execTime1.getMinutes(), execTime1.getHours(), days);
+            break;
+        case MONTHLY:
+            String days1 = schedule.getDays();
+            Time execTime2 = schedule.getExecutionTime();
+            retStr = String.format("0 %s %s %s * ? *", execTime2.getMinutes(), execTime2.getHours(), days1);
+            break;
+        case UNKNOWN:
+            return null;
+        }
+
+        return retStr;
+    }
+
+    public Time convertTime(Time inTime, String fromTimeZone) {
+        Calendar calFrom = new GregorianCalendar(TimeZone.getTimeZone(fromTimeZone));
+        calFrom.set(Calendar.HOUR, inTime.getHours());
+        calFrom.set(Calendar.MINUTE, inTime.getMinutes());
+        calFrom.set(Calendar.SECOND, inTime.getSeconds());
+
+        Calendar calTo = new GregorianCalendar();
+        calTo.setTimeInMillis(calFrom.getTimeInMillis());
+
+        return new Time(calTo.get(Calendar.HOUR_OF_DAY), calTo.get(Calendar.MINUTE), calTo.get(Calendar.SECOND));
     }
 }
