@@ -2,6 +2,8 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
+
 /**
  * Class representing information of a Gluster Volume Option
  *
@@ -53,7 +55,6 @@ public class GlusterVolumeOptionInfo implements Serializable, Comparable<Gluster
         int result = 1;
         result = prime * result + ((key == null) ? 0 : key.hashCode());
         result = prime * result + ((defaultValue == null) ? 0 : defaultValue.hashCode());
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
         return result;
     }
 
@@ -64,10 +65,8 @@ public class GlusterVolumeOptionInfo implements Serializable, Comparable<Gluster
         }
 
         GlusterVolumeOptionInfo option = (GlusterVolumeOptionInfo) obj;
-        return (option.getKey().equals(key)
-                && option.getDefaultValue().equals(defaultValue)
-                && option.getDescription()
-                .equals(description));
+        return ObjectUtils.objectsEqual(option.getKey(), key)
+                && ObjectUtils.objectsEqual(option.getDefaultValue(), defaultValue);
     }
 
     @Override

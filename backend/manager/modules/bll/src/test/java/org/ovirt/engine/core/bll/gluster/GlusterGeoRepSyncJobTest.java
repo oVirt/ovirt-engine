@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionConfiguration;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -103,6 +104,20 @@ public class GlusterGeoRepSyncJobTest {
     }
 
     @Test
+    public void testDiscoverGeoRepDataWithConfig() {
+
+        doReturn(getSessionsVDSReturnVal(true, 2)).when(syncJob)
+                .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepSessionList),
+                        any(GlusterVolumeGeoRepSessionVDSParameters.class));
+        doReturn(getSessionsConfigListVDSReturnVal(true)).when(syncJob)
+                .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepConfigList),
+                any(GlusterVolumeGeoRepSessionVDSParameters.class));
+        syncJob.discoverGeoRepData();
+        Mockito.verify(geoRepDao, times(2)).save(any(GlusterGeoRepSession.class));
+        Mockito.verify(geoRepDao, times(2)).saveConfig(any(GlusterGeoRepSessionConfiguration.class));
+    }
+
+    @Test
     public void testDiscoverGeoRepDataWhenNoSessions() {
 
         doReturn(getSessionsVDSReturnVal(true, 0)).when(syncJob)
@@ -161,6 +176,26 @@ public class GlusterGeoRepSyncJobTest {
             vdsRetValue.setReturnValue(null);
         }
         return vdsRetValue;
+    }
+
+    private Object getSessionsConfigListVDSReturnVal(boolean ret) {
+        VDSReturnValue vdsRetValue = new VDSReturnValue();
+        vdsRetValue.setSucceeded(ret);
+        if (ret) {
+            vdsRetValue.setReturnValue(getSessionConfigList());
+        } else {
+            vdsRetValue.setReturnValue(null);
+        }
+        return vdsRetValue;
+    }
+
+    private List<GlusterGeoRepSessionConfiguration> getSessionConfigList() {
+        List<GlusterGeoRepSessionConfiguration> configList = new ArrayList<>();
+        GlusterGeoRepSessionConfiguration config = new GlusterGeoRepSessionConfiguration();
+        config.setKey("georep-crawl");
+        config.setValue("hybrid");
+        configList.add(config);
+        return configList;
     }
 
     private List<GlusterGeoRepSession> getSessions(int count, boolean populateVoId) {

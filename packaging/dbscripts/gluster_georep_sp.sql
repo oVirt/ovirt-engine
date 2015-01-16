@@ -223,6 +223,18 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION GetGlusterGeoRepSessionConfigByKey(v_session_id UUID,
+                                                              v_config_key VARCHAR(50))
+RETURNS SETOF gluster_geo_rep_config_view STABLE
+AS $procedure$
+BEGIN
+    RETURN QUERY SELECT *
+    FROM  gluster_geo_rep_config_view
+    WHERE session_id = v_session_id
+    AND config_key = v_config_key;
+END; $procedure$
+LANGUAGE plpgsql;
+
 Create or replace FUNCTION GetAllGlusterGeoRepSessions()
 RETURNS SETOF gluster_georep_sessions_view STABLE
 AS $procedure$
