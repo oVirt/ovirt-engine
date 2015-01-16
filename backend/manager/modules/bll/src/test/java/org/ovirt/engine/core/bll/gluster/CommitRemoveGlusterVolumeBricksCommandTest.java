@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -71,6 +72,8 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
         doReturn(getVolumeWithRemoveBricksTaskNull(volumeWithRemoveBricksTaskNull)).when(volumeDao)
                 .getById(volumeWithRemoveBricksTaskNull);
         doReturn(null).when(volumeDao).getById(null);
+        doReturn(SUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
+        doReturn(vdsGroup).when(command).getVdsGroup();
     }
 
     private Object getVolumeWithRemoveBricksTaskNull(Guid volumeId) {
@@ -164,6 +167,20 @@ public class CommitRemoveGlusterVolumeBricksCommandTest extends AbstractRemoveGl
 
         prepareMocks(cmd);
         assertTrue(cmd.canDoAction());
+    }
+
+    @Test
+    public void canDoActionFailsOnCompatVersion() {
+        cmd =
+                spy(new CommitRemoveGlusterVolumeBricksCommand(new GlusterVolumeRemoveBricksParameters(volumeWithRemoveBricksTask,
+                        getBricks(volumeWithRemoveBricksTask))));
+
+        prepareMocks(cmd);
+        doReturn(UNSUPPORTED_VERSION).when(vdsGroup).getCompatibilityVersion();
+        assertFalse(cmd.canDoAction());
+        assertTrue(cmd.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(VdcBllMessages.GLUSTER_TASKS_NOT_SUPPORTED_FOR_CLUSTER_LEVEL.toString()));
     }
 
     @Test
