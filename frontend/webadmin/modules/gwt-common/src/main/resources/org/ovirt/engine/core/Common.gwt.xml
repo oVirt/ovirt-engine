@@ -351,6 +351,8 @@
         <include name="common/businessentities/gluster/GlusterVolumeSnapshotEntity.java"/>
         <include name="common/businessentities/gluster/GlusterSnapshotStatus.java"/>
         <include name="common/businessentities/gluster/GlusterVolumeSnapshotConfig.java"/>
+        <include name="common/businessentities/gluster/GlusterVolumeSnapshotSchedule.java"/>
+        <include name="common/businessentities/gluster/GlusterVolumeSnapshotScheduleRecurrence.java"/>
         <!-- Scheduling -->
 		<include name="common/scheduling/*.java"/>
 		<include name="common/scheduling/parameters/*.java"/>
