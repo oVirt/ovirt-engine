@@ -42,17 +42,19 @@ public class GlusterGeoRepSessionConfiguration extends GlusterVolumeOptionInfo i
 
     @Override
     public boolean equals(Object obj) {
-        return obj != null && obj instanceof GlusterGeoRepSessionConfiguration
-                && ObjectUtils.objectsEqual(getId(), ((GlusterGeoRepSessionConfiguration) obj).getId())
-                && super.equals(obj);
+        if (obj == null || !(obj instanceof GlusterGeoRepSessionConfiguration)) {
+            return false;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        return ObjectUtils.objectsEqual(getId(), ((GlusterGeoRepSessionConfiguration) obj).getId());
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = 1;
-        result = prime * result + sessionId.hashCode();
-        result = prime * result + super.hashCode();
-        return result;
+        int result = super.hashCode();
+        return prime * result + ((sessionId == null) ? 0 : sessionId.hashCode());
     }
 }

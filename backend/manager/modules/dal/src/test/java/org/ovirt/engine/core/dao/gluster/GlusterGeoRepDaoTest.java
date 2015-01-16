@@ -18,6 +18,7 @@ import org.ovirt.engine.core.dao.FixturesTool;
 
 public class GlusterGeoRepDaoTest extends BaseDAOTestCase {
 
+    private static final String GEOREP_CONFIG_CRAWL = "georep-crawl";
     private static final Guid SESSION_ID = new Guid("4f4f751e-549b-4e7a-aff6-32d36856c125");
     private static final Guid NONEXIST_SESSION_ID = new Guid("5e5e751e-549b-4e7a-aff6-32d36856c125");
 
@@ -55,7 +56,7 @@ public class GlusterGeoRepDaoTest extends BaseDAOTestCase {
     private GlusterGeoRepSessionConfiguration getGlusterGeoRepSessionConfig() {
         GlusterGeoRepSessionConfiguration sessionConfig = new GlusterGeoRepSessionConfiguration();
         sessionConfig.setId(FixturesTool.GLUSTER_GEOREP_SESSION_ID);
-        sessionConfig.setKey("georep-crawl");
+        sessionConfig.setKey(GEOREP_CONFIG_CRAWL);
         sessionConfig.setDescription("Geo-replication session  crawl");
         sessionConfig.setValue("changelog");
         return sessionConfig;
@@ -100,8 +101,12 @@ public class GlusterGeoRepDaoTest extends BaseDAOTestCase {
     public void testSaveConfig() {
         GlusterGeoRepSessionConfiguration sessionConfig = getGlusterGeoRepSessionConfig();
         dao.saveConfig(sessionConfig);
-        List<GlusterGeoRepSessionConfiguration> fetchedSessionConfig = dao.getGeoRepSessionConfig(FixturesTool.GLUSTER_GEOREP_SESSION_ID);
-        assertEquals(sessionConfig, fetchedSessionConfig.get(0));
+        List<GlusterGeoRepSessionConfiguration> fetchedSessionConfigList =
+                dao.getGeoRepSessionConfig(FixturesTool.GLUSTER_GEOREP_SESSION_ID);
+        assertEquals(sessionConfig, fetchedSessionConfigList.get(0));
+        GlusterGeoRepSessionConfiguration fetchedSessionConfig =
+                dao.getGeoRepSessionConfigByKey(FixturesTool.GLUSTER_GEOREP_SESSION_ID, GEOREP_CONFIG_CRAWL);
+        assertEquals(sessionConfig, fetchedSessionConfig);
     }
 
     @Test

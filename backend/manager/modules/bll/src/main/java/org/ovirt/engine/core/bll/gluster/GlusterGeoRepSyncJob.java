@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionConfiguration;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
@@ -144,7 +145,6 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
         updateDiscoveredSessions(cluster, sessionsMap);
     }
 
-
     private void updateDiscoveredSessions(VDSGroup cluster, Map<String, GlusterGeoRepSession> sessionsMap) {
         removeDeletedSessions(cluster.getId(), sessionsMap);
 
@@ -191,7 +191,53 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
                 getGeoRepDao().updateSession(session);
             }
             updateSessionDetailsInDB(session);
+            updateDiscoveredSessionConfig(cluster, session);
         }
+    }
+
+    private void updateDiscoveredSessionConfig(VDSGroup cluster, GlusterGeoRepSession session) {
+        List<GlusterGeoRepSessionConfiguration> sessionConfigList = getSessionConfigFromCLI(cluster, session);
+        if (sessionConfigList == null) {
+            log.info("No configuration information returned from VDS for session '{}'", session.getSessionKey());
+            return;
+        }
+        List<GlusterGeoRepSessionConfiguration> existingSessionConfigs =
+                getGeoRepDao().getGeoRepSessionConfig(session.getId());
+        Map<String, GlusterGeoRepSessionConfiguration> existingKeyConfigMap =
+                prepareMapOfExistingConfigs(existingSessionConfigs);
+        for (GlusterGeoRepSessionConfiguration sessionConfig : sessionConfigList) {
+            //update sessionId for fetched object.
+            sessionConfig.setId(session.getId());
+            // check if session config not same as in db
+            if (!existingSessionConfigs.contains(sessionConfig)) {
+                // confirm that it exists in db, which means config has been updated
+                if (existingKeyConfigMap.containsKey(sessionConfig.getKey())) {
+                    getGeoRepDao().updateConfig(sessionConfig);
+                    String oldValue = existingKeyConfigMap.get(sessionConfig.getKey()).getValue();
+                    logGeoRepMessage(AuditLogType.GEOREP_OPTION_CHANGED_FROM_CLI,
+                            cluster.getId(),
+                            getOptionChangedCustomVars(session,
+                                    sessionConfig.getKey(),
+                                    sessionConfig.getValue(),
+                                    oldValue));
+                } else {
+                    getGeoRepDao().saveConfig(sessionConfig);
+                    logGeoRepMessage(AuditLogType.GEOREP_OPTION_SET_FROM_CLI,
+                            cluster.getId(),
+                            getOptionChangedCustomVars(session, sessionConfig.getKey(), sessionConfig.getValue(), null));
+                }
+            }
+        }
+    }
+
+    private Map<String, GlusterGeoRepSessionConfiguration> prepareMapOfExistingConfigs(List<GlusterGeoRepSessionConfiguration> existingConfigs) {
+        Map<String, GlusterGeoRepSessionConfiguration> keyConfigMap = new HashMap<>();
+        if (existingConfigs != null) {
+            for (GlusterGeoRepSessionConfiguration config : existingConfigs) {
+                keyConfigMap.put(config.getKey(), config);
+            }
+        }
+        return keyConfigMap;
     }
 
     private void updateSlaveNodeAndVolumeId(GlusterGeoRepSession session) {
@@ -246,6 +292,24 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
                         put("geoRepSessionKey", session.getSessionKey());
                     }
                 });
+    }
+
+    private void logGeoRepMessage(AuditLogType logType, Guid clusterId, final HashMap<String, String> customVars) {
+        logUtil.logAuditMessage(clusterId, null, null,
+                logType, customVars);
+    }
+
+    private HashMap<String, String> getOptionChangedCustomVars(final GlusterGeoRepSession session,
+            String key,
+            String value,
+            String oldValue) {
+        HashMap<String, String> keyValMap = new HashMap<>();
+        keyValMap.put(GlusterConstants.VOLUME_NAME, session.getMasterVolumeName());
+        keyValMap.put("geoRepSessionKey", session.getSessionKey());
+        keyValMap.put("key", key);
+        keyValMap.put("value", value);
+        keyValMap.put("oldValue", oldValue);
+        return keyValMap;
     }
 
     /**
@@ -346,6 +410,31 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
                             session.getMasterVolumeName(), session.getSlaveHostName(), session.getSlaveVolumeName()));
             if (returnValue.getSucceeded()) {
                 return (List<GlusterGeoRepSessionDetails>) returnValue.getReturnValue();
+            } else {
+                log.error("VDS error {}", returnValue.getVdsError().getMessage());
+                log.debug("VDS error", returnValue.getVdsError());
+                return null;
+            }
+        } catch (Exception e) {
+            log.error("Exception getting geo-rep status from vds {}", e.getMessage());
+            log.debug("Exception", e);
+            return null;
+        }
+    }
+
+    private List<GlusterGeoRepSessionConfiguration> getSessionConfigFromCLI(VDSGroup cluster,
+            GlusterGeoRepSession session) {
+        VDS upServer = getClusterUtils().getRandomUpServer(cluster.getId());
+        if (upServer == null) {
+            log.debug("No UP server found in cluster: {} for geo-rep monitoring", cluster.getName());
+            return null;
+        }
+        try {
+            VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GetGlusterVolumeGeoRepConfigList,
+                    new GlusterVolumeGeoRepSessionVDSParameters(upServer.getId(),
+                            session.getMasterVolumeName(), session.getSlaveHostName(), session.getSlaveVolumeName()));
+            if (returnValue.getSucceeded()) {
+                return (List<GlusterGeoRepSessionConfiguration>) returnValue.getReturnValue();
             } else {
                 log.error("VDS error {}", returnValue.getVdsError().getMessage());
                 log.debug("VDS error", returnValue.getVdsError());

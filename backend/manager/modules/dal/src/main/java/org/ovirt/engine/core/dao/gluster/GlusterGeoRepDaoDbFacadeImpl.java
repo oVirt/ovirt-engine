@@ -60,7 +60,9 @@ public class GlusterGeoRepDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
             entity.setKey(rs.getString("config_key"));
             entity.setValue(rs.getString("config_value"));
             entity.setDescription(rs.getString("config_description"));
-            entity.setAllowedValues(Arrays.asList(rs.getString("config_possible_values").split(";")));
+            entity.setAllowedValues(rs.getString("config_possible_values") != null ? Arrays.asList(rs.getString("config_possible_values")
+                    .split(";"))
+                    : null);
             return entity;
         }
     }
@@ -153,6 +155,12 @@ public class GlusterGeoRepDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
     public List<GlusterGeoRepSessionConfiguration> getGeoRepSessionConfig(Guid sessionId) {
         return getCallsHandler().executeReadList("GetGlusterGeoRepSessionConfig", georepSessionConfigRowMapper,
                 createIdParameterMapper(sessionId));
+    }
+
+    @Override
+    public GlusterGeoRepSessionConfiguration getGeoRepSessionConfigByKey(Guid sessionId, String configKey) {
+        return getCallsHandler().executeRead("GetGlusterGeoRepSessionConfigByKey", georepSessionConfigRowMapper,
+                createIdParameterMapper(sessionId).addValue("config_key", configKey));
     }
 
     @Override
