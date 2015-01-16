@@ -15,12 +15,14 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.hamcrest.Matcher;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
@@ -32,6 +34,7 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParamet
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -40,6 +43,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
@@ -49,10 +53,14 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StopRebalanceGlusterVolumeCommandTest {
+    private static final Version SUPPORTED_VERSION = new Version(3, 4);
+    private static final Version UNSUPPORTED_VERSION = new Version(3, 3);
 
     @Mock
     GlusterVolumeDao volumeDao;
@@ -61,11 +69,19 @@ public class StopRebalanceGlusterVolumeCommandTest {
     @Mock
     protected VDSBrokerFrontend vdsBrokerFrontend;
 
-    private Guid volumeWithRebalanceTask = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
-    private Guid volumeWithRebalanceTaskCompleted = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
-    private Guid volumeWithoutAsyncTask = new Guid("000000000000-0000-0000-0000-00000003");
-    private Guid volumeWithoutRebalanceTask = new Guid("000000000000-0000-0000-0000-00000004");
-    private Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+    private final Guid volumeWithRebalanceTask = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
+    private final Guid volumeWithRebalanceTaskCompleted = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
+    private final Guid volumeWithoutAsyncTask = new Guid("000000000000-0000-0000-0000-00000003");
+    private final Guid volumeWithoutRebalanceTask = new Guid("000000000000-0000-0000-0000-00000004");
+    private final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+
+    @ClassRule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.GlusterAsyncTasksSupport, UNSUPPORTED_VERSION.getValue(), false),
+            mockConfig(ConfigValues.GlusterAsyncTasksSupport, SUPPORTED_VERSION.getValue(), true));
+
+    @Mock
+    protected VDSGroup vdsGroup;
 
     /**
      * The command under test.
@@ -82,6 +98,8 @@ public class StopRebalanceGlusterVolumeCommandTest {
         doReturn(getvolumeWithoutRebalanceTask(volumeWithoutRebalanceTask)).when(volumeDao)
                 .getById(volumeWithoutRebalanceTask);
         doReturn(null).when(volumeDao).getById(null);
+        doReturn(SUPPORTED_VERSION).when(vdsGroup).getcompatibility_version();
+        doReturn(vdsGroup).when(command).getVdsGroup();
     }
 
     private Object getvolumeWithoutRebalanceTask(Guid volumeId) {

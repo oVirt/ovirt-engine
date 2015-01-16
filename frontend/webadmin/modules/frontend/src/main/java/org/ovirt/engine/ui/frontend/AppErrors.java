@@ -3098,7 +3098,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Geo-replication session is paused.")
     String ACTION_TYPE_FAILED_GEOREP_SESSION_ALREADY_PAUSED();
-
     @DefaultStringValue("Cannot ${action} ${type}. Cannot set the configuration.")
     String ACTION_TYPE_FAILED_GLUSTER_GEOREP_CONFIG_SET();
 
@@ -3125,6 +3124,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Snapshot ${snapname} is already de-activated.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_ALREADY_DEACTIVATED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Gluster task management is not supported in compatibility version ${compatibilityVersion}.")
+    String GLUSTER_TASKS_NOT_SUPPORTED_FOR_CLUSTER_LEVEL();
 
     @DefaultStringValue("Cannot ${action} ${type}. All three values are needed in order to define QoS on each network directions.")
     String ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES();
