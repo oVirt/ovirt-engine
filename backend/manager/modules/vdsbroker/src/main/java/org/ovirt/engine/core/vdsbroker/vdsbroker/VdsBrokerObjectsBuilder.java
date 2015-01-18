@@ -54,6 +54,7 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
@@ -1466,20 +1467,32 @@ public class VdsBrokerObjectsBuilder {
             Map<String, Object> xmlRpcStruct) {
 
         // Networks collection (name point to list of nics or bonds)
-        Map<String, Object> networks = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.NETWORKS);
+        Map<String, Map<String, Object>> networks =
+                (Map<String, Map<String, Object>>) xmlRpcStruct.get(VdsProperties.NETWORKS);
+        Map<String, Map<String, Object>> bridges =
+                (Map<String, Map<String, Object>>) xmlRpcStruct.get(VdsProperties.NETWORK_BRIDGES);
+        Map<String, VdsNetworkInterface> vdsInterfaces = Entities.entitiesByName(vds.getInterfaces());
+        boolean bridgesReported = FeatureSupported.bridgesReportByVdsm(vds.getVdsGroupCompatibilityVersion());
 
         if (networks != null) {
             vds.getNetworks().clear();
-            for (Entry<String, Object> entry : networks.entrySet()) {
-                Map<String, Object> network = (Map<String, Object>) entry.getValue();
+            for (Entry<String, Map<String, Object>> entry : networks.entrySet()) {
+                Map<String, Object> network = entry.getValue();
                 if (network != null) {
+                    String interfaceName = (String) network.get(VdsProperties.INTERFACE);
+
+                    boolean bridgedNetwork = isBridgedNetwork(network);
+                    HostNetworkQos qos = new HostNetworkQosMapper(network).deserialize();
                     Network net = createNetworkData(entry.getKey(), network);
 
-                    List<VdsNetworkInterface> interfaces = findNetworkInterfaces(vds, xmlRpcStruct, network);
-
+                    List<VdsNetworkInterface> interfaces =
+                            bridgesReported ? findNetworkInterfaces(vdsInterfaces, interfaceName, bridges)
+                                    : findBridgedNetworkInterfaces(network, vdsInterfaces);
                     for (VdsNetworkInterface iface : interfaces) {
                         updateNetworkDetailsInInterface(iface,
                                 network,
+                                bridgedNetwork,
+                                qos,
                                 vds,
                                 net);
                     }
@@ -1518,32 +1531,23 @@ public class VdsBrokerObjectsBuilder {
         return logable;
     }
 
-    private static List<VdsNetworkInterface> findNetworkInterfaces(VDS vds,
-            Map<String, Object> xmlRpcStruct,
-            Map<String, Object> network) {
-
-        Map<String, VdsNetworkInterface> vdsInterfaces = Entities.entitiesByName(vds.getInterfaces());
+    private static List<VdsNetworkInterface> findNetworkInterfaces(Map<String, VdsNetworkInterface> vdsInterfaces,
+            String interfaceName,
+            Map<String, Map<String, Object>> bridges) {
 
         List<VdsNetworkInterface> interfaces = new ArrayList<VdsNetworkInterface>();
-        if (FeatureSupported.bridgesReportByVdsm(vds.getVdsGroupCompatibilityVersion())) {
-            VdsNetworkInterface iface = null;
-            String interfaceName = (String) network.get(VdsProperties.INTERFACE);
-            if (interfaceName != null) {
-                iface = vdsInterfaces.get(interfaceName);
-                if (iface == null) {
-                    Map<String, Object> bridges =
-                            (Map<String, Object>) xmlRpcStruct.get(VdsProperties.NETWORK_BRIDGES);
-                    if (bridges != null && bridges.containsKey(interfaceName)) {
-                        interfaces.addAll(findBridgedNetworkInterfaces((Map<String, Object>) bridges.get(interfaceName),
-                                vdsInterfaces));
-                    }
-                } else {
-                    interfaces.add(iface);
+        VdsNetworkInterface iface = vdsInterfaces.get(interfaceName);
+        if (iface == null) {
+            if (bridges != null) {
+                Map<String, Object> bridgeProperties = bridges.get(interfaceName);
+                if (bridgeProperties != null) {
+                    interfaces.addAll(findBridgedNetworkInterfaces(bridgeProperties, vdsInterfaces));
                 }
             }
         } else {
-            interfaces.addAll(findBridgedNetworkInterfaces(network, vdsInterfaces));
+            interfaces.add(iface);
         }
+
         return interfaces;
     }
 
@@ -1714,11 +1718,19 @@ public class VdsBrokerObjectsBuilder {
      *            The interface to update.
      * @param network
      *            Network struct to get details from.
+     * @param bridgedNetwork
+     *            Whether the network is bridged.
+     * @param qos
+     *            The reported network QoS.
+     * @param host
+     *            The host to which the interface belongs.
      * @param net
      *            Network to get details from.
      */
     private static void updateNetworkDetailsInInterface(VdsNetworkInterface iface,
             Map<String, Object> network,
+            boolean bridgedNetwork,
+            HostNetworkQos qos,
             VDS host,
             Network net) {
 
@@ -1732,7 +1744,6 @@ public class VdsBrokerObjectsBuilder {
 
             iface.setAddress(net.getAddr());
             iface.setSubnet(net.getSubnet());
-            boolean bridgedNetwork = isBridgedNetwork(network);
             iface.setBridged(bridgedNetwork);
             setGatewayIfNecessary(iface, host, net.getGateway());
 
@@ -1741,8 +1752,7 @@ public class VdsBrokerObjectsBuilder {
                 addBootProtocol(networkConfig, host, iface);
             }
 
-            HostNetworkQosMapper qosMapper = new HostNetworkQosMapper(network);
-            iface.setQos(qosMapper.deserialize());
+            iface.setQos(qos);
         }
     }
 
