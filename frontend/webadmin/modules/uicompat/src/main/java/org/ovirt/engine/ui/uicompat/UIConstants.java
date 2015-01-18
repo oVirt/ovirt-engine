@@ -1993,13 +1993,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("All VM disks are sharable and cannot be removed")
     String removeVmDisksAllSharedMsg();
 
-    // Network
-    @DefaultStringValue("VM")
-    String vmNetworkRole();
-
-    @DefaultStringValue("Management")
-    String mgmgtNetworkRole();
-
     @DefaultStringValue("There are no new hosts in the cluster")
     String emptyNewGlusterHosts();
 

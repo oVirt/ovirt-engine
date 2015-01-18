@@ -1,10 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -12,11 +10,8 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class NetworkGeneralModel extends EntityModel
 {
-    private final String ENGINE_NETWORK_NAME =
-            (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultManagementNetwork);
-
     private String name;
-    private String role;
+    private Boolean vmNetwork;
     private Integer vlan;
     private Integer mtu;
     private String description;
@@ -52,21 +47,7 @@ public class NetworkGeneralModel extends EntityModel
         setName(extendedNetwork.getName());
         setId(extendedNetwork.getId());
         setDescription(extendedNetwork.getDescription());
-
-        String role = ""; //$NON-NLS-1$
-
-        if (ENGINE_NETWORK_NAME.equals(extendedNetwork.getName())) {
-            role = role.concat(ConstantsManager.getInstance().getConstants().mgmgtNetworkRole());
-        }
-
-        if (extendedNetwork.isVmNetwork()) {
-            if (!role.equals("")) //$NON-NLS-1$
-            {
-                role = role.concat(", "); //$NON-NLS-1$
-            }
-            role = role.concat(ConstantsManager.getInstance().getConstants().vmNetworkRole());
-        }
-        setRole(role);
+        setVmNetwork(extendedNetwork.isVmNetwork());
         setVlan(extendedNetwork.getVlanId());
 
         setMtu(extendedNetwork.getMtu());
@@ -90,16 +71,12 @@ public class NetworkGeneralModel extends EntityModel
         }
     }
 
-    public String getRole() {
-        return role;
+    public Boolean getVmNetwork() {
+        return vmNetwork;
     }
 
-    public void setRole(String value) {
-        if (!ObjectUtils.objectsEqual(role, value))
-        {
-            role = value;
-            onPropertyChanged(new PropertyChangedEventArgs("Role")); //$NON-NLS-1$
-        }
+    public void setVmNetwork(Boolean vmNetwork) {
+        this.vmNetwork = vmNetwork;
     }
 
     public Integer getVlan() {

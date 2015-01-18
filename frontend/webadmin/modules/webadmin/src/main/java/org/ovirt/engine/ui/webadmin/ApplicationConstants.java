@@ -2069,6 +2069,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("true")
     String trueVmNetwork();
 
+    @DefaultStringValue("false")
+    String falseVmNetwork();
+
     @DefaultStringValue("Status")
     String statusNetwork();
 
