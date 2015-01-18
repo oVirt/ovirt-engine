@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -520,7 +521,7 @@ public class SystemTreeModel extends SearchableListModel<SystemTreeItemModel> im
             List<Network> dcNetworks = getNetworkMap().get(dataCenter.getId());
             if (dcNetworks != null) {
                 // sort by name first
-                Collections.sort(dcNetworks, new Linq.NetworkComparator());
+                Collections.sort(dcNetworks, new NameableComparator());
                 for (Network network : dcNetworks) {
                     SystemTreeItemModel networkItem = new SystemTreeItemModel();
                     networkItem.setType(SystemTreeItemType.Network);

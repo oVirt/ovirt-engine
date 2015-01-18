@@ -60,7 +60,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkQoSModel;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ExternalNetwork;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
@@ -1315,21 +1314,22 @@ public final class Linq
         }
     }
 
-    public final static class NetworkComparator implements Comparator<Network>, Serializable {
+    public final static class NetworkInClusterComparator implements Comparator<Network>, Serializable {
 
         private static final long serialVersionUID = 990203400356561587L;
         private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
         @Override
         public int compare(Network net1, Network net2) {
-            // management first
-            if (net1.getName().equals(HostInterfaceListModel.ENGINE_NETWORK_NAME)) {
-                return -1;
-            } else if (net2.getName().equals(HostInterfaceListModel.ENGINE_NETWORK_NAME)) {
-                return 1;
-            }
 
-            return lexoNumeric.compare(net1.getName(), net2.getName());
+            final boolean managementNetwork1 = net1.getCluster().isManagement();
+            final boolean managementNetwork2 = net2.getCluster().isManagement();
+
+            if (!managementNetwork1 && !managementNetwork2) {
+                return lexoNumeric.compare(net1.getName(), net2.getName());
+            } else {
+                return managementNetwork1 ? -1 : 1;
+            }
         }
     }
 

@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -15,7 +16,6 @@ import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -125,7 +125,7 @@ public class DataCenterNetworkListModel extends SearchableListModel
             public void onSuccess(Object model, Object ReturnValue)
             {
                 ArrayList<Network> newItems = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                Collections.sort(newItems, new Linq.NetworkComparator());
+                Collections.sort(newItems, new NameableComparator());
                 SearchableListModel searchableListModel = (SearchableListModel) model;
                 searchableListModel.setItems(newItems);
             }

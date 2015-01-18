@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.Linq.NetworkInClusterComparator;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -127,7 +128,7 @@ public class ClusterNetworkListModel extends SearchableListModel
             {
                 SearchableListModel searchableListModel = (SearchableListModel) model;
                 final List<Network> newItems = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                Collections.sort(newItems, new Linq.NetworkComparator());
+                Collections.sort(newItems, new NetworkInClusterComparator());
                 for (Network network : newItems) {
                     network.getCluster().setId(new NetworkClusterId(getEntity().getId(), network.getId()));
                 }
