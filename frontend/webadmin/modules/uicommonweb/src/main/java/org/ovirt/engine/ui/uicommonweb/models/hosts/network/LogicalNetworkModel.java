@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
 import org.ovirt.engine.core.common.businessentities.network.Vlan;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.DcNetworkParams;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.NetworkParameters;
 
@@ -19,22 +18,16 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.NetworkParameters;
 public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
 
     private boolean selected;
-    private boolean management;
+    private final boolean management;
     private boolean attachedViaLabel;
     private String errorMessage;
     private NetworkInterfaceModel attachedToNic;
     private NetworkInterfaceModel vlanNicModel;
 
-    public LogicalNetworkModel(HostSetupNetworksModel setupModel) {
-        super(setupModel);
-    }
-
     public LogicalNetworkModel(Network network, HostSetupNetworksModel setupModel) {
-        this(setupModel);
+        super(setupModel);
         setEntity(network);
-        if (HostInterfaceListModel.ENGINE_NETWORK_NAME.equals(network.getName())) {
-            setManagement(true);
-        }
+        management = network.getCluster() != null && network.getCluster().isManagement();
     }
 
     /**
@@ -220,10 +213,6 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
 
     public void setVlanNicModel(NetworkInterfaceModel vlanNicmodel) {
         this.vlanNicModel = vlanNicmodel;
-    }
-
-    public void setManagement(boolean management) {
-        this.management = management;
     }
 
     public void setSelected(Boolean selected) {

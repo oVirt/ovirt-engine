@@ -68,6 +68,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     private EntityModel<Boolean> checkConnectivity;
 
+    private LogicalNetworkModel managementNetworkModel;
+
     public EntityModel<Boolean> getCheckConnectivity()
     {
         return checkConnectivity;
@@ -586,7 +588,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         initAllModels(true);
     }
 
-    protected void onNicsChanged() {
+    private void onNicsChanged() {
         operationFactory = new NetworkOperationFactory(getNetworks(), getNics());
         validate();
     }
@@ -638,12 +640,15 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     }
 
     private void initNetworkModels() {
-        Map<String, LogicalNetworkModel> networkModels = new HashMap<String, LogicalNetworkModel>();
-        networkLabelMap = new HashMap<String, NetworkLabelModel>();
+        Map<String, LogicalNetworkModel> networkModels = new HashMap<>();
+        networkLabelMap = new HashMap<>();
         for (Network network : allNetworks) {
             LogicalNetworkModel networkModel = new LogicalNetworkModel(network, this);
             networkModels.put(network.getName(), networkModel);
 
+            if (networkModel.isManagement()) {
+                managementNetworkModel = networkModel;
+            }
             if (!network.isExternal()) {
                 NetworkLabelModel labelModel = networkLabelMap.get(network.getLabel());
                 if (labelModel == null) {
@@ -722,11 +727,6 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                     networkModel.getEntity().setVlanId(nic.getVlanId());
                     networkModel.getEntity().setMtu(nic.getMtu());
                     networkModel.getEntity().setVmNetwork(nic.isBridged());
-                }
-
-                // is this a management network (from backend)?
-                if (isNicManagement) {
-                    networkModel.setManagement(true);
                 }
 
                 Collection<LogicalNetworkModel> nicNetworks = new ArrayList<LogicalNetworkModel>();
@@ -945,8 +945,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     private void validate() {
         // check if management network is attached
-        LogicalNetworkModel mgmtNetwork = networkMap.get(HostInterfaceListModel.ENGINE_NETWORK_NAME);
-        if (!mgmtNetwork.isAttached()) {
+        if (!managementNetworkModel.isAttached()) {
             okCommand.getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
                     .getConstants()
                     .mgmtNotAttachedToolTip());
