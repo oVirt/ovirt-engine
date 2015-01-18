@@ -143,19 +143,38 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         return toReturn;
     }
 
-    private boolean validateStorageDomains(List<DiskImage> vmDisksList, List<DiskImage> memoryDisksList) {
-        List<DiskImage> disksList = getAllDisks(vmDisksList, memoryDisksList);
-        MultipleStorageDomainsValidator sdValidator = createMultipleStorageDomainsValidator(disksList);
-        return validate(sdValidator.allDomainsExistAndActive())
-                && validate(sdValidator.allDomainsWithinThresholds())
-                && validate(sdValidator.allDomainsHaveSpaceForAllDisks(vmDisksList, memoryDisksList));
-    }
+    private boolean validateStorage() {
+        List<DiskImage> vmDisksList = getDisksListForChecks();
+        if (vmDisksList.size() > 0) {
+            DiskImagesValidator diskImagesValidator = createDiskImageValidator(vmDisksList);
+            if (!(validate(diskImagesValidator.diskImagesNotLocked())
+                    && validate(diskImagesValidator.diskImagesNotIllegal()))) {
+                return false;
+            }
+        }
+        vmDisksList = ImagesHandler.getDisksDummiesForStorageAllocations(vmDisksList);
+        List<DiskImage> allDisks = new ArrayList<>(vmDisksList);
 
-    private static List<DiskImage> getAllDisks(List<DiskImage> newDisksList, List<DiskImage> cloneDisksList) {
-        List<DiskImage> disksList = new ArrayList<>();
-        disksList.addAll(newDisksList);
-        disksList.addAll(cloneDisksList);
-        return disksList;
+        List<DiskImage> memoryDisksList = null;
+        if (getParameters().isSaveMemory()) {
+            memoryDisksList = MemoryUtils.createDiskDummies(getVm().getTotalMemorySizeInBytes(), MemoryUtils.META_DATA_SIZE_IN_BYTES);
+            if (Guid.Empty.equals(getStorageDomainIdForVmMemory(memoryDisksList))) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
+            }
+            allDisks.addAll(memoryDisksList);
+        }
+
+        MultipleStorageDomainsValidator sdValidator = createMultipleStorageDomainsValidator(allDisks);
+        if (!validate(sdValidator.allDomainsExistAndActive())
+                || !validate(sdValidator.allDomainsWithinThresholds())) {
+            return false;
+        }
+
+        if (memoryDisksList == null) { //no memory volumes
+            return validate(sdValidator.allDomainsHaveSpaceForNewDisks(vmDisksList));
+        }
+
+        return validate(sdValidator.allDomainsHaveSpaceForAllDisks(vmDisksList, memoryDisksList));
     }
 
     protected MemoryImageBuilder getMemoryImageBuilder() {
@@ -499,26 +518,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             return false;
         }
 
-        List<DiskImage> disksList = getDisksListForChecks();
-        if (disksList.size() > 0) {
-            DiskImagesValidator diskImagesValidator = createDiskImageValidator(disksList);
-            if (!(validate(diskImagesValidator.diskImagesNotLocked())
-                    && validate(diskImagesValidator.diskImagesNotIllegal()))) {
-                return false;
-            }
-        }
-
-        List<DiskImage> memoryDisksList = MemoryUtils.createDiskDummies(getVm().getTotalMemorySizeInBytes(), MemoryUtils.META_DATA_SIZE_IN_BYTES);
-        getStorageDomainIdForVmMemory(memoryDisksList);
-        if (getParameters().isSaveMemory() && Guid.Empty.equals(cachedStorageDomainId)) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
-        }
-
-        if (!validateStorageDomains(disksList, memoryDisksList)) {
-            return false;
-        }
-
-        return true;
+        return validateStorage();
     }
 
     protected StoragePoolValidator createStoragePoolValidator() {
