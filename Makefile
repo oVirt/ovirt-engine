@@ -232,7 +232,7 @@ generated-files:	$(GENERATED)
 
 # support force run of maven
 maven:
-	MAVEN_OPTS="${MAVEN_OPTS} $(BUILD_JAVA_OPTS_MAVEN)" \
+	MAVEN_OPTS="${MAVEN_OPTS} "'$(BUILD_JAVA_OPTS_MAVEN)' \
 		$(MVN) \
 			$(BUILD_FLAGS) \
 			$(BUILD_TARGET)
