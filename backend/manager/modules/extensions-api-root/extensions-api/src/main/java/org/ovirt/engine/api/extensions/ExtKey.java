@@ -82,6 +82,13 @@ public class ExtKey implements Cloneable, Serializable {
     }
 
     /**
+     * Constructor, default. For serialization.
+     */
+    public ExtKey() {
+        this(String.class, new ExtUUID(), 0);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

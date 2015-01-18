@@ -34,6 +34,13 @@ public class ExtUUID implements Comparable<ExtUUID>, Cloneable, Serializable {
     }
 
     /**
+     * Constructor, default. For serialization.
+     */
+    public ExtUUID() {
+        this("UNINITIALIZED", "00000000-0000-0000-0000-000000000000");
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
