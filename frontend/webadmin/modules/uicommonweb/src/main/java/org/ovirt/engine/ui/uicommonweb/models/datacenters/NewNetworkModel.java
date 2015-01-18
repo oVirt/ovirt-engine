@@ -197,6 +197,11 @@ public class NewNetworkModel extends NetworkModel {
         }
     }
 
+    @Override
+    protected boolean isManagement() {
+        return false;
+    }
+
     public ArrayList<NetworkClusterModel> getClustersToAttach()
     {
         ArrayList<NetworkClusterModel> clusterToAttach = new ArrayList<>();

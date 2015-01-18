@@ -649,15 +649,17 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
-    public void isClusterEmpty(AsyncQuery aQuery, Guid id) {
-        aQuery.converterCallback = new IAsyncConverter<Boolean>() {
-            @Override
-            public Boolean Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                return (Boolean) source;
-            }
-        };
-        Frontend.getInstance().runQuery(VdcQueryType.IsClusterEmpty, new IdQueryParameters(id), aQuery);
+    public void isManagementNetwork(AsyncQuery aQuery, Guid networkId) {
+        runQueryByIdParameter(VdcQueryType.IsManagementNetwork, aQuery, networkId);
+    }
+
+    public void isClusterEmpty(AsyncQuery aQuery, Guid clusterId) {
+        runQueryByIdParameter(VdcQueryType.IsClusterEmpty, aQuery, clusterId);
+    }
+
+    private void runQueryByIdParameter(VdcQueryType queryType, AsyncQuery aQuery, Guid id) {
+        aQuery.converterCallback = new AsIsAsyncConverter();
+        Frontend.getInstance().runQuery(queryType, new IdQueryParameters(id), aQuery);
     }
 
     public void getHostArchitecture(AsyncQuery aQuery, Guid id) {
@@ -1996,7 +1998,9 @@ public class AsyncDataProvider {
                 return source != null ? (ArrayList<ServerCpu>) source : new ArrayList<ServerCpu>();
             }
         };
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllServerCpuList, new GetAllServerCpuListParameters(version), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllServerCpuList,
+                new GetAllServerCpuListParameters(version),
+                aQuery);
     }
 
     public void getPmTypeList(AsyncQuery aQuery, Version version) {
@@ -2657,19 +2661,6 @@ public class AsyncDataProvider {
         }
 
         return cachedCommandsCompatibilityVersions.get(vdcActionType);
-    }
-
-    /**
-     * Get the Management Network Name
-     *
-     * @param aQuery
-     *            result callback
-     */
-    public void getManagementNetworkName(AsyncQuery aQuery) {
-        getConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.DefaultManagementNetwork,
-                        getDefaultConfigurationVersion()),
-                aQuery);
     }
 
     /**
@@ -3957,5 +3948,12 @@ public class AsyncDataProvider {
         };
 
         Frontend.getInstance().runQuery(VdcQueryType.GetSupportedCpuList, new GetSupportedCpuListParameters(cpuName), aQuery);
+    }
+
+    private static class AsIsAsyncConverter implements IAsyncConverter {
+        @Override
+        public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            return source;
+        }
     }
 }

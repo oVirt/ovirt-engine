@@ -53,8 +53,6 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
 {
     private static final String CMD_APPROVE = "OnApprove"; //$NON-NLS-1$
     private static final String CMD_ABORT = "OnAbort"; //$NON-NLS-1$
-    protected static final String ENGINE_NETWORK =
-            (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultManagementNetwork);
 
     public final static HostNetworkQos EMPTY_HOST_NETWORK_QOS = createEmptyHostNetworkQos();
 
@@ -690,7 +688,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
             return;
         }
 
-        if (isManagemet()) {
+        if (isManagement()) {
             ConfirmationModel confirmationModel = new ConfirmationModel();
             confirmationModel.setMessage(ConstantsManager.getInstance().getConstants().updateManagementNetworkWarning());
             UICommand cmdOk = UICommand.createDefaultOkUiCommand(CMD_APPROVE, this);
@@ -734,9 +732,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
         }
     }
 
-    public boolean isManagemet() {
-        return ENGINE_NETWORK.equals(getNetwork().getName());
-    }
+    protected abstract boolean isManagement();
 
     protected abstract void initMtu();
 
