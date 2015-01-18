@@ -33,11 +33,9 @@ import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-@SuppressWarnings("unused")
 public abstract class VmInterfaceModel extends Model
 {
     protected static final String ON_SAVE_COMMAND = "OnSave"; //$NON-NLS-1$
-    protected static String ENGINE_NETWORK_NAME;
 
     private EntityModel<String> privateName;
     private ListModel<VnicProfileView> privateProfile;
@@ -76,10 +74,6 @@ public abstract class VmInterfaceModel extends Model
     {
         this.dcId = dcId;
         this.profileBehavior = profileBehavior;
-        // get management network name
-        ENGINE_NETWORK_NAME =
-                (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultManagementNetwork);
-
         this.vm = vm;
         this.vmNicList = vmNicList;
         this.vmStatus = vmStatus;
