@@ -496,6 +496,15 @@ public final class Linq
         return ret;
     }
 
+    public static Network findManagementNetwork(List<Network> networks) {
+        for (Network network : networks) {
+            if (network.getCluster().isManagement()) {
+                return network;
+            }
+        }
+        return null;
+    }
+
     public static Network findNetworkByName(ArrayList<Network> items, String name)
     {
         for (Network n : items)

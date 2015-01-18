@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 public abstract class ProfileBehavior {
 
     private List<Network> clusterNetworks = new ArrayList<Network>();
+    private String managementNetworkName;
 
     public void initProfiles(final boolean hotUpdateSupported,
             final Guid clusterId,
@@ -61,6 +62,7 @@ public abstract class ProfileBehavior {
             public void onSuccess(Object model1, Object result1)
             {
                 List<Network> clusterNetworks = (List<Network>) result1;
+                managementNetworkName = Linq.findManagementNetwork(clusterNetworks).getName();
 
                 profilesQuery.setModel(clusterNetworks);
                 AsyncDataProvider.getInstance().getVnicProfilesByDcId(profilesQuery, dcId);
@@ -78,5 +80,9 @@ public abstract class ProfileBehavior {
             }
         }
         return null;
+    }
+
+    protected String getManagementNetworkName() {
+        return managementNetworkName;
     }
 }
