@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -563,7 +564,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return true;
     }
 
-    protected MultipleStorageDomainsValidator createMultipleStorageDomainsValidator(List<DiskImage> disksList) {
+    protected MultipleStorageDomainsValidator createMultipleStorageDomainsValidator(Collection<DiskImage> disksList) {
         return new MultipleStorageDomainsValidator(getVm().getStoragePoolId(),
                 ImagesHandler.getAllStorageIdsForImageIds(disksList));
     }

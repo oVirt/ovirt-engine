@@ -866,8 +866,8 @@ public final class ImagesHandler {
      * which could have another volume type/format than the target disk volume type/format, which is not yet created.
      * "Real" override for these values is done in CreateSnapshotCommand, when creating the new DiskImages.
      */
-    public static Collection<DiskImage> getDisksDummiesForStorageAllocations(Collection<DiskImage> originalDisks) {
-        Collection<DiskImage> diskDummies = new HashSet<>();
+    public static List<DiskImage> getDisksDummiesForStorageAllocations(Collection<DiskImage> originalDisks) {
+        List<DiskImage> diskDummies = new ArrayList<>(originalDisks.size());
         for (DiskImage diskImage : originalDisks) {
             DiskImage clone = DiskImage.copyOf(diskImage);
             clone.setVolumeType(VolumeType.Sparse);

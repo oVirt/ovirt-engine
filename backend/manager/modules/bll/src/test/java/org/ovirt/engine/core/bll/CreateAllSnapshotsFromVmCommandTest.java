@@ -253,7 +253,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
     public void testAllDomainsExistAndActive() {
         setUpGeneralValidations();
         setUpDiskValidations();
-        doReturn(getNonEmptyDiskList()).when(cmd).getDisksList();
+        doReturn(Collections.emptyList()).when(cmd).getDisksList();
         doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST)).when(multipleStorageDomainsValidator)
                 .allDomainsExistAndActive();
         assertFalse(cmd.canDoAction());
@@ -263,10 +263,34 @@ public class CreateAllSnapshotsFromVmCommandTest {
     }
 
     @Test
+    public void testAllDomainsHaveSpaceForNewDisksFailure() {
+        setUpGeneralValidations();
+        setUpDiskValidations();
+        List<DiskImage> disksList = Collections.emptyList();
+        doReturn(disksList).when(cmd).getDisksList();
+        doReturn(disksList).when(cmd).getDisksListForChecks();
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).when(multipleStorageDomainsValidator)
+                .allDomainsHaveSpaceForNewDisks(disksList);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
+        verify(multipleStorageDomainsValidator).allDomainsHaveSpaceForNewDisks(disksList);
+    }
+
+    @Test
+    public void testAllDomainsHaveSpaceForNewDisksSuccess() {
+        setUpGeneralValidations();
+        setUpDiskValidations();
+        List<DiskImage> disksList = Collections.emptyList();
+        doReturn(disksList).when(cmd).getDisksList();
+        doReturn(ValidationResult.VALID).when(multipleStorageDomainsValidator).allDomainsHaveSpaceForNewDisks(disksList);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        verify(multipleStorageDomainsValidator).allDomainsHaveSpaceForNewDisks(disksList);
+    }
+
+    @Test
     public void testAllDomainsWithinThreshold() {
         setUpGeneralValidations();
         setUpDiskValidations();
-        doReturn(getNonEmptyDiskList()).when(cmd).getDisksList();
+        doReturn(Collections.emptyList()).when(cmd).getDisksList();
         doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).when(multipleStorageDomainsValidator)
                 .allDomainsExistAndActive();
         assertFalse(cmd.canDoAction());
@@ -280,6 +304,8 @@ public class CreateAllSnapshotsFromVmCommandTest {
         setUpGeneralValidations();
         setUpDiskValidations();
         doReturn(Collections.emptyList()).when(cmd).getDisksList();
+        cmd.getParameters().setSaveMemory(true);
+        doReturn(Guid.newGuid()).when(cmd).getStorageDomainIdForVmMemory(eq(Collections.<DiskImage>emptyList()));
         doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).when(multipleStorageDomainsValidator)
                 .allDomainsHaveSpaceForAllDisks(eq(Collections.<DiskImage>emptyList()), anyList());
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
@@ -291,6 +317,8 @@ public class CreateAllSnapshotsFromVmCommandTest {
         setUpGeneralValidations();
         setUpDiskValidations();
         doReturn(Collections.emptyList()).when(cmd).getDisksList();
+        cmd.getParameters().setSaveMemory(true);
+        doReturn(Guid.newGuid()).when(cmd).getStorageDomainIdForVmMemory(eq(Collections.<DiskImage>emptyList()));
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
         verify(multipleStorageDomainsValidator).allDomainsHaveSpaceForAllDisks(eq(Collections.<DiskImage>emptyList()), anyList());
     }
@@ -301,6 +329,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
         doReturn(ValidationResult.VALID).when(multipleStorageDomainsValidator).allDomainsExistAndActive();
         doReturn(ValidationResult.VALID).when(multipleStorageDomainsValidator).allDomainsWithinThresholds();
         doReturn(ValidationResult.VALID).when(multipleStorageDomainsValidator).allDomainsHaveSpaceForAllDisks(anyList(), anyList());
+        doReturn(ValidationResult.VALID).when(multipleStorageDomainsValidator).allDomainsHaveSpaceForNewDisks(anyList());
     }
 
     private void setUpGeneralValidations() {
@@ -322,6 +351,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
     private static List<DiskImage> getNonEmptyDiskList() {
         List<DiskImage> diskList = new ArrayList<>();
         DiskImage newDiskImage = new DiskImage();
+        newDiskImage.setStorageIds(new ArrayList<Guid>());
         diskList.add(newDiskImage);
         return diskList;
     }
