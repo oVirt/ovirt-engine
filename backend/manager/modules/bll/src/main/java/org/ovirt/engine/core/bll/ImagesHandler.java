@@ -874,4 +874,20 @@ public final class ImagesHandler {
         }
         return diskDummies;
     }
+
+    public static List<DiskImage> getSnapshotsDummiesForStorageAllocations(Collection<DiskImage> originalDisks) {
+        List<DiskImage> diskDummies = new ArrayList<>();
+        for (DiskImage snapshot : originalDisks) {
+            DiskImage clone = DiskImage.copyOf(snapshot);
+            // Add the child snapshot into which the deleted snapshot is going to be merged to the
+            // DiskImage for StorageDomainValidator to handle
+            List<DiskImage> snapshots = DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForParent(clone.getImageId());
+            clone.getSnapshots().clear();
+            clone.getSnapshots().add(clone); // Add the clone itself since snapshots should contain the entire chain.
+            clone.getSnapshots().addAll(snapshots);
+            diskDummies.add(clone);
+        }
+        return diskDummies;
+    }
+
 }

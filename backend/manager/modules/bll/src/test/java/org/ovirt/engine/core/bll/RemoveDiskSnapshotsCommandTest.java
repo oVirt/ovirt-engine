@@ -191,6 +191,7 @@ public class RemoveDiskSnapshotsCommandTest {
         doReturn(true).when(cmd).isLiveMergeSupported();
         doReturn(ValidationResult.VALID).when(vmValidator).vmQualifiedForSnapshotMerge();
         doReturn(ValidationResult.VALID).when(vmValidator).vmHostCanLiveMerge();
+        doReturn(true).when(cmd).validateStorageDomainAvailableSpace();
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
     }
 }
