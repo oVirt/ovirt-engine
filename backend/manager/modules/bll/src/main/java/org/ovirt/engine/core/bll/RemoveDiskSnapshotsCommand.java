@@ -417,7 +417,8 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         // Worst-case scenario when merging a snapshot in terms of space, is the outcome volume, along with the not-yet-deleted volumes.
         // The following implementation does just that. In this case only snapshots are passed to the validation
         // (as opposed to the whole chain).
-        return validate(getStorageDomainValidator().hasSpaceForClonedDisks(getImages()));
+        List<DiskImage> disksList = ImagesHandler.getSnapshotsDummiesForStorageAllocations(getImages());
+        return validate(getStorageDomainValidator().hasSpaceForClonedDisks(disksList));
     }
 
     protected DiskImagesValidator createDiskImageValidator(List<DiskImage> disksList) {
