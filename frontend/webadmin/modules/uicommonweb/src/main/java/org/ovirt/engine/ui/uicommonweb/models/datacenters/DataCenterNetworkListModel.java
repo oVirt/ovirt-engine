@@ -8,16 +8,13 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -26,8 +23,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 @SuppressWarnings("unused")
 public class DataCenterNetworkListModel extends SearchableListModel
 {
-
-    private static String ENGINE_NETWORK;
 
     private UICommand privateNewCommand;
 
@@ -78,9 +73,6 @@ public class DataCenterNetworkListModel extends SearchableListModel
 
     public DataCenterNetworkListModel()
     {
-        // get management network name
-        ENGINE_NETWORK = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultManagementNetwork);
-
         setTitle(ConstantsManager.getInstance().getConstants().logicalNetworksTitle());
         setHelpTag(HelpTag.logical_networks);
         setHashName("logical_networks"); //$NON-NLS-1$
@@ -198,19 +190,8 @@ public class DataCenterNetworkListModel extends SearchableListModel
         ArrayList selectedItems =
                 (ArrayList) ((tempVar != null) ? tempVar : new ArrayList());
 
-        boolean anyEngine = false;
-        for (Object item : selectedItems)
-        {
-            Network network = (Network) item;
-            if (ObjectUtils.objectsEqual(network.getName(), ENGINE_NETWORK))
-            {
-                anyEngine = true;
-                break;
-            }
-        }
-
         getEditCommand().setIsExecutionAllowed(selectedItems.size() == 1);
-        getRemoveCommand().setIsExecutionAllowed(selectedItems.size() > 0 && !anyEngine);
+        getRemoveCommand().setIsExecutionAllowed(selectedItems.size() > 0);
     }
 
     @Override
