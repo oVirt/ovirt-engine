@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -17,11 +16,8 @@ import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.scheduling.RunVmDelayer;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
-import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.action.IdParameters;
-import org.ovirt.engine.core.common.action.RemoveVmHibernationVolumesParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.LUNs;
@@ -182,29 +178,9 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             if (getVm().getLastVdsRunOn() == null || !getVm().getLastVdsRunOn().equals(getCurrentVdsId())) {
                 getVm().setLastVdsRunOn(getCurrentVdsId());
             }
-
-            if (StringUtils.isNotEmpty(getActiveSnapshot().getMemoryVolume())) {
-                removeVmHibernationVolumes();
-                getSnapshotDAO().removeMemoryFromActiveSnapshot(getVmId());
-            }
         }
         finally {
             freeLock();
-        }
-    }
-
-    private void removeVmHibernationVolumes() {
-        RemoveVmHibernationVolumesParameters removeVmHibernationVolumesParameters = new RemoveVmHibernationVolumesParameters(getVmId());
-        removeVmHibernationVolumesParameters.setParentCommand(getActionType());
-        removeVmHibernationVolumesParameters.setEntityInfo(getParameters().getEntityInfo());
-        removeVmHibernationVolumesParameters.setParentParameters(getParameters());
-
-        VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
-                VdcActionType.RemoveVmHibernationVolumes,
-                removeVmHibernationVolumesParameters);
-
-        for (Guid taskId : vdcRetValue.getInternalVdsmTaskIdList()) {
-            CommandCoordinatorUtil.startPollingTask(taskId);
         }
     }
 
