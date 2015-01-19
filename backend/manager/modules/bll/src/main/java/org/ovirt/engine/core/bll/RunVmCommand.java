@@ -138,11 +138,16 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return getVm().getDedicatedVmForVds();
     }
 
-    private String getMemoryFromSnapshot() {
+    private String getMemoryFromActiveSnapshot() {
         // If the memory from the snapshot could have been restored already, the disks might be
         // non coherent with the memory, thus we don't want to try to restore the memory again
         if (memoryFromSnapshotUsed) {
             return StringUtils.EMPTY;
+        }
+
+        if (getFlow() == RunVmFlow.RESUME_HIBERNATE) {
+            cachedMemoryVolumeFromSnapshot = getActiveSnapshot().getMemoryVolume();
+            return cachedMemoryVolumeFromSnapshot;
         }
 
         if (cachedMemoryVolumeFromSnapshot == null) {
@@ -698,7 +703,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     getVdsGroup().getEmulatedMachine()));
         }
 
-        getVm().setHibernationVolHandle(getMemoryFromSnapshot());
+        getVm().setHibernationVolHandle(getMemoryFromActiveSnapshot());
     }
 
     protected boolean isPayloadExists(VmDeviceType deviceType) {
