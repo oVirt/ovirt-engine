@@ -1,11 +1,13 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
+import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.permissions.PermissionWithInheritedPermissionListModelTable;
@@ -27,6 +29,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.SelectionChangeEvent;
 
 public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<CpuProfile, CpuProfileListModel> {
 
@@ -50,12 +53,15 @@ public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<Cpu
 
     private boolean permissionPanelVisible = false;
 
+    private final CpuProfilePermissionModelProvider cpuProfilePermissionModelProvider;
+
     public CpuProfilesListModelTable(SearchableTableModelProvider<CpuProfile, CpuProfileListModel> modelProvider,
             CpuProfilePermissionModelProvider cpuProfilePermissionModelProvider,
             EventBus eventBus,
             ClientStorage clientStorage,
             CommonApplicationConstants constants) {
         super(modelProvider, eventBus, clientStorage, false);
+        this.cpuProfilePermissionModelProvider = cpuProfilePermissionModelProvider;
         ViewIdHandler.idHandler.generateAndSetIds(this);
         // Create cpu profile table
         tableContainer.add(getTable());
@@ -166,6 +172,17 @@ public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<Cpu
                     splitLayoutPanel.add(tableContainer);
                     permissionPanelVisible = true;
                 }
+            }
+        });
+    }
+
+    @Override
+    public void addModelListeners() {
+        final SimpleActionTable<Permissions> table = permissionListModelTable.getTable();
+        table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
+            @Override
+            public void onSelectionChange(SelectionChangeEvent event) {
+                cpuProfilePermissionModelProvider.setSelectedItems(table.getSelectedItems());
             }
         });
     }

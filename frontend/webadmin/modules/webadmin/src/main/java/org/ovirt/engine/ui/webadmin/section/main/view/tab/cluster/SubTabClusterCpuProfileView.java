@@ -42,4 +42,9 @@ public class SubTabClusterCpuProfileView extends AbstractSubTabTableWidgetView<V
         initTable(constants);
         initWidget(getModelBoundTableWidget());
     }
+
+    @Override
+    public void addModelListeners() {
+        getModelBoundTableWidget().addModelListeners();
+    }
 }

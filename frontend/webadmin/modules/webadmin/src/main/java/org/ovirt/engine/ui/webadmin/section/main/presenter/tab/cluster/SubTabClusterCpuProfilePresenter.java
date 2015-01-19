@@ -32,6 +32,8 @@ public class SubTabClusterCpuProfilePresenter extends
     }
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VDSGroup> {
+
+        void addModelListeners();
     }
 
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
@@ -58,4 +60,10 @@ public class SubTabClusterCpuProfilePresenter extends
         updateMainTabSelection(event.getSelectedItems());
     }
 
+    @Override
+    public void initializeHandlers() {
+        super.initializeHandlers();
+
+        getView().addModelListeners();
+    }
 }
