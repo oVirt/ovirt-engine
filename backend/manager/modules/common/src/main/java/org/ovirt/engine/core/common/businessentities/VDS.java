@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.pm.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceProxySourceType;
@@ -24,7 +23,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     private VdsDynamic vdsDynamic;
     private VdsStatistics vdsStatistics;
     private ArrayList<VdsNetworkInterface> interfaces;
-    private ArrayList<Network> networks;
+    private Set<String> networkNames;
     private String activeNic;
     private boolean balloonEnabled;
     private boolean countThreadsAsCores;
@@ -58,7 +57,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         storagePoolId = Guid.Empty;
         spmStatus = VdsSpmStatus.None;
         interfaces = new ArrayList<>();
-        networks = new ArrayList<>();
+        networkNames = new HashSet<>();
         fenceAgents = new LinkedList<>();
     }
 
@@ -72,7 +71,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         result = prime * result + (imagesLastCheck == null ? 0 : imagesLastCheck.hashCode());
         result = prime * result + (imagesLastDelay == null ? 0 : imagesLastDelay.hashCode());
         result = prime * result + (interfaces == null ? 0 : interfaces.hashCode());
-        result = prime * result + (networks == null ? 0 : networks.hashCode());
+        result = prime * result + (networkNames == null ? 0 : networkNames.hashCode());
         result = prime * result + maxVdsMemoryOverCommit;
         result = prime * result + (privateDomains == null ? 0 : privateDomains.hashCode());
         result = prime * result + (vdsSpmId == null ? 0 : vdsSpmId.hashCode());
@@ -105,7 +104,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
                 && ObjectUtils.objectsEqual(imagesLastCheck, other.imagesLastCheck)
                 && ObjectUtils.objectsEqual(imagesLastDelay, other.imagesLastDelay)
                 && ObjectUtils.objectsEqual(interfaces, other.interfaces)
-                && ObjectUtils.objectsEqual(networks, other.networks)
+                && ObjectUtils.objectsEqual(networkNames, other.networkNames)
                 && maxVdsMemoryOverCommit == other.maxVdsMemoryOverCommit
                 && balloonEnabled == other.balloonEnabled
                 && ObjectUtils.objectsEqual(privateDomains, other.privateDomains)
@@ -1043,8 +1042,8 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         vdsStatistics = value;
     }
 
-    public ArrayList<Network> getNetworks() {
-        return networks;
+    public Set<String> getNetworkNames() {
+        return networkNames;
     }
 
     public ArrayList<VdsNetworkInterface> getInterfaces() {

@@ -280,13 +280,12 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
     }
 
     private String getMissingOperationalClusterNetworks(VDS host, List<Network> clusterNetworks) {
-        Map<String, Network> hostNetworksByName = Entities.entitiesByName(host.getNetworks());
         List<String> networkNames = new ArrayList<>();
 
         for (Network net : clusterNetworks) {
             if (net.getCluster().getStatus() == OPERATIONAL &&
                 net.getCluster().isRequired() &&
-                !hostNetworksByName.containsKey(net.getName())) {
+                !host.getNetworkNames().contains(net.getName())) {
                 networkNames.add(net.getName());
             }
         }

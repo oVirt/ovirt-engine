@@ -56,7 +56,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
@@ -1475,30 +1474,43 @@ public class VdsBrokerObjectsBuilder {
         boolean bridgesReported = FeatureSupported.bridgesReportByVdsm(vds.getVdsGroupCompatibilityVersion());
 
         if (networks != null) {
-            vds.getNetworks().clear();
+            vds.getNetworkNames().clear();
             for (Entry<String, Map<String, Object>> entry : networks.entrySet()) {
                 Map<String, Object> network = entry.getValue();
+                String networkName = entry.getKey();
                 if (network != null) {
                     String interfaceName = (String) network.get(VdsProperties.INTERFACE);
 
                     boolean bridgedNetwork = isBridgedNetwork(network);
                     HostNetworkQos qos = new HostNetworkQosMapper(network).deserialize();
-                    Network net = createNetworkData(entry.getKey(), network);
+                    String addr = extractAddress(network);
+                    String subnet = extractSubnet(network);
+                    String gateway = (String) network.get(VdsProperties.GLOBAL_GATEWAY);
 
                     List<VdsNetworkInterface> interfaces =
                             bridgesReported ? findNetworkInterfaces(vdsInterfaces, interfaceName, bridges)
                                     : findBridgedNetworkInterfaces(network, vdsInterfaces);
                     for (VdsNetworkInterface iface : interfaces) {
-                        updateNetworkDetailsInInterface(iface,
-                                network,
-                                bridgedNetwork,
-                                qos,
-                                vds,
-                                net);
+                        iface.setNetworkName(networkName);
+                        iface.setAddress(addr);
+                        iface.setSubnet(subnet);
+                        iface.setBridged(bridgedNetwork);
+                        iface.setQos(qos);
+
+                        // set the management ip
+                        if (getManagementNetworkUtil().isManagementNetwork(iface.getNetworkName(), vds.getVdsGroupId())) {
+                            iface.setType(iface.getType() | VdsInterfaceType.MANAGEMENT.getValue());
+                        }
+
+                        setGatewayIfNecessary(iface, vds, gateway);
+
+                        if (bridgedNetwork) {
+                            addBootProtocol(network, vds, iface);
+                        }
                     }
 
-                    vds.getNetworks().add(net);
-                    reportInvalidInterfacesForNetwork(interfaces, net, vds);
+                    vds.getNetworkNames().add(networkName);
+                    reportInvalidInterfacesForNetwork(interfaces, networkName, vds);
                 }
             }
         }
@@ -1515,19 +1527,19 @@ public class VdsBrokerObjectsBuilder {
      * @param vds
      *            The host in which the network is defined
      */
-    private static void reportInvalidInterfacesForNetwork(List<VdsNetworkInterface> interfaces, Network network, VDS vds) {
+    private static void reportInvalidInterfacesForNetwork(List<VdsNetworkInterface> interfaces, String networkName, VDS vds) {
         if (interfaces.isEmpty()) {
-            auditLogDirector.log(createHostNetworkAuditLog(network, vds), AuditLogType.NETWORK_WITHOUT_INTERFACES);
+            auditLogDirector.log(createHostNetworkAuditLog(networkName, vds), AuditLogType.NETWORK_WITHOUT_INTERFACES);
         } else if (interfaces.size() > 1) {
-            AuditLogableBase logable = createHostNetworkAuditLog(network, vds);
+            AuditLogableBase logable = createHostNetworkAuditLog(networkName, vds);
             logable.addCustomValue("Interfaces", StringUtils.join(Entities.objectNames(interfaces), ","));
             auditLogDirector.log(logable, AuditLogType.BRIDGED_NETWORK_OVER_MULTIPLE_INTERFACES);
         }
     }
 
-    protected static AuditLogableBase createHostNetworkAuditLog(Network network, VDS vds) {
+    protected static AuditLogableBase createHostNetworkAuditLog(String networkName, VDS vds) {
         AuditLogableBase logable = new AuditLogableBase(vds.getId());
-        logable.addCustomValue("NetworkName", network.getName());
+        logable.addCustomValue("NetworkName", networkName);
         return logable;
     }
 
@@ -1549,18 +1561,6 @@ public class VdsBrokerObjectsBuilder {
         }
 
         return interfaces;
-    }
-
-    private static Network createNetworkData(String networkName, Map<String, Object> network) {
-        Network net = new Network();
-        net.setName(networkName);
-        net.setAddr((String) network.get("addr"));
-        net.setSubnet((String) network.get("netmask"));
-        net.setGateway((String) network.get(VdsProperties.GLOBAL_GATEWAY));
-        if (StringUtils.isNotBlank((String) network.get(VdsProperties.MTU))) {
-            net.setMtu(Integer.parseInt((String) network.get(VdsProperties.MTU)));
-        }
-        return net;
     }
 
     private static List<VdsNetworkInterface> findBridgedNetworkInterfaces(Map<String, Object> bridge,
@@ -1699,8 +1699,8 @@ public class VdsBrokerObjectsBuilder {
 
         Map<String, Object> nicProperties = ifaceEntry.getValue();
         if (nicProperties != null) {
-            iface.setAddress((String) nicProperties.get("addr"));
-            iface.setSubnet((String) nicProperties.get("netmask"));
+            iface.setAddress(extractAddress(nicProperties));
+            iface.setSubnet(extractSubnet(nicProperties));
 
             String mtu = (String) nicProperties.get(VdsProperties.MTU);
             if (StringUtils.isNotBlank(mtu)) {
@@ -1711,49 +1711,12 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    /**
-     * Update the network details on a given interface.
-     *
-     * @param iface
-     *            The interface to update.
-     * @param network
-     *            Network struct to get details from.
-     * @param bridgedNetwork
-     *            Whether the network is bridged.
-     * @param qos
-     *            The reported network QoS.
-     * @param host
-     *            The host to which the interface belongs.
-     * @param net
-     *            Network to get details from.
-     */
-    private static void updateNetworkDetailsInInterface(VdsNetworkInterface iface,
-            Map<String, Object> network,
-            boolean bridgedNetwork,
-            HostNetworkQos qos,
-            VDS host,
-            Network net) {
+    private static String extractAddress(Map<String, Object> properties) {
+        return (String) properties.get("addr");
+    }
 
-        if (iface != null) {
-            iface.setNetworkName(net.getName());
-
-            // set the management ip
-            if (getManagementNetworkUtil().isManagementNetwork(iface.getNetworkName(), host.getVdsGroupId())) {
-                iface.setType(iface.getType() | VdsInterfaceType.MANAGEMENT.getValue());
-            }
-
-            iface.setAddress(net.getAddr());
-            iface.setSubnet(net.getSubnet());
-            iface.setBridged(bridgedNetwork);
-            setGatewayIfNecessary(iface, host, net.getGateway());
-
-            if (bridgedNetwork) {
-                Map<String, Object> networkConfig = (Map<String, Object>) network.get("cfg");
-                addBootProtocol(networkConfig, host, iface);
-            }
-
-            iface.setQos(qos);
-        }
+    private static String extractSubnet(Map<String, Object> properties) {
+        return (String) properties.get("netmask");
     }
 
     /**
