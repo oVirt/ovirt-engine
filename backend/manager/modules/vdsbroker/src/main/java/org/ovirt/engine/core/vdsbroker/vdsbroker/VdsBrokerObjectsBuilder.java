@@ -1574,31 +1574,19 @@ public class VdsBrokerObjectsBuilder {
     }
 
     private static void addHostBondDevices(VDS vds, Map<String, Object> xmlRpcStruct) {
-        Map<String, Object> bonds = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.NETWORK_BONDINGS);
+        Map<String, Map<String, Object>> bonds =
+                (Map<String, Map<String, Object>>) xmlRpcStruct.get(VdsProperties.NETWORK_BONDINGS);
         if (bonds != null) {
-            for (Entry<String, Object> entry : bonds.entrySet()) {
+            for (Entry<String, Map<String, Object>> entry : bonds.entrySet()) {
                 VdsNetworkInterface iface = new Bond();
-                VdsNetworkStatistics iStats = new VdsNetworkStatistics();
-                iface.setStatistics(iStats);
-                iStats.setId(Guid.newGuid());
-                iStats.setVdsId(vds.getId());
-                iface.setId(iStats.getId());
-
-                iface.setName(entry.getKey());
-                iface.setVdsId(vds.getId());
+                updateCommonInterfaceData(iface, vds, entry);
                 iface.setBonded(true);
 
-                Map<String, Object> bond = (Map<String, Object>) entry.getValue();
+                Map<String, Object> bond = entry.getValue();
                 if (bond != null) {
                     iface.setMacAddress((String) bond.get("hwaddr"));
-                    iface.setAddress((String) bond.get("addr"));
-                    iface.setSubnet((String) bond.get("netmask"));
                     if (bond.get("slaves") != null) {
                         addBondDeviceToHost(vds, iface, (Object[]) bond.get("slaves"));
-                    }
-
-                    if (StringUtils.isNotBlank((String) bond.get(VdsProperties.MTU))) {
-                        iface.setMtu(Integer.parseInt((String) bond.get(VdsProperties.MTU)));
                     }
 
                     Map<String, Object> config =
@@ -1607,7 +1595,6 @@ public class VdsBrokerObjectsBuilder {
                     if (config != null && config.get("BONDING_OPTS") != null) {
                         iface.setBondOptions(config.get("BONDING_OPTS").toString());
                     }
-                    addBootProtocol(config, vds, iface);
                 }
             }
         }
@@ -1623,21 +1610,14 @@ public class VdsBrokerObjectsBuilder {
      */
     private static void addHostVlanDevices(VDS vds, Map<String, Object> xmlRpcStruct) {
         // vlans
-        Map<String, Object> vlans = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.NETWORK_VLANS);
+        Map<String, Map<String, Object>> vlans = (Map<String, Map<String, Object>>) xmlRpcStruct.get(VdsProperties.NETWORK_VLANS);
         if (vlans != null) {
-            for (Entry<String, Object> entry : vlans.entrySet()) {
+            for (Entry<String, Map<String, Object>> entry : vlans.entrySet()) {
                 VdsNetworkInterface iface = new Vlan();
-                VdsNetworkStatistics iStats = new VdsNetworkStatistics();
-                iface.setStatistics(iStats);
-                iStats.setId(Guid.newGuid());
-                iface.setId(iStats.getId());
+                updateCommonInterfaceData(iface, vds, entry);
 
                 String vlanDeviceName = entry.getKey();
-                iface.setName(vlanDeviceName);
-                iface.setVdsId(vds.getId());
-
-                Map<String, Object> vlan = (Map<String, Object>) entry.getValue();
-
+                Map<String, Object> vlan = entry.getValue();
                 if (vlan.get(VdsProperties.VLAN_ID) != null && vlan.get(VdsProperties.BASE_INTERFACE) != null) {
                     iface.setVlanId((Integer) vlan.get(VdsProperties.VLAN_ID));
                     iface.setBaseInterface((String) vlan.get(VdsProperties.BASE_INTERFACE));
@@ -1648,14 +1628,6 @@ public class VdsBrokerObjectsBuilder {
                     iface.setBaseInterface(names[0]);
                 }
 
-                iface.setAddress((String) vlan.get("addr"));
-                iface.setSubnet((String) vlan.get("netmask"));
-                if (StringUtils.isNotBlank((String) vlan.get(VdsProperties.MTU))) {
-                    iface.setMtu(Integer.parseInt((String) vlan.get(VdsProperties.MTU)));
-                }
-
-                iStats.setVdsId(vds.getId());
-                addBootProtocol((Map<String, Object>) vlan.get("cfg"), vds, iface);
                 vds.getInterfaces().add(iface);
             }
         }
@@ -1670,54 +1642,68 @@ public class VdsBrokerObjectsBuilder {
      *            A nested map contains network interfaces data
      */
     private static void addHostNetworkInterfaces(VDS vds, Map<String, Object> xmlRpcStruct) {
-        Map<String, Object> nics = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.NETWORK_NICS);
+        Map<String, Map<String, Object>> nics =
+                (Map<String, Map<String, Object>>) xmlRpcStruct.get(VdsProperties.NETWORK_NICS);
         if (nics != null) {
-            for (Entry<String, Object> entry : nics.entrySet()) {
+            for (Entry<String, Map<String, Object>> entry : nics.entrySet()) {
                 VdsNetworkInterface iface = new Nic();
-                VdsNetworkStatistics iStats = new VdsNetworkStatistics();
-                iface.setStatistics(iStats);
-                iStats.setId(Guid.newGuid());
-                iface.setId(iStats.getId());
-                iface.setName(entry.getKey());
-                iface.setVdsId(vds.getId());
+                updateCommonInterfaceData(iface, vds, entry);
 
-                updateNetworkInterfaceDataFromHost(iface, vds, (Map<String, Object>) entry.getValue());
+                Map<String, Object> nicProperties = entry.getValue();
+                if (nicProperties != null) {
+                    if (nicProperties.get("speed") != null) {
+                        Object speed = nicProperties.get("speed");
+                        iface.setSpeed((Integer) speed);
+                    }
+                    iface.setMacAddress((String) nicProperties.get("hwaddr"));
+                    // if we get "permhwaddr", we are a part of a bond and we use that as the mac address
+                    String mac = (String) nicProperties.get("permhwaddr");
+                    if (mac != null) {
+                        //TODO remove when the minimal supported vdsm version is >=3.6
+                        // in older VDSM version, slave's Mac is in upper case
+                        iface.setMacAddress(mac.toLowerCase());
+                    }
+                }
 
-                iStats.setVdsId(vds.getId());
                 vds.getInterfaces().add(iface);
             }
         }
     }
 
     /**
-     * Updates a given interface by data as collected from the host.
+     * Updates a given interface (be it physical, bond or VLAN) by data as collected from the host.
      *
      * @param iface
      *            The interface to update
-     * @param nic
-     *            A key-value map of the interface properties and their value
+     * @param host
+     *            The host to which the interface belongs.
+     * @param ifaceEntry
+     *            A pair whose key is the interface's name, and whose value it a map of the interface properties.
      */
-    private static void updateNetworkInterfaceDataFromHost(
-            VdsNetworkInterface iface, VDS host, Map<String, Object> nic) {
-        if (nic != null) {
-            if (nic.get("speed") != null) {
-                Object speed = nic.get("speed");
-                iface.setSpeed((Integer) speed);
+    private static void updateCommonInterfaceData(VdsNetworkInterface iface,
+            VDS host,
+            Entry<String, Map<String, Object>> ifaceEntry) {
+
+        iface.setName(ifaceEntry.getKey());
+        iface.setId(Guid.newGuid());
+        iface.setVdsId(host.getId());
+
+        VdsNetworkStatistics iStats = new VdsNetworkStatistics();
+        iStats.setId(iface.getId());
+        iStats.setVdsId(host.getId());
+        iface.setStatistics(iStats);
+
+        Map<String, Object> nicProperties = ifaceEntry.getValue();
+        if (nicProperties != null) {
+            iface.setAddress((String) nicProperties.get("addr"));
+            iface.setSubnet((String) nicProperties.get("netmask"));
+
+            String mtu = (String) nicProperties.get(VdsProperties.MTU);
+            if (StringUtils.isNotBlank(mtu)) {
+                iface.setMtu(Integer.parseInt(mtu));
             }
-            iface.setAddress((String) nic.get("addr"));
-            iface.setSubnet((String) nic.get("netmask"));
-            iface.setMacAddress((String) nic.get("hwaddr"));
-            // if we get "permhwaddr", we are a part of a bond and we use that as the mac address
-            String mac = (String) nic.get("permhwaddr");
-            if (mac != null) {
-                //TODO remove when the minimal supported vdsm version is >=3.6
-                // in older VDSM version, slave's Mac is in upper case
-                iface.setMacAddress(mac.toLowerCase());
-            }
-            if (StringUtils.isNotBlank((String) nic.get(VdsProperties.MTU))) {
-                iface.setMtu(Integer.parseInt((String) nic.get(VdsProperties.MTU)));
-            }
-            addBootProtocol((Map<String, Object>) nic.get("cfg"), host, iface);
+
+            addBootProtocol((Map<String, Object>) nicProperties.get("cfg"), host, iface);
         }
     }
 
