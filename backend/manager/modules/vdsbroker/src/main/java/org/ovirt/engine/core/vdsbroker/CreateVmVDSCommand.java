@@ -30,10 +30,6 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
     protected void executeVmCommand() {
         final VM vm = getParameters().getVm();
         vm.setLastStartTime(new Date());
-        // if the VM is not suspended, it means that if there is 'hibernation volume'
-        // set, it is actually memory from snapshot, thus it should be cleared right
-        // after the VM started
-        final boolean clearHibernationVolume = vm.getStatus() != VMStatus.Suspended;
         if (canExecute() && ResourceManager.getInstance().AddAsyncRunningVm(vm.getId())) {
             CreateVDSCommand<?> command = null;
             try {
@@ -45,9 +41,6 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                     vm.setStopReason(null);
                     vm.setInitialized(true);
                     vm.setRunOnVds(getParameters().getVdsId());
-                    if (clearHibernationVolume) {
-                        DbFacade.getInstance().getSnapshotDao().removeMemoryFromActiveSnapshot(vm.getId());
-                    }
                     vmManager.update(vm.getDynamicData());
                 } else {
                     handleCommandResult(command);

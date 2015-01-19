@@ -100,8 +100,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private RunVmFlow cachedFlow;
     /** Note: this field should not be used directly, use {@link #isStatelessSnapshotExistsForVm()} instead */
     private Boolean cachedStatelessSnapshotExistsForVm;
-    /** Cache the memory volume which is stored in the active snapshot of the VM */
-    private String cachedMemoryVolumeFromSnapshot;
     /** Indicates whether there is a possibility that the active snapshot's memory was already restored */
     private boolean memoryFromSnapshotUsed;
 
@@ -146,19 +144,20 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         if (getFlow() == RunVmFlow.RESUME_HIBERNATE) {
-            cachedMemoryVolumeFromSnapshot = getActiveSnapshot().getMemoryVolume();
-            return cachedMemoryVolumeFromSnapshot;
+             return getActiveSnapshot().getMemoryVolume();
         }
 
-        if (cachedMemoryVolumeFromSnapshot == null) {
-            boolean archSupportSnapshot = FeatureSupported.isMemorySnapshotSupportedByArchitecture(
-                    getVm().getClusterArch(),
-                    getVm().getVdsGroupCompatibilityVersion());
-            cachedMemoryVolumeFromSnapshot = archSupportSnapshot && FeatureSupported.memorySnapshot(getVm().getVdsGroupCompatibilityVersion()) ?
-                    getActiveSnapshot().getMemoryVolume() : StringUtils.EMPTY;
+        if (!FeatureSupported.isMemorySnapshotSupportedByArchitecture(
+                getVm().getClusterArch(),
+                getVm().getVdsGroupCompatibilityVersion())) {
+            return StringUtils.EMPTY;
         }
 
-        return cachedMemoryVolumeFromSnapshot;
+        if (!FeatureSupported.memorySnapshot(getVm().getVdsGroupCompatibilityVersion())) {
+            return StringUtils.EMPTY;
+        }
+
+        return getActiveSnapshot().getMemoryVolume();
     }
 
     /**
@@ -1046,13 +1045,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     private void removeMemoryFromActiveSnapshot() {
-        if (StringUtils.isEmpty(cachedMemoryVolumeFromSnapshot)) {
+        String memory = getActiveSnapshot().getMemoryVolume();
+        if (StringUtils.isEmpty(memory)) {
             return;
         }
 
         // If the active snapshot is the only one that points to the memory volume we can remove it
-        if (getSnapshotDAO().getNumOfSnapshotsByMemory(cachedMemoryVolumeFromSnapshot) == 1) {
-            removeMemoryVolumes(cachedMemoryVolumeFromSnapshot, getActionType(), true);
+        if (getSnapshotDAO().getNumOfSnapshotsByMemory(memory) == 1) {
+            removeMemoryVolumes(memory, getActionType(), true);
         }
         getSnapshotDAO().removeMemoryFromActiveSnapshot(getVmId());
     }
