@@ -87,7 +87,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     }
 
     private Provider<?> getHostProvider() {
-        return getProviderDao().get(getParameters().getProviderId());
+        return getProviderDao().get(getParameters().getVdsStaticData().getHostProviderId());
     }
 
     @Override
@@ -125,7 +125,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             }
             HostProviderProxy proxy =
                     ((HostProviderProxy) ProviderProxyFactory.getInstance().create(getHostProvider()));
-            getParameters().getvds().getStaticData().setHostProviderId(getParameters().getProviderId());
             proxy.provisionHost(
                     getParameters().getvds(),
                     getParameters().getHostGroup(),
