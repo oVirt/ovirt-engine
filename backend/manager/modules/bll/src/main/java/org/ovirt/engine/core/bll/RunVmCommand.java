@@ -1050,11 +1050,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return;
         }
 
-        // If the active snapshot is the only one that points to the memory volume we can remove it
-        if (getSnapshotDAO().getNumOfSnapshotsByMemory(memory) == 1) {
+        getSnapshotDAO().removeMemoryFromActiveSnapshot(getVmId());
+
+        // If the memory volumes are not used by any other snapshot, we can remove them
+        if (getSnapshotDAO().getNumOfSnapshotsByMemory(memory) == 0) {
             removeMemoryVolumes(memory, getActionType(), true);
         }
-        getSnapshotDAO().removeMemoryFromActiveSnapshot(getVmId());
     }
 
     /**
