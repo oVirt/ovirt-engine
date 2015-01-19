@@ -14,6 +14,7 @@ public class ImportRepoImageParameters extends ImagesActionsParametersBase {
     private Guid sourceStorageDomainId;
     private Guid clusterId;
     private boolean importAsTemplate;
+    private String templateName;
 
     public String getSourceRepoImageId() {
         return sourceRepoImageId;
@@ -55,4 +56,11 @@ public class ImportRepoImageParameters extends ImagesActionsParametersBase {
         this.diskImage = diskImage;
     }
 
+    public String getTemplateName() {
+        return templateName;
+    }
+
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName;
+    }
 }

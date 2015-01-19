@@ -45,8 +45,21 @@ public class BackendStorageDomainImageResource
             if (action.isImportAsTemplate()) {
                 validateParameters(action, "cluster.id|name");
                 importParameters.setClusterId(getClusterId(action));
+
+                if (action.isSetTemplate() && action.getTemplate().isSetName()) {
+                    importParameters.setTemplateName(action.getTemplate().getName());
+                }
             }
             importParameters.setImportAsTemplate(action.isImportAsTemplate());
+        }
+
+        if (action.isSetDisk()) {
+            if (action.getDisk().isSetName()) {
+                importParameters.setDiskAlias(action.getDisk().getName());
+            }
+            if (action.getDisk().isSetAlias()) {
+                importParameters.setDiskAlias(action.getDisk().getAlias());
+            }
         }
 
         return doAction(VdcActionType.ImportRepoImage, importParameters, action);

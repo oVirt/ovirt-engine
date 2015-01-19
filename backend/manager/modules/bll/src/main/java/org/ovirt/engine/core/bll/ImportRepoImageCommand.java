@@ -157,6 +157,9 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
                 } else {
                     diskImage.setVolumeType(VolumeType.Sparse);
                 }
+                if (getParameters().getDiskAlias() != null) {
+                    diskImage.setDiskAlias(getParameters().getDiskAlias());
+                }
             }
             getParameters().setDiskImage(diskImage);
         }

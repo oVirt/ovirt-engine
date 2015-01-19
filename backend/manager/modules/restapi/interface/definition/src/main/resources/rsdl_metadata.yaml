@@ -6591,6 +6591,8 @@ actions:
           action.grace_period.expiry: xs:long
           action.import_as_template: xs:boolean
           action.cluster.id|name: xs:string
+          action.disk.alias|name: xs:string
+          action.template.name: xs:string
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
