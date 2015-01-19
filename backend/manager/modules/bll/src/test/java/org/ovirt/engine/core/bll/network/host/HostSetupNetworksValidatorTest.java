@@ -91,61 +91,7 @@ public class HostSetupNetworksValidatorTest {
         bond.setId(Guid.newGuid());
     }
 
-    @Test
-    public void testNetworksOnNicMatchMtuWhenNoNetworksAreProvided() throws Exception {
-        Map<String, List<Network>> networksOnNics =
-            Collections.singletonMap("nicName", Collections.<Network> emptyList());
-
-        assertThat(createHostSetupNetworksValidator().validateMtu(networksOnNics),
-            isValid());
-    }
-
-    @Test
-    public void testNetworksOnNicMatchMtu() throws Exception {
-        List<Network> networks = Arrays.asList(createNetwork(1, false),
-            createNetwork(1, false));
-
-        Map<String, List<Network>> networksOnNics = Collections.singletonMap("nicName", networks);
-
-        assertThat(createHostSetupNetworksValidator().validateMtu(networksOnNics), isValid());
-    }
-
-    @Test
-    public void testNetworksOnNicMatchMtuNetworkMtuDoesNotMatch() throws Exception {
-
-        List<Network> networks = Arrays.asList(createNetwork(1, false),
-            createNetwork(2, false));
-
-        Map<String, List<Network>> networksOnNics = Collections.singletonMap("nicName", networks);
-
-        HostSetupNetworksValidator hostSetupNetworksValidator = createHostSetupNetworksValidator();
-        assertThat(hostSetupNetworksValidator.validateMtu(networksOnNics),
-            failsWith(EngineMessage.NETWORK_MTU_DIFFERENCES));
-    }
-
-    /**
-     * this is probably not a valid scenario, but validation method allows this.
-     */
-    @Test
-    public void testNetworksOnNicMatchMtuIgnoreMtuDifferenceWhenBothNetworksAreVmNetworks() throws Exception {
-        List<Network> networks = Arrays.asList(createNetwork(1, true),
-            createNetwork(2, true));
-
-        Map<String, List<Network>> networksOnNics = Collections.singletonMap("nicName", networks);
-
-        assertThat(createHostSetupNetworksValidator().validateMtu(networksOnNics), isValid());
-    }
-
-    private Network createNetwork(int mtu, boolean isVmNetwork) {
-        Network network = new Network();
-        network.setId(Guid.newGuid());
-        network.setMtu(mtu);
-        network.setVmNetwork(isVmNetwork);
-        return network;
-    }
-
-    @Test
-    public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk() throws Exception {
+public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk() throws Exception {
         Network unlabeledNetwork = new Network();
         unlabeledNetwork.setId(Guid.newGuid());
 
@@ -949,13 +895,6 @@ public class HostSetupNetworksValidatorTest {
         slave.setBondName(bond.getName());
         slave.setBonded(false);
         return slave;
-    }
-
-    private HostSetupNetworksValidator createHostSetupNetworksValidator() {
-        return new HostSetupNetworksValidatorBuilder()
-            .setHost(host)
-            .setParams(new HostSetupNetworksParameters(host.getId()))
-            .build();
     }
 
     private HostSetupNetworksValidator createHostSetupNetworksValidator(List<Network> networks) {

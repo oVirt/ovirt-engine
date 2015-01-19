@@ -39,7 +39,6 @@ import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
-import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,7 +118,8 @@ public class HostSetupNetworksValidator {
         vr = skipValidation(vr) ? vr : attachmentsDontReferenceSameNetworkDuplicately(attachmentsToConfigure);
         vr = skipValidation(vr) ? vr : networksUniquelyConfiguredOnHost(attachmentsToConfigure);
         vr = skipValidation(vr) ? vr : validateNetworkExclusiveOnNics(attachmentsToConfigure);
-        vr = skipValidation(vr) ? vr : validateMtu(attachmentsToConfigure);
+        vr = skipValidation(vr) ? vr : new NetworkMtuValidator(networkBusinessEntityMap).validateMtu(
+            attachmentsToConfigure);
         vr = skipValidation(vr) ? vr : validateCustomProperties();
 
         // TODO: Cover qos change not supported and network sync. see SetupNetworkHelper.validateNetworkQos()
@@ -545,71 +545,6 @@ public class HostSetupNetworksValidator {
         }
 
         return ValidationResult.VALID;
-    }
-
-    /**
-     * Validates there is no differences on MTU value between non-VM network to Vlans over the same interface/bond
-     */
-    private ValidationResult validateMtu(Collection<NetworkAttachment> attachmentsToConfigure) {
-        return validateMtu(getNicNameToNetworksMap(attachmentsToConfigure));
-    }
-
-    ValidationResult validateMtu(Map<String, List<Network>> nicsToNetworks) {
-        for (List<Network> networksOnNic : nicsToNetworks.values()) {
-            if (!networksOnNicMatchMtu(networksOnNic)) {
-                ValidationResult validationResult = reportMtuDifferences(networksOnNic);
-                if (!validationResult.isValid()) {
-                    return validationResult;
-                }
-            }
-        }
-
-        return ValidationResult.VALID;
-    }
-
-    private boolean networksOnNicMatchMtu(List<Network> networksOnNic) {
-        Set<String> checkNetworks = new HashSet<>(networksOnNic.size());
-
-        for (Network networkOnNic : networksOnNic) {
-            for (Network otherNetworkOnNic : networksOnNic) {
-                if (!checkNetworks.contains(networkOnNic.getName())
-                    && networkOnNic.getMtu() != otherNetworkOnNic.getMtu()
-                    && (NetworkUtils.isNonVmNonVlanNetwork(networkOnNic)
-                    || NetworkUtils.isNonVmNonVlanNetwork(otherNetworkOnNic))) {
-                    return false;
-                }
-            }
-
-            checkNetworks.add(networkOnNic.getName());
-        }
-
-        return true;
-    }
-
-    Map<String, List<Network>> getNicNameToNetworksMap(Collection<NetworkAttachment> attachmentsToConfigure) {
-        Map<String, List<Network>> nicNameToNetworksMap = new HashMap<>();
-        for (NetworkAttachment attachment : attachmentsToConfigure) {
-            String mapKey = attachment.getNicName();
-            Network networkToConfigure = existingNetworkRelatedToAttachment(attachment);
-
-            MultiValueMapUtils.addToMap(mapKey,
-                networkToConfigure,
-                nicNameToNetworksMap,
-                new MultiValueMapUtils.ListCreator<Network>());
-        }
-
-        return nicNameToNetworksMap;
-    }
-
-    private ValidationResult reportMtuDifferences(List<Network> ifaceNetworks) {
-        List<String> mtuDiffNetworks = new ArrayList<>();
-        for (Network net : ifaceNetworks) {
-            mtuDiffNetworks.add(String.format("%s(%s)",
-                net.getName(),
-                net.getMtu() == 0 ? "default" : String.valueOf(net.getMtu())));
-        }
-        String replacements = String.format("[%s]", commaSeparated(mtuDiffNetworks));
-        return new ValidationResult(EngineMessage.NETWORK_MTU_DIFFERENCES, replacements);
     }
 
     ValidationResult notMovingLabeledNetworkToDifferentNic(NetworkAttachment attachment) {
