@@ -12,14 +12,12 @@ public class AddVdsActionParameters extends VdsOperationActionParameters {
     private boolean privateAddPending;
     private boolean glusterPeerProbeNeeded;
     private boolean privateAddProvisioned;
-    private Guid providerId;
     private ExternalHostGroup hostGroup;
     private String hostMac;
     private String discoverName;
     private ExternalComputeResource computeResource;
     private String discoverIp;
     public String getDiscoverIp() { return discoverIp; }
-    public Guid getProviderId() { return providerId; };
     public ExternalHostGroup getHostGroup() { return hostGroup; };
     public String getHostMac() { return hostMac; };
     public String getDiscoverName() { return discoverName; };
@@ -40,7 +38,7 @@ public class AddVdsActionParameters extends VdsOperationActionParameters {
         privateAddProvisioned = true;
         hostMac = mac;
         hostGroup = hg;
-        providerId = pid;
+        getVdsStaticData().setHostProviderId(pid);
         discoverName = discover_name;
         computeResource = cr;
         discoverIp = discover_ip;
