@@ -221,7 +221,7 @@ public class DiskGeneralModel extends EntityModel
 
         if (isImage()) {
             DiskImage diskImage = (DiskImage) disk;
-            setDiskProfileName(diskImage.getDiskProfileName());
+            setDiskProfileName(StringUtils.join(diskImage.getDiskProfileNames(), ", ")); //$NON-NLS-1$
             setQuotaName(StringUtils.join(diskImage.getQuotaNames(), ", ")); //$NON-NLS-1$
             setQuotaAvailable(!diskImage.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));
         }
