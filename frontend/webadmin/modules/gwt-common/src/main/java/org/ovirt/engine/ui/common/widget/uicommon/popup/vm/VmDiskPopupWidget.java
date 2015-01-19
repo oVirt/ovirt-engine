@@ -91,11 +91,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     ListModelListBoxEditor<DiskInterface> interfaceEditor;
 
     @UiField(provided = true)
-    @Path("volumeType.selectedItem")
-    @WithElementId("volumeType")
-    ListModelListBoxEditor<VolumeType> volumeTypeEditor;
-
-    @UiField(provided = true)
     @Path("dataCenter.selectedItem")
     @WithElementId("dataCenter")
     ListModelListBoxEditor<StoragePool> datacenterEditor;
@@ -104,6 +99,11 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     @Path("storageDomain.selectedItem")
     @WithElementId("storageDomain")
     ListModelListBoxEditor<StorageDomain> storageDomainEditor;
+
+    @UiField(provided = true)
+    @Path("volumeType.selectedItem")
+    @WithElementId("volumeType")
+    ListModelListBoxEditor<VolumeType> volumeTypeEditor;
 
     @UiField(provided = true)
     @Path("diskProfile.selectedItem")
@@ -438,9 +438,9 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         aliasEditor.setTabIndex(nextTabIndex++);
         descriptionEditor.setTabIndex(nextTabIndex++);
         interfaceEditor.setTabIndex(nextTabIndex++);
-        volumeTypeEditor.setTabIndex(nextTabIndex++);
         datacenterEditor.setTabIndex(nextTabIndex++);
         storageDomainEditor.setTabIndex(nextTabIndex++);
+        volumeTypeEditor.setTabIndex(nextTabIndex++);
         diskProfileEditor.setTabIndex(nextTabIndex++);
         quotaEditor.setTabIndex(nextTabIndex++);
         hostListEditor.setTabIndex(nextTabIndex++);

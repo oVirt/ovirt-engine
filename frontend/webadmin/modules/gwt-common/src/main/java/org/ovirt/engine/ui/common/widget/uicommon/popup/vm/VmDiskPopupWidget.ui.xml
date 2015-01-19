@@ -72,9 +72,9 @@
 					    <e:ListModelListBoxEditor ui:field="interfaceEditor" addStyleNames="{style.boxEditor}"/>
                         <d:InfoIcon ui:field="interfaceInfoIcon" addStyleNames="{style.infoIcon}" visible="false"/>
                     </g:HorizontalPanel>
-					<e:ListModelListBoxEditor ui:field="volumeTypeEditor" addStyleNames="{style.boxEditor}"/>
 					<e:ListModelListBoxEditor ui:field="datacenterEditor" addStyleNames="{style.boxEditor}"/>
 					<e:ListModelListBoxEditor ui:field="storageDomainEditor" addStyleNames="{style.boxEditor}"/>
+					<e:ListModelListBoxEditor ui:field="volumeTypeEditor" addStyleNames="{style.boxEditor}"/>
 					<e:ListModelListBoxEditor ui:field="diskProfileEditor" addStyleNames="{style.boxEditor}"/>
 					<e:ListModelListBoxEditor ui:field="quotaEditor" addStyleNames="{style.boxEditor}"/>
 					<e:ListModelListBoxEditor ui:field="hostListEditor" addStyleNames="{style.boxEditor}"/>
