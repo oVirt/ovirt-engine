@@ -35,7 +35,6 @@
         .diskTableLabel {
             font-size: 13px;
             padding: 5px 10px 0px 5px;
-            font-family: Verdana,sans-serif;
         }
 	</ui:style>
 

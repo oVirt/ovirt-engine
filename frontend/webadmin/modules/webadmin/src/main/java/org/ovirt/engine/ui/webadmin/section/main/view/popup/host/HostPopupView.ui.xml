@@ -73,7 +73,6 @@
 
         .sourceLabel {
             font-size: 13px;
-            font-family: Verdana,sans-serif;
             padding: 0 5px;
         }
 

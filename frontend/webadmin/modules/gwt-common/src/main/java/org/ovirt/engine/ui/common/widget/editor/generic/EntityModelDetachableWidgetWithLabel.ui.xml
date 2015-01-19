@@ -36,7 +36,6 @@
         .label {
             font-size: 13px;
             padding: 0 5px;
-            font-family: Verdana,sans-serif;
             line-height: 30px;
         }
 
