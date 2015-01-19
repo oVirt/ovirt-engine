@@ -25,6 +25,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
     public static final String VM_NAMES = "VM_NAMES";
     public static final String QUOTA = "QUOTA";
     public static final String ID = "ID";
+    public static final String WIPE_AFTER_DELETE = "WIPE_AFTER_DELETE";
 
     public DiskConditionFieldAutoCompleter() {
         // Building the basic verbs set.
@@ -43,6 +44,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         mVerbs.add(VM_NAMES);
         mVerbs.add(QUOTA);
         mVerbs.add(ID);
+        mVerbs.add(WIPE_AFTER_DELETE);
 
         // Building the autoCompletion dict.
         buildCompletions();
@@ -63,6 +65,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         getTypeDictionary().put(VM_NAMES, String.class);
         getTypeDictionary().put(QUOTA, String.class);
         getTypeDictionary().put(ID, UUID.class);
+        getTypeDictionary().put(WIPE_AFTER_DELETE, Boolean.class);
 
         // building the ColumnName dict. - the name of the column in db
         columnNameDict.put(ALIAS, "disk_alias");
@@ -80,6 +83,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         columnNameDict.put(VM_NAMES, "vm_names");
         columnNameDict.put(QUOTA, "quota_name");
         columnNameDict.put(ID, "disk_id");
+        columnNameDict.put(WIPE_AFTER_DELETE, "wipe_after_delete");
 
         // Building the validation dict.
         buildBasicValidationTable();
@@ -106,7 +110,8 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         } else if (DISK_TYPE.equals(fieldName)) {
             return new EnumValueAutoCompleter(DiskStorageType.class);
         } else if (BOOTABLE.equals(fieldName) ||
-                SHAREABLE.equals(fieldName)) {
+                SHAREABLE.equals(fieldName) ||
+                WIPE_AFTER_DELETE.equals(fieldName)) {
             return new BitValueAutoCompleter();
         }
         return null;
