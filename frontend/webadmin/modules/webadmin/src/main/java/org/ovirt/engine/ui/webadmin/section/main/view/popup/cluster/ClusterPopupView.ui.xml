@@ -152,6 +152,10 @@
             display: inline;
         }
 
+        .sectionPanel {
+            margin-bottom: 20px;
+        }
+
     </ui:style>
 
     <d:SimpleDialogPanel width="800px" height="560px">
@@ -160,7 +164,7 @@
                 <t:tab>
                     <t:DialogTab ui:field="generalTab">
                         <t:content>
-                            <g:FlowPanel>
+                            <g:FlowPanel addStyleNames="{style.sectionPanel}">
                                 <g:FlowPanel ui:field="dataCenterPanel" addStyleNames="{style.generalTabTopDecorator} generalTabTopDecorator_pfly_fix">
                                     <e:ListModelListBoxEditor ui:field="dataCenterEditor" />
                                 </g:FlowPanel>
