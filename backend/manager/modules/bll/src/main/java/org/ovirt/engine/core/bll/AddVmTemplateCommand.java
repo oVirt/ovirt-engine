@@ -824,7 +824,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     private void addPermission() {
         UniquePermissionsSet permissionsToAdd = new UniquePermissionsSet();
-
+        if (getCurrentUser() == null) {
+            setCurrentUser(getParameters().getParametersCurrentUser());
+        }
         addPermissionForTemplate(permissionsToAdd, getCurrentUser().getId(), PredefinedRoles.TEMPLATE_OWNER);
         // if the template is for public use, set EVERYONE as a TEMPLATE_USER.
         if (getParameters().isPublicUse()) {
