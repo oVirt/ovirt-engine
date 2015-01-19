@@ -387,19 +387,20 @@ class Plugin(plugin.PluginBase):
             ] = self.dialog.queryString(
                 name='ISO_DOMAIN_ACL',
                 note=_(
-                    'Local ISO domain ACL - note that the default will '
-                    'restrict access to {fqdn} only, for security reasons '
-                    '[@DEFAULT@]: '
-                ).format(
-                    fqdn=self.environment[osetupcons.ConfigEnv.FQDN]
+                    '\nPlease provide the ACL for the Local ISO domain.\n'
+                    'See the exports(5) manpage for the format.\n'
+                    'Examples:\n'
+                    '- To allow access for host1, host2 and host3, input: '
+                    'host1(rw) host2(rw) host3(rw)\n'
+                    '- To allow access to the entire Internet, input: *(rw)\n'
+                    '\nFor more information, see: '
+                    'http://www.ovirt.org/Troubleshooting_NFS_Storage_Issues\n'
+                    '\nLocal ISO domain ACL: '
                 ),
+                # No default, user must input something.
+                # see https://bugzilla.redhat.com/1110740
                 prompt=True,
                 caseSensitive=True,
-                default=(
-                    osetupcons.Const.ISO_DOMAIN_NFS_DEFAULT_ACL_FORMAT.format(
-                        fqdn=self.environment[osetupcons.ConfigEnv.FQDN]
-                    )
-                ),
             )
 
         if self.environment[
