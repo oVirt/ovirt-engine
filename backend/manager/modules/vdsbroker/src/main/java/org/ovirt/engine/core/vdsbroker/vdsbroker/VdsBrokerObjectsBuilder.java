@@ -1479,15 +1479,24 @@ public class VdsBrokerObjectsBuilder {
                 String networkName = entry.getKey();
                 if (network != null) {
                     String interfaceName = (String) network.get(VdsProperties.INTERFACE);
+                    Map<String, Object> bridgeProperties = (bridges == null) ? null : bridges.get(interfaceName);
 
                     boolean bridgedNetwork = isBridgedNetwork(network);
                     HostNetworkQos qos = new HostNetworkQosMapper(network).deserialize();
-                    String addr = extractAddress(network);
-                    String subnet = extractSubnet(network);
-                    String gateway = (String) network.get(VdsProperties.GLOBAL_GATEWAY);
+
+                    /**
+                     * TODO: remove overly-defensive code in 4.0 - IP address, subnet, gateway and boot protocol should
+                     * only be extracted for bridged networks and from bridge entries (not network entries)
+                     **/
+                    Map<String, Object> effectiveProperties =
+                            (bridgesReported && bridgedNetwork && bridgeProperties != null) ? bridgeProperties
+                                    : network;
+                    String addr = extractAddress(effectiveProperties);
+                    String subnet = extractSubnet(effectiveProperties);
+                    String gateway = (String) effectiveProperties.get(VdsProperties.GLOBAL_GATEWAY);
 
                     List<VdsNetworkInterface> interfaces =
-                            bridgesReported ? findNetworkInterfaces(vdsInterfaces, interfaceName, bridges)
+                            bridgesReported ? findNetworkInterfaces(vdsInterfaces, interfaceName, bridgeProperties)
                                     : findBridgedNetworkInterfaces(network, vdsInterfaces);
                     for (VdsNetworkInterface iface : interfaces) {
                         iface.setNetworkName(networkName);
@@ -1504,7 +1513,7 @@ public class VdsBrokerObjectsBuilder {
                         setGatewayIfNecessary(iface, vds, gateway);
 
                         if (bridgedNetwork) {
-                            addBootProtocol(network, vds, iface);
+                            addBootProtocol(effectiveProperties, vds, iface);
                         }
                     }
 
@@ -1544,16 +1553,13 @@ public class VdsBrokerObjectsBuilder {
 
     private static List<VdsNetworkInterface> findNetworkInterfaces(Map<String, VdsNetworkInterface> vdsInterfaces,
             String interfaceName,
-            Map<String, Map<String, Object>> bridges) {
+            Map<String, Object> bridgeProperties) {
 
         List<VdsNetworkInterface> interfaces = new ArrayList<VdsNetworkInterface>();
         VdsNetworkInterface iface = vdsInterfaces.get(interfaceName);
         if (iface == null) {
-            if (bridges != null) {
-                Map<String, Object> bridgeProperties = bridges.get(interfaceName);
-                if (bridgeProperties != null) {
-                    interfaces.addAll(findBridgedNetworkInterfaces(bridgeProperties, vdsInterfaces));
-                }
+            if (bridgeProperties != null) {
+                interfaces.addAll(findBridgedNetworkInterfaces(bridgeProperties, vdsInterfaces));
             }
         } else {
             interfaces.add(iface);
