@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget.editor.generic;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -52,16 +51,34 @@ public class EntityModelDetachableWidget extends BaseEntityModelDetachableWidget
 
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
 
+        setupAlign(attachedImageAlign);
+
+        initialize(contentWidgetContainer, attachedSeparatedImage, style);
+    }
+
+    public void setupAlign(Align attachedImageAlign) {
+        if (attachedImageAlign == Align.IGNORE) {
+            return;
+        }
+
+        setupContentWidgetContainerLayout(attachedImageAlign);
+        setupContentWrapper(attachedImageAlign);
+    }
+
+    public void setupContentWidgetContainerLayout(Align attachedImageAlign) {
         if (attachedImageAlign == Align.LEFT) {
             contentWidgetContainer.getElement().getStyle().setFloat(Float.RIGHT);
-        } else {
+        } else if (attachedImageAlign == Align.RIGHT) {
             contentWidgetContainer.getElement().getStyle().setFloat(Float.LEFT);
             contentWidgetContainer.getElement().getStyle().setWidth(AbstractValidatedWidgetWithLabel.CONTENT_WIDTH, Unit.PX);
+        }
+    }
+
+    public void setupContentWrapper(Align attachedImageAlign) {
+        if (attachedImageAlign == Align.RIGHT) {
             contentWrapper.removeStyleName(style.contentWrapper());
             contentWrapper.addStyleName(style.contentWrapperImageOnRight());
         }
-
-        initialize(contentWidgetContainer, attachedSeparatedImage, style);
     }
 
     public EntityModelDetachableWidget(AbstractValidatedWidgetWithLabel decorated) {
@@ -78,7 +95,11 @@ public class EntityModelDetachableWidget extends BaseEntityModelDetachableWidget
         decorated.setEnabled(enabled);
     }
 
-    public void addContentWrapperStypeName(String styleName) {
+    public void setContentWidgetContainerStyle(String style) {
+        contentWidgetContainer.addStyleName(style);
+    }
+
+    public void setContentWrapperStypeName(String styleName) {
         contentWrapper.addStyleName(styleName);
     }
 

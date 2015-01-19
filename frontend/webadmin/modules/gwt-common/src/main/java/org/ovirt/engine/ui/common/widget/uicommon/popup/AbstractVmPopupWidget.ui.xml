@@ -414,6 +414,18 @@
         .button {
             padding: 0 5px;
         }
+
+        .migrationModeContentWidgetEditor, .overrideMigrationDowntimeContentEditor {
+            float: left;
+        }
+
+        .migrationModeContentWidgetEditor {
+            width: 300px;
+        }
+
+        .overrideMigrationDowntimeContentEditor {
+            width: 20px;
+        }
     </ui:style>
 
     <t:DialogTabPanel width="100%" height="100%" ui:field="mainTabPanel">
@@ -610,9 +622,9 @@
                     </g:FlowPanel>
                         <g:Label addStyleNames="{style.slimSectionLabel}" text="{constants.runMigrationOptionsVmPopup}" />
                         <g:VerticalPanel width="100%" addStyleNames="{style.hostRunMigrationOptions}">
-                             <ge:EntityModelDetachableWidget ui:field="migrationModeEditorWithDetachable" addStyleNames="{style.migrationSelect}"/>
+                             <ge:EntityModelDetachableWidget ui:field="migrationModeEditorWithDetachable" addStyleNames="{style.migrationSelect}" contentWidgetContainerStyle="{style.migrationModeContentWidgetEditor}" />
                              <g:FlowPanel addStyleNames="{style.migrationDowntimePanel}">
-                               <ge:EntityModelDetachableWidget ui:field="overrideMigrationDowntimeEditorWithDetachable" addStyleNames="{style.overrideMigrationDowntime} avmpw_overrideMigrationDowntime_pfly_fix" />
+                               <ge:EntityModelDetachableWidget ui:field="overrideMigrationDowntimeEditorWithDetachable" addStyleNames="{style.overrideMigrationDowntime} avmpw_overrideMigrationDowntime_pfly_fix" contentWidgetContainerStyle="{style.overrideMigrationDowntimeContentEditor}" />
                                <g:Label text="{constants.overrideMigrationDowntimeLabel}" addStyleNames="{style.migrationDowntimeLabel} avmpw_migrationDowntimeLabel_pfly_fix" />
                                <d:InfoIcon ui:field="migrationDowntimeInfoIcon" addStyleNames="{style.migrationDowntimeInfoIcon} avmpw_infoIcon_pfly_fix" />
                                <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="migrationDowntimeEditor" addStyleNames="{style.migrationDowntime}" />

@@ -998,9 +998,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     private void initDetachableFields() {
         detachableMemSizeEditor = new EntityModelDetachableWidgetWithLabel(memSizeEditor);
         isHighlyAvailableEditorWithDetachable = new EntityModelDetachableWidget(isHighlyAvailableEditor, Align.RIGHT);
-        overrideMigrationDowntimeEditorWithDetachable = new EntityModelDetachableWidget(overrideMigrationDowntimeEditor, Align.RIGHT);
+
+        overrideMigrationDowntimeEditorWithDetachable = new EntityModelDetachableWidget(overrideMigrationDowntimeEditor, Align.IGNORE);
+        overrideMigrationDowntimeEditorWithDetachable.setupContentWrapper(Align.RIGHT);
+
         overrideMigrationDowntimeEditor.getContentWidgetContainer().getElement().getStyle().setWidth(20, Unit.PX);
-        migrationModeEditorWithDetachable = new EntityModelDetachableWidget(migrationModeEditor, Align.RIGHT);
+
+        migrationModeEditorWithDetachable = new EntityModelDetachableWidget(migrationModeEditor, Align.IGNORE);
+        migrationModeEditorWithDetachable.setupContentWrapper(Align.RIGHT);
 
         StringEntityModelLabel rnglabel = new StringEntityModelLabel();
         rnglabel.setText(constants.rngDevEnabled());
