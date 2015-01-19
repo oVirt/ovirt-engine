@@ -14,6 +14,7 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
     public static final String COMMITTED = "COMMITTED";
     public static final String COMMENT = "COMMENT";
     public static final String DESCRIPTION = "DESCRIPTION";
+    public static final String WIPE_AFTER_DELETE = "WIPE_AFTER_DELETE";
 
 
     public StorageDomainFieldAutoCompleter() {
@@ -27,6 +28,7 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         mVerbs.add(COMMITTED);
         mVerbs.add(COMMENT);
         mVerbs.add(DESCRIPTION);
+        mVerbs.add(WIPE_AFTER_DELETE);
 
         // Building the autoCompletion Dict
         buildCompletions();
@@ -40,6 +42,7 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         getTypeDictionary().put(COMMITTED, Integer.class);
         getTypeDictionary().put(COMMENT, String.class);
         getTypeDictionary().put(DESCRIPTION, String.class);
+        getTypeDictionary().put(WIPE_AFTER_DELETE, Boolean.class);
 
         // building the ColumnName Dict
         columnNameDict.put(NAME, "storage_name");
@@ -51,6 +54,7 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         columnNameDict.put(COMMITTED, "commited_disk_size");
         columnNameDict.put(COMMENT, "storage_comment");
         columnNameDict.put(DESCRIPTION, "storage_description");
+        columnNameDict.put(WIPE_AFTER_DELETE, "wipe_after_delete");
 
         // Building the validation dict
         buildBasicValidationTable();
@@ -74,6 +78,9 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         }
         else if (STATUS.equals(fieldName)) {
             retval = new EnumValueAutoCompleter(StorageDomainSharedStatus.class);
+        }
+        else if (WIPE_AFTER_DELETE.equals(fieldName)) {
+            retval = new BitValueAutoCompleter();
         } else {
         }
         return retval;
