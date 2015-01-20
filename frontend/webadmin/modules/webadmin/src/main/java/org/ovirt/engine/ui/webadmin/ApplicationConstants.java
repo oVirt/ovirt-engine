@@ -302,6 +302,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Comment")
     String commentLabel();
 
+    @DefaultStringValue("Management Network")
+    String managementNetworkLabel();
+
     @DefaultStringValue("VM network")
     String vmNetworkLabel();
 

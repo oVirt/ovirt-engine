@@ -651,6 +651,14 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
+    public void getDefaultManagementNetwork(AsyncQuery aQuery, Guid dataCenterId) {
+        runQueryByIdParameter(VdcQueryType.GetDefaultManagementNetwork, aQuery, dataCenterId);
+    }
+
+    public void getManagementNetwork(AsyncQuery aQuery, Guid clusterId) {
+        runQueryByIdParameter(VdcQueryType.GetManagementNetwork, aQuery, clusterId);
+    }
+
     public void isManagementNetwork(AsyncQuery aQuery, Guid networkId) {
         runQueryByIdParameter(VdcQueryType.IsManagementNetwork, aQuery, networkId);
     }

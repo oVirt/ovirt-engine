@@ -2667,4 +2667,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Create Brick")
     String createBrick();
+
+    @DefaultStringValue("Changing management network is only permitted via the 'Manage Cluster Networks' dialog.")
+    String prohibitManagementNetworkChangeInEditClusterInfoMessage();
 }

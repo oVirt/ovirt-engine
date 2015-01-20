@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -584,9 +585,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         model.getHost()
                                 .setItems(new ArrayList<VDS>(Arrays.asList(new VDS[] { localHost })));
                         model.getHost().setSelectedItem(localHost);
-                        model.getDataCenter()
-                                .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { getEntity() })));
-                        model.getDataCenter().setSelectedItem(getEntity());
+                        model.getDataCenter().setItems(Collections.singletonList(getEntity()), getEntity());
                         UICommand tempVar = UICommand.createDefaultOkUiCommand("OnAddStorage", listModel); //$NON-NLS-1$
                         model.getCommands().add(tempVar);
                         UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", listModel); //$NON-NLS-1$
@@ -615,8 +614,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         model.setHashName("new_domain"); //$NON-NLS-1$
         ArrayList<StoragePool> dataCenters = new ArrayList<StoragePool>();
         dataCenters.add(getEntity());
-        model.getDataCenter().setItems(dataCenters);
-        model.getDataCenter().setSelectedItem(getEntity());
+        model.getDataCenter().setItems(dataCenters, getEntity());
         model.getDataCenter().setIsChangable(false);
 
         List<IStorageModel> items = null;
@@ -1295,8 +1293,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         ArrayList<StoragePool> dataCenters = new ArrayList<StoragePool>();
         dataCenters.add(getEntity());
-        model.getDataCenter().setItems(dataCenters);
-        model.getDataCenter().setSelectedItem(getEntity());
+        model.getDataCenter().setItems(dataCenters, getEntity());
         model.getDataCenter().setIsChangable(false);
 
         UICommand tempVar = UICommand.createDefaultOkUiCommand("OnAddCluster", this); //$NON-NLS-1$
@@ -1495,9 +1492,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         model.getOverrideIpTables().setEntity(true);
         model.setSpmPriorityValue(null);
 
-        model.getDataCenter()
-                .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { getEntity() })));
-        model.getDataCenter().setSelectedItem(getEntity());
+        model.getDataCenter().setItems(Collections.singletonList(getEntity()), getEntity());
         model.getDataCenter().setIsChangable(false);
 
         model.getCluster().getSelectedItemChangedEvent().addListener(new IEventListener() {

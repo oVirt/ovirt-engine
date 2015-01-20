@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Version;
@@ -103,6 +104,11 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @Path(value = "comment.entity")
     @WithElementId
     StringEntityModelTextBoxEditor commentEditor;
+
+    @UiField(provided = true)
+    @Path(value = "managementNetwork.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<Network> managementNetworkEditor;
 
     @UiField(provided = true)
     @Path(value = "CPU.selectedItem")
@@ -455,6 +461,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         nameEditor.setLabel(constants.clusterPopupNameLabel());
         descriptionEditor.setLabel(constants.clusterPopupDescriptionLabel());
         commentEditor.setLabel(constants.commentLabel());
+        managementNetworkEditor.setLabel(constants.managementNetworkLabel());
         cpuEditor.setLabel(constants.clusterPopupCPUTypeLabel());
         architectureEditor.setLabel(constants.clusterPopupArchitectureLabel());
         versionEditor.setLabel(constants.clusterPopupVersionLabel());
@@ -539,6 +546,13 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
     private void initListBoxEditors() {
         dataCenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
+
+        managementNetworkEditor = new ListModelListBoxEditor<Network>(new NullSafeRenderer<Network>() {
+            @Override
+            protected String renderNullSafe(Network network) {
+                return network.getName();
+            }
+        });
 
         cpuEditor = new ListModelListBoxEditor<ServerCpu>(new NullSafeRenderer<ServerCpu>() {
             @Override

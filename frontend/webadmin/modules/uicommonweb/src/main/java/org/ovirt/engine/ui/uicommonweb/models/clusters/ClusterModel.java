@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -36,9 +37,9 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
+import org.ovirt.engine.ui.uicommonweb.models.FilteredListModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.FilteredListModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SerialNumberPolicyModel;
@@ -58,6 +59,8 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
 {
     private Map<Guid, PolicyUnit> policyUnitMap;
     private ListModel<ClusterPolicy> clusterPolicy;
+    private Map<Guid, Network> defaultManagementNetworkCache = new HashMap<>();
+    private Boolean detached;
 
     public ListModel<ClusterPolicy> getClusterPolicy() {
         return clusterPolicy;
@@ -209,6 +212,16 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
     public void setDataCenter(ListModel<StoragePool> value)
     {
         privateDataCenter = value;
+    }
+
+    private ListModel<Network> managementNetwork;
+
+    public void setManagementNetwork(ListModel<Network> managementNetwork) {
+        this.managementNetwork = managementNetwork;
+    }
+
+    public ListModel<Network> getManagementNetwork() {
+        return managementNetwork;
     }
 
     private FilteredListModel<ServerCpu> privateCPU;
@@ -1162,6 +1175,14 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         setArchitecture(new ListModel<ArchitectureType>());
         getArchitecture().setIsAvailable(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
 
+        setManagementNetwork(new ListModel<Network>());
+        if (isEdit && !isClusterDetached()) {
+            getManagementNetwork().setChangeProhibitionReason(ConstantsManager.getInstance()
+                    .getConstants()
+                    .prohibitManagementNetworkChangeInEditClusterInfoMessage());
+            getManagementNetwork().setIsChangable(false);
+        }
+
         setCPU(new FilteredListModel<ServerCpu>());
         getCPU().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
         getCPU().getSelectedItemChangedEvent().addListener(this);
@@ -1225,6 +1246,13 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                                         }));
                     }
                 }));
+    }
+
+    boolean isClusterDetached() {
+        if (detached == null) {
+            detached = getEntity().getStoragePoolId() == null;
+        }
+        return detached;
     }
 
     private void initSpiceProxy() {
@@ -1317,8 +1345,10 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         initSpiceProxy();
         getFencingEnabledModel().setEntity(getEntity().getFencingPolicy().isFencingEnabled());
         getSkipFencingIfSDActiveEnabled().setEntity(getEntity().getFencingPolicy().isSkipFencingIfSDActive());
-        getSkipFencingIfConnectivityBrokenEnabled().setEntity(getEntity().getFencingPolicy().isSkipFencingIfConnectivityBroken());
-        getHostsWithBrokenConnectivityThreshold().setSelectedItem(getEntity().getFencingPolicy().getHostsWithBrokenConnectivityThreshold());
+        getSkipFencingIfConnectivityBrokenEnabled().setEntity(getEntity().getFencingPolicy()
+                .isSkipFencingIfConnectivityBroken());
+        getHostsWithBrokenConnectivityThreshold().setSelectedItem(getEntity().getFencingPolicy()
+                .getHostsWithBrokenConnectivityThreshold());
 
         setMemoryOverCommit(getEntity().getMaxVdsMemoryOverCommit());
 
@@ -1330,29 +1360,82 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model, Object result)
-            {
+            public void onSuccess(Object model, Object result) {
                 ClusterModel clusterModel = (ClusterModel) model;
-                ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
+                List<StoragePool> dataCenters = (List<StoragePool>) result;
 
                 clusterModel.getDataCenter().setItems(dataCenters);
 
                 clusterModel.getDataCenter().setSelectedItem(null);
-                for (StoragePool a : dataCenters)
-                {
-                    if (clusterModel.getEntity().getStoragePoolId() != null
-                            && a.getId().equals(clusterModel.getEntity().getStoragePoolId()))
-                    {
-                        clusterModel.getDataCenter().setSelectedItem(a);
+                final Guid dataCenterId = clusterModel.getEntity().getStoragePoolId();
+                for (StoragePool dataCenter : dataCenters) {
+                    if (dataCenterId != null && dataCenter.getId().equals(dataCenterId)) {
+                        clusterModel.getDataCenter().setSelectedItem(dataCenter);
                         break;
                     }
                 }
-                clusterModel.getDataCenter().setIsChangable(clusterModel.getDataCenter().getSelectedItem() == null);
+                final StoragePool selectedDataCenter = clusterModel.getDataCenter().getSelectedItem();
+                clusterModel.getDataCenter().setIsChangable(selectedDataCenter == null);
 
                 clusterModel.setMigrateOnErrorOption(clusterModel.getEntity().getMigrateOnError());
+
+                if (!clusterModel.getManagementNetwork().getIsChangable()) {
+                    loadCurrentClusterManagementNetwork();
+                }
             }
         };
         AsyncDataProvider.getInstance().getDataCenterList(_asyncQuery);
+    }
+
+    private void loadCurrentClusterManagementNetwork() {
+        final AsyncQuery getManagementNetworkQuery = new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                final ClusterModel clusterModel = (ClusterModel) model;
+                final Network managementNetwork = (Network) returnValue;
+                clusterModel.getManagementNetwork().setSelectedItem(managementNetwork);
+            }
+        });
+        AsyncDataProvider.getInstance().getManagementNetwork(getManagementNetworkQuery, getEntity().getId());
+    }
+
+    private void loadDcNetworks(final Guid dataCenterId) {
+        if (dataCenterId == null) {
+            return;
+        }
+        final AsyncQuery getAllDataCenterNetworksQuery = new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                final ClusterModel clusterModel = (ClusterModel) model;
+                final List<Network> dcNetworks = (List<Network>) returnValue;
+                clusterModel.getManagementNetwork().setItems(dcNetworks);
+
+                if (defaultManagementNetworkCache.containsKey(dataCenterId)) {
+                    final Network defaultManagementNetwork = defaultManagementNetworkCache.get(dataCenterId);
+                    setSelectedDefaultManagementNetwork(clusterModel, defaultManagementNetwork);
+                } else {
+                    final AsyncQuery getDefaultManagementNetworkQuery =
+                            new AsyncQuery(clusterModel, new INewAsyncCallback() {
+                                @Override
+                                public void onSuccess(Object model, Object returnValue) {
+                                    final Network defaultManagementNetwork = (Network) returnValue;
+                                    defaultManagementNetworkCache.put(dataCenterId, defaultManagementNetwork);
+                                    setSelectedDefaultManagementNetwork(clusterModel, defaultManagementNetwork);
+                                }
+                            });
+                    AsyncDataProvider.getInstance()
+                            .getDefaultManagementNetwork(getDefaultManagementNetworkQuery, dataCenterId);
+                }
+            }
+
+            private void setSelectedDefaultManagementNetwork(ClusterModel clusterModel,
+                    Network defaultManagementNetwork) {
+                if (defaultManagementNetwork != null) {
+                    clusterModel.getManagementNetwork().setSelectedItem(defaultManagementNetwork);
+                }
+            }
+        });
+        AsyncDataProvider.getInstance().getAllDataCenterNetworks(getAllDataCenterNetworksQuery, dataCenterId);
     }
 
     @Override
@@ -1762,6 +1845,10 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
             }
         };
         AsyncDataProvider.getInstance().getDataCenterVersions(_asyncQuery, selectedDataCenter.getId());
+
+        if (getManagementNetwork().getIsChangable()) {
+            loadDcNetworks(selectedDataCenter.getId());
+        }
     }
 
     private void clusterPolicyChanged() {
@@ -1829,6 +1916,8 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
 
         getVersion().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
+        getManagementNetwork().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+
         validateRngRequiredSource();
 
         boolean validService = true;
@@ -1870,6 +1959,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         }
 
         boolean generalTabValid = getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid()
+                && getManagementNetwork().getIsValid()
                 && getVersion().getIsValid() && validService && getGlusterHostAddress().getIsValid()
                 && getRngRandomSourceRequired().getIsValid()
                 && getRngHwrngSourceRequired().getIsValid()

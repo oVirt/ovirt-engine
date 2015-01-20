@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.google.inject.Inject;
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -34,6 +35,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.Linq.DataCenterPredicate;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -59,8 +61,6 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
-
-import com.google.inject.Inject;
 
 public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGroup> implements ISupportSystemTreeContext {
 
@@ -325,8 +325,6 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
                 ClusterModel cModel = (ClusterModel) clModel.getWindow();
                 ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
 
-                cModel.getDataCenter().setItems(dataCenters);
-
                 // Be aware of system tree selection.
                 // Strict data center as neccessary.
                 if (clModel.getSystemTreeSelectedItem() != null
@@ -336,13 +334,14 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
                     SystemTreeItemModel treeSelectedDc = SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, treeSelectedItem);
                     StoragePool selectDataCenter = (StoragePool) treeSelectedDc.getEntity();
 
-                    cModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters,
-                            new Linq.DataCenterPredicate(selectDataCenter.getId())));
+                    final StoragePool selectedDataCenter = Linq.firstOrDefault(dataCenters,
+                            new DataCenterPredicate(selectDataCenter.getId()));
+                    cModel.getDataCenter().setItems(dataCenters, selectedDataCenter);
                     cModel.getDataCenter().setIsChangable(false);
                 }
                 else
                 {
-                    cModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters));
+                    cModel.getDataCenter().setItems(dataCenters, Linq.firstOrDefault(dataCenters));
                 }
 
                 UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSave", clModel); //$NON-NLS-1$
@@ -733,9 +732,13 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
 
         model.startProgress(null);
 
-        Frontend.getInstance().runAction(model.getIsNew() ? VdcActionType.AddVdsGroup : VdcActionType.UpdateVdsGroup,
-                model.getIsNew() ? new ManagementNetworkOnClusterOperationParameters(cluster) :
-                                   new VdsGroupOperationParameters(cluster),
+        final Network managementNetwork = model.getManagementNetwork().getSelectedItem();
+        final ManagementNetworkOnClusterOperationParameters clusterOperationParameters =
+                new ManagementNetworkOnClusterOperationParameters(cluster, managementNetwork.getId());
+        final VdcActionType actionType = model.getIsNew() ? VdcActionType.AddVdsGroup : VdcActionType.UpdateVdsGroup;
+        Frontend.getInstance().runAction(
+                actionType,
+                clusterOperationParameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {

@@ -171,6 +171,7 @@
                                 <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
                                 <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
                                 <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" />
+                                <e:ListModelListBoxEditor ui:field="managementNetworkEditor" />
                                 <e:ListModelListBoxEditor ui:field="architectureEditor" />
                                 <e:ListModelListBoxEditor ui:field="cpuEditor" />
                                 <e:ListModelListBoxEditor ui:field="versionEditor" />
