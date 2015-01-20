@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -198,14 +199,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         default:
             return AuditLogType.USER_ADD_VM_TEMPLATE_FINISHED_FAILURE;
-        }
-    }
-
-    @Override
-    protected void buildChildCommandInfos() {
-        Guid vmSnapshotId = Guid.newGuid();
-        for (DiskImage diskImage : mImages) {
-            addChildCommandInfo(diskImage.getImageId(), VdcActionType.CreateImageTemplate, buildChildCommandParameters(diskImage, vmSnapshotId));
         }
     }
 
@@ -668,7 +661,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     protected void addVmTemplateImages(Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {
         for (DiskImage diskImage : mImages) {
             // The return value of this action is the 'copyImage' task GUID:
-            VdcReturnValueBase retValue = executeChildCommand(diskImage.getImageId());
+            VdcReturnValueBase retValue = Backend.getInstance().runInternalAction(
+                    VdcActionType.CreateImageTemplate,
+                    buildChildCommandParameters(diskImage, Guid.newGuid()),
+                    ExecutionHandler.createDefaultContextForTasks(getContext()));
 
             if (!retValue.getSucceeded()) {
                 throw new VdcBLLException(retValue.getFault().getError(), retValue.getFault().getMessage());
