@@ -179,7 +179,7 @@ public class AddStorageDomainCommonTest {
         sd.setStorageDomainType(StorageDomainType.ISO);
         sd.setStorageType(StorageType.FCP);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
-                (cmd, VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
+                (cmd, VdcBllMessages.ACTION_TYPE_FAILED_DOMAIN_TYPE_CAN_BE_CREATED_ONLY_ON_SPECIFIC_STORAGE_DOMAINS);
     }
 
     @Test
