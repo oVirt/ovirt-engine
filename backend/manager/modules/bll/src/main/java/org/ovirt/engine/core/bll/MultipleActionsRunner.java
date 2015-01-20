@@ -199,7 +199,6 @@ public class MultipleActionsRunner {
                     command.isInternalExecution());
         }
         CorrelationIdTracker.setCorrelationId(command.getCorrelationId());
-        command.insertAsyncTaskPlaceHolders();
         command.executeAction();
     }
 

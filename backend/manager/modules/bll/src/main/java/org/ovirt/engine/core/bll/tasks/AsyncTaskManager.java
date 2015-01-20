@@ -35,7 +35,6 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
@@ -110,21 +109,21 @@ public final class AsyncTaskManager {
     public void initAsyncTaskManager() {
         tasksInDbAfterRestart = new ConcurrentHashMap();
         Map<Guid, List<AsyncTask>> rootCommandIdToTasksMap = groupTasksByRootCommandId(coco.getAllAsyncTasksFromDb());
-        int numberOfCommandsWithEmptyVdsmId = 0;
+        int numberOfCommandsPartiallyExecuted = 0;
         for (Entry<Guid, List<AsyncTask>> entry : rootCommandIdToTasksMap.entrySet()) {
-            if (hasTasksWithoutVdsmId(rootCommandIdToTasksMap.get(entry.getKey()))) {
-                log.info("Root Command '{}' has tasks without vdsm id.", entry.getKey());
-                numberOfCommandsWithEmptyVdsmId++;
+            if (isPartiallyExecutedCommand(rootCommandIdToTasksMap.get(entry.getKey()))) {
+                log.info("Root Command '{}' has partially executed task.", entry.getKey());
+                numberOfCommandsPartiallyExecuted++;
             }
         }
-        irsBrokerLatch = new CountDownLatch(numberOfCommandsWithEmptyVdsmId);
+        irsBrokerLatch = new CountDownLatch(numberOfCommandsPartiallyExecuted);
         for (Entry<Guid, List<AsyncTask>> entry : rootCommandIdToTasksMap.entrySet()) {
-            if (hasTasksWithoutVdsmId(rootCommandIdToTasksMap.get(entry.getKey()))) {
-                log.info("Root Command '{}' has tasks without vdsm id.", entry.getKey());
-                handleTasksOfCommandWithEmptyVdsmId(rootCommandIdToTasksMap.get(entry.getKey()));
+            if (isPartiallyExecutedCommand(rootCommandIdToTasksMap.get(entry.getKey()))) {
+                log.info("Root Command '{}' has partially executed tasks.", entry.getKey());
+                handlePartiallyExecuteTasksOfCommand(rootCommandIdToTasksMap.get(entry.getKey()));
             }
             for (AsyncTask task : entry.getValue()) {
-                if (!hasEmptyVdsmId(task)) {
+                if (!isPartiallyExecutedTask(task)) {
                     tasksInDbAfterRestart.putIfAbsent(task.getStoragePoolId(), new ArrayList<AsyncTask>());
                     tasksInDbAfterRestart.get(task.getStoragePoolId()).add(task);
                 }
@@ -184,7 +183,7 @@ public final class AsyncTaskManager {
         // for SubtractMinutesAsMills of minutes.
         return (task.getState() == AsyncTaskState.Cleared || task.getState() == AsyncTaskState.ClearFailed)
                 && task.getLastAccessToStatusSinceEnd() < (System
-                        .currentTimeMillis() - SubtractMinutesAsMills);
+                .currentTimeMillis() - SubtractMinutesAsMills);
     }
 
     public synchronized boolean hasTasksByStoragePoolId(Guid storagePoolID) {
@@ -212,7 +211,7 @@ public final class AsyncTaskManager {
         return false;
     }
 
-    public void handleTasksOfCommandWithEmptyVdsmId(final List<AsyncTask> tasks) {
+    public void handlePartiallyExecuteTasksOfCommand(final List<AsyncTask> tasks) {
         ThreadPoolUtil.execute(new Runnable() {
             @SuppressWarnings("synthetic-access")
             @Override
@@ -221,9 +220,8 @@ public final class AsyncTaskManager {
                     @Override
                     public Object runInTransaction() {
                         try {
-                            boolean isPartiallySubmittedCommand = isPartiallySubmittedCommand(tasks);
                             for (AsyncTask task : tasks) {
-                                handleTaskOfCommandWithEmptyVdsmId(isPartiallySubmittedCommand, task);
+                                handlePartiallyExecutedTaskOfCommand(task);
                             }
                             return null;
                         } finally {
@@ -235,22 +233,12 @@ public final class AsyncTaskManager {
         });
     }
 
-    /**
-     * A command is considered partially submitted to the vdsm if some of its
-     * place holders have vdsm id and some have empty vdsm id, indicating that
-     * the server was restarted during command execution.
-     * @param tasks
-     * @return
-     */
-    private boolean isPartiallySubmittedCommand(List<AsyncTask> tasks) {
-        for (AsyncTask task : tasks) {
-            // if one of the tasks has a vdsm id, the command was partially
-            // submitted to vdsm
-            if (!hasEmptyVdsmId(task)) {
-                return true;
-            }
-        }
-        return false;
+    private boolean isPartiallyExecutedCommand(List<AsyncTask> tasks) {
+        return tasks.isEmpty() ? false : !tasks.get(0).getRootCmdEntity().isExecuted();
+    }
+
+    private static boolean hasEmptyVdsmId(AsyncTask task) {
+        return Guid.Empty.equals(task.getVdsmTaskId());
     }
 
     /**
@@ -267,22 +255,8 @@ public final class AsyncTaskManager {
         return rootCommandIdToCommandsMap;
     }
 
-    /**
-     * Determines if any of the tasks has an empty vdsm id.
-     * @param tasks
-     * @return
-     */
-    private boolean hasTasksWithoutVdsmId(List<AsyncTask> tasks) {
-        for (AsyncTask task : tasks) {
-            if (hasEmptyVdsmId(task)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean hasEmptyVdsmId(AsyncTask task) {
-        return Guid.Empty.equals(task.getVdsmTaskId());
+    private static boolean isPartiallyExecutedTask(AsyncTask task) {
+        return !task.getChildCmdEntity().isExecuted();
     }
 
     /**
@@ -294,41 +268,28 @@ public final class AsyncTaskManager {
      * If none of the tasks were submitted to vdsm, the empty place holders
      * are deleted from the database and we endAction on the command with
      * failure
-     * @param isPartiallySubmittedCommand
      * @param task
      */
-    private void handleTaskOfCommandWithEmptyVdsmId(
-            final boolean isPartiallySubmittedCommand,
+    private void handlePartiallyExecutedTaskOfCommand(
             final AsyncTask task) {
-        if (isPartiallySubmittedCommand) {
-            if (hasEmptyVdsmId(task)) {
-                removeTaskFromDbByTaskId(task.getTaskId());
-                return;
-            }
-            partiallyCompletedCommandTasks.put(task.getVdsmTaskId(), task);
+
+        if (hasEmptyVdsmId(task)) {
+            removeTaskFromDbByTaskId(task.getTaskId());
             return;
         }
-        TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                new TransactionMethod<Void>() {
-                    @Override
-                    public Void runInTransaction() {
-                        logAndFailTaskOfCommandWithEmptyVdsmId(task,
-                                "Engine was restarted before all tasks of the command could be submitted to vdsm.");
-                        return null;
-                    }
-                });
+        partiallyCompletedCommandTasks.put(task.getVdsmTaskId(), task);
     }
 
     public void logAndFailTaskOfCommandWithEmptyVdsmId(Guid asyncTaskId, String message) {
         AsyncTask task = coco.getAsyncTaskFromDb(asyncTaskId);
         if (task != null) {
-            logAndFailTaskOfCommandWithEmptyVdsmId(task, message);
+            logAndFailPartiallySubmittedTaskOfCommand(task, message);
         }
     }
 
-    public void logAndFailTaskOfCommandWithEmptyVdsmId(final AsyncTask task, String message) {
+    public void logAndFailPartiallySubmittedTaskOfCommand(final AsyncTask task, String message) {
         log.info(
-                "Failing task with empty vdsm id AsyncTaskType '{}': Task '{}' Parent Command '{}'",
+                "Failing partially submitted task AsyncTaskType '{}': Task '{}' Parent Command '{}'",
                 task.getTaskType(),
                 task.getTaskId(),
                 (task.getActionType()));
@@ -336,13 +297,13 @@ public final class AsyncTaskManager {
         if (task.getActionType() == VdcActionType.Unknown) {
             removeTaskFromDbByTaskId(task.getTaskId());
             log.info(
-                    "Not calling endAction for task with out vdsm id and AsyncTaskType '{}': Task '{}' Parent Command '{}'",
+                    "Not calling endAction for partially submitted task and AsyncTaskType '{}': Task '{}' Parent Command '{}'",
                     task.getTaskType(),
                     task.getTaskId(),
                     (task.getActionType()));
             return;
         }
-        log.info("Calling updateTask for task with out vdsm id and AsyncTaskType '{}': Task '{}' Parent Command"
+        log.info("Calling updateTask for partially submitted task and AsyncTaskType '{}': Task '{}' Parent Command"
                         + " '{}' Parameters class '{}'",
                 task.getTaskType(),
                 task.getTaskId(),
@@ -449,7 +410,7 @@ public final class AsyncTaskManager {
     private void pollAndUpdateAsyncTasks() {
         if (logChangedMap) {
             log.info("Polling and updating Async Tasks: {} tasks, {} tasks to poll now",
-                           _tasks.size(), numberOfTasksToPoll());
+                    _tasks.size(), numberOfTasksToPoll());
         }
 
         // Fetch Set of pool id's
@@ -468,7 +429,7 @@ public final class AsyncTaskManager {
      * @param asyncTaskMap - Task statuses Map fetched from VDSM.
      */
     private void updateTaskStatuses(
-                                    Map<Guid, Map<Guid, AsyncTaskStatus>> poolsAllTasksMap) {
+            Map<Guid, Map<Guid, AsyncTaskStatus>> poolsAllTasksMap) {
         for (SPMTask task : _tasks.values()) {
             if (task.getShouldPoll()) {
                 Map<Guid, AsyncTaskStatus> asyncTasksForPoolMap = poolsAllTasksMap
@@ -658,7 +619,7 @@ public final class AsyncTaskManager {
                     _tasks.get(vdsmTaskId).setLastStatusAccessTime();
                     returnValue.add(_tasks.get(vdsmTaskId).getLastTaskStatus());
                 } else { // task doesn't exist in the manager (shouldn't happen) ->
-                // assume it has been ended successfully.
+                    // assume it has been ended successfully.
                     log.warn(
                             "Polling tasks. Task ID '{}' doesn't exist in the manager -> assuming 'finished'.",
                             vdsmTaskId);
@@ -717,8 +678,8 @@ public final class AsyncTaskManager {
                             newlyAddedTasks.add(task);
                         } catch (Exception e) {
                             log.error("Failed to load task of type '{}' with id '{}': {}.",
-                                       creationInfo.getTaskType(), creationInfo.getVdsmTaskId(),
-                                       ExceptionUtils.getRootCauseMessage(e));
+                                    creationInfo.getTaskType(), creationInfo.getVdsmTaskId(),
+                                    ExceptionUtils.getRootCauseMessage(e));
                             log.debug("Exception", e);
                         }
                     }

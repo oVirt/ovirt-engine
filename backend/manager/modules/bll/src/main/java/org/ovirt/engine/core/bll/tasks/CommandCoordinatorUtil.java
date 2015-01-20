@@ -109,7 +109,7 @@ public class CommandCoordinatorUtil {
     }
 
     public static void logAndFailTaskOfCommandWithEmptyVdsmId(AsyncTask task, String message) {
-        getAsyncTaskManager().logAndFailTaskOfCommandWithEmptyVdsmId(task, message);
+        getAsyncTaskManager().logAndFailPartiallySubmittedTaskOfCommand(task, message);
     }
 
     public static Collection<Guid> getUserIdsForVdsmTaskIds(ArrayList<Guid> tasksIDs) {

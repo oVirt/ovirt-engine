@@ -127,7 +127,6 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                 JobRepositoryFactory.getJobRepository().closeCompletedJobSteps(job.getId(), JobExecutionStatus.FAILED);
             }
         }
-        insertAsyncTaskPlaceHolders();
         executeAction();
     }
 
