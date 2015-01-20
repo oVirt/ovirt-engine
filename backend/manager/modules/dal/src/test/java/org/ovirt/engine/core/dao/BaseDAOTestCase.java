@@ -44,9 +44,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public abstract class BaseDAOTestCase {
     protected static final Guid PRIVILEGED_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
-    protected static final long PRIVILEGED_USER_SESSION_ID = 2;
+    protected static final String PRIVILEGED_USER_ENGINE_SESSION_ID = "c6f975b2-6f67-11e4-8455-3c970e14c386";
     protected static final Guid UNPRIVILEGED_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
-    protected static final long UNPRIVILEGED_USER_SESSION_ID = 1;
+    protected static final String UNPRIVILEGED_USER_ENGINE_SESSION_ID = "9ee57fd0-6f67-11e4-9e67-3c970e14c386";
 
     protected static DbFacade dbFacade;
     private static Object dataFactory;

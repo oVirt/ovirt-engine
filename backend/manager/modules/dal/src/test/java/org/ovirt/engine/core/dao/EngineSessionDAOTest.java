@@ -37,7 +37,7 @@ public class EngineSessionDAOTest extends BaseDAOTestCase {
         newEngineSession.setGroupIds(new HashSet<Guid>(Arrays.asList(FixturesTool.EXISTING_GROUP_ID)));
         newEngineSession.setUserName("");
 
-        existingEngineSession = dao.get(PRIVILEGED_USER_SESSION_ID);
+        existingEngineSession = dao.getBySessionId(PRIVILEGED_USER_ENGINE_SESSION_ID);
     }
 
     /**
