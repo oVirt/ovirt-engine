@@ -70,12 +70,6 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         return lockProperties.withScope(Scope.Command);
     }
 
-    @Override
-    protected void insertAsyncTaskPlaceHolders() {
-        persistAsyncTaskPlaceHolder(getParameters().getParentCommand(), SAVE_IMAGE_TASK_KEY);
-        persistAsyncTaskPlaceHolder(getParameters().getParentCommand(), SAVE_RAM_STATE_TASK_KEY);
-    }
-
     /**
      * Finds an active data/master storage domain which has enough space to store the hibernation volumes
      *
@@ -97,7 +91,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
     @Override
     protected void perform() {
-        final Guid taskId1 = getAsyncTaskId(SAVE_IMAGE_TASK_KEY);
+        final Guid taskId1 = persistAsyncTaskPlaceHolder(getParameters().getParentCommand(), SAVE_IMAGE_TASK_KEY);
 
         Guid image1GroupId = Guid.newGuid();
 
@@ -122,7 +116,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         Guid guid1 = createTask(taskId1, ret1.getCreationInfo(), VdcActionType.HibernateVm);
         getReturnValue().getVdsmTaskIdList().add(guid1);
 
-        Guid taskId2 = getAsyncTaskId(SAVE_RAM_STATE_TASK_KEY);
+        Guid taskId2 = persistAsyncTaskPlaceHolder(getParameters().getParentCommand(), SAVE_RAM_STATE_TASK_KEY);
 
         // second vol should be 10kb
         Guid image2GroupId = Guid.newGuid();
