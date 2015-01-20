@@ -97,6 +97,7 @@ public enum VdcQueryType implements Serializable {
     GetNetworkById(VdcQueryAuthType.User),
     GetNetworkByNameAndDataCenter,
     IsManagementNetwork,
+    GetManagementNetwork,
     GetDefaultManagementNetwork,
 
     // External network providers
