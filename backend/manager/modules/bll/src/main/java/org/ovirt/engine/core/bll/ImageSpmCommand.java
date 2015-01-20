@@ -29,11 +29,6 @@ public abstract class ImageSpmCommand<T extends ImagesContainterParametersBase> 
         return lockProperties.withScope(Scope.Execution);
     }
 
-    @Override
-    protected void insertAsyncTaskPlaceHolders() {
-        persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
-    }
-
     private Guid getPoolSpmId() {
         if (cachedSpmId == null) {
             cachedSpmId = getStoragePool().getSpmVdsId();
@@ -82,7 +77,7 @@ public abstract class ImageSpmCommand<T extends ImagesContainterParametersBase> 
         VDSReturnValue vdsReturnValue = executeVdsCommand();
 
         if (vdsReturnValue.getSucceeded()) {
-            Guid taskId = getAsyncTaskId();
+            Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
             getReturnValue().getInternalVdsmTaskIdList().add(createTask(taskId,
                     vdsReturnValue.getCreationInfo(),
                     getParameters().getParentCommand(),
