@@ -42,11 +42,6 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     }
 
     @Override
-    protected void insertAsyncTaskPlaceHolders() {
-        persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
-    }
-
-    @Override
     protected void executeCommand() {
         if (canCreateSnapshot()) {
             VDSReturnValue vdsReturnValue = performImageVdsmOperation();
@@ -88,7 +83,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
         VDSReturnValue vdsReturnValue = null;
 
         try {
-            Guid taskId = getAsyncTaskId();
+            Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
 
             vdsReturnValue =
                     runVdsCommand(

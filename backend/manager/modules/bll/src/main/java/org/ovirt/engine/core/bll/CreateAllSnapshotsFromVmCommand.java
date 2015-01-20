@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.memory.LiveSnapshotMemoryImageBuilder;
 import org.ovirt.engine.core.bll.memory.MemoryImageBuilder;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
@@ -188,15 +189,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     @Override
-    protected void buildChildCommandInfos() {
-        for (DiskImage image : getDisksList()) {
-            addChildCommandInfo(image.getImageId(),
-                    VdcActionType.CreateSnapshot,
-                    buildCreateSnapshotParameters(image));
-        }
-    }
-
-    @Override
     protected void executeVmCommand() {
         Guid createdSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
         getParameters().setSnapshotType(determineSnapshotType());
@@ -260,7 +252,10 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     private void createSnapshotsForDisks() {
         for (DiskImage image : getDisksList()) {
-            VdcReturnValueBase vdcReturnValue = executeChildCommand(image.getImageId());
+            VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(
+                    VdcActionType.CreateSnapshot,
+                    buildCreateSnapshotParameters(image),
+                    ExecutionHandler.createDefaultContextForTasks(getContext()));
 
             if (vdcReturnValue.getSucceeded()) {
                 getTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
