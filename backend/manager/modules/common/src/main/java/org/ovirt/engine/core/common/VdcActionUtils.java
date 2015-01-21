@@ -194,16 +194,6 @@ public final class VdcActionUtils {
                         VdcActionType.RemoveVmInterface, VdcActionType.CancelMigrateVm,
                         VdcActionType.ExtendImageSize, VdcActionType.RebootVm));
         vmMatrix.put(
-                VMStatus.PreparingForHibernate,
-                EnumSet.of(VdcActionType.RunVm, VdcActionType.CloneVm,
-                        VdcActionType.RunVmOnce, VdcActionType.StopVm, VdcActionType.ShutdownVm,
-                        VdcActionType.HibernateVm, VdcActionType.MigrateVm, VdcActionType.RemoveVm,
-                        VdcActionType.AddVmTemplate, VdcActionType.ExportVm, VdcActionType.MoveVm,
-                        VdcActionType.ImportVm, VdcActionType.ChangeDisk,
-                        VdcActionType.AddVmInterface, VdcActionType.UpdateVmInterface,
-                        VdcActionType.RemoveVmInterface, VdcActionType.CancelMigrateVm,
-                        VdcActionType.ExtendImageSize, VdcActionType.RebootVm));
-        vmMatrix.put(
                 VMStatus.RestoringState,
                 EnumSet.of(VdcActionType.RunVm, VdcActionType.CloneVm,
                         VdcActionType.RunVmOnce, VdcActionType.StopVm, VdcActionType.ShutdownVm,

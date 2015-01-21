@@ -675,7 +675,6 @@ public class VmMapper extends VmBaseMapper {
         case NotResponding:         return VmStatus.NOT_RESPONDING;
         case WaitForLaunch:         return VmStatus.WAIT_FOR_LAUNCH;
         case RebootInProgress:      return VmStatus.REBOOT_IN_PROGRESS;
-        case PreparingForHibernate:
         case SavingState:           return VmStatus.SAVING_STATE;
         case RestoringState:        return VmStatus.RESTORING_STATE;
         case Suspended:             return VmStatus.SUSPENDED;

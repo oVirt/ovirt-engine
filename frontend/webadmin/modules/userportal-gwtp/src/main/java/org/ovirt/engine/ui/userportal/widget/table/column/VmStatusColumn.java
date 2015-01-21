@@ -47,7 +47,6 @@ public class VmStatusColumn extends ImageWithDecoratorColumn<UserPortalItemModel
         case WaitForLaunch:
             return getApplicationResources().waitforlaunch();
         case ImageLocked:
-        case PreparingForHibernate:
         case SavingState:
             return getApplicationResources().vmStatusWaiting();
         case PoweringUp:

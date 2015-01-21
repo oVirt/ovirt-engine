@@ -547,10 +547,6 @@ public class VmAnalyzer {
             if (vdsmVm.getVmDynamic().getStatus() != VMStatus.Up) {
                 props.remove(VmDynamic.APPLICATIONS_LIST_FIELD_NAME);
                 vdsmVm.getVmDynamic().setAppList(dbVm.getAppList());
-            } else if (props.contains(VmDynamic.STATUS_FIELD_NAME)
-                    && dbVm.getDynamicData().getStatus() == VMStatus.PreparingForHibernate) {
-                vdsmVm.getVmDynamic().setStatus(VMStatus.PreparingForHibernate);
-                props.remove(VmDynamic.STATUS_FIELD_NAME);
             }
             // if anything else changed
             if (!props.isEmpty()) {

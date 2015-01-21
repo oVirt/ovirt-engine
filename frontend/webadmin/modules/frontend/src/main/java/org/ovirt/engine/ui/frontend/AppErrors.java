@@ -1102,9 +1102,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$vmStatus Image Illegal")
     String VAR__VM_STATUS__IMAGE_ILLEGAL();
 
-    @DefaultStringValue("$vmStatus Preparing for Hibernate")
-    String VAR__VM_STATUS__PREPARING_FOR_HIBERNATE();
-
     @DefaultStringValue("$type Gluster Volume")
     String VAR__TYPE__GLUSTER_VOLUME();
 

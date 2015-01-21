@@ -28,7 +28,6 @@ public class LocalizedVmStatus {
         statusToMessage.put(VMStatus.ImageIllegal, VdcBllMessages.VAR__VM_STATUS__IMAGE_ILLEGAL);
         statusToMessage.put(VMStatus.ImageLocked, VdcBllMessages.VAR__VM_STATUS__IMAGE_LOCKED);
         statusToMessage.put(VMStatus.PoweringDown, VdcBllMessages.VAR__VM_STATUS__POWERING_DOWN);
-        statusToMessage.put(VMStatus.PreparingForHibernate, VdcBllMessages.VAR__VM_STATUS__PREPARING_FOR_HIBERNATE);
     }
 
     public static final String from(VMStatus status) {

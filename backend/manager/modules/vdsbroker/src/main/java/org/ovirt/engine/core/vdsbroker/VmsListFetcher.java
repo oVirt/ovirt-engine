@@ -123,9 +123,7 @@ public class VmsListFetcher {
     }
 
     private boolean statusChanged(VM dbVm, VmDynamic vdsmVm) {
-        return dbVm == null ||
-                (dbVm.getStatus() != vdsmVm.getStatus() &&
-                        !(dbVm.getStatus() == VMStatus.PreparingForHibernate && vdsmVm.getStatus() == VMStatus.Up));
+        return dbVm == null || (dbVm.getStatus() != vdsmVm.getStatus());
     }
 
     private boolean isDevicesChanged(VM dbVm, VmInternalData vdsmVm) {

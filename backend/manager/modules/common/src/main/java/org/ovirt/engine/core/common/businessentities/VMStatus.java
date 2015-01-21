@@ -19,8 +19,7 @@ public enum VMStatus implements Identifiable {
     Suspended(13),
     ImageIllegal(14),
     ImageLocked(15),
-    PoweringDown(16),
-    PreparingForHibernate(17);
+    PoweringDown(16);
 
     private int value;
     private static final HashMap<Integer, VMStatus> valueToStatus = new HashMap<Integer, VMStatus>();
@@ -144,7 +143,7 @@ public enum VMStatus implements Identifiable {
      * @return true if the VM is in the middle of hibernation process
      */
     public boolean isHibernating() {
-        return this == SavingState || this == PreparingForHibernate;
+        return this == SavingState;
     }
 
     public boolean isDownOrSuspended() {

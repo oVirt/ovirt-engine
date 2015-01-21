@@ -196,10 +196,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
             @Override
             public VMStatus getRawValue(VM object) {
-                switch (object.getStatus()) {
-                case PreparingForHibernate: return VMStatus.SavingState;
-                default:                    return object.getStatus();
-                }
+                return object.getStatus();
             }
         };
 
