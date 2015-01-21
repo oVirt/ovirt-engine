@@ -50,7 +50,7 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
         }
     }
 
-    public <T> Set<MockConfigDescriptor<T>> getExtraConfigDescriptors() {
+    protected <T> Set<MockConfigDescriptor<T>> getExtraConfigDescriptors() {
         return Collections.emptySet();
     }
 
