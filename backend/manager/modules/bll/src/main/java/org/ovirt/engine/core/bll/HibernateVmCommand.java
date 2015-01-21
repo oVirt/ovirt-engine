@@ -70,7 +70,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(Scope.Execution);
+        return lockProperties.withScope(Scope.Command);
     }
 
     @Override
@@ -265,7 +265,15 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getVmId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, getVmIsHibernatingMessage()));
+    }
+
+    private String getVmIsHibernatingMessage() {
+        StringBuilder builder = new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_HIBERNATING.name());
+        if (getVmName() != null) {
+            builder.append(String.format("$VmName %1$s", getVmName()));
+        }
+        return builder.toString();
     }
 
     @Override

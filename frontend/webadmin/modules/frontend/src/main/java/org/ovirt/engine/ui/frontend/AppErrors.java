@@ -1885,6 +1885,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Snapshot is currently being created for VM ${VmName}.")
     String ACTION_TYPE_FAILED_SNAPSHOT_IS_BEING_TAKEN_FOR_VM();
 
+    @DefaultStringValue("Cannot ${action} ${type}. VM is hibernating.")
+    String ACTION_TYPE_FAILED_VM_IS_HIBERNATING();
+
     @DefaultStringValue("Cannot ${action} ${type}. This disk is currently in use to create VM ${VmName}.")
     String ACTION_TYPE_FAILED_DISK_IS_USED_FOR_CREATE_VM();
 
