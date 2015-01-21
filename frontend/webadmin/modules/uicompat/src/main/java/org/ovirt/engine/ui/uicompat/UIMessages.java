@@ -418,4 +418,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Force {0} session")
     String geoRepForceTitle(String action);
 
+    @DefaultMessage("Value of cluster configuration parameter {0} is empty")
+    String clusterSnapshotOptionValueEmpty(String option);
+
+    @DefaultMessage("Value of volume configuration parameter {0} is empty")
+    String volumeSnapshotOptionValueEmpty(String option);
 }

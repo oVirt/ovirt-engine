@@ -32,6 +32,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.AddBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.BrickAdvancedDetailsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterClusterSnapshotConfigureOptionsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeSnapshotConfigureOptionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickStatusPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.ReplaceBrickPopupPresenterWidget;
@@ -61,7 +63,9 @@ public class VolumeModule extends AbstractGinModule {
             final Provider<VolumeRebalanceStatusPopupPresenterWidget> rebalanceStatusPopupProvider,
             final Provider<VolumeProfileStatisticsPopupPresenterWidget> volumeProfileStatsPopupProvider,
             final Provider<VolumeListModel> modelProvider,
-            final Provider<CommonModel> commonModelProvider) {
+            final Provider<CommonModel> commonModelProvider,
+            final Provider<GlusterVolumeSnapshotConfigureOptionsPopupPresenterWidget> volumeSnapshotConfigOptionsPopupProvider,
+            final Provider<GlusterClusterSnapshotConfigureOptionsPopupPresenterWidget> clusterSnapshotConfigOptionsPopupProvider) {
         MainTabModelProvider<GlusterVolumeEntity, VolumeListModel> result =
                 new MainTabModelProvider<GlusterVolumeEntity, VolumeListModel>(eventBus, defaultConfirmPopupProvider,
                         commonModelProvider) {
@@ -76,6 +80,12 @@ public class VolumeModule extends AbstractGinModule {
                 }
                 else if(lastExecutedCommand == getModel().getShowVolumeProfileDetailsCommand() || lastExecutedCommand.getName().equals("showProfileDetails")) {//$NON-NLS-1$
                     return volumeProfileStatsPopupProvider.get();
+                }
+                else if (lastExecutedCommand == getModel().getConfigureVolumeSnapshotOptionsCommand()) {
+                    return volumeSnapshotConfigOptionsPopupProvider.get();
+                }
+                else if (lastExecutedCommand == getModel().getConfigureClusterSnapshotOptionsCommand()) {
+                    return clusterSnapshotConfigOptionsPopupProvider.get();
                 }
                 else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);

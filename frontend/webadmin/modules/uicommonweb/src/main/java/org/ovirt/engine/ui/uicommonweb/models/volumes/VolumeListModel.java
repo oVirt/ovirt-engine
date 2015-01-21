@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
+import org.ovirt.engine.core.common.action.gluster.UpdateGlusterVolumeSnapshotConfigParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -21,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
@@ -52,6 +54,8 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterClusterSnapshotConfigModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotConfigModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeBrickListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeEventListModel;
@@ -61,6 +65,7 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeParameterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeProfileStatisticsModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeRebalanceStatusModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeSnapshotOptionModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -108,6 +113,8 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
     private UICommand startVolumeProfilingCommand;
     private UICommand showVolumeProfileDetailsCommand;
     private UICommand stopVolumeProfilingCommand;
+    private UICommand configureClusterSnapshotOptionsCommand;
+    private UICommand configureVolumeSnapshotOptionsCommand;
 
     public UICommand getStartRebalanceCommand() {
         return startRebalanceCommand;
@@ -200,6 +207,22 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         this.stopVolumeProfilingCommand = stopVolumeProfilingCommand;
     }
 
+    public UICommand getConfigureClusterSnapshotOptionsCommand() {
+        return this.configureClusterSnapshotOptionsCommand;
+    }
+
+    public void setConfigureClusterSnapshotOptionsCommand(UICommand command) {
+        this.configureClusterSnapshotOptionsCommand = command;
+    }
+
+    public UICommand getConfigureVolumeSnapshotOptionsCommand() {
+        return this.configureVolumeSnapshotOptionsCommand;
+    }
+
+    public void setConfigureVolumeSnapshotOptionsCommand(UICommand command) {
+        this.configureVolumeSnapshotOptionsCommand = command;
+    }
+
     @Inject
     public VolumeListModel(final VolumeBrickListModel volumeBrickListModel, final VolumeGeneralModel volumeGeneralModel,
             final VolumeParameterListModel volumeParameterListModel,
@@ -230,6 +253,8 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         setShowVolumeProfileDetailsCommand(new UICommand("showProfileDetails", this));//$NON-NLS-1$
         setStopVolumeProfilingCommand(new UICommand("stopProfiling", this));//$NON-NLS-1$
         setOptimizeForVirtStoreCommand(new UICommand("OptimizeForVirtStore", this)); //$NON-NLS-1$
+        setConfigureClusterSnapshotOptionsCommand(new UICommand("configureClusterSnapshotOptions", this)); //$NON-NLS-1$
+        setConfigureVolumeSnapshotOptionsCommand(new UICommand("configureVolumeSnapshotOptions", this)); //$NON-NLS-1$
 
         getRemoveVolumeCommand().setIsExecutionAllowed(false);
         getStartCommand().setIsExecutionAllowed(false);
@@ -444,6 +469,8 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         boolean allowStartProfiling = false;
         boolean allowStopProfiling = false;
         boolean allowProfileStatisticsDetails = false;
+        boolean allowConfigureClusterSnapshotOptions = true;
+        boolean allowConfigureVolumeSnapshotOptions = false;
 
         if (getSelectedItems() == null || getSelectedItems().size() == 0) {
             allowStart = false;
@@ -484,6 +511,7 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                         volumeEntity.getStatus() == GlusterStatus.UP && asyncTask != null
                                 && asyncTask.getType() == GlusterTaskType.REBALANCE
                                 && asyncTask.getStatus() == JobExecutionStatus.STARTED;
+                allowConfigureVolumeSnapshotOptions = volumeEntity.getStatus() == GlusterStatus.UP;
             }
             else {
                 allowStopRebalance = false;
@@ -498,6 +526,8 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         getStopRebalanceCommand().setIsExecutionAllowed(allowStopRebalance);
         getStatusRebalanceCommand().setIsExecutionAllowed(allowStatusRebalance);
         getOptimizeForVirtStoreCommand().setIsExecutionAllowed(allowOptimize);
+        getConfigureClusterSnapshotOptionsCommand().setIsExecutionAllowed(allowConfigureClusterSnapshotOptions);
+        getConfigureVolumeSnapshotOptionsCommand().setIsExecutionAllowed(allowConfigureVolumeSnapshotOptions);
 
         // System tree dependent actions.
         boolean isAvailable =
@@ -622,6 +652,18 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                 selectedVolumes.add((GlusterVolumeEntity) selectedVolume);
             }
             optimizeVolumesForVirtStore(selectedVolumes);
+        } else if (command.equals(getConfigureClusterSnapshotOptionsCommand())) {
+            configureClusterSnapshotOptions();
+        } else if (command.getName().equalsIgnoreCase("confirmConfigureClusterSnapshotOptions")) {//$NON-NLS-1$
+            confirmConfigureClusterSnapshotOptions();
+        } else if (command.getName().equalsIgnoreCase("onConfigureClusterSnapshotOptions")) {//$NON-NLS-1$
+            onConfigureClusterSnapshotOptions();
+        } else if (command.equals(getConfigureVolumeSnapshotOptionsCommand())) {
+            configureVolumeSnapshotOptions();
+        } else if (command.getName().equalsIgnoreCase("confirmConfigureVolumeSnapshotOptions")) {//$NON-NLS-1$
+            confirmConfigureVolumeSnapshotOptions();
+        } else if (command.getName().equalsIgnoreCase("onConfigureVolumeSnapshotOptions")) {//$NON-NLS-1$
+            onConfigureVolumeSnapshotOptions();
         }
     }
 
@@ -1109,6 +1151,246 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
                 optimizeVolumesForVirtStore(Arrays.asList(volume));
             }
         }
+    }
+
+    /**
+     * This action is handled here in VolumeLisModel only, because there is a use case where no volume would be selected
+     * for setting the configuration. And in this scenario the GlusrerVolumeSnapshotListModel would not be initialized.
+     */
+    public void configureClusterSnapshotOptions() {
+        if (getWindow() != null) {
+            return;
+        }
+
+        final UIConstants constants = ConstantsManager.getInstance().getConstants();
+
+        final GlusterClusterSnapshotConfigModel clusterSnapshotConfigModel = new GlusterClusterSnapshotConfigModel();
+        clusterSnapshotConfigModel.setHelpTag(HelpTag.configure_volume_snapshot);
+        clusterSnapshotConfigModel.setHashName("configure_volume_snapshot"); //$NON-NLS-1$
+        clusterSnapshotConfigModel.setTitle(ConstantsManager.getInstance()
+                .getConstants()
+                .configureClusterSnapshotOptionsTitle());
+        setWindow(clusterSnapshotConfigModel);
+
+        AsyncDataProvider.getInstance().getClusterList(new AsyncQuery(this, new INewAsyncCallback() {
+
+            @Override
+            public void onSuccess(Object model, final Object returnValue) {
+                if (getSystemTreeSelectedItem() != null) {
+                    VDSGroup selectedCluster = (VDSGroup) getSystemTreeSelectedItem().getEntity();
+                    clusterSnapshotConfigModel.getClusters().setItems((List<VDSGroup>) returnValue, selectedCluster);
+                } else {
+                    if (getSelectedItems() != null) {
+                        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getSelectedItems().get(0);
+                        if (volumeEntity != null) {
+                            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this, new INewAsyncCallback() {
+
+                                @Override
+                                public void onSuccess(Object model, Object returnValue1) {
+                                    clusterSnapshotConfigModel.getClusters().setItems((List<VDSGroup>) returnValue, (VDSGroup) returnValue1);
+                                }
+                            }), volumeEntity.getClusterId());
+                        }
+                    } else {
+                        clusterSnapshotConfigModel.getClusters().setItems((List<VDSGroup>) returnValue);
+                    }
+                }
+            }
+        }));
+
+        clusterSnapshotConfigModel.getClusterConfigOptions().setTitle(ConstantsManager.getInstance()
+                .getConstants()
+                .configureClusterSnapshotOptionsTitle());
+
+        UICommand updateCommand = new UICommand("confirmConfigureClusterSnapshotOptions", this); //$NON-NLS-1$
+        updateCommand.setTitle(constants.snapshotConfigUpdateButtonLabel());
+        updateCommand.setIsDefault(true);
+        clusterSnapshotConfigModel.getCommands().add(updateCommand);
+
+        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
+        cancelCommand.setTitle(constants.cancel());
+        cancelCommand.setIsCancel(true);
+        clusterSnapshotConfigModel.getCommands().add(cancelCommand);
+    }
+
+    public void confirmConfigureClusterSnapshotOptions() {
+        boolean cfgChanged = false;
+        GlusterClusterSnapshotConfigModel snapshotConfigModel = (GlusterClusterSnapshotConfigModel) getWindow();
+
+        if (!snapshotConfigModel.validate()) {
+            return;
+        }
+
+        for (EntityModel<GlusterVolumeSnapshotConfig> clusterCfg : snapshotConfigModel.getClusterConfigOptions()
+                .getItems()) {
+            if (!(clusterCfg.getEntity().getParamValue().equals(snapshotConfigModel.getExistingClusterConfigValue(clusterCfg.getEntity()
+                    .getParamName())))) {
+                cfgChanged = true;
+                break;
+            }
+        }
+
+        if (cfgChanged) {
+            ConfirmationModel confirmModel = new ConfirmationModel();
+            setConfirmWindow(confirmModel);
+            confirmModel.setTitle(ConstantsManager.getInstance()
+                    .getConstants()
+                    .updateSnapshotConfigurationConfirmationTitle());
+            confirmModel.setHelpTag(HelpTag.configure_volume_snapshot_confirmation);
+            confirmModel.setHashName("configure_volume_snapshot_confirmation"); //$NON-NLS-1$
+            confirmModel.setMessage(ConstantsManager.getInstance()
+                    .getConstants()
+                    .youAreAboutChangeSnapshotConfigurationMsg());
+
+            UICommand tempVar = new UICommand("onConfigureClusterSnapshotOptions", this); //$NON-NLS-1$
+            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
+            tempVar.setIsDefault(true);
+            getConfirmWindow().getCommands().add(tempVar);
+            UICommand tempVar2 = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
+            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+            tempVar2.setIsCancel(true);
+            getConfirmWindow().getCommands().add(tempVar2);
+        } else {
+            onConfigureClusterSnapshotOptions();
+        }
+    }
+
+    public void onConfigureClusterSnapshotOptions() {
+        GlusterClusterSnapshotConfigModel clusterSnapshotConfigModel = (GlusterClusterSnapshotConfigModel) getWindow();
+
+        Guid clusterId = clusterSnapshotConfigModel.getClusters().getSelectedItem().getId();
+        List<GlusterVolumeSnapshotConfig> vdsParams = new ArrayList<GlusterVolumeSnapshotConfig>();
+        for (EntityModel<GlusterVolumeSnapshotConfig> clusterCfg : clusterSnapshotConfigModel.getClusterConfigOptions()
+                .getItems()) {
+            vdsParams.add(new GlusterVolumeSnapshotConfig(clusterId,
+                    null,
+                    clusterCfg.getEntity().getParamName(),
+                    clusterCfg.getEntity().getParamValue()));
+        }
+
+        Frontend.getInstance().runAction(VdcActionType.UpdateGlusterVolumeSnapshotConfig,
+                new UpdateGlusterVolumeSnapshotConfigParameters(clusterId, null, vdsParams),
+                new IFrontendActionAsyncCallback() {
+                    @Override
+                    public void executed(FrontendActionAsyncResult result) {
+                        if (result.getReturnValue() != null && result.getReturnValue().getSucceeded()) {
+                            cancel();
+                        }
+                        if (getConfirmWindow() != null) {
+                            setConfirmWindow(null);
+                        }
+                    }
+                },
+                this);
+    }
+
+    public void configureVolumeSnapshotOptions() {
+        if (getWindow() != null) {
+            return;
+        }
+
+        final UIConstants constants = ConstantsManager.getInstance().getConstants();
+
+        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getSelectedItems().get(0);
+        final GlusterVolumeSnapshotConfigModel volumeSnapshotConfigModel =
+                new GlusterVolumeSnapshotConfigModel(volumeEntity);
+        volumeSnapshotConfigModel.setHelpTag(HelpTag.configure_volume_snapshot);
+        volumeSnapshotConfigModel.setHashName("configure_volume_snapshot"); //$NON-NLS-1$
+        volumeSnapshotConfigModel.setTitle(ConstantsManager.getInstance()
+                .getConstants()
+                .configureVolumeSnapshotOptionsTitle());
+        setWindow(volumeSnapshotConfigModel);
+
+        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this, new INewAsyncCallback() {
+
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                volumeSnapshotConfigModel.getClusterName().setEntity(((VDSGroup) returnValue).getName());
+            }
+        }), volumeEntity.getClusterId());
+        volumeSnapshotConfigModel.getVolumeName().setEntity(volumeEntity.getName());
+
+        UICommand updateCommand = new UICommand("confirmConfigureVolumeSnapshotOptions", this); //$NON-NLS-1$
+        updateCommand.setTitle(constants.snapshotConfigUpdateButtonLabel());
+        updateCommand.setIsDefault(true);
+        volumeSnapshotConfigModel.getCommands().add(updateCommand);
+
+        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
+        cancelCommand.setTitle(constants.cancel());
+        cancelCommand.setIsCancel(true);
+        volumeSnapshotConfigModel.getCommands().add(cancelCommand);
+    }
+
+    public void confirmConfigureVolumeSnapshotOptions() {
+        boolean cfgChanged = false;
+        GlusterVolumeSnapshotConfigModel snapshotConfigModel = (GlusterVolumeSnapshotConfigModel) getWindow();
+
+        if (!snapshotConfigModel.validate()) {
+            return;
+        }
+
+        for (EntityModel<VolumeSnapshotOptionModel> volumeCfg : snapshotConfigModel.getConfigOptions().getItems()) {
+            if (!(volumeCfg.getEntity().getOptionValue().equals(snapshotConfigModel.getExistingVolumeConfigValue(volumeCfg.getEntity()
+                    .getOptionName())))) {
+                cfgChanged = true;
+                break;
+            }
+        }
+
+        if (cfgChanged) {
+            ConfirmationModel confirmModel = new ConfirmationModel();
+            setConfirmWindow(confirmModel);
+            confirmModel.setTitle(ConstantsManager.getInstance()
+                    .getConstants()
+                    .updateSnapshotConfigurationConfirmationTitle());
+            confirmModel.setHelpTag(HelpTag.configure_volume_snapshot_confirmation);
+            confirmModel.setHashName("configure_volume_snapshot_confirmation"); //$NON-NLS-1$
+            confirmModel.setMessage(ConstantsManager.getInstance()
+                    .getConstants()
+                    .youAreAboutChangeSnapshotConfigurationMsg());
+
+            UICommand tempVar = new UICommand("onConfigureVolumeSnapshotOptions", this); //$NON-NLS-1$
+            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
+            tempVar.setIsDefault(true);
+            getConfirmWindow().getCommands().add(tempVar);
+            UICommand tempVar2 = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
+            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+            tempVar2.setIsCancel(true);
+            getConfirmWindow().getCommands().add(tempVar2);
+        } else {
+            onConfigureVolumeSnapshotOptions();
+        }
+    }
+
+    public void onConfigureVolumeSnapshotOptions() {
+        GlusterVolumeSnapshotConfigModel volumeSnapshotConfigModel = (GlusterVolumeSnapshotConfigModel) getWindow();
+
+        GlusterVolumeEntity volumeEntity = volumeSnapshotConfigModel.getSelectedVolumeEntity();
+        List<GlusterVolumeSnapshotConfig> vdsParams = new ArrayList<GlusterVolumeSnapshotConfig>();
+        for (EntityModel<VolumeSnapshotOptionModel> volumeCfg : volumeSnapshotConfigModel.getConfigOptions()
+                .getItems()) {
+            vdsParams.add(new GlusterVolumeSnapshotConfig(volumeEntity.getClusterId(),
+                    volumeEntity.getId(),
+                    volumeCfg.getEntity().getOptionName(),
+                    volumeCfg.getEntity().getOptionValue()));
+        }
+
+        Frontend.getInstance().runAction(VdcActionType.UpdateGlusterVolumeSnapshotConfig,
+                new UpdateGlusterVolumeSnapshotConfigParameters(volumeEntity.getClusterId(),
+                        volumeEntity.getId(),
+                        vdsParams),
+                new IFrontendActionAsyncCallback() {
+                    @Override
+                    public void executed(FrontendActionAsyncResult result) {
+                        if (result.getReturnValue() != null && result.getReturnValue().getSucceeded()) {
+                            cancel();
+                        }
+                        if (getConfirmWindow() != null) {
+                            setConfirmWindow(null);
+                        }
+                    }
+                },
+                this);
     }
 
     @Override

@@ -1717,6 +1717,11 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeRebalanceStatus, parameters, aQuery);
     }
 
+    public void getGlusterSnapshotConfig(AsyncQuery aQuery, Guid clusterId, Guid volumeId) {
+        aQuery.setHandleFailure(true);
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeSnapshotConfig, new GlusterVolumeQueriesParameters(clusterId, volumeId), aQuery);
+    }
+
     public void getGlusterVolumeProfilingStatistics(AsyncQuery aQuery, Guid clusterId, Guid volumeId, boolean nfs) {
         aQuery.setHandleFailure(true);
         GlusterVolumeProfileParameters parameters = new GlusterVolumeProfileParameters(clusterId, volumeId, nfs);
