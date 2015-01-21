@@ -6,7 +6,10 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
 import org.ovirt.engine.api.common.util.StatusUtils;
+import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.LogicalUnit;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
@@ -26,6 +29,7 @@ import org.ovirt.engine.api.resource.RemovableStorageDomainContentsResource;
 import org.ovirt.engine.api.resource.StorageDomainResource;
 import org.ovirt.engine.api.resource.StorageDomainServerConnectionsResource;
 import org.ovirt.engine.api.restapi.util.StorageDomainHelper;
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
@@ -41,11 +45,12 @@ import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
+import org.ovirt.engine.core.common.queries.StorageDomainsAndStoragePoolIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageDomainResource extends
-        AbstractBackendSubResource<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain> implements StorageDomainResource {
+        AbstractBackendActionableResource<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain> implements StorageDomainResource {
 
     private final BackendStorageDomainsResource parent;
 
@@ -94,6 +99,34 @@ public class BackendStorageDomainResource extends
                 new UpdateParametersProvider()),
                 new String[] { "templates", "vms" });
     }
+
+
+    @Override
+    public Response getIsAttached(Action action) {
+        validateParameters(action, "host.id|name");
+        Host host = action.getHost();
+        org.ovirt.engine.core.common.businessentities.StorageDomain storageDomainToAttach =
+                getEntity(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
+                        VdcQueryType.GetStorageDomainById,
+                        new IdQueryParameters(guid),
+                        "storage_domain");
+        StorageDomainsAndStoragePoolIdQueryParameters parameters =
+                new StorageDomainsAndStoragePoolIdQueryParameters(storageDomainToAttach, null, asGuid(host.getId()));
+        parameters.setCheckStoragePoolStatus(false);
+        List<StorageDomainStatic> attachedStorageDomains =
+                getEntity(List.class,
+                        VdcQueryType.GetStorageDomainsWithAttachedStoragePoolGuid,
+                        parameters,
+                        "GetStorageDomainsWithAttachedStoragePoolGuid", true);
+        StorageDomain returnedStorageDomain = new StorageDomain();
+        returnedStorageDomain.setIsAttached(false);
+        returnedStorageDomain.setId(guid.toString());
+        if (!attachedStorageDomains.isEmpty()) {
+            returnedStorageDomain.setIsAttached(true);
+        }
+        return Response.ok().entity(returnedStorageDomain).build();
+    }
+
 
     @Override
     public FilesResource getFilesResource() {

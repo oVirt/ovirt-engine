@@ -1528,6 +1528,20 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
+- name: /storagedomains/{storagedomain:id}/isattached|rel=isattached
+  description: Querying if the Storage Domain is already attached to a Data Center by the is_attached boolean field, which is part of the storage server. IMPORTANT, Executing this API will cause the Host to disconnect from the Storage Domain.
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {action.host.id: 'xs:string'}
+        optionalArguments: {}
+        description:
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /storagedomains/{storagedomain:id}|rel=update
   description: update the storage domain
   request:
