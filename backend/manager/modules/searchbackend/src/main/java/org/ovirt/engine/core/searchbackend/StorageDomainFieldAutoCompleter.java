@@ -16,7 +16,6 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
     public static final String DESCRIPTION = "DESCRIPTION";
     public static final String WIPE_AFTER_DELETE = "WIPE_AFTER_DELETE";
 
-
     public StorageDomainFieldAutoCompleter() {
         // Building the basic vervs Dict
         mVerbs.add(NAME);
@@ -81,7 +80,6 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         }
         else if (WIPE_AFTER_DELETE.equals(fieldName)) {
             retval = new BitValueAutoCompleter();
-        } else {
         }
         return retval;
     }
