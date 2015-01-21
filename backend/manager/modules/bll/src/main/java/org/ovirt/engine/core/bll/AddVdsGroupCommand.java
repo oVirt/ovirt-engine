@@ -99,6 +99,7 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
                 && validate(validator.mixedClusterServicesSupported())
                 && validate(validator.attestationServerConfigured())
                 && validate(validator.migrationSupported(getArchitecture()))
+                && validateClusterPolicy()
                 && validate(validator.virtIoRngSupported());
     }
 
