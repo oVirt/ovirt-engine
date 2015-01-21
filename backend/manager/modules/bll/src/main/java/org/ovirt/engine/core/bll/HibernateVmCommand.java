@@ -278,81 +278,66 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
     @Override
     protected void endSuccessfully() {
-        if (getVm() != null) {
-            if (getVm().getStatus() != VMStatus.PreparingForHibernate) {
-                // If the Vm is not PreparingForHibernate, we shouldn't perform Hibernate on it,
-                // since if the Vm is in another status, something might have happened to it
-                // that might prevent it from being hibernated.
+        if (getVm().getStatus() != VMStatus.PreparingForHibernate) {
+            // If the Vm is not PreparingForHibernate, we shouldn't perform Hibernate on it,
+            // since if the Vm is in another status, something might have happened to it
+            // that might prevent it from being hibernated.
 
-                // NOTE: We don't remove the 2 volumes because we don't want to
-                // start here another tasks.
+            // NOTE: We don't remove the 2 volumes because we don't want to
+            // start here another tasks.
 
-                log.warn(
-                        "VM '{}' is not in 'PreparingForHibernate' status, but in '{}' status - not performing Hibernate.",
-                        getVm().getName(),
-                        getVm().getStatus());
-                getReturnValue().setEndActionTryAgain(false);
-            }
+            log.warn(
+                    "VM '{}' is not in 'PreparingForHibernate' status, but in '{}' status - not performing Hibernate.",
+                    getVm().getName(),
+                    getVm().getStatus());
+            getReturnValue().setEndActionTryAgain(false);
+        }
 
-            else if (getVm().getRunOnVds() == null) {
-                log.warn(
-                        "VM '{}' doesn't have 'run_on_vds' value - cannot Hibernate.",
-                        getVm().getName());
-                getReturnValue().setEndActionTryAgain(false);
-            }
-
-            else {
-                String hiberVol = getActiveSnapshot().getMemoryVolume();
-                if (hiberVol != null) {
-                    try {
-                        runVdsCommand(VDSCommandType.Hibernate,
-                                new HibernateVDSCommandParameters(getVm().getRunOnVds(), getVmId(), hiberVol));
-                    } catch (VdcBLLException e) {
-                        isHibernateVdsProblematic = true;
-                        throw e;
-                    }
-                    setSucceeded(true);
-                } else {
-                    log.error("Hibernation volume of VM '{}', is not initialized.", getVm().getName());
-                    endWithFailure();
-                }
-            }
+        else if (getVm().getRunOnVds() == null) {
+            log.warn(
+                    "VM '{}' doesn't have 'run_on_vds' value - cannot Hibernate.",
+                    getVm().getName());
+            getReturnValue().setEndActionTryAgain(false);
         }
 
         else {
-            log.warn("VM is null - not performing full endAction.");
-            setSucceeded(true);
+            String hiberVol = getActiveSnapshot().getMemoryVolume();
+            if (hiberVol != null) {
+                try {
+                    runVdsCommand(VDSCommandType.Hibernate,
+                            new HibernateVDSCommandParameters(getVm().getRunOnVds(), getVmId(), hiberVol));
+                } catch (VdcBLLException e) {
+                    isHibernateVdsProblematic = true;
+                    throw e;
+                }
+                setSucceeded(true);
+            } else {
+                log.error("Hibernation volume of VM '{}', is not initialized.", getVm().getName());
+                endWithFailure();
+            }
         }
     }
 
     @Override
     protected void endWithFailure() {
-        if (getVm() != null) {
-            revertTasks();
-            if (getVm().getRunOnVds() != null) {
-                getSnapshotDAO().removeMemoryFromActiveSnapshot(getVmId());
-                getVm().setStatus(VMStatus.Up);
+        revertTasks();
+        if (getVm().getRunOnVds() != null) {
+            getSnapshotDAO().removeMemoryFromActiveSnapshot(getVmId());
+            getVm().setStatus(VMStatus.Up);
 
-                runVdsCommand(
-                                VDSCommandType.UpdateVmDynamicData,
-                                new UpdateVmDynamicDataVDSCommandParameters(getVm().getDynamicData()));
+            runVdsCommand(
+                    VDSCommandType.UpdateVmDynamicData,
+                    new UpdateVmDynamicDataVDSCommandParameters(getVm().getDynamicData()));
 
-                setSucceeded(true);
-            }
-
-            else {
-                log.warn(
-                        "VM '{}' doesn't have 'run_on_vds' value - not clearing 'hibernation_vol_handle' info.",
-                        getVm().getName());
-
-                getReturnValue().setEndActionTryAgain(false);
-            }
+            setSucceeded(true);
         }
 
         else {
-            setCommandShouldBeLogged(false);
-            log.warn("VM is null - not performing full endAction.");
-            setSucceeded(true);
+            log.warn(
+                    "VM '{}' doesn't have 'run_on_vds' value - not clearing 'hibernation_vol_handle' info.",
+                    getVm().getName());
+
+            getReturnValue().setEndActionTryAgain(false);
         }
     }
 
