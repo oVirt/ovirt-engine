@@ -7,7 +7,7 @@ import java.util.Comparator;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
@@ -95,7 +95,9 @@ public class StorageIsoListModel extends SearchableListModel
         }
 
         StorageDomain storageDomain = (StorageDomain) getEntity();
-        if (storageDomain.getStorageDomainType() == StorageDomainType.ISO && storageDomain.getStatus() != StorageDomainStatus.Active) {
+        boolean isDomainActive = storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Active ||
+                storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Mixed;
+        if (storageDomain.getStorageDomainType() == StorageDomainType.ISO && !isDomainActive) {
             setItems(Collections.<StorageDomain>emptyList());
             return;
         }
