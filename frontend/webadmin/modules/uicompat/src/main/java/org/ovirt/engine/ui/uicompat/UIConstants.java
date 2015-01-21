@@ -2624,4 +2624,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Geo-replication session configuration reset failed")
     String geoRepSessionConfigResetFailed();
+
+    @DefaultStringValue("Last Day")
+    String lastDay();
 }
