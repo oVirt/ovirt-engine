@@ -1475,14 +1475,14 @@ public class VdsBrokerObjectsBuilder {
         if (networks != null) {
             vds.getNetworkNames().clear();
             for (Entry<String, Map<String, Object>> entry : networks.entrySet()) {
-                Map<String, Object> network = entry.getValue();
+                Map<String, Object> networkProperties = entry.getValue();
                 String networkName = entry.getKey();
-                if (network != null) {
-                    String interfaceName = (String) network.get(VdsProperties.INTERFACE);
+                if (networkProperties != null) {
+                    String interfaceName = (String) networkProperties.get(VdsProperties.INTERFACE);
                     Map<String, Object> bridgeProperties = (bridges == null) ? null : bridges.get(interfaceName);
 
-                    boolean bridgedNetwork = isBridgedNetwork(network);
-                    HostNetworkQos qos = new HostNetworkQosMapper(network).deserialize();
+                    boolean bridgedNetwork = isBridgedNetwork(networkProperties);
+                    HostNetworkQos qos = new HostNetworkQosMapper(networkProperties).deserialize();
 
                     /**
                      * TODO: remove overly-defensive code in 4.0 - IP address, subnet, gateway and boot protocol should
@@ -1490,14 +1490,14 @@ public class VdsBrokerObjectsBuilder {
                      **/
                     Map<String, Object> effectiveProperties =
                             (bridgesReported && bridgedNetwork && bridgeProperties != null) ? bridgeProperties
-                                    : network;
+                                    : networkProperties;
                     String addr = extractAddress(effectiveProperties);
                     String subnet = extractSubnet(effectiveProperties);
                     String gateway = (String) effectiveProperties.get(VdsProperties.GLOBAL_GATEWAY);
 
                     List<VdsNetworkInterface> interfaces =
                             bridgesReported ? findNetworkInterfaces(vdsInterfaces, interfaceName, bridgeProperties)
-                                    : findBridgedNetworkInterfaces(network, vdsInterfaces);
+                                    : findBridgedNetworkInterfaces(networkProperties, vdsInterfaces);
                     for (VdsNetworkInterface iface : interfaces) {
                         iface.setNetworkName(networkName);
                         iface.setAddress(addr);
@@ -1588,26 +1588,26 @@ public class VdsBrokerObjectsBuilder {
         if (bonds != null) {
             boolean cfgEntriesDeprecated = FeatureSupported.cfgEntriesDeprecated(vds.getVdsGroupCompatibilityVersion());
             for (Entry<String, Map<String, Object>> entry : bonds.entrySet()) {
-                VdsNetworkInterface iface = new Bond();
-                updateCommonInterfaceData(iface, vds, entry);
-                iface.setBonded(true);
+                VdsNetworkInterface bond = new Bond();
+                updateCommonInterfaceData(bond, vds, entry);
+                bond.setBonded(true);
 
-                Map<String, Object> bond = entry.getValue();
-                if (bond != null) {
-                    iface.setMacAddress((String) bond.get("hwaddr"));
-                    if (bond.get("slaves") != null) {
-                        addBondDeviceToHost(vds, iface, (Object[]) bond.get("slaves"));
+                Map<String, Object> bondProperties = entry.getValue();
+                if (bondProperties != null) {
+                    bond.setMacAddress((String) bondProperties.get("hwaddr"));
+                    if (bondProperties.get("slaves") != null) {
+                        addBondDeviceToHost(vds, bond, (Object[]) bondProperties.get("slaves"));
                     }
 
                     Object bondOptions = null;
                     if (cfgEntriesDeprecated) {
-                        bondOptions = bond.get("opts");
+                        bondOptions = bondProperties.get("opts");
                     } else {
-                        Map<String, Object> config = (Map<String, Object>) bond.get("cfg");
+                        Map<String, Object> config = (Map<String, Object>) bondProperties.get("cfg");
                         bondOptions = (config == null) ? null : config.get("BONDING_OPTS");
                     }
                     if (bondOptions != null) {
-                        iface.setBondOptions(bondOptions.toString());
+                        bond.setBondOptions(bondOptions.toString());
                     }
                 }
             }
@@ -1627,22 +1627,22 @@ public class VdsBrokerObjectsBuilder {
         Map<String, Map<String, Object>> vlans = (Map<String, Map<String, Object>>) xmlRpcStruct.get(VdsProperties.NETWORK_VLANS);
         if (vlans != null) {
             for (Entry<String, Map<String, Object>> entry : vlans.entrySet()) {
-                VdsNetworkInterface iface = new Vlan();
-                updateCommonInterfaceData(iface, vds, entry);
+                VdsNetworkInterface vlan = new Vlan();
+                updateCommonInterfaceData(vlan, vds, entry);
 
                 String vlanDeviceName = entry.getKey();
-                Map<String, Object> vlan = entry.getValue();
-                if (vlan.get(VdsProperties.VLAN_ID) != null && vlan.get(VdsProperties.BASE_INTERFACE) != null) {
-                    iface.setVlanId((Integer) vlan.get(VdsProperties.VLAN_ID));
-                    iface.setBaseInterface((String) vlan.get(VdsProperties.BASE_INTERFACE));
+                Map<String, Object> vlanProperties = entry.getValue();
+                if (vlanProperties.get(VdsProperties.VLAN_ID) != null && vlanProperties.get(VdsProperties.BASE_INTERFACE) != null) {
+                    vlan.setVlanId((Integer) vlanProperties.get(VdsProperties.VLAN_ID));
+                    vlan.setBaseInterface((String) vlanProperties.get(VdsProperties.BASE_INTERFACE));
                 } else if (vlanDeviceName.contains(".")) {
                     String[] names = vlanDeviceName.split("[.]", -1);
                     String vlanId = names[1];
-                    iface.setVlanId(Integer.parseInt(vlanId));
-                    iface.setBaseInterface(names[0]);
+                    vlan.setVlanId(Integer.parseInt(vlanId));
+                    vlan.setBaseInterface(names[0]);
                 }
 
-                vds.getInterfaces().add(iface);
+                vds.getInterfaces().add(vlan);
             }
         }
     }
@@ -1660,26 +1660,26 @@ public class VdsBrokerObjectsBuilder {
                 (Map<String, Map<String, Object>>) xmlRpcStruct.get(VdsProperties.NETWORK_NICS);
         if (nics != null) {
             for (Entry<String, Map<String, Object>> entry : nics.entrySet()) {
-                VdsNetworkInterface iface = new Nic();
-                updateCommonInterfaceData(iface, vds, entry);
+                VdsNetworkInterface nic = new Nic();
+                updateCommonInterfaceData(nic, vds, entry);
 
                 Map<String, Object> nicProperties = entry.getValue();
                 if (nicProperties != null) {
                     if (nicProperties.get("speed") != null) {
                         Object speed = nicProperties.get("speed");
-                        iface.setSpeed((Integer) speed);
+                        nic.setSpeed((Integer) speed);
                     }
-                    iface.setMacAddress((String) nicProperties.get("hwaddr"));
+                    nic.setMacAddress((String) nicProperties.get("hwaddr"));
                     // if we get "permhwaddr", we are a part of a bond and we use that as the mac address
                     String mac = (String) nicProperties.get("permhwaddr");
                     if (mac != null) {
                         //TODO remove when the minimal supported vdsm version is >=3.6
                         // in older VDSM version, slave's Mac is in upper case
-                        iface.setMacAddress(mac.toLowerCase());
+                        nic.setMacAddress(mac.toLowerCase());
                     }
                 }
 
-                vds.getInterfaces().add(iface);
+                vds.getInterfaces().add(nic);
             }
         }
     }
