@@ -39,6 +39,9 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     private static final String VDSM_STATUS_UNKONWN = "unknown";
     private static final int UNKNOWN_RESULT_ALLOWED = 3;
 
+    protected FenceValidator fenceValidator;
+    protected FenceExecutor fenceExecutor;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      *
@@ -46,6 +49,8 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
      */
     protected FenceVdsBaseCommand(Guid commandId) {
         super(commandId);
+        fenceExecutor = new FenceExecutor(getVds(), getParameters().getFencingPolicy());
+        fenceValidator = new FenceValidator();
     }
 
     public FenceVdsBaseCommand(T parameters) {
@@ -54,11 +59,12 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
 
     public FenceVdsBaseCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
+        fenceExecutor = new FenceExecutor(getVds(), getParameters().getFencingPolicy());
+        fenceValidator = new FenceValidator();
     }
 
     @Override
     protected boolean canDoAction() {
-        FenceValidator fenceValidator = new FenceValidator();
         List<String> messages = getReturnValue().getCanDoActionMessages();
         boolean canDo =
                 fenceValidator.isHostExists(getVds(), messages)
@@ -199,7 +205,6 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     }
 
     private VDSFenceReturnValue fence(FenceAgent fenceAgent, int retries) {
-        FenceExecutor fenceExecutor = createFenceExecutor();
         VDSFenceReturnValue fenceExecutionResult = fenceExecutor.fence(getAction(), fenceAgent);
         if (wasSkippedDueToStatus(fenceExecutionResult)) {
             log.info("Attemp to {} host using fence agent '{}' skipped, host is already at the requested state.",
@@ -250,10 +255,8 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
 
     protected void setStatus(VDSStatus status) {
         if (getVds().getStatus() != status) {
-            Backend.getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.SetVdsStatus,
-                            new SetVdsStatusVDSCommandParameters(getVds().getId(), status));
+            getBackend().getResourceManager().RunVdsCommand(VDSCommandType.SetVdsStatus,
+                    new SetVdsStatusVDSCommandParameters(getVds().getId(), status));
         }
     }
 
@@ -264,7 +267,6 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     }
 
     protected boolean waitForStatus() {
-        FenceExecutor executor = createFenceExecutor();
         int i = 1;
         int j = 1;
         boolean requiredStatusReached = false;
@@ -275,11 +277,11 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         // This is done because if we will attempt to get host status immediately
         // in most cases it will not turn from on/off to off/on and we will need
         // to wait a full cycle for it.
-        ThreadUtils.sleep(SLEEP_BEFORE_FIRST_ATTEMPT);
+        ThreadUtils.sleep(getSleepBeforeFirstAttempt());
         int retries = getWaitForStatusRerties();
         while (!requiredStatusReached && i <= retries) {
             log.info("Attempt {} to get host '{}' status", i, hostName);
-            VDSFenceReturnValue returnValue = executor.checkStatus();
+            VDSFenceReturnValue returnValue = fenceExecutor.checkStatus();
             if (returnValue != null && returnValue.getSucceeded()) {
                 String status = ((FenceStatusReturnValue) returnValue.getReturnValue()).getStatus();
                 if (status.equalsIgnoreCase(VDSM_STATUS_UNKONWN)) {
@@ -357,10 +359,6 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
 
     }
 
-    protected FenceExecutor createFenceExecutor() {
-        return new FenceExecutor(getVds(), getParameters().getFencingPolicy());
-    }
-
     protected FenceProxyLocator createProxyHostLocator() {
         return new FenceProxyLocator(getVds(), getParameters().getFencingPolicy());
     }
@@ -383,6 +381,28 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
      */
     private boolean wasSkippedDueToStatus(VDSFenceReturnValue result) {
         return result != null && result.isSkipped() && getParameters().getParentCommand() != VdcActionType.RestartVds;
+    }
+
+    public FenceValidator getFenceValidator() {
+        return fenceValidator;
+    }
+
+    public void setFenceValidator(FenceValidator fenceValidator) {
+        this.fenceValidator = fenceValidator;
+    }
+
+    // Exported to a method for mocking purposes (when running unit-tests, we don't want to wait 5 seconds for each
+    // test...)
+    int getSleepBeforeFirstAttempt() {
+        return SLEEP_BEFORE_FIRST_ATTEMPT;
+    }
+
+    public FenceExecutor getFenceExecutor() {
+        return fenceExecutor;
+    }
+
+    public void setFenceExecutor(FenceExecutor fenceExecutor) {
+        this.fenceExecutor = fenceExecutor;
     }
 
     /**
