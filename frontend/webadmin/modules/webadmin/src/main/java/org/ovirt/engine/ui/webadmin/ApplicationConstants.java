@@ -3935,6 +3935,15 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("No of snapshots")
     String noOfSnapshotsLabel();
 
+    @DefaultStringValue("Cluster")
+    String volumeClusterLabel();
+
+    @DefaultStringValue("Volume")
+    String volumeNameLabel();
+
+    @DefaultStringValue("Snapshot")
+    String volumeSnapshotMainTabTitle();
+
     @DefaultStringValue("Options - Cluster")
     String configureClusterSnapshotOptions();
 

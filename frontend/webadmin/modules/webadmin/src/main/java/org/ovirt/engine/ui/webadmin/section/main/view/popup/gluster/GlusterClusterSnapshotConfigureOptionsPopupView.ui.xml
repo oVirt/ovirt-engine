@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+
+	<ui:style>
+		.tablePanel {
+		padding: 5px;
+		border: 1px solid #CED8DF;
+		width:
+		450px;
+		}
+
+		.panelStyle {
+		width:470px;
+		}
+
+		.headerLabel {
+		font-weight: bold;
+		padding-bottom: 5px;
+		padding-top: 30px;
+		}
+	</ui:style>
+
+	<d:SimpleDialogPanel width="550px" height="400px">
+		<d:content>
+			<g:FlowPanel addStyleNames="{style.panelStyle}">
+				<e:ListModelListBoxEditor
+					ui:field="clusterEditor" />
+				<g:Label ui:field="snapshotConfigHeader" addStyleNames="{style.headerLabel}" />
+				<e:EntityModelCellTable ui:field="configsTable"
+					addStyleNames="{style.tablePanel}" />
+			</g:FlowPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+
+</ui:UiBinder>

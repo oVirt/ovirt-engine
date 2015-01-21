@@ -350,7 +350,8 @@
         <include name="common/businessentities/gluster/GlusterGeoRepSessionConfiguration.java"/>
         <include name="common/businessentities/gluster/GlusterVolumeSnapshotEntity.java"/>
         <include name="common/businessentities/gluster/GlusterSnapshotStatus.java"/>
-		<!-- Scheduling -->
+        <include name="common/businessentities/gluster/GlusterVolumeSnapshotConfig.java"/>
+        <!-- Scheduling -->
 		<include name="common/scheduling/*.java"/>
 		<include name="common/scheduling/parameters/*.java"/>
 		<!-- Numa -->

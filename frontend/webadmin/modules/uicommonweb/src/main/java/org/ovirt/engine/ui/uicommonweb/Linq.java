@@ -39,6 +39,7 @@ import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComp
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
@@ -143,6 +144,15 @@ public final class Linq
         @Override
         public int compare(GlusterVolumeSnapshotEntity snapshot0, GlusterVolumeSnapshotEntity snapshot1) {
             return snapshot0.getSnapshotName().compareTo(snapshot1.getSnapshotName());
+        }
+    }
+
+    public static class GlusterVolumeSnapshotConfigComparator implements Comparator<GlusterVolumeSnapshotConfig>, Serializable {
+        private static final long serialVersionUID = 2L;
+
+        @Override
+        public int compare(GlusterVolumeSnapshotConfig param0, GlusterVolumeSnapshotConfig param1) {
+            return param0.getParamName().compareTo(param1.getParamName());
         }
     }
 

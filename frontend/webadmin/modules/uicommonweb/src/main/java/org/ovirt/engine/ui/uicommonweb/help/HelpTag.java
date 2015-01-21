@@ -324,6 +324,10 @@ public enum HelpTag {
 
     new_volume("new_volume", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> New"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    configure_volume_snapshot("configure_volume_snapshot", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Snapshot -> Options"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    configure_volume_snapshot_confirmation("configure_volume_snapshot_confirmation", HelpTagType.WEBADMIN, "Configure volume snapshot: confirmation dialog that appears when changing the volume snapshot configuration parameters."), //$NON-NLS-1$ //$NON-NLS-2$
+
     parameters("parameters", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
     permissions("permissions", HelpTagType.UNKNOWN), //$NON-NLS-1$

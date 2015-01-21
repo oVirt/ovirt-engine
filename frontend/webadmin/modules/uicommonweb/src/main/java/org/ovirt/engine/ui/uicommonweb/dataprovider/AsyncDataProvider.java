@@ -1687,6 +1687,11 @@ public final class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeProfileInfo, parameters, aQuery);
     }
 
+    public static void getGlusterSnapshotConfig(AsyncQuery aQuery, Guid clusterId, Guid volumeId) {
+        aQuery.setHandleFailure(true);
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeSnapshotConfig, new GlusterVolumeQueriesParameters(clusterId, volumeId), aQuery);
+    }
+
     public static void getGlusterRemoveBricksStatus(AsyncQuery aQuery,
             Guid clusterId,
             Guid volumeId,

@@ -2491,5 +2491,22 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
             + "the command will still perform the operation on as many nodes as it can.\n"
             + "This command can also be used to re-perform the operation on the nodes where the session has died, or the operation has not be executed.")
     String geoRepForceHelp();
+
+    @DefaultStringValue("Volume Snapshot - Cluster Options")
+    String configureClusterSnapshotOptionsTitle();
+
+    @DefaultStringValue("Volume Snapshot - Volume Options")
+    String configureVolumeSnapshotOptionsTitle();
+
+    @DefaultStringValue("Update")
+    String snapshotConfigUpdateButtonLabel();
+
+    @DefaultStringValue("Update snapshot configuration options")
+    String updateSnapshotConfigurationConfirmationTitle();
+
+    @DefaultStringValue("Configuring volume snapshot options\n\n"
+            + "Changing configuration parameters will lead to deletion of snapshots if they exceed the new limit.\n\n"
+            + "Are you sure you want to continue?")
+    String youAreAboutChangeSnapshotConfigurationMsg();
 }
 

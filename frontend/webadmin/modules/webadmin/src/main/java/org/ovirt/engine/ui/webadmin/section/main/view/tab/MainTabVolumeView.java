@@ -221,7 +221,35 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                 return getMainModel().getStopVolumeProfilingCommand();
             }
         });
-        getTable().addActionButton(new WebAdminMenuBarButtonDefinition<GlusterVolumeEntity>(constants.volumeProfilingAction(), volumeProfilingActions, CommandLocation.ContextAndToolBar));
+
+        getTable().addActionButton(new WebAdminMenuBarButtonDefinition<GlusterVolumeEntity>(constants.volumeProfilingAction(),
+                volumeProfilingActions,
+                CommandLocation.ContextAndToolBar));
+
+        getTable().addActionButton(new WebAdminMenuBarButtonDefinition<GlusterVolumeEntity>(constants.volumeSnapshotMainTabTitle(),
+                getVolumeSnapshotMenu(constants),
+                CommandLocation.ContextAndToolBar));
+    }
+
+    private List<ActionButtonDefinition<GlusterVolumeEntity>> getVolumeSnapshotMenu(ApplicationConstants constants) {
+        List<ActionButtonDefinition<GlusterVolumeEntity>> snapshotMenu = new ArrayList<ActionButtonDefinition<GlusterVolumeEntity>>();
+
+        WebAdminButtonDefinition<GlusterVolumeEntity> configureClusterSnapshotOptionsButton = new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.configureClusterSnapshotOptions()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getConfigureClusterSnapshotOptionsCommand();
+            }
+        };
+        WebAdminButtonDefinition<GlusterVolumeEntity> configureVolumeSnapshotOptionsButton = new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.configureVolumeSnapshotOptions()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getConfigureVolumeSnapshotOptionsCommand();
+            }
+        };
+
+        snapshotMenu.add(configureClusterSnapshotOptionsButton);
+        snapshotMenu.add(configureVolumeSnapshotOptionsButton);
+        return snapshotMenu;
     }
 
     private MenuCell<GlusterTaskSupport> getRebalanceActivityMenu(ApplicationConstants constants) {
