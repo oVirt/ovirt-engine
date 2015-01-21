@@ -66,12 +66,11 @@ public class DeactivateStorageDomainWithOvfUpdateCommand<T extends StorageDomain
         }
 
         if (getReturnValue().getVdsmTaskIdList().isEmpty()) {
-            executeDeactivateCommnad(true);
+            setSucceeded(executeDeactivateCommnad(true));
         } else {
             setCommandShouldBeLogged(false);
+            setSucceeded(true);
         }
-
-        setSucceeded(true);
     }
 
     protected boolean shouldPerformOvfUpdate() {
