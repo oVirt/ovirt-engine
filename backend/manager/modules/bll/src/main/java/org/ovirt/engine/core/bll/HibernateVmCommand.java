@@ -30,13 +30,10 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.HibernateVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,22 +97,6 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
     @Override
     protected void perform() {
-        TransactionSupport.executeInNewTransaction(
-                new TransactionMethod<Object>() {
-                    @Override
-                    public Object runInTransaction() {
-                        getCompensationContext().snapshotEntityStatus(getVm().getDynamicData());
-
-                        // Set the VM to SavingState to lock the VM,to avoid situation of multi VM hibernation.
-                        getVm().setStatus(VMStatus.PreparingForHibernate);
-
-                        runVdsCommand(VDSCommandType.UpdateVmDynamicData,
-                                new UpdateVmDynamicDataVDSCommandParameters(getVm().getDynamicData()));
-                        getCompensationContext().stateChanged();
-                        return null;
-                    }
-                });
-
         final Guid taskId1 = getAsyncTaskId(SAVE_IMAGE_TASK_KEY);
 
         Guid image1GroupId = Guid.newGuid();
@@ -138,20 +119,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
             return;
         }
 
-        Guid guid1 = TransactionSupport.executeInNewTransaction(
-                new TransactionMethod<Guid>() {
-                    @Override
-                    public Guid runInTransaction() {
-                        getCompensationContext().resetCompensation();
-                        return createTaskInCurrentTransaction(
-                                taskId1,
-                                ret1.getCreationInfo(),
-                                VdcActionType.HibernateVm,
-                                VdcObjectType.Storage,
-                                getStorageDomainId());
-                    }
-                });
-
+        Guid guid1 = createTask(taskId1, ret1.getCreationInfo(), VdcActionType.HibernateVm);
         getReturnValue().getVdsmTaskIdList().add(guid1);
 
         Guid taskId2 = getAsyncTaskId(SAVE_RAM_STATE_TASK_KEY);
@@ -278,22 +246,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
     @Override
     protected void endSuccessfully() {
-        if (getVm().getStatus() != VMStatus.PreparingForHibernate) {
-            // If the Vm is not PreparingForHibernate, we shouldn't perform Hibernate on it,
-            // since if the Vm is in another status, something might have happened to it
-            // that might prevent it from being hibernated.
-
-            // NOTE: We don't remove the 2 volumes because we don't want to
-            // start here another tasks.
-
-            log.warn(
-                    "VM '{}' is not in 'PreparingForHibernate' status, but in '{}' status - not performing Hibernate.",
-                    getVm().getName(),
-                    getVm().getStatus());
-            getReturnValue().setEndActionTryAgain(false);
-        }
-
-        else if (getVm().getRunOnVds() == null) {
+        if (getVm().getRunOnVds() == null) {
             log.warn(
                     "VM '{}' doesn't have 'run_on_vds' value - cannot Hibernate.",
                     getVm().getName());
@@ -323,12 +276,6 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         revertTasks();
         if (getVm().getRunOnVds() != null) {
             getSnapshotDAO().removeMemoryFromActiveSnapshot(getVmId());
-            getVm().setStatus(VMStatus.Up);
-
-            runVdsCommand(
-                    VDSCommandType.UpdateVmDynamicData,
-                    new UpdateVmDynamicDataVDSCommandParameters(getVm().getDynamicData()));
-
             setSucceeded(true);
         }
 
