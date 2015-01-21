@@ -115,3 +115,48 @@ a.gwt-InlineHyperlink,a.gwt-Anchor {
 .gwt-MenuBar .gwt-MenuItem {
     padding: 0 10px !important;
 }
+
+.selectedFlexTableCell {
+	background-color : #E6E6FA;
+	width: 25px;
+}
+
+.normalFlexTableCell {
+	background-color: white;
+	width: 25px;
+}
+
+.daysSelectorWrapperPanel {
+	width: 190px;
+}
+
+.timeComponentWidth {
+	width: 50px;
+}
+
+.dateBoxPopup {
+       position: relative;
+       top: 0px;
+       z-index: 5;
+}
+
+.dateBoxWidth {
+       width: 90px;
+}
+
+.checkBox {
+	width: 30px;
+	margin-right: 30px;
+}
+
+.dateBoxColumnWidth {
+	width: 100px;
+}
+
+.dateBoxShrink {
+	width: 0px;
+}
+
+.daysOfMonthWidget {
+	border-width: 2px;
+}
