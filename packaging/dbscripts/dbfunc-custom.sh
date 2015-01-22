@@ -7,10 +7,13 @@ DBFUNC_DB_DATABASE="${DBFUNC_DB_DATABASE:-engine}"
 DBFUNC_CUSTOM_CLEAN_TASKS=
 
 dbfunc_common_hook_init_insert_data() {
-	echo "Inserting data..."
-	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/insert_data.sql" > /dev/null
-	echo "Inserting pre-defined roles..."
-	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/insert_predefined_roles.sql" > /dev/null
+        # generate new UUIDs for default DC & Cluster
+        "${DBFUNC_COMMON_DBSCRIPTS_DIR}"/uuidgen.sh "${DBFUNC_DB_USER}" "${DBFUNC_DB_DATABASE}" "${DBFUNC_COMMON_DBSCRIPTS_DIR}"/data "change"
+        for script in $(ls "${DBFUNC_COMMON_DBSCRIPTS_DIR}"/data/*insert_*.sql); do
+	    echo "Inserting data from ${script} ..."
+	    dbfunc_psql_die --file="${script}" > /dev/null
+        done
+        "${DBFUNC_COMMON_DBSCRIPTS_DIR}"/uuidgen.sh "${DBFUNC_DB_USER}" "${DBFUNC_DB_DATABASE}" "${DBFUNC_COMMON_DBSCRIPTS_DIR}"/data "restore"
 }
 
 dbfunc_common_hook_pre_upgrade() {
