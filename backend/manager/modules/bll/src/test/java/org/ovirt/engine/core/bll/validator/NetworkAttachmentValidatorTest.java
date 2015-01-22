@@ -11,7 +11,6 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
 
 import org.hamcrest.Matcher;
 import org.junit.ClassRule;
@@ -25,6 +24,7 @@ import org.ovirt.engine.core.bll.DbDependentTestBase;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
+import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.IPv4Address;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
@@ -459,7 +459,8 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         attachment.setNicName("nicName");
 
         NetworkAttachmentValidator validator = createNetworkAttachmentValidator(attachment);
-        Map<String, VdsNetworkInterface> nics = Collections.emptyMap();
+        BusinessEntityMap<VdsNetworkInterface> nics =
+            new BusinessEntityMap<>(Collections.<VdsNetworkInterface> emptyList());
         assertThat(validator.networkIpAddressWasSameAsHostnameAndChanged(nics), isValid());
     }
 
@@ -477,7 +478,8 @@ public class NetworkAttachmentValidatorTest extends DbDependentTestBase {
         host.setHostName(existingInterface.getAddress());
 
         NetworkAttachmentValidator validator = createNetworkAttachmentValidator(attachment);
-        Map<String, VdsNetworkInterface> nics = Collections.singletonMap(existingInterface.getName(), existingInterface);
+        BusinessEntityMap<VdsNetworkInterface> nics =
+            new BusinessEntityMap<>(Collections.singletonList(existingInterface));
         assertThat(validator.networkIpAddressWasSameAsHostnameAndChanged(nics),
                 failsWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED));
     }

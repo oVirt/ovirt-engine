@@ -4,15 +4,13 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 
-import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.Mask;
+import org.ovirt.engine.core.common.validation.annotation.ValidNameOfVdsNetworkInterface;
 import org.ovirt.engine.core.common.validation.annotation.ValidNetworkConfiguration;
 import org.ovirt.engine.core.common.validation.annotation.ValidNetworkLabelFormat;
 import org.ovirt.engine.core.compat.Guid;
@@ -60,8 +58,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     }
 
     @Override
-    @Size(min = 1, max = BusinessEntitiesDefinitions.HOST_NIC_NAME_LENGTH)
-    @NotNull(message = "VALIDATION_NAME_NULL")
+    @ValidNameOfVdsNetworkInterface
     public String getName() {
         return super.getName();
     }

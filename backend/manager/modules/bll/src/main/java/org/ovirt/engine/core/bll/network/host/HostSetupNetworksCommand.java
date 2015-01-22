@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -72,6 +73,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private List<VdsNetworkInterface> existingNics;
     private List<NetworkAttachment> existingAttachments;
     private List<HostNetwork> networksToConfigure;
+    private BusinessEntityMap<VdsNetworkInterface> existingNicsBusinessEntityMap;
     private final QosDaoCache qosDaoCache = new QosDaoCache(getDbFacade().getHostNetworkQosDao());
 
     @Inject
@@ -125,7 +127,13 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         completer.completeBonds(getParameters().getBonds());
         completer.completeNetworkAttachments(getExistingAttachments());
 
-        return validate(validateWithHostSetupNetworksValidator(host));
+        ValidationResult hostSetupNetworkValidatorResult = validateWithHostSetupNetworksValidator(host);
+        if (!hostSetupNetworkValidatorResult.isValid()) {
+            return validate(hostSetupNetworkValidatorResult);
+        }
+
+
+        return validate(checkForOutOfSyncNetworks());
     }
 
     private ValidationResult validateWithHostSetupNetworksValidator(VDS host) {
@@ -166,8 +174,8 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 if (retVal.getSucceeded()) {
                     try (EngineLock monitoringLock = acquireMonitorLock()) {
                         VDSReturnValue returnValue =
-                                runVdsCommand(VDSCommandType.GetCapabilities,
-                                        new VdsIdAndVdsVDSCommandParametersBase(getVds()));
+                            runVdsCommand(VDSCommandType.GetCapabilities,
+                                new VdsIdAndVdsVDSCommandParametersBase(getVds()));
                         VDS updatedHost = (VDS) returnValue.getReturnValue();
                         persistNetworkChanges(updatedHost);
                     }
@@ -181,11 +189,43 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         }
     }
 
+    private ValidationResult checkForOutOfSyncNetworks() {
+        BusinessEntityMap<VdsNetworkInterface> existingNicsBusinessEntityMap = getExistingNicsBusinessEntityMap();
+
+        for (NetworkAttachment networkAttachment : getParameters().getNetworkAttachments()) {
+            boolean newNetworkAttachment = networkAttachment.getId() == null;
+            if (newNetworkAttachment) {
+                //attachment to be yet created cannot be out of sync.
+                continue;
+            }
+
+            boolean doNotCheckForOutOfSync = networkAttachment.isOverrideConfiguration();
+            if (doNotCheckForOutOfSync) {
+                continue;
+            }
+
+            Map<Guid, NetworkAttachment> existingNetworkAttachmentMap =
+                Entities.businessEntitiesById(getExistingAttachments());
+            NetworkAttachment existingNetworkAttachment = existingNetworkAttachmentMap.get(networkAttachment.getId());
+
+            VdsNetworkInterface vdsNetworkInterface = existingNicsBusinessEntityMap.get(existingNetworkAttachment.getNicId());
+            Network network = getNetworkBusinessEntityMap().get(existingNetworkAttachment.getNetworkId());
+            HostNetworkQos qos = qosDaoCache.get(network.getQosId());
+
+            boolean networkInSync = NetworkUtils.isNetworkInSync(vdsNetworkInterface, network, qos);
+            if (!networkInSync) {
+                return new ValidationResult(EngineMessage.NETWORKS_NOT_IN_SYNC, "NETWORK_NOT_IN_SYNC", network.getName());
+            }
+        }
+
+        return ValidationResult.VALID;
+    }
+
     private FutureVDSCall<VDSReturnValue> invokeSetupNetworksCommand(int timeout) {
         final HostSetupNetworksVdsCommandParameters parameters = createSetupNetworksParameters(timeout);
         FutureVDSCall<VDSReturnValue> setupNetworksTask =
-                getBackend().getResourceManager().runFutureVdsCommand(FutureVDSCommandType.HostSetupNetworks,
-                    parameters);
+            getBackend().getResourceManager().runFutureVdsCommand(FutureVDSCommandType.HostSetupNetworks,
+                parameters);
 
         if (parameters.isRollbackOnFailure()) {
             HostSetupNetworkPoller poller = new HostSetupNetworkPoller();
@@ -199,11 +239,11 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     private HostSetupNetworksVdsCommandParameters createSetupNetworksParameters(int timeout) {
         final HostSetupNetworksVdsCommandParameters hostCmdParams = new HostSetupNetworksVdsCommandParameters(
-                getVds(),
-                getNetworksToConfigure(),
-                getRemovedNetworks(),
-                getParameters().getBonds(),
-                getRemovedBondNames());
+            getVds(),
+            getNetworksToConfigure(),
+            getRemovedNetworks(),
+            getParameters().getBonds(),
+            getRemovedBondNames());
         hostCmdParams.setRollbackOnFailure(getParameters().rollbackOnFailure());
         hostCmdParams.setConectivityTimeout(timeout);
         boolean hostNetworkQosSupported = FeatureSupported.hostNetworkQos(getVds().getVdsGroupCompatibilityVersion());
@@ -213,22 +253,22 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
     protected Integer getSetupNetworksTimeout() {
         return getParameters().getConectivityTimeout() != null ? getParameters().getConectivityTimeout()
-                : Config.<Integer> getValue(ConfigValues.NetworkConnectivityCheckTimeoutInSeconds);
+            : Config.<Integer> getValue(ConfigValues.NetworkConnectivityCheckTimeoutInSeconds);
     }
 
     private boolean defaultRouteRequired(Network network, IpConfiguration ipConfiguration) {
         return managementNetworkUtil.isManagementNetwork(network.getId(), getVds().getVdsGroupId())
-                && ipConfiguration != null
-                && (ipConfiguration.getBootProtocol() == NetworkBootProtocol.DHCP
-                || ipConfiguration.getBootProtocol() == NetworkBootProtocol.STATIC_IP
-                && ipConfiguration.hasPrimaryAddressSet() && StringUtils.isNotEmpty(ipConfiguration.getPrimaryAddress().getGateway()));
+            && ipConfiguration != null
+            && (ipConfiguration.getBootProtocol() == NetworkBootProtocol.DHCP
+            || ipConfiguration.getBootProtocol() == NetworkBootProtocol.STATIC_IP
+            && ipConfiguration.hasPrimaryAddressSet() && StringUtils.isNotEmpty(ipConfiguration.getPrimaryAddress().getGateway()));
     }
 
     private boolean noChangesDetected() {
         return getNetworksToConfigure().isEmpty()
-                && getRemovedNetworks().isEmpty()
-                && getParameters().getBonds().isEmpty()
-                && getRemovedBondNames().isEmpty();
+            && getRemovedNetworks().isEmpty()
+            && getParameters().getBonds().isEmpty()
+            && getRemovedBondNames().isEmpty();
     }
 
     private List<VdsNetworkInterface> getRemovedBonds() {
@@ -297,7 +337,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private List<HostNetwork> getNetworksToConfigure() {
         if (networksToConfigure == null) {
             networksToConfigure = new ArrayList<>(getParameters().getNetworkAttachments().size());
-            BusinessEntityMap<VdsNetworkInterface> nics = new BusinessEntityMap<>(getExistingNics());
+            BusinessEntityMap<VdsNetworkInterface> nics = getExistingNicsBusinessEntityMap();
 
             for (NetworkAttachment attachment : getParameters().getNetworkAttachments()) {
                 Network network = existingNetworkRelatedToAttachment(attachment);
@@ -325,14 +365,22 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         return networksToConfigure;
     }
 
+    private BusinessEntityMap<VdsNetworkInterface> getExistingNicsBusinessEntityMap() {
+        if (existingNicsBusinessEntityMap == null) {
+            existingNicsBusinessEntityMap = new BusinessEntityMap<>(getExistingNics());
+        }
+
+        return existingNicsBusinessEntityMap;
+    }
+
     private boolean defaultRouteSupported() {
         boolean defaultRouteSupported = false;
         Set<Version> supportedClusterVersionsSet = getVds().getSupportedClusterVersionsSet();
         if (supportedClusterVersionsSet == null || supportedClusterVersionsSet.isEmpty()) {
             log.warn("Host '{}' ('{}') doesn't contain Supported Cluster Versions, "
-                            + "therefore 'defaultRoute' will not be sent via the SetupNetworks",
-                    getVdsName(),
-                    getVdsId());
+                    + "therefore 'defaultRoute' will not be sent via the SetupNetworks",
+                getVdsName(),
+                getVdsId());
         } else if (FeatureSupported.defaultRoute(Collections.max(supportedClusterVersionsSet))) {
             defaultRouteSupported = true;
         }
@@ -348,7 +396,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
         }
 
         VdsNetworkInterface attachedNic = nics.get(attachment.getNicId(), attachment.getNicName());
-        Validate.notNull(attachedNic, "Bond must refer to a resolvable interface");
+        Validate.notNull(attachedNic, "NicId/NicName must refer to a resolvable interface");
         return Boolean.TRUE.equals(attachedNic.getBonded());
     }
 
@@ -385,13 +433,13 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
             @Override
             public Void runInTransaction() {
                 UserConfiguredNetworkData userConfiguredNetworkData =
-                        new UserConfiguredNetworkData(getParameters().getNetworkAttachments(),
-                                applyUserConfiguredNics());
+                    new UserConfiguredNetworkData(getParameters().getNetworkAttachments(),
+                        applyUserConfiguredNics());
 
                 // save the new network topology to DB
                 hostNetworkTopologyPersister.persistAndEnforceNetworkCompliance(updatedHost,
-                        false,
-                        userConfiguredNetworkData);
+                    false,
+                    userConfiguredNetworkData);
 
                 getVdsDynamicDao().updateNetConfigDirty(getVds().getId(), getVds().getNetConfigDirty());
 

@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.validator;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
@@ -10,6 +9,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -141,10 +141,10 @@ public class NetworkAttachmentValidator {
      * it is forbidden to modify the IP address without reinstalling the host.</li>
      * </ul>
      */
-    public ValidationResult networkIpAddressWasSameAsHostnameAndChanged(Map<String, VdsNetworkInterface> nics) {
+    public ValidationResult networkIpAddressWasSameAsHostnameAndChanged(BusinessEntityMap<VdsNetworkInterface> existingInterfaces) {
         IpConfiguration ipConfiguration = attachment.getIpConfiguration();
         if (ipConfiguration != null && ipConfiguration.getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
-            VdsNetworkInterface existingIface = nics.get(attachment.getNicName());
+            VdsNetworkInterface existingIface = existingInterfaces.get(attachment.getNicName());
             if (existingIface != null) {
                 String oldAddress = existingIface.getAddress();
                 return ValidationResult.failWith(EngineMessage.ACTION_TYPE_FAILED_NETWORK_ADDRESS_CANNOT_BE_CHANGED)

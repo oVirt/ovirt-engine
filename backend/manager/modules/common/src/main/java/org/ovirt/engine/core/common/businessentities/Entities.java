@@ -24,22 +24,26 @@ import org.slf4j.LoggerFactory;
 public class Entities {
 
     private final static Logger log = LoggerFactory.getLogger(Entities.class);
+
     /**
      * Map entity's name -> entity object. A lot of logic code does filtering of data from 2 collections by quad
-     * iterating over them. Common scenario: entity Parent.name is represent in Child.parentName. given list<Parent> and
+     * iterating over them. Common scenario: entity Parent.name is represent in Child.parentName. given list<Parent>
+     * and
      * List<Child> find each Child that have parents in List<Parent> <code>
      * <code>
      * List<Parent> parents = ...
      * List<Child> childs = ...
      * Map<String, Parent> parentsByName = Entities.byName(parents)
-     *      for (Child c : childs) {
-     *          if(parents.contatinsKey(c.getParentName())) {
-     *              doThis();
-     *          }
-     *      }
+     * for (Child c : childs) {
+     * if(parents.contatinsKey(c.getParentName())) {
+     * doThis();
+     * }
+     * }
      * }
      * </code>
+     *
      * @param entities
+     *
      * @return
      */
     public static <E extends Nameable> Map<String, E> entitiesByName(Collection<E> entities) {
@@ -154,17 +158,16 @@ public class Entities {
      * "[]", otherwise first element will appear after the opening bracket, and the consecutive elements (if any) will
      * appear on a new line, prefixed by the given prefix.
      *
-     * @param objects
-     *            The collection to convert (can be <code>null</code>).
-     * @param prefix
-     *            The prefix to print on new line of a collection element (not on 1st element).
+     * @param objects The collection to convert (can be <code>null</code>).
+     * @param prefix The prefix to print on new line of a collection element (not on 1st element).
+     *
      * @return A {@link String} representation of the given collection.
      */
     public static String collectionToString(Collection<?> objects, String prefix) {
         StringBuilder sb = new StringBuilder("[");
         if (objects != null) {
             boolean first = true;
-            for (Iterator<?> iterator = objects.iterator(); iterator.hasNext();) {
+            for (Iterator<?> iterator = objects.iterator(); iterator.hasNext(); ) {
                 Object object = iterator.next();
 
                 if (first) {

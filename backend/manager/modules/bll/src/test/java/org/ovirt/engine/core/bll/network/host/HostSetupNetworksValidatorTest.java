@@ -35,7 +35,6 @@ import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.validator.HostInterfaceValidator;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -99,7 +98,7 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
 
         HostSetupNetworksValidator validator =
             createHostSetupNetworksValidator(Collections.singletonList(unlabeledNetwork));
-        assertThat(validator.notRemovingLabeledNetworks(networkAttachment, null), isValid());
+        assertThat(validator.notRemovingLabeledNetworks(networkAttachment), isValid());
     }
 
     @Test
@@ -113,11 +112,10 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
 
         VdsNetworkInterface existingNic = new VdsNetworkInterface();
         existingNic.setName("existingNicName");
-        Map<String, VdsNetworkInterface> existingNics = Entities.entitiesByName(Collections.singletonList(existingNic));
 
         HostSetupNetworksValidator validator =
             createHostSetupNetworksValidator(Collections.singletonList(labeledNetwork));
-        assertThat(validator.notRemovingLabeledNetworks(networkAttachment, existingNics), isValid());
+        assertThat(validator.notRemovingLabeledNetworks(networkAttachment), isValid());
     }
 
     @Test
@@ -135,7 +133,6 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
         VdsNetworkInterface existingNic = new VdsNetworkInterface();
         existingNic.setLabels(Collections.singleton(label));
         existingNic.setName(nicName);
-        Map<String, VdsNetworkInterface> existingNics = Entities.entitiesByName(Collections.singletonList(existingNic));
 
         HostSetupNetworksValidator validator = createHostSetupNetworksValidator(
             new HostSetupNetworksParameters(host.getId()),
@@ -143,8 +140,8 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
             Collections.<NetworkAttachment> emptyList(),
             new BusinessEntityMap<>(Collections.singletonList(labeledNetwork)));
 
-        assertThat(validator.notRemovingLabeledNetworks(networkAttachment, existingNics), failsWith(
-            EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC));
+        assertThat(validator.notRemovingLabeledNetworks(networkAttachment),
+            failsWith(EngineMessage.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC));
     }
 
     @Test
@@ -207,8 +204,7 @@ public void testNotRemovingLabeledNetworksReferencingUnlabeledNetworkRemovalIsOk
             Collections.<VdsNetworkInterface> singletonList(bond),
             null,
             new BusinessEntityMap<>(Collections.singletonList(labeledNetwork)));
-        assertThat(validator.notRemovingLabeledNetworks(networkAttachment,
-            Entities.entitiesByName(Collections.<VdsNetworkInterface> singletonList(bond))), isValid());
+        assertThat(validator.notRemovingLabeledNetworks(networkAttachment), isValid());
     }
 
     @Test

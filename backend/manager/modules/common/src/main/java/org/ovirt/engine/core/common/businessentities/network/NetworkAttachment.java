@@ -5,7 +5,9 @@ import java.util.Objects;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
@@ -26,12 +28,16 @@ public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
 
     private Guid nicId;
 
+    @Size(min = 1,
+            max = BusinessEntitiesDefinitions.HOST_NIC_NAME_LENGTH,
+            groups = { CreateEntity.class, UpdateEntity.class })
     private String nicName;
 
     @Valid
     private IpConfiguration ipConfiguration;
 
     private Map<String, String> properties;
+    private boolean overrideConfiguration;
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
@@ -96,6 +102,14 @@ public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
         return getId();
     }
 
+    public boolean isOverrideConfiguration() {
+        return overrideConfiguration;
+    }
+
+    public void setOverrideConfiguration(boolean overrideConfiguration) {
+        this.overrideConfiguration = overrideConfiguration;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -121,6 +135,7 @@ public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
                 .append("nicName", getNicName())
                 .append("ipConfiguration", getIpConfiguration())
                 .append("properties", getProperties())
+                .append("overrideConfiguration", isOverrideConfiguration())
                 .build();
     }
 }

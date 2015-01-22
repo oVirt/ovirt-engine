@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -80,5 +81,10 @@ public class BusinessEntityMap<E extends BusinessEntity<Guid> & Nameable> {
      */
     public E get(Guid id, String name) {
         return id == null ? get(name) : get(id);
+    }
+
+
+    public Map<Guid, E> unmodifiableEntitiesByIdMap() {
+        return Collections.unmodifiableMap(entitiesById);
     }
 }
