@@ -97,9 +97,10 @@ public class EngineExtensionsManager extends ExtensionsManager {
         for (ExtensionProxy extension : getLoadedExtensions()) {
             if (
                 EngineLocalConfig.getInstance().getBoolean(
-                    (
-                         ENGINE_EXTENSION_ENABLED + extension.getContext()
-                         .<String> get(Base.ContextKeys.INSTANCE_NAME)
+                    ENGINE_EXTENSION_ENABLED + normalizeName(
+                        extension.getContext().<String> get(
+                            Base.ContextKeys.INSTANCE_NAME
+                        )
                     ),
                     Boolean.parseBoolean(
                             extension.getContext().<Properties> get(
@@ -113,6 +114,18 @@ public class EngineExtensionsManager extends ExtensionsManager {
         }
 
         dump();
+    }
+
+    private String normalizeName(String s) {
+        StringBuilder ret = new StringBuilder();
+        for (char c : s.toCharArray()) {
+            if (c == '_' || Character.isLetterOrDigit(c)) {
+                ret.append(c);
+            } else {
+                ret.append('_');
+            }
+        }
+        return ret.toString();
     }
 
     private void createInternalAAAConfigurations() {
