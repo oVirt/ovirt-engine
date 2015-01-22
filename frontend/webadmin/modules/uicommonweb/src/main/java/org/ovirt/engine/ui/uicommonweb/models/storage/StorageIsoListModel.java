@@ -89,11 +89,6 @@ public class StorageIsoListModel extends SearchableListModel
 
         super.syncSearch();
 
-        if (getProgress() != null)
-        {
-            return;
-        }
-
         StorageDomain storageDomain = (StorageDomain) getEntity();
         boolean isDomainActive = storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Active ||
                 storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Mixed;
