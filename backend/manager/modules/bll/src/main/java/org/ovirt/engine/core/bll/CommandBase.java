@@ -763,10 +763,17 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return getParameters().getParentCommand() != VdcActionType.Unknown;
     }
 
+    private boolean isCanDoActionSupportsTransaction() {
+        return getClass().isAnnotationPresent(CanDoActionSupportsTransaction.class);
+    }
+
     private boolean internalCanDoAction() {
         boolean returnValue = false;
         try {
-            Transaction transaction = TransactionSupport.suspend();
+            Transaction transaction = null;
+            if (!isCanDoActionSupportsTransaction()) {
+                transaction = TransactionSupport.suspend();
+            }
             try {
                 returnValue =
                         isUserAuthorizedToRunAction() && isBackwardsCompatible() && validateInputs() && acquireLock()
@@ -778,7 +785,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                             StringUtils.join(getReturnValue().getCanDoActionMessages(), ','));
                 }
             } finally {
-                TransactionSupport.resume(transaction);
+                if (transaction != null) {
+                    TransactionSupport.resume(transaction);
+                }
             }
         } catch (DataAccessException dataAccessEx) {
             log.error("Data access error during CanDoActionFailure.", dataAccessEx);
