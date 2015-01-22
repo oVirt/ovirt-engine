@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
+import org.ovirt.engine.core.bll.CanDoActionSupportsTransaction;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.helper.DisplayNetworkClusterHelper;
@@ -15,6 +16,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirectorDelegator;
 
 @InternalCommandAttribute
+@CanDoActionSupportsTransaction
 public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsGroupParameter> extends
                                                                                        NetworkClusterCommandBase<T> {
 

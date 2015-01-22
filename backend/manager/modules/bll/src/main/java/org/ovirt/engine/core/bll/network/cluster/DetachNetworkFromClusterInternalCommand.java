@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.network.cluster;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.CanDoActionSupportsTransaction;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VdsGroupCommandBase;
@@ -16,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
 @InternalCommandAttribute
+@CanDoActionSupportsTransaction
 public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToVdsGroupParameter>
         extends VdsGroupCommandBase<T> {
 
