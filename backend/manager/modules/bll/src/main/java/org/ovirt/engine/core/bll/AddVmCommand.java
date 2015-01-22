@@ -745,7 +745,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         ImagesHandler.fillImagesMapBasedOnTemplate(vmDisksSource,
                 getPoolDomains(),
                 diskInfoDestinationMap,
-                destStorages, false);
+                destStorages);
     }
 
     protected boolean validateIsImagesOnDomains() {

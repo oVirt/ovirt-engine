@@ -344,7 +344,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             } else {
                 ImagesHandler.fillImagesMapBasedOnTemplate(getVmTemplate(),
                         diskInfoDestinationMap,
-                        destStorages, false);
+                        destStorages);
             }
         }
         if (getVmTemplate().getDiskTemplateMap().values().size() != diskInfoDestinationMap.size()) {

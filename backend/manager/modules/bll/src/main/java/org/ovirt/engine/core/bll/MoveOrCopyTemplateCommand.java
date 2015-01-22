@@ -124,7 +124,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
             // check that images are ok
             ImagesHandler.fillImagesMapBasedOnTemplate(getVmTemplate(),
                     imageFromSourceDomainMap,
-                    null, true);
+                    null);
             if (getVmTemplate().getDiskTemplateMap().values().size() != imageFromSourceDomainMap.size()) {
                 log.errorFormat("Can not found any default active domain for one of the disks of template with id : {0}",
                         getVmTemplate().getId());
