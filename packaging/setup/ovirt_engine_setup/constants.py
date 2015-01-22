@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013-2014 Red Hat, Inc.
+# Copyright (C) 2013-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -498,6 +498,12 @@ class RemoveEnv(object):
     )
     def REMOVE_ALL(self):
         return 'OVESETUP_REMOVE/removeAll'
+
+    @osetupattrs(
+        answerfile=True,
+    )
+    def REMOVE_CHANGED(self):
+        return 'OVESETUP_REMOVE/removeChanged'
 
     @osetupattrs(
         answerfile=True,

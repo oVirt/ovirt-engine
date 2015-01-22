@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013-2014 Red Hat, Inc.
+# Copyright (C) 2013-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -182,7 +182,10 @@ class Plugin(plugin.PluginBase):
             osetupcons.RemoveEnv.REMOVE_SPEC_OPTION_GROUP_LIST,
             []
         )
-
+        self.environment.setdefault(
+            osetupcons.RemoveEnv.REMOVE_CHANGED,
+            None
+        )
         self._infos = sorted(
             glob.glob(
                 os.path.join(
@@ -337,6 +340,36 @@ class Plugin(plugin.PluginBase):
                 unremovable.update(getFiles('unremovable'))
 
         self._toremove = set(self._files.keys()) - set(unremovable.keys())
+        changed = []
+        for f in self._toremove:
+            if os.path.exists(f):
+                if self._digestFile(f) != self._files[f]:
+                    changed.append(f)
+        self.logger.debug('changed=%s', changed)
+        if changed:
+            if self.environment[osetupcons.RemoveEnv.REMOVE_CHANGED] is None:
+                self.environment[
+                    osetupcons.RemoveEnv.REMOVE_CHANGED
+                ] = dialog.queryBoolean(
+                    dialog=self.dialog,
+                    name='OVESETUP_ENGINE_REMOVE_CHANGED',
+                    note=_(
+                        'The following files were changed since setup:\n'
+                        '{files}\n'
+                        'Remove them anyway? '
+                        '(@VALUES@) [@DEFAULT@]: '
+                    ).format(
+                        files='\n'.join(changed),
+                    ),
+                    prompt=True,
+                    true=_('Yes'),
+                    false=_('No'),
+                    default=True,
+                )
+
+        if not self.environment[osetupcons.RemoveEnv.REMOVE_CHANGED]:
+            self._toremove -= set(changed)
+
         self._tomodifylines = self._lines.keys()
         self.logger.debug('tomodifylines=%s', self._tomodifylines)
         self.logger.debug('files=%s', self._files)
@@ -354,16 +387,7 @@ class Plugin(plugin.PluginBase):
         self.logger.info(_('Removing files'))
         for f in self._toremove:
             if os.path.exists(f):
-                if self._digestFile(f) != self._files[f]:
-                    self.logger.warning(
-                        _(
-                            "Preserving '{file}' as changed since installation"
-                        ).format(
-                            file=f,
-                        )
-                    )
-                else:
-                    self._safeDelete(f)
+                self._safeDelete(f)
 
             elif os.path.islink(f):
                 # dead link
