@@ -76,27 +76,25 @@ public final class ImagesHandler {
      * @param template
      * @param diskInfoDestinationMap
      * @param destStorages
-     * @param notCheckSize - if we need to perform a size check for storage or not
      */
     public static void fillImagesMapBasedOnTemplate(VmTemplate template,
             Map<Guid, DiskImage> diskInfoDestinationMap,
-            Map<Guid, StorageDomain> destStorages, boolean notCheckSize) {
+            Map<Guid, StorageDomain> destStorages) {
         List<StorageDomain> domains =
                 DbFacade.getInstance()
                         .getStorageDomainDao()
                         .getAllForStoragePool(template.getStoragePoolId());
-        fillImagesMapBasedOnTemplate(template, domains, diskInfoDestinationMap, destStorages, notCheckSize);
+        fillImagesMapBasedOnTemplate(template, domains, diskInfoDestinationMap, destStorages);
     }
 
     public static void fillImagesMapBasedOnTemplate(VmTemplate template,
             List<StorageDomain> domains,
             Map<Guid, DiskImage> diskInfoDestinationMap,
-            Map<Guid, StorageDomain> destStorages, boolean notCheckSize) {
+            Map<Guid, StorageDomain> destStorages) {
         Map<Guid, StorageDomain> storageDomainsMap = new HashMap<Guid, StorageDomain>();
         for (StorageDomain storageDomain : domains) {
             StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
-            if (validator.isDomainExistAndActive().isValid() && validator.domainIsValidDestination().isValid()
-                    && (notCheckSize || validator.isDomainWithinThresholds().isValid())) {
+            if (validator.isDomainExistAndActive().isValid() && validator.domainIsValidDestination().isValid()) {
                 storageDomainsMap.put(storageDomain.getId(), storageDomain);
             }
         }
