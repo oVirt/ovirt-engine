@@ -67,8 +67,7 @@ public class DetachDiskFromVmCommand<T extends AttachDetachVmDiskParameters> ext
             // therefore for attached disk snapshot it shouldn't be checked whether it has snapshots or not.
             if (vmDevice.getSnapshotId() == null
                     && getDiskImageDao().getAllSnapshotsForImageGroup(disk.getId()).size() > 1) {
-                addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DETACH_DISK_WITH_SNAPSHOT);
-                retValue = false;
+                return failCanDoAction(VdcBllMessages.ERROR_CANNOT_DETACH_DISK_WITH_SNAPSHOT);
             }
         }
         return retValue;
