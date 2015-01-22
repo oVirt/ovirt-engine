@@ -225,3 +225,9 @@ ENGINE_REPORTS_RIGHTCLICK_URL=
 ENGINE_REPORTS_NOT_INSTALLED_URL=/ovirt-engine/ReportsNotInstalled.html
 
 ENGINE_EXTENSION_PATH="${ENGINE_USR}/extensions.d:${ENGINE_ETC}/extensions.d"
+
+#
+# Disable extensions (override extension configuration)
+#
+# ENGINE_EXTENSION_ENABLED_<name>=false
+#
