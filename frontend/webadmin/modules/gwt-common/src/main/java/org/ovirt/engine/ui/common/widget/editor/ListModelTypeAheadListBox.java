@@ -130,17 +130,6 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
         // no need to do additional switchSuggestions() - it is processed by MenuBar itself
         getSuggestionMenu().getParent().addDomHandler(new FocusHandlerEnablingMouseHandlers(handlers), MouseUpEvent.getType());
 
-        asSuggestBox().addValueChangeHandler(new ValueChangeHandler<String>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<String> event) {
-                // in case of other way changed the value (like clicking somewhere else when there is a correct value)
-                // hide the suggest box
-                if(isSuggestionListShowing()) {
-                    hideSuggestions();
-                }
-            }
-        });
-
         addValueChangeHandler(new ValueChangeHandler<T>() {
             @Override
             public void onValueChange(ValueChangeEvent<T> event) {
