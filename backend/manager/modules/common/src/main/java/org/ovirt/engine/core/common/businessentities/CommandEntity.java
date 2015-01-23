@@ -12,6 +12,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class CommandEntity implements BusinessEntity<Guid> {
 
     private static final long serialVersionUID = 5293055556971973650L;
+    private Guid userId;
     private Guid commandId;
     private Guid rootCommandId;
     private Guid jobId;
@@ -117,7 +118,8 @@ public class CommandEntity implements BusinessEntity<Guid> {
         this.callBackNotified = callBackNotified;
     }
 
-    public static CommandEntity buildCommandEntity(Guid commandId,
+    public static CommandEntity buildCommandEntity(Guid userId,
+                                                   Guid commandId,
                                                    Guid rootCommandId,
                                                    Guid jobId,
                                                    Guid stepId,
@@ -127,6 +129,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
                                                    boolean callBackEnabled,
                                                    VdcReturnValueBase returnValue) {
         CommandEntity entity = new CommandEntity();
+        entity.setUserId(userId);
         entity.setId(commandId);
         entity.setRootCommandId(rootCommandId);
         entity.setJobId(jobId);
@@ -171,4 +174,11 @@ public class CommandEntity implements BusinessEntity<Guid> {
         this.executed = executed;
     }
 
+    public Guid getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Guid userId) {
+        this.userId = userId;
+    }
 }

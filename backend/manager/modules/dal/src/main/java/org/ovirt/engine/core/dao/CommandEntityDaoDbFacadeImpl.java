@@ -26,6 +26,7 @@ public class CommandEntityDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Comm
         @Override
         public CommandEntity mapRow(ResultSet resultSet, int rowNum) throws SQLException {
             CommandEntity result = new CommandEntity();
+            result.setUserId(Guid.createGuidFromString(resultSet.getString("user_id")));
             result.setId(Guid.createGuidFromString(resultSet.getString("command_id")));
             result.setJobId(Guid.createGuidFromString(resultSet.getString("job_id")));
             result.setStepId(Guid.createGuidFromString(resultSet.getString("step_id")));
@@ -57,7 +58,8 @@ public class CommandEntityDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Comm
 
     @Override
     protected MapSqlParameterSource createFullParametersMapper(CommandEntity entity) {
-        return getCustomMapSqlParameterSource().addValue("command_id", Guid.isNullOrEmpty(entity.getId()) ? Guid.Empty : entity.getId())
+        return getCustomMapSqlParameterSource().addValue("user_id", Guid.isNullOrEmpty(entity.getUserId()) ? Guid.Empty : entity.getUserId())
+                .addValue("command_id", Guid.isNullOrEmpty(entity.getId()) ? Guid.Empty : entity.getId())
                 .addValue("command_type", entity.getCommandType().getValue())
                 .addValue("root_command_id", Guid.isNullOrEmpty(entity.getRootCommandId()) ? Guid.Empty : entity.getRootCommandId())
                 .addValue("job_id", Guid.isNullOrEmpty(entity.getJobId()) ? Guid.Empty : entity.getJobId())
