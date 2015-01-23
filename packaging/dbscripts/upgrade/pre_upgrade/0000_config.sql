@@ -1018,6 +1018,11 @@ select fn_db_update_default_config_value('GuestToolsSetupIsoPrefix','RHEV-toolsS
 select fn_db_update_default_config_value('vdsConnectionTimeout', '180', '2', 'general', false);
 select fn_db_update_default_config_value('vdsRetries', '3', '0', 'general', false);
 
+-- Override existing configuration to TLSv1 if it is SSLv3
+select fn_db_update_default_config_value('VdsmSSLProtocol','SSLv3','TLSv1','general', false);
+select fn_db_update_default_config_value('ExternalCommunicationProtocol','SSLv3','TLSv1','general', false);
+
+
 ------------------------------------------------------------------------------------
 --              Cleanup deprecated configuration values section
 ------------------------------------------------------------------------------------
