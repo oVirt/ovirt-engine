@@ -830,6 +830,11 @@ select fn_db_update_default_config_value('vdsRetries', '3', '0', 'general', fals
 select fn_db_update_default_config_value('CustomDeviceProperties', '{type=interface;prop={SecurityGroups=^(?:(?:[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}, *)*[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}|)$}}', '{type=interface;prop={SecurityGroups=^(?:(?:[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}, *)*[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}|)$}}', '3.4', false);
 select fn_db_update_default_config_value('CustomDeviceProperties', '{type=interface;prop={SecurityGroups=^(?:(?:[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}, *)*[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}|)$}}', '{type=interface;prop={SecurityGroups=^(?:(?:[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}, *)*[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}|)$}}', '3.5', false);
 
+-- Override existing configuration to TLSv1 if it is SSLv3
+select fn_db_update_default_config_value('VdsmSSLProtocol','SSLv3','TLSv1','general', false);
+select fn_db_update_default_config_value('ExternalCommunicationProtocol','SSLv3','TLSv1','general', false);
+
+
 ------------------------------------------------------------------------------------
 --              Cleanup deprecated configuration values section
 ------------------------------------------------------------------------------------
