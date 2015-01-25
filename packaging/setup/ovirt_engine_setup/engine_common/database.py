@@ -569,11 +569,37 @@ class OvirtUtils(base.Base):
 
         return backupFile
 
+    _RE_IGNORED_ERRORS = re.compile(
+        flags=re.VERBOSE,
+        pattern=r"""
+            .*(
+             language\ "plpgsql"\ already\ exists
+            |must\ be\ owner\ of\ language\ plpgsql
+            |must\ be\ owner\ of\ extension\ plpgsql
+        """
+        #
+        # older versions of dwh used uuid-ossp, which requires special privs,
+        # is not used anymore, and emits the following errors for normal users.
+        r"""|permission\ denied\ for\ language\ c
+            |function\ public.uuid_generate_v1\(\)\ does\ not\ exist
+            |function\ public.uuid_generate_v1mc\(\)\ does\ not\ exist
+            |function\ public.uuid_generate_v3\(uuid,\ text\)\ does\ not\ exist
+            |function\ public.uuid_generate_v4\(\)\ does\ not\ exist
+            |function\ public.uuid_generate_v5\(uuid,\ text\)\ does\ not\ exist
+            |function\ public.uuid_nil\(\)\ does\ not\ exist
+            |function\ public.uuid_ns_dns\(\)\ does\ not\ exist
+            |function\ public.uuid_ns_oid\(\)\ does\ not\ exist
+            |function\ public.uuid_ns_url\(\)\ does\ not\ exist
+            |function\ public.uuid_ns_x500\(\)\ does\ not\ exist
+            ).*
+        """
+    )
+
     def restore(
         self,
         backupFile,
     ):
-        self._plugin.execute(
+        rc, stdout, stderr = self._plugin.execute(
             (
                 self.command.get('pg_restore'),
                 '-w',
@@ -589,10 +615,25 @@ class OvirtUtils(base.Base):
                 'PGPASSFILE': self.environment[self._dbenvkeys['pgpassfile']],
             },
             raiseOnError=False,
-            # TODO: check stderr of this and raise an error if there are real
-            # errors. We currently always have one about plpgsql already
-            # existing. When doing that, verify with both pg 8 and 9.
         )
+        if (rc != 0) and stderr:
+            errors = [
+                l for l in stderr
+                if 'ERROR: ' in l and not self._RE_IGNORED_ERRORS.match(l)
+            ]
+            if errors:
+                self.logger.error(
+                    _(
+                        'Errors while restoring {name} database, please check '
+                        'the log file for details'
+                    ).format(
+                        name=self.environment[self._dbenvkeys['database']],
+                    )
+                )
+                self.logger.debug(
+                    'Errors unfiltered during restore:\n\n%s\n' %
+                    '\n'.join(errors)
+                )
 
     @staticmethod
     def _lower_equal(key, current, expected):
