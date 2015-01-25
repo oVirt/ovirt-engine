@@ -62,6 +62,7 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
         } catch (RuntimeException e) {
             log.error("Failed to retrieve storage domains by connections info: {}", e.getMessage());
             log.debug("Exception", e);
+            getQueryReturnValue().setExceptionString(e.getMessage());
             getQueryReturnValue().setSucceeded(false);
             return;
         }
