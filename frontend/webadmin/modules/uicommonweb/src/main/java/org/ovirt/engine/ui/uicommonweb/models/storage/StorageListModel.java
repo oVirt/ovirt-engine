@@ -2082,7 +2082,11 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
                     boolean success = returnVal != null && returnVal.getSucceeded();
                     if (success) {
                         storageListModel.fileConnection.setid((String) returnVal.getActionReturnValue());
-                        checkFileDomainAttachedToDc("OnImportFile", storageListModel.fileConnection); //$NON-NLS-1$
+                        if (storageModel.getRole() == StorageDomainType.Data) {
+                            checkFileDomainAttachedToDc("OnImportFile", storageListModel.fileConnection); //$NON-NLS-1$
+                        } else {
+                            getExistingStorageDomainList();
+                        }
                     }
                     else {
                         postImportFileStorage(storageListModel.context,
