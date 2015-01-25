@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -59,44 +59,18 @@ class Plugin(plugin.PluginBase):
         )
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_SETUP,
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        after=(
+            oenginecons.Stages.CORE_ENABLE,
+        ),
+        before=(
+            osetupcons.Stages.DISTRO_RPM_PACKAGE_UPDATE_CHECK,
+        ),
     )
-    def _setup(self):
+    def _customization(self):
         def tolist(s):
             return [e.strip() for e in s.split(',')]
 
-        self.environment[
-            osetupcons.RPMDistroEnv.VERSION_LOCK_FILTER
-        ].extend(
-            tolist(
-                self.environment[oenginecons.RPMDistroEnv.ENGINE_PACKAGES]
-            )
-        )
-        self.environment[
-            osetupcons.RPMDistroEnv.VERSION_LOCK_APPLY
-        ].extend(
-            [
-                '%s%s' % (prefix, suffix)
-                for prefix in tolist(
-                    self.environment[
-                        oenginecons.RPMDistroEnv.ENGINE_PACKAGES
-                    ]
-                )
-                for suffix in osetupcons.Const.RPM_LOCK_LIST_SUFFIXES
-            ]
-        )
-        self.environment[
-            osetupcons.RPMDistroEnv.PACKAGES_UPGRADE_LIST
-        ].append(
-            {
-                'group': self.environment[
-                    oenginecons.RPMDistroEnv.UPGRADE_YUM_GROUP
-                ],
-                'packages': tolist(
-                    self.environment[oenginecons.RPMDistroEnv.ENGINE_PACKAGES]
-                ),
-            },
-        )
         self.environment[
             osetupcons.RPMDistroEnv.PACKAGES_SETUP
         ].extend(
@@ -106,6 +80,40 @@ class Plugin(plugin.PluginBase):
                 ]
             )
         )
+
+        if self.environment[oenginecons.CoreEnv.ENABLE]:
+            self.environment[
+                osetupcons.RPMDistroEnv.VERSION_LOCK_FILTER
+            ].extend(
+                tolist(
+                    self.environment[oenginecons.RPMDistroEnv.ENGINE_PACKAGES]
+                )
+            )
+            self.environment[
+                osetupcons.RPMDistroEnv.VERSION_LOCK_APPLY
+            ].extend(
+                [
+                    '%s%s' % (prefix, suffix)
+                    for prefix in tolist(
+                        self.environment[
+                            oenginecons.RPMDistroEnv.ENGINE_PACKAGES
+                        ]
+                    )
+                    for suffix in osetupcons.Const.RPM_LOCK_LIST_SUFFIXES
+                ]
+            )
+            self.environment[
+                osetupcons.RPMDistroEnv.PACKAGES_UPGRADE_LIST
+            ].append(
+                {
+                    'group': self.environment[
+                        oenginecons.RPMDistroEnv.UPGRADE_YUM_GROUP
+                    ],
+                    'packages': tolist(
+                        self.environment[oenginecons.RPMDistroEnv.ENGINE_PACKAGES]
+                    ),
+                },
+            )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
