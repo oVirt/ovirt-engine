@@ -3206,7 +3206,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Storage Domain wasn't provided.")
     String ACTION_TYPE_DISK_PROFILE_STORAGE_DOMAIN_NOT_PROVIDED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Disk Profile doesn't match provided Storage Domain.")
+    @DefaultStringValue("Cannot ${action} ${type}. Disk Profile '${diskProfile}' is not assigned to Storage Domain '${storageDomain}'.")
     String ACTION_TYPE_DISK_PROFILE_NOT_MATCH_STORAGE_DOMAIN();
 
     @DefaultStringValue("Cannot ${action} ${type}. CPU Profile doesn't match provided Cluster.")
