@@ -283,6 +283,8 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     public Response unregisteredStorageDomainsDiscover(Action action) {
         validateParameters(action, "iscsi.address");
 
+        // Validate if the Host exists.
+        getEntity();
         List<StorageServerConnections> storageServerConnections = new ArrayList<>();
         for (String iscsiTarget : action.getIscsiTargets()) {
             StorageServerConnections connectionDetails = getInitializedConnectionIscsiDetails(action);
