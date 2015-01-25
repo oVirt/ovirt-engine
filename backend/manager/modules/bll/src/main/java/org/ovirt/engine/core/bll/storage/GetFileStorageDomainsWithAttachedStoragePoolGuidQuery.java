@@ -31,23 +31,26 @@ public class GetFileStorageDomainsWithAttachedStoragePoolGuidQuery<P extends Sto
 
     protected List<StorageDomainStatic> getStorageDomainsByStorageServerConnections(StorageServerConnections storageServerConnection) {
         List<StorageDomainStatic> storageDomainsWithAttachedStoragePoolId = new ArrayList<>();
-        List<StorageDomain> existingStorageDomains = getExistingStorageDomainList(storageServerConnection);
-        if (!existingStorageDomains.isEmpty()) {
-            StorageDomain storageDomain = existingStorageDomains.get(0);
-            if (storageDomain.getStoragePoolId() != null) {
-                storageDomainsWithAttachedStoragePoolId.add(storageDomain.getStorageStaticData());
+        VdcQueryReturnValue returnValue = getExistingStorageDomainList(storageServerConnection);
+        if (returnValue.getSucceeded()) {
+            List<StorageDomain> existingStorageDomains = returnValue.getReturnValue();
+            if (!existingStorageDomains.isEmpty()) {
+                StorageDomain storageDomain = existingStorageDomains.get(0);
+                if (storageDomain.getStoragePoolId() != null) {
+                    storageDomainsWithAttachedStoragePoolId.add(storageDomain.getStorageStaticData());
+                }
             }
         }
         return storageDomainsWithAttachedStoragePoolId;
     }
 
-    protected List<StorageDomain> getExistingStorageDomainList(StorageServerConnections storageServerConnection) {
+    protected VdcQueryReturnValue getExistingStorageDomainList(StorageServerConnections storageServerConnection) {
         VdcQueryReturnValue returnValue = getBackend().runInternalQuery(VdcQueryType.GetExistingStorageDomainList,
                 new GetExistingStorageDomainListParameters(
                         getVdsId(),
                         storageServerConnection.getstorage_type(),
                         StorageDomainType.Data,
                         storageServerConnection.getconnection()));
-        return returnValue.getReturnValue();
+        return returnValue;
     }
 }

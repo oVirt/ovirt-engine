@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.StorageDomainsAndStoragePoolIdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -190,7 +191,36 @@ public class GetFileStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
         when(paramsMock.getStorageServerConnection()).thenReturn(storageServerConnections);
 
         List<StorageDomain> storageDomains = new ArrayList<>();
-        doReturn(storageDomains).when(getQuery()).getExistingStorageDomainList(eq(storageServerConnections));
+        VdcQueryReturnValue vdcReturnValue = new VdcQueryReturnValue();
+        vdcReturnValue.setSucceeded(true);
+        vdcReturnValue.setReturnValue(storageDomains);
+        doReturn(vdcReturnValue).when(getQuery()).getExistingStorageDomainList(eq(storageServerConnections));
+
+        // Execute command
+        getQuery().executeQueryCommand();
+
+        // Assert the query's results
+        List<StorageDomainStatic> returnedStorageDomainList = new ArrayList<>();
+        assertEquals(returnedStorageDomainList, getQuery().getQueryReturnValue().getReturnValue());
+    }
+
+    @Test
+    public void testFetchUsingStorageServerConnectionWithFailedInternalQuery() {
+        mockVdsCommand();
+        StoragePool storagePool = new StoragePool();
+        storagePool.setStatus(StoragePoolStatus.Up);
+        mockStoragePoolDao(storagePool);
+
+        // Create parameters
+        StorageDomainsAndStoragePoolIdQueryParameters paramsMock = getQueryParameters();
+        when(paramsMock.getStorageDomainList()).thenReturn(null);
+        StorageServerConnections storageServerConnections = new StorageServerConnections();
+        when(paramsMock.getStorageServerConnection()).thenReturn(storageServerConnections);
+
+        VdcQueryReturnValue vdcReturnValue = new VdcQueryReturnValue();
+        vdcReturnValue.setSucceeded(false);
+        vdcReturnValue.setReturnValue(null);
+        doReturn(vdcReturnValue).when(getQuery()).getExistingStorageDomainList(eq(storageServerConnections));
 
         // Execute command
         getQuery().executeQueryCommand();
@@ -219,7 +249,10 @@ public class GetFileStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
 
         List<StorageDomain> storageDomains = new ArrayList<>();
         storageDomains.add(mockedStorageDomain);
-        doReturn(storageDomains).when(getQuery()).getExistingStorageDomainList(eq(storageServerConnection));
+        VdcQueryReturnValue vdcReturnValue = new VdcQueryReturnValue();
+        vdcReturnValue.setSucceeded(true);
+        vdcReturnValue.setReturnValue(storageDomains);
+        doReturn(vdcReturnValue).when(getQuery()).getExistingStorageDomainList(eq(storageServerConnection));
 
         // Execute command
         getQuery().executeQueryCommand();
@@ -248,7 +281,10 @@ public class GetFileStorageDomainsWithAttachedStoragePoolGuidQueryTest extends
 
         List<StorageDomain> storageDomains = new ArrayList<>();
         storageDomains.add(mockedStorageDomain);
-        doReturn(storageDomains).when(getQuery()).getExistingStorageDomainList(eq(storageServerConnections));
+        VdcQueryReturnValue vdcReturnValue = new VdcQueryReturnValue();
+        vdcReturnValue.setSucceeded(true);
+        vdcReturnValue.setReturnValue(storageDomains);
+        doReturn(vdcReturnValue).when(getQuery()).getExistingStorageDomainList(eq(storageServerConnections));
 
         // Execute command
         getQuery().executeQueryCommand();
