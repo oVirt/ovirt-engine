@@ -59,7 +59,11 @@ public class DiskProfileValidator extends ProfileValidator<DiskProfile> {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_PROFILE_NOT_FOUND);
         }
         if (!storageDomainId.equals(fetchedDiskProfile.getStorageDomainId())) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_DISK_PROFILE_NOT_MATCH_STORAGE_DOMAIN);
+            String diskProfileName = fetchedDiskProfile.getName();
+            String targetStorageDomainName = getStorageDomain().getName();
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_DISK_PROFILE_NOT_MATCH_STORAGE_DOMAIN,
+                    String.format("$diskProfile %s", diskProfileName),
+                    String.format("$storageDomain %s", targetStorageDomainName));
         }
         return ValidationResult.VALID;
     }
