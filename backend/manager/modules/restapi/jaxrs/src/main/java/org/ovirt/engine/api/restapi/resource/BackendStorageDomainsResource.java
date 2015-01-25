@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
@@ -132,6 +133,10 @@ public class BackendStorageDomainsResource
     }
 
     private Response addExistingSAN(StorageDomain model, StorageType storageType, Guid hostId) {
+        getEntity(VDS.class,
+                VdcQueryType.GetVdsByVdsId,
+                new IdQueryParameters(hostId),
+                "Host: id=" + hostId);
         List<LUNs> existingLuns = getDeviceList(hostId, storageType);
         List<StorageServerConnections> existingStorageServerConnections =
                 getLunsWithInitializedStorageType(existingLuns, storageType);
@@ -143,6 +148,10 @@ public class BackendStorageDomainsResource
 
         StorageDomainStatic storageDomainToImport =
                 getMatchingStorageDomain(asGuid(model.getId()), existingStorageDomains);
+        if (storageDomainToImport == null) {
+            throw new WebFaultException(new WebApplicationException(), "Storage Domain id " + model.getId()
+                    + " Does not exists", Status.NOT_FOUND);
+        }
         StorageDomainManagementParameter parameters =
                 new StorageDomainManagementParameter(storageDomainToImport);
         parameters.setVdsId(hostId);
