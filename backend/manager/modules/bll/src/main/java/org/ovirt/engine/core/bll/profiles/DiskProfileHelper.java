@@ -92,7 +92,8 @@ public class DiskProfileHelper {
     private static boolean isDiskProfilePermitted(DiskProfile diskProfile,
             Set<Guid> permittedDiskProfilesIds,
             DbUser user) {
-        return permittedDiskProfilesIds.contains(diskProfile.getId())
+        return user == null
+                || permittedDiskProfilesIds.contains(diskProfile.getId())
                 || getPermissionDAO().getEntityPermissions(user.getId(),
                         ActionGroup.ATTACH_DISK_PROFILE,
                         diskProfile.getId(),
