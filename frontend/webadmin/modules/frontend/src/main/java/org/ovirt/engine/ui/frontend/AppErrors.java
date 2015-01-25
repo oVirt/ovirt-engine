@@ -1165,7 +1165,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Maximum value for concurrently running VMs exceeded.")
     String ACTION_TYPE_FAILED_VM_MAX_RESOURCE_EXEEDED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. One or more provided storage domains are in maintenance/non-operational status.")
+    @DefaultStringValue("Cannot ${action} ${type}. One or more provided storage domains are either not in active status or of an illegal type for the requested operation")
     String ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS();
 
     @DefaultStringValue("Cannot ${action} ${type}. Provided wrong storage domain, which is not related to disk.")
