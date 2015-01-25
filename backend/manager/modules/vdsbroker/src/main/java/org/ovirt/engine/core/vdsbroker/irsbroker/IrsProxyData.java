@@ -424,19 +424,23 @@ public class IrsProxyData {
                 DbFacade.getInstance().getStorageDomainDynamicDao().update(data.getStorageDynamicData());
                 if (data.getAvailableDiskSize() != null && data.getUsedDiskSize() != null) {
                     double freePercent = data.getStorageDynamicData().getfreeDiskPercent();
-                    int freeDiskInGB = data.getStorageDynamicData().getfreeDiskInGB();
                     AuditLogType type = AuditLogType.UNASSIGNED;
-                    boolean spaceThresholdMet =
-                            freeDiskInGB < Config.<Integer> getValue(ConfigValues.FreeSpaceCriticalLowInGB);
-                    boolean percentThresholdMet =
-                            freePercent < Config.<Integer> getValue(ConfigValues.FreeSpaceLow);
-                    if (spaceThresholdMet && percentThresholdMet) {
-                        type = AuditLogType.IRS_DISK_SPACE_LOW_ERROR;
-                    } else {
-                        if (spaceThresholdMet || percentThresholdMet) {
-                            type = AuditLogType.IRS_DISK_SPACE_LOW;
+                    Integer freeDiskInGB = data.getStorageDynamicData().getAvailableDiskSize();
+                    if (freeDiskInGB != null) {
+                        boolean spaceThresholdMet =
+                                freeDiskInGB < Config.<Integer>getValue(ConfigValues.FreeSpaceCriticalLowInGB);
+                        boolean percentThresholdMet =
+                                freePercent < Config.<Integer>getValue(ConfigValues.FreeSpaceLow);
+
+                        if (spaceThresholdMet && percentThresholdMet) {
+                            type = AuditLogType.IRS_DISK_SPACE_LOW_ERROR;
+                        } else {
+                            if (spaceThresholdMet || percentThresholdMet) {
+                                type = AuditLogType.IRS_DISK_SPACE_LOW;
+                            }
                         }
                     }
+
                     if (type != AuditLogType.UNASSIGNED) {
                         AuditLogableBase logable = new AuditLogableBase();
                         logable.setStorageDomain(data);

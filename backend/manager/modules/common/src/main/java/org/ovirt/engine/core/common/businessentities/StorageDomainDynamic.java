@@ -55,12 +55,6 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
         return totalSize != 0 ? (availableDiskSize / totalSize) * 100 : 0.0;
     }
 
-    public int getfreeDiskInGB() {
-        int availableDiskSize = getAvailableDiskSize() == null ? 0 : getAvailableDiskSize();
-            return availableDiskSize;
-    }
-
-
     @Override
     public int hashCode() {
         final int prime = 31;
