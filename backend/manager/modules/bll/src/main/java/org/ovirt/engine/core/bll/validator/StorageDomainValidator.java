@@ -57,7 +57,9 @@ public class StorageDomainValidator {
 
     public ValidationResult isDomainWithinThresholds() {
         StorageDomainDynamic dynamic = storageDomain.getStorageDynamicData();
-        if (dynamic != null && dynamic.getfreeDiskInGB() < getLowDiskSpaceThreshold()) {
+        if (dynamic != null
+                && dynamic.getAvailableDiskSize() != null
+                && dynamic.getAvailableDiskSize() < getLowDiskSpaceThreshold()) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
                     storageName());
         }
