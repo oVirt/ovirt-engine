@@ -36,6 +36,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -178,9 +179,11 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
         }
+
+        List<StorageDomainStatic> poolDomains = getStorageDomainStaticDAO().getAllForStoragePool(getStoragePool().getId());
         if (returnValue
                 && _oldStoragePool.isLocal() != getStoragePool().isLocal()
-                && getStorageDomainStaticDAO().getAllForStoragePool(getStoragePool().getId()).size() > 0) {
+                && poolDomains.size() > 0) {
             returnValue = false;
             getReturnValue()
                     .getCanDoActionMessages()
@@ -197,6 +200,9 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             }
             // decreasing of compatibility version is allowed under conditions
             else if (getStoragePool().getcompatibility_version().compareTo(_oldStoragePool.getcompatibility_version()) < 0) {
+                if (!poolDomains.isEmpty() && !isCompatibilityVersionChangeAllowedForDomains(poolDomains)) {
+                    return false;
+                }
                 List<Network> networks = getNetworkDAO().getAllForDataCenter(getStoragePoolId());
                 if (networks.size() == 1) {
                     Network network = networks.get(0);
@@ -222,6 +228,43 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             returnValue = validate(validator.isNotLocalfsWithDefaultCluster());
         }
         return returnValue;
+    }
+
+    private boolean isCompatibilityVersionChangeAllowedForDomains(List<StorageDomainStatic> poolDomains) {
+        List<Object> formatProblematicDomains = new ArrayList<>();
+        List<Object> typeProblematicDomains = new ArrayList<>();
+        boolean failOnSupportedTypeMixing = false;
+
+        for (StorageDomainStatic domainStatic : poolDomains) {
+            if (!failOnSupportedTypeMixing && !isStorageDomainTypeFitsPoolIfMixed(domainStatic)) {
+                failOnSupportedTypeMixing = true;
+            }
+            if (!isStorageDomainCompatibleWithDC(domainStatic).isValid()) {
+                typeProblematicDomains.add(domainStatic.getName());
+            }
+            if (!isStorageDomainFormatCorrectForDC(domainStatic, getStoragePool())) {
+                formatProblematicDomains.add(domainStatic.getName());
+            }
+        }
+
+        return manageCompatibilityVersionChangeCheckResult(failOnSupportedTypeMixing, formatProblematicDomains, typeProblematicDomains);
+    }
+
+    private boolean isStorageDomainTypeFitsPoolIfMixed(StorageDomainStatic domainStatic) {
+        return !isMixedTypeDC(domainStatic);
+    }
+
+    private boolean manageCompatibilityVersionChangeCheckResult(boolean failOnSupportedTypeMixing, List<Object> formatProblematicDomains, List<Object> typeProblematicDomains) {
+        if (!formatProblematicDomains.isEmpty()) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DECREASING_COMPATIBILITY_VERSION_CAUSES_STORAGE_FORMAT_DOWNGRADING);
+            getReturnValue().getCanDoActionMessages().addAll(ReplacementUtils.replaceWith("formatDowngradedDomains", formatProblematicDomains));
+        }
+        if (!typeProblematicDomains.isEmpty()) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAINS_ARE_NOT_SUPPORTED_IN_DOWNGRADED_VERSION);
+            getReturnValue().getCanDoActionMessages().addAll(ReplacementUtils.replaceWith("unsupportedVersionDomains", typeProblematicDomains));
+        }
+
+        return typeProblematicDomains.isEmpty() && formatProblematicDomains.isEmpty() && !failOnSupportedTypeMixing;
     }
 
     protected boolean checkAllClustersLevel() {

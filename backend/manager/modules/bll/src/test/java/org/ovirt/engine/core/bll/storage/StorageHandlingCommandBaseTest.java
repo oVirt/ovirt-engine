@@ -166,7 +166,7 @@ public class StorageHandlingCommandBaseTest {
         when(storagePoolDAO.getStorageTypesInPool(storagePool.getId())).thenReturn(Collections.singletonList(StorageType.NFS));
 
         StorageDomain domainToAttach = createValidStorageDomain();
-        domainToAttach.setStorageFormat(cmd.getSupportedStorageFormatSet(version).iterator().next());
+        domainToAttach.setStorageFormat(StorageFormatType.V1);
         initCommand();
         assertTrue("Attaching an NFS domain to a pool with NFS domain with no mixed type allowed failed, version: " + version, cmd.checkDomainCanBeAttached(domainToAttach));
 
@@ -249,7 +249,9 @@ public class StorageHandlingCommandBaseTest {
     @Test
     public void testAttachFailFormatType() {
         StorageDomain domainToAttach = createValidStorageDomain();
-        domainToAttach.setStorageFormat(StorageFormatType.V2);
+        domainToAttach.setStorageFormat(StorageFormatType.V3);
+        storagePool.setcompatibility_version(Version.v3_0);
+
         assertFalse("Attaching domain with unsupported version succeeded while it should have failed", cmd.checkDomainCanBeAttached(domainToAttach));
         CanDoActionTestUtils.assertCanDoActionMessages("Attaching domain with unsupported version failed with the wrong message", cmd,
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL);

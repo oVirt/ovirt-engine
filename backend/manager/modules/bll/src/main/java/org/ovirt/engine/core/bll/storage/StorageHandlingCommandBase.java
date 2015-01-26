@@ -38,6 +38,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -329,26 +330,26 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return returnValue;
     }
 
-    protected boolean isStorageDomainCompatibleWithDC(StorageDomain storageDomain) {
+    protected ValidationResult isStorageDomainCompatibleWithDC(StorageDomainStatic domainStatic) {
         StoragePoolValidator spv = new StoragePoolValidator(getStoragePool());
-        if (storageDomain.getStorageType() == StorageType.GLUSTERFS) {
-            ValidationResult result = spv.isGlusterSupportedInDC();
-            return validate(result);
+        if (domainStatic.getStorageType() == StorageType.GLUSTERFS) {
+            return spv.isGlusterSupportedInDC();
         }
 
-        if (storageDomain.getStorageType() == StorageType.POSIXFS) {
-            ValidationResult result = spv.isPosixSupportedInDC();
-            return validate(result);
+        if (domainStatic.getStorageType() == StorageType.POSIXFS) {
+            return spv.isPosixSupportedInDC();
         }
 
-        return true;
+        return ValidationResult.VALID;
     }
 
     protected boolean checkDomainCanBeAttached(StorageDomain storageDomain) {
         if (!validateAmountOfIsoAndExportDomainsInDC(storageDomain)) {
             return false;
         }
-        if (!isStorageDomainFormatCorrectForDC(storageDomain, getStoragePool())) {
+        if (!isStorageDomainFormatCorrectForDC(storageDomain.getStorageStaticData(), getStoragePool())) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL);
+            getReturnValue().getCanDoActionMessages().add(String.format("$storageFormat %1$s", storageDomain.getStorageFormat().toString()));
             return false;
         }
         if (!checkStorageDomainSharedStatusNotLocked(storageDomain)) {
@@ -360,11 +361,11 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         if (!isStorageDomainTypeCorrect(storageDomain)) {
             return false;
         }
-        if (!isStorageDomainCompatibleWithDC(storageDomain)) {
+        if (!validate(isStorageDomainCompatibleWithDC(storageDomain.getStorageStaticData()))) {
             return false;
         }
         if (!isStorageDomainOfTypeIsoOrExport(storageDomain ) && !isMixedTypesAllowedInDC(getStoragePool().getcompatibility_version())
-                && isMixedTypeDC(storageDomain)) {
+                && isMixedTypeDC(storageDomain.getStorageStaticData())) {
             return false;
         }
 
@@ -379,8 +380,8 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         return FeatureSupported.mixedDomainTypesOnDataCenter(version);
     }
 
-    public boolean isMixedTypeDC(StorageDomain storageDomain) {
-        boolean isBlockDomain = storageDomain.getStorageType().isBlockDomain();
+    public boolean isMixedTypeDC(StorageDomainStatic domainStatic) {
+        boolean isBlockDomain = domainStatic.getStorageType().isBlockDomain();
 
         List<StorageType> storageTypesOnPool = getStoragePoolDAO().getStorageTypesInPool(getStoragePoolId());
         for (StorageType storageType : storageTypesOnPool) {
@@ -525,25 +526,24 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
      * The following method should check if the format of the storage domain allows to it to be attached to the storage
      * pool. At case of failure the false value will be return and appropriate error message will be added to
      * canDoActionMessages
-     * @param storageDomain
+     * @param domainStatic
      *            -the domain object
      * @param storagePool
      *            - the pool object
      * @return
      */
-    protected boolean isStorageDomainFormatCorrectForDC(StorageDomain storageDomain, StoragePool storagePool) {
-        if (storageDomain.getStorageDomainType().isIsoOrImportExportDomain()) {
+    protected boolean isStorageDomainFormatCorrectForDC(StorageDomainStatic domainStatic, StoragePool storagePool) {
+        if (domainStatic.getStorageDomainType().isIsoOrImportExportDomain()) {
             return true;
         }
-        Set<StorageFormatType> supportedFormatsSet =
-                getSupportedStorageFormatSet(storagePool.getcompatibility_version());
-        if (supportedFormatsSet.contains(storageDomain.getStorageFormat())) {
-            return true;
+
+        if (storagePool != null) {
+            if (VersionStorageFormatUtil.getPreferredForVersion(storagePool.getcompatibility_version(),
+                    domainStatic.getStorageType()).compareTo(domainStatic.getStorageFormat()) < 0) {
+                return false;
+            }
         }
-        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL);
-        getReturnValue().getCanDoActionMessages().add(
-                String.format("$storageFormat %1$s", storageDomain.getStorageFormat().toString()));
-        return false;
+        return true;
     }
 
     protected Set<StorageFormatType> getSupportedStorageFormatSet(Version version) {
