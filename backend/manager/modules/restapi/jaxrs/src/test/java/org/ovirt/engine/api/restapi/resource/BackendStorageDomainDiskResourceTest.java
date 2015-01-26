@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.PARENT_ID;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -42,6 +43,12 @@ public class BackendStorageDomainDiskResourceTest extends AbstractBackendSubReso
                 new String[]{"Id"},
                 new Object[]{DISK_ID},
                 getEntity(1));
+        setUpEntityQueryExpectations(
+                VdcQueryType.GetVmsByDiskGuid,
+                IdQueryParameters.class,
+                new String[]{"Id"},
+                new Object[]{DISK_ID},
+                Collections.emptyMap());
         control.replay();
 
         Disk disk = resource.get();
@@ -58,6 +65,12 @@ public class BackendStorageDomainDiskResourceTest extends AbstractBackendSubReso
                 new String[] { "Id" },
                 new Object[] { DISK_ID },
                 getEntity(1, true));
+        setUpEntityQueryExpectations(
+                VdcQueryType.GetVmsByDiskGuid,
+                IdQueryParameters.class,
+                new String[]{"Id"},
+                new Object[]{DISK_ID},
+                Collections.emptyMap());
         control.replay();
 
         try {
