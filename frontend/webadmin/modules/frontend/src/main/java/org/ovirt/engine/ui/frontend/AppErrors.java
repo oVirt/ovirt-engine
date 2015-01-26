@@ -1858,6 +1858,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot decrease data center compatibility version.")
     String ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION();
 
+    @DefaultStringValue("Cannot ${action} ${type}. This action will cause storage format downgrading which is not supported. The following storage domains cannot be downgraded: ${formatDowngradedDomains}.")
+    String ACTION_TYPE_FAILED_DECREASING_COMPATIBILITY_VERSION_CAUSES_STORAGE_FORMAT_DOWNGRADING();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The following storage domains are not supported in the selected version: ${unsupportedVersionDomains}.")
+    String ACTION_TYPE_FAILED_STORAGE_DOMAINS_ARE_NOT_SUPPORTED_IN_DOWNGRADED_VERSION();
+
     @DefaultStringValue("Cannot decrease cluster compatibility version beneath data center compatibility version.")
     String ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION_UNDER_DC();
 
