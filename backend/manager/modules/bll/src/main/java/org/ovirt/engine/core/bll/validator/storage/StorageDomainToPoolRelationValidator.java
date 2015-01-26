@@ -43,7 +43,7 @@ public class StorageDomainToPoolRelationValidator {
         return storageDomainStatic.getStorageDomainType().isIsoOrImportExportDomain();
     }
 
-    public ValidationResult isStorageDomainCompatibleWithDC() {
+    public ValidationResult isStorageDomainTypeSupportedInPool() {
         if (storageDomainStatic.getStorageType() == StorageType.GLUSTERFS) {
             return isGlusterSupportedInDC();
         }
@@ -123,9 +123,7 @@ public class StorageDomainToPoolRelationValidator {
     }
 
     /**
-     * The following method should check if the format of the storage domain allows to it to be attached to the storage
-     * pool. At case of failure the false value will be return and appropriate error message will be added to
-     * canDoActionMessages
+     * The following method checks if the format of the storage domain allows it to be attached to the storage pool.
      */
     public ValidationResult isStorageDomainFormatCorrectForDC() {
         if (isStorageDomainOfTypeIsoOrExport()) {
@@ -135,7 +133,6 @@ public class StorageDomainToPoolRelationValidator {
         if (storagePool != null) {
             if (VersionStorageFormatUtil.getPreferredForVersion(storagePool.getCompatibilityVersion(),
                     storageDomainStatic.getStorageType()).compareTo(storageDomainStatic.getStorageFormat()) < 0) {
-
                 return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL, String.format("$storageFormat %1$s", storageDomainStatic
                         .getStorageFormat().toString()));
             }
@@ -150,7 +147,7 @@ public class StorageDomainToPoolRelationValidator {
         return ValidationResult.VALID;
     }
 
-    public ValidationResult isStorageDomainTypeFitsDC() {
+    public ValidationResult isStorageDomainTypeFitsPoolIfMixed() {
         boolean isBlockDomain = storageDomainStatic.getStorageType().isBlockDomain();
 
         if (!isMixedTypesAllowedInDC()) {
@@ -199,7 +196,7 @@ public class StorageDomainToPoolRelationValidator {
             if (!(valResult = isStorageDomainLocalityFitsDC()).isValid()) {
                 return valResult;
             }
-            if (!(valResult = isStorageDomainTypeFitsDC()).isValid()) {
+            if (!(valResult = isStorageDomainTypeFitsPoolIfMixed()).isValid()) {
                 return valResult;
             }
         } else {
@@ -207,7 +204,7 @@ public class StorageDomainToPoolRelationValidator {
                 return valResult;
             }
         }
-        if (!(valResult = isStorageDomainCompatibleWithDC()).isValid()) {
+        if (!(valResult = isStorageDomainTypeSupportedInPool()).isValid()) {
             return valResult;
         }
         return ValidationResult.VALID;
