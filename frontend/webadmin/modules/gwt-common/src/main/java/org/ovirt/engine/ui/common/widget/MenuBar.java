@@ -47,7 +47,7 @@ public class MenuBar extends com.google.gwt.user.client.ui.MenuBar {
                 if (subMenuPopup != null) {
                     PopupUtils.adjustPopupLocationToFitScreenAndShow(subMenuPopup,
                             subMenuPopup.getAbsoluteLeft(),
-                            subMenuPopup.getAbsoluteTop(), this);
+                            subMenuPopup.getAbsoluteTop(), this, item.getOffsetHeight());
                 }
             }
             break;

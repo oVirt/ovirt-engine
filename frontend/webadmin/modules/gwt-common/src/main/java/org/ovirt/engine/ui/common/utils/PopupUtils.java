@@ -15,7 +15,7 @@ public class PopupUtils {
     public static void adjustPopupLocationToFitScreenAndShow(final PopupPanel popup,
             int left,
             int top,
-            MenuBar parentMenu) {
+            MenuBar parentMenu, int itemHeight) {
 
         Style style = popup.getElement().getStyle();
 
@@ -25,14 +25,15 @@ public class PopupUtils {
         style.setProperty("width", "auto"); //$NON-NLS-1$ //$NON-NLS-2$
 
         popup.show();
-        adjustPopupLocationToFitScreenAndShow(popup, left, top, -parentMenu.getOffsetWidth(), 0);
+        adjustPopupLocationToFitScreenAndShow(popup, left, top, -parentMenu.getOffsetWidth(), 0, itemHeight);
     }
 
     private static void adjustPopupLocationToFitScreenAndShow(final PopupPanel popup,
             int relativeLeft,
             int relativeTop,
             int relativeWidth,
-            int relativeHeight) {
+            int relativeHeight,
+            int itemHeight) {
         Style style = popup.getElement().getStyle();
 
         /* We need this code because the gwt MenuBar- openPopupMethod, sets the position of the subMenu popup. It can't be overridden.
@@ -73,7 +74,7 @@ public class PopupUtils {
             top += relativeHeight;
         }
         else if (distanceFromWindowTop >= popup.getOffsetHeight()) {
-            top -= popup.getOffsetHeight();
+            top -= popup.getOffsetHeight() - itemHeight;
         } else {// Position above the relative object and add scroll
             top += relativeHeight;
             style.setHeight(distanceToWindowBottom, Unit.PX);
@@ -182,10 +183,10 @@ public class PopupUtils {
                 relativeObject.getAbsoluteLeft(),
                 relativeObject.getAbsoluteTop(),
                 relativeObject.getOffsetWidth(),
-                relativeObject.getOffsetHeight());
+                relativeObject.getOffsetHeight(), 0);
     }
 
     public static void adjustPopupLocationToFitScreenAndShow(final PopupPanel popup, int left, int top) {
-        adjustPopupLocationToFitScreenAndShow(popup, left, top, 0, 0);
+        adjustPopupLocationToFitScreenAndShow(popup, left, top, 0, 0, 0);
     }
 }
