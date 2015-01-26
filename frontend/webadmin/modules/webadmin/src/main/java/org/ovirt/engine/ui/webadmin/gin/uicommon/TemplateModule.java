@@ -32,7 +32,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateInterfacePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateNewPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateEditPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 
@@ -51,7 +51,7 @@ public class TemplateModule extends AbstractGinModule {
     @Singleton
     public MainModelProvider<VmTemplate, TemplateListModel> getTemplateListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            final Provider<TemplateNewPresenterWidget> popupProvider,
+            final Provider<TemplateEditPresenterWidget> popupProvider,
             final Provider<VmExportPopupPresenterWidget> exportPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<TemplateListModel> modelProvider,

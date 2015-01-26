@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.MainSectionPresente
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.permissions.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.template.TemplateInterfacePopupPresenterWidget;
-import org.ovirt.engine.ui.userportal.section.main.presenter.popup.template.TemplateNewPopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.template.TemplateEditPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.CloneVmPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
@@ -60,7 +60,7 @@ import org.ovirt.engine.ui.userportal.section.main.view.MainSectionView;
 import org.ovirt.engine.ui.userportal.section.main.view.MainTabPanelView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.permissions.PermissionsPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.template.TemplateInterfacePopupView;
-import org.ovirt.engine.ui.userportal.section.main.view.popup.template.TemplateNewPopupView;
+import org.ovirt.engine.ui.userportal.section.main.view.popup.template.TemplateEditPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.CloneVmPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmChangeCDPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmClonePopupView;
@@ -308,9 +308,9 @@ public class PresenterModule extends BasePresenterModule {
                 VmNextRunConfigurationPopupView.class);
 
         // Template popups
-        bindPresenterWidget(TemplateNewPopupPresenterWidget.class,
-                TemplateNewPopupPresenterWidget.ViewDef.class,
-                TemplateNewPopupView.class);
+        bindPresenterWidget(TemplateEditPopupPresenterWidget.class,
+                TemplateEditPopupPresenterWidget.ViewDef.class,
+                TemplateEditPopupView.class);
 
         bindPresenterWidget(VmInterfacePopupPresenterWidget.class,
                 VmInterfacePopupPresenterWidget.ViewDef.class,

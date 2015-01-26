@@ -17,17 +17,17 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.Widget;
 
-public class TemplateNewPopupWidget extends AbstractVmPopupWidget {
+public class TemplateEditPopupWidget extends AbstractVmPopupWidget {
 
-    interface ViewIdHandler extends ElementIdHandler<TemplateNewPopupWidget> {
+    interface ViewIdHandler extends ElementIdHandler<TemplateEditPopupWidget> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    public TemplateNewPopupWidget(CommonApplicationConstants constants,
-            CommonApplicationResources resources,
-            CommonApplicationMessages messages,
-            CommonApplicationTemplates applicationTemplates,
-            EventBus eventBus) {
+    public TemplateEditPopupWidget(CommonApplicationConstants constants,
+                                   CommonApplicationResources resources,
+                                   CommonApplicationMessages messages,
+                                   CommonApplicationTemplates applicationTemplates,
+                                   EventBus eventBus) {
         super(constants, resources, messages, applicationTemplates, eventBus);
     }
 
