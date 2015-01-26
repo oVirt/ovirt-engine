@@ -54,8 +54,8 @@ ENGINE_GROUP=@ENGINE_GROUP@
 # These variables control the amount of memory used by the java
 # virtual machine where the engine runs:
 #
-ENGINE_HEAP_MIN=1g
-ENGINE_HEAP_MAX=1g
+ENGINE_HEAP_MIN=2g
+ENGINE_HEAP_MAX=4g
 ENGINE_PERM_MIN=256m
 ENGINE_PERM_MAX=256m
 
