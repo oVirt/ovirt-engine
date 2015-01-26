@@ -1343,6 +1343,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Allow to move Disk to another Storage Domain")
     String allowToMoveDiskToAnotherStorageDomainRoleTreeTooltip();
 
+    @DefaultStringValue("Allow to live migrate a Disk to another Storage Domain")
+    String allowToLiveMigrateDiskToAnotherStorageDomainRoleTreeTooltip();
+
     @DefaultStringValue("Allow to attach Disk to a VM")
     String allowToAttachDiskToVmRoleTreeTooltip();
 

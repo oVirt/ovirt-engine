@@ -161,16 +161,9 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
             if (diskImage != null) {
                 permissionList.add(new PermissionSubject(diskImage.getId(),
                         VdcObjectType.Disk,
-                        ActionGroup.CONFIGURE_DISK_STORAGE));
+                        ActionGroup.DISK_LIVE_STORAGE_MIGRATION));
             }
-            permissionList.add(new PermissionSubject(parameters.getTargetStorageDomainId(),
-                    VdcObjectType.Storage,
-                    ActionGroup.CREATE_DISK));
-            permissionList.add(new PermissionSubject(parameters.getVmId(),
-                    VdcObjectType.VM,
-                    ActionGroup.MANIPULATE_VM_SNAPSHOTS));
         }
-
         return permissionList;
     }
 
