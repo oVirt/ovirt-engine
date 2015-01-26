@@ -1655,6 +1655,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             watchDogActions.add(action);
         }
         getWatchdogAction().setItems(watchDogActions);
+        getWatchdogAction().setIsChangeable(false);
 
         setWatchdogModel(new NotChangableForVmInPoolListModel<VmWatchdogType>());
         getWatchdogModel().getSelectedItemChangedEvent().addListener(this);
@@ -1881,7 +1882,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             }
             else if (sender == getBaseTemplate()) {
                 behavior.baseTemplateSelectedItemChanged();
-            } else if (sender == getWatchdogModel()) {
+            }
+            else if (sender == getWatchdogModel()) {
                 watchdogModelSelectedItemChanged(sender, args);
             }
         }
@@ -1959,7 +1961,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     private void watchdogModelSelectedItemChanged(Object sender, EventArgs args) {
         if (getWatchdogModel().getSelectedItem() == null) {
             getWatchdogAction().setIsChangeable(false);
-            getWatchdogAction().setSelectedItem(null); //$NON-NLS-1$
+            getWatchdogAction().setSelectedItem(null);
         } else {
             getWatchdogAction().setIsChangeable(true);
         }

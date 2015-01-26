@@ -2149,4 +2149,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Update available")
     String updateAvailable();
+
+    @DefaultStringValue("<No-Watchdog>")
+    String noWatchdogLabel();
 }

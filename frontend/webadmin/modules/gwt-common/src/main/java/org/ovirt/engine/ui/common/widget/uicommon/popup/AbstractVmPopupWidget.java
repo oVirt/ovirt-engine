@@ -934,6 +934,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         watchdogModelEditor = new ListModelListBoxEditor<VmWatchdogType>(new NullSafeRenderer<VmWatchdogType>() {
             @Override
+            public String render(VmWatchdogType object) {
+                return object == null ? constants.noWatchdogLabel() : renderNullSafe(object);
+            }
+
+            @Override
             protected String renderNullSafe(VmWatchdogType object) {
                 return EnumTranslator.getInstance().translate(object);
             }
