@@ -105,7 +105,9 @@ public class RoleTreeView
                                         new RoleNode(ActionGroup.CONFIGURE_SCSI_GENERIC_IO,
                                                 getConstants().allowToChangeSGIORoleTreeTooltip()),
                                         new RoleNode(ActionGroup.ACCESS_IMAGE_STORAGE,
-                                                getConstants().allowAccessImageDomainRoleTreeTooltip()) }),
+                                                getConstants().allowAccessImageDomainRoleTreeTooltip()),
+                                        new RoleNode(ActionGroup.DISK_LIVE_STORAGE_MIGRATION,
+                                                getConstants().allowToLiveMigrateDiskToAnotherStorageDomainRoleTreeTooltip())}),
                         new RoleNode(getConstants().attachDiskProfileRoleTree(),
                                 getConstants().notePermissionsContainingDiskProfileOperationsRoleTreeTooltip(),
                                 new RoleNode[] {
