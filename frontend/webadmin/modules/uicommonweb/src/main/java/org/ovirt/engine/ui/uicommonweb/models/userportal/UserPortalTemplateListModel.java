@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -111,7 +112,7 @@ public class UserPortalTemplateListModel extends TemplateListModel {
      *     <li>and then by version number - descending</li>
      * </ul>
      */
-    private static class TemplateComparator implements Comparator<VmTemplate> {
+    private static class TemplateComparator implements Comparator<VmTemplate>, Serializable {
 
         @Override
         public int compare(VmTemplate t1, VmTemplate t2) {
