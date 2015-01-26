@@ -149,6 +149,8 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         tasksTree = new TasksTree(resources, constants, templates);
         tasksTree.updateTree(taskModelProvider.getModel());
 
+        updateButtonResources();
+
         _tasksTable =
                 new SimpleActionTable<Job>(taskModelProvider, getTableResources(), eventBus, clientStorage);
         makeSingleRowTable(_tasksTable);
@@ -175,7 +177,6 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         // no body is invoking the alert search (timer)
         taskModelProvider.getModel().search();
 
-        updateButtonResources();
         updateEventsButton();
         updateTaskButton(0);
         setAlertCount(0);
