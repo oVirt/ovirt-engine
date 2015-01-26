@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.FenceProxyLocator;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -17,7 +18,7 @@ import org.ovirt.engine.core.utils.pm.FenceConfigHelper;
 public class FenceValidator {
 
     public boolean isProxyHostAvailable(VDS vds, List<String> messages) {
-        FenceProxyLocator proxyHostLocator = new FenceProxyLocator(vds);
+        FenceProxyLocator proxyHostLocator = getProxyLocator(vds);
         if (!proxyHostLocator.isProxyHostAvailable()) {
             messages.add(VdcBllMessages.VDS_NO_VDS_PROXY_FOUND.name());
             return false;
@@ -30,8 +31,7 @@ public class FenceValidator {
         // check if we are in the interval of X seconds from startup
         // if yes , system is still initializing , ignore fence operations
         Date waitTo =
-                Backend.getInstance()
-                        .getStartedAt()
+                getBackend().getStartedAt()
                         .addSeconds((Integer) Config.getValue(ConfigValues.DisableFenceAtStartupInSec));
         Date now = new Date();
         if (!(waitTo.before(now) || waitTo.equals(now))) {
@@ -91,6 +91,14 @@ public class FenceValidator {
         } else {
             return true;
         }
+    }
+
+    protected FenceProxyLocator getProxyLocator(VDS vds) {
+        return new FenceProxyLocator(vds);
+    }
+
+    protected BackendInternal getBackend() {
+        return Backend.getInstance();
     }
 
 }
