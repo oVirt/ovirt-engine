@@ -468,12 +468,15 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
 
     private boolean isPathEditable(StorageDomain storage) {
         if (storage.getStorageType().isFileDomain() && !storage.getStorageType().equals(StorageType.GLUSTERFS)) {
-            return ((storage.getStorageDomainType() == StorageDomainType.Data
-                    || storage.getStorageDomainType() == StorageDomainType.Master)
-                        && (storage.getStatus() == StorageDomainStatus.Maintenance
-                            || storage.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached));
+            StorageDomainType storageDomainType = storage.getStorageDomainType();
+            return storageDomainType.isInternalDomain() && isStorageStatusValidForPathEditing(storage);
         }
         return false;
+    }
+
+    private boolean isStorageStatusValidForPathEditing(StorageDomain storage) {
+        return (storage.getStatus() == StorageDomainStatus.Maintenance
+                || storage.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached);
     }
 
     private IStorageModel prepareLocalStorageForEdit(StorageDomain storage)
@@ -1154,10 +1157,10 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
                 || storageDomain.getStatus() == StorageDomainStatus.PreparingForMaintenance);
         boolean isUnattached = (storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached
                 || storageDomain.getStatus() == StorageDomainStatus.Detaching);
-        boolean isDataDomain = storageDomain.getStorageDomainType().isDataDomain();
+        boolean isInternalDomain = storageDomain.getStorageDomainType().isInternalDomain();
         boolean isBlockStorage = storageDomain.getStorageType().isBlockDomain();
 
-        isEditAvailable = isActive || isBlockStorage || ((isInMaintenance || isUnattached) && isDataDomain);
+        isEditAvailable = isActive || isBlockStorage || ((isInMaintenance || isUnattached) && isInternalDomain);
         return isEditAvailable;
     }
 

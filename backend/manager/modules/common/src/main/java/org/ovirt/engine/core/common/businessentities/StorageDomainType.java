@@ -24,4 +24,8 @@ public enum StorageDomainType {
     public boolean isIsoOrImportExportDomain() {
         return (this == ISO || this == ImportExport);
     }
+
+    public boolean isInternalDomain() {
+        return isDataDomain() || isIsoOrImportExportDomain();
+    }
 }
