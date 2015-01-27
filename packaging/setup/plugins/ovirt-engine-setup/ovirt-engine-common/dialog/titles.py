@@ -189,9 +189,31 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        name=oengcommcons.Stages.DIALOG_TITLES_S_STORAGE,
+        after=(
+                oengcommcons.Stages.DIALOG_TITLES_E_ENGINE,
+        ),
+    )
+    def _title_s_storage(self):
+        self._title(
+            text=_('STORAGE CONFIGURATION'),
+        )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        name=oengcommcons.Stages.DIALOG_TITLES_E_STORAGE,
+        after=(
+                oengcommcons.Stages.DIALOG_TITLES_S_STORAGE,
+        ),
+        )
+    def _title_e_storage(self):
+        pass
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=oengcommcons.Stages.DIALOG_TITLES_S_PKI,
         after=(
-            oengcommcons.Stages.DIALOG_TITLES_E_ENGINE,
+            oengcommcons.Stages.DIALOG_TITLES_E_STORAGE,
         ),
     )
     def _title_s_pki(self):

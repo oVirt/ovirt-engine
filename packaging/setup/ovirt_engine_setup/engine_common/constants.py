@@ -182,6 +182,9 @@ class Stages(object):
     DIALOG_TITLES_S_ENGINE = 'osetup.dialog.titles.engine.start'
     DIALOG_TITLES_E_ENGINE = 'osetup.dialog.titles.engine.end'
 
+    DIALOG_TITLES_S_STORAGE = 'osetup.dialog.titles.storage.start'
+    DIALOG_TITLES_E_STORAGE = 'osetup.dialog.titles.storage.end'
+
     RENAME_PKI_CONF_MISC = 'osetup.rename.pki.conf.misc'
 
 

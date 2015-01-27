@@ -35,6 +35,7 @@ from . import tools
 from . import iso_domain
 from . import macrange
 from . import public_glance_repository
+from . import storage
 
 
 @util.export
@@ -52,6 +53,7 @@ def createPlugins(context):
     iso_domain.Plugin(context=context)
     macrange.Plugin(context=context)
     public_glance_repository.Plugin(context=context)
+    storage.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

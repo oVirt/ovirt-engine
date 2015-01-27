@@ -359,6 +359,14 @@ class ConfigEnv(object):
         return 'OVESETUP_CONFIG/storageIsLocal'
 
     @osetupattrs(
+        summary=True,
+        description=_('Default SAN wipe after delete'),
+        postinstallfile=True,
+    )
+    def SAN_WIPE_AFTER_DELETE(self):
+        return 'OVESETUP_CONFIG/sanWipeAfterDelete'
+
+    @osetupattrs(
         answerfile=True,
         summary=True,
         description=_('Host FQDN'),
