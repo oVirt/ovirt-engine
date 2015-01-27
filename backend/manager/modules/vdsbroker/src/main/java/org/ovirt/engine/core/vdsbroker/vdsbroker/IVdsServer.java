@@ -362,4 +362,6 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc glusterSnapshotActivate(String snapshotName, boolean force);
 
     StatusOnlyReturnForXmlRpc glusterSnapshotDeactivate(String snapshotName);
+
+    StatusOnlyReturnForXmlRpc glusterSnapshotRestore(String snapshotName);
 }

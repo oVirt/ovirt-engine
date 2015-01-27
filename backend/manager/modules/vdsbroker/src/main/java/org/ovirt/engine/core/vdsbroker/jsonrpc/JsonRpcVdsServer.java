@@ -1703,4 +1703,13 @@ public class JsonRpcVdsServer implements IVdsServer {
                 new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterSnapshotRestore(String snapshotName) {
+        JsonRpcRequest request =
+                new RequestBuilder("GlusterSnapshot.restore").withParameter("snapName", snapshotName)
+                    .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
 }

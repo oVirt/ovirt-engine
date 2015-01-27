@@ -338,4 +338,6 @@ public interface VdsServerConnector {
     public Map<String, Object> glusterSnapshotActivate(String snapshotName, boolean force);
 
     public Map<String, Object> glusterSnapshotDeactivate(String snapshotName);
+
+    public Map<String, Object> glusterSnapshotRestore(String snapshotName);
 }

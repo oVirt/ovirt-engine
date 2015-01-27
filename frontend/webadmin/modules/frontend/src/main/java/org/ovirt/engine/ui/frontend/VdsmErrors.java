@@ -858,9 +858,12 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Failed to delete gluster volume snapshot")
     String GlusterSnapshotDeleteFailedException();
 
-    @DefaultStringValue("Gluster snapshot activate failed")
+    @DefaultStringValue("Failed to activate gluster volume snapshot")
     String GlusterSnapshotActivateFailedException();
 
-    @DefaultStringValue("Gluster snapshot de-activate failed")
+    @DefaultStringValue("Failed to de-activate gluster volume snapshot")
     String GlusterSnapshotDeactivateFailedException();
+
+    @DefaultStringValue("Failed to restore the gluster volume snapshot")
+    String GlusterSnapshotRestoreFailedException();
 }
