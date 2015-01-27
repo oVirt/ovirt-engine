@@ -471,7 +471,6 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
             return ((storage.getStorageDomainType() == StorageDomainType.Data
                     || storage.getStorageDomainType() == StorageDomainType.Master)
                         && (storage.getStatus() == StorageDomainStatus.Maintenance
-                            || storage.getStatus() == StorageDomainStatus.PreparingForMaintenance
                             || storage.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached));
         }
         return false;
