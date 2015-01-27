@@ -326,4 +326,8 @@ public interface VdsServerConnector {
     public Map<String, Object> glusterVolumeGeoRepConfigReset(String volumeName, String slaveHost, String slaveVolumeName, String configKey);
 
     public Map<String, Object> glusterVolumeGeoRepConfigList(String volumeName, String slaveHost, String slaveVolumeName);
+
+    public Map<String, Object> glusterSnapshotInfo(String snapshotName, String volumeName);
+
+    public Map<String, Object> glusterSnapshotConfigGet(String volumeName);
 }

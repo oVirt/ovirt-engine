@@ -23,6 +23,8 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusDetailFo
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeOptionsInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeProfileInfoReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotConfigReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeTaskReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
@@ -1642,5 +1644,23 @@ public class JsonRpcVdsServer implements IVdsServer {
                 new FutureMap(this.client, request).withResponseKey("vmList")
                         .withResponseType(Object[].class);
         return new VMListReturnForXmlRpc(response);
+    }
+
+    @Override
+    public GlusterVolumeSnapshotInfoReturnForXmlRpc glusterSnapshotInfo(Guid clusterId, String volumeName) {
+        JsonRpcRequest request =
+                new RequestBuilder("GlusterVolume.snapshotList").withOptionalParameter("volumeName", volumeName)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
+        return new GlusterVolumeSnapshotInfoReturnForXmlRpc(clusterId, response);
+    }
+
+    @Override
+    public GlusterVolumeSnapshotConfigReturnForXmlRpc glusterVolumeSnapshotConfigGet(Guid clusterId, String volumeName) {
+        JsonRpcRequest request =
+                new RequestBuilder("GlusterSnapshot.configList").withOptionalParameter("volumeName", volumeName)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
+        return new GlusterVolumeSnapshotConfigReturnForXmlRpc(clusterId, response);
     }
 }

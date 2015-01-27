@@ -9,14 +9,15 @@ Create or replace FUNCTION InsertGlusterVolumeSnapshot(v_snapshot_id UUID,
                                                 v_snapshot_name VARCHAR(1000),
                                                 v_volume_id UUID,
                                                 v_description VARCHAR(1024),
-                                                v_status VARCHAR(32))
+                                                v_status VARCHAR(32),
+                                                v__create_date TIMESTAMP WITH TIME ZONE)
     RETURNS VOID
     AS $procedure$
 BEGIN
     INSERT INTO gluster_volume_snapshots (snapshot_id, snapshot_name, volume_id,
-        description, status)
+        description, status, _create_date)
     VALUES (v_snapshot_id,  v_snapshot_name, v_volume_id,
-        v_description, v_status);
+        v_description, v_status, v__create_date);
 
     PERFORM UpdateSnapshotCountInc(v_volume_id, 1);
 END; $procedure$

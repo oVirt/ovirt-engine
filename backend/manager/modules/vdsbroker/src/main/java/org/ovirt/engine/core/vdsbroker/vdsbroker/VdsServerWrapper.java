@@ -19,6 +19,8 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusDetailFo
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeOptionsInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeProfileInfoReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotConfigReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeTaskReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
@@ -1587,6 +1589,36 @@ public class VdsServerWrapper implements IVdsServer {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getExternalVMs(uri, username, password);
             VMListReturnForXmlRpc wrapper = new VMListReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    public GlusterVolumeSnapshotInfoReturnForXmlRpc glusterSnapshotInfo(Guid clusterId,
+            String volumeName) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterSnapshotInfo("", volumeName);
+            GlusterVolumeSnapshotInfoReturnForXmlRpc wrapper =
+                    new GlusterVolumeSnapshotInfoReturnForXmlRpc(clusterId, xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public GlusterVolumeSnapshotConfigReturnForXmlRpc glusterVolumeSnapshotConfigGet(Guid clusterId, String volumeName) {
+        try {
+            Map<String, Object> xmlRpcReturnValue;
+            if (volumeName == null) {
+                xmlRpcReturnValue = vdsServer.glusterSnapshotConfigGet("");
+            } else {
+                xmlRpcReturnValue = vdsServer.glusterSnapshotConfigGet(volumeName);
+            }
+
+            GlusterVolumeSnapshotConfigReturnForXmlRpc wrapper =
+                    new GlusterVolumeSnapshotConfigReturnForXmlRpc(clusterId, xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);

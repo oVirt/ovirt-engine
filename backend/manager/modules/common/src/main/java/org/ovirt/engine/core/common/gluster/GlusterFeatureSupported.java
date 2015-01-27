@@ -81,7 +81,7 @@ public class GlusterFeatureSupported {
         }
     }
 
-    /**
+   /**
     *
     * @param version
     *            Compatibility version to check for.
@@ -91,4 +91,14 @@ public class GlusterFeatureSupported {
    public static boolean glusterGeoReplication(Version version) {
        return supportedInConfig(ConfigValues.GlusterGeoReplicationEnabled, version);
    }
+
+  /**
+   * @param version
+   *            Compatibility version to check for.
+   * @return <code>true</code> if gluster snapshot management feature is enabled,
+   *         <code>false</code> if it's not.
+   */
+  public static boolean glusterSnapshot(Version version) {
+      return supportedInConfig(ConfigValues.GlusterVolumeSnapshotSupported, version);
+  }
 }

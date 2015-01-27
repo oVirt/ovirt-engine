@@ -174,6 +174,14 @@ public abstract class GlusterJob {
         return lock;
     }
 
+    protected EngineLock acquireVolumeSnapshotLock(Guid id) {
+        EngineLock lock = new EngineLock(Collections.singletonMap(id.toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER_SNAPSHOT,
+                        VdcBllMessages.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_LOCKED)), null);
+        LockManagerFactory.getLockManager().acquireLockWait(lock);
+        return lock;
+    }
+
     protected GlusterUtil getGlusterUtil() {
         return GlusterUtil.getInstance();
     }
