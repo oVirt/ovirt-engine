@@ -19,6 +19,7 @@ public class VolumeGeneralModel extends EntityModel {
     private String glusterMountPoint;
     private String nfsMountPoint;
     private Set<TransportType> transportTypes;
+    private String snapMaxLimit;
 
     public String getName() {
         return name;
@@ -89,6 +90,14 @@ public class VolumeGeneralModel extends EntityModel {
         this.nfsMountPoint = nfsMountPoint;
     }
 
+    public String getSnapMaxLimit() {
+        return this.snapMaxLimit;
+    }
+
+    public void setSnapMaxLimit(String noOfSnaps) {
+        this.snapMaxLimit = noOfSnaps;
+    }
+
     public VolumeGeneralModel() {
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
         setHelpTag(HelpTag.general);
@@ -113,6 +122,7 @@ public class VolumeGeneralModel extends EntityModel {
         setStripeCount(entity.getStripeCount() != null ? Integer.toString(entity.getStripeCount()) : null);
         setNumOfBricks(entity.getBricks() != null ? Integer.toString(entity.getBricks().size()) : null);
         setTransportTypes(entity.getTransportTypes());
+        setSnapMaxLimit(entity.getSnapMaxLimit() != null ? entity.getSnapMaxLimit().toString() : null);
     }
 
     public Set<TransportType> getTransportTypes() {

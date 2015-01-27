@@ -150,6 +150,16 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                 constants.activitiesOnVolume(),
                 "100px"); //$NON-NLS-1$
 
+        AbstractTextColumnWithTooltip<GlusterVolumeEntity> snapshotCountColumn =
+                new AbstractTextColumnWithTooltip<GlusterVolumeEntity>() {
+            @Override
+            public String getValue(GlusterVolumeEntity object) {
+                return object.getSnapshotsCount().toString();
+            }
+        };
+        snapshotCountColumn.makeSortable();
+        getTable().addColumn(snapshotCountColumn, constants.noOfSnapshotsLabel(), "100px"); //$NON-NLS-1$
+
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.newVolume()) {
             @Override
             protected UICommand resolveCommand() {

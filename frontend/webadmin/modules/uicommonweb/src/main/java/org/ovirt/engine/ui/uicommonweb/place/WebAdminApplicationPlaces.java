@@ -311,6 +311,8 @@ public class WebAdminApplicationPlaces {
 
     public static final String volumeGeoRepSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "geo_replication"; //$NON-NLS-1$
 
+    public static final String volumeSnapshotSubTabPlace = volumeMainTabPlace + SUB_TAB_PREFIX + "volume_snapshots"; //$NON-NLS-1$
+
     // Disk
 
     public static final String diskGeneralSubTabPlace = diskMainTabPlace + SUB_TAB_PREFIX + "general"; //$NON-NLS-1$
@@ -322,7 +324,6 @@ public class WebAdminApplicationPlaces {
     public static final String diskStorageSubTabPlace = diskMainTabPlace + SUB_TAB_PREFIX + "storage"; //$NON-NLS-1$
 
     public static final String diskPermissionSubTabPlace = diskMainTabPlace + SUB_TAB_PREFIX + "permissions"; //$NON-NLS-1$
-
 
     // Network
     public static final String networkGeneralSubTabPlace = networkMainTabPlace + SUB_TAB_PREFIX + "general"; //$NON-NLS-1$
@@ -347,7 +348,6 @@ public class WebAdminApplicationPlaces {
 
     public static final String networkPermissionSubTabPlace = networkMainTabPlace + SUB_TAB_PREFIX
             + "permissions"; //$NON-NLS-1$
-
 
     // Provider
     public static final String providerGeneralSubTabPlace = providerMainTabPlace + SUB_TAB_PREFIX + "general"; //$NON-NLS-1$

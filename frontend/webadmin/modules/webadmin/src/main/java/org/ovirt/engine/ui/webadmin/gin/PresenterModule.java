@@ -170,6 +170,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVol
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeGeoRepPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeParameterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumePermissionPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabGlusterVolumeSnapshotPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.VolumeSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostBrickPresenter;
@@ -416,6 +417,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeGe
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeGeoRepView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeParameterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumePermissionView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabGlusterVolumeSnapshotView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.VolumeSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.HostSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostBrickView;
@@ -868,7 +870,6 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabVirtualMachineEventPresenter.ViewDef.class,
                 SubTabVirtualMachineEventView.class,
                 SubTabVirtualMachineEventPresenter.ProxyDef.class);
-
 
         // Pool
         bindPresenter(PoolSubTabPanelPresenter.class,
@@ -1401,7 +1402,7 @@ public class PresenterModule extends BasePresenterModule {
                 QuotaPopupPresenterWidget.ViewDef.class,
                 QuotaPopupView.class);
 
-        //Network QoS
+        // Network QoS
         bindPresenterWidget(NetworkQoSPopupPresenterWidget.class,
                 NetworkQoSPopupPresenterWidget.ViewDef.class,
                 NetworkQoSPopupView.class);
@@ -1467,6 +1468,11 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabVolumeEventPresenter.ViewDef.class,
                 SubTabVolumeEventView.class,
                 SubTabVolumeEventPresenter.ProxyDef.class);
+
+        bindPresenter(SubTabGlusterVolumeSnapshotPresenter.class,
+                SubTabGlusterVolumeSnapshotPresenter.ViewDef.class,
+                SubTabGlusterVolumeSnapshotView.class,
+                SubTabGlusterVolumeSnapshotPresenter.ProxyDef.class);
 
         bindPresenterWidget(AddBrickPopupPresenterWidget.class,
                 AddBrickPopupPresenterWidget.ViewDef.class,

@@ -47,6 +47,7 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
     TextBoxLabel stripeCount = new TextBoxLabel();
     TextBoxLabel numOfBricks = new TextBoxLabel();
     VolumeTransportTypeLabel transportTypes = new VolumeTransportTypeLabel();
+    TextBoxLabel snapMaxLimit = new TextBoxLabel();
 
     FormBuilder formBuilder;
 
@@ -68,7 +69,7 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
         generateIds();
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 1, 7);
+        formBuilder = new FormBuilder(formPanel, 1, 8);
 
         formBuilder.addFormItem(new FormItem(constants.NameVolume(), name, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.volumeIdVolume(), volumeId, 1, 0));
@@ -82,6 +83,8 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
 
         formBuilder.addFormItem(new FormItem(constants.numberOfBricksVolume(), numOfBricks, 5, 0));
         formBuilder.addFormItem(new FormItem(constants.transportTypesVolume(), transportTypes, 6, 0));
+
+        formBuilder.addFormItem(new FormItem(constants.maxNumberOfSnapshotsVolume(), snapMaxLimit, 7, 0));
 
         getDetailModel().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
