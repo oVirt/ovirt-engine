@@ -9,10 +9,12 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
+import java.util.EnumSet;
 import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -318,8 +320,21 @@ public class VdsDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetAllForStoragePoolAndStatus() {
+        assertNotNull(existingVds.getStatus());
         List<VDS> result = dao.getAllForStoragePoolAndStatus(existingVds.getStoragePoolId(), existingVds.getStatus());
         assertCorrectGetAllResult(result);
+    }
+
+    @Test
+    public void testGetAllForStoragePoolAndStatusForAllStatuses() {
+        dbFacade.getVdsDynamicDao().updateStatus(existingVds.getId(), VDSStatus.Maintenance);
+        List<VDS> result = dao.getAllForStoragePoolAndStatus(existingVds.getStoragePoolId(), null);
+        EnumSet<VDSStatus> statuses = EnumSet.noneOf(VDSStatus.class);
+        for (VDS vds : result) {
+            statuses.add(vds.getStatus());
+        }
+        assertCorrectGetAllResult(result);
+        assertTrue("more then one different status expected", statuses.size() > 1);
     }
 
     private void assertGetAllForVdsGroupCorrectResult(List<VDS> result) {

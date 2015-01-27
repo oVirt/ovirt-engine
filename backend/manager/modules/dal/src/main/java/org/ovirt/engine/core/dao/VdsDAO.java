@@ -149,9 +149,9 @@ public interface VdsDAO extends DAO, SearchDAO<VDS>, AutoRecoverDAO<VDS> {
 
     /**
      * Retrieves all VDS instances by storage pool ID and status.
-     *
+     * NOTE- only hosts from VIRT service supporting cluster are returned
      * @param storagePool The storage pool's ID
-     * @param status The status of vds
+     * @param status The status of vds, null for all statuses
      * @return the list of VDS instances
      */
     List<VDS> getAllForStoragePoolAndStatus(Guid storagePool, VDSStatus status);

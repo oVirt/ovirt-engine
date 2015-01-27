@@ -197,7 +197,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
                 VdsRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("storage_pool_id", storagePool)
-                        .addValue("status", status.getValue()));
+                        .addValue("status", status != null ? status.getValue() : null));
         return uniteAgents(vdsList);
     }
 
