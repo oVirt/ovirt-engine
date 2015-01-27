@@ -19,6 +19,8 @@ public enum LockingGroup {
     GLUSTER,
     /** this group is used to lock geo-replication session */
     GLUSTER_GEOREP,
+    /** this group is used for gluster volume snapshot purpose */
+    GLUSTER_SNAPSHOT,
     USER_VM_POOL,
     /** This group is used to lock template which is in export domain */
     REMOTE_TEMPLATE,

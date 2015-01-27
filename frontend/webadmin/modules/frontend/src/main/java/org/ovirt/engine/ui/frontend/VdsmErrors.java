@@ -842,4 +842,10 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot get list of images in ISO domain. " +
             "Please check that the storage domain status is Active")
     String GetIsoListError();
+
+    @DefaultStringValue("Error in executing gluster snapshot command")
+    String GlusterSnapshotException();
+
+    @DefaultStringValue("Gluster snapshot info failed")
+    String GlusterSnapshotInfoFailedException();
 }

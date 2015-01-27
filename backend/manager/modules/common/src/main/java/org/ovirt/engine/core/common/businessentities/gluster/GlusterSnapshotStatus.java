@@ -7,7 +7,7 @@ public enum GlusterSnapshotStatus {
 
     public static GlusterSnapshotStatus from(String status) {
         for (GlusterSnapshotStatus snapshotStatus : values()) {
-            if (snapshotStatus.name().equals(status)) {
+            if (snapshotStatus.name().equalsIgnoreCase(status)) {
                 return snapshotStatus;
             }
         }

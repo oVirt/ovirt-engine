@@ -130,7 +130,8 @@ public class GlusterVolumeSnapshotDaoDbFacadeImpl extends MassOperationsGenericD
                 .addValue("snapshot_name", snapshot.getSnapshotName())
                 .addValue("volume_id", snapshot.getVolumeId())
                 .addValue("description", snapshot.getDescription())
-                .addValue("status", EnumUtils.nameOrNull(snapshot.getStatus()));
+                .addValue("status", EnumUtils.nameOrNull(snapshot.getStatus()))
+                .addValue("_create_date", snapshot.getCreatedAt());
     }
 
     private MapSqlParameterSource createSnapshotIdParams(Guid id) {

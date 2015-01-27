@@ -79,6 +79,15 @@ public class GlusterJobsManager {
                 getRefreshRate(ConfigValues.GlusterRefreshRateGeoRepStatusInSecs),
                 getRefreshRate(ConfigValues.GlusterRefreshRateGeoRepStatusInSecs),
                 TimeUnit.SECONDS);
+
+        scheduler.scheduleAFixedDelayJob(GlusterSnapshotSyncJob.getInstance(),
+                "gluster_snapshot_poll_event",
+                new Class[0],
+                new Class[0],
+                getRefreshRate(ConfigValues.GlusterRefreshRateSnapshotDiscovery),
+                getRefreshRate(ConfigValues.GlusterRefreshRateSnapshotDiscovery),
+                TimeUnit.SECONDS);
+
     }
 
     private static boolean glusterModeSupported() {
