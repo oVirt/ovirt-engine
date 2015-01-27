@@ -315,7 +315,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                         IsPending);
 
             AddVdsActionParameters p = new AddVdsActionParameters(vds, "");
-            p.setAddPending(IsPending);
+            p.setPending(IsPending);
 
             VdcReturnValueBase ret = Backend.getInstance().runInternalAction(VdcActionType.AddVds, p);
 

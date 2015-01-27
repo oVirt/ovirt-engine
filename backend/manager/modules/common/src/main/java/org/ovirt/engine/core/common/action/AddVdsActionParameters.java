@@ -46,7 +46,7 @@ public class AddVdsActionParameters extends VdsOperationActionParameters {
         this.discoverIp = discoverIp;
     }
 
-    public boolean getAddProvisioned() {
+    public boolean isProvisioned() {
         return provisioned;
     }
 
@@ -66,12 +66,12 @@ public class AddVdsActionParameters extends VdsOperationActionParameters {
         return glusterPeerProbeNeeded;
     }
 
-    public boolean getAddPending() {
+    public boolean isPending() {
         return pending;
     }
 
-    public void setAddPending(boolean value) {
-        pending = value;
+    public void setPending(boolean pending) {
+        this.pending = pending;
     }
 
     public List<FenceAgent> getFenceAgents() {

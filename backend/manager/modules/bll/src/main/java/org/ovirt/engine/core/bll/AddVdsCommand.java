@@ -114,7 +114,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             }
         });
 
-        if (getParameters().getAddProvisioned()) {
+        if (getParameters().isProvisioned()) {
             if (getParameters().getComputeResource() == null) {
                 log.error("Failed to provision: Compute resource cannot be empty");
                 throw new VdcBLLException(VdcBllErrors.PROVIDER_PROVISION_MISSING_COMPUTERESOURCE);
@@ -174,8 +174,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         // do not install vds's which added in pending mode or for provisioning (currently power
         // clients). they are installed as part of the approve process or automatically after provision
         if (Config.<Boolean> getValue(ConfigValues.InstallVds) &&
-            !getParameters().getAddPending() &&
-            !getParameters().getAddProvisioned()) {
+            !getParameters().isPending() &&
+            !getParameters().isProvisioned()) {
             final InstallVdsParameters installVdsParameters = new InstallVdsParameters(getVdsId(), getParameters().getPassword());
             installVdsParameters.setAuthMethod(getParameters().getAuthMethod());
             installVdsParameters.setOverrideFirewall(getParameters().getOverrideFirewall());
@@ -288,10 +288,10 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         VdsDynamic vdsDynamic = new VdsDynamic();
         vdsDynamic.setId(getParameters().getVdsStaticData().getId());
         // TODO: oVirt type - here oVirt behaves like power client?
-        if (getParameters().getAddPending()) {
+        if (getParameters().isPending()) {
             vdsDynamic.setStatus(VDSStatus.PendingApproval);
         }
-        else if (getParameters().getAddProvisioned()) {
+        else if (getParameters().isProvisioned()) {
             vdsDynamic.setStatus(VDSStatus.InstallingOS);
         }
         else if (Config.<Boolean> getValue(ConfigValues.InstallVds)) {
@@ -332,7 +332,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             && validate(validator.sshUserNameNotEmpty())
             && validate(validator.validateSingleHostAttachedToLocalStorage())
             && validate(validator.securityKeysExists())
-            && validate(validator.passwordNotEmpty(getParameters().getAddPending(),
+            && validate(validator.passwordNotEmpty(getParameters().isPending(),
                     getParameters().getAuthMethod(),
                     getParameters().getPassword()));
         }
@@ -437,7 +437,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     protected boolean canConnect(VDS vds) {
         // execute the connectivity and id uniqueness validation for VDS type hosts
         if (
-            !getParameters().getAddPending() && !getParameters().getAddProvisioned() &&
+            !getParameters().isPending() && !getParameters().isProvisioned() &&
             Config.<Boolean> getValue(ConfigValues.InstallVds)
         ) {
             try (final EngineSSHClient sshclient = getSSHClient()) {
