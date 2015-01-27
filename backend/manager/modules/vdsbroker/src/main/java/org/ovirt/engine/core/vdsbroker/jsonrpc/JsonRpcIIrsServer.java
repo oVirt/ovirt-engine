@@ -357,7 +357,9 @@ public class JsonRpcIIrsServer implements IIrsServer {
                 new RequestBuilder("StorageDomain.extend").withParameter("storagedomainID", sdUUID)
                         .withParameter("storagepoolID", spUUID)
                         .withParameter("devlist", new ArrayList<String>(Arrays.asList(devlist)))
-                        .withOptionalParameter("force", Boolean.toString(force))
+                        // TODO: Change to withOptionalParameter when the API will allow to send primitives as
+                        // optional parameters.
+                        .withParameter("force", force)
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
