@@ -1773,6 +1773,13 @@ SELECT gluster_volume_snapshots.*,
 FROM gluster_volume_snapshots
 INNER JOIN gluster_volumes ON gluster_volume_snapshots.volume_id = gluster_volumes.id;
 
+CREATE OR REPLACE VIEW gluster_volume_snapshot_schedules_view
+AS
+SELECT gluster_volume_snapshot_schedules.*,
+       gluster_volumes.cluster_id AS cluster_id
+FROM gluster_volume_snapshot_schedules
+INNER JOIN gluster_volumes ON gluster_volume_snapshot_schedules.volume_id = gluster_volumes.id;
+
 CREATE OR REPLACE VIEW gluster_volume_bricks_view
 AS
 SELECT gluster_volume_bricks.*,
