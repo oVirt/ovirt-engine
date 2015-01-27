@@ -139,6 +139,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Sync")
     String geoRepSessionSync();
 
+    @DefaultStringValue("Snapshots")
+    String volumeSnapshotSubTabLabel();
+
     @DefaultStringValue("Permissions")
     String volumePermissionSubTabLabel();
 
@@ -816,7 +819,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("CPU Threads")
     String clusterPopupCpuThreadsPanelTitle();
 
-    @DefaultStringValue("Allow guests to use host threads as virtual CPU cores, utilizing AMD Clustered MultiThreading or Intel" +
+    @DefaultStringValue("Allow guests to use host threads as virtual CPU cores, utilizing AMD Clustered MultiThreading or Intel"
+            +
             " Hyper-Threading technology on the virtualization host. Enabling this option may be useful for less" +
             " CPU-intensive workloads, or to run guests with CPU configurations that would otherwise be restricted.")
     String clusterPopupCpuThreadsInfo();
@@ -2777,6 +2781,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Transport Types")
     String transportTypesVolume();
 
+    @DefaultStringValue("Maximum no of snapshots")
+    String maxNumberOfSnapshotsVolume();
+
     @DefaultStringValue("Activities")
     String activitiesOnVolume();
 
@@ -3579,7 +3586,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Remove brick in progress but status unknown. Unable to fetch the status at the moment.")
     String removeBrickStatusUnknown();
 
-    //Volume Rebalance Status Table Columns
+    // Volume Rebalance Status Table Columns
     @DefaultStringValue("Host")
     String rebalanceSessionHost();
 
@@ -3743,11 +3750,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Disk Snapshots")
     String snapshotsLabel();
 
-
     @DefaultStringValue("Attached by label")
     String attachedByLabel();
 
-    //Gluster Volume Profiling
+    // Gluster Volume Profiling
     @DefaultStringValue("File operation")
     String fileOperation();
 
@@ -3910,4 +3916,34 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Slave Volume")
     String geoRepSlaveVolume();
 
+    // Volume snapshots
+    @DefaultStringValue("Name")
+    String volumeSnapshotName();
+
+    @DefaultStringValue("Description")
+    String volumeSnapshotDescription();
+
+    @DefaultStringValue("Creation Time")
+    String volumeSnapshotCreationTime();
+
+    @DefaultStringValue("No of snapshots")
+    String noOfSnapshotsLabel();
+
+    @DefaultStringValue("Options - Cluster")
+    String configureClusterSnapshotOptions();
+
+    @DefaultStringValue("Options - Volume")
+    String configureVolumeSnapshotOptions();
+
+    @DefaultStringValue("Option")
+    String volumeSnapshotConfigName();
+
+    @DefaultStringValue("Cluster Value")
+    String clusterSnapshotConfigValue();
+
+    @DefaultStringValue("Value")
+    String volumeSnapshotConfigValue();
+
+    @DefaultStringValue("Snapshot Options")
+    String snapshotConfigHeaderLabel();
 }

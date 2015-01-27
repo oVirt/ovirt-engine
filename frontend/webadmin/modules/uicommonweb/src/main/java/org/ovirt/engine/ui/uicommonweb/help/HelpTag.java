@@ -476,6 +476,8 @@ public enum HelpTag {
 
     volume_stop("volume_stop", HelpTagType.WEBADMIN, "Volumes Tab > Stop Volume"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    volume_snapshots("volume_snapshots", HelpTagType.WEBADMIN), //$NON-NLS-1$
+
     new_role("new_role", HelpTagType.WEBADMIN), //$NON-NLS-1$
 
     edit_role("edit_role", HelpTagType.WEBADMIN), //$NON-NLS-1$

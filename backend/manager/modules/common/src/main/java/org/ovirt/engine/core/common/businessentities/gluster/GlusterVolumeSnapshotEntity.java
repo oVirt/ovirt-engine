@@ -133,4 +133,9 @@ public class GlusterVolumeSnapshotEntity extends IVdcQueryable implements Busine
 
         return true;
     }
+
+    @Override
+    public Object getQueryableId() {
+        return this.snapshotId;
+    }
 }

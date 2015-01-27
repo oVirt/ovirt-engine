@@ -51,6 +51,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeBrickListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
@@ -175,6 +176,16 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         this.geoRepListModel = geoRepListModel;
     }
 
+    private GlusterVolumeSnapshotListModel snapshotListModel;
+
+    public GlusterVolumeSnapshotListModel getSnapshotListModel() {
+        return snapshotListModel;
+    }
+
+    public void setSnapshotListModel(GlusterVolumeSnapshotListModel snapshotListModel) {
+        this.snapshotListModel = snapshotListModel;
+    }
+
     public UICommand getStartVolumeProfilingCommand() {
         return startVolumeProfilingCommand;
     }
@@ -239,6 +250,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
         setBrickListModel(new VolumeBrickListModel());
         setGeoRepListModel(new VolumeGeoRepListModel());
+        setSnapshotListModel(new GlusterVolumeSnapshotListModel());
 
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(new VolumeGeneralModel());
@@ -247,6 +259,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         list.add(getGeoRepListModel());
         list.add(new PermissionListModel());
         list.add(new VolumeEventListModel());
+        list.add(getSnapshotListModel());
         setDetailModels(list);
     }
 
@@ -422,6 +435,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         GlusterVolumeEntity selectedVolume = (GlusterVolumeEntity)provideDetailModelEntity(getSelectedItem());
         getBrickListModel().setVolumeEntity(selectedVolume);
         getGeoRepListModel().setEntity(selectedVolume);
+        getSnapshotListModel().setEntity(selectedVolume);
     }
 
     @Override

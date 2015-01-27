@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
@@ -20,6 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeBrickListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
@@ -156,6 +158,29 @@ public class VolumeModule extends AbstractGinModule {
         };
     }
 
+    public SearchableDetailModelProvider<GlusterVolumeSnapshotEntity, VolumeListModel, GlusterVolumeSnapshotListModel> getVolumeSnapshotListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<VolumeListModel> mainModelProvider,
+            final Provider<GlusterVolumeSnapshotListModel> modelProvider) {
+        return new SearchableDetailTabModelProvider<GlusterVolumeSnapshotEntity, VolumeListModel, GlusterVolumeSnapshotListModel>(eventBus,
+                defaultConfirmPopupProvider,
+                VolumeListModel.class,
+                GlusterVolumeSnapshotListModel.class) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(GlusterVolumeSnapshotListModel source,
+                            UICommand lastExecutedCommand,
+                            Model windowModel) {
+                        return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                    }
+
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(GlusterVolumeSnapshotListModel source,
+                            UICommand lastExecutedCommand) {
+                        return super.getConfirmModelPopup(source, lastExecutedCommand);
+                    }
+                };
+    }
+
     @Provides
     @Singleton
     public SearchableDetailModelProvider<GlusterVolumeOptionEntity, VolumeListModel, VolumeParameterListModel> getVolumeParameterListProvider(EventBus eventBus,
@@ -237,6 +262,7 @@ public class VolumeModule extends AbstractGinModule {
 
     @Override
     protected void configure() {
+        bind(GlusterVolumeSnapshotListModel.class).in(Singleton.class);
     }
 
 }
