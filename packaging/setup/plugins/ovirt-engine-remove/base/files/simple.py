@@ -289,9 +289,6 @@ class Plugin(plugin.PluginBase):
                         index = comps[1]        # '00001', '00002', etc
                         line_type = comps[2]    # 'name' or 'content'
 
-                        # TODO: Remove the following 'if' for 3.4.
-                        # It supports the format that was in the development
-                        # tree prior to merging http://gerrit.ovirt.org/16768
                         if len(comps) == 3 and line_type == 'content':
                             comps.append('added')
 
