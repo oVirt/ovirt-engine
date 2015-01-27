@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013-2014 Red Hat, Inc.
+# Copyright (C) 2013-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -109,6 +109,7 @@ class Hostname(base.Base):
     def __init__(self, plugin):
         super(Hostname, self).__init__()
         self._plugin = plugin
+        self.command.detect('dig')
 
     @property
     def plugin(self):
@@ -306,21 +307,28 @@ class Hostname(base.Base):
                     )
                 )
 
-    def getHostname(self, envkey, whichhost, supply_default):
+    def getHostname(self, envkey, whichhost, supply_default, prompttext=None):
         interactive = self.environment[envkey] is None
         validFQDN = False
+        if prompttext is None:
+            prompttext = _(
+                'Host fully qualified DNS name of {whichhost} server'
+            ).format(
+                whichhost=whichhost,
+            )
         while not validFQDN:
             if interactive:
                 fqdn = socket.getfqdn()
                 self.environment[
                     envkey
                 ] = self.dialog.queryString(
-                    name='OVESETUP_NETWORK_FQDN',
+                    name='OVESETUP_NETWORK_FQDN_{whichhost}'.format(
+                        whichhost=whichhost.replace(' ', '_'),
+                    ),
                     note=_(
-                        'Host fully qualified DNS name of '
-                        '{whichhost} server [@DEFAULT@]: '
+                        '{prompt} [@DEFAULT@]: '
                     ).format(
-                        whichhost=whichhost,
+                        prompt=prompttext,
                     ),
                     prompt=True,
                     default=fqdn if supply_default else '',

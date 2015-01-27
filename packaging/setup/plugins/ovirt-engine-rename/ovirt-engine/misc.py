@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup import hostname as osetuphostname
 
 
 @util.export
@@ -85,15 +86,14 @@ class Plugin(plugin.PluginBase):
         if self.environment[
             osetupcons.RenameEnv.FQDN
         ] is None:
-            self.environment[
-                osetupcons.RenameEnv.FQDN
-            ] = self.dialog.queryString(
-                name='OVESETUP_RENAME_FQDN',
-                note=_('New fully qualified server name: '),
-                prompt=True,
+            osetuphostname.Hostname(
+                plugin=self,
+            ).getHostname(
+                envkey=osetupcons.RenameEnv.FQDN,
+                whichhost=_('New'),
+                supply_default=False,
+                prompttext=_('New fully qualified server name: '),
             )
-            # TODO validate host name syntax
-            # TODO check resolve?
         self.environment[osetupcons.ConfigEnv.FQDN] = self.environment[
             osetupcons.RenameEnv.FQDN
         ]
