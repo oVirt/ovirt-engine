@@ -1623,7 +1623,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
             @Override
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if (args.propertyName == "IsAvailable") { //$NON-NLS-1$
+                if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
                     isVirtioScsiEnabledInfoIcon.setVisible(object.getIsVirtioScsiEnabled().getIsAvailable());
                 }
             }
@@ -1633,7 +1633,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
             @Override
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if (args.propertyName == "SelectedItem") { //$NON-NLS-1$
+                if ("SelectedItem".equals(args.propertyName)) { //$NON-NLS-1$
                     updateUsbNativeMessageVisibility(object);
                 }
             }
