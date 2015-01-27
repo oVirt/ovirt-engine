@@ -238,6 +238,11 @@ public class BackendStorageDomainsResourceTest
                 new String[] { "ServerConnectionId" },
                 new Object[] { GUIDS[POSIX_IDX].toString() },
                 setUpPosixStorageServerConnection(POSIX_IDX));
+        setUpGetEntityExpectations(VdcQueryType.GetExistingStorageDomainList,
+                GetExistingStorageDomainListParameters.class,
+                new String[] { "VdsId", "StorageType", "StorageDomainType", "Path" },
+                new Object[] { GUIDS[0], STORAGE_TYPES_MAPPED[POSIX_IDX], TYPES_MAPPED[0], ADDRESSES[POSIX_IDX] + ":" + PATHS[POSIX_IDX] },
+                new ArrayList<StorageDomainStatic>());
 
         setUpCreationExpectations(VdcActionType.AddPosixFsStorageDomain,
                 StorageDomainManagementParameter.class,
@@ -418,6 +423,12 @@ public class BackendStorageDomainsResourceTest
                 new String[] { "ServerConnectionId" },
                 new Object[] { GUIDS[POSIX_IDX].toString() },
                 setUpPosixStorageServerConnection(POSIX_IDX));
+
+        setUpGetEntityExpectations(VdcQueryType.GetExistingStorageDomainList,
+                GetExistingStorageDomainListParameters.class,
+                new String[] { "VdsId", "StorageType", "StorageDomainType", "Path" },
+                new Object[] { GUIDS[0], STORAGE_TYPES_MAPPED[POSIX_IDX], TYPES_MAPPED[0], ADDRESSES[POSIX_IDX] + ":" + PATHS[POSIX_IDX] },
+                new ArrayList<StorageDomainStatic>());
 
         setUpCreationExpectations(VdcActionType.AddPosixFsStorageDomain,
                 StorageDomainManagementParameter.class,
