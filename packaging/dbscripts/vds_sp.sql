@@ -898,7 +898,7 @@ BEGIN
         RETURN QUERY SELECT vds.*
         FROM vds
         INNER JOIN vds_groups vdsgroup ON vds.vds_group_id = vdsgroup.vds_group_id
-        WHERE (vds.status = v_status) AND (vds.storage_pool_id = v_storage_pool_id)
+        WHERE (v_status IS NULL OR vds.status = v_status) AND (vds.storage_pool_id = v_storage_pool_id)
         AND vdsgroup.virt_service = true;
     END;
     RETURN;

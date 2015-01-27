@@ -54,6 +54,9 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
      */
     public static void updateVdsDomainsData(VDS vds, Guid storagePoolId,
             ArrayList<VDSDomainsData> vdsDomainData) {
+        // NOTE - if this condition is ever updated, every place that acts upon the reporting
+        // should be updated as well, only hosts the we collect the report from should be affected
+        // from it.
         if (vds.getStatus() == reportingVdsStatus && vds.getVdsGroupSupportsVirtService()) {
             IrsProxyData proxy = _irsProxyData.get(storagePoolId);
             if (proxy != null) {
