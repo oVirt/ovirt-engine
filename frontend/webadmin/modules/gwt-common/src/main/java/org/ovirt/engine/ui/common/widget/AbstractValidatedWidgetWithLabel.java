@@ -12,11 +12,14 @@ import com.google.gwt.event.dom.client.HasAllKeyHandlers;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -301,5 +304,19 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
 
     public void setKeepTitleOnSetEnabled(boolean keepTitleOnSetEnabled) {
         this.keepTitleOnSetEnabled = keepTitleOnSetEnabled;
+    }
+
+    /**
+     * Force fire a change event on this field. This will trigger editor and model
+     * population from the field without a user edit and blur.
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public void fireChangeEvent() {
+        W w = getContentWidget();
+        if (w instanceof TakesValue && w instanceof HasValueChangeHandlers) {
+            TakesValue t = (TakesValue) w;
+            HasValueChangeHandlers h = (HasValueChangeHandlers) w;
+            ValueChangeEvent.fire(h, t.getValue());
+        }
     }
 }
