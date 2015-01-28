@@ -153,6 +153,7 @@ public class FenceProxyLocator {
                 || vdsDynamic.getStatus() == VDSStatus.Reboot
                 || vdsDynamic.getStatus() == VDSStatus.Kdumping
                 || vdsDynamic.getStatus() == VDSStatus.NonResponsive
+                || vdsDynamic.getStatus() == VDSStatus.PendingApproval
                 || (vdsDynamic.getStatus() == VDSStatus.NonOperational
         && vdsDynamic.getNonOperationalReason() == NonOperationalReason.NETWORK_UNREACHABLE));
     }
