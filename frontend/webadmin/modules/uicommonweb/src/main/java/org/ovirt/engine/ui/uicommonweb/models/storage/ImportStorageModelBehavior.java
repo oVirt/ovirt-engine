@@ -31,11 +31,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
 
     private void initializeItems() {
         List<IStorageModel> items = AsyncDataProvider.getIsoStorageModels();
-
-        NfsStorageModel tempVar2 = new NfsStorageModel();
-        tempVar2.setRole(StorageDomainType.ImportExport);
-        items.add(tempVar2);
-
+        items.addAll(AsyncDataProvider.getExportStorageModels());
         items.addAll(AsyncDataProvider.getFileDataStorageModels());
         items.addAll(AsyncDataProvider.getImportBlockDataStorageModels());
 
