@@ -77,7 +77,7 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
  */
 @NonTransactiveCommandAttribute
 public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePoolParametersBase> {
-    private boolean fenceSucceeded = true;
+    private boolean fenceSucceeded = false;
     private boolean vdsProxyFound;
     private List<StorageDomainStatic> problematicDomains;
     private boolean connectPoolSucceeded;
