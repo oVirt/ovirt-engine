@@ -11,7 +11,9 @@
   <packaging>ejb</packaging>
 
   <name>engine scheduler bean</name>
-
+  <properties>
+    <engine.db>pgsql</engine.db>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>${engine.groupId}</groupId>
@@ -38,12 +40,21 @@
   </dependencies>
 
   <build>
+   <filters>
+      <filter>src/test/filters/${engine.db}.properties</filter>
+   </filters>
    <resources>
       <resource>
         <directory>src/main/resources</directory>
         <filtering>true</filtering>
       </resource>
     </resources>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
     <plugins>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
