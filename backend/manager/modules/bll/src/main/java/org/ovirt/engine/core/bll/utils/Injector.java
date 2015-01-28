@@ -38,7 +38,7 @@ public class Injector {
      * @param <T> an unmanaged CDI instance with some members containing <code>@Inject</code> annotated
      *           members
      */
-    public static <T extends  CommandBase<? extends VdcActionParametersBase>> T injectMembers(T instance) {
+    public static <T> T injectMembers(T instance) {
         AnnotatedType type = injector.manager.createAnnotatedType(instance.getClass());
         InjectionTarget injectionTarget = injector.manager.createInjectionTarget(type);
         injectionTarget.inject(instance, injector.manager.createCreationalContext(null));

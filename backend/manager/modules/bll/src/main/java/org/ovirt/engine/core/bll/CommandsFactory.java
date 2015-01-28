@@ -135,7 +135,7 @@ public final class CommandsFactory {
                                 engineContext);
 
             }
-            return result;
+            return Injector.injectMembers(result);
         } catch (Exception e) {
             log.error("Command Factory: Failed to create command '{}' using reflection: {}", type, e.getMessage());
             log.error("Exception", e);
