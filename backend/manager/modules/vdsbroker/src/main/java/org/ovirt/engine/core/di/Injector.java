@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.utils;
+package org.ovirt.engine.core.di;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.spi.AnnotatedType;

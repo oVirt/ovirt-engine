@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.utils.GlusterGeoRepUtil;
-import org.ovirt.engine.core.bll.utils.Injector;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepNonEligibilityReason;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeGeoRepEligibilityParameters;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class GetNonEligibilityReasonsOfVolumeForGeoRepSessionQuery<P extends GlusterVolumeGeoRepEligibilityParameters> extends GlusterQueriesCommandBase<P> {

@@ -43,7 +43,6 @@ import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.Command;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
-import org.ovirt.engine.core.bll.utils.Injector;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -92,6 +91,7 @@ import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
 import org.ovirt.engine.core.dao.GenericDao;
 import org.ovirt.engine.core.dao.StatusAwareDao;
 import org.ovirt.engine.core.dao.VdsSpmIdMapDAO;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.Deserializer;
 import org.ovirt.engine.core.utils.ReflectionUtils;
@@ -230,8 +230,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *            command type for the rollback
      * @param params
      *            parameters for the rollback
-     * @param context
-     *            command context for the rollback
      * @return result of the command execution
      */
     protected VdcReturnValueBase attemptRollback(VdcActionType commandType,
