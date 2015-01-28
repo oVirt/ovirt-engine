@@ -301,13 +301,17 @@ public interface VdsServerConnector {
 
     public Map<String, Object> glusterVolumeRebalanceStatus(String volumeName);
 
-    public Map<String, Object> glusterVolumeGeoRepStatus();
+    public Map<String, Object> glusterVolumeGeoRepSessionList();
 
-    public Map<String, Object> glusterVolumeGeoRepStatus(String volumeName);
+    public Map<String, Object> glusterVolumeGeoRepSessionList(String volumeName);
 
-    public Map<String, Object> glusterVolumeGeoRepStatus(String volumeName, String slaveHost, String slaveVolumeName);
+    public Map<String, Object> glusterVolumeGeoRepSessionList(String volumeName,
+            String slaveHost,
+            String slaveVolumeName);
 
-    public Map<String, Object> glusterVolumeGeoRepStatusDetail(String volumeName, String slaveHost, String slaveVolumeName);
+    public Map<String, Object> glusterVolumeGeoRepSessionStatus(String volumeName,
+            String slaveHost,
+            String slaveVolumeName);
 
     public Map<String, Object> glusterVolumeRemoveBrickStatus(String volumeName, String[] bricksList);
 

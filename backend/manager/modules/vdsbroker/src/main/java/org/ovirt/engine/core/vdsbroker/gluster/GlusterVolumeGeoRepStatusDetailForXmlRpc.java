@@ -9,7 +9,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessio
 
 public class GlusterVolumeGeoRepStatusDetailForXmlRpc extends GlusterVolumeGeoRepStatusForXmlRpc {
 
-    private static final String FILES_SYNCED = "filesSyncd";
+    private static final String SESSION_STATUS = "sessionStatus";
+    private static final String FILES_SYNCED = "filesSynced";
     private static final String FILES_PENDING = "filesPending";
     private static final String BYTES_PENDING = "bytesPending";
     private static final String DELETES_PENDING = "deletesPending";
@@ -18,8 +19,9 @@ public class GlusterVolumeGeoRepStatusDetailForXmlRpc extends GlusterVolumeGeoRe
     private final ArrayList<GlusterGeoRepSessionDetails> geoRepDetails = new ArrayList<GlusterGeoRepSessionDetails>();
     private final List<GlusterGeoRepSession> geoRepSessions = new ArrayList<GlusterGeoRepSession>();
 
-    private GlusterGeoRepSessionDetails populatePairDetails(Map<String, Object> innerMap) {
-        GlusterGeoRepSessionDetails details = getSessionDetails(innerMap);
+    @Override
+    protected GlusterGeoRepSessionDetails getSessionDetails(Map<String, Object> innerMap) {
+        GlusterGeoRepSessionDetails details = super.getSessionDetails(innerMap);
         if (details != null) {
             Long filesSynced =
                     innerMap.containsKey(FILES_SYNCED) ? Long.parseLong(innerMap.get(FILES_SYNCED).toString()) : null;
@@ -41,26 +43,10 @@ public class GlusterVolumeGeoRepStatusDetailForXmlRpc extends GlusterVolumeGeoRe
         return details;
     }
 
-    @SuppressWarnings("unchecked")
-    private void populateSessionDetails(Map<String, Object> innerMap) {
-        if (innerMap.containsKey(VOLUME_NAME)) {
-            String masterVolumeName = (String) innerMap.get(VOLUME_NAME);
-            GlusterGeoRepSession session = getSession(masterVolumeName, innerMap);
-
-            if (innerMap.containsKey(GEO_REP_PAIRS)) {
-                for (Object sessionPair : (Object[]) innerMap.get(GEO_REP_PAIRS)) {
-                    geoRepDetails.add(populatePairDetails((Map<String, Object>) sessionPair));
-                }
-            }
-            session.setSessionDetails(geoRepDetails);
-            geoRepSessions.add(session);
-        }
-    }
-
     public GlusterVolumeGeoRepStatusDetailForXmlRpc(Map<String, Object> innerMap) {
         super(innerMap, false);
-        if (innerMap.containsKey(GEO_REP)) {
-            populateSessionDetails((Map<String, Object>) innerMap.get(GEO_REP));
+        if (innerMap.containsKey(SESSION_STATUS)) {
+            populateSessions((Map<String, Object>) innerMap.get(SESSION_STATUS));
         }
     }
 

@@ -308,7 +308,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
             return null;
         }
         // get details of geo-rep sessions in cluster
-        VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GetGlusterVolumeGeoRepStatus,
+        VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GetGlusterVolumeGeoRepSessionList,
                 new GlusterVolumeGeoRepSessionVDSParameters(upServer.getId(), volumeName));
         if (returnValue.getSucceeded()) {
             List<GlusterGeoRepSession> sessions = (List<GlusterGeoRepSession>) returnValue.getReturnValue();
@@ -335,7 +335,7 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
             return null;
         }
         try {
-            VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GetGlusterVolumeGeoRepStatusDetail,
+            VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GetGlusterVolumeGeoRepSessionStatus,
                     new GlusterVolumeGeoRepSessionVDSParameters(upServer.getId(),
                             session.getMasterVolumeName(), session.getSlaveHostName(), session.getSlaveVolumeName()));
             if (returnValue.getSucceeded()) {

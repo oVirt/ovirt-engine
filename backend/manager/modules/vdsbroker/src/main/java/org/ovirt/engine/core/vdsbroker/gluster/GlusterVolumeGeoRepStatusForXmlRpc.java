@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.gluster;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepCrawlStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
@@ -20,30 +21,30 @@ public class GlusterVolumeGeoRepStatusForXmlRpc extends StatusReturnForXmlRpc {
 
     private static final Logger log = LoggerFactory.getLogger(GlusterVolumeGeoRepStatusForXmlRpc.class);
 
-    protected static final String GEO_REP = "geo-rep";
     protected static final String VOLUME_NAME = "volumeName";
-    protected static final String GEO_REP_PAIRS = "pairs";
+    protected static final String BRICKS = "bricks";
     private static final String SESSIONS = "sessions";
-    private static final String SESSION_SLAVE = "sessionSlave";
-    private static final String MASTER_NODE_UUID = "masterNodeUuid";
-    private static final String MASTER_BRICK = "masterBrick";
-    private static final String SLAVE = "slave";
+    private static final String SESSION_KEY = "sessionKey";
+    private static final String HOST_UUID = "hostUuid";
+    private static final String BRICK_NAME = "brickName";
+    private static final String REMOTE_HOST = "remoteHost";
     private static final String STATUS = "status";
     private static final String CHECK_POINT_STATUS = "checkpointStatus";
     private static final String CRAWL_STATUS = "crawlStatus";
+    private static final String REMOTE_VOL_NAME = "remoteVolumeName";
 
     private final List<GlusterGeoRepSession> geoRepSessions = new ArrayList<GlusterGeoRepSession>();
 
     protected GlusterGeoRepSessionDetails getSessionDetails(Map<String, Object> innerMap) {
         GlusterGeoRepSessionDetails details = new GlusterGeoRepSessionDetails();
         Guid masterNodeGlusterId;
-        if (innerMap.containsKey(MASTER_NODE_UUID)) {
-            masterNodeGlusterId = new Guid(innerMap.get(MASTER_NODE_UUID).toString());
+        if (innerMap.containsKey(HOST_UUID)) {
+            masterNodeGlusterId = new Guid(innerMap.get(HOST_UUID).toString());
         } else {
             log.error("Master node uuid is not available");
             return null;
         }
-        String masterBrickDir = (innerMap.containsKey(MASTER_BRICK)) ? innerMap.get(MASTER_BRICK).toString() : null;
+        String masterBrickDir = (innerMap.containsKey(BRICK_NAME)) ? innerMap.get(BRICK_NAME).toString() : null;
         GlusterServer glusterServer = getDbUtils().getServerByUuid(masterNodeGlusterId);
         if (glusterServer != null) {
             GlusterBrickEntity brick =
@@ -58,11 +59,8 @@ public class GlusterVolumeGeoRepStatusForXmlRpc extends StatusReturnForXmlRpc {
                     masterBrickDir);
         }
 
-        String slave = innerMap.containsKey(SLAVE) ? innerMap.get(SLAVE).toString() : null;
-        String[] slaveSplit = (slave != null) ? slave.split("([://]+)") : null;
-        if (slaveSplit != null && slaveSplit.length >= 2) {
-            details.setSlaveHostName(slaveSplit[slaveSplit.length - 2]);
-        }
+        String slave = innerMap.containsKey(REMOTE_HOST) ? innerMap.get(REMOTE_HOST).toString() : null;
+        details.setSlaveHostName(slave);
         details.setStatus(GeoRepSessionStatus.from((String) innerMap.get(STATUS)));
         details.setCrawlStatus(GeoRepCrawlStatus.from((String) innerMap.get(CRAWL_STATUS)));
         details.setCheckPointStatus((String) innerMap.get(CHECK_POINT_STATUS));
@@ -71,12 +69,12 @@ public class GlusterVolumeGeoRepStatusForXmlRpc extends StatusReturnForXmlRpc {
 
     protected GlusterGeoRepSession getSession(String masterVolumeName, Map<String, Object> innerMap) {
         GlusterGeoRepSession geoRepSession = new GlusterGeoRepSession();
-        // sessionslave in the form - the uuid is the gluster server uuid on master
-        // <session_slave>11ae7a03-e793-4270-8fc4-b42def8b3051:ssh://192.168.122.14::slave2</session_slave>
-        String sessionKey = (String) innerMap.get(SESSION_SLAVE);
+        // sessionKey in the form - the uuid is the gluster server uuid on master
+        // <sessionKey>11ae7a03-e793-4270-8fc4-b42def8b3051:ssh://192.168.122.14::slave2</sessionKey>
+        String sessionKey = (String) innerMap.get(SESSION_KEY);
         String sessSplit[] = sessionKey.split("([://]+)");
         String slaveNode = sessSplit[sessSplit.length - 2];
-        String slaveVolume = sessSplit[sessSplit.length - 1];
+        String slaveVolume = (String) innerMap.get(REMOTE_VOL_NAME);
         geoRepSession.setSlaveHostName(slaveNode);
         geoRepSession.setSlaveVolumeName(slaveVolume);
         geoRepSession.setSessionKey(sessionKey);
@@ -89,26 +87,28 @@ public class GlusterVolumeGeoRepStatusForXmlRpc extends StatusReturnForXmlRpc {
     }
 
     @SuppressWarnings("unchecked")
-    private void populateSessions(Object[] geoRepVolSessions) {
-        for (Object geoRepVolSession : geoRepVolSessions) {
-            Map<String, Object> innerMap = (Map<String, Object>) geoRepVolSession;
-            if (innerMap.containsKey(VOLUME_NAME)) {
-                String masterVolName = (String) innerMap.get(VOLUME_NAME);
-                if (innerMap.containsKey(SESSIONS)) {
-                    for (Object session : (Object[]) innerMap.get(SESSIONS)) {
-                        geoRepSessions.add(populateSession(masterVolName, (Map<String, Object>) session));
-                    }
+    protected void populateSessions(Map<String, Object> geoRepVolSessions) {
+        for (Entry<String, Object> entry : geoRepVolSessions.entrySet()) {
+            log.debug("received session information for volume '{}'", entry.getKey());
+            String masterVolName = entry.getKey();
+
+            Map<String, Object> sessionsMap = (Map<String, Object>) entry.getValue();
+
+            if (sessionsMap.containsKey(SESSIONS)) {
+                for (Object session : (Object[]) sessionsMap.get(SESSIONS)) {
+                    geoRepSessions.add(populateSession(masterVolName, (Map<String, Object>) session));
                 }
             }
         }
+
     }
 
     private GlusterGeoRepSession populateSession(String volumeName, Map<String, Object> innerMap) {
         GlusterGeoRepSession geoRepSession = getSession(volumeName, innerMap);
         ArrayList<GlusterGeoRepSessionDetails> geoRepSessionDetails = new ArrayList<GlusterGeoRepSessionDetails>();
-        if (innerMap.containsKey(GEO_REP_PAIRS)) {
-            for (Object sessionPair : (Object[]) innerMap.get(GEO_REP_PAIRS)) {
-                geoRepSessionDetails.add(getSessionDetails((Map<String, Object>) sessionPair));
+        if (innerMap.containsKey(BRICKS)) {
+            for (Object brickSession : (Object[]) innerMap.get(BRICKS)) {
+                geoRepSessionDetails.add(getSessionDetails((Map<String, Object>) brickSession));
             }
         }
         geoRepSession.setSessionDetails(geoRepSessionDetails);
@@ -121,8 +121,8 @@ public class GlusterVolumeGeoRepStatusForXmlRpc extends StatusReturnForXmlRpc {
 
     public GlusterVolumeGeoRepStatusForXmlRpc(Map<String, Object> innerMap, boolean includeSessions) {
         super(innerMap);
-        if (includeSessions && innerMap.containsKey(GEO_REP)) {
-            populateSessions((Object[]) innerMap.get(GEO_REP));
+        if (includeSessions && innerMap.containsKey(SESSIONS)) {
+            populateSessions((Map<String, Object>) innerMap.get(SESSIONS));
         }
     }
 

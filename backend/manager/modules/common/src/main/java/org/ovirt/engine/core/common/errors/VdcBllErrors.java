@@ -378,6 +378,7 @@ public enum VdcBllErrors {
     GlusterVolumeProfileStopFailed(4159),
     GlusterVolumeProfileInfoFailed(4160),
     GlusterVolumeStatusAllFailedException(4161),
+    GlusterVolumeGeoRepStatusFailed(4203),
     GlusterHostIsNotPartOfCluster(4403),
     GlusterAddHostFailed(4404),
     GlusterHostRemoveFailedException(4406),
@@ -406,8 +407,6 @@ public enum VdcBllErrors {
     GlusterVolumeGeoRepStopFailedException(4596),
     GlusterVolumeGeoRepPauseFailed(4597),
     GlusterVolumeGeoRepResumeFailed(4598),
-    GlusterVolumeGeoRepStatusFailed(4599),
-    GlusterVolumeGeoRepStatusDetailFailed(4600),
     GlusterVolumeGeoRepSyncFailed(4601),
 
     UnicodeArgumentException(4900),
