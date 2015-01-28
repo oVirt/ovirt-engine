@@ -51,6 +51,10 @@ public abstract class AbstractLoginPresenterWidget<T extends LoginModel, V exten
         HasKeyPressHandlers getLoginForm();
 
         String getMotdAnchorHtml(String url);
+
+        T flush();
+
+        void fireChangeEventsOnFields();
     }
 
     private static final Logger logger = Logger.getLogger(AbstractLoginPresenterWidget.class.getName());
@@ -106,6 +110,9 @@ public abstract class AbstractLoginPresenterWidget<T extends LoginModel, V exten
         registerHandler(getView().getLoginButton().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+                // force fire change events in case the login form was filled in by an SSO robot or pasted in
+                getView().fireChangeEventsOnFields();
+                getView().flush();
                 modelCommandInvoker.invokeDefaultCommand();
             }
         }));
@@ -114,6 +121,9 @@ public abstract class AbstractLoginPresenterWidget<T extends LoginModel, V exten
             @Override
             public void onKeyPress(KeyPressEvent event) {
                 if (event.getNativeEvent().getKeyCode() == KeyCodes.KEY_ENTER) {
+                    // force fire change events in case the login form was filled in by an SSO robot or pasted in
+                    getView().fireChangeEventsOnFields();
+                    getView().flush();
                     modelCommandInvoker.invokeDefaultCommand();
                 }
             }

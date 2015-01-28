@@ -336,4 +336,12 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     public void setRenderer(VisibilityRenderer renderer) {
         this.renderer = renderer;
     }
+
+    /**
+     * Force fire a change event on this field. This will trigger editor and model
+     * population from the field without a user edit and blur.
+     */
+    public void fireChangeEvent() {
+        ValueChangeEvent.fire(getContentWidget(), getContentWidget().getValue());
+    }
 }

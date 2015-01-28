@@ -197,4 +197,24 @@ public abstract class AbstractLoginFormView extends AbstractView {
         return loginForm;
     }
 
+    /**
+     * <p>
+     * Force fire change events on the login form fields.
+     * </p>
+     * <p>
+     * Our editors/models don't get populated from forms unless a change event fires on the form
+     * (usually on blur when a user types in a value and tabs away).
+     * </p>
+     * <p>
+     * For the login form, there are third-party SSO applications that "paste" credentials
+     * into the form. We want to allow those to work by forcing change events on the form
+     * when the form is submitted.
+     * </p>
+     */
+    public void fireChangeEventsOnFields() {
+        userNameEditor.fireChangeEvent();
+        passwordEditor.fireChangeEvent();
+        profileEditor.fireChangeEvent();
+    }
+
 }
