@@ -310,6 +310,7 @@ Group:		%{ovirt_product_group}
 Requires:	%{name} = %{version}-%{release}
 Requires:	%{name}-extensions-api-impl >= %{version}-%{release}
 Requires:	%{name}-lib >= %{version}-%{release}
+Requires:	ebay-cors-filter
 Requires:	httpd
 Requires:	java
 Requires:	logrotate
@@ -742,6 +743,7 @@ common/org/apache/xmlgraphics/batik/main/batik-transcoder.jar batik/batik-transc
 common/org/apache/xmlgraphics/batik/main/batik-util.jar batik/batik-util.jar
 common/org/apache/xmlgraphics/commons/main/xmlgraphics-commons.jar
 common/org/apache/xmlgraphics/fop/main/fop.jar
+common/org/ebaysf/web/cors-filter/main/cors-filter.jar ebay-cors-filter/cors-filter.jar
 common/org/ovirt/otopi/main/otopi.jar otopi/otopi.jar
 common/org/ovirt/ovirt-host-deploy/main/ovirt-host-deploy.jar ovirt-host-deploy/ovirt-host-deploy.jar
 common/org/ovirt/vdsm-jsonrpc-java/main/vdsm-jsonrpc-java-client.jar vdsm-jsonrpc-java/vdsm-jsonrpc-java-client.jar
