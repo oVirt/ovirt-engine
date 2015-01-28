@@ -177,12 +177,14 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVol
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeParameterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumePermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.VolumeSubTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostGeneralSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostBrickPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostEventPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralInfoPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralSoftwarePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGlusterSwiftPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHardwarePresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralHardwarePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHookPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostInterfacePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostPermissionPresenter;
@@ -430,12 +432,14 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeGe
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeParameterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumePermissionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.VolumeSubTabPanelView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.HostGeneralSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.HostSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostBrickView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostEventView;
-import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGeneralView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGeneralInfoView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGeneralSoftwareView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGlusterSwiftView;
-import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostHardwareView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGeneralHardwareView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostHookView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostInterfaceView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostPermissionView;
@@ -814,14 +818,22 @@ public class PresenterModule extends BasePresenterModule {
                 HostSubTabPanelPresenter.ViewDef.class,
                 HostSubTabPanelView.class,
                 HostSubTabPanelPresenter.ProxyDef.class);
-        bindPresenter(SubTabHostGeneralPresenter.class,
-                SubTabHostGeneralPresenter.ViewDef.class,
-                SubTabHostGeneralView.class,
-                SubTabHostGeneralPresenter.ProxyDef.class);
-        bindPresenter(SubTabHostHardwarePresenter.class,
-                SubTabHostHardwarePresenter.ViewDef.class,
-                SubTabHostHardwareView.class,
-                SubTabHostHardwarePresenter.ProxyDef.class);
+        bindPresenter(HostGeneralSubTabPanelPresenter.class,
+                HostGeneralSubTabPanelPresenter.ViewDef.class,
+                HostGeneralSubTabPanelView.class,
+                HostGeneralSubTabPanelPresenter.ProxyDef.class);
+        bindPresenter(SubTabHostGeneralSoftwarePresenter.class,
+                SubTabHostGeneralSoftwarePresenter.ViewDef.class,
+                SubTabHostGeneralSoftwareView.class,
+                SubTabHostGeneralSoftwarePresenter.ProxyDef.class);
+        bindPresenter(SubTabHostGeneralInfoPresenter.class,
+                SubTabHostGeneralInfoPresenter.ViewDef.class,
+                SubTabHostGeneralInfoView.class,
+                SubTabHostGeneralInfoPresenter.ProxyDef.class);
+        bindPresenter(SubTabHostGeneralHardwarePresenter.class,
+                SubTabHostGeneralHardwarePresenter.ViewDef.class,
+                SubTabHostGeneralHardwareView.class,
+                SubTabHostGeneralHardwarePresenter.ProxyDef.class);
         bindPresenter(SubTabHostVmPresenter.class,
                 SubTabHostVmPresenter.ViewDef.class,
                 SubTabHostVmView.class,

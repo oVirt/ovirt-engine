@@ -25,13 +25,12 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralInfoPresenter;
 import org.ovirt.engine.ui.webadmin.widget.alert.InLineAlertWidget;
 import org.ovirt.engine.ui.webadmin.widget.label.DetailsTextBoxLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.FullDateTimeLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.NullableNumberTextBoxLabel;
 import org.ovirt.engine.ui.webadmin.widget.label.PercentTextBoxLabel;
-import org.ovirt.engine.ui.webadmin.widget.label.VersionTextBoxLabel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
@@ -42,12 +41,13 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListModel<Void>, HostGeneralModel> implements SubTabHostGeneralPresenter.ViewDef, Editor<HostGeneralModel> {
+public class SubTabHostGeneralInfoView extends AbstractSubTabFormView<VDS, HostListModel<Void>, HostGeneralModel>
+    implements SubTabHostGeneralInfoPresenter.ViewDef, Editor<HostGeneralModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<HostGeneralModel, SubTabHostGeneralView> {
+    interface Driver extends SimpleBeanEditorDriver<HostGeneralModel, SubTabHostGeneralInfoView> {
     }
 
-    interface ViewIdHandler extends ElementIdHandler<SubTabHostGeneralView> {
+    interface ViewIdHandler extends ElementIdHandler<SubTabHostGeneralInfoView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
@@ -55,16 +55,8 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
     private final ApplicationResources resources;
     private final ApplicationConstants constants = GWT.create(ApplicationConstants.class);
 
-    @Path("OS")
-    TextBoxLabel oS = new TextBoxLabel();
-    TextBoxLabel kvmVersion = new TextBoxLabel();
-    VersionTextBoxLabel libvirtVersion = new VersionTextBoxLabel();
-    TextBoxLabel spiceVersion = new TextBoxLabel();
-    TextBoxLabel kernelVersion = new TextBoxLabel();
-    VersionTextBoxLabel glusterVersion = new VersionTextBoxLabel();
     @Path("IScsiInitiatorName")
     TextBoxLabel iScsiInitiatorName = new TextBoxLabel();
-    VersionTextBoxLabel vdsmVersion = new VersionTextBoxLabel();
     PercentTextBoxLabel<Integer> sharedMemory = new PercentTextBoxLabel<Integer>();
     BooleanTextBoxLabel memoryPageSharing = new BooleanTextBoxLabel(constants.active(), constants.inactive());
     NullableNumberTextBoxLabel<Integer> activeVms = new NullableNumberTextBoxLabel<Integer>();
@@ -76,14 +68,14 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
     TextBoxLabel kdumpStatus = new TextBoxLabel();
     TextBoxLabel selinuxEnforceMode = new TextBoxLabel();
 
-    MemorySizeTextBoxLabel<Integer> physicalMemory;
-    MemorySizeTextBoxLabel<Integer> usedMemory;
-    MemorySizeTextBoxLabel<Integer> freeMemory;
+    MemorySizeTextBoxLabel<Integer> physicalMemory = new MemorySizeTextBoxLabel<Integer>(constants);
+    MemorySizeTextBoxLabel<Integer> usedMemory = new MemorySizeTextBoxLabel<Integer>(constants);
+    MemorySizeTextBoxLabel<Integer> freeMemory = new MemorySizeTextBoxLabel<Integer>(constants);
 
-    MemorySizeTextBoxLabel<Long> swapTotal;
-    MemorySizeTextBoxLabel<Long> usedSwap;
-    MemorySizeTextBoxLabel<Long> swapFree;
-    MemorySizeTextBoxLabel<Float> maxSchedulingMemory;
+    MemorySizeTextBoxLabel<Long> swapTotal = new MemorySizeTextBoxLabel<Long>(constants);
+    MemorySizeTextBoxLabel<Long> usedSwap = new MemorySizeTextBoxLabel<Long>(constants);
+    MemorySizeTextBoxLabel<Long> swapFree = new MemorySizeTextBoxLabel<Long>(constants);
+    MemorySizeTextBoxLabel<Float> maxSchedulingMemory = new MemorySizeTextBoxLabel<Float>(constants);
 
     BooleanTextBoxLabel liveSnapshotSupport = new BooleanTextBoxLabel(constants.active(), constants.inactive());
 
@@ -122,18 +114,17 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
 
     private final Driver driver = GWT.create(Driver.class);
 
-    interface ViewUiBinder extends UiBinder<Widget, SubTabHostGeneralView> {
+    interface ViewUiBinder extends UiBinder<Widget, SubTabHostGeneralInfoView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
     @Inject
-    public SubTabHostGeneralView(DetailModelProvider<HostListModel<Void>, HostGeneralModel> modelProvider,
+    public SubTabHostGeneralInfoView(DetailModelProvider<HostListModel<Void>, HostGeneralModel> modelProvider,
             ApplicationResources resources) {
         super(modelProvider);
 
         // Inject a reference to the resources:
         this.resources = resources;
-        initMemorySizeLabels();
 
         // Init form panel:
         formPanel = new GeneralFormPanel();
@@ -144,32 +135,26 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         generateIds();
 
         boolean virtSupported = ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly);
-        boolean glusterSupported = ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly);
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 3, 9);
+        formBuilder = new FormBuilder(formPanel, 3, 6);
 
-        formBuilder.addFormItem(new FormItem(constants.osVersionHostGeneral(), oS, 0).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.kernelVersionHostGeneral(), kernelVersion, 0).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.kvmVersionHostGeneral(), kvmVersion, 0, virtSupported).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.libvirtVersionHostGeneral(), libvirtVersion, 0, virtSupported).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.vdsmVersionHostGeneral(), vdsmVersion, 0).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.spiceVersionHostGeneral(), spiceVersion, 0, virtSupported).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.glusterVersionHostGeneral(), glusterVersion, 0, glusterSupported).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.spmPriority(), spmPriority, 0, 0, virtSupported).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.activeVmsHostGeneral(), activeVms, 0, virtSupported).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.logicalCores(), logicalCores, 0).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.onlineCores(), onlineCores, 0).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.bootTimeHostGeneral(), bootTime, 0).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.hostedEngineHaHostGeneral(), hostedEngineHa, 0,
+                virtSupported).withAutoPlacement());
 
-        formBuilder.addFormItem(new FormItem(constants.spmPriority(), spmPriority, 0, 1, virtSupported).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.activeVmsHostGeneral(), activeVms, 1, virtSupported).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.logicalCores(), logicalCores, 1).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.onlineCores(), onlineCores, 1).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.bootTimeHostGeneral(), bootTime, 1).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.hostedEngineHaHostGeneral(), hostedEngineHa, 1, virtSupported).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.isciInitNameHostGeneral(), iScsiInitiatorName, 1, virtSupported).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.isciInitNameHostGeneral(), iScsiInitiatorName, 0, 1,
+                virtSupported).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.kdumpStatus(), kdumpStatus, 1).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.physMemHostGeneral(), physicalMemoryDetails, 1).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.swapSizeHostGeneral(), swapSizeDetails, 1).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.sharedMemHostGeneral(), sharedMemory, 1).withAutoPlacement());
 
-        formBuilder.addFormItem(new FormItem(constants.physMemHostGeneral(), physicalMemoryDetails, 2).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.swapSizeHostGeneral(), swapSizeDetails, 2).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.sharedMemHostGeneral(), sharedMemory, 2).withAutoPlacement());
-        formBuilder.addFormItem(new FormItem(constants.maxSchedulingMemory(), maxSchedulingMemory, 2, virtSupported).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.maxSchedulingMemory(), maxSchedulingMemory, 0, 2, virtSupported).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.memPageSharingHostGeneral(), memoryPageSharing, 2).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.autoLargePagesHostGeneral(), automaticLargePage, 2).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.selinuxModeGeneral(), selinuxEnforceMode, 2).withAutoPlacement());
@@ -182,19 +167,6 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initMemorySizeLabels() {
-        this.physicalMemory = new MemorySizeTextBoxLabel<Integer>(constants);
-        this.usedMemory = new MemorySizeTextBoxLabel<Integer>(constants);
-        this.freeMemory = new MemorySizeTextBoxLabel<Integer>(constants);
-
-        this.swapTotal = new MemorySizeTextBoxLabel<Long>(constants);
-        this.usedSwap = new MemorySizeTextBoxLabel<Long>(constants);
-        this.swapFree = new MemorySizeTextBoxLabel<Long>(constants);
-
-        this.maxSchedulingMemory = new MemorySizeTextBoxLabel<Float>(constants);
-    }
-
-    @SuppressWarnings("unchecked")
     @Override
     public void setMainTabSelectedItem(VDS selectedItem) {
         driver.edit(getDetailModel());

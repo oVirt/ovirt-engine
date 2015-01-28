@@ -1,21 +1,23 @@
-package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter;
+package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host;
 
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
-import org.ovirt.engine.ui.common.presenter.ScrollableTabBarPresenterWidget;
-import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
-import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
-import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractSubTabPanelPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DataCenterSelectionChangeEvent;
 import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter.DynamicTabPanel;
+import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
+import org.ovirt.engine.ui.common.presenter.ScrollableTabBarPresenterWidget;
+import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
+import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractSubTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.HostSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.ChangeTabHandler;
-import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.RequestTabsHandler;
 import com.gwtplatform.mvp.client.TabData;
@@ -31,12 +33,12 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxy;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
-public class DataCenterQosSubTabPanelPresenter extends
-    AbstractSubTabPanelPresenter<DataCenterQosSubTabPanelPresenter.ViewDef, DataCenterQosSubTabPanelPresenter.ProxyDef> {
+public class HostGeneralSubTabPanelPresenter extends AbstractSubTabPanelPresenter<
+    HostGeneralSubTabPanelPresenter.ViewDef, HostGeneralSubTabPanelPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(WebAdminApplicationPlaces.dataCenterQosSubTabPlace)
-    public interface ProxyDef extends TabContentProxyPlace<DataCenterQosSubTabPanelPresenter> {
+    @NameToken(WebAdminApplicationPlaces.hostGeneralSubTabPlace)
+    public interface ProxyDef extends TabContentProxyPlace<HostGeneralSubTabPanelPresenter> {
     }
 
     public interface ViewDef extends AbstractSubTabPanelPresenter.ViewDef, DynamicTabPanel {
@@ -51,34 +53,37 @@ public class DataCenterQosSubTabPanelPresenter extends
     @ContentSlot
     public static final Type<RevealContentHandler<?>> TYPE_SetTabContent = new Type<RevealContentHandler<?>>();
 
-    private Presenter<?, ?> lastPresenter;
+    private AbstractSubTabPresenter<VDS, HostListModel<Void>, HostGeneralModel,
+        ? extends AbstractSubTabPresenter.ViewDef<VDS>, ? extends TabContentProxyPlace<?>> lastPresenter;
 
     @Inject
-    public DataCenterQosSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            ScrollableTabBarPresenterWidget tabBar, SubTabDataCenterStorageQosPresenter dataCenterStorageQosPresenter) {
-        super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, tabBar, DataCenterSubTabPanelPresenter.TYPE_SetTabContent);
-        this.lastPresenter = dataCenterStorageQosPresenter;
+    public HostGeneralSubTabPanelPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
+            ScrollableTabBarPresenterWidget tabBar, SubTabHostGeneralInfoPresenter infoPresenter) {
+        super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab, tabBar,
+                HostSubTabPanelPresenter.TYPE_SetTabContent);
+        lastPresenter = infoPresenter;
     }
 
-    @TabInfo(container = DataCenterSubTabPanelPresenter.class)
+    @TabInfo(container = HostSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            ModelProvider<DataCenterListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.dataCenterQosSubTabLabel(), 2, modelProvider);
+            DetailModelProvider<HostListModel<Void>, HostGeneralModel> modelProvider) {
+        return new ModelBoundTabData(applicationConstants.hostGeneralSubTabLabel(), 0, modelProvider);
     }
 
     @ProxyEvent
-    public void onDataCenterSelectionChange(DataCenterSelectionChangeEvent event) {
+    public void onHostSelectionChange(HostSelectionChangeEvent event) {
         this.mainTabSelectedItems = event.getSelectedItems();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void setInSlot(Object slot, PresenterWidget<?> content) {
         super.setInSlot(slot, content);
-        if (content instanceof SubTabDataCenterStorageQosPresenter
-                || content instanceof SubTabDataCenterNetworkQoSPresenter
-                || content instanceof SubTabDataCenterCpuQosPresenter
-                || content instanceof SubTabDataCenterHostNetworkQosPresenter) {
-            lastPresenter = (Presenter<?, ?>) content;
+        if (content instanceof SubTabHostGeneralInfoPresenter
+                || content instanceof SubTabHostGeneralSoftwarePresenter
+                || content instanceof SubTabHostGeneralHardwarePresenter) {
+            lastPresenter = (AbstractSubTabPresenter<VDS, HostListModel<Void>, HostGeneralModel,
+                    ? extends AbstractSubTabPresenter.ViewDef<VDS>, ? extends TabContentProxyPlace<?>>) content;
         }
         TabContentProxy<?> proxy = (TabContentProxy<?>) lastPresenter.getProxy();
         super.setInSlot(TYPE_SetTabContent, lastPresenter);
@@ -88,6 +93,6 @@ public class DataCenterQosSubTabPanelPresenter extends
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(WebAdminApplicationPlaces.dataCenterMainTabPlace);
+        return PlaceRequestFactory.get(WebAdminApplicationPlaces.hostMainTabPlace);
     }
 }

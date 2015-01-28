@@ -527,8 +527,14 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("General")
     String hostGeneralSubTabLabel();
 
-    @DefaultStringValue("Hardware Information")
-    String hostHardwareSubTabLabel();
+    @DefaultStringValue("Info")
+    String hostGeneralInfoSubTabLabel();
+
+    @DefaultStringValue("Software")
+    String hostGeneralSoftwareSubTabLabel();
+
+    @DefaultStringValue("Hardware")
+    String hostGeneralHardwareSubTabLabel();
 
     @DefaultStringValue("Virtual Machines")
     String hostVmSubTabLabel();

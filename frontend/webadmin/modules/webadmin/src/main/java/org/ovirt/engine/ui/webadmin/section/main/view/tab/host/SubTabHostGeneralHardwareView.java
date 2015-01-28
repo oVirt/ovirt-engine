@@ -17,7 +17,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHardwareGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHardwarePresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralHardwarePresenter;
 import org.ovirt.engine.ui.webadmin.widget.label.NullableNumberTextBoxLabel;
 
 import com.google.gwt.core.client.GWT;
@@ -31,12 +31,14 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SubTabHostHardwareView extends AbstractSubTabFormView<VDS, HostListModel<Void>, HostHardwareGeneralModel> implements SubTabHostHardwarePresenter.ViewDef, Editor<HostHardwareGeneralModel> {
+public class SubTabHostGeneralHardwareView
+    extends AbstractSubTabFormView<VDS, HostListModel<Void>, HostHardwareGeneralModel>
+    implements SubTabHostGeneralHardwarePresenter.ViewDef, Editor<HostHardwareGeneralModel> {
 
-    interface Driver extends SimpleBeanEditorDriver<HostHardwareGeneralModel, SubTabHostHardwareView> {
+    interface Driver extends SimpleBeanEditorDriver<HostHardwareGeneralModel, SubTabHostGeneralHardwareView> {
     }
 
-    interface ViewIdHandler extends ElementIdHandler<SubTabHostHardwareView> {
+    interface ViewIdHandler extends ElementIdHandler<SubTabHostGeneralHardwareView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
@@ -64,12 +66,12 @@ public class SubTabHostHardwareView extends AbstractSubTabFormView<VDS, HostList
 
     private final Driver driver = GWT.create(Driver.class);
 
-    interface ViewUiBinder extends UiBinder<Widget, SubTabHostHardwareView> {
+    interface ViewUiBinder extends UiBinder<Widget, SubTabHostGeneralHardwareView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
     @Inject
-    public SubTabHostHardwareView(DetailModelProvider<HostListModel<Void>, HostHardwareGeneralModel> modelProvider,
+    public SubTabHostGeneralHardwareView(DetailModelProvider<HostListModel<Void>, HostHardwareGeneralModel> modelProvider,
             ApplicationResources resources, ApplicationConstants constants) {
         super(modelProvider);
         this.constants = constants;

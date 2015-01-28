@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:e="urn:import:com.google.gwt.editor.ui.client"
+    xmlns:f="urn:import:org.ovirt.engine.ui.common.widget.form">
+
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+
+    <ui:style>
+        .formPanel {
+            padding-top: 10px;
+        }
+
+        @external alertsPanel;
+        .alertsPanel {
+            padding-top: 5px;
+            padding-right: 16px;
+            padding-left: 16px;
+        }
+
+        .alertsPanel a {
+            color: black;
+            text-decoration: underline;
+        }
+
+        .actionItemsLabel {
+            font-weight: bold;
+        }
+    </ui:style>
+
+    <g:FlowPanel>
+        <f:GeneralFormPanel ui:field="formPanel" addStyleNames="{style.formPanel}"/>
+        <g:HTMLPanel ui:field="alertsPanel" addStyleNames="{style.alertsPanel}">
+            <div>
+                <g:Label text="{constants.actionItemsHostGeneral}" addStyleNames="{style.actionItemsLabel}" />
+            </div>
+            <g:FlowPanel ui:field="alertsList"/>
+        </g:HTMLPanel>
+    </g:FlowPanel>
+
+</ui:UiBinder>

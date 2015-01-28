@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:e="urn:import:com.google.gwt.editor.ui.client"
+    xmlns:f="urn:import:org.ovirt.engine.ui.common.widget.form">
+
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+
+    <ui:style>
+        .formPanel {
+            padding-top: 10px;
+        }
+    </ui:style>
+
+    <g:FlowPanel>
+        <f:GeneralFormPanel ui:field="formPanel" addStyleNames="{style.formPanel}"/>
+    </g:FlowPanel>
+
+</ui:UiBinder>

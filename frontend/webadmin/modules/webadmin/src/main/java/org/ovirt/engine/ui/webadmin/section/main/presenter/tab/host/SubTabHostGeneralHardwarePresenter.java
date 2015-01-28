@@ -22,27 +22,29 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabHostHardwarePresenter extends AbstractSubTabPresenter<VDS, HostListModel<Void>, HostHardwareGeneralModel, SubTabHostHardwarePresenter.ViewDef, SubTabHostHardwarePresenter.ProxyDef> {
+public class SubTabHostGeneralHardwarePresenter extends
+    AbstractSubTabPresenter<VDS, HostListModel<Void>, HostHardwareGeneralModel,
+        SubTabHostGeneralHardwarePresenter.ViewDef, SubTabHostGeneralHardwarePresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(WebAdminApplicationPlaces.hostHardwareSubTabPlace)
-    public interface ProxyDef extends TabContentProxyPlace<SubTabHostHardwarePresenter> {
+    @NameToken(WebAdminApplicationPlaces.hostGeneralHardwareSubTabPlace)
+    public interface ProxyDef extends TabContentProxyPlace<SubTabHostGeneralHardwarePresenter> {
     }
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VDS> {
     }
 
-    @TabInfo(container = HostSubTabPanelPresenter.class)
+    @TabInfo(container = HostGeneralSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
             DetailModelProvider<HostListModel<Void>, HostHardwareGeneralModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.hostHardwareSubTabLabel(), 6, modelProvider);
+        return new ModelBoundTabData(applicationConstants.hostGeneralHardwareSubTabLabel(), 6, modelProvider);
     }
 
     @Inject
-    public SubTabHostHardwarePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
+    public SubTabHostGeneralHardwarePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, DetailModelProvider<HostListModel<Void>, HostHardwareGeneralModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
-                HostSubTabPanelPresenter.TYPE_SetTabContent);
+                HostGeneralSubTabPanelPresenter.TYPE_SetTabContent);
     }
 
     @Override

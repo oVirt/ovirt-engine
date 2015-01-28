@@ -198,8 +198,14 @@ public class WebAdminApplicationPlaces {
     public static final String hostGeneralSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
             + "general"; //$NON-NLS-1$
 
-    public static final String hostHardwareSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
-            + "hardware"; //$NON-NLS-1$
+    public static final String hostGeneralSoftwareSubTabPlace = hostGeneralSubTabPlace
+            + "_software"; //$NON-NLS-1$
+
+    public static final String hostGeneralHardwareSubTabPlace = hostGeneralSubTabPlace
+            + "_hardware"; //$NON-NLS-1$
+
+    public static final String hostGeneralInfoSubTabPlace = hostGeneralSubTabPlace
+            + "_info"; //$NON-NLS-1$
 
     public static final String hostVmSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
             + "virtual_machines"; //$NON-NLS-1$

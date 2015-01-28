@@ -17,7 +17,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.HostSelectionChangeEvent;
 
@@ -38,11 +37,12 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, HostListModel<Void>, HostGeneralModel, SubTabHostGeneralPresenter.ViewDef, SubTabHostGeneralPresenter.ProxyDef> {
+public class SubTabHostGeneralInfoPresenter extends AbstractSubTabPresenter<VDS, HostListModel<Void>, HostGeneralModel,
+    SubTabHostGeneralInfoPresenter.ViewDef, SubTabHostGeneralInfoPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(WebAdminApplicationPlaces.hostGeneralSubTabPlace)
-    public interface ProxyDef extends TabContentProxyPlace<SubTabHostGeneralPresenter> {
+    @NameToken(WebAdminApplicationPlaces.hostGeneralInfoSubTabPlace)
+    public interface ProxyDef extends TabContentProxyPlace<SubTabHostGeneralInfoPresenter> {
     }
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VDS> {
@@ -64,20 +64,19 @@ public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, Hos
     // We need this to get the text of the alert messages:
     private final ApplicationMessages messages;
 
-    @TabInfo(container = HostSubTabPanelPresenter.class)
+    @TabInfo(container = HostGeneralSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
             DetailModelProvider<HostListModel<Void>, HostGeneralModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.hostGeneralSubTabLabel(), 0, modelProvider);
+        return new ModelBoundTabData(applicationConstants.hostGeneralInfoSubTabLabel(), 0, modelProvider);
     }
 
     @Inject
-    public SubTabHostGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, DetailModelProvider<HostListModel<Void>, HostGeneralModel> modelProvider) {
+    public SubTabHostGeneralInfoPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
+            PlaceManager placeManager, DetailModelProvider<HostListModel<Void>, HostGeneralModel> modelProvider,
+            ApplicationMessages messages) {
         super(eventBus, view, proxy, placeManager, modelProvider,
-                HostSubTabPanelPresenter.TYPE_SetTabContent);
-
-        // Inject a reference to the messages:
-        messages = ClientGinjectorProvider.getApplicationMessages();
+                HostGeneralSubTabPanelPresenter.TYPE_SetTabContent);
+        this.messages = messages;
     }
 
     @Override
