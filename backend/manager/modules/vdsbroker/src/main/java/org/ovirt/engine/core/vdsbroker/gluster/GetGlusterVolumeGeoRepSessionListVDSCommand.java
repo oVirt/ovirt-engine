@@ -3,10 +3,10 @@ package org.ovirt.engine.core.vdsbroker.gluster;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessionVDSParameters;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
 
-public class GetGlusterVolumeGeoRepStatusVDSCommand<P extends GlusterVolumeGeoRepSessionVDSParameters> extends AbstractGlusterBrokerCommand<P> {
+public class GetGlusterVolumeGeoRepSessionListVDSCommand<P extends GlusterVolumeGeoRepSessionVDSParameters> extends AbstractGlusterBrokerCommand<P> {
     GlusterVolumeGeoRepStatusForXmlRpc result;
 
-    public GetGlusterVolumeGeoRepStatusVDSCommand(P parameters) {
+    public GetGlusterVolumeGeoRepSessionListVDSCommand(P parameters) {
         super(parameters);
     }
 
@@ -19,11 +19,14 @@ public class GetGlusterVolumeGeoRepStatusVDSCommand<P extends GlusterVolumeGeoRe
     protected void executeVdsBrokerCommand() {
         GlusterVolumeGeoRepSessionVDSParameters parameter = getParameters();
         if (parameter.getVolumeName() == null) {
-            result = getBroker().glusterVolumeGeoRepStatus();
+            result = getBroker().glusterVolumeGeoRepSessionList();
         } else if (parameter.getSlaveHost() == null || parameter.getSlaveVolume() == null) {
-            result = getBroker().glusterVolumeGeoRepStatus(parameter.getVolumeName());
+            result = getBroker().glusterVolumeGeoRepSessionList(parameter.getVolumeName());
         } else {
-            result = getBroker().glusterVolumeGeoRepStatus(parameter.getVolumeName(), parameter.getSlaveHost(), parameter.getSlaveVolume());
+            result =
+                    getBroker().glusterVolumeGeoRepSessionList(parameter.getVolumeName(),
+                            parameter.getSlaveHost(),
+                            parameter.getSlaveVolume());
         }
         proceedProxyReturnValue();
         if (getVDSReturnValue().getSucceeded()) {

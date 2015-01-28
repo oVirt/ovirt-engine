@@ -18,8 +18,8 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterServersListReturnForXmlRpc
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterServicesReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterTaskInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterTasksListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusDetailForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeOptionsInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeProfileInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRpc;
@@ -1294,6 +1294,7 @@ public class JsonRpcVdsServer implements IVdsServer {
         return new StatusOnlyReturnForXmlRpc(response);
     }
 
+    @Override
     public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepPause(String masterVolumeName, String slaveHost, String slaveVolumeName, boolean force) {
         JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepPause").withParameter("volumeName", masterVolumeName)
                 .withParameter("remoteHost", slaveHost)
@@ -1492,15 +1493,15 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public GlusterVolumeGeoRepStatusForXmlRpc glusterVolumeGeoRepStatus() {
-        JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepStatus").build();
+    public GlusterVolumeGeoRepStatusForXmlRpc glusterVolumeGeoRepSessionList() {
+        JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepSessionList").build();
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
         return new GlusterVolumeGeoRepStatusForXmlRpc(response);
     }
 
     @Override
-    public GlusterVolumeGeoRepStatusForXmlRpc glusterVolumeGeoRepStatus(String volumeName) {
-        JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepStatus")
+    public GlusterVolumeGeoRepStatusForXmlRpc glusterVolumeGeoRepSessionList(String volumeName) {
+        JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepSessionList")
                     .withParameter("volName", volumeName)
                     .build();
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
@@ -1508,8 +1509,11 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public GlusterVolumeGeoRepStatusForXmlRpc glusterVolumeGeoRepStatus(String volumeName, String slaveHost, String slaveVolumeName) {
-        JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepStatus").withParameter("volName", volumeName)
+    public GlusterVolumeGeoRepStatusForXmlRpc glusterVolumeGeoRepSessionList(String volumeName,
+            String slaveHost,
+            String slaveVolumeName) {
+        JsonRpcRequest request =
+                new RequestBuilder("GlusterVolume.geoRepSessionList").withParameter("volName", volumeName)
                 .withParameter("remoteHost", slaveHost)
                 .withParameter("remoteVolName", slaveVolumeName).build();
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
@@ -1517,8 +1521,11 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public GlusterVolumeGeoRepStatusDetailForXmlRpc glusterVolumeGeoRepStatusDetail(String volumeName, String slaveHost, String slaveVolumeName) {
-        JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepStatusDetail").withParameter("volName", volumeName)
+    public GlusterVolumeGeoRepStatusDetailForXmlRpc glusterVolumeGeoRepSessionStatus(String volumeName,
+            String slaveHost,
+            String slaveVolumeName) {
+        JsonRpcRequest request =
+                new RequestBuilder("GlusterVolume.geoRepSessionStatus").withParameter("volName", volumeName)
                 .withParameter("remoteHost", slaveHost)
                 .withParameter("remoteVolName", slaveVolumeName).build();
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();

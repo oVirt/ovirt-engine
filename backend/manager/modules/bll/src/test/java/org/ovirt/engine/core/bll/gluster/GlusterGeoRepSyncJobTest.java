@@ -96,7 +96,7 @@ public class GlusterGeoRepSyncJobTest {
     public void testDiscoverGeoRepData() {
 
         doReturn(getSessionsVDSReturnVal(true, 2)).when(syncJob)
-                .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepStatus),
+                .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepSessionList),
                         any(GlusterVolumeGeoRepSessionVDSParameters.class));
         syncJob.discoverGeoRepData();
         Mockito.verify(geoRepDao, times(2)).save(any(GlusterGeoRepSession.class));
@@ -106,7 +106,7 @@ public class GlusterGeoRepSyncJobTest {
     public void testDiscoverGeoRepDataWhenNoSessions() {
 
         doReturn(getSessionsVDSReturnVal(true, 0)).when(syncJob)
-                .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepStatus),
+                .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepSessionList),
                         any(GlusterVolumeGeoRepSessionVDSParameters.class));
         syncJob.discoverGeoRepData();
         Mockito.verify(geoRepDao, times(0)).save(any(GlusterGeoRepSession.class));
@@ -115,7 +115,7 @@ public class GlusterGeoRepSyncJobTest {
     @Test
     public void testRefreshStatus() {
         doReturn(getSessionDetailsVDSReturnVal(true)).when(syncJob)
-        .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepStatusDetail),
+                .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepSessionStatus),
                 any(GlusterVolumeGeoRepSessionVDSParameters.class));
         syncJob.refreshGeoRepSessionStatus();
         Mockito.verify(geoRepDao, times(2)).saveOrUpdateDetailsInBatch(any(List.class));
@@ -124,7 +124,7 @@ public class GlusterGeoRepSyncJobTest {
     @Test
     public void testRefreshStatusNoSessions() {
         doReturn(getSessionDetailsVDSReturnVal(false)).when(syncJob)
-                .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepStatusDetail),
+                .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepSessionStatus),
                         any(GlusterVolumeGeoRepSessionVDSParameters.class));
         syncJob.refreshGeoRepSessionStatus();
         Mockito.verify(geoRepDao, times(0)).saveOrUpdateDetailsInBatch(any(List.class));
