@@ -86,7 +86,8 @@ public class BackendStorageDomainsResource
                 connection.setid(addStorageServerConnection(connection, hostId));
         }
         entity.setStorage(connection.getid());
-        if (action == VdcActionType.AddNFSStorageDomain) {
+        if (action == VdcActionType.AddNFSStorageDomain || action == VdcActionType.AddPosixFsStorageDomain ||
+                action == VdcActionType.AddGlusterFsStorageDomain) {
             org.ovirt.engine.core.common.businessentities.StorageDomain existing =
                 getExistingStorageDomain(hostId,
                                          entity.getStorageType(),
