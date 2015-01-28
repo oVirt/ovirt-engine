@@ -8,9 +8,6 @@ import javax.enterprise.inject.spi.InjectionTarget;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.ovirt.engine.core.bll.CommandBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-
 /**
  * an application wide interaction point with the CDI container mostly to gap all the existing unmanged code
  * or for unmanaged code which wants interaction with managed beans.
