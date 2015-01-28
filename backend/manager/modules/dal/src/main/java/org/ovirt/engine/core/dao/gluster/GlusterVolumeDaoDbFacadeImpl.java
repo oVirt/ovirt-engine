@@ -377,6 +377,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
             entity.setReplicaCount(rs.getInt("replica_count"));
             entity.setStripeCount(rs.getInt("stripe_count"));
             entity.setSnapshotsCount(rs.getInt("snapshot_count"));
+            entity.setSnapshotScheduled(rs.getBoolean("snapshot_scheduled"));
             return entity;
         }
     }

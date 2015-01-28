@@ -129,6 +129,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotScheduleDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotConfigDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -889,6 +890,15 @@ public class DbFacade {
      */
     public GlusterVolumeSnapshotConfigDao getGlusterVolumeSnapshotConfigDao() {
         return getDao(GlusterVolumeSnapshotConfigDao.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link GlusterVolumeSnapshotScheduleDao}
+     *
+     * @return the dao
+     */
+    public GlusterVolumeSnapshotScheduleDao getGlusterVolumeSnapshotScheduleDao() {
+        return getDao(GlusterVolumeSnapshotScheduleDao.class);
     }
 
     /**

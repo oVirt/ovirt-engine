@@ -6586,6 +6586,33 @@
         </row>
     </table>
 
+    <table name="gluster_volume_snapshot_schedules">
+        <column>volume_id</column>
+        <column>job_id</column>
+        <column>snapshot_name_prefix</column>
+        <column>snapshot_description</column>
+        <column>recurrence</column>
+        <column>time_zone</column>
+        <column>interval</column>
+        <column>start_date</column>
+        <column>execution_time</column>
+        <column>days</column>
+        <column>end_by</column>
+        <row>
+            <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
+            <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835eb9</value>
+            <value>prefix</value>
+            <value>desc</value>
+            <value>INTERVAL</value>
+            <value>Asia/Calcutta</value>
+            <value>10</value>
+            <null/>
+            <null/>
+            <null/>
+            <null/>
+        </row>
+    </table>
+
     <table name="gluster_volume_bricks">
         <column>id</column>
         <column>volume_id</column>
