@@ -1016,6 +1016,7 @@ fi
 %{engine_data}/bin/pki-enroll-pkcs12.sh
 %{engine_data}/bin/pki-enroll-request.sh
 %{engine_data}/bin/pki-pkcs12-extract.sh
+%{engine_data}/bin/pki-ssh-keygen.py*
 
 # backward compatibly (pre-3.3.0)
 # force rpm not to remove pki files

@@ -19,12 +19,10 @@
 """ssh plugin."""
 
 
-import base64
 import gettext
-import re
-import struct
 
-from M2Crypto import EVP, X509
+from M2Crypto import X509
+
 from otopi import constants as otopicons
 from otopi import filetransaction, plugin, util
 
@@ -41,26 +39,29 @@ def _(m):
 class Plugin(plugin.PluginBase):
     """CA plugin."""
 
-    def _getSSHPublicKeyRaw(self, key):
-        ALGO = 'ssh-rsa'
-        return {
-            'algo': ALGO,
-            'blob': (
-                struct.pack('!l', len(ALGO)) + ALGO.encode('ascii') +
-                key.pub()[0] +
-                key.pub()[1]
-            ),
-        }
-
     def _getSSHPublicKey(self, key):
-        sshkey = self._getSSHPublicKeyRaw(key)
-        return '%s %s' % (sshkey['algo'], base64.b64encode(sshkey['blob']))
+        rc, stdout, stderr = self.execute(
+            (
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_SSH_KEYGEN,
+                '-l',
+                '-i',
+                '-m', 'PKCS8',
+                '-f', '/proc/self/fd/0',
+            ),
+            stdin=key.split('\n'),
+        )
+        return stdout[0]
 
     def _getSSHPublicKeyFingerprint(self, key):
-        sshkey = self._getSSHPublicKeyRaw(key)
-        md5 = EVP.MessageDigest('md5')
-        md5.update(sshkey['blob'])
-        return re.sub(r'(..)', r':\1', base64.b16encode(md5.digest()))[1:]
+        rc, stdout, stderr = self.execute(
+            (
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_SSH_KEYGEN,
+                '-l',
+                '-f', '/proc/self/fd/0',
+            ),
+            stdin=key.split('\n'),
+        )
+        return stdout[0].split()[1]
 
     def _getEnginePublicKey(self):
         rc, cert, stderr = self.execute(
@@ -74,20 +75,13 @@ class Plugin(plugin.PluginBase):
             ),
         )
 
-        x509 = X509.load_cert_string(
+        return X509.load_cert_string(
             string='\n'.join(cert).encode('ascii'),
             format=X509.FORMAT_PEM,
-        )
-        return x509.get_pubkey().get_rsa()
+        ).get_pubkey().get_rsa().as_pem()
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_SETUP,
-    )
-    def _setup(self):
-        self.command.detect('ssh-keygen')
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
