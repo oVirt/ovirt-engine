@@ -254,10 +254,13 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
     }
 
     protected boolean validateSpaceRequirements(DiskImage diskImage) {
+        diskImage.getSnapshots().add(diskImage); // Added for validation purposes.
         StorageDomainValidator sdValidator = createStorageDomainValidator();
-        return (validate(sdValidator.isDomainExistAndActive())
-                && validate(sdValidator.isDomainWithinThresholds()))
+        boolean result = validate(sdValidator.isDomainExistAndActive())
+                && validate(sdValidator.isDomainWithinThresholds())
                 && validate(sdValidator.hasSpaceForClonedDisk(diskImage));
+        diskImage.getSnapshots().remove(diskImage);
+        return result;
     }
 
     protected StorageDomainValidator createStorageDomainValidator() {
