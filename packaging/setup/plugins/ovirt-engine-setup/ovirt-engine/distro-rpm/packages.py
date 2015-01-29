@@ -110,7 +110,8 @@ class Plugin(plugin.PluginBase):
                         oenginecons.RPMDistroEnv.UPGRADE_YUM_GROUP
                     ],
                     'packages': tolist(
-                        self.environment[oenginecons.RPMDistroEnv.ENGINE_PACKAGES]
+                        self.environment[
+                            oenginecons.RPMDistroEnv.ENGINE_PACKAGES]
                     ),
                 },
             )
