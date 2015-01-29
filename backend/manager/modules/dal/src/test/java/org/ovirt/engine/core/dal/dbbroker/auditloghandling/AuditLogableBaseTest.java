@@ -708,11 +708,9 @@ public class AuditLogableBaseTest {
     @Test
     public void getVdsWithVdsId() {
         final AuditLogableBase b = new TestAuditLogableBase();
-        final VDS vds = null;
         final VM vm = new VM();
         vm.setRunOnVds(GUID2);
         final Guid vdsId = GUID;
-        b.setVds(vds);
         b.setVdsId(vdsId);
         b.setVm(vm);
         final VDS v = b.getVds();
