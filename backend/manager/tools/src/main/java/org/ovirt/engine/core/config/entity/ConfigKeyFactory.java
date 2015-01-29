@@ -105,7 +105,7 @@ public class ConfigKeyFactory {
             }
             Class<?> cls = Class.forName("org.ovirt.engine.core.config.entity.helper." + type + "ValueHelper");
             valueHelper = (ValueHelper) cls.newInstance();
-        } catch (Exception e) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
             // failed finding a helper for this type. Setting default string type
             LoggerFactory.getLogger(EngineConfig.class)
                     .debug("Unable to find {} type. Using default string type.", type);

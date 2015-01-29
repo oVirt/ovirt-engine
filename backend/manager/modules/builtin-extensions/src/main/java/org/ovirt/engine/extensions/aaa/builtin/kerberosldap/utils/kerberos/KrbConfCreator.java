@@ -131,7 +131,7 @@ public class KrbConfCreator {
                 List<String> ldapServers = ldapServersPerGSSAPIDomains.get(realm.toLowerCase());
                 if (ldapServers == null || ldapServers.size() == 0) {
                     DnsSRVResult kdc = locator.getKdc(KDCLocator.TCP, realm);
-                    String[] addresses = kdc.getAddresses();
+                    String[] addresses = kdc == null ? new String[0] : kdc.getAddresses();
                     if (addresses.length == 0) { // kdc not found for this realm
                         throw new IllegalArgumentException(InstallerConstants.ERROR_PREFIX
                                 + " there are no KDCs for for realm " + realm +

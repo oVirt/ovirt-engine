@@ -11,6 +11,7 @@ import org.ovirt.engine.core.config.entity.helper.CompositePasswordValueHelper;
 import org.ovirt.engine.core.config.entity.helper.PasswordValueHelper;
 import org.ovirt.engine.core.config.entity.helper.ValidationResult;
 import org.ovirt.engine.core.config.entity.helper.ValueHelper;
+import org.slf4j.LoggerFactory;
 
 public class ConfigKey {
     private String type;
@@ -135,7 +136,9 @@ public class ConfigKey {
         try{
             value = getDisplayValue();
         }
-        catch (Exception e) { }
+        catch (Exception e) {
+            LoggerFactory.getLogger(ConfigKey.class).debug("Error fetching value", e);
+        }
         return (new StringBuilder ("ConfigKey [type=").append(type).append(", description=").append(description)
                 .append(", alternateKey=").append(alternateKey).append(", key=").append(keyName).append(", value=").append(value)
                 .append(", validValues=").append(validValues).append(", version=").append(version + "]")).toString();

@@ -161,14 +161,9 @@ public class EngineConfigLogic {
         if (!f.exists()) {
             return StringUtils.EMPTY;
         }
-        FileReader input = new FileReader(passFile);
-        BufferedReader br = new BufferedReader(input);
-        String pass = br.readLine();
-        try {
-            input.close();
-            br.close();
-        } catch (Exception e) {
-            // Ignore
+        String pass;
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+            pass = br.readLine();
         }
         if (pass == null) {
             return StringUtils.EMPTY;
@@ -216,7 +211,8 @@ public class EngineConfigLogic {
         else {
             prompt = msg + ": ";
         }
-        return new String(console.readPassword(prompt));
+        char[] passwd = console.readPassword(prompt);
+        return passwd == null ? "" : new String(passwd);
     }
 
     /**
