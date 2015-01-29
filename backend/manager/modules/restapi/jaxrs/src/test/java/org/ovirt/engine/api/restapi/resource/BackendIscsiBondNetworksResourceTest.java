@@ -89,6 +89,7 @@ public class BackendIscsiBondNetworksResourceTest extends AbstractBackendNetwork
                 null);
 
         Response response = collection.performRemove(network.getId());
+        assertNotNull(response);
         assertEquals(200, response.getStatus());
     }
 
