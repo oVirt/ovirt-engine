@@ -34,11 +34,6 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
     }
 
     @Override
-    protected void insertAsyncTaskPlaceHolders() {
-        persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
-    }
-
-    @Override
     protected void executeCommand() {
         setImageGroupId(getParameters().getDiskInfo().getId());
         if (Guid.isNullOrEmpty(getDestinationImageId())) {
@@ -91,7 +86,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
     }
 
     protected boolean processImageInIrs() {
-        Guid taskId = getAsyncTaskId();
+        Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
         VDSReturnValue vdsReturnValue = runVdsCommand(
                         VDSCommandType.CreateImage,
                         new CreateImageVDSCommandParameters(getParameters().getStoragePoolId(), getParameters()
