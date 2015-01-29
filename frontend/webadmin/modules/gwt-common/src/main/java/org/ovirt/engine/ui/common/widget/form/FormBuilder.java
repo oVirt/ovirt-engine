@@ -19,15 +19,25 @@ public class FormBuilder {
     // form items whenever the given model property changes its value
     private final Map<String, List<FormItem>> propertyNameMap = new HashMap<String, List<FormItem>>();
 
-    private EntityModel model;
+    private EntityModel<?> model;
 
     public FormBuilder(AbstractFormPanel formPanel, int numOfColumns, int numOfRows) {
         this.formPanel = formPanel;
 
-        // Add columns to the form panel
-        for (int i = 0; i < numOfColumns; i++) {
-            formPanel.addFormDetailView(numOfRows);
+        formPanel.addFormDetailView(numOfRows, numOfColumns);
+    }
+
+    /**
+     * Set the relative width of the column in bootstrap grid columns, acceptable values are between 1 and 12.
+     * Make sure your total for all columns does not exceed 12 or your results will be unpredictable.
+     * @param columnNum The column you want to set the relative width for.
+     * @param widthInColumns The number of grid columns you want your column to occupy.
+     */
+    public void setRelativeColumnWidth(int columnNum, int widthInGridColumns) {
+        if (widthInGridColumns < 1 || widthInGridColumns > 12) {
+            throw new IllegalArgumentException("The widthInGridColumns has to be between 1 and 12"); //$NON-NLS-1$
         }
+        formPanel.setRelativeColumnWidth(columnNum, widthInGridColumns);
     }
 
     /**
@@ -60,7 +70,7 @@ public class FormBuilder {
     /**
      * Updates all items within the form panel.
      */
-    public void update(EntityModel model) {
+    public void update(EntityModel<?> model) {
         // Detach property change listener from old model
         if (this.model != null) {
             this.model.getPropertyChangedEvent().removeListener(propertyChangedEventListener);

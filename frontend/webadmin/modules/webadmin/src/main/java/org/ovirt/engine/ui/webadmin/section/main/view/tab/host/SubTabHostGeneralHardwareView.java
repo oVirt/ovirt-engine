@@ -84,6 +84,9 @@ public class SubTabHostGeneralHardwareView
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 3, 4);
+        formBuilder.setRelativeColumnWidth(0, 3);
+        formBuilder.setRelativeColumnWidth(1, 4);
+        formBuilder.setRelativeColumnWidth(2, 5);
         formBuilder.addFormItem(new FormItem(constants.hardwareManufacturerGeneral(), hardwareManufacturer, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.hardwareFamilyGeneral(), hardwareFamily, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.hardwareProductNameGeneral(), hardwareProductName, 0, 2));
@@ -147,7 +150,7 @@ public class SubTabHostGeneralHardwareView
                 hbaFormBuilder.addFormItem(new FormItem(constants.hbaDeviceType(), interfaceType, 1, 0));
                 hbaFormBuilder.addFormItem(new FormItem(constants.hbaWWNN(), interfaceWWNN, 2, 0));
                 hbaFormBuilder.addFormItem(new FormItem(constants.hbaWWPNs(), portWWPNs, 3, 0));
-
+                hbaFormBuilder.setRelativeColumnWidth(0, 3);
                 hbaInventory.add(hbaFormPanel);
             }
         }

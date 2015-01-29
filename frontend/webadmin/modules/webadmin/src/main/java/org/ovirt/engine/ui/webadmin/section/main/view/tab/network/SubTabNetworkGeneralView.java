@@ -73,7 +73,8 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 2, 4);
-
+        formBuilder.setRelativeColumnWidth(0, 4);
+        formBuilder.setRelativeColumnWidth(1, 3);
         formBuilder.addFormItem(new FormItem(constants.nameNetwork(), name, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.idNetwork(), id, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.descriptionNetwork(), description, 2, 0));

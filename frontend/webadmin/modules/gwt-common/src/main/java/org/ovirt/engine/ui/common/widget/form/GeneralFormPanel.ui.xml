@@ -1,51 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
-	<ui:style>
-		.contentPanel {
-			width: 100%;
-		}
+    <ui:style type="org.ovirt.engine.ui.common.widget.form.AbstractFormPanel.Style">
+        .container {
+            width: 100%;
+        }
 
-		@external formPanel_detailView;
-		.formPanel_detailView {
-			display: block;
-			padding-left: 16px;
-			padding-right: 16px;
-			line-height: 18px;
-		}
+        .formPanelLabel {
+            white-space: nowrap;
+            color: black;
+            font-family: Arial, sans-serif;
+            padding-top: 1px;
+            padding-bottom: 2px;
+        }
 
-		@external formPanel_detailViewNameColumn;
-		.formPanel_detailViewNameColumn {
-			min-width: 100px;
-		}
+        .formPanelValue {
+            white-space: nowrap;
+            color: #777777;
+            font-family: Arial, sans-serif;
+            padding-left: 4px;
+            padding-top: 1px;
+            padding-bottom: 2px;
+        }
+    </ui:style>
 
-		@external formPanel_detailViewValueColumn;
-		.formPanel_detailViewValueColumn {
-			min-width: 100px;
-			width: 100%;
-		}
-
-		@external formPanel_detailViewItemName;
-		.formPanel_detailViewItemName {
-			white-space: nowrap;
-			color: black;
-			font-family: Arial, sans-serif;
-			padding-top: 1px;
-			padding-bottom: 2px;
-		}
-
-		@external formPanel_detailViewItemValue;
-		.formPanel_detailViewItemValue {
-			white-space: nowrap;
-			color: #777777;
-			font-family: Arial, sans-serif;
-			padding-left: 4px;
-			padding-top: 1px;
-			padding-bottom: 2px;
-		}
-	</ui:style>
-
-	<g:HorizontalPanel ui:field="contentPanel" addStyleNames="{style.contentPanel}" />
+    <b:Container fluid="true" ui:field="container" addStyleNames="{style.container}" />
 
 </ui:UiBinder>

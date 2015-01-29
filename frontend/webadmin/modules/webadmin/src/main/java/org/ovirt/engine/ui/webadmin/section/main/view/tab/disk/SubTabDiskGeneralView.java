@@ -92,6 +92,7 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
                 return getDetailModel().isQuotaAvailable();
             }
         });
+        formBuilder.setRelativeColumnWidth(0, 3);
     }
 
     @Override

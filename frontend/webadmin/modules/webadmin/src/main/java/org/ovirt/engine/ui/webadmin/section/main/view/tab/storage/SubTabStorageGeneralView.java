@@ -94,7 +94,7 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 1, 12);
-
+        formBuilder.setRelativeColumnWidth(0, 4);
         formBuilder.addFormItem(new FormItem(constants.sizeStorageGeneral(), totalSize, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.availableStorageGeneral(), availableSize, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.usedStorageGeneral(), usedSize, 2, 0));

@@ -94,6 +94,7 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
                 }
             }
         });
+        formBuilder.setRelativeColumnWidth(0, 3);
     }
 
     @Override

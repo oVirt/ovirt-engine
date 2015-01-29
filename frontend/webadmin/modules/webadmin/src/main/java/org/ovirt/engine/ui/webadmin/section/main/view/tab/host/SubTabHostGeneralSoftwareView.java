@@ -76,7 +76,8 @@ public class SubTabHostGeneralSoftwareView extends AbstractSubTabFormView<VDS, H
         boolean glusterSupported = ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly);
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 3, 9);
+        formBuilder = new FormBuilder(formPanel, 1, 7);
+        formBuilder.setRelativeColumnWidth(0, 3);
         formBuilder.addFormItem(new FormItem(constants.osVersionHostGeneral(), oS, 0).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.kernelVersionHostGeneral(), kernelVersion, 0).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.kvmVersionHostGeneral(), kvmVersion, 0, virtSupported).withAutoPlacement());

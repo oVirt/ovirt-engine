@@ -62,6 +62,7 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 1, 3);
+        formBuilder.setRelativeColumnWidth(0, 3);
 
         formBuilder.addFormItem(new FormItem(constants.authz(), domain, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.emailUserGeneral(), email, 2, 0) {

@@ -138,6 +138,9 @@ public class SubTabHostGeneralInfoView extends AbstractSubTabFormView<VDS, HostL
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 3, 6);
+        formBuilder.setRelativeColumnWidth(0, 3);
+        formBuilder.setRelativeColumnWidth(1, 4);
+        formBuilder.setRelativeColumnWidth(2, 5);
 
         formBuilder.addFormItem(new FormItem(constants.spmPriority(), spmPriority, 0, 0, virtSupported).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.activeVmsHostGeneral(), activeVms, 0, virtSupported).withAutoPlacement());
