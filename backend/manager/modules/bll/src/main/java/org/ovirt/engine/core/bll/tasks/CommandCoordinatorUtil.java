@@ -16,8 +16,10 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
+import org.ovirt.engine.core.common.businessentities.CommandAssociatedEntity;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
@@ -184,9 +186,18 @@ public class CommandCoordinatorUtil {
     }
 
     public static Future<VdcReturnValueBase> executeAsyncCommand(VdcActionType actionType,
-                                    VdcActionParametersBase parameters,
-                                    CommandContext cmdContext) {
-        return coco.executeAsyncCommand(actionType, parameters, cmdContext);
+                                                                 VdcActionParametersBase parameters,
+                                                                 CommandContext cmdContext,
+                                                                 SubjectEntity... subjectEntities) {
+        return coco.executeAsyncCommand(actionType, parameters, cmdContext, subjectEntities);
+    }
+
+    public static List<Guid> getCommandIdsByEntityId(Guid entityId) {
+        return coco.getCommandIdsByEntityId(entityId);
+    }
+
+    public static List<CommandAssociatedEntity> getCommandAssociatedEntities(Guid cmdId) {
+        return coco.getCommandAssociatedEntities(cmdId);
     }
 
     public static VdcReturnValueBase getCommandReturnValue(Guid cmdId) {

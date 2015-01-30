@@ -101,6 +101,12 @@
       <artifactId>hibernate-entitymanager</artifactId>
       <version>${hibernate-jpa.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-library</artifactId>
+      <version>${hamcrest.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <build>
     <filters>

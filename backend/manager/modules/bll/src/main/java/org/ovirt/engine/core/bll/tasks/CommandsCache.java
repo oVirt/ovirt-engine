@@ -1,8 +1,10 @@
 package org.ovirt.engine.core.bll.tasks;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.businessentities.CommandAssociatedEntity;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.DateTime;
@@ -17,6 +19,12 @@ public interface CommandsCache {
     void remove(Guid commandId);
 
     void put(CommandEntity cmdEntity);
+
+    void persistCommandAssociatedEntities(Collection<CommandAssociatedEntity> cmdAssociatedEntities);
+
+    List<CommandAssociatedEntity> getCommandAssociatedEntities(Guid cmdId);
+
+    List<Guid> getCommandIdsByEntityId(Guid entityId);
 
     void removeAllCommandsBeforeDate(DateTime cutoff);
 

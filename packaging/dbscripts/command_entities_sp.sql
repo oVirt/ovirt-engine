@@ -166,3 +166,35 @@ BEGIN
       command_id NOT IN(SELECT command_id FROM async_tasks);
 END; $procedure$
 LANGUAGE plpgsql;
+
+Create or replace FUNCTION InsertCommandAssociatedEntities(
+        v_command_id UUID,
+        v_entity_id UUID,
+        v_entity_type varchar(128))
+
+RETURNS VOID
+   AS $procedure$
+BEGIN
+      INSERT INTO command_assoc_entities (command_id,entity_id,entity_type) VALUES (v_command_id, v_entity_id, v_entity_type);
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION GetCommandIdsByEntityId(v_entity_id UUID)
+RETURNS SETOF idUuidType STABLE
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT command_id from command_assoc_entities where entity_id = v_entity_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION  GetCommandAssociatedEntities(v_command_id UUID)
+RETURNS SETOF command_assoc_entities STABLE
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM command_assoc_entities
+   WHERE command_id = v_command_id;
+END; $procedure$
+LANGUAGE plpgsql;

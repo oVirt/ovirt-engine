@@ -1,11 +1,13 @@
 package org.ovirt.engine.core.bll.tasks.interfaces;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.CommandAssociatedEntity;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.DateTime;
@@ -28,6 +30,12 @@ public interface CommandCRUDOperations {
     void persistCommand(CommandEntity cmdEntity);
 
     void persistCommand(CommandEntity cmdEntity, CommandContext cmdContext);
+
+    void persistCommandAssociatedEntities(Collection<CommandAssociatedEntity> cmdAssociatedEntities);
+
+    List<CommandAssociatedEntity> getCommandAssociatedEntities(Guid cmdId);
+
+    List<Guid> getCommandIdsByEntityId(Guid entityId);
 
     CommandBase<?> retrieveCommand(Guid commandId);
 

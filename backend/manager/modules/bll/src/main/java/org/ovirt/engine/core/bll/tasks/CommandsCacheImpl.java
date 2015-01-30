@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.tasks;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,6 +8,7 @@ import java.util.Set;
 
 import javax.transaction.Transaction;
 
+import org.ovirt.engine.core.common.businessentities.CommandAssociatedEntity;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.DateTime;
@@ -100,6 +102,18 @@ public class CommandsCacheImpl implements CommandsCache {
             cmdEntity.setCallbackNotified(true);
             DbFacade.getInstance().getCommandEntityDao().updateNotified(commandId);
         }
+    }
+
+    public void persistCommandAssociatedEntities(Collection<CommandAssociatedEntity> cmdAssociatedEntities) {
+        DbFacade.getInstance().getCommandEntityDao().insertCommandAssociatedEntities(cmdAssociatedEntities);
+    }
+
+    public List<CommandAssociatedEntity> getCommandAssociatedEntities(Guid cmdId) {
+        return DbFacade.getInstance().getCommandEntityDao().getAllCommandAssociatedEntities(cmdId);
+    }
+
+    public List<Guid> getCommandIdsByEntityId(Guid entityId) {
+        return DbFacade.getInstance().getCommandEntityDao().getCommandIdsByEntity(entityId);
     }
 
     @Override

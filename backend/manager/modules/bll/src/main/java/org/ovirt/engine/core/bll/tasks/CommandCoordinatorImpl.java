@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.tasks;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,9 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
+import org.ovirt.engine.core.common.businessentities.CommandAssociatedEntity;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
+import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SPMTaskGuidBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -94,6 +97,18 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         }
     }
 
+    public void persistCommandAssociatedEntities(Collection<CommandAssociatedEntity> cmdAssociatedEntities) {
+        commandsCache.persistCommandAssociatedEntities(cmdAssociatedEntities);
+    }
+
+    public List<Guid> getCommandIdsByEntityId(Guid entityId) {
+        return commandsCache.getCommandIdsByEntityId(entityId);
+    }
+
+    public List<CommandAssociatedEntity> getCommandAssociatedEntities(Guid cmdId) {
+        return commandsCache.getCommandAssociatedEntities(cmdId);
+    }
+
     void saveCommandContext(Guid cmdId, CommandContext cmdContext) {
         if (cmdContext != null) {
             contextsCache.put(cmdId, cmdContext);
@@ -107,8 +122,9 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
     @Override
     public Future<VdcReturnValueBase> executeAsyncCommand(VdcActionType actionType,
                                                           VdcActionParametersBase parameters,
-                                                          CommandContext cmdContext) {
-        return cmdExecutor.executeAsyncCommand(actionType, parameters, cmdContext);
+                                                          CommandContext cmdContext,
+                                                          SubjectEntity... subjectEntities) {
+        return cmdExecutor.executeAsyncCommand(actionType, parameters, cmdContext, subjectEntities);
     }
 
     @Override

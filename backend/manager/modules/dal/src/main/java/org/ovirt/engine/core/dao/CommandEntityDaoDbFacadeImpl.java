@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -10,13 +11,17 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.CommandAssociatedEntity;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
@@ -25,6 +30,30 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 @Named
 @Singleton
 public class CommandEntityDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<CommandEntity, Guid> implements CommandEntityDao {
+
+    private static class IdRowMapper implements RowMapper<Guid> {
+        public static final IdRowMapper instance = new IdRowMapper();
+
+        @Override
+        public Guid mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return getGuidDefaultEmpty(rs, "id");
+        }
+
+    }
+
+    private static class CoCoCmdEntityRowMapper implements RowMapper<CommandAssociatedEntity> {
+
+        public static final RowMapper<CommandAssociatedEntity> instance = new CoCoCmdEntityRowMapper();
+
+        @Override
+        public CommandAssociatedEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
+            CommandAssociatedEntity entity = new CommandAssociatedEntity(getGuid(rs, "command_id"),
+                    VdcObjectType.valueOf(rs.getString("entity_type")),
+                    getGuid(rs, "entity_id"));
+            entity.setEntityType(VdcObjectType.valueOf(rs.getString("entity_type")));
+            return entity;
+        }
+    }
 
     private static RowMapper<CommandEntity> mapper = new RowMapper<CommandEntity>() {
 
@@ -45,6 +74,19 @@ public class CommandEntityDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Comm
             result.setCallbackEnabled(resultSet.getBoolean("callback_enabled"));
             result.setCallbackNotified(resultSet.getBoolean("callback_notified"));
             return result;
+        }
+    };
+
+    private MapSqlParameterMapper<CommandAssociatedEntity> cocoCmdEntityMapper = new MapSqlParameterMapper<CommandAssociatedEntity>() {
+
+        @Override
+        public MapSqlParameterSource map(CommandAssociatedEntity entity) {
+            CustomMapSqlParameterSource paramSource = getCustomMapSqlParameterSource();
+            paramSource.addValue("command_id", entity.getCommandId()).
+                    addValue("entity_id", entity.getEntityId()).
+                    addValue("entity_type", entity.getEntityType().toString());
+            return paramSource;
+
         }
     };
 
@@ -151,6 +193,30 @@ public class CommandEntityDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Comm
                 .addValue("root_command_id", parentId);
         return getCallsHandler().executeReadList("GetCommandEntitiesByParentCmdId",
                 mapper,
+                parameterSource);
+    }
+
+    @Override
+    public List<Guid> getCommandIdsByEntity(Guid entityId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("entity_id", entityId);
+        return getCallsHandler().executeReadList("GetCommandIdsByEntityId",
+                IdRowMapper.instance,
+                parameterSource);
+    }
+
+    public void insertCommandAssociatedEntities(Collection<CommandAssociatedEntity> cmdAssociatedEntities) {
+        getCallsHandler().executeStoredProcAsBatch("InsertCommandAssociatedEntities",
+                cmdAssociatedEntities,
+                cocoCmdEntityMapper);
+    }
+
+    @Override
+    public List<CommandAssociatedEntity> getAllCommandAssociatedEntities(Guid cmdId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("command_id", cmdId);
+        return getCallsHandler().executeReadList("GetCommandAssociatedEntities",
+                CoCoCmdEntityRowMapper.instance,
                 parameterSource);
     }
 

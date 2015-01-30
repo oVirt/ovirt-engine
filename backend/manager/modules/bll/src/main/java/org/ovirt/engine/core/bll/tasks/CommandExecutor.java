@@ -1,6 +1,10 @@
 package org.ovirt.engine.core.bll.tasks;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
@@ -22,7 +26,9 @@ import org.ovirt.engine.core.bll.utils.BackendUtils;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.CommandAssociatedEntity;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
+import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -142,12 +148,14 @@ public class CommandExecutor {
 
     public Future<VdcReturnValueBase> executeAsyncCommand(final VdcActionType actionType,
                                                           final VdcActionParametersBase parameters,
-                                                          final CommandContext cmdContext) {
+                                                          final CommandContext cmdContext,
+                                                          SubjectEntity... subjectEntities) {
         final CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters, cmdContext);
-        CommandCallback callback = command.getCallback();
-        command.persistCommand(command.getParameters().getParentCommand(), cmdContext, callback != null);
-        if (callback != null) {
-            cmdCallbackMap.put(command.getCommandId(), callback);
+        CommandCallback callBack = command.getCallback();
+        command.persistCommand(command.getParameters().getParentCommand(), cmdContext, callBack != null);
+        coco.persistCommandAssociatedEntities(buildCommandAssociatedEntities(command.getCommandId(), subjectEntities));
+        if (callBack != null) {
+            cmdCallbackMap.put(command.getCommandId(), callBack);
         }
         Future<VdcReturnValueBase> retVal;
         try {
@@ -165,6 +173,18 @@ public class CommandExecutor {
             retVal = new RejectedExecutionFuture();
         }
         return retVal;
+    }
+
+    private Collection<CommandAssociatedEntity> buildCommandAssociatedEntities(Guid cmdId, SubjectEntity... subjectEntities) {
+        if (subjectEntities.length == 0) {
+            return Collections.emptyList();
+        }
+        List<CommandAssociatedEntity> results = new ArrayList<>(subjectEntities.length);
+        for (SubjectEntity subjectEntity : subjectEntities) {
+            results.add(new CommandAssociatedEntity(cmdId, subjectEntity.getEntityType(), subjectEntity.getEntityId()));
+
+        }
+        return results;
     }
 
     private VdcReturnValueBase executeCommand(final CommandBase<?> command, final CommandContext cmdContext) {

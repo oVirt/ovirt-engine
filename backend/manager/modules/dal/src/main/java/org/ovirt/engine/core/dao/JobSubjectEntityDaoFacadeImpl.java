@@ -10,6 +10,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.businessentities.SubjectEntity;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
@@ -40,13 +41,13 @@ public class JobSubjectEntityDaoFacadeImpl extends BaseDAODbFacade implements Jo
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("job_id", jobId);
 
-        List<JobSubjectEntity> list =
+        List<SubjectEntity> list =
                 getCallsHandler().executeReadList("GetJobSubjectEntityByJobId",
                         jobSubjectEntityRowMapper,
                         parameterSource);
 
         Map<Guid, VdcObjectType> entityMap = new HashMap<Guid, VdcObjectType>();
-        for (JobSubjectEntity jobSubjectEntity : list) {
+        for (SubjectEntity jobSubjectEntity : list) {
             entityMap.put(jobSubjectEntity.getEntityId(), jobSubjectEntity.getEntityType());
         }
         return entityMap;
@@ -60,35 +61,12 @@ public class JobSubjectEntityDaoFacadeImpl extends BaseDAODbFacade implements Jo
         return getCallsHandler().executeReadList("GetAllJobIdsByEntityId", createGuidMapper(), parameterSource);
     }
 
-    private static class JobSubjectEntity {
-        private Guid entityId;
-        private VdcObjectType entityType;
-
-        public void setEntityId(Guid entityId) {
-            this.entityId = entityId;
-        }
-
-        public Guid getEntityId() {
-            return entityId;
-        }
-
-        public void setEntityType(VdcObjectType entityType) {
-            this.entityType = entityType;
-        }
-
-        public VdcObjectType getEntityType() {
-            return entityType;
-        }
-    }
-
-    private static class JobSubjectEntityRowMapper implements RowMapper<JobSubjectEntity> {
+    private static class JobSubjectEntityRowMapper implements RowMapper<SubjectEntity> {
 
         @Override
-        public JobSubjectEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
-            JobSubjectEntity entity = new JobSubjectEntity();
-            entity.setEntityId(getGuidDefaultEmpty(rs, "entity_id"));
-            entity.setEntityType(VdcObjectType.valueOf(rs.getString("entity_type")));
-            return entity;
+        public SubjectEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new SubjectEntity(VdcObjectType.valueOf(rs.getString("entity_type")),
+                    getGuidDefaultEmpty(rs, "entity_id"));
         }
     }
 }
