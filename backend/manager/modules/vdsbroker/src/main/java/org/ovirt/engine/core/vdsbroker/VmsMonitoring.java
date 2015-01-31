@@ -665,7 +665,7 @@ public class VmsMonitoring {
      * @return The LUNs to update in DB
      */
     protected List<LUNs> getVmLunDisksToSave() {
-        return Collections.unmodifiableList(vmLunDisksToSave);
+        return vmLunDisksToSave;
     }
 
     protected List<VmDynamic> getPoweringUpVms() {
