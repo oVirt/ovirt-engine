@@ -124,6 +124,7 @@ if [[ $VERSION = 0 ]]; then
 	VERSION="3.5"
 else
 	VERSION="3.4"
+        dbfunc_psql_die --command="create table command_entities ();"
 fi
 
 if [ "${TASK_ID}" != "" -o "${COMMAND_ID}" != "" -o -n "${CLEAR_ALL}" -o -n "${CLEAR_COMPENSATION}" -o -n "${CLEAR_JOB_STEPS}" ]; then #delete operations block
@@ -295,3 +296,8 @@ dbfunc_psql_die --file="$(dirname "$0")/taskcleaner_sp.sql" > /dev/null
 # Execute
 
 dbfunc_psql_die --command="${CMD1}${CMD2}"
+
+if [[ $VERSION = "3.4" ]]; then
+    dbfunc_psql_die --command="drop table command_entities cascade;"
+fi
+
