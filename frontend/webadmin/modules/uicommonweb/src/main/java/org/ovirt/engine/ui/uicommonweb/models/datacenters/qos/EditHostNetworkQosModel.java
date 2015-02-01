@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 public class EditHostNetworkQosModel extends QosModel<HostNetworkQos, HostNetworkQosParametersModel> {
 
     public EditHostNetworkQosModel(HostNetworkQos qos, Model sourceModel, StoragePool dataCenter) {
-        super(qos, new HostNetworkQosParametersModel(), sourceModel, dataCenter);
+        super(qos, new SharedHostNetworkQosParametersModel(), sourceModel, dataCenter);
     }
 
     @Override

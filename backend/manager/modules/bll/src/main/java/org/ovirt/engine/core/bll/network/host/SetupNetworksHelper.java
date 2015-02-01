@@ -276,16 +276,19 @@ public class SetupNetworksHelper {
         for (VdsNetworkInterface iface : params.getInterfaces()) {
             String networkName = iface.getNetworkName();
 
-            // check that the interface has a network attached to it, otherwise QoS settings should be wiped anyway
-            if (networkName == null) {
+            // check that:
+            // 1. the interface has a network attached to it, otherwise QoS settings should be wiped anyway
+            // 2. if QoS isn't overridden - no problem
+            if (networkName == null || !iface.isQosOverridden()) {
                 continue;
             }
 
-            if (iface.isQosOverridden()) {
-                if (!hostNetworkQosSupported) {
-                    addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED, networkName);
-                }
+            if (!hostNetworkQosSupported) {
+                addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED, networkName);
+            }
 
+            // next checks are only relevant if non-empty QoS was supplied
+            if (iface.getQos() != null && !iface.getQos().isEmpty()) {
                 HostNetworkQosValidator qosValidator = new HostNetworkQosValidator(iface.getQos());
                 if (qosValidator.requiredValuesPresent() != ValidationResult.VALID) {
                     addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_MISSING_VALUES,

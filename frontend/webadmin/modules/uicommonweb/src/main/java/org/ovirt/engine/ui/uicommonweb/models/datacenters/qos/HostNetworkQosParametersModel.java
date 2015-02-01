@@ -1,12 +1,14 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters.qos;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -63,16 +65,21 @@ public class HostNetworkQosParametersModel extends QosParametersModel<HostNetwor
         qos.setOutAverageRealtime(StringUtils.parseInteger(getOutAverageRealtime().getEntity()));
     }
 
+    protected Collection<IValidation> getOutLinkshareValidations() {
+        Collection<IValidation> validations = new ArrayList<>();
+        validations.add(new IntegerValidation(1, (Integer) AsyncDataProvider.getInstance()
+                .getConfigValuePreConverted(ConfigurationValues.MaxHostNetworkQosShares)));
+        return validations;
+    }
+
     @Override
     public boolean validate() {
         if (!getIsChangable() || !getIsAvailable()) {
             return true;
         }
 
-        getOutAverageLinkshare().validateEntity(new IValidation[] {
-                new NotEmptyValidation(),
-                new IntegerValidation(1, (Integer) AsyncDataProvider.getInstance()
-                        .getConfigValuePreConverted(ConfigurationValues.MaxHostNetworkQosShares)) });
+        Collection<IValidation> outLinkshareValidations = getOutLinkshareValidations();
+        getOutAverageLinkshare().validateEntity(outLinkshareValidations.toArray(new IValidation[outLinkshareValidations.size()]));
 
         IValidation[] rateRangeValidation =
                 new IValidation[] { new IntegerValidation(0, (Integer) AsyncDataProvider.getInstance()

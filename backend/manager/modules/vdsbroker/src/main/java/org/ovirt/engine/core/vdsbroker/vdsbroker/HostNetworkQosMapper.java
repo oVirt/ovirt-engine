@@ -62,7 +62,7 @@ public class HostNetworkQosMapper {
         qos.setOutAverageLinkshare(deserializeValue(outboundEntry, VdsProperties.HOST_QOS_LINKSHARE));
         qos.setOutAverageUpperlimit(deserializeValue(outboundEntry, VdsProperties.HOST_QOS_UPPERLIMIT, MBITS_TO_BITS));
         qos.setOutAverageRealtime(deserializeValue(outboundEntry, VdsProperties.HOST_QOS_REALTIME, MBITS_TO_BITS));
-        return qos;
+        return qos.isEmpty() ? null : qos;
     }
 
     private Integer deserializeValue(Map<String, Object> entry, String curveKey) {

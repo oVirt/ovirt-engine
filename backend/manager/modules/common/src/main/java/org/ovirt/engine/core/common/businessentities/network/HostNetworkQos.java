@@ -51,6 +51,10 @@ public class HostNetworkQos extends QosBase {
         this.outAverageRealtime = outAverageRealtime;
     }
 
+    public boolean isEmpty() {
+        return getOutAverageLinkshare() == null && getOutAverageUpperlimit() == null && getOutAverageRealtime() == null;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.forInstance(this)

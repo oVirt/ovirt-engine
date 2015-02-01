@@ -144,7 +144,7 @@ public final class NetworkUtils {
      */
     public static boolean qosConfiguredOnInterface(VdsNetworkInterface iface, Network network) {
         if (iface.isQosOverridden()) {
-            return iface.getQos() != null;
+            return iface.getQos() != null && !iface.getQos().isEmpty();
         } else {
             return network != null && network.getQosId() != null;
         }
