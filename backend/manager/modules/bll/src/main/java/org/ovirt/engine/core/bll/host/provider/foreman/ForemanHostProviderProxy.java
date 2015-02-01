@@ -6,6 +6,7 @@ import java.net.URLEncoder;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -13,12 +14,16 @@ import org.codehaus.jackson.map.DeserializationConfig.Feature;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.bll.provider.BaseProviderProxy;
+import org.ovirt.engine.core.common.businessentities.Erratum;
+import org.ovirt.engine.core.common.businessentities.Erratum.ErrataSeverity;
+import org.ovirt.engine.core.common.businessentities.Erratum.ErrataType;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.ExternalOperatingSystem;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.uutils.crypto.CryptMD5;
@@ -45,6 +50,11 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
 
     private static final String OPERATION_SYSTEM_ENTRY_POINT = API_ENTRY_POINT + "/operatingsystems";
     private static final String OPERATION_SYSTEM_QUERY = OPERATION_SYSTEM_ENTRY_POINT + "?" + JSON_FORMAT;
+
+    private static final String KATELLO_API_ENTRY_POINT = "/katello/api/v2";
+    private static final String CONTENT_HOSTS_ENTRY_POINT = KATELLO_API_ENTRY_POINT + "/systems";
+    private static final String CONTENT_HOST_ERRATA_ENTRY_POINT = CONTENT_HOSTS_ENTRY_POINT + "/%1$s/errata";
+    private static final String CONTENT_HOST_ERRATUM_ENTRY_POINT = CONTENT_HOSTS_ENTRY_POINT + "/%1$s/errata/%2$s";
 
     public ForemanHostProviderProxy(Provider<?> hostProvider) {
         super(hostProvider);
@@ -301,5 +311,96 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     public void onRemoval() {
     }
 
+    public ContentHost findContentHost(VdsStatic host) {
+        final String hostNameFact = "facts.network.hostname:" + host.getHostName();
+        final List<ContentHost> contentHosts =
+                runContentHostListMethod(CONTENT_HOSTS_ENTRY_POINT + String.format(SEARCH_QUERY_FORMAT, hostNameFact));
 
+        if (contentHosts.isEmpty()) {
+            log.error("Failed to find host on provider by host name '{}' ", host.getHostName());
+            return null;
+        }
+
+        ContentHost latestRegisteredHost = contentHosts.get(0);
+        for (int i = 1; i < contentHosts.size(); i++) {
+            ContentHost candidateHost = contentHosts.get(i);
+            if (candidateHost.getCreated().after(latestRegisteredHost.getCreated())) {
+                latestRegisteredHost = candidateHost;
+            }
+        }
+
+        return latestRegisteredHost;
+    }
+
+    private List<ContentHost> runContentHostListMethod(String relativeUrl) {
+        try {
+            ContentHostsWrapper wrapper =
+                    objectMapper.readValue(runHttpGetMethod(relativeUrl), ContentHostsWrapper.class);
+            return Arrays.asList(wrapper.getResults());
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    private List<Erratum> runErrataListMethod(String relativeUrl) {
+        try {
+            ErrataWrapper wrapper = objectMapper.readValue(runHttpGetMethod(relativeUrl), ErrataWrapper.class);
+            return mapErrata(Arrays.asList(wrapper.getResults()));
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    private List<Erratum> mapErrata(List<ExternalErratum> externalErrata) {
+        ArrayList<Erratum> errata = new ArrayList<Erratum>(externalErrata.size());
+        for (ExternalErratum externalErratum : externalErrata) {
+            Erratum erratum = mapErratum(externalErratum);
+            errata.add(erratum);
+        }
+
+        return errata;
+    }
+
+    private Erratum mapErratum(ExternalErratum externalErratum) {
+        Erratum erratum = new Erratum();
+        erratum.setId(externalErratum.getId());
+        erratum.setIssued(externalErratum.getIssued());
+        erratum.setTitle(externalErratum.getTitle());
+        erratum.setSummary(externalErratum.getSummary());
+        erratum.setSolution(externalErratum.getSolution());
+        erratum.setDescription(externalErratum.getDescription());
+        erratum.setSeverity(ErrataSeverity.byDescription(externalErratum.getSeverity()));
+        erratum.setType(ErrataType.byDescription(externalErratum.getType()));
+        erratum.setPackages(Arrays.asList(externalErratum.getPackages()));
+        return erratum;
+    }
+
+    @Override
+    public List<Erratum> getErrataForHost(VdsStatic host) {
+        ContentHost contentHost = findContentHost(host);
+        if (contentHost == null) {
+            return Collections.emptyList();
+        }
+
+        return runErrataListMethod(String.format(CONTENT_HOST_ERRATA_ENTRY_POINT, contentHost.getId()));
+    }
+
+    @Override
+    public Erratum getErratumForHost(VdsStatic host, String erratumId) {
+        ContentHost contentHost = findContentHost(host);
+        if (contentHost == null) {
+            return null;
+        }
+
+        return runErratumMethod(String.format(CONTENT_HOST_ERRATUM_ENTRY_POINT, contentHost.getId(), erratumId));
+    }
+
+    private Erratum runErratumMethod(String relativeUrl) {
+        try {
+            ExternalErratum erratum = objectMapper.readValue(runHttpGetMethod(relativeUrl), ExternalErratum.class);
+            return mapErratum(erratum);
+        } catch (IOException e) {
+            return null;
+        }
+    }
 }
