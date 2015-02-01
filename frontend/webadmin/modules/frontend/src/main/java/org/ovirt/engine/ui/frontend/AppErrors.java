@@ -3422,7 +3422,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$detailMessage its swap value was illegal")
     String VAR__DETAIL__SWAP_VALUE_ILLEGAL();
 
-    @DefaultStringValue("$detailMessage it has insufficient free memory to run the VM")
+    @DefaultStringValue("$detailMessage has availabe ${availableMem} MB memory. Insufficient free memory to run the VM")
     String VAR__DETAIL__NOT_ENOUGH_MEMORY();
 
     @DefaultStringValue("$detailMessage cannot accommodate memory of VM's pinned virtual NUMA nodes within host's physical NUMA nodes.")

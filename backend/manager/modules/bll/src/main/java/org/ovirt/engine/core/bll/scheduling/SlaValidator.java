@@ -19,22 +19,41 @@ public class SlaValidator {
     public boolean hasMemoryToRunVM(VDS curVds, VM vm) {
         boolean retVal = false;
         if (curVds.getMemCommited() != null && curVds.getPhysicalMemMb() != null && curVds.getReservedMem() != null) {
-            double vdsCurrentMem =
-                    curVds.getMemCommited() + curVds.getPendingVmemSize() + curVds.getGuestOverhead() + curVds
-                            .getReservedMem() + vm.getMinAllocatedMem();
-            double vdsMemLimit = curVds.getMaxVdsMemoryOverCommit() * curVds.getPhysicalMemMb() / 100.0;
-            log.debug("hasMemoryToRunVM: host '{}' pending vmem size is : {} MB",
+            double vdsCurrentMem = getVdsCurrentMemoryInUse(curVds) + vm.getMinAllocatedMem();
+            double vdsMemLimit = getVdsMemLimit(curVds);
+            log.debug("hasMemoryToRunVM: host '{}' physical vmem size is : {} MB",
                     curVds.getName(),
-                    curVds.getPendingVmemSize());
-            log.debug("Host Mem Conmmitted: '{}', Host Reserved Mem: {}, Host Guest Overhead {}, VM Min Allocated Mem {}",
+                    curVds.getPhysicalMemMb());
+            log.debug("Host Mem Conmmitted: '{}', pending vmem size is : {}, Host Guest Overhead {}, Host Reserved Mem: {}, VM Min Allocated Mem {}",
                     curVds.getMemCommited(),
-                    curVds.getReservedMem(),
+                    curVds.getPendingVmemSize(),
                     curVds.getGuestOverhead(),
+                    curVds.getReservedMem(),
                     vm.getMinAllocatedMem());
             log.debug("{} <= ???  {}", vdsCurrentMem, vdsMemLimit);
             retVal = (vdsCurrentMem <= vdsMemLimit);
         }
         return retVal;
+    }
+
+    public int getHostAvailableMemoryLimit(VDS curVds) {
+        if (curVds.getMemCommited() != null && curVds.getPhysicalMemMb() != null && curVds.getReservedMem() != null) {
+            double vdsCurrentMem = getVdsCurrentMemoryInUse(curVds);
+            double vdsMemLimit = getVdsMemLimit(curVds);
+            return (int) (vdsMemLimit - vdsCurrentMem);
+        }
+        return 0;
+    }
+
+    private double getVdsMemLimit(VDS curVds) {
+        // if single vm on host. Disregard memory over commitment
+        int computedMemoryOverCommit = (curVds.getVmCount() == 0) ? 100 : curVds.getMaxVdsMemoryOverCommit();
+        return (computedMemoryOverCommit * curVds.getPhysicalMemMb() / 100.0);
+    }
+
+    private double getVdsCurrentMemoryInUse(VDS curVds) {
+        return curVds.getMemCommited() + curVds.getPendingVmemSize() + curVds.getGuestOverhead()
+                        + curVds.getReservedMem();
     }
 
     public static Integer getEffectiveCpuCores(VDS vds) {
