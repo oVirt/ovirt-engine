@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -53,11 +53,16 @@ class Plugin(plugin.PluginBase):
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
-        self._total_memory = 0
+        self.environment.setdefault(
+            osetupcons.ConfigEnv.TOTAL_MEMORY_MB,
+            None
+        )
 
     def _check_requirements(self):
         satisfied = False
-        if self._total_memory < self.environment[
+        if self.environment[
+            osetupcons.ConfigEnv.TOTAL_MEMORY_MB
+        ] < self.environment[
             oenginecons.SystemEnv.MEMCHECK_MINIMUM_MB
         ] * self.environment[
             oenginecons.SystemEnv.MEMCHECK_THRESHOLD
@@ -78,7 +83,9 @@ class Plugin(plugin.PluginBase):
             )
         else:
             satisfied = True
-            if self._total_memory < self.environment[
+            if self.environment[
+                osetupcons.ConfigEnv.TOTAL_MEMORY_MB
+            ] < self.environment[
                 oenginecons.SystemEnv.MEMCHECK_RECOMMENDED_MB
             ] * self.environment[
                 oenginecons.SystemEnv.MEMCHECK_THRESHOLD
@@ -116,14 +123,9 @@ class Plugin(plugin.PluginBase):
         )
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_VALIDATION,
-        name=oenginecons.Stages.MEMORY_CHECK,
-        condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
+        stage=plugin.Stages.STAGE_SETUP,
     )
-    def _validateMemory(self):
-        """
-        Check if the system met the memory requirements.
-        """
+    def _setup(self):
         self.logger.debug('Checking total memory')
         with open('/proc/meminfo', 'r') as f:
             content = f.read()
@@ -132,12 +134,22 @@ class Plugin(plugin.PluginBase):
         if match is None:
             raise RuntimeError(_("Unable to parse /proc/meminfo"))
 
-        self._total_memory = int(
-            match.group('value')
-        )
-        if match.group('unit') == "kB":
-            self._total_memory //= 1024
+        if self.environment[osetupcons.ConfigEnv.TOTAL_MEMORY_MB] is None:
+            self.environment[osetupcons.ConfigEnv.TOTAL_MEMORY_MB] = int(
+                match.group('value')
+            )
+            if match.group('unit') == "kB":
+                self.environment[osetupcons.ConfigEnv.TOTAL_MEMORY_MB] //= 1024
 
+    @plugin.event(
+        stage=plugin.Stages.STAGE_VALIDATION,
+        name=oenginecons.Stages.MEMORY_CHECK,
+        condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
+    )
+    def _validateMemory(self):
+        """
+        Check if the system met the memory requirements.
+        """
         self._satisfied = self._check_requirements()
 
     @plugin.event(

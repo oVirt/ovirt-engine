@@ -431,6 +431,7 @@ class ConfigEnv(object):
         return 'OVESETUP_CONFIG/remoteEngineHostRootPassword'
 
     ISO_PATHS_TO_UPLOAD = 'OVESETUP_CONFIG/isoPathsToUpload'
+    TOTAL_MEMORY_MB = 'OVESETUP_CONFIG/totalMemoryMB'
 
 
 @util.export
