@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.qos;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
-import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.HostNetworkQosParametersModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -35,17 +35,17 @@ public class HostNetworkQosWidget extends QosWidget<HostNetworkQos, HostNetworkQ
     @UiField
     @Path(value="outAverageLinkshare.entity")
     @WithElementId
-    IntegerEntityModelTextBoxEditor outAverageLinkshare;
+    StringEntityModelTextBoxEditor outAverageLinkshare;
 
     @UiField
     @Path(value="outAverageUpperlimit.entity")
     @WithElementId
-    IntegerEntityModelTextBoxEditor outAverageUpperlimit;
+    StringEntityModelTextBoxEditor outAverageUpperlimit;
 
     @UiField
     @Path(value="outAverageRealtime.entity")
     @WithElementId
-    IntegerEntityModelTextBoxEditor outAverageRealtime;
+    StringEntityModelTextBoxEditor outAverageRealtime;
 
     @UiField
     Style style;

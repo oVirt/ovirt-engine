@@ -10,22 +10,23 @@ import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class HostNetworkQosParametersModel extends QosParametersModel<HostNetworkQos> {
 
-    private EntityModel<Integer> outAverageLinkshare = new EntityModel<Integer>();
-    private EntityModel<Integer> outAverageUpperlimit = new EntityModel<Integer>();
-    private EntityModel<Integer> outAverageRealtime = new EntityModel<Integer>();
+    private EntityModel<String> outAverageLinkshare = new EntityModel<>();
+    private EntityModel<String> outAverageUpperlimit = new EntityModel<>();
+    private EntityModel<String> outAverageRealtime = new EntityModel<>();
 
-    public EntityModel<Integer> getOutAverageLinkshare() {
+    public EntityModel<String> getOutAverageLinkshare() {
         return outAverageLinkshare;
     }
 
-    public EntityModel<Integer> getOutAverageUpperlimit() {
+    public EntityModel<String> getOutAverageUpperlimit() {
         return outAverageUpperlimit;
     }
 
-    public EntityModel<Integer> getOutAverageRealtime() {
+    public EntityModel<String> getOutAverageRealtime() {
         return outAverageRealtime;
     }
 
@@ -50,16 +51,16 @@ public class HostNetworkQosParametersModel extends QosParametersModel<HostNetwor
             qos = new HostNetworkQos();
         }
 
-        getOutAverageLinkshare().setEntity(qos.getOutAverageLinkshare());
-        getOutAverageUpperlimit().setEntity(qos.getOutAverageUpperlimit());
-        getOutAverageRealtime().setEntity(qos.getOutAverageRealtime());
+        getOutAverageLinkshare().setEntity(StringUtils.render(qos.getOutAverageLinkshare()));
+        getOutAverageUpperlimit().setEntity(StringUtils.render(qos.getOutAverageUpperlimit()));
+        getOutAverageRealtime().setEntity(StringUtils.render(qos.getOutAverageRealtime()));
     }
 
     @Override
     public void flush(HostNetworkQos qos) {
-        qos.setOutAverageLinkshare(getOutAverageLinkshare().getEntity());
-        qos.setOutAverageUpperlimit(getOutAverageUpperlimit().getEntity());
-        qos.setOutAverageRealtime(getOutAverageRealtime().getEntity());
+        qos.setOutAverageLinkshare(StringUtils.parseInteger(getOutAverageLinkshare().getEntity()));
+        qos.setOutAverageUpperlimit(StringUtils.parseInteger(getOutAverageUpperlimit().getEntity()));
+        qos.setOutAverageRealtime(StringUtils.parseInteger(getOutAverageRealtime().getEntity()));
     }
 
     @Override

@@ -17,9 +17,9 @@
 
     <g:FlowPanel ui:field="mainPanel" >
         <g:Label text="{constants.hostNetworkQosOutLabel}" addStyleNames="{style.paddingLeft}" />
-        <e:IntegerEntityModelTextBoxEditor ui:field="outAverageLinkshare" addStyleNames="{style.paddingLeft}" />
-        <e:IntegerEntityModelTextBoxEditor ui:field="outAverageUpperlimit" addStyleNames="{style.paddingLeft}" />
-        <e:IntegerEntityModelTextBoxEditor ui:field="outAverageRealtime" addStyleNames="{style.paddingLeft}" />
+        <e:StringEntityModelTextBoxEditor ui:field="outAverageLinkshare" addStyleNames="{style.paddingLeft}" />
+        <e:StringEntityModelTextBoxEditor ui:field="outAverageUpperlimit" addStyleNames="{style.paddingLeft}" />
+        <e:StringEntityModelTextBoxEditor ui:field="outAverageRealtime" addStyleNames="{style.paddingLeft}" />
     </g:FlowPanel>
 
 </ui:UiBinder>
