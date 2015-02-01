@@ -238,7 +238,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Quota")
     String dataCenterQuotaSubTabLabel();
 
-    @DefaultStringValue("Network")
+    @DefaultStringValue("VM Network")
     String dataCenterNetworkQoSSubTabLabel();
 
     @DefaultStringValue("Host Network")

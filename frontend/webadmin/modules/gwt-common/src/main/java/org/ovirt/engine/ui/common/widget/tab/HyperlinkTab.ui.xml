@@ -6,7 +6,7 @@
     <ui:style>
         .tab {
             height: 28px;
-            min-width: 80px;
+            margin-left: 20px;
             text-align: center;
             overflow: visible;
             font-family: Arial,sans-serif;
