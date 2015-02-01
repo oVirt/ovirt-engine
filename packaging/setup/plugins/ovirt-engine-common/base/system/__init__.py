@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,11 +23,13 @@ from otopi import util
 
 
 from . import hostile_services
+from . import mem
 
 
 @util.export
 def createPlugins(context):
     hostile_services.Plugin(context=context)
+    mem.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

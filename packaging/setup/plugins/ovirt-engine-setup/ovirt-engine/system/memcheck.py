@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ Available memory checking plugin.
 """
 
 
-import re
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -39,25 +38,15 @@ class Plugin(plugin.PluginBase):
     """
     Available memory checking plugin.
     """
-    _RE_MEMINFO_MEMTOTAL = re.compile(
-        flags=re.VERBOSE,
-        pattern=r"""
-            ^
-            MemTotal:
-            \s+
-            (?P<value>\d+)
-            \s+
-            (?P<unit>\w+)
-        """
-    )
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
-        self._total_memory = 0
 
     def _check_requirements(self):
         satisfied = False
-        if self._total_memory < self.environment[
+        if self.environment[
+            osetupcons.ConfigEnv.TOTAL_MEMORY_MB
+        ] < self.environment[
             oenginecons.SystemEnv.MEMCHECK_MINIMUM_MB
         ] * self.environment[
             oenginecons.SystemEnv.MEMCHECK_THRESHOLD
@@ -78,7 +67,9 @@ class Plugin(plugin.PluginBase):
             )
         else:
             satisfied = True
-            if self._total_memory < self.environment[
+            if self.environment[
+                osetupcons.ConfigEnv.TOTAL_MEMORY_MB
+            ] < self.environment[
                 oenginecons.SystemEnv.MEMCHECK_RECOMMENDED_MB
             ] * self.environment[
                 oenginecons.SystemEnv.MEMCHECK_THRESHOLD
@@ -124,20 +115,6 @@ class Plugin(plugin.PluginBase):
         """
         Check if the system met the memory requirements.
         """
-        self.logger.debug('Checking total memory')
-        with open('/proc/meminfo', 'r') as f:
-            content = f.read()
-
-        match = self._RE_MEMINFO_MEMTOTAL.match(content)
-        if match is None:
-            raise RuntimeError(_("Unable to parse /proc/meminfo"))
-
-        self._total_memory = int(
-            match.group('value')
-        )
-        if match.group('unit') == "kB":
-            self._total_memory //= 1024
-
         self._satisfied = self._check_requirements()
 
     @plugin.event(

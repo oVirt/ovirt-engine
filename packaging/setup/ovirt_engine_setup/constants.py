@@ -416,6 +416,7 @@ class ConfigEnv(object):
     def REMOTE_ENGINE_HOST_ROOT_PASSWORD(self):
         return 'OVESETUP_CONFIG/remoteEngineHostRootPassword'
 
+    TOTAL_MEMORY_MB = 'OVESETUP_CONFIG/totalMemoryMB'
 
 @util.export
 @util.codegen
