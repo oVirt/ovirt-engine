@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
+import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -20,8 +21,11 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class MemoryPolicyUnit extends PolicyUnitImpl {
+    private static final Log log = LogFactory.getLog(MemoryPolicyUnit.class);
 
     public MemoryPolicyUnit(PolicyUnit policyUnit) {
         super(policyUnit);
@@ -43,6 +47,11 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
             }
             if (!memoryChecker.evaluate(vds, vm)) {
                 log.debugFormat("host '{0}' has insufficient memory to run the VM", vds.getName());
+                int hostAavailableMem = SlaValidator.getInstance().getHostAvailableMemoryLimit(vds);
+                log.debugFormat("Host '{0}' has {1} MB available. Insufficient memory to run the VM",
+                        vds.getName(),
+                        hostAavailableMem);
+                messages.addMessage(vds.getId(), String.format("$availableMem %1$d", hostAavailableMem));
                 messages.addMessage(vds.getId(), VdcBllMessages.VAR__DETAIL__NOT_ENOUGH_MEMORY.toString());
                 continue;
             }
