@@ -59,6 +59,8 @@ cleanup() {
 }
 trap cleanup 0
 
+NAME=""
+SUBJECT=""
 TIMEOUT="20"
 DAYS="1800"
 OVIRT_KU=""
