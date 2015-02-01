@@ -332,6 +332,7 @@ Requires:	logrotate
 Requires:	mailcap
 Requires:	mod_ssl
 Requires:	novnc
+Requires:	openssh
 Requires:	openssl
 Requires:	ovirt-host-deploy-java >= 1.4.0
 Requires:	python-cheetah
@@ -1013,6 +1014,7 @@ fi
 %dir %{engine_pki}/keys
 %{engine_data}/bin/pki-common.sh
 %{engine_data}/bin/pki-create-ca.sh
+%{engine_data}/bin/pki-enroll-openssh-cert.sh
 %{engine_data}/bin/pki-enroll-pkcs12.sh
 %{engine_data}/bin/pki-enroll-request.sh
 %{engine_data}/bin/pki-pkcs12-extract.sh
