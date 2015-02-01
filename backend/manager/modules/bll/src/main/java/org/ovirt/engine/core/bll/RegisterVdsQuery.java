@@ -262,8 +262,8 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                 getParameters().getVdsPort(),
                 IsPending);
         UpdateVdsActionParameters p = new UpdateVdsActionParameters(vds.getStaticData(), "", false);
-        p.setInstallVds(!IsPending);
-        p.setIsReinstallOrUpgrade(!IsPending);
+        p.setInstallHost(!IsPending);
+        p.setReinstallOrUpgrade(!IsPending);
         p.setAuthMethod(VdsOperationActionParameters.AuthenticationMethod.PublicKey);
         if (vds.isFenceAgentsExist()) {
             p.setFenceAgents(vds.getFenceAgents());

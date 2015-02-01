@@ -1021,7 +1021,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
             parameters.setvds(host);
             parameters.setVdsId(host.getId());
             parameters.setPassword(""); //$NON-NLS-1$
-            parameters.setInstallVds(false);
+            parameters.setInstallHost(false);
             parameters.setRebootAfterInstallation(isVirt);
             parameters.setAuthMethod(model.getAuthenticationMethod());
             parameters.setFenceAgents(getFenceAgents(model));
@@ -1401,8 +1401,8 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         param.setvds(host);
         param.setVdsId(host.getId());
         param.setPassword(model.getUserPassword().getEntity());
-        param.setIsReinstallOrUpgrade(true);
-        param.setInstallVds(true);
+        param.setReinstallOrUpgrade(true);
+        param.setInstallHost(true);
         param.setoVirtIsoFile(null);
         param.setOverrideFirewall(model.getOverrideIpTables().getEntity());
         param.setActivateHost(model.getActivateHostAfterInstall().getEntity());
@@ -1528,8 +1528,8 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         param.setvds(host);
         param.setVdsId(host.getId());
         param.setPassword(model.getUserPassword().getEntity());
-        param.setIsReinstallOrUpgrade(true);
-        param.setInstallVds(true);
+        param.setReinstallOrUpgrade(true);
+        param.setInstallHost(true);
         param.setoVirtIsoFile(isOVirt ? model.getOVirtISO().getSelectedItem().getRpmName() : null);
         param.setOverrideFirewall(model.getOverrideIpTables().getEntity());
         param.setActivateHost(model.getActivateHostAfterInstall().getEntity());

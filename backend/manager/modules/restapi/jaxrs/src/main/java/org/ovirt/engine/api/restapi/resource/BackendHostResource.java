@@ -169,7 +169,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         params = (UpdateVdsActionParameters) getMapper
                 (Action.class, VdsOperationActionParameters.class).map(action, (VdsOperationActionParameters) params);
         if (vds.getVdsType()==VDSType.oVirtNode) {
-            params.setIsReinstallOrUpgrade(true);
+            params.setReinstallOrUpgrade(true);
             if (action.isSetImage()) {
                 params.setoVirtIsoFile(action.getImage());
             }

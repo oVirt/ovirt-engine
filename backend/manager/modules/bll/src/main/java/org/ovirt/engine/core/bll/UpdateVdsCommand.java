@@ -98,17 +98,17 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                         .getHostName())
                         && getVdsDAO().getAllForHostname(hostName).size() != 0) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST);
-                } else if (getParameters().getInstallVds() && _oldVds.getStatus() != VDSStatus.Maintenance
+                } else if (getParameters().isInstallHost() && _oldVds.getStatus() != VDSStatus.Maintenance
                         && _oldVds.getStatus() != VDSStatus.NonOperational
                         && _oldVds.getStatus() != VDSStatus.InstallFailed
                         && _oldVds.getStatus() != VDSStatus.InstallingOS) {
                     addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_INSTALL_STATUS_ILLEGAL);
-                } else if (getParameters().getInstallVds()
+                } else if (getParameters().isInstallHost()
                         && getParameters().getAuthMethod() == AuthenticationMethod.Password
                         && StringUtils.isEmpty(getParameters().getPassword())
                         && getParameters().getVdsStaticData().getVdsType() == VDSType.VDS) {
                     addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_INSTALL_EMPTY_PASSWORD);
-                } else if (!getParameters().getInstallVds()
+                } else if (!getParameters().isInstallHost()
                         && _oldVds.getPort() != getParameters().getVdsStaticData().getPort()) {
                     addCanDoActionMessage(VdcBllMessages.VDS_PORT_CHANGE_REQUIRE_INSTALL);
                 } else if (!_oldVds.getVdsGroupId().equals(getParameters().getVdsStaticData().getVdsGroupId())) {
@@ -117,7 +117,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                     // This is due to permission check that must be done both on
                     // the VDS and on the VDSGroup
                     addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_UPDATE_CLUSTER);
-                } else if (getParameters().getInstallVds() && getParameters().getNetworkProviderId() != null) {
+                } else if (getParameters().isInstallHost() && getParameters().getNetworkProviderId() != null) {
                     returnValue =
                             validateNetworkProviderProperties(getParameters().getNetworkProviderId(),
                                     getParameters().getNetworkMappings());
@@ -157,9 +157,9 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             initializeVds();
         }
 
-        if (getParameters().getInstallVds()) {
+        if (getParameters().isInstallHost()) {
             InstallVdsParameters tempVar = new InstallVdsParameters(getVdsId(), getParameters().getPassword());
-            tempVar.setIsReinstallOrUpgrade(getParameters().getIsReinstallOrUpgrade());
+            tempVar.setIsReinstallOrUpgrade(getParameters().isReinstallOrUpgrade());
             tempVar.setoVirtIsoFile(getParameters().getoVirtIsoFile());
             if (getVdsDAO().get(getVdsId()).getStatus() ==  VDSStatus.InstallingOS) {
                 // TODO: remove hack when reinstall api will provider override-firewall parameter.

@@ -8,49 +8,47 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 public class UpdateVdsActionParameters extends VdsOperationActionParameters {
     private static final long serialVersionUID = -7467029979089285065L;
     private List<FenceAgent> fenceAgents;
-
-    public UpdateVdsActionParameters(VdsStatic vdsStatic, String password, boolean installVds) {
-        super(vdsStatic, password);
-        _installVds = installVds;
-    }
-
-    public UpdateVdsActionParameters(VdsStatic vdsStatic, boolean installVds) {
-        super(vdsStatic);
-        _installVds = installVds;
-    }
-
-    private boolean _installVds;
-
-    public boolean getInstallVds() {
-        return _installVds;
-    }
-
-    public void setInstallVds(boolean value) {
-        _installVds = value;
-    }
-
-    private boolean privateIsReinstallOrUpgrade;
-
-    public boolean getIsReinstallOrUpgrade() {
-        return privateIsReinstallOrUpgrade;
-    }
-
-    public void setIsReinstallOrUpgrade(boolean value) {
-        privateIsReinstallOrUpgrade = value;
-    }
-
-    private String privateoVirtIsoFile;
-
-    public String getoVirtIsoFile() {
-        return privateoVirtIsoFile;
-    }
-
-    public void setoVirtIsoFile(String value) {
-        privateoVirtIsoFile = value;
-    }
+    private boolean installHost;
+    private boolean reinstallOrUpgrade;
+    private String oVirtIsoFile;
 
     public UpdateVdsActionParameters() {
     }
+
+    public UpdateVdsActionParameters(VdsStatic vdsStatic, boolean installHost) {
+        super(vdsStatic);
+        this.installHost = installHost;
+    }
+
+    public UpdateVdsActionParameters(VdsStatic vdsStatic, String password, boolean installHost) {
+        super(vdsStatic, password);
+        this.installHost = installHost;
+    }
+
+    public boolean isInstallHost() {
+        return installHost;
+    }
+
+    public void setInstallHost(boolean installHost) {
+        this.installHost = installHost;
+    }
+
+    public boolean isReinstallOrUpgrade() {
+        return reinstallOrUpgrade;
+    }
+
+    public void setReinstallOrUpgrade(boolean reinstallOrUpgrade) {
+        this.reinstallOrUpgrade = reinstallOrUpgrade;
+    }
+
+    public String getoVirtIsoFile() {
+        return oVirtIsoFile;
+    }
+
+    public void setoVirtIsoFile(String oVirtIsoFile) {
+        this.oVirtIsoFile = oVirtIsoFile;
+    }
+
 
     public List<FenceAgent> getFenceAgents() {
         return fenceAgents;
