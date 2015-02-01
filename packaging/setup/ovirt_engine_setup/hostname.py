@@ -248,7 +248,7 @@ class Hostname(base.Base):
             if not revResolved:
                 raise RuntimeError(
                     _(
-                        'The following addresses: {addresses} did not reverse'
+                        'The following addresses: {addresses} did not reverse '
                         'resolve into {fqdn}'
                     ).format(
                         addresses=resolvedAddressesAsString,
