@@ -163,6 +163,34 @@
         <artifactId>cdi-api</artifactId>
         <scope>provided</scope>
      </dependency>
+     <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-test</artifactId>
+         <version>1.1.4.RELEASE</version>
+         <scope>test</scope>
+     </dependency>
+     <dependency>
+         <groupId>javax.enterprise</groupId>
+         <artifactId>cdi-api</artifactId>
+         <version>1.0-SP4</version>
+     </dependency>
+     <dependency>
+         <groupId>org.apache.deltaspike.core</groupId>
+         <artifactId>deltaspike-core-api</artifactId>
+         <version>${deltaspike.version}</version>
+         <scope>compile</scope>
+     </dependency>
+     <dependency>
+         <groupId>org.apache.deltaspike.core</groupId>
+         <artifactId>deltaspike-core-impl</artifactId>
+         <version>${deltaspike.version}</version>
+         <scope>runtime</scope>
+     </dependency>
+     <dependency>
+         <groupId>org.reflections</groupId>
+         <artifactId>reflections</artifactId>
+         <version>${reflections.version}</version>
+     </dependency>
   </dependencies>
 
   <build>

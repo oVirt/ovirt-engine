@@ -110,6 +110,9 @@
     <gwt-maven-plugin.workingRefresh.version>2.4.0</gwt-maven-plugin.workingRefresh.version>
     <cdi.api.version>1.0-SP4</cdi.api.version>
     <javacc.version>2.6</javacc.version>
+    <antlr.version>4.2.2</antlr.version>
+    <deltaspike.version>1.1.0</deltaspike.version>
+    <reflections.version>0.9.9-RC1</reflections.version>
   </properties>
   <dependencyManagement>
     <dependencies>

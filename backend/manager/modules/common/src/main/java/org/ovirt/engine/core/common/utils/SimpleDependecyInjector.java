@@ -63,6 +63,7 @@ public class SimpleDependecyInjector {
      * @param <T>
      * @return
      */
+    @SuppressWarnings("unchecked")
     public <T> T get(Class<T> clazz) {
         return (T) map.get(clazz.getName());
     }

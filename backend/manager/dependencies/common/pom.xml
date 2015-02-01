@@ -386,6 +386,24 @@
       <version>1.0.1</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.apache.deltaspike.core</groupId>
+      <artifactId>deltaspike-core-api</artifactId>
+      <version>${deltaspike.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.deltaspike.core</groupId>
+      <artifactId>deltaspike-core-impl</artifactId>
+      <version>${deltaspike.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.reflections</groupId>
+      <artifactId>reflections</artifactId>
+      <version>${reflections.version}</version>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -745,6 +763,24 @@
                 <groupId>org.ebaysf.web</groupId>
                 <artifactId>cors-filter</artifactId>
                 <moduleName>org.ebaysf.web.cors-filter</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.deltaspike.core</groupId>
+                <artifactId>deltaspike-core-api</artifactId>
+                <moduleName>org.deltaspike</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.deltaspike.core</groupId>
+                <artifactId>deltaspike-core-impl</artifactId>
+                <moduleName>org.deltaspike</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <moduleName>org.reflections</moduleName>
               </module>
 
             </modules>
