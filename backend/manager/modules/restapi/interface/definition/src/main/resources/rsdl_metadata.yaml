@@ -3054,6 +3054,23 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
+- name: /hosts/{host:id}/katelloerrata|rel=get
+  description: get the list of errata available for the host
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /hosts/{host:id}/katelloerrata/{katelloerratum:id}|rel=get
+  description: get the details of the specific erratum available for the host
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
 - name: /hosts/{host:id}/nics|rel=get
   description: get the list of network interfaces for the host
   request:

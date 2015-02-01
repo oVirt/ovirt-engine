@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
 import static org.ovirt.engine.api.restapi.types.MappingTestHelper.populate;
+
 import org.junit.Test;
 import org.ovirt.engine.api.model.Application;
 import org.ovirt.engine.core.common.businessentities.VM;

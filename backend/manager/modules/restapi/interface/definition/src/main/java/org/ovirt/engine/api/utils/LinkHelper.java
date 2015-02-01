@@ -65,6 +65,7 @@ import org.ovirt.engine.api.model.Image;
 import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.IscsiBond;
 import org.ovirt.engine.api.model.Job;
+import org.ovirt.engine.api.model.KatelloErratum;
 import org.ovirt.engine.api.model.Label;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.LinkCapabilities;
@@ -72,18 +73,18 @@ import org.ovirt.engine.api.model.MacPool;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NumaNode;
-import org.ovirt.engine.api.model.OperatingSystemInfo;
 import org.ovirt.engine.api.model.OpenStackImage;
 import org.ovirt.engine.api.model.OpenStackImageProvider;
 import org.ovirt.engine.api.model.OpenStackNetwork;
 import org.ovirt.engine.api.model.OpenStackNetworkProvider;
 import org.ovirt.engine.api.model.OpenStackSubnet;
+import org.ovirt.engine.api.model.OperatingSystemInfo;
 import org.ovirt.engine.api.model.Parameter;
 import org.ovirt.engine.api.model.ParametersSet;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.Permit;
-import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.QoS;
+import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.ReportedDevice;
 import org.ovirt.engine.api.model.Request;
 import org.ovirt.engine.api.model.Role;
@@ -125,12 +126,12 @@ import org.ovirt.engine.api.resource.CapabilitiesResource;
 import org.ovirt.engine.api.resource.CapabiliyResource;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.resource.ClustersResource;
+import org.ovirt.engine.api.resource.CpuProfileResource;
+import org.ovirt.engine.api.resource.CpuProfilesResource;
 import org.ovirt.engine.api.resource.DataCenterResource;
 import org.ovirt.engine.api.resource.DataCentersResource;
 import org.ovirt.engine.api.resource.DeviceResource;
 import org.ovirt.engine.api.resource.DevicesResource;
-import org.ovirt.engine.api.resource.CpuProfileResource;
-import org.ovirt.engine.api.resource.CpuProfilesResource;
 import org.ovirt.engine.api.resource.DiskProfileResource;
 import org.ovirt.engine.api.resource.DiskProfilesResource;
 import org.ovirt.engine.api.resource.DiskResource;
@@ -172,8 +173,8 @@ import org.ovirt.engine.api.resource.OperatingSystemsResource;
 import org.ovirt.engine.api.resource.PermissionResource;
 import org.ovirt.engine.api.resource.PermitResource;
 import org.ovirt.engine.api.resource.PermitsResource;
-import org.ovirt.engine.api.resource.QosResource;
 import org.ovirt.engine.api.resource.QoSsResource;
+import org.ovirt.engine.api.resource.QosResource;
 import org.ovirt.engine.api.resource.QuotaResource;
 import org.ovirt.engine.api.resource.QuotasResource;
 import org.ovirt.engine.api.resource.ReadOnlyDeviceResource;
@@ -244,6 +245,8 @@ import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostProviderR
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostProvidersResource;
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostResource;
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostsResource;
+import org.ovirt.engine.api.resource.externalhostproviders.KatelloErrataResource;
+import org.ovirt.engine.api.resource.externalhostproviders.KatelloErratumResource;
 import org.ovirt.engine.api.resource.gluster.GlusterBrickResource;
 import org.ovirt.engine.api.resource.gluster.GlusterBricksResource;
 import org.ovirt.engine.api.resource.gluster.GlusterHookResource;
@@ -559,6 +562,9 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(FenceAgentResource.class, FenceAgentsResource.class, Host.class);
         TYPES.put(Agent.class, map);
+
+        map = new ParentToCollectionMap(KatelloErratumResource.class, KatelloErrataResource.class, Host.class);
+        TYPES.put(KatelloErratum.class, map);
     }
 
     /**
@@ -622,7 +628,11 @@ public class LinkHelper {
             type = chopEnd(type, "y");
         }
 
-        return method.contains(type);
+        return method.contains(type) || isExceptionalPluralResource(method, type);
+    }
+
+    private static boolean isExceptionalPluralResource(String method, String type) {
+        return "katelloerrata".equals(method) && "katelloerratum".equals(type);
     }
 
     private static String chopStart(String str, String chop) {

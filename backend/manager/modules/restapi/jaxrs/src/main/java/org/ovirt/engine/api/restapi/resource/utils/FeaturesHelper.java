@@ -95,6 +95,7 @@ public class FeaturesHelper {
         if (VersionUtils.greaterOrEqual(version, BackendCapabilitiesResource.VERSION_3_6)) {
             addExternalHostProvidersFeature(features);
             addOpenStackImageProvidersFeature(features);
+            addErrataForHostsFeature(features);
         }
         return features;
     }
@@ -534,6 +535,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("OpenStack Image Providers");
         feature.setDescription("Add/modify/remove OpenStack image providers.");
+        features.getFeature().add(feature);
+    }
+
+    private void addErrataForHostsFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Katello Host Errata");
+        feature.setDescription("View available Katello Errata for hosts.");
         features.getFeature().add(feature);
     }
 }

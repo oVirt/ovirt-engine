@@ -1939,6 +1939,7 @@
 	  <xs:element name="auto_numa_status" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="numa_supported" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="live_snapshot_support" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+          <xs:element ref="katello_errata"  minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -5439,6 +5440,65 @@
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="katello_errata" type="KatelloErrata"/>
+
+  <xs:element name="katello_erratum" type="KatelloErratum"/>
+
+  <xs:complexType name="KatelloErratum">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element name="title" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="issued" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="severity" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="solution" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="summary" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="packages" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="host" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="KatelloErrata">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="katello_erratum" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="KatelloErrata"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+ <xs:element name="packages" type="Packages"/>
+
+ <xs:element name="package" type="Package"/>
+
+  <xs:complexType name="Packages">
+    <xs:sequence>
+      <xs:element ref="package" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="Packages"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Package">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
   </xs:complexType>
 
 </xs:schema>

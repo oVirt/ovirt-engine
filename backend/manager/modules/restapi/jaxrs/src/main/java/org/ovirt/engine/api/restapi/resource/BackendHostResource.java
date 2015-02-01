@@ -30,16 +30,18 @@ import org.ovirt.engine.api.resource.HostNumaNodesResource;
 import org.ovirt.engine.api.resource.HostResource;
 import org.ovirt.engine.api.resource.HostStorageResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
+import org.ovirt.engine.api.resource.externalhostproviders.KatelloErrataResource;
 import org.ovirt.engine.api.restapi.model.AuthenticationMethod;
+import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendHostKatelloErrataResource;
 import org.ovirt.engine.api.restapi.types.DeprecatedPowerManagementMapper;
 import org.ovirt.engine.api.restapi.types.FenceAgentMapper;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ApproveVdsParameters;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
+import org.ovirt.engine.core.common.action.FenceAgentCommandParameterBase;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
-import org.ovirt.engine.core.common.action.FenceAgentCommandParameterBase;
 import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
@@ -525,5 +527,10 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     @Path("fenceagents")
     public FenceAgentsResource getFenceAgentsResource() {
         return inject(new BackendFenceAgentsResource(id));
+    }
+
+    @Override
+    public KatelloErrataResource getKatelloErrataResource() {
+        return inject(new BackendHostKatelloErrataResource(id));
     }
 }
