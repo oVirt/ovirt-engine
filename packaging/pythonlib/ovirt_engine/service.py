@@ -111,7 +111,7 @@ class TempDir(base.Base):
 
     def create(self):
         self._clear()
-        os.makedirs(self._dir)
+        os.makedirs(self._dir, 0o700)
 
     def destroy(self):
         try:
