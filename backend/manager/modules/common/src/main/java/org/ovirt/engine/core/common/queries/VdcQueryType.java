@@ -58,6 +58,8 @@ public enum VdcQueryType implements Serializable {
     GetFenceAgentsByVdsId,
     GetHostDevicesByHostId,
     GetHostDeviceByHostIdAndDeviceName,
+    GetErrataForHost,
+    GetErratumByIdForHost,
 
     // VdsStatic Queries
     GetVdsStaticByName,
