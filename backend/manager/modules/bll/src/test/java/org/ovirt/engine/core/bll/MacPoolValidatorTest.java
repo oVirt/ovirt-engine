@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
@@ -24,7 +23,7 @@ import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MacPoolValidatorTest {
+public class MacPoolValidatorTest extends DbDependentTestBase {
 
     private final MacPool macPool = new MacPool();
 
@@ -36,19 +35,15 @@ public class MacPoolValidatorTest {
     @Mock
     private StoragePoolDAO storagePoolDao;
 
-    @Mock
-    private DbFacade dbFacadeMock;
-
     @Before
     public void setUp() throws Exception {
         this.macPoolValidator = createMacPoolValidator(macPool);
-        when(dbFacadeMock.getMacPoolDao()).thenReturn(macPoolDaoMock);
-        when(dbFacadeMock.getStoragePoolDao()).thenReturn(storagePoolDao);
+        when(DbFacade.getInstance().getMacPoolDao()).thenReturn(macPoolDaoMock);
+        when(DbFacade.getInstance().getStoragePoolDao()).thenReturn(storagePoolDao);
     }
 
     private MacPoolValidator createMacPoolValidator(MacPool macPool) {
         MacPoolValidator macPoolValidator = spy(new MacPoolValidator(macPool));
-        doReturn(dbFacadeMock).when(macPoolValidator).getDbFacade();
         return macPoolValidator;
     }
 

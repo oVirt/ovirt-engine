@@ -21,9 +21,9 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.KeyValue;
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.api.extensions.aaa.Acct;
 import org.ovirt.engine.core.aaa.AcctUtils;
+import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.attestationbroker.AttestThread;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -106,6 +106,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private static boolean firstInitialization = true;
     private String poolMonitoringJobId;
     @Inject Injector injector;
+    @Inject
+    private DbFacade dbFacade;
 
     public static BackendInternal getInstance() {
         return EjbUtils.findBean(BeanType.BACKEND, BeanProxyType.LOCAL);
@@ -142,15 +144,15 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         AcctUtils.reportReason(Acct.ReportReason.SHUTDOWN, "Shutting down engine");
     }
 
-    private static void checkDBConnectivity() {
+    private void checkDBConnectivity() {
         boolean dbUp = false;
         long expectedTimeout =
                 System.currentTimeMillis()
-                        + DbFacade.getInstance().getOnStartConnectionTimeout();
-        long waitBetweenInterval = DbFacade.getInstance().getConnectionCheckInterval();
+                        + dbFacade.getOnStartConnectionTimeout();
+        long waitBetweenInterval = dbFacade.getConnectionCheckInterval();
         while (!dbUp && System.currentTimeMillis() < expectedTimeout) {
             try {
-                dbUp = DbFacade.getInstance().checkDBConnection();
+                dbUp = dbFacade.checkDBConnection();
             } catch (RuntimeException ex) {
                 log.error("Error in getting DB connection, database is inaccessible: {}",
                         ex.getMessage());
@@ -268,7 +270,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     private void initAttestation() {
-        List<VDSGroup> vdsGroups = DbFacade.getInstance().getVdsGroupDao().getTrustedClusters();
+        List<VDSGroup> vdsGroups = dbFacade.getVdsGroupDao().getTrustedClusters();
         List<VDS> trustedVdsList = new ArrayList<>();
         List<String> trustedVdsNames = new ArrayList<>();
 
@@ -276,7 +278,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             return;
         }
         for (VDSGroup vdsGroup : vdsGroups) {
-            List<VDS> vdssInGroup = DbFacade.getInstance().getVdsDao().
+            List<VDS> vdssInGroup = dbFacade.getVdsDao().
                     getAllForVdsGroupWithStatus(vdsGroup.getId(), VDSStatus.Up);
             if (vdssInGroup != null) {
                 trustedVdsList.addAll(vdssInGroup);
@@ -299,7 +301,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private void setNonOperational(NonOperationalReason reason, VDS vds) {
         vds.setNonOperationalReason(reason);
         vds.setStatus(VDSStatus.NonOperational);
-        DbFacade.getInstance().getVdsDynamicDao().update(vds.getDynamicData());
+        dbFacade.getVdsDynamicDao().update(vds.getDynamicData());
     }
 
     private void initSearchDependencies() {
@@ -374,7 +376,9 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private VdcReturnValueBase notAllowToRunAction(VdcActionType actionType) {
         // Since reload of configuration values is not fully supported, we have to get this value from DB
         // and can not use the cached configuration.
-        String  mode = (DbFacade.getInstance().getVdcOptionDao().getByNameAndVersion(ConfigValues.EngineMode.name(), ConfigCommon.defaultConfigurationVersion)).getoption_value();
+        String mode =
+                (dbFacade.getVdcOptionDao().getByNameAndVersion(ConfigValues.EngineMode.name(),
+                        ConfigCommon.defaultConfigurationVersion)).getoption_value();
         if (EngineWorkingMode.MAINTENANCE.name().equalsIgnoreCase(mode)) {
             return getErrorCommandReturnValue(VdcBllMessages.ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE);
         }
@@ -483,7 +487,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         Class<CommandBase<? extends VdcActionParametersBase>> clazz =
                 CommandsFactory.getQueryClass(actionType.name());
         if (clazz.isAnnotationPresent(DisableInMaintenanceMode.class)) {
-            String  mode = (DbFacade.getInstance().getVdcOptionDao().getByNameAndVersion
+            String mode = (dbFacade.getVdcOptionDao().getByNameAndVersion
                     (ConfigValues.EngineMode.name(), ConfigCommon.defaultConfigurationVersion)).getoption_value();
             if (EngineWorkingMode.MAINTENANCE.name().equalsIgnoreCase(mode)) {
                 return getErrorQueryReturnValue(VdcBllMessages.ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE);
@@ -665,7 +669,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         OsRepositoryImpl.INSTANCE.init(OsInfoPreferencesLoader.INSTANCE.getPreferences());
         OsRepository osRepository = OsRepositoryImpl.INSTANCE;
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
-        DbFacade.getInstance().populateDwhOsInfo(osRepository.getOsNames());
+        dbFacade.populateDwhOsInfo(osRepository.getOsNames());
     }
 
    @Override

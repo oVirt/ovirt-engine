@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Properties;
 
+import javax.inject.Inject;
 import javax.sql.DataSource;
 
 import org.dbunit.database.DatabaseConfig;
@@ -21,14 +22,15 @@ import org.junit.runner.RunWith;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator;
 import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+import org.springframework.mock.jndi.SimpleNamingContextBuilder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,8 +41,8 @@ import org.springframework.transaction.annotation.Transactional;
  * back on completion of the test.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@TestExecutionListeners({ TransactionalTestExecutionListener.class })
-@ContextConfiguration(loader = CustomizedContextLoader.class)
+@TestExecutionListeners({ TransactionalTestExecutionListener.class, DependencyInjectionTestExecutionListener.class })
+@ContextConfiguration(locations = { "classpath:/test-beans.xml" })
 @Transactional
 public abstract class BaseDAOTestCase {
     protected static final Guid PRIVILEGED_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
@@ -48,7 +50,8 @@ public abstract class BaseDAOTestCase {
     protected static final Guid UNPRIVILEGED_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
     protected static final String UNPRIVILEGED_USER_ENGINE_SESSION_ID = "9ee57fd0-6f67-11e4-9e67-3c970e14c386";
 
-    protected static DbFacade dbFacade;
+    @Inject
+    protected DbFacade dbFacade;
     private static Object dataFactory;
     protected static boolean needInitializationSql = false;
     protected static String initSql;
@@ -65,10 +68,12 @@ public abstract class BaseDAOTestCase {
             ejbRule.mockResource(ContainerManagedResourceType.DATA_SOURCE, dataSource);
 
             dataset = initDataSet();
-            dbFacade = DbFacadeLocator.getDbFacade();
-            dbFacade.setDbEngineDialect(DbFacadeLocator.loadDbEngineDialect());
             // load data from fixtures to DB
             DatabaseOperation.CLEAN_INSERT.execute(getConnection(), dataset);
+
+            SimpleNamingContextBuilder builder = new SimpleNamingContextBuilder();
+            builder.bind("java:/ENGINEDataSource", dataSource);
+            builder.activate();
         }
     }
 
@@ -150,7 +155,7 @@ public abstract class BaseDAOTestCase {
         dataFactory = clazz.newInstance();
     }
 
-    public static DbFacade getDbFacade() {
+    public DbFacade getDbFacade() {
         return dbFacade;
     }
 

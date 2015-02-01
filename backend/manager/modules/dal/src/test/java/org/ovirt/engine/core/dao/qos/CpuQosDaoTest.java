@@ -15,7 +15,13 @@ import org.ovirt.engine.core.dao.FixturesTool;
 
 public class CpuQosDaoTest extends BaseDAOTestCase {
 
-    private final CpuQosDao dao = getDbFacade().getCpuQosDao();
+    private CpuQosDao dao;
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        dao = getDbFacade().getCpuQosDao();
+    }
 
     /**
      * Ensures that retrieving with an invalid ID returns null.

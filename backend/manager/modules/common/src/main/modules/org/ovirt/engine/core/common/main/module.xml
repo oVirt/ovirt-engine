@@ -18,6 +18,7 @@
     <module name="org.codehaus.jackson.jackson-core-asl"/>
     <module name="org.codehaus.jackson.jackson-mapper-asl"/>
     <module name="org.hibernate.validator"/>
+    <module name="org.javassist"/>
     <module name="org.ovirt.engine.core.compat"/>
     <module name="org.slf4j"/>
   </dependencies>

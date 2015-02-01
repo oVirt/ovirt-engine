@@ -1,2 +1,7 @@
 <FindBugsFilter>
+     <Match>
+       <Class name="org.ovirt.engine.core.dal.dbbroker.DbFacade"/>
+       <Method name="init"/>
+       <Bug code="ST"/>
+     </Match>
 </FindBugsFilter>

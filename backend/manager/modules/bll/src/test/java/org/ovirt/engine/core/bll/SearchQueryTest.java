@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.utils.CommonConstants;
-import org.ovirt.engine.core.dal.dbbroker.DbEngineDialect;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.QuotaDAO;
@@ -39,7 +38,7 @@ import org.ovirt.engine.core.searchbackend.SearchObjectAutoCompleter;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-public class SearchQueryTest {
+public class SearchQueryTest extends DbDependentTestBase {
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
@@ -57,8 +56,11 @@ public class SearchQueryTest {
     List<StoragePool> storagePoolResultList = new ArrayList<StoragePool>();
     List<GlusterVolumeEntity> glusterVolumeList = new ArrayList<GlusterVolumeEntity>();
     List<NetworkView> networkResultList = new ArrayList<NetworkView>();
+    private DbFacade facadeMock;
 
-    private DbFacade mockDAO() {
+    @Before
+    public void setup() {
+        facadeMock = DbFacade.getInstance();
         final DiskDao diskDao = Mockito.mock(DiskDao.class);
         final QuotaDAO quotaDAO = Mockito.mock(QuotaDAO.class);
         final VmDAO vmDAO = Mockito.mock(VmDAO.class);
@@ -67,54 +69,15 @@ public class SearchQueryTest {
         final StoragePoolDAO storagePoolDAO = Mockito.mock(StoragePoolDAO.class);
         final GlusterVolumeDao glusterVolumeDao = Mockito.mock(GlusterVolumeDao.class);
         final NetworkViewDao networkViewDao = Mockito.mock(NetworkViewDao.class);
-        final DbEngineDialect dbEngineDialect = Mockito.mock(DbEngineDialect.class);
-        final DbFacade facadeMock = new DbFacade() {
-            @Override
-            public DiskDao getDiskDao() {
-                return diskDao;
-            }
 
-            @Override
-            public VmDAO getVmDao() {
-                return vmDAO;
-            }
-
-            @Override
-            public VdsDAO getVdsDao() {
-                return vdsDAO;
-            }
-
-            @Override
-            public VdsGroupDAO getVdsGroupDao() {
-                return vdsGroupDAO;
-            }
-
-            @Override
-            public StoragePoolDAO getStoragePoolDao() {
-                return storagePoolDAO;
-            }
-
-            @Override
-            public DbEngineDialect getDbEngineDialect() {
-                return dbEngineDialect;
-            }
-
-            @Override
-            public GlusterVolumeDao getGlusterVolumeDao() {
-                return glusterVolumeDao;
-            }
-
-            @Override
-            public QuotaDAO getQuotaDao() {
-                return quotaDAO;
-            }
-
-            @Override
-            public NetworkViewDao getNetworkViewDao() {
-                return networkViewDao;
-            }
-        };
-
+        Mockito.when(facadeMock.getDiskDao()).thenReturn(diskDao);
+        Mockito.when(facadeMock.getQuotaDao()).thenReturn(quotaDAO);
+        Mockito.when(facadeMock.getVmDao()).thenReturn(vmDAO);
+        Mockito.when(facadeMock.getVdsDao()).thenReturn(vdsDAO);
+        Mockito.when(facadeMock.getVdsGroupDao()).thenReturn(vdsGroupDAO);
+        Mockito.when(facadeMock.getStoragePoolDao()).thenReturn(storagePoolDAO);
+        Mockito.when(facadeMock.getGlusterVolumeDao()).thenReturn(glusterVolumeDao);
+        Mockito.when(facadeMock.getNetworkViewDao()).thenReturn(networkViewDao);
         // mock DAOs
         mockDiskSao(diskDao);
         mockQuotaDAO(quotaDAO);
@@ -124,8 +87,6 @@ public class SearchQueryTest {
         mockStoragePoolDAO(storagePoolDAO);
         mockGlusterVolumeDao(glusterVolumeDao);
         mockNetworkDao(networkViewDao);
-
-        return facadeMock;
     }
 
     /**
@@ -341,7 +302,6 @@ public class SearchQueryTest {
 
     private SearchQuery<SearchParameters> spySearchQuery(SearchParameters searchParam) {
         SearchQuery<SearchParameters> searchQuery = spy(new SearchQuery<SearchParameters>(searchParam));
-        doReturn(mockDAO()).when(searchQuery).getDbFacade();
         return searchQuery;
     }
 

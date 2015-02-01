@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.compat.Guid;
@@ -15,7 +16,14 @@ import org.ovirt.engine.core.dao.FixturesTool;
 
 public class StorageQosDaoTest extends BaseDAOTestCase {
 
-    private final StorageQosDao dao = getDbFacade().getStorageQosDao();
+    private StorageQosDao dao;
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        dao = getDbFacade().getStorageQosDao();
+    }
 
     /**
      * Ensures that retrieving with an invalid ID returns null.

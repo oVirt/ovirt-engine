@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import org.junit.After;
-import org.junit.Before;
-import org.ovirt.engine.core.bll.tasks.AsyncTaskState;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -10,9 +7,9 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
-import java.sql.Connection;
 import java.util.Collections;
 
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,6 +17,7 @@ import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
+import org.ovirt.engine.core.bll.tasks.AsyncTaskState;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTask;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -45,7 +43,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator;
 import org.ovirt.engine.core.dao.AsyncTaskDAO;
 import org.ovirt.engine.core.dao.CommandEntityDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -53,7 +50,6 @@ import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 import org.ovirt.engine.core.utils.ejb.BeanType;
-import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 
 /**
@@ -61,7 +57,7 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtil;
  * It's mainly intended to observe that future refactoring of these commands will not break current behavior.
  */
 @RunWith(Theories.class)
-public class BackwardCompatibilityTaskCreationTest {
+public class BackwardCompatibilityTaskCreationTest extends DbDependentTestBase {
 
     @Rule
     public final RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
@@ -80,20 +76,12 @@ public class BackwardCompatibilityTaskCreationTest {
 
     @Before
     public void before() {
-        ejbRule.mockResource(ContainerManagedResourceType.DATA_SOURCE, mock(Connection.class));
-        DbFacade dbFacade = spy(new DbFacade());
-        DbFacadeLocator.setDbFacade(dbFacade);
         AsyncTaskDAO asyncTaskDao = mock(AsyncTaskDAO.class);
         when(asyncTaskDao.getAll()).thenReturn(Collections.EMPTY_LIST);
-        when(dbFacade.getAsyncTaskDao()).thenReturn(asyncTaskDao);
+        when(DbFacade.getInstance().getAsyncTaskDao()).thenReturn(asyncTaskDao);
         CommandEntityDao cmdEntityDao = mock(CommandEntityDao.class);
-        when(dbFacade.getCommandEntityDao()).thenReturn(cmdEntityDao);
+        when(DbFacade.getInstance().getCommandEntityDao()).thenReturn(cmdEntityDao);
         when(cmdEntityDao.getAll()).thenReturn(Collections.EMPTY_LIST);
-    }
-
-    @After
-    public void after() {
-        DbFacadeLocator.setDbFacade(null);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes"})

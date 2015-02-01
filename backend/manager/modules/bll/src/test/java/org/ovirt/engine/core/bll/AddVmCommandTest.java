@@ -70,7 +70,6 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
@@ -146,6 +145,7 @@ public class AddVmCommandTest {
     @Before
     public void InitTest() {
         mockOsRepository();
+        SimpleDependecyInjector.getInstance().bind(DbFacade.class, dbFacade);
     }
 
     @Test
@@ -183,7 +183,6 @@ public class AddVmCommandTest {
         graphicsDevice.setVmId(vmId);
 
         when(deviceDao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.GRAPHICS)).thenReturn(Arrays.asList(graphicsDevice));
-        DbFacadeLocator.setDbFacade(dbFacade);
         doReturn(deviceDao).when(dbFacade).getVmDeviceDao();
     }
 

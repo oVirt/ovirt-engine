@@ -13,7 +13,7 @@ import static org.junit.Assert.assertTrue;
 
 public class NetworkQosDaoTest extends BaseDAOTestCase {
 
-    private NetworkQoSDao dao = getDbFacade().getNetworkQosDao();
+    private NetworkQoSDao dao;
 
     private static final Guid qosAId = Guid.createGuidFromString("de956031-6be2-43d6-bb90-5191c9253314");
     private static final Guid qosBId = Guid.createGuidFromString("de956031-6be2-43d6-bb90-5191c9253315");
@@ -21,6 +21,11 @@ public class NetworkQosDaoTest extends BaseDAOTestCase {
     private static final Guid qosDId = Guid.createGuidFromString("de956031-6be2-43d6-bb90-5191c9253317");
 
 
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        dao = getDbFacade().getNetworkQosDao();
+    }
     /**
      * Ensures that retrieving with an invalid ID returns null.
      */

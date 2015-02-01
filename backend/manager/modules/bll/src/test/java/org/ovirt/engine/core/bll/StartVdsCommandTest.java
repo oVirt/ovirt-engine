@@ -41,7 +41,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSFenceReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator;
 import org.ovirt.engine.core.dao.AuditLogDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
@@ -49,7 +48,7 @@ import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
-public class StartVdsCommandTest {
+public class StartVdsCommandTest extends DbDependentTestBase {
 
     private static final String HOST_NAME = "HostName";
     private static final Guid FENCECD_HOST_ID = new Guid("11111111-1111-1111-1111-111111111111");
@@ -63,7 +62,6 @@ public class StartVdsCommandTest {
     private FenceExecutor executor;
     private FenceAgent agent1;
     private FenceAgent agent2;
-    @Mock
     private DbFacade dbFacade;
     @Mock
     private VdsDAO vdsDao;
@@ -82,6 +80,7 @@ public class StartVdsCommandTest {
 
     @Before
     public void setup() {
+        dbFacade = DbFacade.getInstance();
         initAgents();
         mockDbFacades();
         initCommand();
@@ -93,7 +92,6 @@ public class StartVdsCommandTest {
         mockVmDao();
         mockAuditLogDao();
         mockVdsDao();
-        DbFacadeLocator.setDbFacade(dbFacade);
     }
 
     private void mockVdsGroupDao() {

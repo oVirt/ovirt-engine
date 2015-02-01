@@ -1,5 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.when;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,20 +22,14 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 
 /**
  * This class tests the FenceProxyLocator
  */
 @RunWith(MockitoJUnitRunner.class)
-public class FenceProxyLocatorTest {
+public class FenceProxyLocatorTest extends DbDependentTestBase {
 
     private static String HOST_NAME = "hostname";
     private static String ANOTHER_HOST_NAME = "hostname2";
@@ -53,7 +52,6 @@ public class FenceProxyLocatorTest {
     @Mock
     private VDS fencedVds;
 
-    @Mock
     private DbFacade dbFacade;
 
     @Mock
@@ -63,13 +61,13 @@ public class FenceProxyLocatorTest {
 
     @Before
     public void setup() {
+        dbFacade = DbFacade.getInstance();
         when(fencedVds.getName()).thenReturn(HOST_NAME);
         when(fencedVds.getId()).thenReturn(FENCECD_HOST_ID);
         when(fencedVds.getVdsGroupId()).thenReturn(FENCED_HOST_CLUSTER_ID);
         when(fencedVds.getStoragePoolId()).thenReturn(FENCED_HOST_DATACENTER_ID);
         fenceProxyLocator = new FenceProxyLocator(fencedVds);
         when(dbFacade.getVdsDao()).thenReturn(vdsDao);
-        DbFacadeLocator.setDbFacade(dbFacade);
     }
 
     /**

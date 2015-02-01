@@ -46,7 +46,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class VmDeviceUtils {
-    private static VmDeviceDAO dao = DbFacade.getInstance().getVmDeviceDao();
     private final static String RAM = "ram";
     private final static String VRAM = "vram";
     private final static String HEADS = "heads";
@@ -58,6 +57,7 @@ public class VmDeviceUtils {
     private final static int SINGLE_QXL_MONITORS = 1;
     private static OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
     private static DbFacade dbFacade = SimpleDependecyInjector.getInstance().get(DbFacade.class);
+    private static VmDeviceDAO dao = dbFacade.getVmDeviceDao();
 
     /**
      * Update the vm devices according to changes made in vm static for existing VM
@@ -114,7 +114,7 @@ public class VmDeviceUtils {
 
     public static void updateSmartcardDevice(Guid vmId, boolean smartcardEnabled) {
         List<VmDevice> vmDevices =
-                DbFacade.getInstance()
+                dbFacade
                         .getVmDeviceDao()
                         .getVmDeviceByVmIdTypeAndDevice(vmId,
                                 VmDeviceGeneralType.SMARTCARD,
@@ -148,7 +148,7 @@ public class VmDeviceUtils {
             return; //we don't want to update the device
         }
 
-        List<VmDevice> consoles = DbFacade.getInstance()
+        List<VmDevice> consoles = dbFacade
                     .getVmDeviceDao()
                     .getVmDeviceByVmIdTypeAndDevice(vmId,
                             VmDeviceGeneralType.CONSOLE, VmDeviceType.CONSOLE.getName());
@@ -169,7 +169,7 @@ public class VmDeviceUtils {
             return; //we don't want to update the device
         }
 
-        List<VmDevice> controllers = DbFacade.getInstance()
+        List<VmDevice> controllers = dbFacade
                 .getVmDeviceDao()
                 .getVmDeviceByVmIdTypeAndDevice(vmId,
                         VmDeviceGeneralType.CONTROLLER, VmDeviceType.VIRTIOSCSI.getName());
@@ -221,7 +221,7 @@ public class VmDeviceUtils {
         boolean osChanged = oldVm.getOsId() != newVmBase.getOsId();
 
         List<VmDevice> list =
-                DbFacade.getInstance()
+                dbFacade
                         .getVmDeviceDao()
                         .getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.SOUND);
 
@@ -288,7 +288,10 @@ public class VmDeviceUtils {
         // indicates that VM should have CD either from its own (iso_path) or from the snapshot it was cloned from.
         boolean shouldHaveCD = StringUtils.isNotEmpty(isoPath);
         // indicates if VM has already a non empty CD in DB
-        boolean hasAlreadyCD = (!(DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(vmBase.getId(), VmDeviceGeneralType.DISK, VmDeviceType.CDROM.getName())).isEmpty());
+        boolean hasAlreadyCD =
+                (!(dbFacade.getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(vmBase.getId(),
+                        VmDeviceGeneralType.DISK,
+                        VmDeviceType.CDROM.getName())).isEmpty());
         boolean addCD = (!hasAlreadyCD && shouldHaveCD);
         boolean hasSoundDevice = false;
         boolean hasAlreadyConsoleDevice = false;
@@ -484,12 +487,12 @@ public class VmDeviceUtils {
                                      boolean isBalloonEnabled,
                                      Set<GraphicsType> graphicsToSkip,
                                      boolean copySnapshotDevices) {
-        VM vm = DbFacade.getInstance().getVmDao().get(dstId);
+        VM vm = dbFacade.getVmDao().get(dstId);
         VmBase vmBase = (vm != null) ? vm.getStaticData() : null;
         boolean isVm = (vmBase != null);
 
         if (!isVm) {
-            vmBase = DbFacade.getInstance().getVmTemplateDao().get(dstId);
+            vmBase = dbFacade.getVmTemplateDao().get(dstId);
         }
 
         List<VmDevice> devices = dao.getVmDeviceByVmId(srcId);
@@ -611,7 +614,7 @@ public class VmDeviceUtils {
         // If we add Disk/Interface/CD/Floppy, we have to recalculate boot order
         if (type == VmDeviceGeneralType.DISK || type == VmDeviceGeneralType.INTERFACE) {
             // recalculate boot sequence
-            VmBase vmBase = DbFacade.getInstance().getVmStaticDao().get(id.getVmId());
+            VmBase vmBase = dbFacade.getVmStaticDao().get(id.getVmId());
             updateBootOrderInVmDeviceAndStoreToDB(vmBase);
         }
         return managedDevice;
@@ -627,7 +630,7 @@ public class VmDeviceUtils {
         }
         List<VmDevice> vmDeviceToAdd = new ArrayList<VmDevice>();
         List<VmDevice> vmDeviceToUpdate = new ArrayList<VmDevice>();
-        VmDeviceDAO dao = DbFacade.getInstance().getVmDeviceDao();
+        VmDeviceDAO dao = dbFacade.getVmDeviceDao();
         addImportedDisks(entity, vmDeviceToUpdate);
         addImportedInterfaces(entity, vmDeviceToUpdate);
         addOtherDevices(entity, vmDeviceToAdd);
@@ -637,8 +640,8 @@ public class VmDeviceUtils {
 
     public static void setVmDevices(VmBase vmBase) {
         Map<Guid, VmDevice> vmManagedDeviceMap = new HashMap<Guid, VmDevice>();
-        List<VmDevice> devices = DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmId(vmBase.getId());
-        vmBase.setUnmanagedDeviceList(DbFacade.getInstance().getVmDeviceDao().getUnmanagedDevicesByVmId(vmBase.getId()));
+        List<VmDevice> devices = dbFacade.getVmDeviceDao().getVmDeviceByVmId(vmBase.getId());
+        vmBase.setUnmanagedDeviceList(dbFacade.getVmDeviceDao().getUnmanagedDevicesByVmId(vmBase.getId()));
         for (VmDevice device : devices) {
             if (device.getIsManaged()) {
                 vmManagedDeviceMap.put(device.getDeviceId(), device);
@@ -670,8 +673,8 @@ public class VmDeviceUtils {
             for (VmDevice device: devices) {
                 device.setBootOrder(0);
             }
-            VM vm = DbFacade.getInstance().getVmDao().get(vmBase.getId());
-            VmHandler.updateDisksForVm(vm, DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId()));
+            VM vm = dbFacade.getVmDao().get(vmBase.getId());
+            VmHandler.updateDisksForVm(vm, dbFacade.getDiskDao().getAllForVm(vm.getId()));
             VmHandler.updateNetworkInterfacesFromDb(vm);
             boolean isOldCluster = VmDeviceCommonUtils.isOldClusterVersion(vm.getVdsGroupCompatibilityVersion());
             VmDeviceCommonUtils.updateVmDevicesBootOrder(vm, devices, isOldCluster);
@@ -688,7 +691,10 @@ public class VmDeviceUtils {
      *            NOTE : Only one CD is currently supported.
      */
     private static void updateCdInVmDevice(VmBase oldVmBase, VmBase newVmBase) {
-        List<VmDevice> cdList = DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(oldVmBase.getId(), VmDeviceGeneralType.DISK, VmDeviceType.CDROM.getName());
+        List<VmDevice> cdList =
+                dbFacade.getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(oldVmBase.getId(),
+                        VmDeviceGeneralType.DISK,
+                        VmDeviceType.CDROM.getName());
         if (cdList.size() > 0){ // this is done only for safety, each VM must have at least an Empty CD
             VmDevice cd = cdList.get(0); // only one managed CD is currently supported.
             cd.getSpecParams()
@@ -1084,29 +1090,29 @@ public class VmDeviceUtils {
     }
 
     public static boolean hasVmRngDevice(Guid vmId) {
-        return !DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdAndType(vmId,
+        return !dbFacade.getVmDeviceDao().getVmDeviceByVmIdAndType(vmId,
                 VmDeviceGeneralType.RNG).isEmpty();
     }
 
     public static boolean hasVmGraphicsDeviceOfType(Guid vmId, GraphicsType type) {
-        return !DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(vmId,
+        return !dbFacade.getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(vmId,
                 VmDeviceGeneralType.GRAPHICS,
                 type.name().toLowerCase()).isEmpty();
     }
 
 
     public static List<VmDevice> getSoundDevices(Guid vmId) {
-        return DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdAndType(vmId,
+        return dbFacade.getVmDeviceDao().getVmDeviceByVmIdAndType(vmId,
                 VmDeviceGeneralType.SOUND);
     }
 
     public static List<VmDevice> getBalloonDevices(Guid vmId) {
-        return DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdAndType(vmId,
+        return dbFacade.getVmDeviceDao().getVmDeviceByVmIdAndType(vmId,
                 VmDeviceGeneralType.BALLOON);
     }
 
     public static List<VmDevice> getWatchdogs(Guid vmId) {
-        return DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdAndType(vmId,
+        return dbFacade.getVmDeviceDao().getVmDeviceByVmIdAndType(vmId,
                 VmDeviceGeneralType.WATCHDOG);
     }
 
@@ -1201,7 +1207,8 @@ public class VmDeviceUtils {
         List<GraphicsType> result = new ArrayList<>();
 
         if (entityId != null) {
-            List<VmDevice> devices = DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdAndType(entityId, VmDeviceGeneralType.GRAPHICS);
+            List<VmDevice> devices =
+                    dbFacade.getVmDeviceDao().getVmDeviceByVmIdAndType(entityId, VmDeviceGeneralType.GRAPHICS);
             if (devices != null) {
                 for (VmDevice device : devices) {
                     result.add(GraphicsType.fromString(device.getDevice()));

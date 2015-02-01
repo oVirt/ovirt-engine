@@ -1,5 +1,16 @@
 package org.ovirt.engine.core.bll;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.stub;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -28,26 +40,13 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator;
 import org.ovirt.engine.core.dao.AuditLogDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
-import org.ovirt.engine.core.common.config.ConfigValues;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.stub;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.verify;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
-public class FenceExecutorTest {
+public class FenceExecutorTest extends DbDependentTestBase {
 
     private static final Version CLUSTER_VERSION = Version.v3_0;
     private static final ArchitectureType CLUSTER_ARCHITECTURE_TYPE = ArchitectureType.ppc64;
@@ -61,9 +60,6 @@ public class FenceExecutorTest {
     @ClassRule
     public static MockConfigRule configRule =
             new MockConfigRule(MockConfigRule.mockConfig(ConfigValues.FenceAgentMapping, ""));
-
-    @Mock
-    private DbFacade dbFacade;
 
     @Mock
     private VDS vds;
@@ -114,10 +110,9 @@ public class FenceExecutorTest {
         VDSGroup cluster = mockCluster();
         when(vdsGroupDao.get(FENCECD_HOST_CLUSTER_ID)).thenReturn(cluster);
         doNothing().when(auditLogDao).save(any(AuditLog.class));
-        when(dbFacade.getVdsDao()).thenReturn(vdsDao);
-        when(dbFacade.getVdsGroupDao()).thenReturn(vdsGroupDao);
-        when(dbFacade.getAuditLogDao()).thenReturn(auditLogDao);
-        DbFacadeLocator.setDbFacade(dbFacade);
+        when(DbFacade.getInstance().getVdsDao()).thenReturn(vdsDao);
+        when(DbFacade.getInstance().getVdsGroupDao()).thenReturn(vdsGroupDao);
+        when(DbFacade.getInstance().getAuditLogDao()).thenReturn(auditLogDao);
     }
 
     private VDSGroup mockCluster() {

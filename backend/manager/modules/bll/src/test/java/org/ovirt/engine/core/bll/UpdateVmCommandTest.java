@@ -53,7 +53,6 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
@@ -126,6 +125,7 @@ public class UpdateVmCommandTest {
         final Version version = Version.v3_0;
 
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        SimpleDependecyInjector.getInstance().bind(DbFacade.class, dbFacade);
 
         when(osRepository.getMinimumRam(osId, version)).thenReturn(0);
         when(osRepository.getMinimumRam(osId, null)).thenReturn(0);
@@ -258,7 +258,6 @@ public class UpdateVmCommandTest {
 
         when(vmDeviceDAO.getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.GRAPHICS)).thenReturn(Arrays.asList(graphicsDevice));
         doReturn(vmDeviceDAO).when(dbFacade).getVmDeviceDao();
-        DbFacadeLocator.setDbFacade(dbFacade);
     }
 
     @Test

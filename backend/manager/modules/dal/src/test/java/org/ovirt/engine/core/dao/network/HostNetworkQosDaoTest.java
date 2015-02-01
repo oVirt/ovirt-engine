@@ -14,7 +14,13 @@ import org.ovirt.engine.core.dao.FixturesTool;
 
 public class HostNetworkQosDaoTest extends BaseDAOTestCase {
 
-    private HostNetworkQosDao dao = getDbFacade().getHostNetworkQosDao();
+    private HostNetworkQosDao dao;
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        dao = getDbFacade().getHostNetworkQosDao();
+    }
 
     /**
      * Ensures that retrieving with an invalid ID returns null.

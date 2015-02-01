@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.network.macpoolmanager;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.eq;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -18,6 +18,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.DbDependentTestBase;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MacRange;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -25,19 +26,15 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator;
 import org.ovirt.engine.core.dao.AuditLogDAO;
 import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 
 @RunWith(MockitoJUnitRunner.class)
-public class MacPoolPerDcTest {
+public class MacPoolPerDcTest extends DbDependentTestBase {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
-
-    @Mock
-    private DbFacade dbFacade;
 
     @Mock
     private StoragePoolDAO storagePoolDao;
@@ -60,12 +57,10 @@ public class MacPoolPerDcTest {
 
     @Before
     public void setUp() throws Exception {
-        DbFacadeLocator.setDbFacade(dbFacade);
-
-        when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDao);
-        when(dbFacade.getVmNicDao()).thenReturn(vmNicDao);
-        when(dbFacade.getMacPoolDao()).thenReturn(macPoolDao);
-        when(dbFacade.getAuditLogDao()).thenReturn(auditLogDao);
+        when(DbFacade.getInstance().getStoragePoolDao()).thenReturn(storagePoolDao);
+        when(DbFacade.getInstance().getVmNicDao()).thenReturn(vmNicDao);
+        when(DbFacade.getInstance().getMacPoolDao()).thenReturn(macPoolDao);
+        when(DbFacade.getInstance().getAuditLogDao()).thenReturn(auditLogDao);
 
         macPool = createMacPool(MAC_FROM, MAC_TO);
         dataCenter = createStoragePool(macPool);
@@ -77,11 +72,10 @@ public class MacPoolPerDcTest {
     public void testInitCanBeCalledTwice() throws Exception {
         MacPoolPerDc pool = new MacPoolPerDc();
         pool.initialize();
-        Mockito.verify(dbFacade).getMacPoolDao();
         Mockito.verify(macPoolDao).getAll();
 
         pool.initialize();
-        Mockito.verifyNoMoreInteractions(storagePoolDao, vmNicDao, macPoolDao, dbFacade);
+        Mockito.verifyNoMoreInteractions(storagePoolDao, vmNicDao, macPoolDao);
     }
 
     @Test()

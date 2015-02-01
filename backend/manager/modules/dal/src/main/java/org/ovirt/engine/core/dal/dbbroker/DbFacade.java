@@ -7,6 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.ExternalVariable;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -137,9 +141,9 @@ import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
-import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotConfigDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotDao;
+import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -161,12 +165,18 @@ import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
+@Singleton
 public class DbFacade {
+
+    private final static Logger log = LoggerFactory.getLogger(DbFacade.class);
+
     @SuppressWarnings("serial")
     private final static Map<Class<?>, Class<?>> mapEntityToDao = new HashMap<Class<?>, Class<?>>()
     {
@@ -219,6 +229,9 @@ public class DbFacade {
         }
     };
 
+    @Inject
+    private DbFacadeLocator dbFacadeLocator;
+    private static DbFacade instance;
     private JdbcTemplate jdbcTemplate;
 
     private DbEngineDialect dbEngineDialect;
@@ -267,7 +280,18 @@ public class DbFacade {
         return dao;
     }
 
-    public DbFacade() {
+    private DbFacade() {
+    }
+
+    /**
+     * A way to keep backward compatibility with static getInstance() usage pattern.
+     * @TODO once the code is cleaned from getInstance we could remove it.
+     */
+    @PostConstruct
+    void init() {
+        log.info("Initializing the DbFacade");
+        dbFacadeLocator.configure(this);
+        instance = this;
     }
 
     public void setTemplate(JdbcTemplate template) {
@@ -279,7 +303,7 @@ public class DbFacade {
      * just convenience so we don't refactor old code
      */
     public static DbFacade getInstance() {
-        return DbFacadeLocator.getDbFacade();
+        return instance;
     }
 
     private CustomMapSqlParameterSource getCustomMapSqlParameterSource() {

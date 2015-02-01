@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -91,6 +92,14 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
         InputStream is = null;
         try {
+            // Since DbFacade ctor is private, we need to do some reflections magic
+
+            Class<DbFacade> dbFacadeClass = DbFacade.class;
+            @SuppressWarnings("unchecked")
+            Constructor<DbFacade> privateCtor = (Constructor<DbFacade>) dbFacadeClass.getDeclaredConstructors()[0];
+            privateCtor.setAccessible(true);
+            DbFacade localDbFacade = privateCtor.newInstance();
+
             is = super.getClass().getResourceAsStream(
                     "/test-database.properties");
             properties.load(is);
@@ -105,7 +114,6 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
                     properties.getProperty("database.password"),
                     true
                     );
-            DbFacade localDbFacade = new DbFacade();
             localDbFacade.setDbEngineDialect(DbFacadeLocator.loadDbEngineDialect());
             localDbFacade.setTemplate(localDbFacade.getDbEngineDialect().createJdbcTemplate(result));
             localDbFacade.checkDBConnection();
@@ -116,6 +124,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
             assertTrue(true);
             // If this exception is thrown we fail the test
         } catch (Exception undesiredException) {
+            undesiredException.printStackTrace();
             fail();
         } finally {
             if (is != null) {
