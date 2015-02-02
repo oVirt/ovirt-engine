@@ -163,7 +163,7 @@ _dbfunc_common_schema_create() {
 
 _dbfunc_common_schema_upgrade() {
 
-	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/upgrade/03_03_0000_set_version.sql" > /dev/null
+	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/upgrade/03_04_0000_set_version.sql" > /dev/null
 
 	local files="$(_dbfunc_common_get_files "upgrade" 1)"
 	if [ -n "${files}" ]; then

@@ -8,7 +8,7 @@
 --
 
 INSERT INTO schema_version(version,script,checksum,installed_by,ended_at,state,current)
-  values ('03030000','upgrade/03_03_0000_set_version.sql','0','engine',now(),'INSTALLED',true);
+  values ('03040000','upgrade/03_04_0000_set_version.sql','0','engine',now(),'INSTALLED',true);
 
 
 --
