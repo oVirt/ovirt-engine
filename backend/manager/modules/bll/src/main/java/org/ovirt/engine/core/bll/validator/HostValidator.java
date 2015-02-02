@@ -92,4 +92,8 @@ public class HostValidator {
         return ValidationResult.failWith(VdcBllMessages.VDS_CANNOT_INSTALL_EMPTY_PASSWORD)
                 .when(!addPending && authMethod == AuthenticationMethod.Password && StringUtils.isEmpty(password));
     }
+
+    protected VDS getHost() {
+        return host;
+    }
 }
