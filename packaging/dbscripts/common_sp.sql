@@ -423,6 +423,20 @@ begin
 END; $procedure$
 LANGUAGE plpgsql;
 
+-- Checks if a table given by its name exists in DB
+CREATE OR REPLACE FUNCTION fn_db_is_table_exists (v_table varchar(64)) returns boolean STABLE
+   AS $procedure$
+   declare
+   retvalue  boolean;
+BEGIN
+   retvalue := EXISTS (
+        SELECT * FROM information_schema.tables WHERE table_schema = 'public' AND table_name ILIKE v_table
+   );
+   return retvalue;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 -- Creates an index on an existing table, if there is no WHERE condition, the last argument should be empty ('')
 -- Example : Table T with columns a,b and c
 -- fn_db_create_index('T_INDEX', 'T', 'a,b', ''); ==> Creates an index named T_INDEX on table T (a,b)
