@@ -1,2 +1,0 @@
-insert into event_map(event_up_name, event_down_name) values('GLUSTER_VOLUME_REBALANCE_STOP', 'UNASSIGNED');
-insert into event_map(event_up_name, event_down_name) values('GLUSTER_VOLUME_REBALANCE_STOP_FAILED', 'GLUSTER_VOLUME_REBALANCE_STOP');
