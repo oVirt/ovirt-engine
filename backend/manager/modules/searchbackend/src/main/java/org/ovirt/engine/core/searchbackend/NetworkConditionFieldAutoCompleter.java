@@ -11,6 +11,7 @@ public class NetworkConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
     public static final String VM_NETWORK = "VMNETWORK";
     public static final String DATA_CENTER = "DATACENTER";
     public static final String LABEL = "LABEL";
+    public static final String PROVIDER_NAME = "PROVIDER_NAME";
 
     public NetworkConditionFieldAutoCompleter() {
         // Building the basic verbs dict.
@@ -23,6 +24,7 @@ public class NetworkConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         mVerbs.add(VM_NETWORK);
         mVerbs.add(DATA_CENTER);
         mVerbs.add(LABEL);
+        mVerbs.add(PROVIDER_NAME);
 
         // Building the autoCompletion dict.
         buildCompletions();
@@ -37,6 +39,7 @@ public class NetworkConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         getTypeDictionary().put(VM_NETWORK, Boolean.class);
         getTypeDictionary().put(DATA_CENTER, String.class);
         getTypeDictionary().put(LABEL, String.class);
+        getTypeDictionary().put(PROVIDER_NAME, String.class);
 
         // building the ColumnName dict.
         columnNameDict.put(NAME, "name");
@@ -48,6 +51,7 @@ public class NetworkConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         columnNameDict.put(VM_NETWORK, "vm_network");
         columnNameDict.put(DATA_CENTER, "storage_pool_name");
         columnNameDict.put(LABEL, "label");
+        columnNameDict.put(PROVIDER_NAME, "provider_name");
 
         // Building the validation dict.
         buildBasicValidationTable();

@@ -146,6 +146,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
                 return object.getProvidedBy() == null ? "" : object.getProviderName(); //$NON-NLS-1$
             }
         };
+        providerColumn.makeSortable(NetworkConditionFieldAutoCompleter.PROVIDER_NAME);
         getTable().addColumn(providerColumn, constants.providerNetwork(), "200px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<NetworkView>(constants.newNetwork()) {
