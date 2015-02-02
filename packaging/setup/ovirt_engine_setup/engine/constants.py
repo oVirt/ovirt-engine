@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2014 Red Hat, Inc.
+# Copyright (C) 2014-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -257,6 +257,10 @@ class FileLocations(object):
     OVIRT_ENGINE_NOTIFIER_SERVICE_CONFIG_JBOSS = os.path.join(
         OVIRT_ENGINE_NOTIFIER_SERVICE_CONFIGD,
         '10-setup-jboss.conf',
+    )
+    OVIRT_ENGINE_SERVICE_CONFIG_JAVA = os.path.join(
+        OVIRT_ENGINE_SERVICE_CONFIGD,
+        '10-setup-java.conf',
     )
     OVIRT_ENGINE_UNINSTALL_DIR = os.path.join(
         OVIRT_ENGINE_SYSCONFDIR,
@@ -596,6 +600,18 @@ class ConfigEnv(object):
     MAC_RANGE_POOL = 'OVESETUP_CONFIG/macRangePool'
 
     ENGINE_FQDN = 'OVESETUP_ENGINE_CONFIG/fqdn'
+
+    @osetupattrs(
+        answerfile=True,
+    )
+    def ENGINE_HEAP_MIN(self):
+        return 'OVESETUP_CONFIG/engineHeapMin'
+
+    @osetupattrs(
+        answerfile=True,
+    )
+    def ENGINE_HEAP_MAX(self):
+        return 'OVESETUP_CONFIG/engineHeapMax'
 
 
 @util.export
