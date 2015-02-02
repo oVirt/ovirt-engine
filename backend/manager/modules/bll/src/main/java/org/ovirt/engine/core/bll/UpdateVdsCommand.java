@@ -64,18 +64,19 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
     @Override
     protected boolean canDoAction() {
         oldHost = getVdsDAO().get(getVdsId());
+        VdsStatic updatedHost = getParameters().getVdsStaticData();
 
-        if (oldHost == null || getParameters().getVdsStaticData() == null) {
+        if (oldHost == null || updatedHost == null) {
             return failCanDoAction(VdcBllMessages.VDS_INVALID_SERVER_ID);
         }
 
         String compatibilityVersion = oldHost.getVdsGroupCompatibilityVersion().toString();
 
-        if (!VdsHandler.isUpdateValid(getParameters().getVdsStaticData(), oldHost.getStaticData(), oldHost.getStatus())) {
+        if (!VdsHandler.isUpdateValid(updatedHost, oldHost.getStaticData(), oldHost.getStatus())) {
             return failCanDoAction(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE);
         }
 
-        String vdsName = getParameters().getVdsStaticData().getName();
+        String vdsName = updatedHost.getName();
         if (vdsName == null || vdsName.isEmpty()) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY);
         }
@@ -86,18 +87,18 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
         }
 
-        String hostName = getParameters().getVdsStaticData().getHostName();
+        String hostName = updatedHost.getHostName();
         if (oldHost.getStatus() != VDSStatus.InstallFailed && !oldHost.getHostName().equals(hostName)) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_HOSTNAME_CANNOT_CHANGE);
         }
 
         // check if a name is updated to an existing vds name
-        if (!StringUtils.equalsIgnoreCase(oldHost.getName(), getParameters().getVdsStaticData().getName())
+        if (!StringUtils.equalsIgnoreCase(oldHost.getName(), updatedHost.getName())
                 && getVdsDAO().getByName(vdsName) != null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
         }
 
-        if (!StringUtils.equalsIgnoreCase(oldHost.getHostName(), getParameters().getVdsStaticData().getHostName())
+        if (!StringUtils.equalsIgnoreCase(oldHost.getHostName(), updatedHost.getHostName())
                 && getVdsDAO().getAllForHostname(hostName).size() != 0) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST);
         }
@@ -113,17 +114,17 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
         if (getParameters().isInstallHost()
                 && getParameters().getAuthMethod() == AuthenticationMethod.Password
                 && StringUtils.isEmpty(getParameters().getPassword())
-                && getParameters().getVdsStaticData().getVdsType() == VDSType.VDS) {
+                && updatedHost.getVdsType() == VDSType.VDS) {
             return failCanDoAction(VdcBllMessages.VDS_CANNOT_INSTALL_EMPTY_PASSWORD);
         }
 
-        if (!getParameters().isInstallHost() && oldHost.getPort() != getParameters().getVdsStaticData().getPort()) {
+        if (!getParameters().isInstallHost() && oldHost.getPort() != updatedHost.getPort()) {
             return failCanDoAction(VdcBllMessages.VDS_PORT_CHANGE_REQUIRE_INSTALL);
         }
 
         // Forbid updating group id - this must be done through ChangeVDSClusterCommand
         // This is due to permission check that must be done both on the VDS and on the VDSGroup
-        if (!oldHost.getVdsGroupId().equals(getParameters().getVdsStaticData().getVdsGroupId())) {
+        if (!oldHost.getVdsGroupId().equals(updatedHost.getVdsGroupId())) {
             return failCanDoAction(VdcBllMessages.VDS_CANNOT_UPDATE_CLUSTER);
         }
 
@@ -134,16 +135,14 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             return false;
         }
 
-        if (getParameters().getVdsStaticData().getProtocol() != oldHost.getProtocol()
-                && oldHost.getStatus() != VDSStatus.Maintenance &&
-                oldHost.getStatus() != VDSStatus.InstallingOS) {
+        if (updatedHost.getProtocol() != oldHost.getProtocol()
+                && oldHost.getStatus() != VDSStatus.Maintenance
+                && oldHost.getStatus() != VDSStatus.InstallingOS) {
             return failCanDoAction(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE);
         }
 
         // if all ok check PM is legal
-        return isPowerManagementLegal(getParameters().getVdsStaticData().isPmEnabled(),
-                getParameters().getFenceAgents(),
-                compatibilityVersion);
+        return isPowerManagementLegal(updatedHost.isPmEnabled(), getParameters().getFenceAgents(), compatibilityVersion);
     }
 
     @Override
