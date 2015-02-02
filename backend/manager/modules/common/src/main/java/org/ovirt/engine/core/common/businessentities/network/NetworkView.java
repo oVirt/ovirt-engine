@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
+import java.util.Objects;
+
 import org.ovirt.engine.core.compat.Version;
 
 public class NetworkView extends Network {
@@ -40,6 +42,7 @@ public class NetworkView extends Network {
         int result = super.hashCode();
         result = prime * result + ((getCompatibilityVersion() == null) ? 0 : getCompatibilityVersion().hashCode());
         result = prime * result + ((getDataCenterName() == null) ? 0 : getDataCenterName().hashCode());
+        result = prime * result + ((getProviderName() == null) ? 0 : getProviderName().hashCode());
         return result;
     }
 
@@ -67,6 +70,9 @@ public class NetworkView extends Network {
                 return false;
             }
         } else if (!getDataCenterName().equals(other.getDataCenterName())) {
+            return false;
+        }
+        if (Objects.equals(getProviderName(), other.getProviderName())) {
             return false;
         }
         return true;
