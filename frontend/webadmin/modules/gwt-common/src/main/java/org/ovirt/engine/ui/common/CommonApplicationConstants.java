@@ -1797,6 +1797,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Unlimited")
     String unlimitedQos();
 
+    @DefaultStringValue("None")
+    String noneQos();
+
     @DefaultStringValue("Password")
     String hostPasswordLabel();
 

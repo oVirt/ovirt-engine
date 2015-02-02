@@ -66,7 +66,7 @@ public class SubTabDataCenterHostNetworkQosView extends AbstractSubTabTableView<
         AbstractTextColumn<HostNetworkQos> outAverageLinkshareColumn = new AbstractTextColumn<HostNetworkQos>() {
             @Override
             public String getValue(HostNetworkQos object) {
-                return object.getOutAverageLinkshare() == null ? constants.unlimitedQos()
+                return object.getOutAverageLinkshare() == null ? constants.noneQos()
                         : object.getOutAverageLinkshare().toString();
             }
         };
@@ -86,7 +86,7 @@ public class SubTabDataCenterHostNetworkQosView extends AbstractSubTabTableView<
         AbstractTextColumn<HostNetworkQos> outAverageRealtimeColumn = new AbstractTextColumn<HostNetworkQos>() {
             @Override
             public String getValue(HostNetworkQos object) {
-                return object.getOutAverageRealtime() == null ? constants.unlimitedQos()
+                return object.getOutAverageRealtime() == null ? constants.noneQos()
                         : object.getOutAverageRealtime().toString();
             }
         };
