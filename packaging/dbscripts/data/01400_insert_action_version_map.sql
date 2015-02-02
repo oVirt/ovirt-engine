@@ -23,9 +23,14 @@ INSERT INTO action_version_map (action_type, cluster_minimal_version, storage_po
 INSERT INTO action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version) VALUES (1409, '3.1', '*');
 INSERT INTO action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version) VALUES (1410, '3.2', '*');
 INSERT INTO action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version) VALUES (1411, '3.2', '*');
-INSERT INTO action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version) VALUES (1412, '3.2', '*');
 INSERT INTO action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version) VALUES (1010, '3.2', '3.2');
 INSERT INTO action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version) VALUES (1011, '3.2', '3.2');
+INSERT INTO action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version) VALUES (1001, '3.3', '3.3');
+INSERT INTO action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version) VALUES (1412, '3.1', '*');
+INSERT INTO action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version) VALUES (232, '3.3', '*');
+INSERT INTO action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version) VALUES (1013, '3.3', '3.3');
+INSERT INTO action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version) VALUES (1014, '3.3', '*');
+INSERT INTO action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version) VALUES (1015, '3.3', '*');
 
 
 --
