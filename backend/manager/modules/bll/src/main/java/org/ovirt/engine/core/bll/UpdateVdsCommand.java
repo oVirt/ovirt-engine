@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
+import org.ovirt.engine.core.bll.validator.UpdateHostValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.InstallVdsParameters;
@@ -13,18 +14,14 @@ import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -64,85 +61,36 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
     @Override
     protected boolean canDoAction() {
         oldHost = getVdsDAO().get(getVdsId());
-        VdsStatic updatedHost = getParameters().getVdsStaticData();
+        UpdateHostValidator validator =
+                new UpdateHostValidator(getDbFacade(),
+                        oldHost,
+                        getParameters().getvds(),
+                        getParameters().isInstallHost());
 
-        if (oldHost == null || updatedHost == null) {
-            return failCanDoAction(VdcBllMessages.VDS_INVALID_SERVER_ID);
-        }
+        return validate(validator.hostExists())
+                && validate(validator.hostStatusValid())
+                && validate(validator.nameNotEmpty())
+                && validate(validator.nameLengthIsLegal())
+                && validate(validator.updateHostAddressAllowed())
+                && validate(validator.nameNotUsed())
+                && validate(validator.hostNameNotUsed())
+                && validate(validator.statusSupportedForHostInstallation())
+                && validate(validator.passwordProvidedForHostInstallation(getParameters().getAuthMethod(),
+                        getParameters().getPassword()))
+                && validate(validator.updatePortAllowed())
+                && validate(validator.clusterNotChanged())
+                && validate(validator.changeProtocolAllowed())
+                && validateNetworkProviderConfiguration()
+                && isPowerManagementLegal(getParameters().getVdsStaticData().isPmEnabled(),
+                        getParameters().getFenceAgents(),
+                        oldHost.getVdsGroupCompatibilityVersion().toString());
+    }
 
-        String compatibilityVersion = oldHost.getVdsGroupCompatibilityVersion().toString();
-
-        if (!VdsHandler.isUpdateValid(updatedHost, oldHost.getStaticData(), oldHost.getStatus())) {
-            return failCanDoAction(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE);
-        }
-
-        String vdsName = updatedHost.getName();
-        if (vdsName == null || vdsName.isEmpty()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY);
-        }
-
-        // check that VDS name is not too long
-        int maxVdsNameLength = Config.<Integer> getValue(ConfigValues.MaxVdsNameLength);
-        if (vdsName.length() > maxVdsNameLength) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
-        }
-
-        String hostName = updatedHost.getHostName();
-        if (oldHost.getStatus() != VDSStatus.InstallFailed && !oldHost.getHostName().equals(hostName)) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_HOSTNAME_CANNOT_CHANGE);
-        }
-
-        // check if a name is updated to an existing vds name
-        if (!StringUtils.equalsIgnoreCase(oldHost.getName(), updatedHost.getName())
-                && getVdsDAO().getByName(vdsName) != null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
-        }
-
-        if (!StringUtils.equalsIgnoreCase(oldHost.getHostName(), updatedHost.getHostName())
-                && getVdsDAO().getAllForHostname(hostName).size() != 0) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST);
-        }
-
-        if (getParameters().isInstallHost()
-                && oldHost.getStatus() != VDSStatus.Maintenance
-                && oldHost.getStatus() != VDSStatus.NonOperational
-                && oldHost.getStatus() != VDSStatus.InstallFailed
-                && oldHost.getStatus() != VDSStatus.InstallingOS) {
-            return failCanDoAction(VdcBllMessages.VDS_CANNOT_INSTALL_STATUS_ILLEGAL);
-        }
-
-        if (getParameters().isInstallHost()
-                && getParameters().getAuthMethod() == AuthenticationMethod.Password
-                && StringUtils.isEmpty(getParameters().getPassword())
-                && updatedHost.getVdsType() == VDSType.VDS) {
-            return failCanDoAction(VdcBllMessages.VDS_CANNOT_INSTALL_EMPTY_PASSWORD);
-        }
-
-        if (!getParameters().isInstallHost() && oldHost.getPort() != updatedHost.getPort()) {
-            return failCanDoAction(VdcBllMessages.VDS_PORT_CHANGE_REQUIRE_INSTALL);
-        }
-
-        // Forbid updating group id - this must be done through ChangeVDSClusterCommand
-        // This is due to permission check that must be done both on the VDS and on the VDSGroup
-        if (!oldHost.getVdsGroupId().equals(updatedHost.getVdsGroupId())) {
-            return failCanDoAction(VdcBllMessages.VDS_CANNOT_UPDATE_CLUSTER);
-        }
-
-        if (getParameters().isInstallHost()
-                && getParameters().getNetworkProviderId() != null
-                && !validateNetworkProviderProperties(getParameters().getNetworkProviderId(),
-                        getParameters().getNetworkMappings())) {
-            return false;
-        }
-
-        if (updatedHost.getProtocol() != oldHost.getProtocol()
-                && oldHost.getStatus() != VDSStatus.Maintenance
-                && oldHost.getStatus() != VDSStatus.InstallingOS) {
-            return failCanDoAction(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE);
-        }
-
-        // if all ok check PM is legal
-        return isPowerManagementLegal(updatedHost.isPmEnabled(), getParameters().getFenceAgents(), compatibilityVersion);
+    private boolean validateNetworkProviderConfiguration() {
+        return !getParameters().isInstallHost()
+                || getParameters().getNetworkProviderId() == null
+                || validateNetworkProviderProperties(getParameters().getNetworkProviderId(),
+                        getParameters().getNetworkMappings());
     }
 
     @Override
