@@ -115,6 +115,8 @@ public class VolumeParameterListModel extends SearchableListModel {
 
         VolumeParameterModel volumeParameterModel = new VolumeParameterModel();
         volumeParameterModel.setTitle(ConstantsManager.getInstance().getConstants().addOptionVolume());
+        volumeParameterModel.setHelpTag(HelpTag.add_option);
+        volumeParameterModel.setHashName("add_option"); //$NON-NLS-1$
         setWindow(volumeParameterModel);
         volumeParameterModel.startProgress(null);
 
@@ -220,6 +222,8 @@ public class VolumeParameterListModel extends SearchableListModel {
 
         VolumeParameterModel volumeParameterModel = new VolumeParameterModel();
         volumeParameterModel.setTitle(ConstantsManager.getInstance().getConstants().editOptionVolume());
+        volumeParameterModel.setHelpTag(HelpTag.edit_option);
+        volumeParameterModel.setHashName("edit_option"); //$NON-NLS-1$
         volumeParameterModel.setIsNew(false);
         setWindow(volumeParameterModel);
 
