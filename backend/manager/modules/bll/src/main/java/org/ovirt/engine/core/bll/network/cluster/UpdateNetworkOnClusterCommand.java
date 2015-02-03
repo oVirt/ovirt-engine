@@ -93,6 +93,11 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
                     getNetworkCluster().isMigration() ? getNetwork().getId() : getManagementNetwork().getId());
         }
 
+        if (getNetworkCluster().isGluster() != getOldNetworkCluster().isGluster()) {
+            getNetworkClusterDAO().setNetworkExclusivelyAsGluster(getVdsGroupId(),
+                    getNetworkCluster().isGluster() ? getNetwork().getId() : null);
+        }
+
         NetworkClusterHelper.setStatus(getVdsGroupId(), getNetwork());
         setSucceeded(true);
     }

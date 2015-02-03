@@ -26,6 +26,7 @@ public class NetworkClusterDaoDbFacadeImpl extends BaseDAODbFacade implements Ne
                     entity.setDisplay(rs.getBoolean("is_display"));
                     entity.setRequired(rs.getBoolean("required"));
                     entity.setMigration(rs.getBoolean("migration"));
+                    entity.setGluster(rs.getBoolean("is_gluster"));
                     return entity;
                 }
             };
@@ -72,7 +73,8 @@ public class NetworkClusterDaoDbFacadeImpl extends BaseDAODbFacade implements Ne
                 .addValue("status", cluster.getStatus())
                 .addValue("is_display", cluster.isDisplay())
                 .addValue("required", cluster.isRequired())
-                .addValue("migration", cluster.isMigration());
+                .addValue("migration", cluster.isMigration())
+                .addValue("is_gluster", cluster.isGluster());
 
         getCallsHandler().executeModification("Insertnetwork_cluster", parameterSource);
     }
@@ -85,7 +87,8 @@ public class NetworkClusterDaoDbFacadeImpl extends BaseDAODbFacade implements Ne
                 .addValue("status", cluster.getStatus())
                 .addValue("is_display", cluster.isDisplay())
                 .addValue("required", cluster.isRequired())
-                .addValue("migration", cluster.isMigration());
+                .addValue("migration", cluster.isMigration())
+                .addValue("is_gluster", cluster.isGluster());
 
         getCallsHandler().executeModification("Updatenetwork_cluster", parameterSource);
     }
@@ -124,4 +127,14 @@ public class NetworkClusterDaoDbFacadeImpl extends BaseDAODbFacade implements Ne
 
         getCallsHandler().executeModification("set_network_exclusively_as_migration", parameterSource);
     }
+
+    @Override
+    public void setNetworkExclusivelyAsGluster(Guid clusterId, Guid networkId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("cluster_id", clusterId).addValue("network_id", networkId);
+
+        getCallsHandler().executeModification("set_network_exclusively_as_gluster", parameterSource);
+
+    }
+
 }

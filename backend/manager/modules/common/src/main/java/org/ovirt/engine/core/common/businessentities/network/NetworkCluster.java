@@ -17,9 +17,10 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntityWithS
      */
     private boolean required;
     private boolean migration;
+    private boolean gluster;
 
     public NetworkCluster() {
-        this (null, null, NetworkStatus.NON_OPERATIONAL, false, true, false);
+        this(null, null, NetworkStatus.NON_OPERATIONAL, false, true, false, false);
     }
 
     public NetworkCluster(boolean required) {
@@ -31,7 +32,8 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntityWithS
             NetworkStatus status,
             boolean display,
             boolean required,
-            boolean migration) {
+            boolean migration,
+            boolean gluster) {
         this(required);
         id = new NetworkClusterId();
         id.setClusterId(clusterId);
@@ -39,6 +41,7 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntityWithS
         this.status = status;
         this.display = display;
         this.migration = migration;
+        this.gluster = gluster;
     }
 
     @Override
@@ -101,6 +104,14 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntityWithS
         this.migration = migration;
     }
 
+    public boolean isGluster() {
+        return gluster;
+    }
+
+    public void setGluster(boolean gluster) {
+        this.gluster = gluster;
+    }
+
     @Override
     public Object getQueryableId() {
         return getId();
@@ -119,6 +130,8 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntityWithS
                 .append(isRequired())
                 .append(", migration=")
                 .append(isMigration())
+                .append(", gluster=")
+                .append(isGluster())
                 .append("}");
         return builder.toString();
     }
@@ -132,6 +145,7 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntityWithS
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + (required ? 11 : 13);
         result = prime * result + (migration ? 1231 : 1237);
+        result = prime * result + (gluster ? 1231 : 1237);
         return result;
     }
 
@@ -162,6 +176,10 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntityWithS
         if (migration != other.migration) {
             return false;
         }
+        if (gluster != other.gluster) {
+            return false;
+        }
         return true;
     }
+
 }
