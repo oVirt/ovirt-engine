@@ -1045,6 +1045,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("This field can't contain spaces.")
     String thisFieldCantConatainSpacesMsg();
 
+    @DefaultStringValue("This field must contain a valid unicast MAC address.")
+    String invalidUnicastMacAddressMsg();
+
     @DefaultStringValue("Invalid MAC address")
     String invalidMacAddressMsg();
 
