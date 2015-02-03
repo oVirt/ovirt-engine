@@ -175,6 +175,9 @@ class Plugin(plugin.PluginBase):
                     else:
                         raise RuntimeError(msg)
                     bad_password = True
+            self.environment[
+                osetupcons.ConfigEnv.REMOTE_ENGINE_HOST_ROOT_PASSWORD
+            ] = password
 
         def configure(self, fqdn):
             self._fqdn = fqdn
