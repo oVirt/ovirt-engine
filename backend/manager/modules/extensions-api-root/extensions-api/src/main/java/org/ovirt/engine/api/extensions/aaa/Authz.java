@@ -319,7 +319,7 @@ public class Authz {
          * This key with appropriate value must exist within this record.
          * Either {@link #FILTER} or {@link #KEY} should be available.
          */
-        public static final ExtKey KEY = new ExtKey("AAA_AUTHZ_QUERY_FILTER_OPERATOR_KEY", ExtKey.class, "2be62864-6a4c-4a1b-80f0-bed68d9eb529");
+        public static final ExtKey KEY = new ExtKey("AAA_AUTHZ_QUERY_FILTER_KEY", ExtKey.class, "2be62864-6a4c-4a1b-80f0-bed68d9eb529");
     }
 
     /**
