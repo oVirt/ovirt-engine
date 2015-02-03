@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -859,6 +860,29 @@ public final class Linq
         return filteredList;
     }
 
+    public static <I, T extends I> T findByType(Collection<I> models, Class<T> specific) {
+        for (I model : models) {
+            if (model.getClass().equals(specific)) {
+                return (T) model;
+            }
+        }
+
+        return null;
+    }
+
+    public static Collection<EntityModel<?>> findSelectedItems(Collection<EntityModel<?>> items) {
+        if (items == null) {
+            return Collections.EMPTY_LIST;
+        }
+
+        return where(items, new IPredicate<EntityModel<?>>() {
+            @Override
+            public boolean match(EntityModel<?> entityModel) {
+                return entityModel.getIsSelected();
+            }
+        });
+    }
+
     public static DiskModel diskToModel(Disk disk) {
         DiskModel diskModel = new DiskModel();
         diskModel.getAlias().setEntity(disk.getDiskAlias());
@@ -881,7 +905,7 @@ public final class Linq
         return diskModel;
     }
 
-    public static ArrayList<DiskModel> disksToDiskModelList(ArrayList<Disk> disks) {
+    public static ArrayList<DiskModel> disksToDiskModelList(List<Disk> disks) {
         ArrayList<DiskModel> diskModels = new ArrayList<DiskModel>();
 
         for (Disk disk : disks) {

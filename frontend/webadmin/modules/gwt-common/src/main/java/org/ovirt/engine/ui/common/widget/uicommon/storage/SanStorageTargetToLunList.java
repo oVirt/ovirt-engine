@@ -242,7 +242,11 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         }, constants.serialSanStorage(), "120px"); //$NON-NLS-1$
 
         table.setRowData(items);
+        Object selectedItem = leafModel.getSelectedItem();
+        leafModel.setSelectedItem(null);
         table.asEditor().edit(leafModel);
+        leafModel.setSelectedItem(selectedItem);
+
         table.setWidth("100%", true); //$NON-NLS-1$
 
         if (!multiSelection) {

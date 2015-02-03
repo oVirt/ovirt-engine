@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.LUNs;
@@ -19,6 +20,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.ValueEventArgs;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -137,6 +139,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
             return;
         }
 
+        final Collection<EntityModel<?>> prevSelected = Linq.findSelectedItems((Collection<EntityModel<?>>) getSelectedItem());
         clearItems();
         initializeItems(null, null);
 
@@ -147,7 +150,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
             public void onSuccess(Object target, Object returnValue) {
                 VdcQueryReturnValue response = (VdcQueryReturnValue) returnValue;
                 if (response.getSucceeded()) {
-                    model.applyData((ArrayList<LUNs>) response.getReturnValue(), false);
+                    model.applyData((ArrayList<LUNs>) response.getReturnValue(), false, prevSelected);
                     model.setGetLUNsFailure(""); //$NON-NLS-1$
                 }
                 else {
@@ -220,7 +223,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
     /**
      * Creates model items from the provided list of business entities.
      */
-    public void applyData(List<LUNs> source, boolean isIncluded)
+    public void applyData(List<LUNs> source, boolean isIncluded, Collection<EntityModel<?>> selectedItems)
     {
         ArrayList<LunModel> newItems = new ArrayList<LunModel>();
 
@@ -241,7 +244,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
                 lunModel.setIsAccessible(a.getAccessible());
                 lunModel.setStatus(a.getStatus());
                 lunModel.setIsIncluded(isIncluded);
-                lunModel.setIsSelected(isIncluded);
+                lunModel.setIsSelected(containsLun(lunModel, selectedItems, isIncluded));
                 lunModel.setEntity(a);
 
                 // Add LunModel
@@ -260,6 +263,22 @@ public abstract class SanStorageModel extends SanStorageModelBase
 
         initializeItems(newItems, null);
         proposeDiscover();
+    }
+
+    private boolean containsLun(LunModel lunModel, Collection<EntityModel<?>> models, boolean isIncluded) {
+        if (models == null) {
+            return isIncluded;
+        }
+
+        for (EntityModel<?> model : models) {
+            if (model instanceof LunModel) {
+                if (((LunModel) model).getLunId().equals(lunModel.getLunId())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private ArrayList<SanTargetModel> createTargetModelList(LUNs a) {
@@ -697,7 +716,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 ArrayList<LUNs> lunList = (ArrayList<LUNs>) returnValue;
-                model.applyData(lunList, true);
+                model.applyData(lunList, true, Linq.findSelectedItems((Collection<EntityModel<?>>) getSelectedItem()));
             }
         }), storage.getStorage(), hostId);
     }

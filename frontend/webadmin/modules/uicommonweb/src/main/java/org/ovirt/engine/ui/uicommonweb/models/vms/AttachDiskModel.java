@@ -39,36 +39,62 @@ public class AttachDiskModel extends NewDiskModel {
     }
 
     @Override
+    public void flush() {
+        // no need to do any flush
+    }
+
+    @Override
     public void initialize() {
         super.initialize();
 
         getIsPlugged().setIsAvailable(true);
 
-        // Get internal attachable disks
-        AsyncDataProvider.getInstance().getAllAttachableDisks(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object target, Object returnValue) {
-                ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
-                Collections.sort(disks, new Linq.DiskByAliasComparer());
-                ArrayList<DiskModel> diskModels = Linq.disksToDiskModelList(disks);
+        if (getVm().getId() != null) {
+            loadAttachableDisks();
+        }
+    }
 
-                getAttachableDisksMap().get(DiskStorageType.IMAGE).setItems(Linq.toEntityModelList(
-                        Linq.filterDisksByType(diskModels, Disk.DiskStorageType.IMAGE)));
-            }
-        }), getVm().getStoragePoolId(), getVm().getId());
+    public void loadAttachableDisks() {
+        doLoadAttachableDisks(new GetDisksCallback(DiskStorageType.IMAGE),
+                new GetDisksCallback(DiskStorageType.LUN));
+    }
 
-        // Get external attachable disks
-        AsyncDataProvider.getInstance().getAllAttachableDisks(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object target, Object returnValue) {
-                ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
-                Collections.sort(disks, new Linq.DiskByAliasComparer());
-                ArrayList<DiskModel> diskModels = Linq.disksToDiskModelList(disks);
+    protected void doLoadAttachableDisks(GetDisksCallback imageCallback, GetDisksCallback lunCallback) {
+        AsyncDataProvider.getInstance().getAllAttachableDisks(
+                new AsyncQuery(this, imageCallback
+                ), getVm().getStoragePoolId(), getVm().getId());
 
-                getAttachableDisksMap().get(DiskStorageType.LUN).setItems(Linq.toEntityModelList(
-                        Linq.filterDisksByType(diskModels, Disk.DiskStorageType.LUN)));
-            }
-        }), null, getVm().getId());
+        AsyncDataProvider.getInstance().getAllAttachableDisks(
+                new AsyncQuery(this, lunCallback
+                ), null, getVm().getId());
+    }
+
+    class GetDisksCallback implements INewAsyncCallback {
+
+        private DiskStorageType diskStorageType;
+
+        GetDisksCallback(DiskStorageType diskStorageType) {
+            this.diskStorageType = diskStorageType;
+        }
+
+        @Override
+        public void onSuccess(Object model, Object returnValue) {
+            List<Disk> disks = adjustReturnValue(returnValue);
+            Collections.sort(disks, new Linq.DiskByAliasComparer());
+            ArrayList<DiskModel> diskModels = Linq.disksToDiskModelList(disks);
+
+            List<EntityModel<DiskModel>> entities = Linq.toEntityModelList(
+                    Linq.filterDisksByType(diskModels, diskStorageType));
+            initAttachableDisks(entities);
+        }
+
+        protected void initAttachableDisks(List<EntityModel<DiskModel>> entities) {
+            getAttachableDisksMap().get(diskStorageType).setItems(entities);
+        }
+
+        protected List<Disk> adjustReturnValue(Object returnValue) {
+            return (List<Disk>) returnValue;
+        }
     }
 
     @Override
@@ -82,7 +108,7 @@ public class AttachDiskModel extends NewDiskModel {
     }
 
     @Override
-    public void onSave() {
+    public void store(IFrontendActionAsyncCallback callback) {
         if (getProgress() != null || !validate()) {
             return;
         }
@@ -91,7 +117,7 @@ public class AttachDiskModel extends NewDiskModel {
         ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
         ArrayList<IFrontendActionAsyncCallback> callbacks = new ArrayList<IFrontendActionAsyncCallback>();
 
-        IFrontendActionAsyncCallback onFinishCallback = new IFrontendActionAsyncCallback() {
+        IFrontendActionAsyncCallback onFinishCallback = callback != null ? callback : new IFrontendActionAsyncCallback() {
             @Override
             public void executed(FrontendActionAsyncResult result) {
                 NewDiskModel diskModel = (NewDiskModel) result.getState();
@@ -121,20 +147,27 @@ public class AttachDiskModel extends NewDiskModel {
 
     private boolean isNoSelection() {
         for (ListModel<EntityModel<DiskModel>> listModel : attachableDisksMap.values()) {
-            if (listModel.getSelectedItems() != null && !listModel.getSelectedItems().isEmpty()) {
+            boolean multipleSelectionSelected = listModel.getSelectedItems() != null && !listModel.getSelectedItems().isEmpty();
+            boolean singleSelectionSelected = listModel.getSelectedItem() != null;
+            if (multipleSelectionSelected || singleSelectionSelected) {
                 return false;
             }
         }
         return true;
     }
 
-    private List<EntityModel<DiskModel>> getSelectedDisks() {
+    public List<EntityModel<DiskModel>> getSelectedDisks() {
         List<EntityModel<DiskModel>> selectedDisks = new ArrayList<EntityModel<DiskModel>>();
         for (ListModel<EntityModel<DiskModel>> listModel : attachableDisksMap.values()) {
             if (listModel.getSelectedItems() != null && !listModel.getSelectedItems().isEmpty()) {
                 selectedDisks.addAll(listModel.getSelectedItems());
             }
+
+            if (listModel.getSelectedItem() != null) {
+                selectedDisks.add(listModel.getSelectedItem());
+            }
         }
         return selectedDisks;
     }
+
 }

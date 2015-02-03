@@ -148,6 +148,11 @@ public class Event<T extends EventArgs> {
         return listeners;
     }
 
+    public void clearListeners() {
+        listeners.clear();
+        contexts.clear();
+    }
+
     public void setListeners(List<IEventListener<? super T>> listeners) {
         this.listeners = listeners;
     }

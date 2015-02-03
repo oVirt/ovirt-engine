@@ -138,13 +138,8 @@ public class NewDiskModel extends AbstractDiskModel
     }
 
     @Override
-    public void onSave() {
-        if (getProgress() != null || !validate()) {
-            return;
-        }
-
-        super.onSave();
-
+    public void flush() {
+        super.flush();
         if (getDiskStorageType().getEntity() == Disk.DiskStorageType.IMAGE) {
             DiskImage diskImage = (DiskImage) getDisk();
             diskImage.setSizeInGigabytes(getSize().getEntity());
@@ -157,6 +152,13 @@ public class NewDiskModel extends AbstractDiskModel
             luns.setLunType(getStorageType().getSelectedItem());
             lunDisk.setLun(luns);
         }
+    }
+
+    @Override
+    public void store(IFrontendActionAsyncCallback callback) {
+        if (getProgress() != null || !validate()) {
+            return;
+        }
 
         startProgress(null);
 
@@ -167,7 +169,7 @@ public class NewDiskModel extends AbstractDiskModel
             parameters.setStorageDomainId(storageDomain.getId());
         }
 
-        Frontend.getInstance().runAction(VdcActionType.AddDisk, parameters, new IFrontendActionAsyncCallback() {
+        IFrontendActionAsyncCallback onFinished = callback != null ? callback : new IFrontendActionAsyncCallback() {
             @Override
             public void executed(FrontendActionAsyncResult result) {
                 NewDiskModel diskModel = (NewDiskModel) result.getState();
@@ -175,7 +177,9 @@ public class NewDiskModel extends AbstractDiskModel
                 diskModel.cancel();
                 postSave();
             }
-        }, this);
+        };
+
+        Frontend.getInstance().runAction(VdcActionType.AddDisk, parameters, onFinished, this);
     }
 
     protected void postSave() {

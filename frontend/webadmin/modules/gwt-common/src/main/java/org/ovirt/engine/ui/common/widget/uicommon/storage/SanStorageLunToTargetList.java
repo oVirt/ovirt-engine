@@ -126,6 +126,8 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
 
                 if (!lunModel.getIsSelected()) {
                     table.getSelectionModel().setSelected(lunModel, false);
+                } else {
+                    table.getSelectionModel().setSelected(lunModel, true);
                 }
                 table.redraw();
             }
@@ -159,6 +161,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         // Update table
         table.setRowData(items);
         table.asEditor().edit(listModel);
+
         table.setWidth("100%", true); //$NON-NLS-1$
 
         rootModel.getPropertyChangedEvent().removeListener(lunModelSelectedItemListener);
@@ -281,7 +284,12 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         }
 
         table.setRowData(items);
+
+        Object selectedItem = leafModel.getSelectedItem();
+        leafModel.setSelectedItem(null);
         table.asEditor().edit(leafModel);
+        leafModel.setSelectedItem(selectedItem);
+
         table.setWidth("100%", true); //$NON-NLS-1$
 
         ScrollPanel panel = new ScrollPanel();

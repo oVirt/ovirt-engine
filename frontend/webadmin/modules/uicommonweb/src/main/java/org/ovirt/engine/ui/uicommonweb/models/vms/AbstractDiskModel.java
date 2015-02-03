@@ -45,6 +45,7 @@ import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.StorageModel;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyQuotaValidation;
@@ -53,6 +54,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidati
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public abstract class AbstractDiskModel extends DiskModel
@@ -80,6 +82,8 @@ public abstract class AbstractDiskModel extends DiskModel
 
     private SystemTreeItemModel systemTreeSelectedItem;
     private UICommand cancelCommand;
+
+    private StorageModel storageModel;
 
     public EntityModel<Boolean> getIsWipeAfterDelete() {
         return isWipeAfterDelete;
@@ -307,6 +311,18 @@ public abstract class AbstractDiskModel extends DiskModel
 
     @Override
     public void initialize() {
+        commonInitialize();
+        if (getVm() != null) {
+            updateBootableDiskAvailable();
+        }
+    }
+
+    public void initialize(List<Disk> currentDisks) {
+        commonInitialize();
+        updateBootableFrom(currentDisks != null ? currentDisks : new ArrayList<Disk>());
+    }
+
+    private void commonInitialize() {
         super.initialize();
 
         // Create and set commands
@@ -315,11 +331,6 @@ public abstract class AbstractDiskModel extends DiskModel
         onSaveCommand.setIsDefault(true);
         getCommands().add(onSaveCommand);
         getCommands().add(getCancelCommand());
-
-        // Update data
-        if (getVm() != null) {
-            updateBootableDiskAvailable();
-        }
         updateDatacenters();
     }
 
@@ -331,10 +342,8 @@ public abstract class AbstractDiskModel extends DiskModel
                 ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
 
                 ArrayList<StorageDomain> filteredStorageDomains = new ArrayList<StorageDomain>();
-                for (StorageDomain a : storageDomains)
-                {
-                    if (!a.getStorageDomainType().isIsoOrImportExportDomain() && a.getStatus() == StorageDomainStatus.Active)
-                    {
+                for (StorageDomain a : storageDomains) {
+                    if (!a.getStorageDomainType().isIsoOrImportExportDomain() && a.getStatus() == StorageDomainStatus.Active) {
                         filteredStorageDomains.add(a);
                     }
                 }
@@ -386,7 +395,7 @@ public abstract class AbstractDiskModel extends DiskModel
                         dataCenters.add(dataCenter);
                     }
 
-                    diskModel.getDataCenter().setItems(dataCenters);
+                    diskModel.getDataCenter().setItems(dataCenters, Linq.firstOrDefault(dataCenters));
 
                     if (dataCenters.isEmpty()) {
                         diskModel.setMessage(CONSTANTS.relevantDCnotActive());
@@ -422,28 +431,31 @@ public abstract class AbstractDiskModel extends DiskModel
         AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
-                AbstractDiskModel diskModel = (AbstractDiskModel) target;
                 ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
-
-                diskModel.getIsBootable().setEntity(true);
-                if (getDisk() == null || !getDisk().isDiskSnapshot()) {
-                    for (Disk disk : disks) {
-                        if (disk.isBoot() && !disk.equals(getDisk())) {
-                            diskModel.getIsBootable().setEntity(false);
-                            if (!disk.isDiskSnapshot()) {
-                                diskModel.getIsBootable().setChangeProhibitionReason(CONSTANTS.onlyOneBootableDisk());
-                                diskModel.getIsBootable().setIsChangable(false);
-                                break;
-                            }
-                        }
-                 }
-                }
-
-                if (!getIsNew()) {
-                    getIsBootable().setEntity(getDisk().isBoot());
-                }
+                updateBootableFrom(disks);
             }
         }), getVm().getId());
+    }
+
+    public void updateBootableFrom(List<Disk> vmDisks) {
+        getIsBootable().setEntity(true);
+        getIsBootable().setIsChangable(true);
+        if (getDisk() == null || !getDisk().isDiskSnapshot()) {
+            for (Disk disk : vmDisks) {
+                if (disk.isBoot() && !disk.equals(getDisk())) {
+                    getIsBootable().setEntity(false);
+                    if (!disk.isDiskSnapshot()) {
+                        getIsBootable().setChangeProhibitionReason(CONSTANTS.onlyOneBootableDisk());
+                        getIsBootable().setIsChangable(false);
+                        break;
+                    }
+                }
+         }
+        }
+
+        if (!getIsNew()) {
+            getIsBootable().setEntity(getDisk().isBoot());
+        }
     }
 
     private void updateShareableDiskEnabled(StoragePool datacenter) {
@@ -540,7 +552,7 @@ public abstract class AbstractDiskModel extends DiskModel
         }
         // handle disk profile selected item
         Guid defaultProfileId =
-                getDisk() != null ? ((DiskImage) getDisk()).getDiskProfileId() : null;
+                (getDisk() != null && getDisk().getDiskStorageType() == DiskStorageType.IMAGE)? ((DiskImage) getDisk()).getDiskProfileId() : null;
         if (defaultProfileId != null) {
             for (DiskProfile profile : diskProfiles) {
                 if (profile.getId().equals(defaultProfileId)) {
@@ -744,7 +756,7 @@ public abstract class AbstractDiskModel extends DiskModel
         return getVm() != null && getVm().getVmPoolId() != null;
     }
 
-    private void datacenter_SelectedItemChanged() {
+    protected void datacenter_SelectedItemChanged() {
         StoragePool datacenter = getDataCenter().getSelectedItem();
         boolean isInVm = getVm() != null;
 
@@ -840,6 +852,11 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     public void onSave() {
+        flush();
+        store(null);
+    }
+
+    public void flush() {
         if (getDiskStorageType().getEntity() == DiskStorageType.IMAGE) {
             DiskImage diskImage = getDiskImage();
             if (getQuota().getIsAvailable() && getQuota().getSelectedItem() != null) {
@@ -881,6 +898,8 @@ public abstract class AbstractDiskModel extends DiskModel
         getDisk().setReadOnly(getIsReadOnly().getIsAvailable() ? getIsReadOnly().getEntity() : null);
     }
 
+    public abstract void store(IFrontendActionAsyncCallback callback);
+
     @Override
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
@@ -921,5 +940,13 @@ public abstract class AbstractDiskModel extends DiskModel
                 storageDomain_SelectedItemChanged();
             }
         }
+    }
+
+    public StorageModel getStorageModel() {
+        return storageModel;
+    }
+
+    public void setStorageModel(StorageModel storageModel) {
+        this.storageModel = storageModel;
     }
 }

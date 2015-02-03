@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.ScsiGenericIO;
@@ -43,9 +43,9 @@ public class EditDiskModel extends AbstractDiskModel
         getIsSgIoUnfiltered().setEntity(getDisk().getSgio() == ScsiGenericIO.UNFILTERED);
         getIsReadOnly().setEntity(getDisk().getReadOnly());
 
-        if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
+        if (getDisk().getDiskStorageType() == Disk.DiskStorageType.IMAGE) {
             DiskImage diskImage = (DiskImage) getDisk();
-            getDiskStorageType().setEntity(DiskStorageType.IMAGE);
+            getDiskStorageType().setEntity(Disk.DiskStorageType.IMAGE);
             getSize().setEntity((int) diskImage.getSizeInGigabytes());
             getVolumeType().setSelectedItem(diskImage.getVolumeType());
             setVolumeFormat(diskImage.getVolumeFormat());
@@ -53,8 +53,23 @@ public class EditDiskModel extends AbstractDiskModel
             boolean isExtendImageSizeEnabled = getVm() != null && !diskImage.isDiskSnapshot() &&
                     VdcActionUtils.canExecute(Arrays.asList(getVm()), VM.class, VdcActionType.ExtendImageSize);
             getSizeExtend().setIsChangable(isExtendImageSizeEnabled);
+        } else {
+            LunDisk lunDisk = (LunDisk) getDisk();
+            getDiskStorageType().setEntity(Disk.DiskStorageType.LUN);
+            getSize().setEntity(lunDisk.getLun().getDeviceSize());
+            getSizeExtend().setIsAvailable(false);
+        }
 
-            Guid storageDomainId = diskImage.getStorageIds().get(0);
+        updateReadOnlyChangeability();
+        updateWipeAfterDeleteChangeability();
+    }
+
+    @Override
+    protected void datacenter_SelectedItemChanged() {
+        super.datacenter_SelectedItemChanged();
+        // this needs to be executed after the data center is loaded because the update quota needs both values
+        if (getDisk().getDiskStorageType() == Disk.DiskStorageType.IMAGE) {
+            Guid storageDomainId = ((DiskImage) getDisk()).getStorageIds().get(0);
             AsyncDataProvider.getInstance().getStorageDomainById(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
@@ -63,15 +78,7 @@ public class EditDiskModel extends AbstractDiskModel
                     diskModel.getStorageDomain().setSelectedItem(storageDomain);
                 }
             }), storageDomainId);
-        } else {
-            LunDisk lunDisk = (LunDisk) getDisk();
-            getDiskStorageType().setEntity(DiskStorageType.LUN);
-            getSize().setEntity(lunDisk.getLun().getDeviceSize());
-            getSizeExtend().setIsAvailable(false);
         }
-
-        updateReadOnlyChangeability();
-        updateWipeAfterDeleteChangeability();
     }
 
     @Override
@@ -100,22 +107,23 @@ public class EditDiskModel extends AbstractDiskModel
     }
 
     @Override
-    public void onSave() {
+    public void store(IFrontendActionAsyncCallback callback) {
         if (getProgress() != null || !validate()) {
             return;
         }
-        super.onSave();
+
         startProgress(null);
 
         UpdateVmDiskParameters parameters = new UpdateVmDiskParameters(getVmId(), getDisk().getId(), getDisk());
-        Frontend.getInstance().runAction(VdcActionType.UpdateVmDisk, parameters, new IFrontendActionAsyncCallback() {
+        IFrontendActionAsyncCallback onFinished = callback != null ? callback : new IFrontendActionAsyncCallback() {
             @Override
             public void executed(FrontendActionAsyncResult result) {
                 EditDiskModel diskModel = (EditDiskModel) result.getState();
                 diskModel.stopProgress();
                 diskModel.cancel();
             }
-        }, this);
+        };
+        Frontend.getInstance().runAction(VdcActionType.UpdateVmDisk, parameters, onFinished, this);
     }
 
     @Override

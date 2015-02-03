@@ -40,6 +40,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupW
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.FcpStorageView;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.IscsiStorageView;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.FcpStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.IStorageModel;
@@ -331,7 +332,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
 
         diskTypePanel.addRadioButton(
                 constants.internalDisk(),
-                disk.getIsNew() || disk.getDisk().getDiskStorageType() == DiskStorageType.IMAGE,
+                disk.getDisk() == null || disk.getDisk().getDiskStorageType() == DiskStorageType.IMAGE,
                 disk.getIsNew(),
                 new ClickHandler() {
                 @Override
@@ -343,7 +344,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
 
         diskTypePanel.addRadioButton(
                 constants.externalDisk(),
-                !disk.getIsNew() && disk.getDisk().getDiskStorageType() == DiskStorageType.LUN,
+                disk.getDisk() != null && disk.getDisk().getDiskStorageType() == DiskStorageType.LUN,
                 disk.getIsNew(),
                 new ClickHandler() {
                     @Override
@@ -354,31 +355,44 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                     }
                 });
 
-        storageModel = new StorageModel(new NewEditStorageModelBehavior());
+        if (disk.getStorageModel() == null) {
+            storageModel = new StorageModel(new NewEditStorageModelBehavior());
 
-        // Create IscsiStorageModel
-        iscsiStorageModel = new IscsiStorageModel();
-        iscsiStorageModel.setContainer(storageModel);
-        iscsiStorageModel.setIsGrouppedByTarget(true);
-        iscsiStorageModel.setIgnoreGrayedOut(true);
+            // Create IscsiStorageModel
+            iscsiStorageModel = new IscsiStorageModel();
+            iscsiStorageModel.setContainer(storageModel);
+            iscsiStorageModel.setIsGrouppedByTarget(true);
+            iscsiStorageModel.setIgnoreGrayedOut(true);
+
+            // Create FcpStorageModel
+            fcpStorageModel = new FcpStorageModel();
+            fcpStorageModel.setContainer(storageModel);
+            fcpStorageModel.setIsGrouppedByTarget(false);
+            fcpStorageModel.setIgnoreGrayedOut(true);
+
+            // Set 'StorageModel' items
+            ArrayList<IStorageModel> items = new ArrayList<IStorageModel>();
+            items.add(iscsiStorageModel);
+            items.add(fcpStorageModel);
+            storageModel.setItems(items);
+            storageModel.setHost(disk.getHost());
+
+            disk.setStorageModel(storageModel);
+        } else {
+            storageModel = disk.getStorageModel();
+
+            iscsiStorageModel = Linq.findByType(storageModel.getItems(), IscsiStorageModel.class);
+            iscsiStorageModel.getPropertyChangedEvent().clearListeners();
+
+            fcpStorageModel = Linq.findByType(storageModel.getItems(), FcpStorageModel.class);
+            fcpStorageModel.getPropertyChangedEvent().clearListeners();
+        }
 
         iscsiStorageView = new IscsiStorageView(false, 115, 214, 244, 275, 142, 55, -67);
         iscsiStorageView.edit(iscsiStorageModel);
 
-        // Create FcpStorageModel
-        fcpStorageModel = new FcpStorageModel();
-        fcpStorageModel.setContainer(storageModel);
-        fcpStorageModel.setIsGrouppedByTarget(false);
-        fcpStorageModel.setIgnoreGrayedOut(true);
         fcpStorageView = new FcpStorageView(false, 278, 240);
         fcpStorageView.edit(fcpStorageModel);
-
-        // Set 'StorageModel' items
-        ArrayList<IStorageModel> items = new ArrayList<IStorageModel>();
-        items.add(iscsiStorageModel);
-        items.add(fcpStorageModel);
-        storageModel.setItems(items);
-        storageModel.setHost(disk.getHost());
 
         // SelectedItemChangedEvent handlers
         disk.getStorageType().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
@@ -395,6 +409,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
             }
         });
 
+        revealStorageView(disk);
         revealDiskPanel(disk);
     }
 

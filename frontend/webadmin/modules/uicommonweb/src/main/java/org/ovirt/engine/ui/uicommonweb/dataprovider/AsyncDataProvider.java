@@ -96,6 +96,7 @@ import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAgentFenceOptionsQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllAttachableDisksForVmQueryParameters;
+import org.ovirt.engine.core.common.queries.GetFilteredAttachableDisksParameters;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllProvidersParameters;
 import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
@@ -2571,6 +2572,21 @@ public class AsyncDataProvider {
         GetAllAttachableDisksForVmQueryParameters params = new GetAllAttachableDisksForVmQueryParameters(storagePoolId);
         params.setVmId(vmId);
         Frontend.getInstance().runQuery(VdcQueryType.GetAllAttachableDisksForVm, params, aQuery);
+    }
+
+    public void getFilteredAttachableDisks(AsyncQuery aQuery, Guid storagePoolId, Guid vmId, int os, Version compatibilityVersion) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? (ArrayList<Disk>) source : new ArrayList<Disk>();
+            }
+        };
+        GetFilteredAttachableDisksParameters params = new GetFilteredAttachableDisksParameters(storagePoolId);
+        params.setVmId(vmId);
+        params.setOs(os);
+        params.setVdsGroupCompatibilityVersion(compatibilityVersion);
+        Frontend.getInstance().runQuery(VdcQueryType.GetFilteredAttachableDisks, params, aQuery);
     }
 
     public void getPermittedStorageDomainsByStoragePoolId(AsyncQuery aQuery,
