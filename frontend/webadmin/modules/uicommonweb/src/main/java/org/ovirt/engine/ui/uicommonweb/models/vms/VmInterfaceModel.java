@@ -25,9 +25,9 @@ import org.ovirt.engine.ui.uicommonweb.models.IModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.MacAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NoSpecialCharactersWithDotValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.UnicastMacAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.VnicProfileValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -342,7 +342,7 @@ public abstract class VmInterfaceModel extends Model {
 
         getMAC().setIsValid(true);
         if (getMAC().getIsChangable()) {
-            getMAC().validateEntity(new IValidation[] { new NotEmptyValidation(), new MacAddressValidation() });
+            getMAC().validateEntity(new IValidation[] { new NotEmptyValidation(), new UnicastMacAddressValidation() });
         }
 
         return getName().getIsValid() && getNicType().getIsValid()

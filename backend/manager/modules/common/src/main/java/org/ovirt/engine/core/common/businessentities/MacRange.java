@@ -14,21 +14,14 @@ public class MacRange implements Serializable {
 
     private Guid macPoolId;
 
-    @Pattern.List({
-                   @Pattern(regexp = MacAddressValidationPatterns.VALID_MAC_ADDRESS_FORMAT,
-                            message = VmNic.VALIDATION_MESSAGE_MAC_ADDRESS_INVALID),
-                   @Pattern(regexp = MacAddressValidationPatterns.NON_MULTICAST_MAC_ADDRESS_FORMAT,
-                            message = VmNic.VALIDATION_VM_NETWORK_MAC_ADDRESS_MULTICAST)
-    })
-    @NotNull(message= "VALIDATION_VM_NETWORK_MAC_ADDRESS_NOT_NULL")
+    @Pattern(regexp = MacAddressValidationPatterns.VALID_MAC_ADDRESS_FORMAT,
+            message = VmNic.VALIDATION_MESSAGE_MAC_ADDRESS_INVALID)
+    @NotNull(message= "VALIDATION.VM.NETWORK.MAC.ADDRESS.NOT_NULL")
     private String macFrom;
 
-    @Pattern.List({
-                   @Pattern(regexp = MacAddressValidationPatterns.VALID_MAC_ADDRESS_FORMAT,
-                            message = VmNic.VALIDATION_MESSAGE_MAC_ADDRESS_INVALID),
-                   @Pattern(regexp = MacAddressValidationPatterns.NON_MULTICAST_MAC_ADDRESS_FORMAT,
-                            message = VmNic.VALIDATION_VM_NETWORK_MAC_ADDRESS_MULTICAST)
-    })
+    @Pattern(regexp = MacAddressValidationPatterns.VALID_MAC_ADDRESS_FORMAT,
+            message = VmNic.VALIDATION_MESSAGE_MAC_ADDRESS_INVALID)
+    @NotNull(message = "VALIDATION.VM.NETWORK.MAC.ADDRESS.NOT_NULL")
     private String macTo;
 
     public String getMacFrom() {
