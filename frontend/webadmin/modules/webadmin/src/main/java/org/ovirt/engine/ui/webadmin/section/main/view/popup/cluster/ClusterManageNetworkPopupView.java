@@ -104,6 +104,11 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
                 new MigrationNetworkIndicatorCheckboxColumn(multiCluster,
                         new MigrationNetworkIndicatorFieldUpdater()),
                 constants.migrationNetwork(), "105px"); //$NON-NLS-1$
+
+        networks.addColumn(
+                new GlusterNetworkIndicatorCheckboxColumn(multiCluster,
+                        new GlusterNetworkIndicatorFieldUpdater()),
+                constants.glusterNetwork(), "100px"); //$NON-NLS-1$
     }
 
     @Override
@@ -125,6 +130,9 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
             }
             if (clusterNetworkModel.isMigrationNetwork()) {
                 updateMigrationNetwork(clusterNetworkModel, false);
+            }
+            if (clusterNetworkModel.isGlusterNetwork()) {
+                updateGlusterNetwork(clusterNetworkModel, false);
             }
             if (clusterNetworkModel.isRequired()) {
                 clusterNetworkModel.setRequired(false);
@@ -376,6 +384,36 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
     private void updateManagementNetwork(ClusterNetworkModel clusterNetworkModel, boolean value) {
         networks.asEditor().flush().setManagementNetwork(clusterNetworkModel, value);
+    }
+
+    private static final class GlusterNetworkIndicatorCheckboxColumn extends AbstractCheckboxColumn<ClusterNetworkModel> {
+        private GlusterNetworkIndicatorCheckboxColumn(boolean multipleSelectionAllowed,
+                GlusterNetworkIndicatorFieldUpdater glusterNetworkIndicatorFieldUpdater) {
+            super(multipleSelectionAllowed, glusterNetworkIndicatorFieldUpdater);
+        }
+
+        @Override
+        public Boolean getValue(ClusterNetworkModel clusterNetworkModel) {
+            return clusterNetworkModel.isGlusterNetwork();
+        }
+
+        @Override
+        protected boolean canEdit(ClusterNetworkModel clusterNetworkModel) {
+            return clusterNetworkModel.isAttached() && !clusterNetworkModel.isExternal();
+        }
+
+    }
+
+    private final class GlusterNetworkIndicatorFieldUpdater implements FieldUpdater<ClusterNetworkModel, Boolean> {
+        @Override
+        public void update(int index, ClusterNetworkModel clusterNetworkModel, Boolean value) {
+            updateGlusterNetwork(clusterNetworkModel, value);
+            refreshNetworksTable();
+        }
+    }
+
+    private void updateGlusterNetwork(ClusterNetworkModel clusterNetworkModel, boolean value) {
+        networks.asEditor().flush().setGlusterNetwork(clusterNetworkModel, value);
     }
 
     private final class DisplayNetworkIndicatorFieldUpdater implements FieldUpdater<ClusterNetworkModel, Boolean> {

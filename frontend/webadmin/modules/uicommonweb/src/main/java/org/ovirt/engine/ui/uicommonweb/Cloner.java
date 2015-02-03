@@ -360,6 +360,7 @@ public final class Cloner
         obj.setRequired(instance.isRequired());
         obj.setMigration(instance.isMigration());
         obj.setManagement(instance.isManagement());
+        obj.setGluster(instance.isGluster());
         return obj;
     }
 

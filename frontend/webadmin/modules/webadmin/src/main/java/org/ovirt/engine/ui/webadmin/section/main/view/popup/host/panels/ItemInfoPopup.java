@@ -41,6 +41,9 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
     SafeHtml migrationImage =
             SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.migrationNetwork())
                     .getHTML());
+    SafeHtml glusterNwImage =
+            SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.glusterNetwork())
+                    .getHTML());
     SafeHtml unknownImage =
             SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.questionMarkImage()).getHTML());
     SafeHtml notInSyncImage =
@@ -104,13 +107,15 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
 
         boolean isDisplay = false;
         boolean isMigration = false;
+        boolean isGlusterNw = false;
 
         if (entity.getCluster() != null) {
             isDisplay = entity.getCluster().isDisplay();
             isMigration = entity.getCluster().isMigration();
+            isGlusterNw = entity.getCluster().isGluster();
         }
         // Usages
-        if (networkModel.isManagement() || isDisplay || entity.isVmNetwork() || isMigration) {
+        if (networkModel.isManagement() || isDisplay || entity.isVmNetwork() || isMigration || isGlusterNw) {
 
             addRow(SafeHtmlUtils.fromString(constants.usageItemInfo() + ":")); //$NON-NLS-1$
             if (networkModel.isManagement()) {
@@ -127,6 +132,10 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
 
             if (isMigration) {
                 addRow(templates.imageTextSetupNetworkUsage(migrationImage, constants.migrationItemInfo()));
+            }
+
+            if (isGlusterNw) {
+                addRow(templates.imageTextSetupNetworkUsage(glusterNwImage, constants.glusterNwItemInfo()));
             }
 
         }

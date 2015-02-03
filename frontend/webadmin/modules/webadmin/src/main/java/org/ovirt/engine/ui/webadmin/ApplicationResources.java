@@ -298,6 +298,9 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/network/migration_network.png")
     ImageResource migrationNetwork();
 
+    @Source("images/network/gluster_network.png")
+    ImageResource glusterNetwork();
+
     @Source("images/network/empty.png")
     ImageResource networkEmpty();
 

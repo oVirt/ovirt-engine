@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import java.util.ArrayList;
-
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
@@ -23,6 +22,7 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
     private final UICommand okCommand;
     private final UICommand cancelCommand;
     private ClusterNetworkModel managementNetwork;
+    private ClusterNetworkModel glusterNetwork;
     private boolean needsAnyChange;
 
     public ClusterNetworkManageModel(SearchableListModel<?, ?> sourceListModel) {
@@ -41,6 +41,9 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
                 for (ClusterNetworkModel model : getItems()) {
                     if (model.isManagement()) {
                         managementNetwork = model;
+                    }
+                    if (model.isGlusterNetwork()) {
+                        glusterNetwork = model;
                     }
                 }
             }
@@ -118,6 +121,23 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
             }
         }
         model.setManagement(value);
+   }
+
+   private ClusterNetworkModel getGlusterNetwork() {
+        return glusterNetwork;
+    }
+
+    public void setGlusterNetwork(ClusterNetworkModel model, boolean value) {
+        if (!isMultiCluster()) {
+            if (value) {
+                // Reset the old gluster network
+                if (getGlusterNetwork() != null) {
+                    getGlusterNetwork().setGlusterNetwork(false);
+                }
+                glusterNetwork = model;
+            }
+        }
+        model.setGlusterNetwork(value);
     }
 
     private void onManage() {
@@ -139,7 +159,8 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
                 if ((manageModel.isRequired() != networkCluster.isRequired())
                         || manageModel.isDisplayNetwork() != networkCluster.isDisplay()
                         || manageModel.isMigrationNetwork() != networkCluster.isMigration()
-                        || manageModel.isManagement() != networkCluster.isManagement()) {
+                        || manageModel.isManagement() != networkCluster.isManagement()
+                        || manageModel.isGlusterNetwork() != networkCluster.isGluster()) {
                     needsUpdate = true;
                     copyRoles(manageModel, networkCluster);
                 }
@@ -181,6 +202,7 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
         networkCluster.setDisplay(manageModel.isDisplayNetwork());
         networkCluster.setMigration(manageModel.isMigrationNetwork());
         networkCluster.setManagement(manageModel.isManagement());
+        networkCluster.setGluster(manageModel.isGlusterNetwork());
     }
 
     private NetworkCluster createNetworkCluster(ClusterNetworkModel manageModel) {

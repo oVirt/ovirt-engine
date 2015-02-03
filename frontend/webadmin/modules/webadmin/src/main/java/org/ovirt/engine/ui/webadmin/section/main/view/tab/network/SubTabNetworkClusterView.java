@@ -43,6 +43,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
 
     private final SafeHtml displayImage;
     private final SafeHtml migrationImage;
+    private final SafeHtml glusterNwImage;
     private final SafeHtml emptyImage;
     private final SafeHtml managementImage;
 
@@ -56,6 +57,8 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkMonitor()).getHTML());
         migrationImage =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.migrationNetwork()).getHTML());
+        glusterNwImage =
+                SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.glusterNetwork()).getHTML());
         emptyImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkEmpty()).getHTML());
         managementImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.mgmtNetwork()).getHTML());
         initTable();
@@ -148,6 +151,12 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
                             } else {
                                 images.add(emptyImage);
                             }
+                            if (object.getSecond().isGluster()) {
+                                images.add(glusterNwImage);
+                            } else {
+                                images.add(emptyImage);
+
+                            }
                         }
                         return NetworkRoleColumnHelper.getValue(images);
                     }
@@ -167,6 +176,10 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
                             if (object.getSecond().isMigration()) {
                                 imagesToText.put(migrationImage, constants.migrationItemInfo());
                             }
+
+                            if (object.getSecond().isGluster()) {
+                                imagesToText.put(glusterNwImage, constants.glusterNwItemInfo());
+                            }
                         }
 
                         return NetworkRoleColumnHelper.getTooltip(imagesToText);
@@ -181,9 +194,12 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
                         res += 10;
                     }
                     if (networkCluster.isDisplay()) {
-                        res += 2;
+                        res += 4;
                     }
                     if (networkCluster.isMigration()) {
+                        res += 2;
+                    }
+                    if (networkCluster.isGluster()) {
                         res += 1;
                     }
                 }
