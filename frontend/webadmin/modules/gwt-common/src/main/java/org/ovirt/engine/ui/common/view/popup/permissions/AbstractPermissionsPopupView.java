@@ -29,14 +29,14 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.HasKeyPressHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HasHandlers;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasValue;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 
 public abstract class AbstractPermissionsPopupView<T extends AdElementListModel> extends AbstractModelBoundPopupView<T> implements AbstractPermissionsPopupPresenterWidget.ViewDef<T> {
 
@@ -45,10 +45,14 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    public interface Style extends CssResource {
+        String alignBottomSearch();
+    }
+
     /**
      * This is the max width of a column in this dialogs
      */
-    private static final String MAX_COL_WIDTH = "284px"; //$NON-NLS-1$
+    private static final String MAX_COL_WIDTH = "270px"; //$NON-NLS-1$
 
     @UiField
     @WithElementId
@@ -63,10 +67,6 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     @Path("namespace.selectedItem")
     @WithElementId("namespace")
     public ListModelListBoxEditor<String> namespaceSelection;
-
-    @UiField
-    @Ignore
-    public Label roleToAssignLabel;
 
     @UiField(provided = true)
     @Path("role.selectedItem")
@@ -94,10 +94,10 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     public TextBoxChanger searchStringEditor;
 
     @UiField
-    public SimplePanel everyonePanel;
+    public FlowPanel everyonePanel;
 
     @UiField
-    public HorizontalPanel roleSelectionPanel;
+    public FlowPanel roleSelectionPanel;
 
     @UiField
     public ScrollPanel searchItemsScrollPanel;
@@ -105,6 +105,9 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     @UiField
     @Ignore
     Label errorMessage;
+
+    @UiField
+    Style style;
 
     private PopupNativeKeyPressHandler nativeKeyPressHandler;
 
@@ -120,6 +123,9 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
         initTable(constants);
         specificUserOrGroupRadio.setValue(true);
         everyoneRadio.setValue(false);
+        //Have to add these classes to the searchStringEditor as the UiBinder seems to remove them
+        searchStringEditor.addStyleName("form-control"); //$NON-NLS-1$
+        searchStringEditor.addStyleName(style.alignBottomSearch());
         localize(constants);
     }
 
@@ -171,8 +177,6 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
 
     void localize(CommonApplicationConstants constants) {
         searchButton.setLabel(constants.goPermissionsPopup());
-        namespaceSelection.setLabel(constants.namespacePermissionsPopup());
-
     }
 
     @Override

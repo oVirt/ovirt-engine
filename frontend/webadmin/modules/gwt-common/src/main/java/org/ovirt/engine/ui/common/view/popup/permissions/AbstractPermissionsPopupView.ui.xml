@@ -2,100 +2,87 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
     xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
 
-    <ui:style>
-        .mainLabel {
-            font-weight: bold;
-            padding: 5px;
+    <ui:style type="org.ovirt.engine.ui.common.view.popup.permissions.AbstractPermissionsPopupView.Style">
+        .alignBottomGo {
+            margin-top: 28px;
         }
 
-        .goButton {
-            float: left;
-            height: 25px;
-            margin-left: 5px;
-            margin-top: 3px;
-        }
-
-        .searchItemsPanel {
-            width: 100%;
-            height: 70%;
-            border-bottom: 1px solid #BBBBBB;
-            border-top: 1px solid #BBBBBB;
-        }
-
-        .searchStringEditor {
-            width: 200px;
-            height: 18px;
-            margin-left: 5px;
-            margin-top: 3px;
-            margin-bottom: 3px;
-        }
-
-        .profileSelection {
-            width: 320px;
-            height: 30px;
-        }
-
-        .namespaceSelection {
-            width: 330px;
-            height: 30px;
-        }
-
-        .everyonePanel {
-            height: 30px;
-            margin-top: 3px;
-        }
-
-        .searchStringPanel {
-            width: 860px;
-            height: 30px;
-        }
-
-        .rolePanel {
-            height: 9%;
-        }
-
-        .errorPanel {
-            width: 100%;
-            text-align: center;
+        .alignBottomSearch {
+            margin-top: 25px;
         }
 
         .errorLabel {
             color: #CD2127;
         }
+
+        .gridRow {
+            margin-top: 10px;
+        }
+
+        .searchItemsPanel {
+            width: 100%;
+            height: 260px;
+            border-bottom: 1px solid #BBBBBB;
+            border-top: 1px solid #BBBBBB;
+        }
+
+        .grid {
+            height: 250px;
+        }
     </ui:style>
 
-    <d:SimpleDialogPanel width="900px" height="500px">
+    <d:SimpleDialogPanel width="900px" height="505px">
         <d:content>
-            <g:FlowPanel>
-                <g:SimplePanel ui:field="everyonePanel" addStyleNames="{style.everyonePanel}">
-                    <g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
-                        <g:RadioButton name="everyoneOrSpecific" ui:field="specificUserOrGroupRadio" text="{constants.specificUserGroupPermission}"></g:RadioButton>
-                        <g:RadioButton name="everyoneOrSpecific" ui:field="everyoneRadio" text="{constants.everyonePermission}"></g:RadioButton>
-                    </g:HorizontalPanel>
-                </g:SimplePanel>
-                <g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE" addStyleNames="{style.searchStringPanel}">
-                    <e:ListModelListBoxEditor addStyleNames="{style.profileSelection}" label="{constants.searchPermissionsPopup}" ui:field="profileSelection" />
-                    <e:ListModelListBoxEditor addStyleNames="{style.namespaceSelection}" label="{constants.namespacePermissionsPopup}" ui:field="namespaceSelection" />
-                    <e:TextBoxChanger addStyleNames="{style.searchStringEditor}" ui:field="searchStringEditor" />
-                    <w:UiCommandButton ui:field="searchButton" addStyleNames="{style.goButton} appv_searchButton_pfly_fix" />
-                </g:HorizontalPanel>
-                <g:ScrollPanel ui:field="searchItemsScrollPanel" addStyleNames="{style.searchItemsPanel}">
-                    <e:EntityModelCellTable ui:field="searchItems" />
-                </g:ScrollPanel>
-                <g:HorizontalPanel ui:field="roleSelectionPanel" addStyleNames="{style.rolePanel} ts10">
-                    <g:Label ui:field="roleToAssignLabel" addStyleNames="{style.mainLabel}" text="{constants.roleToAssignPermissionsPopup}" />
-                    <e:ListModelListBoxEditor ui:field="roleSelection" />
-                </g:HorizontalPanel>
-                <g:HorizontalPanel addStyleNames="{style.errorPanel}">
-                    <g:cell horizontalAlignment="CENTER">
+            <b:Container>
+                <b:Row>
+                    <g:FlowPanel ui:field="everyonePanel">
+                        <b:Column size="LG_3">
+                            <g:RadioButton name="everyoneOrSpecific" ui:field="specificUserOrGroupRadio" text="{constants.specificUserGroupPermission}"></g:RadioButton>
+                        </b:Column>
+                        <b:Column size="LG_3">
+                            <g:RadioButton name="everyoneOrSpecific" ui:field="everyoneRadio" text="{constants.everyonePermission}"></g:RadioButton>
+                        </b:Column>
+                    </g:FlowPanel>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="LG_3">
+                        <e:ListModelListBoxEditor ui:field="profileSelection" label="{constants.searchPermissionsPopup}" usePatternFly="true" />
+                    </b:Column>
+                    <b:Column size="LG_3">
+                        <e:ListModelListBoxEditor ui:field="namespaceSelection" label="{constants.namespacePermissionsPopup}" usePatternFly="true" />
+                    </b:Column>
+                    <b:Column size="LG_3">
+                        <e:TextBoxChanger ui:field="searchStringEditor" addStyleNames="{style.alignBottomSearch} form-control" />
+                    </b:Column>
+                    <b:Column size="LG_2">
+                        <w:UiCommandButton ui:field="searchButton" addStyleNames="{style.alignBottomGo}" />
+                    </b:Column>
+                </b:Row>
+                <b:Row addStyleNames="{style.gridRow}">
+                    <b:Column size="LG_12">
+                        <g:ScrollPanel ui:field="searchItemsScrollPanel" addStyleNames="{style.searchItemsPanel}">
+                            <e:EntityModelCellTable ui:field="searchItems" />
+                        </g:ScrollPanel>
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="LG_3">
+                        <g:FlowPanel ui:field="roleSelectionPanel">
+                            <e:ListModelListBoxEditor ui:field="roleSelection" label="{constants.roleToAssignPermissionsPopup}" usePatternFly="true" />
+                        </g:FlowPanel>
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="LG_12">
                         <g:Label ui:field="errorMessage" addStyleNames="{style.errorLabel}" />
-                    </g:cell>
-                </g:HorizontalPanel>
-            </g:FlowPanel>
+                    </b:Column>
+                </b:Row>
+            </b:Container>
         </d:content>
     </d:SimpleDialogPanel>
 
