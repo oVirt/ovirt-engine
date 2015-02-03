@@ -2,17 +2,17 @@ package org.ovirt.engine.core.common.queries;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetAllAttachableDisks extends VdcQueryParametersBase {
+public class GetAllAttachableDisksForVmQueryParameters extends VdcQueryParametersBase {
 
     private static final long serialVersionUID = 155490543085422118L;
 
     private Guid storagePoolId;
     private Guid vmId;
 
-    public GetAllAttachableDisks() {
+    public GetAllAttachableDisksForVmQueryParameters() {
     }
 
-    public GetAllAttachableDisks(Guid storagePoolId) {
+    public GetAllAttachableDisksForVmQueryParameters(Guid storagePoolId) {
         this.setStoragePoolId(storagePoolId);
     }
 

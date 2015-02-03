@@ -95,7 +95,7 @@ import org.ovirt.engine.core.common.queries.ArchCapabilitiesParameters.ArchCapab
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetAgentFenceOptionsQueryParameters;
-import org.ovirt.engine.core.common.queries.GetAllAttachableDisks;
+import org.ovirt.engine.core.common.queries.GetAllAttachableDisksForVmQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllProvidersParameters;
 import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
@@ -2568,9 +2568,9 @@ public class AsyncDataProvider {
                 return source != null ? (ArrayList<Disk>) source : new ArrayList<Disk>();
             }
         };
-        GetAllAttachableDisks params = new GetAllAttachableDisks(storagePoolId);
+        GetAllAttachableDisksForVmQueryParameters params = new GetAllAttachableDisksForVmQueryParameters(storagePoolId);
         params.setVmId(vmId);
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllAttachableDisks, params, aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllAttachableDisksForVm, params, aQuery);
     }
 
     public void getPermittedStorageDomainsByStoragePoolId(AsyncQuery aQuery,
