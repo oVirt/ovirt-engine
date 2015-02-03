@@ -575,7 +575,9 @@ select fn_db_add_config_value('LogMaxSwapUsedThresholdInPercentage', '95', 'gene
 
 -- Device Custom Properties
 select fn_db_add_config_value_for_versions_up_to('SupportCustomDeviceProperties', 'false', '3.2');
-select fn_db_add_config_value_for_versions_up_to('CustomDeviceProperties', '', '3.6');
+select fn_db_add_config_value_for_versions_up_to('CustomDeviceProperties', '', '3.3');
+-- Allow to specify SecurityGroups property for vNICs, containing either an empty string or a list of one or more comma seperated UUIDs.
+select fn_db_add_config_value_for_versions_up_to('CustomDeviceProperties', '{type=interface;prop={SecurityGroups=^(?:(?:[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}, *)*[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}|)$}}', '3.6');
 
 -- Network Custom Properties
 select fn_db_add_config_value_for_versions_up_to('NetworkCustomPropertiesSupported', 'false', '3.4');
@@ -830,9 +832,6 @@ select fn_db_update_default_config_value('GuestToolsSetupIsoPrefix','RHEV-toolsS
 -- disable retries for more predictable HA timing:
 select fn_db_update_default_config_value('vdsConnectionTimeout', '180', '2', 'general', false);
 select fn_db_update_default_config_value('vdsRetries', '3', '0', 'general', false);
--- Allow to specify SecurityGroups property for vNICs, containing either an empty string or a list of one or more comma seperated UUIDs.
-select fn_db_update_default_config_value('CustomDeviceProperties', '{type=interface;prop={SecurityGroups=^(?:(?:[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}, *)*[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}|)$}}', '{type=interface;prop={SecurityGroups=^(?:(?:[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}, *)*[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}|)$}}', '3.4', false);
-select fn_db_update_default_config_value('CustomDeviceProperties', '{type=interface;prop={SecurityGroups=^(?:(?:[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}, *)*[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}|)$}}', '{type=interface;prop={SecurityGroups=^(?:(?:[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}, *)*[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}|)$}}', '3.5', false);
 
 -- Override existing configuration to TLSv1 if it is SSLv3
 select fn_db_update_default_config_value('VdsmSSLProtocol','SSLv3','TLSv1','general', false);
