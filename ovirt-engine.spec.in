@@ -749,7 +749,11 @@ tools/org/slf4j/main/slf4j-api.jar slf4j/slf4j-api.jar
 tools/org/slf4j/main/slf4j-jdk14.jar slf4j/slf4j-jdk14.jar
 %if 0%{?fedora}
 %if %{fedora} >= 19
+%if %{fedora} >= 21
+common/com/mchange/c3p0/main/c3p0.jar c3p0/c3p0.jar
+%else
 common/com/mchange/c3p0/main/c3p0.jar
+%endif
 common/com/woorea/openstack/sdk/main/glance-client.jar openstack-java-sdk/glance-client.jar
 common/com/woorea/openstack/sdk/main/glance-model.jar openstack-java-sdk/glance-model.jar
 common/com/woorea/openstack/sdk/main/keystone-client.jar openstack-java-sdk/keystone-client.jar
