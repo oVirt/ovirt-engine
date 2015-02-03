@@ -53,7 +53,7 @@ public class LocalStorageView extends AbstractStorageView<LocalStorageModel> {
     }
 
     void addStyles() {
-        localPathEditor.addContentWidgetStyleName(style.localPathContentWidget());
+        localPathEditor.addContentWidgetContainerStyleName(style.localPathContentWidget());
     }
 
     void localize(ApplicationConstants constants) {

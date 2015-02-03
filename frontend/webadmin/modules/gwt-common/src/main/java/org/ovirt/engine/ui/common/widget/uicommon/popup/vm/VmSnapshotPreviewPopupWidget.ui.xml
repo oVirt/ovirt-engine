@@ -42,7 +42,7 @@
             <g:Label ui:field="snapshotDisksLabel" />
             <e:ListModelRadioGroupEditor ui:field="partialPreviewSnapshotOptionEditor" addStyleNames="{style.partialPreviewSnapshotOptionEditor} dvrg_radioGroup_pfly_fix"
                                          label="{constants.previewPartialSnapshotQuestionLabel}" labelStyleName="{style.staticQuestionLabel}"
-                                         contentWidgetStyleName="{style.partialPreviewSnapshotOptionEditor}"/>
+                                         contentWidgetContainerStyleName="{style.partialPreviewSnapshotOptionEditor}"/>
         </g:FlowPanel>
         <g:SimplePanel ui:field="horizontalSeparator" addStyleNames="{style.horizontalSeparator}"/>
         <g:FlowPanel ui:field="memoryWarningPanel">

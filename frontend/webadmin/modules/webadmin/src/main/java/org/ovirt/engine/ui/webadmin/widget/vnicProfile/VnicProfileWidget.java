@@ -87,9 +87,9 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
     }
 
     private void initStyles() {
-        nameEditor.addContentWidgetStyleName(style.name());
-        publicUseEditor.addContentWidgetStyleName(style.publicUse());
-        networkQoSEditor.addContentWidgetStyleName(style.qos());
+        nameEditor.addContentWidgetContainerStyleName(style.name());
+        publicUseEditor.addContentWidgetContainerStyleName(style.publicUse());
+        networkQoSEditor.addContentWidgetContainerStyleName(style.qos());
     }
 
     @Override

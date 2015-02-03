@@ -202,10 +202,10 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
 
     void addStyles() {
         storageTypeListEditor.setLabelStyleName(style.label());
-        storageTypeListEditor.addContentWidgetStyleName(style.storageContentWidget());
+        storageTypeListEditor.addContentWidgetContainerStyleName(style.storageContentWidget());
         formatListEditor.setLabelStyleName(style.label());
-        formatListEditor.addContentWidgetStyleName(style.formatContentWidget());
-        activateDomainEditor.addContentWidgetStyleName(style.activateDomainEditor());
+        formatListEditor.addContentWidgetContainerStyleName(style.formatContentWidget());
+        activateDomainEditor.addContentWidgetContainerStyleName(style.activateDomainEditor());
         advancedParametersExpanderContent.setStyleName(style.advancedParametersExpanderContent());
     }
 

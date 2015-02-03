@@ -204,10 +204,10 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
 
         // Set Styles
         bootProtocolLabel.asValueBox().setVisible(false);
-        checkConnectivity.setContentWidgetStyleName(style.checkCon());
-        qosOverridden.setContentWidgetStyleName(style.syncInfo());
+        checkConnectivity.setContentWidgetContainerStyleName(style.checkCon());
+        qosOverridden.setContentWidgetContainerStyleName(style.syncInfo());
         customPropertiesLabel.asValueBox().setVisible(false);
-        isToSync.setContentWidgetStyleName(style.syncInfo());
+        isToSync.setContentWidgetContainerStyleName(style.syncInfo());
         mainPanel.getElement().setPropertyString("width", "100%"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Localize

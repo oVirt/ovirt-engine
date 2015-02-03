@@ -440,12 +440,12 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         initialRunPanel.setVisible(false);
         systemPanel.setVisible(true);
         hostPanel.setVisible(true);
-        attachFloppyEditor.addContentWidgetStyleName(style.attachImageCheckBoxLabel());
-        attachIsoEditor.addContentWidgetStyleName(style.attachImageCheckBoxLabel());
+        attachFloppyEditor.addContentWidgetContainerStyleName(style.attachImageCheckBoxLabel());
+        attachIsoEditor.addContentWidgetContainerStyleName(style.attachImageCheckBoxLabel());
         floppyImageEditor.addLabelStyleName(style.attachImageSelectBoxLabel());
         isoImageEditor.addLabelStyleName(style.attachImageSelectBoxLabel());
-        floppyImageEditor.addContentWidgetStyleName(style.attachImageSelectbox());
-        isoImageEditor.addContentWidgetStyleName(style.attachImageSelectbox());
+        floppyImageEditor.addContentWidgetContainerStyleName(style.attachImageSelectbox());
+        isoImageEditor.addContentWidgetContainerStyleName(style.attachImageSelectbox());
     }
 
     @Override

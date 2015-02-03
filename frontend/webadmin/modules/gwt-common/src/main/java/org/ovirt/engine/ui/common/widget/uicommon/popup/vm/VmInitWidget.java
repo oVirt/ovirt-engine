@@ -518,7 +518,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         windowsSysprepTimeZoneEditor.addStyleName(customizableStyle.primaryOption());
         inputLocaleEditor.addStyleName(customizableStyle.primaryOption());
         uiLanguageEditor.addStyleName(customizableStyle.primaryOption());
-        sysprepScriptEditor.setContentWidgetStyleName(customizableStyle.customScript());
+        sysprepScriptEditor.setContentWidgetContainerStyleName(customizableStyle.customScript());
         activeDirectoryOUEditor.addStyleName(customizableStyle.primaryOption());
         systemLocaleEditor.addStyleName(customizableStyle.primaryOption());
         userLocaleEditor.addStyleName(customizableStyle.primaryOption());
@@ -537,7 +537,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         sysprepPasswordSetEditor.addStyleName(customizableStyle.primaryOption());
         regenerateKeysEnabledEditor.addStyleName(customizableStyle.primaryOption());
 
-        customScriptEditor.setContentWidgetStyleName(customizableStyle.customScript());
+        customScriptEditor.setContentWidgetContainerStyleName(customizableStyle.customScript());
 
         authenticationExpanderContent.addStyleName(customizableStyle.expanderContent());
         customScriptExpanderContent.addStyleName(customizableStyle.expanderContent());

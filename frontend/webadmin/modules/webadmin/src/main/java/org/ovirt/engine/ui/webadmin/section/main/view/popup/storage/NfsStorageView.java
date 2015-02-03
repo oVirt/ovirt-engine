@@ -149,7 +149,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     }
 
     void addStyles() {
-        pathEditor.addContentWidgetStyleName(style.pathEditorContent());
+        pathEditor.addContentWidgetContainerStyleName(style.pathEditorContent());
 
         expanderContent.setClassName(style.expanderContent());
 

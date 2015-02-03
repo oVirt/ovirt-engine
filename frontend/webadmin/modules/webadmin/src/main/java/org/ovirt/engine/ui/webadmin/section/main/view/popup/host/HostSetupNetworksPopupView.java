@@ -109,8 +109,8 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initStatusPanel();
-        checkConnectivity.setContentWidgetStyleName(style.checkCon());
-        commitChanges.setContentWidgetStyleName(style.commitChanges());
+        checkConnectivity.setContentWidgetContainerStyleName(style.checkCon());
+        commitChanges.setContentWidgetContainerStyleName(style.commitChanges());
         initUnassignedNetworksPanel();
         localize();
         driver.initialize(this);

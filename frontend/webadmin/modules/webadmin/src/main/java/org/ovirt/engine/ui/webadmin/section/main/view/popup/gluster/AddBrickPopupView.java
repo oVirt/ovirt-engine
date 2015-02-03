@@ -159,10 +159,10 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
     }
 
     protected void addStyles() {
-        volumeTypeEditor.addContentWidgetStyleName(style.editorContentWidget());
-        replicaCountEditor.addContentWidgetStyleName(style.editorContentWidget());
-        stripeCountEditor.addContentWidgetStyleName(style.editorContentWidget());
-        forceEditor.addContentWidgetStyleName(style.forceEditorWidget());
+        volumeTypeEditor.addContentWidgetContainerStyleName(style.editorContentWidget());
+        replicaCountEditor.addContentWidgetContainerStyleName(style.editorContentWidget());
+        stripeCountEditor.addContentWidgetContainerStyleName(style.editorContentWidget());
+        forceEditor.addContentWidgetContainerStyleName(style.forceEditorWidget());
     }
 
     protected void initTableColumns(ApplicationConstants constants){

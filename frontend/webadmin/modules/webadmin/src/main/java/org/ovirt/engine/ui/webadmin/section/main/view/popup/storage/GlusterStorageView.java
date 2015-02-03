@@ -83,7 +83,7 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
     }
 
     void addStyles() {
-        pathEditor.addContentWidgetStyleName(style.pathEditorContent());
+        pathEditor.addContentWidgetContainerStyleName(style.pathEditorContent());
     }
 
     void localize(ApplicationConstants constants) {

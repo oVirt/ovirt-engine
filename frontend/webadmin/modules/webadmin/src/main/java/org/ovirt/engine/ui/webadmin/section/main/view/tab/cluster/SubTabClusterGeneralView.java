@@ -145,7 +145,7 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
     }
 
     private void addStyles() {
-        glusterSwiftStatusEditor.addContentWidgetStyleName(style.glusterSwiftStatus());
+        glusterSwiftStatusEditor.addContentWidgetContainerStyleName(style.glusterSwiftStatus());
     }
 
     @Override

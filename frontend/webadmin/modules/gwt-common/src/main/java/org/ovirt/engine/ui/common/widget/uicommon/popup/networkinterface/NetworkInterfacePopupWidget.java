@@ -205,14 +205,14 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     }
 
     private void applyStyles() {
-        cardStatusEditor.addContentWidgetStyleName(style.statusEditorContent());
-        pluggedEditor.addContentWidgetStyleName(style.statusRadioContent());
-        unpluggedEditor.addContentWidgetStyleName(style.statusRadioContent());
+        cardStatusEditor.addContentWidgetContainerStyleName(style.statusEditorContent());
+        pluggedEditor.addContentWidgetContainerStyleName(style.statusRadioContent());
+        unpluggedEditor.addContentWidgetContainerStyleName(style.statusRadioContent());
 
-        linkStateEditor.addContentWidgetStyleName(style.statusEditorContent());
-        linkedEditor.addContentWidgetStyleName(style.statusRadioContent());
-        unlinkedEditor.addContentWidgetStyleName(style.statusRadioContent());
+        linkStateEditor.addContentWidgetContainerStyleName(style.statusEditorContent());
+        linkedEditor.addContentWidgetContainerStyleName(style.statusRadioContent());
+        unlinkedEditor.addContentWidgetContainerStyleName(style.statusRadioContent());
 
-        enableManualMacCheckbox.addContentWidgetStyleName(style.checkBox());
+        enableManualMacCheckbox.addContentWidgetContainerStyleName(style.checkBox());
     }
 }

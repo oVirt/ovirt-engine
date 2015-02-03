@@ -157,7 +157,7 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         // Set Styles
-        checkConnectivity.setContentWidgetStyleName(style.checkCon());
+        checkConnectivity.setContentWidgetContainerStyleName(style.checkCon());
         mainPanel.getElement().setPropertyString("width", "100%"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Localize

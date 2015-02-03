@@ -38,8 +38,8 @@ public class DetachableLabel extends BaseEntityModelDetachableWidget {
         initialize(decorated, attachedSeparatedImage, style);
     }
 
-    public void setContentWidgetStyleName(String contentWidgetStyleName) {
-        decorated.setStyleName(contentWidgetStyleName);
+    public void setLabelStyleName(String labelStyleName) {
+        decorated.setStyleName(labelStyleName);
     }
 
 }

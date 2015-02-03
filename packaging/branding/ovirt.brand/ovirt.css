@@ -1,0 +1,24 @@
+/*
+   ovirt.css -- main CSS file
+
+   This CSS file will eventually become the main source of CSS in ovirt.
+   Long-term goal is to use SASS or LESS to build this file. For now,
+   it is maintained by hand.
+
+   This will be preferred over native GWT CSS solutions because we're moving
+   away from pure GWT to a more hybrid approach. UI Plugins and components
+   need to access the app's CSS, and they can't do that if the CSS is
+   owned and obfuscated by GWT.
+*/
+
+label[for=LoginFormView_userName], label[for=LoginFormView_password], label[for=LoginFormView_profile] {
+    color: #fff;
+}
+
+.labelEnabled {
+    color: #333333;
+}
+
+.labelDisabled {
+    color: gray;
+}

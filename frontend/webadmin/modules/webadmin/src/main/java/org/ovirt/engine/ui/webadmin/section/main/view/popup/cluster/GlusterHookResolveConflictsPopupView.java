@@ -200,9 +200,9 @@ public class GlusterHookResolveConflictsPopupView extends AbstractModelBoundPopu
     }
 
     private void addStyles() {
-        contentEditor.addContentWidgetStyleName(style.contentViewWidget());
-        checksumEditor.addContentWidgetStyleName(style.contentViewWidget());
-        statusEditor.addContentWidgetStyleName(style.contentViewWidget());
+        contentEditor.addContentWidgetContainerStyleName(style.contentViewWidget());
+        checksumEditor.addContentWidgetContainerStyleName(style.contentViewWidget());
+        statusEditor.addContentWidgetContainerStyleName(style.contentViewWidget());
     }
 
     private void localize(ApplicationConstants constants) {

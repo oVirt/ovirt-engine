@@ -83,7 +83,7 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
     }
 
     void addStyles() {
-        pathEditor.addContentWidgetStyleName(style.pathEditorContent());
+        pathEditor.addContentWidgetContainerStyleName(style.pathEditorContent());
     }
 
     void localize(ApplicationConstants constants) {

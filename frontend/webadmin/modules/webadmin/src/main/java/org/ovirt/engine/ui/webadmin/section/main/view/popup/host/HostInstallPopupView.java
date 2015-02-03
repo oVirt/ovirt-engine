@@ -247,8 +247,8 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     }
 
     private void addStyles() {
-        overrideIpTablesEditor.addContentWidgetStyleName(style.overrideIpStyle());
-        activateHostAfterInstallEditor.addContentWidgetStyleName(style.activateHostAfterInstallStyle());
+        overrideIpTablesEditor.addContentWidgetContainerStyleName(style.overrideIpStyle());
+        activateHostAfterInstallEditor.addContentWidgetContainerStyleName(style.activateHostAfterInstallStyle());
         publicKeyEditor.setCustomStyle(style.pkStyle());
     }
 }

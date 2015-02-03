@@ -70,7 +70,7 @@ public class EntityModelDetachableWidget extends BaseEntityModelDetachableWidget
             contentWidgetContainer.getElement().getStyle().setFloat(Float.RIGHT);
         } else if (attachedImageAlign == Align.RIGHT) {
             contentWidgetContainer.getElement().getStyle().setFloat(Float.LEFT);
-            contentWidgetContainer.getElement().getStyle().setWidth(AbstractValidatedWidgetWithLabel.CONTENT_WIDTH, Unit.PX);
+            contentWidgetContainer.getElement().getStyle().setWidth(AbstractValidatedWidgetWithLabel.CONTENT_WIDTH_LEGACY, Unit.PX);
         }
     }
 

@@ -514,15 +514,15 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     }
 
     private void addStyles() {
-        overrideIpTablesEditor.addContentWidgetStyleName(style.overrideIpStyle());
-        protocolEditor.addContentWidgetStyleName(style.protocolStyle());
-        externalHostProviderEnabledEditor.addContentWidgetStyleName(style.externalHostProviderEnabledEditorContent());
-        providerSearchFilterEditor.addContentWidgetStyleName(style.searchFilter());
+        overrideIpTablesEditor.addContentWidgetContainerStyleName(style.overrideIpStyle());
+        protocolEditor.addContentWidgetContainerStyleName(style.protocolStyle());
+        externalHostProviderEnabledEditor.addContentWidgetContainerStyleName(style.externalHostProviderEnabledEditorContent());
+        providerSearchFilterEditor.addContentWidgetContainerStyleName(style.searchFilter());
         providerSearchFilterEditor.setStyleName(style.searchFilterLabel());
         providerSearchFilterEditor.setLabelStyleName(style.emptyEditor());
-        providerSearchFilterLabel.addContentWidgetStyleName(style.emptyEditor());
+        providerSearchFilterLabel.addContentWidgetContainerStyleName(style.emptyEditor());
         providerSearchFilterLabel.setStyleName(style.searchFilterLabel());
-        fetchSshFingerprint.addContentWidgetStyleName(style.fingerprintEditor());
+        fetchSshFingerprint.addContentWidgetContainerStyleName(style.fingerprintEditor());
         expanderContent.setStyleName(style.expanderContent());
         publicKeyEditor.setCustomStyle(style.pkStyle());
         tabPanel.addBarStyle(style.bar());

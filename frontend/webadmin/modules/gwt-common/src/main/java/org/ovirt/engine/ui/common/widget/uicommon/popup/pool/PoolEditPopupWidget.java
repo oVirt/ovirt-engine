@@ -93,28 +93,28 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
 
         // In 'ja' locale the text of prestarted vms is too long for 230px.
         // Changed all the right column widgets width to 250px.
-        dataCenterWithClusterEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
-        vmTypeEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
-        quotaEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
-        instanceTypesEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
-        descriptionEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
-        memSizeEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
-        templateWithVersionEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        dataCenterWithClusterEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
+        vmTypeEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
+        quotaEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
+        instanceTypesEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
+        descriptionEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
+        memSizeEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
+        templateWithVersionEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
         detachableMemSizeEditor.addContentWrapperStypeName(style.generalTabExtendedRightWidgetWrapperWidth());
-        totalvCPUsEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        totalvCPUsEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
         totalvCPUsEditorWithInfoIcon.getContentWidget().setContentWrapperStypeName(style.generalTabExtendedRightWidgetWrapperWidth());
-        corePerSocketEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        corePerSocketEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
         corePerSocketEditorWithDetachable.addContentWrapperStypeName(style.generalTabExtendedRightWidgetWrapperWidth());
-        numOfSocketsEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        numOfSocketsEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
         numOfSocketsEditorWithDetachable.addContentWrapperStypeName(style.generalTabExtendedRightWidgetWrapperWidth());
-        oSTypeEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
-        isStatelessEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
-        isRunAndPauseEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
-        isDeleteProtectedEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        oSTypeEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
+        isStatelessEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
+        isRunAndPauseEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
+        isDeleteProtectedEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
         editIncreaseVmsPanel.addStyleName(style.generalTabExtendedRightWidgetWidth());
         editPrestartedVmsPanel.addStyleName(style.generalTabExtendedRightWidgetWidth());
         nameEditor.addStyleName(style.generalTabExtendedRightWidgetWidth());
-        nameEditor.addContentWidgetStyleName(style.generalTabExtendedRightWidgetWidth());
+        nameEditor.addContentWidgetContainerStyleName(style.generalTabExtendedRightWidgetWidth());
     }
 
     @Override

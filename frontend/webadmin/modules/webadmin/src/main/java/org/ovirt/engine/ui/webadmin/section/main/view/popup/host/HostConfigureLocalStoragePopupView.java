@@ -266,12 +266,12 @@ public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBound
     }
 
     private void addStyles() {
-        optimizationNoneEditor.setContentWidgetStyleName(style.fullWidth());
-        optimizationForServerEditor.setContentWidgetStyleName(style.fullWidth());
-        optimizationForDesktopEditor.setContentWidgetStyleName(style.fullWidth());
-        optimizationCustomEditor.setContentWidgetStyleName(style.fullWidth());
+        optimizationNoneEditor.setContentWidgetContainerStyleName(style.fullWidth());
+        optimizationForServerEditor.setContentWidgetContainerStyleName(style.fullWidth());
+        optimizationForDesktopEditor.setContentWidgetContainerStyleName(style.fullWidth());
+        optimizationCustomEditor.setContentWidgetContainerStyleName(style.fullWidth());
 
-        countThreadsAsCoresEditor.setContentWidgetStyleName(style.fullWidth());
+        countThreadsAsCoresEditor.setContentWidgetContainerStyleName(style.fullWidth());
     }
 
     void localize() {

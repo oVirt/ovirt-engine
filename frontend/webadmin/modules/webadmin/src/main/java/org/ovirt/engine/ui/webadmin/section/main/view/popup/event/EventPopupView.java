@@ -68,9 +68,9 @@ public class EventPopupView extends AbstractModelBoundPopupView<EventModel> impl
     }
 
     private void applyStyles() {
-        eventIdLabel.addContentWidgetStyleName(style.editorContent());
-        eventTimeLabel.addContentWidgetStyleName(style.editorContent());
-        eventMessageTextArea.addContentWidgetStyleName(style.editorContent());
+        eventIdLabel.addContentWidgetContainerStyleName(style.editorContent());
+        eventTimeLabel.addContentWidgetContainerStyleName(style.editorContent());
+        eventMessageTextArea.addContentWidgetContainerStyleName(style.editorContent());
     }
 
     @Override

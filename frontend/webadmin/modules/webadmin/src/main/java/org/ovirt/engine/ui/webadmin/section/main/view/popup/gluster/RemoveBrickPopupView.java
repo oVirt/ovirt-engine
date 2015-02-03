@@ -90,7 +90,7 @@ public class RemoveBrickPopupView extends AbstractModelBoundPopupView<RemoveBric
     }
 
     protected void addStyles() {
-        migrateEditor.addContentWidgetStyleName(style.migrateOption());
+        migrateEditor.addContentWidgetContainerStyleName(style.migrateOption());
     }
 
     private void localize(ApplicationConstants constants) {

@@ -371,7 +371,7 @@
                                         <g:Label ui:field="testMessage" addStyleNames="{style.testMessage}"/>
                                     </g:HTMLPanel>
                                 </g:FlowPanel>
-                                <ge:EntityModelCheckBoxEditor ui:field="disableAutomaticPowerManagementEditor"  labelStyleNames="{style.policyOverrideLabel}"/>
+                                <ge:EntityModelCheckBoxEditor ui:field="disableAutomaticPowerManagementEditor" addLabelStyleNames="{style.policyOverrideLabel}"/>
                             </g:FlowPanel>
                         </t:content>
                     </t:DialogTab>

@@ -84,7 +84,7 @@ public class GeoRepActionConfirmPopUpView extends AbstractModelBoundPopupView<Gl
     }
 
     private void addStyles() {
-        forceEditor.addContentWidgetStyleName(style.checkBoxEditorWidget());
+        forceEditor.addContentWidgetContainerStyleName(style.checkBoxEditorWidget());
     }
 
     private void localize() {

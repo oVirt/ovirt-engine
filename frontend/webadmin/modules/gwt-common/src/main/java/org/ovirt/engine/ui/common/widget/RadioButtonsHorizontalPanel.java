@@ -13,7 +13,7 @@ public class RadioButtonsHorizontalPanel extends HorizontalPanel {
 
     @UiConstructor
     public RadioButtonsHorizontalPanel(String name) {
-        setStyleName("avw_contentWidget_pfly_fix"); //$NON-NLS-1$
+        setStyleName("avw_contentWidgetContainer_pfly_fix"); //$NON-NLS-1$
         this.name = name;
     }
 

@@ -134,8 +134,8 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
     }
 
     private void applyStyles() {
-        portMirroringEditor.addContentWidgetStyleName(style.portMirroringEditor());
-        publicUseEditor.addContentWidgetStyleName(style.publicUseEditor());
+        portMirroringEditor.addContentWidgetContainerStyleName(style.portMirroringEditor());
+        publicUseEditor.addContentWidgetContainerStyleName(style.publicUseEditor());
         publicUseEditor.asCheckBox().addStyleName(style.checkBox());
     }
 }

@@ -1,7 +1,9 @@
 package org.ovirt.engine.ui.common.widget;
 
+import org.gwtbootstrap3.client.ui.FormLabel;
+import org.gwtbootstrap3.client.ui.constants.Styles;
+import org.ovirt.engine.ui.common.css.OvirtCss;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
-import org.ovirt.engine.ui.common.utils.PatternflyConstants;
 import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
 
@@ -9,7 +11,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.LabelElement;
 import com.google.gwt.event.dom.client.HasAllKeyHandlers;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -29,7 +30,20 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
+ * <p>
  * Base class for validated widgets that have a label associated with them.
+ * </p>
+ * <p>
+ * This widget can run in legacy mode or PatternFly mode. Legacy mode uses absolute positioning
+ * with hardcoded pixels, and should be avoided. PatternFly mode makes use of PatternFly (Bootstrap)
+ * grid positioning, and is preferred.
+ * </p>
+ * <p>
+ * To enable PatternFly mode,  call setUsePatternFly(true). You'll also probably want to set
+ * PatternFly grid classes on both the label and the widget container. E.g: <br/>
+ * addLabelStyleName(Styles.SM_2);<br/>
+ * addContentWidgetContainerStyleName(Styles.SM_10);<br/>
+ * </p>
  * @param <W>
  *            Content widget type.
  */
@@ -42,17 +56,14 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
 
     interface Style extends CssResource {
 
-        String labelEnabled();
+        // TODO: remove these when all usages are PatternFly-based
+        String label_legacy();
 
-        String labelEnabledPatternFly();
+        String wrapper_legacy();
 
-        String labelDisabled();
+        String contentWidgetContainer_legacy();
 
-        String labelHidden();
-
-        String wrapper();
-
-        String contentWidget();
+        String contentWidget_legacy();
     }
 
     private final W contentWidget;
@@ -61,7 +72,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     HTMLPanel wrapperPanel;
 
     @UiField
-    LabelElement labelElement;
+    FormLabel label;
 
     @UiField
     SimplePanel contentWidgetContainer;
@@ -69,8 +80,8 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     @UiField
     Style style;
 
-    // width in PX
-    public static final int CONTENT_WIDTH = 230;
+    // width in PX -- only used in legacy mode
+    public static final int CONTENT_WIDTH_LEGACY = 230;
 
     /**
      * By default the title gets erased, when the setEnabled is called
@@ -81,13 +92,13 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
 
     private VisibilityRenderer renderer;
 
-    private boolean usePatternFly;
-
     public AbstractValidatedWidgetWithLabel(W contentWidget, VisibilityRenderer renderer) {
         this.contentWidget = contentWidget;
         this.renderer = renderer;
 
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
+
+        setUsePatternFly(false);
     }
 
     public AbstractValidatedWidgetWithLabel(W contentWidget) {
@@ -99,34 +110,50 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         super.initWidget(wrapperWidget);
         contentWidgetContainer.setWidget(contentWidget);
 
-        // Adjust content widget width
-        contentWidget.asWidget().setWidth("100%"); //$NON-NLS-1$
+        label.addStyleName(OvirtCss.LABEL_ENABLED);
 
         // Assign ID to content widget element if it's missing or empty
         Element contentWidgetElement = getContentWidgetElement();
         if (contentWidgetElement.getId() == null || contentWidgetElement.getId().isEmpty()) {
-            contentWidgetElement.setId(DOM.createUniqueId());
+            setElementId(DOM.createUniqueId());
         }
-
-        // Connect label with content widget for better accessibility
-        updateLabelElementId(getContentWidgetElement().getId());
     }
 
+    protected FormLabel getFormLabel() {
+        return label;
+    }
+
+    /**
+     * set for="" for better accessibility
+     */
     protected void updateLabelElementId(String elementId) {
-        labelElement.setHtmlFor(elementId);
+        label.setFor(elementId);
     }
 
-    public void setUsePatternFly(final boolean use) {
-        this.usePatternFly = use;
-        if (use) {
-            // set the style to the bootstrap / patternfly style
-            setContentWidgetStyleName(PatternflyConstants.FORM_CONTROL);
-            // Set the content width back to default.
-            addLabelStyleName("label col-sm-2 col-md-2 control-label"); //$NON-NLS-1$
-            addContentWidgetContainerStyleName("col-sm-10 col-md-10"); //$NON-NLS-1$
-            wrapperPanel.getElement().addClassName(PatternflyConstants.FORM_GROUP);
-            wrapperPanel.getElement().removeClassName(style.wrapper());
-            contentWidgetContainer.asWidget().removeStyleName(style.contentWidget());
+    public void setUsePatternFly(final boolean usePatternFly) {
+
+        // toggle styles -- remove both PatternFly and non-PatternFly styles
+        removeLabelStyleName(style.label_legacy());
+        removeContentWidgetStyleName(style.contentWidget_legacy());
+        removeContentWidgetStyleName(Styles.FORM_CONTROL);
+        removeContentWidgetContainerStyleName(style.contentWidgetContainer_legacy());
+        removeContentWidgetContainerStyleName("avw_contentWidgetContainer_pfly_fix"); //$NON-NLS-1$
+        removeWrapperStyleName(Styles.FORM_GROUP);
+        removeWrapperStyleName(style.wrapper_legacy());
+        removeWrapperStyleName("avw_wrapper_pfly_fix"); //$NON-NLS-1$
+
+        // add the proper styles
+        if (usePatternFly) {
+            addContentWidgetStyleName(Styles.FORM_CONTROL);
+            addWrapperStyleName(Styles.FORM_GROUP);
+        }
+        else {
+            addLabelStyleName(style.label_legacy());
+            addContentWidgetStyleName(style.contentWidget_legacy());
+            addContentWidgetContainerStyleName(style.contentWidgetContainer_legacy());
+            addContentWidgetContainerStyleName("avw_contentWidgetContainer_pfly_fix"); //$NON-NLS-1$
+            addWrapperStyleName(style.wrapper_legacy());
+            addWrapperStyleName("avw_wrapper_pfly_fix"); //$NON-NLS-1$
         }
     }
 
@@ -158,19 +185,8 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         return contentWidget.asWidget().getElement();
     }
 
-    // TODO temporarily public, should be protected
     public SimplePanel getContentWidgetContainer() {
         return contentWidgetContainer;
-    }
-
-    protected LabelElement getLabelElement() {
-        return labelElement;
-    }
-
-    public void setLabelStyleNames(String styleNames) {
-        for (String name : styleNames.split("[,\\s]+")) { //$NON-NLS-1$
-            labelElement.addClassName(name);
-        }
     }
 
     @Override
@@ -186,12 +202,12 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
 
     @Override
     public String getLabel() {
-        return labelElement.getInnerText();
+        return label.getElement().getInnerText();
     }
 
     @Override
-    public void setLabel(String label) {
-        labelElement.setInnerText(label);
+    public void setLabel(String labelText) {
+        label.getElement().setInnerText(labelText);
     }
 
     @Override
@@ -255,19 +271,9 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         contentWidget.setEnabled(enabled);
 
         if (enabled) {
-            if (usePatternFly) {
-                getLabelElement().replaceClassName(style.labelDisabled(), style.labelEnabledPatternFly());
-            } else {
-                getLabelElement().replaceClassName(style.labelDisabled(), style.labelEnabled());
-            }
+            getFormLabel().getElement().replaceClassName(OvirtCss.LABEL_DISABLED, OvirtCss.LABEL_ENABLED);
         } else {
-            if (usePatternFly) {
-                getLabelElement().replaceClassName(style.labelEnabledPatternFly(), style.labelDisabled());
-                // In case the style got added somewhere else, remove it.
-                getLabelElement().removeClassName(style.labelEnabled());
-            } else {
-                getLabelElement().replaceClassName(style.labelEnabled(), style.labelDisabled());
-            }
+            getFormLabel().getElement().replaceClassName(OvirtCss.LABEL_ENABLED, OvirtCss.LABEL_DISABLED);
         }
 
         if (!keepTitleOnSetEnabled) {
@@ -285,20 +291,19 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         contentWidget.asWidget().setTitle(title);
     }
 
+
+    // set styleNames on my components
+
     public void addContentWidgetStyleName(String styleName) {
-        if (usePatternFly) {
-            getContentWidgetElement().addClassName(styleName);
-        } else {
-            contentWidgetContainer.addStyleName(styleName);
-        }
+        getContentWidget().asWidget().addStyleName(styleName);
     }
 
     public void setContentWidgetStyleName(String styleName) {
-        if (usePatternFly) {
-            getContentWidgetElement().setClassName(styleName);
-        } else {
-            contentWidgetContainer.setStyleName(styleName);
-        }
+        getContentWidget().asWidget().setStyleName(styleName);
+    }
+
+    public void removeContentWidgetStyleName(String styleName) {
+        getContentWidget().asWidget().removeStyleName(styleName);
     }
 
     public void addContentWidgetContainerStyleName(String styleName) {
@@ -309,20 +314,53 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         contentWidgetContainer.setStyleName(styleName);
     }
 
-    public void setLabelStyleName(String styleName) {
-        getLabelElement().setClassName(styleName);
+    public void removeContentWidgetContainerStyleName(String styleName) {
+        contentWidgetContainer.removeStyleName(styleName);
     }
 
     public void addLabelStyleName(String styleName) {
-        getLabelElement().addClassName(styleName);
+        getFormLabel().addStyleName(styleName);
+    }
+
+    public void removeLabelStyleName(String styleName) {
+        getFormLabel().removeStyleName(styleName);
+    }
+
+    public void setLabelStyleName(String styleName) {
+        getFormLabel().setStyleName(styleName);
+    }
+
+    /**
+     * @param styleNames space or comma-delimited list of style names
+     */
+    public void addLabelStyleNames(String styleNames) {
+        for (String name : styleNames.split("[,\\s]+")) { //$NON-NLS-1$
+            addLabelStyleName(name);
+        }
+    }
+
+    // UIBinder-capable alias for addLabelStyleNames
+    public void setAddLabelStyleNames(String styleNames) {
+        addLabelStyleNames(styleNames);
     }
 
     public void addWrapperStyleName(String styleName) {
         wrapperPanel.addStyleName(styleName);
     }
 
+    public void setWrapperStyleName(String styleName) {
+        wrapperPanel.setStyleName(styleName);
+    }
+
+    public void removeWrapperStyleName(String styleName) {
+        wrapperPanel.removeStyleName(styleName);
+    }
+
+    // end set styleNames on my components
+
+
     public void hideLabel() {
-        getLabelElement().addClassName(style.labelHidden());
+        getFormLabel().setVisible(false);
     }
 
     public void setKeepTitleOnSetEnabled(boolean keepTitleOnSetEnabled) {

@@ -5,6 +5,8 @@ import java.util.Arrays;
 import org.gwtbootstrap3.client.ui.Label;
 import org.gwtbootstrap3.client.ui.ListBox;
 import org.gwtbootstrap3.client.ui.Well;
+import org.gwtbootstrap3.client.ui.constants.ColumnSize;
+import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.utils.VisibleLocalesInfoData;
@@ -108,6 +110,21 @@ public abstract class AbstractLoginFormView extends AbstractView {
         errorMessagePanel.setVisible(false);
         informationMessagePanel.setVisible(false);
         passwordEditor.setAutoComplete("off"); //$NON-NLS-1$
+
+        userNameEditor.addLabelStyleName(ColumnSize.SM_2.getCssName());
+        userNameEditor.addLabelStyleName(Styles.CONTROL_LABEL);
+        userNameEditor.addLabelStyleName("white"); //$NON-NLS-1$
+        userNameEditor.addContentWidgetContainerStyleName(ColumnSize.SM_10.getCssName());
+
+        passwordEditor.addLabelStyleName(ColumnSize.SM_2.getCssName());
+        passwordEditor.addLabelStyleName(Styles.CONTROL_LABEL);
+        userNameEditor.addLabelStyleName("white"); //$NON-NLS-1$
+        passwordEditor.addContentWidgetContainerStyleName(ColumnSize.SM_10.getCssName());
+
+        profileEditor.addLabelStyleName(ColumnSize.SM_2.getCssName());
+        profileEditor.addLabelStyleName(Styles.CONTROL_LABEL);
+        userNameEditor.addLabelStyleName("white"); //$NON-NLS-1$
+        profileEditor.addContentWidgetContainerStyleName(ColumnSize.SM_10.getCssName());
     }
 
     private void initLocalizationEditor() {

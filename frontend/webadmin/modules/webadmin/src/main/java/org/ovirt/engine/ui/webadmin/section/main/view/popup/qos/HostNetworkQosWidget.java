@@ -53,9 +53,9 @@ public class HostNetworkQosWidget extends QosWidget<HostNetworkQos, HostNetworkQ
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         WidgetIdHandler.idHandler.generateAndSetIds(this);
 
-        outAverageLinkshare.addContentWidgetStyleName(style.valueBox());
-        outAverageUpperlimit.addContentWidgetStyleName(style.valueBox());
-        outAverageRealtime.addContentWidgetStyleName(style.valueBox());
+        outAverageLinkshare.addContentWidgetContainerStyleName(style.valueBox());
+        outAverageUpperlimit.addContentWidgetContainerStyleName(style.valueBox());
+        outAverageRealtime.addContentWidgetContainerStyleName(style.valueBox());
 
         outAverageLinkshare.setLabel(constants.hostNetworkQosPopupOutAverageLinkshare());
         outAverageUpperlimit.setLabel(constants.hostNetworkQosPopupOutAverageUpperlimit());

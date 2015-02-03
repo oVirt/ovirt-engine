@@ -1504,18 +1504,18 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     }
 
     protected void applyStyles() {
-        hostCpuEditor.addContentWidgetStyleName(style.longCheckboxContent());
-        allowConsoleReconnectEditor.addContentWidgetStyleName(style.longCheckboxContent());
-        provisioningEditor.addContentWidgetStyleName(style.provisioningEditorContent());
-        provisioningThinEditor.addContentWidgetStyleName(style.provisioningRadioContent());
-        provisioningCloneEditor.addContentWidgetStyleName(style.provisioningRadioContent());
-        cdAttachedEditor.addContentWidgetStyleName(style.cdAttachedLabelWidth());
-        cdImageEditor.addContentWidgetStyleName(style.cdImageEditor());
-        numOfMonitorsEditor.addContentWidgetStyleName(style.monitorsStyles());
+        hostCpuEditor.addContentWidgetContainerStyleName(style.longCheckboxContent());
+        allowConsoleReconnectEditor.addContentWidgetContainerStyleName(style.longCheckboxContent());
+        provisioningEditor.addContentWidgetContainerStyleName(style.provisioningEditorContent());
+        provisioningThinEditor.addContentWidgetContainerStyleName(style.provisioningRadioContent());
+        provisioningCloneEditor.addContentWidgetContainerStyleName(style.provisioningRadioContent());
+        cdAttachedEditor.addContentWidgetContainerStyleName(style.cdAttachedLabelWidth());
+        cdImageEditor.addContentWidgetContainerStyleName(style.cdImageEditor());
+        numOfMonitorsEditor.addContentWidgetContainerStyleName(style.monitorsStyles());
         numOfMonitorsEditor.setStyleName(style.monitorsStyles());
         numOfMonitorsEditor.hideLabel();
-        migrationModeEditor.addContentWidgetStyleName(style.migrationSelectorInner());
-        isVirtioScsiEnabled.addContentWidgetStyleName(style.isVirtioScsiEnabledEditor());
+        migrationModeEditor.addContentWidgetContainerStyleName(style.migrationSelectorInner());
+        isVirtioScsiEnabled.addContentWidgetContainerStyleName(style.isVirtioScsiEnabledEditor());
     }
 
     @Override

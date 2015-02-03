@@ -1,46 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:style type="org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel.Style">
-        .wrapper {
+        .wrapper_legacy {
             line-height: 30px;
             text-align: left;
         }
 
-        .label {
+        .label_legacy {
             font-size: 13px;
             padding: 0 5px;
             font-family: Arial, sans-serif;
-            line-height: 30px;
+            line-height: 16px;
         }
 
-        .labelEnabled {
-            color: #333333;
-        }
-
-        .labelEnabledPatternFly {
-            color: #fff;
-        }
-        .labelDisabled {
-            color: gray;
-        }
-
-        .labelHidden {
-            display: none;
-        }
-
-        .contentWidget {
+        .contentWidgetContainer_legacy {
             float: right;
             width: 238px;
             padding: 0 5px;
-            line-height: 30px;
+            line-height: 16px !important;
+        }
+
+        .contentWidget_legacy {
+            width: 100%;
         }
     </ui:style>
 
-    <g:HTMLPanel ui:field="wrapperPanel" addStyleNames="{style.wrapper} avw_wrapper_pfly_fix">
-        <label ui:field="labelElement" class="{style.label} {style.labelEnabled} avw_label_pfly_fix" />
-        <g:SimplePanel ui:field="contentWidgetContainer" addStyleNames="{style.contentWidget} avw_contentWidget_pfly_fix" />
+    <g:HTMLPanel ui:field="wrapperPanel">
+        <b:FormLabel ui:field="label"/>
+        <g:SimplePanel ui:field="contentWidgetContainer" />
         <div style="clear: both;" />
     </g:HTMLPanel>
 

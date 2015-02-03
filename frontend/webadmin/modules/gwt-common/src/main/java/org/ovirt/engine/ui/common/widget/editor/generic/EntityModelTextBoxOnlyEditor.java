@@ -31,8 +31,7 @@ public class EntityModelTextBoxOnlyEditor<T> extends AbstractValidatedWidgetWith
         super.initWidget(wrapperWidget);
 
         // Fix styles.
-        com.google.gwt.dom.client.Style labelStyle = getLabelElement().getStyle();
-        labelStyle.setDisplay(com.google.gwt.dom.client.Style.Display.NONE);
+        getFormLabel().setVisible(false);
 
         // Style textBoxStyle = getContentWidgetElement().getStyle();
         // textBoxStyle.setWidth(240, Style.Unit.PX);

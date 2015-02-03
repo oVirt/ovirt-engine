@@ -223,7 +223,7 @@ public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<Man
     }
 
     private void applyStyles() {
-        swiftStatusEditor.addContentWidgetStyleName(style.swiftStatusWidget());
+        swiftStatusEditor.addContentWidgetContainerStyleName(style.swiftStatusWidget());
     }
 
     @Override

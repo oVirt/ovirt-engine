@@ -198,16 +198,16 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
     }
 
     private void addStyles() {
-        brickEditor.addContentWidgetStyleName(style.generalValue());
-        statusEditor.addContentWidgetStyleName(style.generalValue());
-        portEditor.addContentWidgetStyleName(style.generalValue());
-        pidEditor.addContentWidgetStyleName(style.generalValue());
-        totalSizeEditor.addContentWidgetStyleName(style.generalValue());
-        freeSizeEditor.addContentWidgetStyleName(style.generalValue());
-        deviceEditor.addContentWidgetStyleName(style.generalValue());
-        blockSizeEditor.addContentWidgetStyleName(style.generalValue());
-        mountOptionsEditor.addContentWidgetStyleName(style.generalValue());
-        fileSystemEditor.addContentWidgetStyleName(style.generalValue());
+        brickEditor.addContentWidgetContainerStyleName(style.generalValue());
+        statusEditor.addContentWidgetContainerStyleName(style.generalValue());
+        portEditor.addContentWidgetContainerStyleName(style.generalValue());
+        pidEditor.addContentWidgetContainerStyleName(style.generalValue());
+        totalSizeEditor.addContentWidgetContainerStyleName(style.generalValue());
+        freeSizeEditor.addContentWidgetContainerStyleName(style.generalValue());
+        deviceEditor.addContentWidgetContainerStyleName(style.generalValue());
+        blockSizeEditor.addContentWidgetContainerStyleName(style.generalValue());
+        mountOptionsEditor.addContentWidgetContainerStyleName(style.generalValue());
+        fileSystemEditor.addContentWidgetContainerStyleName(style.generalValue());
 
         totalAllocatedEditor.addLabelStyleName(style.memStatLabel());
         freeBlocksEditor.addLabelStyleName(style.memStatLabel());
@@ -220,16 +220,16 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
         totalFreeSpaceEditor.addLabelStyleName(style.memStatLabel());
         releasableFreeSpaceEditor.addLabelStyleName(style.memStatLabel());
 
-        totalAllocatedEditor.addContentWidgetStyleName(style.memStatValue());
-        freeBlocksEditor.addContentWidgetStyleName(style.memStatValue());
-        freeFastbinBlocksEditor.addContentWidgetStyleName(style.memStatValue());
-        mmappedBlocksEditor.addContentWidgetStyleName(style.memStatValue());
-        spaceAllocatedMmappedEditor.addContentWidgetStyleName(style.memStatValue());
-        maxTotalAllocatedEditor.addContentWidgetStyleName(style.memStatValue());
-        spaceFreedFastbinEditor.addContentWidgetStyleName(style.memStatValue());
-        totalAllocatedSpaceEditor.addContentWidgetStyleName(style.memStatValue());
-        totalFreeSpaceEditor.addContentWidgetStyleName(style.memStatValue());
-        releasableFreeSpaceEditor.addContentWidgetStyleName(style.memStatValue());
+        totalAllocatedEditor.addContentWidgetContainerStyleName(style.memStatValue());
+        freeBlocksEditor.addContentWidgetContainerStyleName(style.memStatValue());
+        freeFastbinBlocksEditor.addContentWidgetContainerStyleName(style.memStatValue());
+        mmappedBlocksEditor.addContentWidgetContainerStyleName(style.memStatValue());
+        spaceAllocatedMmappedEditor.addContentWidgetContainerStyleName(style.memStatValue());
+        maxTotalAllocatedEditor.addContentWidgetContainerStyleName(style.memStatValue());
+        spaceFreedFastbinEditor.addContentWidgetContainerStyleName(style.memStatValue());
+        totalAllocatedSpaceEditor.addContentWidgetContainerStyleName(style.memStatValue());
+        totalFreeSpaceEditor.addContentWidgetContainerStyleName(style.memStatValue());
+        releasableFreeSpaceEditor.addContentWidgetContainerStyleName(style.memStatValue());
     }
 
     private void initTableColumns(ApplicationConstants constants) {

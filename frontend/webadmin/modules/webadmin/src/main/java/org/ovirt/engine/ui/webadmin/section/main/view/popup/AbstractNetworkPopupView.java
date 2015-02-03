@@ -255,18 +255,18 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     }
 
    protected void addStyles() {
-        vlanTag.addContentWidgetStyleName(style.valueBox());
+        vlanTag.addContentWidgetContainerStyleName(style.valueBox());
         mtuSelectorEditor.addLabelStyleName(style.noPadding());
         mtuSelectorEditor.addLabelStyleName(style.mtuLabel());
-        mtuSelectorEditor.addContentWidgetStyleName(style.mtuSelector());
-        mtuEditor.addContentWidgetStyleName(style.valueBox());
+        mtuSelectorEditor.addContentWidgetContainerStyleName(style.mtuSelector());
+        mtuEditor.addContentWidgetContainerStyleName(style.valueBox());
         mtuEditor.addWrapperStyleName(style.inlineBlock());
         mtuEditor.addWrapperStyleName(style.floatRight());
-        networkLabel.addContentWidgetStyleName(style.valueBox());
-        qosEditor.addContentWidgetStyleName(style.valueBox());
-        isVmNetworkEditor.addContentWidgetStyleName(style.vmNetworkStyle());
+        networkLabel.addContentWidgetContainerStyleName(style.valueBox());
+        qosEditor.addContentWidgetContainerStyleName(style.valueBox());
+        isVmNetworkEditor.addContentWidgetContainerStyleName(style.vmNetworkStyle());
         isVmNetworkEditor.asCheckBox().addStyleName(style.vmNetworkStyle());
-        vlanTagging.addContentWidgetStyleName(style.noPadding());
+        vlanTagging.addContentWidgetContainerStyleName(style.noPadding());
         vlanTagging.asCheckBox().addStyleName(style.noPadding());
         networkLabel.addLabelStyleName(style.noPadding());
         networkLabel.addLabelStyleName(style.inlineBlock());

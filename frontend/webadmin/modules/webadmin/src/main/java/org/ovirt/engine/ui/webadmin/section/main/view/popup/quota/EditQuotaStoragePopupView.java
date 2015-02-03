@@ -69,10 +69,10 @@ public class EditQuotaStoragePopupView extends AbstractModelBoundPopupView<EditQ
     }
 
     private void addStyles() {
-        storageValueEditor.addContentWidgetStyleName(style.textBoxWidth());
+        storageValueEditor.addContentWidgetContainerStyleName(style.textBoxWidth());
         storageValueEditor.addLabelStyleName(style.labelVisible());
-        specificStorageRadioButtonEditor.addContentWidgetStyleName(style.radioButtonWidth());
-        unlimitedStorageRadioButtonEditor.addContentWidgetStyleName(style.radioButtonWidth());
+        specificStorageRadioButtonEditor.addContentWidgetContainerStyleName(style.radioButtonWidth());
+        unlimitedStorageRadioButtonEditor.addContentWidgetContainerStyleName(style.radioButtonWidth());
     }
 
     private void initRadioButtonEditors() {

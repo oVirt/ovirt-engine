@@ -51,7 +51,7 @@ public class VmChangeCDPopupWidget extends AbstractModelBoundPopupWidget<AttachC
 
     void addStyles() {
         isoImageEditor.addLabelStyleName(style.isoImageEditorLabel());
-        isoImageEditor.addContentWidgetStyleName(style.isoImageEditorBox());
+        isoImageEditor.addContentWidgetContainerStyleName(style.isoImageEditorBox());
     }
 
     @Override

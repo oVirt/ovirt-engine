@@ -121,10 +121,10 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
     void addStyles(CommonApplicationTemplates templates,
             CommonApplicationConstants constants, CommonApplicationResources resources) {
         useUserAuthEditor.addLabelStyleName(style.userAuthLabel());
-        addressEditor.addContentWidgetStyleName(style.textBox());
-        portEditor.addContentWidgetStyleName(style.textBox());
-        chapUserEditor.addContentWidgetStyleName(style.chapBox());
-        chapPassEditor.addContentWidgetStyleName(style.chapBox());
+        addressEditor.addContentWidgetContainerStyleName(style.textBox());
+        portEditor.addContentWidgetContainerStyleName(style.textBox());
+        chapUserEditor.addContentWidgetContainerStyleName(style.chapBox());
+        chapPassEditor.addContentWidgetContainerStyleName(style.chapBox());
         chapUserEditor.addLabelStyleName(style.chapLabel());
         chapPassEditor.addLabelStyleName(style.chapLabel());
 

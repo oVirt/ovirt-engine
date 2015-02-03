@@ -55,7 +55,7 @@ public class GlusterHookContentPopupView extends AbstractModelBoundPopupView<Glu
 
     private void applyStyles() {
         contentEditor.setLabelStyleName(style.labelStyle());
-        contentEditor.setContentWidgetStyleName(style.content());
+        contentEditor.setContentWidgetContainerStyleName(style.content());
     }
 
     @Override

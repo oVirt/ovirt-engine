@@ -39,7 +39,7 @@ public class ComboBox<T> extends Composite {
     void addStyles() {
         listBoxEditor.addLabelStyleName(style.listBoxLabel());
         textBoxEditor.addLabelStyleName(style.textBoxLabel());
-        textBoxEditor.addContentWidgetStyleName(style.textBoxWidget());
+        textBoxEditor.addContentWidgetContainerStyleName(style.textBoxWidget());
 
         Element textBox = textBoxEditor.getContentWidgetContainer().getElement();
         Element input = textBox.getElementsByTagName("input").getItem(0); //$NON-NLS-1$

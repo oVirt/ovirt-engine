@@ -86,6 +86,7 @@ public class LoginFormView extends AbstractLoginFormView implements LoginFormPre
         super.setStyles();
         connectAutomaticallyEditor.setContentWidgetContainerStyleName("connect-automatically-checkbox"); //$NON-NLS-1$
         connectAutomaticallyEditor.addContentWidgetContainerStyleName("connect-automatically-checkbox_pfly_fix"); //$NON-NLS-1$
+        connectAutomaticallyEditor.setContentWidgetStyleName(""); //$NON-NLS-1$
         motdPanel.setVisible(false);
     }
 

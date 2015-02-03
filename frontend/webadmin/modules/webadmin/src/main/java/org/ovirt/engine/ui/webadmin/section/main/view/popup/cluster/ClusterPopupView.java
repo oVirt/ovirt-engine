@@ -430,15 +430,15 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     }
 
     private void addStyles() {
-        importGlusterConfigurationEditor.addContentWidgetStyleName(style.editorContentWidget());
-        migrateOnErrorOption_NOEditor.addContentWidgetStyleName(style.label());
-        migrateOnErrorOption_YESEditor.addContentWidgetStyleName(style.label());
-        migrateOnErrorOption_HA_ONLYEditor.addContentWidgetStyleName(style.label());
+        importGlusterConfigurationEditor.addContentWidgetContainerStyleName(style.editorContentWidget());
+        migrateOnErrorOption_NOEditor.addContentWidgetContainerStyleName(style.label());
+        migrateOnErrorOption_YESEditor.addContentWidgetContainerStyleName(style.label());
+        migrateOnErrorOption_HA_ONLYEditor.addContentWidgetContainerStyleName(style.label());
 
-        countThreadsAsCoresEditor.setContentWidgetStyleName(style.fullWidth());
-        enableTrustedServiceEditor.setContentWidgetStyleName(style.fullWidth());
-        enableHaReservationEditor.setContentWidgetStyleName(style.fullWidth());
-        enableOptionalReasonEditor.setContentWidgetStyleName(style.fullWidth());
+        countThreadsAsCoresEditor.setContentWidgetContainerStyleName(style.fullWidth());
+        enableTrustedServiceEditor.setContentWidgetContainerStyleName(style.fullWidth());
+        enableHaReservationEditor.setContentWidgetContainerStyleName(style.fullWidth());
+        enableOptionalReasonEditor.setContentWidgetContainerStyleName(style.fullWidth());
     }
 
     private void localize(ApplicationConstants constants) {

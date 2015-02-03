@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.common.widget.editor;
 
 import java.util.List;
 
-import org.ovirt.engine.ui.common.utils.PatternflyConstants;
+import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
@@ -11,7 +11,6 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.LabelElement;
 import com.google.gwt.dom.client.Node;
 import com.google.gwt.dom.client.Style.BorderStyle;
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
@@ -47,7 +46,7 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
         // align content widget container to the left and hide the LabelElement
         if (useCheckBoxWidgetLabel) {
             getContentWidgetContainer().getElement().getStyle().setFloat(Float.LEFT);
-            getLabelElement().getStyle().setDisplay(Display.NONE);
+            getFormLabel().setVisible(false);
             if (useFullWidthIfAvailable) {
                 getContentWidgetContainer().getElement().getStyle().setWidth(100, Unit.PCT);
             }
@@ -74,7 +73,7 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
             getCheckboxWidgetLabel().getStyle().setPosition(Position.RELATIVE);
             getCheckboxWidgetLabel().getStyle().setTop(-3, Unit.PX);
             // checkboxes don't use form-control
-            getContentWidgetElement().removeClassName(PatternflyConstants.FORM_CONTROL);
+            getContentWidgetElement().removeClassName(Styles.FORM_CONTROL);
         }
     }
 

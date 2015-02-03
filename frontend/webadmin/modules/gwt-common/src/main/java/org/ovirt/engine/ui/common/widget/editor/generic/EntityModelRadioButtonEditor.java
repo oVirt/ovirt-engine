@@ -1,19 +1,20 @@
 package org.ovirt.engine.ui.common.widget.editor.generic;
 
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.LabelElement;
-import com.google.gwt.dom.client.Node;
-import com.google.gwt.dom.client.Style.BorderStyle;
-import com.google.gwt.dom.client.Style.Display;
-import com.google.gwt.dom.client.Style.Float;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.editor.client.IsEditor;
-import com.google.gwt.user.client.ui.RadioButton;
 import java.util.List;
+
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import org.ovirt.engine.ui.common.widget.editor.WidgetWithLabelEditor;
+
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.LabelElement;
+import com.google.gwt.dom.client.Node;
+import com.google.gwt.dom.client.Style.BorderStyle;
+import com.google.gwt.dom.client.Style.Float;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.editor.client.IsEditor;
+import com.google.gwt.user.client.ui.RadioButton;
 
 /**
  * Composite Editor that uses {@link EntityModelRadioButton}.
@@ -47,7 +48,7 @@ public class EntityModelRadioButtonEditor extends AbstractValidatedWidgetWithLab
         if (useRadioButtonWidgetLabel) {
             getContentWidgetContainer().getElement().getStyle().setFloat(Float.LEFT);
             getContentWidgetContainer().getElement().getStyle().setWidth(100, Unit.PCT);
-            getLabelElement().getStyle().setDisplay(Display.NONE);
+            getFormLabel().setVisible(false);
         }
     }
 

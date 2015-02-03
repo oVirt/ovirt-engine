@@ -72,7 +72,7 @@ public class ProfileInstanceTypeEditor extends AbstractModelBoundPopupWidget<Vni
         driver.edit(model);
 
         profileEditor.addLabelStyleName(style.noDisplay());
-        profileEditor.addContentWidgetStyleName(style.contentStyle());
+        profileEditor.addContentWidgetContainerStyleName(style.contentStyle());
         profileEditor.setElementId(ElementIdUtils.createElementId(elementId, model.getNetworkInterface().getName()));
         syncSelectedItemWithNetworkInterface(model);
         model.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {

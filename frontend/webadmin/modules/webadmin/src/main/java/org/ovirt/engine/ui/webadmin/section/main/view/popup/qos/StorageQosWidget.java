@@ -116,12 +116,12 @@ public class StorageQosWidget extends QosWidget<StorageQos, StorageQosParameters
     }
 
     private void setStyle() {
-        throughputTotalEditor.setContentWidgetStyleName(style.valueWidth());
-        throughputReadEditor.setContentWidgetStyleName(style.valueWidth());
-        throughputWriteEditor.setContentWidgetStyleName(style.valueWidth());
-        iopsTotalEditor.setContentWidgetStyleName(style.valueWidth());
-        iopsReadEditor.setContentWidgetStyleName(style.valueWidth());
-        iopsWriteEditor.setContentWidgetStyleName(style.valueWidth());
+        throughputTotalEditor.setContentWidgetContainerStyleName(style.valueWidth());
+        throughputReadEditor.setContentWidgetContainerStyleName(style.valueWidth());
+        throughputWriteEditor.setContentWidgetContainerStyleName(style.valueWidth());
+        iopsTotalEditor.setContentWidgetContainerStyleName(style.valueWidth());
+        iopsReadEditor.setContentWidgetContainerStyleName(style.valueWidth());
+        iopsWriteEditor.setContentWidgetContainerStyleName(style.valueWidth());
     }
 
     private void localize(ApplicationConstants constants) {

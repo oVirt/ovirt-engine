@@ -202,7 +202,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     }
 
     private void addStyles() {
-      copyPermissionsEditor.addContentWidgetStyleName(style.textBoxWidth());
+      copyPermissionsEditor.addContentWidgetContainerStyleName(style.textBoxWidth());
     }
 
     private void initSliders() {

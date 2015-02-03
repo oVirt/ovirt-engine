@@ -142,9 +142,9 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     }
 
     void addStyle() {
-        isTemplatePublicEditor.setContentWidgetStyleName(style.editorLabel());
-        copyVmPermissions.setContentWidgetStyleName(style.editorLabel());
-        isSubTemplateEditor.setContentWidgetStyleName(style.editorLabel());
+        isTemplatePublicEditor.setContentWidgetContainerStyleName(style.editorLabel());
+        copyVmPermissions.setContentWidgetContainerStyleName(style.editorLabel());
+        isSubTemplateEditor.setContentWidgetContainerStyleName(style.editorLabel());
     }
 
     void initListBoxEditors() {

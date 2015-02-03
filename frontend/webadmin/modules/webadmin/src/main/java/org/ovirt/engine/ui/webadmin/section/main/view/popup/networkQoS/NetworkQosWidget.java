@@ -109,12 +109,12 @@ public class NetworkQosWidget extends AbstractModelBoundPopupWidget<BaseNetworkQ
     }
 
     private void setStyle() {
-        inboundAverageEditor.setContentWidgetStyleName(style.valueWidth());
-        inboundPeakEditor.setContentWidgetStyleName(style.valueWidth());
-        inboundBurstEditor.setContentWidgetStyleName(style.valueWidth());
-        outboundAverageEditor.setContentWidgetStyleName(style.valueWidth());
-        outboundPeakEditor.setContentWidgetStyleName(style.valueWidth());
-        outboundBurstEditor.setContentWidgetStyleName(style.valueWidth());
+        inboundAverageEditor.setContentWidgetContainerStyleName(style.valueWidth());
+        inboundPeakEditor.setContentWidgetContainerStyleName(style.valueWidth());
+        inboundBurstEditor.setContentWidgetContainerStyleName(style.valueWidth());
+        outboundAverageEditor.setContentWidgetContainerStyleName(style.valueWidth());
+        outboundPeakEditor.setContentWidgetContainerStyleName(style.valueWidth());
+        outboundBurstEditor.setContentWidgetContainerStyleName(style.valueWidth());
     }
 
     private void localize(ApplicationConstants constants) {
