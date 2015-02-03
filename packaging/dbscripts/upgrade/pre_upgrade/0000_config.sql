@@ -287,6 +287,7 @@ select fn_db_add_config_value('UserPackageNamesForCheckUpdate','','general');
 select fn_db_add_config_value('HostPackagesUpdateTimeInHours','24','general');
 
 select fn_db_add_config_value_for_versions_up_to('LiveStorageMigrationBetweenDifferentStorageTypes', 'false', '3.5');
+select fn_db_add_config_value_for_versions_up_to('VmStatsEvents','false','3.5');
 
 -- by default use no proxy
 select fn_db_add_config_value('SpiceProxyDefault','','general');

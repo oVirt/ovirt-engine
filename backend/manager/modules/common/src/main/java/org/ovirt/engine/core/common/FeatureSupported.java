@@ -258,6 +258,10 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.HotPlugDiskSnapshotSupported, version);
     }
 
+    public static boolean vmStatsEvents(Version version) {
+        return supportedInConfig(ConfigValues.VmStatsEventsSupported, version);
+    }
+
     public static boolean hotPlugCpu(Version version, ArchitectureType arch) {
         return supportedInConfig(ConfigValues.HotPlugCpuSupported, version, arch);
     }

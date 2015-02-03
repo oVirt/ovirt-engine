@@ -1478,7 +1478,7 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    private static VMStatus convertToVmStatus(String statusName) {
+    public static VMStatus convertToVmStatus(String statusName) {
         VMStatus status = VMStatus.Unassigned;
 
         // TODO: The following condition should deleted as soon as we drop compatibility with 3.3 since "Running" state

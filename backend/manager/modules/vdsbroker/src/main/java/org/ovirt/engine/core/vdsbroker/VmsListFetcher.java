@@ -139,7 +139,7 @@ public class VmsListFetcher {
         return dbVm == null || (dbVm.getStatus() != vdsmVm.getStatus());
     }
 
-    private boolean isDevicesChanged(VM dbVm, VmInternalData vdsmVm) {
+    public static boolean isDevicesChanged(VM dbVm, VmInternalData vdsmVm) {
         // Update only running VMs
         VmDynamic vdsmVmDynamic = vdsmVm.getVmDynamic();
         return

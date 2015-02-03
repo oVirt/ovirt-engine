@@ -992,6 +992,14 @@ public class VdsManager {
         }
     }
 
+    public Version getCompatibilityVersion() {
+        return cachedVds.getVdsGroupCompatibilityVersion();
+    }
+
+    public String getVdsHostname() {
+        return cachedVds.getHostName();
+    }
+
     public boolean getRefreshStatistics() {
         if (vmsRefresher == null) {
             return false;

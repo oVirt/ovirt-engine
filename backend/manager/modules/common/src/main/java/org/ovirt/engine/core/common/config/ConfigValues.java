@@ -2211,6 +2211,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("256")
     HotPlugMemoryMultiplicationSizeMb,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    VmStatsEventsSupported,
+
     Invalid
 
 }

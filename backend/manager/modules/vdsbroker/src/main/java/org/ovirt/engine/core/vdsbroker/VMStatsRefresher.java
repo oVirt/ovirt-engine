@@ -55,7 +55,7 @@ public abstract class VMStatsRefresher {
     /**
      * Triggers refresh of vm statistics and analyzes the results.
      */
-    abstract void perform();
+    public abstract void perform();
 
     /**
      * Calculates number of refresh iterations.
