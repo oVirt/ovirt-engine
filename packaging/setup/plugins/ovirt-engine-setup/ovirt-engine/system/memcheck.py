@@ -39,24 +39,9 @@ class Plugin(plugin.PluginBase):
     """
     Available memory checking plugin.
     """
-    _RE_MEMINFO_MEMTOTAL = re.compile(
-        flags=re.VERBOSE,
-        pattern=r"""
-            ^
-            MemTotal:
-            \s+
-            (?P<value>\d+)
-            \s+
-            (?P<unit>\w+)
-        """
-    )
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
-        self.environment.setdefault(
-            osetupcons.ConfigEnv.TOTAL_MEMORY_MB,
-            None
-        )
 
     def _check_requirements(self):
         satisfied = False
@@ -121,25 +106,6 @@ class Plugin(plugin.PluginBase):
             oenginecons.SystemEnv.MEMCHECK_THRESHOLD,
             oenginecons.Defaults.DEFAULT_SYSTEM_MEMCHECK_THRESHOLD
         )
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_SETUP,
-    )
-    def _setup(self):
-        self.logger.debug('Checking total memory')
-        with open('/proc/meminfo', 'r') as f:
-            content = f.read()
-
-        match = self._RE_MEMINFO_MEMTOTAL.match(content)
-        if match is None:
-            raise RuntimeError(_("Unable to parse /proc/meminfo"))
-
-        if self.environment[osetupcons.ConfigEnv.TOTAL_MEMORY_MB] is None:
-            self.environment[osetupcons.ConfigEnv.TOTAL_MEMORY_MB] = int(
-                match.group('value')
-            )
-            if match.group('unit') == "kB":
-                self.environment[osetupcons.ConfigEnv.TOTAL_MEMORY_MB] //= 1024
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
