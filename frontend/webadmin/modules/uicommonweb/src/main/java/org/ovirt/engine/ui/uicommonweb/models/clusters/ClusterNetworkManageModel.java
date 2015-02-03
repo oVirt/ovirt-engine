@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -26,6 +27,8 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
     private boolean needsDetach;
     private boolean needsUpdate;
     private ClusterNetworkModel managementNetwork;
+    private ClusterNetworkModel glusterNetwork;
+    private boolean needsAnyChange;
 
     public ClusterNetworkManageModel(SearchableListModel<?> sourceListModel) {
         this.sourceListModel = sourceListModel;
@@ -47,6 +50,9 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
                 for (ClusterNetworkModel model : getItems()) {
                     if (model.isManagement()) {
                         managementNetwork = model;
+                    }
+                    if (model.isGlusterNetwork()) {
+                        glusterNetwork = model;
                     }
                 }
             }
@@ -109,6 +115,23 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
         model.setMigrationNetwork(value);
     }
 
+   private ClusterNetworkModel getGlusterNetwork() {
+        return glusterNetwork;
+    }
+
+    public void setGlusterNetwork(ClusterNetworkModel model, boolean value) {
+        if (!isMultiCluster()) {
+            if (value) {
+                // Reset the old gluster network
+                if (getGlusterNetwork() != null) {
+                    getGlusterNetwork().setGlusterNetwork(false);
+                }
+                glusterNetwork = model;
+            }
+        }
+        model.setGlusterNetwork(value);
+    }
+
     private void onManage() {
         Iterable<ClusterNetworkModel> manageList = getItems();
         final ArrayList<VdcActionParametersBase> toAttach = new ArrayList<VdcActionParametersBase>();
@@ -127,11 +150,13 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
             if (wasAttached && !needsDetach) {
                 if ((manageModel.isRequired() != networkCluster.isRequired())
                         || (manageModel.isDisplayNetwork() != networkCluster.isDisplay())
-                        || (manageModel.isMigrationNetwork() != networkCluster.isMigration())) {
+                        || (manageModel.isMigrationNetwork() != networkCluster.isMigration())
+                        || manageModel.isGlusterNetwork() != networkCluster.isGluster()) {
                     needsUpdate = true;
                     networkCluster.setRequired(manageModel.isRequired());
                     networkCluster.setDisplay(manageModel.isDisplayNetwork());
                     networkCluster.setMigration(manageModel.isMigrationNetwork());
+                    networkCluster.setGluster(manageModel.isGlusterNetwork());
                 }
             }
 

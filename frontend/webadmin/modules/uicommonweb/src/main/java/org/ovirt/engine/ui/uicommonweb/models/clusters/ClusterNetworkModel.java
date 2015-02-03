@@ -70,6 +70,10 @@ public class ClusterNetworkModel extends EntityModel<Network> {
         return getEntity().getCluster().isMigration();
     }
 
+    public boolean isGlusterNetwork() {
+        return getEntity().getCluster().isGluster();
+    }
+
     public boolean isExternal() {
         return getEntity().isExternal();
     }
@@ -96,6 +100,10 @@ public class ClusterNetworkModel extends EntityModel<Network> {
 
     public void setMigrationNetwork(boolean migrationNetwork) {
         getEntity().getCluster().setMigration(migrationNetwork);
+    }
+
+    public void setGlusterNetwork(boolean glusterNetwork) {
+        getEntity().getCluster().setGluster(glusterNetwork);
     }
 
     public NetworkCluster getOriginalNetworkCluster() {

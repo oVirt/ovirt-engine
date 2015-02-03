@@ -42,6 +42,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
 
     private final SafeHtml displayImage;
     private final SafeHtml migrationImage;
+    private final SafeHtml glusterNwImage;
     private final SafeHtml emptyImage;
 
     @Inject
@@ -55,6 +56,8 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkMonitor()).getHTML());
         migrationImage =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.migrationNetwork()).getHTML());
+        glusterNwImage =
+                SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.glusterNetwork()).getHTML());
         emptyImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkEmpty()).getHTML());
         initTable(constants, templates);
         initWidget(getTable());
@@ -103,6 +106,12 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
                             } else {
                                 images.add(emptyImage);
                             }
+
+                            if (network.getCluster().isGluster()) {
+                                images.add(glusterNwImage);
+                            } else {
+                                images.add(emptyImage);
+                            }
                         }
 
                         return NetworkRoleColumnHelper.getValue(images);
@@ -119,6 +128,10 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
                             if (network.getCluster().isMigration()) {
                                 imagesToText.put(migrationImage, constants.migrationItemInfo());
 
+                            }
+
+                            if (network.getCluster().isGluster()) {
+                                imagesToText.put(glusterNwImage, constants.glusterNwItemInfo());
                             }
                         }
                         return NetworkRoleColumnHelper.getTooltip(imagesToText);

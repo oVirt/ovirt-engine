@@ -2049,6 +2049,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Migration Network")
     String migrationNetwork();
 
+    @DefaultStringValue("Gluster Network")
+    String glusterNetwork();
+
     @DefaultStringValue("Role")
     String roleNetwork();
 
@@ -2702,6 +2705,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Migration")
     String migrationItemInfo();
+
+    @DefaultStringValue("Gluster")
+    String glusterNwItemInfo();
 
     @DefaultStringValue("Unmanaged Network")
     String unmanagedNetworkItemInfo();

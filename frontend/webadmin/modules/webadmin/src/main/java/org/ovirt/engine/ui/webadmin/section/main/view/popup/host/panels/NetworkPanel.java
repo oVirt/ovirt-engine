@@ -47,12 +47,14 @@ public abstract class NetworkPanel extends NetworkItemPanel {
         Image migrationImage;
         Image notSyncImage;
         Image alertImage;
+        Image glusterNwImage;
 
         if (!network.isManaged()) {
             monitorImage = null;
             mgmtNetworkImage = null;
             vmImage = null;
             migrationImage = null;
+            glusterNwImage = null;
             notSyncImage = null;
             alertImage = null;
         } else {
@@ -62,6 +64,8 @@ public abstract class NetworkPanel extends NetworkItemPanel {
             vmImage = network.getEntity().isVmNetwork() ? new Image(resources.networkVm()) : null;
             migrationImage = network.getEntity().getCluster().isMigration() ?
                     new Image(resources.migrationNetwork()) : null;
+            glusterNwImage = network.getEntity().getCluster().isGluster() ?
+                    new Image(resources.glusterNetwork()) : null;
             notSyncImage = !network.isInSync() ? new Image(resources.networkNotSyncImage()) : null;
             alertImage = network.getErrorMessage() != null ? new Image(resources.alertImage()) : null;
 
@@ -81,6 +85,10 @@ public abstract class NetworkPanel extends NetworkItemPanel {
                 migrationImage.setStylePrimaryName(style.networkImageBorder());
             }
 
+            if (network.getEntity().getCluster().isGluster()) {
+                glusterNwImage.setStylePrimaryName(style.networkImageBorder());
+            }
+
             if (!network.isInSync()) {
                 notSyncImage.setStylePrimaryName(style.networkImageBorder());
             }
@@ -89,7 +97,7 @@ public abstract class NetworkPanel extends NetworkItemPanel {
         actionButton.setVisible(network.getAttachedToNic() != null
                 && (network.isManaged() || !network.isAttachedViaLabel()));
 
-        Grid rowPanel = new Grid(1, 9);
+        Grid rowPanel = new Grid(1, 10);
         rowPanel.setCellSpacing(0);
         rowPanel.setWidth("100%"); //$NON-NLS-1$
         rowPanel.setHeight("100%"); //$NON-NLS-1$
@@ -117,8 +125,9 @@ public abstract class NetworkPanel extends NetworkItemPanel {
         rowPanel.setWidget(0, 4, monitorImage);
         rowPanel.setWidget(0, 5, vmImage);
         rowPanel.setWidget(0, 6, migrationImage);
-        rowPanel.setWidget(0, 7, notSyncImage);
-        rowPanel.setWidget(0, 8, actionButton);
+        rowPanel.setWidget(0, 7, glusterNwImage);
+        rowPanel.setWidget(0, 8, notSyncImage);
+        rowPanel.setWidget(0, 9, actionButton);
 
         return rowPanel;
     }
