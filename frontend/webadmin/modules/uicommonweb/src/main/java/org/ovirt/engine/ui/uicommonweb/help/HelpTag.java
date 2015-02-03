@@ -422,6 +422,10 @@ public enum HelpTag {
 
     replace_brick("replace_brick", HelpTagType.WEBADMIN, "Volumes Tab > Bricks Sub-Tab > Replace Bricks"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    add_option("add_option", HelpTagType.WEBADMIN, "Volumes Tab > Parameters Sub-Tab > Add Option"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    edit_option("edit_option", HelpTagType.WEBADMIN, "Volumes Tab > Parameters Sub-Tab > Edit Option"), //$NON-NLS-1$ //$NON-NLS-2$
+
     reset_all_options("reset_all_options", HelpTagType.WEBADMIN, "Volumes Tab > Parameters Sub-Tab > Reset All Options"), //$NON-NLS-1$ //$NON-NLS-2$
 
     reset_option("reset_option", HelpTagType.WEBADMIN, "Volumes Tab > Parameters Sub-Tab > Reset Option"), //$NON-NLS-1$ //$NON-NLS-2$
