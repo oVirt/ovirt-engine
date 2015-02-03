@@ -49,7 +49,7 @@ public abstract class StoragePoolManagementCommandBase<T extends StoragePoolMana
 
     protected boolean isStoragePoolUnique(String storagePoolName) {
         StoragePoolDAO spDao = getStoragePoolDAO();
-        List<StoragePool> sps = spDao.getByName(storagePoolName, false);
+        List<StoragePool> sps = spDao.getByName(storagePoolName, true);
         return (sps == null || sps.isEmpty());
     }
 

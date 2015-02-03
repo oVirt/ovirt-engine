@@ -152,7 +152,7 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
 
     protected boolean isVdsGroupUnique(String vdsGroupName) {
         VdsGroupDAO vdsGroupDao = getVdsGroupDAO();
-        List<VDSGroup> vdsGroups = vdsGroupDao.getByName(vdsGroupName, false);
+        List<VDSGroup> vdsGroups = vdsGroupDao.getByName(vdsGroupName, true);
         return (vdsGroups == null || vdsGroups.isEmpty());
     }
 

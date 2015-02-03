@@ -13,6 +13,6 @@ public class GetStoragePoolByDatacenterNameQuery<P extends NameQueryParameters> 
         getQueryReturnValue()
                 .setReturnValue(getDbFacade()
                         .getStoragePoolDao()
-                        .getByName(getParameters().getName(), false));
+                        .getByName(getParameters().getName(), true));
     }
 }
