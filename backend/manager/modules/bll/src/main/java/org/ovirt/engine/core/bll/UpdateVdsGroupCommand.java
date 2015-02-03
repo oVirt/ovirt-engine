@@ -142,7 +142,8 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                 true,
                 true,
                 true,
-                true);
+                true,
+                false);
         return networkCluster;
     }
 

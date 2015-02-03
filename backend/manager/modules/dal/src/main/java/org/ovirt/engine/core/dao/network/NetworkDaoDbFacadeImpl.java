@@ -203,6 +203,7 @@ public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
             entity.getCluster().setStatus(NetworkStatus.forValue(rs.getInt("status")));
             entity.getCluster().setMigration(rs.getBoolean("migration"));
             entity.getCluster().setManagement(rs.getBoolean("management"));
+            entity.getCluster().setGluster(rs.getBoolean("is_gluster"));
 
             return entity;
         }

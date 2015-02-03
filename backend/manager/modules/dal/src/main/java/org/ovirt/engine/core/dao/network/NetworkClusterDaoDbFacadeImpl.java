@@ -27,6 +27,7 @@ public class NetworkClusterDaoDbFacadeImpl extends BaseDAODbFacade implements Ne
                     entity.setRequired(rs.getBoolean("required"));
                     entity.setMigration(rs.getBoolean("migration"));
                     entity.setManagement(rs.getBoolean("management"));
+                    entity.setGluster(rs.getBoolean("is_gluster"));
                     return entity;
                 }
             };
@@ -87,8 +88,10 @@ public class NetworkClusterDaoDbFacadeImpl extends BaseDAODbFacade implements Ne
                 .addValue("is_display", cluster.isDisplay())
                 .addValue("required", cluster.isRequired())
                 .addValue("migration", cluster.isMigration())
-                .addValue("management", cluster.isManagement());
+                .addValue("management", cluster.isManagement())
+                .addValue("is_gluster", cluster.isGluster());
         return parameterSource;
+
     }
 
     @Override
@@ -126,7 +129,6 @@ public class NetworkClusterDaoDbFacadeImpl extends BaseDAODbFacade implements Ne
         getCallsHandler().executeModification("set_network_exclusively_as_migration", parameterSource);
     }
 
-
     @Override
     public void setNetworkExclusivelyAsManagement(Guid clusterId, Guid networkId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -134,4 +136,14 @@ public class NetworkClusterDaoDbFacadeImpl extends BaseDAODbFacade implements Ne
 
         getCallsHandler().executeModification("set_network_exclusively_as_management", parameterSource);
     }
+
+    @Override
+    public void setNetworkExclusivelyAsGluster(Guid clusterId, Guid networkId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("cluster_id", clusterId).addValue("network_id", networkId);
+
+        getCallsHandler().executeModification("set_network_exclusively_as_gluster", parameterSource);
+
+    }
+
 }

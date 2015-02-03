@@ -256,4 +256,27 @@ public class NetworkClusterDaoTest extends BaseDAOTestCase {
             }
         }
     }
+
+    @Test
+    public void testSetGluster() {
+        dao.setNetworkExclusivelyAsGluster(existingNetworkCluster.getClusterId(),
+                existingNetworkCluster.getNetworkId());
+        List<NetworkCluster> allForCluster = dao.getAllForCluster(existingNetworkCluster.getClusterId());
+        for (NetworkCluster net : allForCluster) {
+            if (net.getId().equals(existingNetworkCluster.getId())) {
+                assertTrue(net.isGluster());
+            } else {
+                assertFalse(net.isGluster());
+            }
+        }
+    }
+
+    @Test
+    public void testSetGlusterAsNull() {
+        dao.setNetworkExclusivelyAsGluster(existingNetworkCluster.getClusterId(), null);
+        List<NetworkCluster> allForCluster = dao.getAllForCluster(existingNetworkCluster.getClusterId());
+        for (NetworkCluster net : allForCluster) {
+            assertFalse(net.isGluster());
+        }
+    }
 }

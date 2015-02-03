@@ -112,6 +112,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
                 false,
                 networkCluster.isRequired(),
                 false,
+                false,
                 false));
 
         if (network.getCluster().isDisplay()) {

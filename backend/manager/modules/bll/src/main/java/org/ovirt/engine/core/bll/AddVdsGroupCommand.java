@@ -166,7 +166,8 @@ public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationPar
                 true,
                 true,
                 true,
-                true);
+                true,
+                false);
     }
 
     @Override

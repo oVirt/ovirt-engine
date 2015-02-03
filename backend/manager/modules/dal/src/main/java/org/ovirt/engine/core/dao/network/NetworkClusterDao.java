@@ -99,4 +99,12 @@ public interface NetworkClusterDao extends DAO {
      * @param networkId
      */
     void setNetworkExclusivelyAsManagement(Guid clusterId, Guid networkId);
+
+    /**
+     * Sets this cluster network as the only gluster storage network on the cluster.
+     *
+     * @param clusterId
+     * @param networkId
+     */
+    void setNetworkExclusivelyAsGluster(Guid clusterId, Guid networkId);
 }
