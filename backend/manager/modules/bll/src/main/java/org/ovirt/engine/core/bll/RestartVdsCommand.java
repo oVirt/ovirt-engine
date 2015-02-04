@@ -120,7 +120,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
         final String sessionId = getParameters().getSessionId();
 
         // do not try to stop Host if Host is reported as Down via PM
-        if (isPmReportsStatusDown()) {
+        if (FenceExecutor.isStatusOff(new FenceExecutor(getVds()).checkHostStatus())) {
             returnValue.setSucceeded(true);
         }
         else {

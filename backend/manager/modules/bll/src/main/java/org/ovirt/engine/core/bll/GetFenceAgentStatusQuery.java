@@ -3,23 +3,23 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.queries.GetNewVdsFenceStatusParameters;
+import org.ovirt.engine.core.common.queries.GetFenceAgentStatusParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSFenceReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
-public class GetNewVdsFenceStatusQuery<P extends GetNewVdsFenceStatusParameters> extends FenceQueryBase<P> {
+public class GetFenceAgentStatusQuery<P extends GetFenceAgentStatusParameters> extends FenceQueryBase<P> {
 
     private static final String UNKNOWN = "unknown";
 
-    public GetNewVdsFenceStatusQuery(P parameters) {
+    public GetFenceAgentStatusQuery(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeQueryCommand() {
         FenceExecutor executor = new FenceExecutor(getHost());
-        VDSFenceReturnValue result = executor.checkStatus();
+        VDSFenceReturnValue result = executor.checkAgentStatus(getParameters().getAgent());
         if (result.getSucceeded()) {
             getQueryReturnValue().setReturnValue(result.getReturnValue());
         } else {
@@ -32,7 +32,6 @@ public class GetNewVdsFenceStatusQuery<P extends GetNewVdsFenceStatusParameters>
         VDS vds = new VDS();
         vds.setId((Guid) ((id != null) ? id : Guid.Empty));
         vds.setStoragePoolId(getParameters().getStoragePoolId());
-        vds.getFenceAgents().add(getParameters().getAgent());
         vds.setPmProxyPreferences(getParameters().getPmProxyPreferences());
         return vds;
     }

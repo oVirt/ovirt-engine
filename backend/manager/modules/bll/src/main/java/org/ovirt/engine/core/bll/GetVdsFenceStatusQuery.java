@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSFenceReturnValue;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 
 public class GetVdsFenceStatusQuery<P extends VdsIdParametersBase> extends FenceQueryBase<P> {
 
@@ -22,10 +21,8 @@ public class GetVdsFenceStatusQuery<P extends VdsIdParametersBase> extends Fence
     protected void executeQueryCommand() {
         VDS vds = DbFacade.getInstance().getVdsDao().get(getParameters().getVdsId());
         FenceExecutor executor = new FenceExecutor(vds);
-        VDSFenceReturnValue result = executor.checkStatus();
+        VDSFenceReturnValue result = executor.checkHostStatus();
         if (result.getSucceeded()) {
-            // Remove all alerts including NOT CONFIG alert
-            AlertDirector.RemoveAllVdsAlerts(getParameters().getVdsId(), true);
             getQueryReturnValue().setReturnValue(result);
         } else {
             handleError(result);

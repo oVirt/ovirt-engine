@@ -281,7 +281,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         int retries = getWaitForStatusRerties();
         while (!requiredStatusReached && i <= retries) {
             log.info("Attempt {} to get host '{}' status", i, hostName);
-            VDSFenceReturnValue returnValue = fenceExecutor.checkStatus();
+            VDSFenceReturnValue returnValue = fenceExecutor.checkHostStatus();
             if (returnValue != null && returnValue.getSucceeded()) {
                 String status = ((FenceStatusReturnValue) returnValue.getReturnValue()).getStatus();
                 if (status.equalsIgnoreCase(VDSM_STATUS_UNKONWN)) {

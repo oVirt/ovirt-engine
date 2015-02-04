@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
+import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -177,7 +178,7 @@ public class FenceExecutorTest {
     @Test
     public void checkStatus_handleProxyNotFound() {
         when(proxyLocator.findProxyHost()).thenReturn(null);
-        VDSFenceReturnValue result = executor.checkStatus();
+        VDSFenceReturnValue result = executor.checkHostStatus();
         assertFalse(result.getSucceeded());
         assertTrue(result.getExceptionString().contains("no running proxy Host was found"));
     }
@@ -267,13 +268,58 @@ public class FenceExecutorTest {
     }
 
 
+    /**
+     * Tests that when at least one agent returns 'on', checkHostStatus() returns 'on'. Mocking makes the first agent
+     * return 'off'. FenceExecutor then tries the next agent, which is mocked to return true.
+     */
     @Test
-    public void checkStatus_success() {
+    public void checkHostStatusOn() {
         mockProxyHost();
-        mockFenceSuccess();
-        VDSFenceReturnValue result = executor.checkStatus();
+        VDSReturnValue returnValueOff = new VDSReturnValue();
+        returnValueOff.setSucceeded(true);
+        FenceStatusReturnValue statusOff = new FenceStatusReturnValue("off", "");
+        returnValueOff.setReturnValue(statusOff);
+        VDSReturnValue returnValueOn = new VDSReturnValue();
+        returnValueOn.setSucceeded(true);
+        FenceStatusReturnValue statusOn = new FenceStatusReturnValue("on", "");
+        returnValueOn.setReturnValue(statusOn);
+        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.FenceVds), any(GetDeviceListVDSCommandParameters.class))).thenReturn(returnValueOff)
+                .thenReturn(returnValueOn);
+        List<FenceAgent> agents = new LinkedList<>();
+        agents.add(createAgent());
+        agents.add(createAgent());
+        when(vds.getFenceAgents()).thenReturn(agents);
+        VDSFenceReturnValue result = executor.checkHostStatus();
         assertTrue(result.getSucceeded());
+        assertTrue(result.getReturnValue() instanceof FenceStatusReturnValue);
+        FenceStatusReturnValue status = (FenceStatusReturnValue) result.getReturnValue();
+        assertEquals(status.getStatus(), "on");
     }
+
+    /**
+     * Tests that when no even a single agent returns 'on', checkHostStatus() returns 'off'. Two agents are mocked to
+     * return status 'off'. FenceExecutor tries both of them and returns status=off
+     */
+    @Test
+    public void checkHostStatusOff() {
+        mockProxyHost();
+        VDSReturnValue returnValueOff = new VDSReturnValue();
+        returnValueOff.setSucceeded(true);
+        FenceStatusReturnValue statusOff = new FenceStatusReturnValue("off", "");
+        returnValueOff.setReturnValue(statusOff);
+        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.FenceVds), any(GetDeviceListVDSCommandParameters.class))).thenReturn(returnValueOff)
+                .thenReturn(returnValueOff);
+        List<FenceAgent> agents = new LinkedList<>();
+        agents.add(createAgent());
+        agents.add(createAgent());
+        when(vds.getFenceAgents()).thenReturn(agents);
+        VDSFenceReturnValue result = executor.checkHostStatus();
+        assertTrue(result.getSucceeded());
+        assertTrue(result.getReturnValue() instanceof FenceStatusReturnValue);
+        FenceStatusReturnValue status = (FenceStatusReturnValue) result.getReturnValue();
+        assertEquals(status.getStatus(), "off");
+    }
+
 
     private FenceAgent createAgent() {
         FenceAgent agent = new FenceAgent();

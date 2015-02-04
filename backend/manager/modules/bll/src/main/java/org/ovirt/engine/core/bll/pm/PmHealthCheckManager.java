@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.vdscommands.VDSFenceReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
@@ -80,11 +81,7 @@ public class PmHealthCheckManager {
                     List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAll();
                     for (VDS host : hosts) {
                         if (host.isPmEnabled()) {
-                            // check health
-                            PmHealth pmHealth = checkPMHealth(host);
-                            // handle alerts - adding or canceling as necessary
-                            handleAlerts(pmHealth);
-                            log.debug(pmHealth.toString());
+                            pmHealthCheck(host);
                         }
                     }
                     log.info("Power Management Health Check completed.");
@@ -95,6 +92,26 @@ public class PmHealthCheckManager {
             }
         }
     }
+
+    /**
+     * Check PM health of a host. Add/Remove alerts as necessary, and log the results.
+     */
+    public void pmHealthCheck(VDS host) {
+        // check health
+        PmHealth pmHealth = checkPMHealth(host);
+        // handle alerts - adding or canceling as necessary
+        handleAlerts(pmHealth);
+        log.debug(pmHealth.toString());
+    }
+
+    /**
+     * Check PM health of a host. Add/Remove alerts as necessary, and log the results.
+     */
+    public void pmHealthCheck(Guid hostId) {
+        VDS host = DbFacade.getInstance().getVdsDao().get(hostId);
+        pmHealthCheck(host);
+    }
+
 
     /**
      * Collect health-status info for all agents.
@@ -190,6 +207,10 @@ public class PmHealthCheckManager {
         }
     }
 
+    /**
+     * Checks if the agent is healthy. A healthy agent is one that returns an answer when queries for status, and it
+     * doesn't matter whether that answer is "on" or "off".
+     */
     private boolean isHealthy(FenceAgent agent, VDS host) {
         return new FenceExecutor(host).fence(FenceActionType.Status, agent).getSucceeded();
     }
@@ -242,7 +263,8 @@ public class PmHealthCheckManager {
             RestartVdsCommand<FenceVdsActionParameters> restartVdsCommand =
                     new RestartVdsCommand<FenceVdsActionParameters>(new
                     FenceVdsActionParameters(host.getId(), FenceActionType.Status));
-            if (restartVdsCommand.isPmReportsStatusDown()) {
+            VDSFenceReturnValue returnValue = new FenceExecutor(host).checkHostStatus();
+            if (FenceExecutor.isStatusOff(returnValue)) {
                 VdcReturnValueBase retValue = Backend.getInstance().runInternalAction(VdcActionType.RestartVds, restartVdsCommand.getParameters());
                 if (retValue!= null && retValue.getSucceeded()) {
                     log.info("Host '{}' was started successfully by PM Health Check Manager",

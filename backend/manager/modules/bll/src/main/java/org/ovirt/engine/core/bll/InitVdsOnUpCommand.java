@@ -184,9 +184,8 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         FenceExecutor executor = new FenceExecutor(getVds());
         vdsProxyFound = new FenceProxyLocator(getVds()).isProxyHostAvailable();
         if (getVds().isPmEnabled() && vdsProxyFound) {
-            VDSFenceReturnValue returnValue = executor.checkStatus();
-            fenceSucceeded = returnValue.getSucceeded(); // potential bug here - if no proxy host found, this variable
-                                                         // is still 'true'
+            VDSFenceReturnValue returnValue = executor.checkHostStatus();
+            fenceSucceeded = returnValue.getSucceeded();
             fenceStatusReturnValue = (FenceStatusReturnValue) returnValue.getReturnValue();
         }
     }

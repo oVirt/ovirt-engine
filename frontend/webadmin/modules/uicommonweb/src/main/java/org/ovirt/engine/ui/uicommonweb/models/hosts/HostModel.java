@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.GetNewVdsFenceStatusParameters;
+import org.ovirt.engine.core.common.queries.GetFenceAgentStatusParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -1578,7 +1578,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs
 
         VDSGroup cluster = getCluster().getSelectedItem();
 
-        GetNewVdsFenceStatusParameters param = new GetNewVdsFenceStatusParameters();
+        GetFenceAgentStatusParameters param = new GetFenceAgentStatusParameters();
         FenceAgent agent = new FenceAgent();
         if (getHostId() != null)
         {
@@ -1596,7 +1596,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         agent.setOptionsMap(isPrimary ? getPmOptionsMap() : getPmSecondaryOptionsMap());
 
         param.setAgent(agent);
-        Frontend.getInstance().runQuery(VdcQueryType.GetNewVdsFenceStatus, param, new AsyncQuery(this, new INewAsyncCallback() {
+        Frontend.getInstance().runQuery(VdcQueryType.GetFenceAgentStatus, param, new AsyncQuery(this, new INewAsyncCallback() {
 
                     @Override
                     public void onSuccess(Object model, Object returnValue) {

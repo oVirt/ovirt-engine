@@ -46,7 +46,7 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
             getReturnValue().setSucceeded(false);
             return;
         }
-        if (isPmReportsStatusDown()) {
+        if (FenceExecutor.isStatusOff(new FenceExecutor(getVds()).checkHostStatus())) {
             // do not try to soft-fence if Host is reported as Down via PM
             getReturnValue().setSucceeded(false);
         }

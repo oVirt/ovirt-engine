@@ -53,21 +53,23 @@ public class FenceExecutor {
     }
 
     /**
-     * Use all fencing agents of this host sequentially, until one succeeds, to check the status of the host.
-     *
+     * Use all fencing agents of this host sequentially. If even one agent returns status "on", the host is up.
+     * Otherwise, the host is down.
      */
-    public VDSFenceReturnValue checkStatus() {
+    public VDSFenceReturnValue checkHostStatus() {
         VDSFenceReturnValue returnValue = null;
         VDS proxyHost = proxyLocator.findProxyHost();
         if (proxyHost == null) {
             returnValue = proxyNotFound();
         } else {
             for (FenceAgent agent : _vds.getFenceAgents()) {
-                returnValue = fence(FenceActionType.Status, agent, proxyHost);
+                returnValue = checkAgentStatus(agent, proxyHost);
                 if (returnValue.getSucceeded()) {
                     returnValue.setProxyHostUsed(proxyHost);
-                    returnValue.setFenceAgentUsed(agent);
-                    break;
+                    if (isStatusOn(returnValue)) {
+                        returnValue.setFenceAgentUsed(agent);
+                        break;
+                    }
                 }
             }
         }
@@ -75,6 +77,28 @@ public class FenceExecutor {
             returnValue = new VDSFenceReturnValue();
             returnValue.setSucceeded(false);
             returnValue.setExceptionString("No fence-agents found for host " + _vds.getName());
+        }
+        return returnValue;
+    }
+
+
+    public VDSFenceReturnValue checkAgentStatus(FenceAgent agent) {
+        VDS proxyHost = proxyLocator.findProxyHost();
+        if (proxyHost == null) {
+            return proxyNotFound();
+        } else {
+            return checkAgentStatus(agent, proxyHost);
+        }
+    }
+
+
+    private VDSFenceReturnValue checkAgentStatus(FenceAgent agent, VDS proxyHost) {
+        VDSFenceReturnValue returnValue = null;
+        returnValue = fence(FenceActionType.Status, agent, proxyHost);
+        if (returnValue.getSucceeded()) {
+            returnValue.setProxyHostUsed(proxyHost);
+            returnValue.setFenceAgentUsed(agent);
+            // the status itself ("on"/"off") is already set in the result object.
         }
         return returnValue;
     }
@@ -225,6 +249,23 @@ public class FenceExecutor {
         } else {
             return host.getId().toString();
         }
+    }
+
+    public static boolean isStatusOff(VDSFenceReturnValue returnValue) {
+        return isStatusEqualTo(returnValue, "off");
+    }
+
+    public static boolean isStatusOn(VDSFenceReturnValue returnValue) {
+        return isStatusEqualTo(returnValue, "on");
+    }
+
+    private static boolean isStatusEqualTo(VDSFenceReturnValue returnValue, String targetStatus) {
+        boolean result = false;
+        if (returnValue != null && returnValue.getSucceeded()) {
+            FenceStatusReturnValue value = (FenceStatusReturnValue) returnValue.getReturnValue();
+            result = value.getStatus().equalsIgnoreCase(targetStatus);
+        }
+        return result;
     }
 
     BackendInternal getBackend() {

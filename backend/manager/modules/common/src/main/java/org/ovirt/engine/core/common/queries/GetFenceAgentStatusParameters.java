@@ -3,14 +3,14 @@ package org.ovirt.engine.core.common.queries;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
+public class GetFenceAgentStatusParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = -3663389765505476776L;
 
     private Guid _vds_id;
     private FenceAgent agent;
     private String pmProxyPreferences;
 
-    public GetNewVdsFenceStatusParameters() {
+    public GetFenceAgentStatusParameters() {
         _storagePoolId = Guid.Empty;
     }
 

@@ -5,13 +5,13 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.pm.PmHealthCheckManager;
 import org.ovirt.engine.core.bll.provider.NetworkProviderValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.FenceValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
-import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -20,14 +20,11 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.AddVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSFenceReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
@@ -172,8 +169,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      */
     protected void testVdsPowerManagementStatus(VdsStatic vdsStatic) {
         if (vdsStatic.isPmEnabled()) {
-            runInternalQuery(VdcQueryType.GetVdsFenceStatus,
-                    new VdsIdParametersBase(vdsStatic.getId()));
+            PmHealthCheckManager.getInstance().pmHealthCheck(vdsStatic.getId());
         }
     }
 
@@ -320,46 +316,11 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         }
     }
 
-    /**
-     * Checks if Host status is Down via its PM card (if defined)
-     * @param vds
-     *              The host to check
-     * @return
-     *              boolean
-     */
-    public boolean isPmReportsStatusDown() {
-        boolean result = false;
-        VDS vds = getVds();
-        VDSFenceReturnValue returnValue = null;
-        // Check first if Host has configured PM
-        if (vds != null && vds.isPmEnabled()) {
-            FenceExecutor executor = new FenceExecutor(vds);
-            returnValue = executor.checkStatus();
-            // !! handle failure
-            result = isHostStatusOff(returnValue);
-        }
-        if (result) {
-            runVdsCommand(VDSCommandType.SetVdsStatus,
-                            new SetVdsStatusVDSCommandParameters(getVds().getId(), VDSStatus.Down));
-        }
-        return result;
-    }
-
     protected boolean validateNetworkProviderProperties(Guid providerId, String networkMappings) {
         NetworkProviderValidator validator = new NetworkProviderValidator(getProviderDao().get(providerId));
         return validate(validator.providerIsSet())
                 && validate(validator.providerTypeValid())
                 && validate(validator.networkMappingsProvided(networkMappings))
                 && validate(validator.messagingBrokerProvided());
-    }
-
-    private static boolean isHostStatusOff(VDSFenceReturnValue returnValue) {
-        String OFF = "off";
-        boolean result = false;
-        if (returnValue != null) {
-            FenceStatusReturnValue value = (FenceStatusReturnValue) returnValue.getReturnValue();
-            result = value.getStatus().equalsIgnoreCase(OFF);
-        }
-        return result;
     }
 }
