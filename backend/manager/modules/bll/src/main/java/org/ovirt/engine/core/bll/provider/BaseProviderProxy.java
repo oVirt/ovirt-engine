@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class BaseProviderProxy implements ProviderProxy {
 
-    public static final Logger log = LoggerFactory.getLogger(BaseProviderProxy.class);
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     public static interface ResponseCodeHandler {
         void handle(final HttpURLConnection connection) throws IOException;
