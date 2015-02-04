@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.gluster;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
@@ -26,6 +27,9 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -33,6 +37,8 @@ import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddBricksToGlusterVolumeCommandTest {
@@ -52,17 +58,29 @@ public class AddBricksToGlusterVolumeCommandTest {
     @Mock
     GlusterVolumeValidator validator;
 
-    private String serverName = "myhost";
+    @Mock
+    NetworkDao networkDao;
 
-    private Guid clusterId = new Guid("c0dd8ca3-95dd-44ad-a88a-440a6e3d8106");
+    @Mock
+    InterfaceDao interfaceDao;
 
-    private Guid serverId = new Guid("d7f10a21-bbf2-4ffd-aab6-4da0b3b2ccec");
+    private final String serverName = "myhost";
 
-    private Guid volumeId1 = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
+    private final Guid clusterId = new Guid("c0dd8ca3-95dd-44ad-a88a-440a6e3d8106");
 
-    private Guid volumeId2 = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
+    private final Guid serverId = new Guid("d7f10a21-bbf2-4ffd-aab6-4da0b3b2ccec");
+
+    private final Guid glusterIfaceId = new Guid("bbbb0a21-bbf2-4ffd-aab6-4da0b3b2ccec");
+
+    private final Guid volumeId1 = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
+
+    private final Guid volumeId2 = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
 
     private static final String BRICK_DIRECTORY = "/tmp/s1";
+
+    private static final String GLUSTER_NW = "gluster-net";
+
+    private static final String SERVER_ADDRESS = "10.70.8.8";
 
     /**
      * The command under test.
@@ -128,6 +146,8 @@ public class AddBricksToGlusterVolumeCommandTest {
         doReturn(vdsStaticDao).when(command).getVdsStaticDao();
         doReturn(brickDao).when(command).getGlusterBrickDao();
         doReturn(validator).when(command).createVolumeValidator();
+        doReturn(networkDao).when(command).getNetworkDAO();
+        doReturn(interfaceDao).when(command).getInterfaceDAO();
 
         doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
         doReturn(getSingleBrickVolume(volumeId1)).when(volumeDao).getById(volumeId1);
@@ -141,6 +161,32 @@ public class AddBricksToGlusterVolumeCommandTest {
                 .isForceCreateVolumeAllowed(Version.v3_1, true);
     }
 
+    private void prepareInterfaceMocks(AddBricksToGlusterVolumeCommand command) {
+        doReturn(getNetworks()).when(networkDao).getAllForCluster(any(Guid.class));
+        doReturn(getNetworkInterfaces()).when(interfaceDao).getAllInterfacesForVds(serverId);
+    }
+
+    private List<Network> getNetworks() {
+        List<Network> networks = new ArrayList<>();
+        Network nw = new Network();
+        nw.setName(GLUSTER_NW);
+        NetworkCluster nc = new NetworkCluster();
+        nc.setGluster(true);
+        nw.setCluster(nc);
+        networks.add(nw);
+        return networks;
+    }
+
+    private List<VdsNetworkInterface> getNetworkInterfaces() {
+        List<VdsNetworkInterface> ifaces = new ArrayList<>();
+        VdsNetworkInterface iface = new VdsNetworkInterface();
+        iface.setNetworkName(GLUSTER_NW);
+        iface.setId(Guid.newGuid());
+        iface.setAddress(SERVER_ADDRESS);
+        ifaces.add(iface);
+        return ifaces;
+    }
+
     private VDSGroup getVDsGroup() {
         VDSGroup vdsGroup = new VDSGroup();
         vdsGroup.setId(clusterId);
@@ -152,6 +198,7 @@ public class AddBricksToGlusterVolumeCommandTest {
 
     private VdsStatic getVdsStatic() {
         VdsStatic vds = new VdsStatic();
+        vds.setId(serverId);
         vds.setVdsGroupId(clusterId);
         vds.setHostName(serverName);
         return vds;
@@ -210,6 +257,14 @@ public class AddBricksToGlusterVolumeCommandTest {
     public void canDoActionFailsWithDuplicateBricks() {
         cmd = spy(createTestCommand(volumeId2, getBricks(volumeId2, 1, true), 2, 0, false));
         prepareMocks(cmd);
+        assertFalse(cmd.canDoAction());
+    }
+
+    @Test
+    public void canDoActionFailsDiffInterface() {
+        cmd = spy(createTestCommand(volumeId1, getBricks(volumeId1, 2), 0, 4, false));
+        prepareMocks(cmd);
+        prepareInterfaceMocks(cmd);
         assertFalse(cmd.canDoAction());
     }
 

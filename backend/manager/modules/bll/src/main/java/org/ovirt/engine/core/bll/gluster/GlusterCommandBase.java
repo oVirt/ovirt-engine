@@ -23,12 +23,17 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 
 /**
  * Base class for all Gluster commands
@@ -36,6 +41,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 public abstract class GlusterCommandBase<T extends VdcActionParametersBase> extends CommandBase<T> {
     protected AuditLogType errorType;
     protected VDS upServer;
+    private Network glusterNetwork;
 
     public GlusterCommandBase(T params) {
         this(params, null);
@@ -130,16 +136,16 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
         getReturnValue().getFault().setError(null);
     }
 
-    protected boolean updateBrickServerNames(List<GlusterBrickEntity> bricks, boolean addCanDoActionMessage) {
+    protected boolean updateBrickServerAndInterfaceNames(List<GlusterBrickEntity> bricks, boolean addCanDoActionMessage) {
         for (GlusterBrickEntity brick : bricks) {
-            if (!updateBrickServerName(brick, addCanDoActionMessage)) {
+            if (!updateBrickServerAndInterfaceName(brick, addCanDoActionMessage)) {
                 return false;
             }
         }
         return true;
     }
 
-    protected boolean updateBrickServerName(GlusterBrickEntity brick, boolean addCanDoActionMessage) {
+    protected boolean updateBrickServerAndInterfaceName(GlusterBrickEntity brick, boolean addCanDoActionMessage) {
         VdsStatic server = getVdsStaticDao().get(brick.getServerId());
         if ((server == null || !server.getVdsGroupId().equals(getVdsGroupId()))) {
             if (addCanDoActionMessage) {
@@ -148,7 +154,49 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
             return false;
         }
         brick.setServerName(server.getHostName());
+        // No interface has been selected to use for brick-
+        // engine will get the gluster network, if present
+        if (brick.getNetworkId() == null) {
+            Network network = getGlusterNetwork();
+            if (network != null) {
+                brick.setNetworkId(network.getId());
+                brick.setNetworkAddress(getGlusterNetworkAddress(server.getId(), network.getName()));
+            }
+        } else {
+            // network id has been set, update the address
+            Network network = getNetworkDAO().get(brick.getNetworkId());
+            if (network != null) {
+                brick.setNetworkAddress(getGlusterNetworkAddress(server.getId(), network.getName()));
+            }
+        }
+
         return true;
+    }
+
+    private Network getGlusterNetwork() {
+        if (glusterNetwork == null) {
+            List<Network> allNetworksInCluster = getNetworkDAO().getAllForCluster(getVdsGroupId());
+
+            for (Network network : allNetworksInCluster) {
+                if (network.getCluster().isGluster()) {
+                    glusterNetwork = network;
+                    return glusterNetwork;
+                }
+            }
+        }
+        return glusterNetwork;
+    }
+
+    private String getGlusterNetworkAddress(Guid hostId, String glusterNetworkName) {
+        final List<VdsNetworkInterface> nics =
+                getInterfaceDAO().getAllInterfacesForVds(hostId);
+
+        for (VdsNetworkInterface nic : nics) {
+            if (glusterNetworkName.equals(nic.getNetworkName())) {
+                return nic.getAddress();
+            }
+        }
+        return null;
     }
 
     protected boolean validateDuplicateBricks(List<GlusterBrickEntity> newBricks) {
@@ -184,6 +232,16 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
 
     protected GlusterBrickDao getGlusterBrickDao() {
         return getDbFacade().getGlusterBrickDao();
+    }
+
+    protected InterfaceDao getInterfaceDAO() {
+        return getDbFacade().getInterfaceDao();
+    }
+
+    @Override
+    // overriding for Junit visibility
+    protected NetworkDao getNetworkDAO() {
+        return super.getNetworkDAO();
     }
 
 }

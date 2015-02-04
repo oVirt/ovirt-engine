@@ -34,6 +34,10 @@ public class GlusterBrickEntity extends IVdcQueryable implements BusinessEntityW
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.BRICK.SERVER_ID.NOT_NULL", groups = { CreateEntity.class })
     private Guid serverId;
 
+    private Guid networkId;
+
+    private String networkAddress;
+
     private String serverName;
 
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.BRICK.BRICK_DIR.NOT_NULL", groups = { CreateEntity.class })
@@ -84,6 +88,22 @@ public class GlusterBrickEntity extends IVdcQueryable implements BusinessEntityW
         return brickDirectory;
     }
 
+    public Guid getNetworkId() {
+        return networkId;
+    }
+
+    public void setNetworkId(Guid networkId) {
+        this.networkId = networkId;
+    }
+
+    public String getNetworkAddress() {
+        return networkAddress;
+    }
+
+    public void setNetworkAddress(String networkAddress) {
+        this.networkAddress = networkAddress;
+    }
+
     @Override
     public GlusterStatus getStatus() {
         return status;
@@ -99,12 +119,15 @@ public class GlusterBrickEntity extends IVdcQueryable implements BusinessEntityW
     }
 
     public String getQualifiedName() {
+        if (networkId != null && networkAddress != null && !networkAddress.isEmpty()) {
+            return networkAddress + ":" + brickDirectory;
+        }
         return serverName + ":" + brickDirectory;
     }
 
     @Override
     public String toString() {
-        return getQualifiedName();
+        return getQualifiedName() + "(" + serverName + ")";
     }
 
     @Override

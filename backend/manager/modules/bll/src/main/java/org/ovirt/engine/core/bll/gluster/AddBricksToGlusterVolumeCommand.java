@@ -81,7 +81,7 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
             return false;
         }
 
-        return updateBrickServerNames(getParameters().getBricks(), true)
+        return updateBrickServerAndInterfaceNames(getParameters().getBricks(), true)
                 && validateDuplicateBricks(getParameters().getBricks());
     }
 

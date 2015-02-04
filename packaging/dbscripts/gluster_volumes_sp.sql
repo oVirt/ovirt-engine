@@ -43,12 +43,13 @@ Create or replace FUNCTION InsertGlusterVolumeBrick(v_id UUID, v_volume_id UUID,
                                                     v_server_id UUID,
                                                     v_brick_dir VARCHAR(4096),
                                                     v_brick_order INTEGER,
-                                                    v_status VARCHAR(32))
+                                                    v_status VARCHAR(32),
+                                                    v_network_id UUID)
     RETURNS VOID
     AS $procedure$
 BEGIN
-    INSERT INTO gluster_volume_bricks (id, volume_id, server_id, brick_dir, brick_order, status)
-    VALUES (v_id, v_volume_id, v_server_id, v_brick_dir, v_brick_order, v_status);
+    INSERT INTO gluster_volume_bricks (id, volume_id, server_id, brick_dir, brick_order, status, network_id)
+    VALUES (v_id, v_volume_id, v_server_id, v_brick_dir, v_brick_order, v_status, v_network_id);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -438,7 +439,7 @@ BEGIN
         status = v_status,
         replica_count = v_replica_count,
         stripe_count = v_stripe_count,
-        disprse_count = v_disperse_count,
+        disperse_count = v_disperse_count,
         redundancy_count = v_redundancy_count,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
@@ -466,7 +467,8 @@ Create or replace FUNCTION UpdateGlusterVolumeBrick(v_id UUID,
                                                     v_new_id UUID,
                                                     v_new_server_id UUID,
                                                     v_new_brick_dir VARCHAR(4096),
-                                                    v_new_status VARCHAR(32))
+                                                    v_new_status VARCHAR(32),
+                                                    v_new_network_id UUID)
     RETURNS VOID
     AS $procedure$
 BEGIN
@@ -475,6 +477,7 @@ BEGIN
            server_id = v_new_server_id,
            brick_dir = v_new_brick_dir,
            status = v_new_status,
+           network_id = v_new_network_id,
            _update_date = LOCALTIMESTAMP
     WHERE  id = v_id;
 END; $procedure$

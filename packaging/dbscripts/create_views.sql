@@ -1741,22 +1741,27 @@ CREATE OR REPLACE VIEW gluster_volume_bricks_view
 AS
 SELECT gluster_volume_bricks.*,
        vds_static.host_name AS vds_name,
-       gluster_volumes.vol_name AS volume_name
+       gluster_volumes.vol_name AS volume_name,
+       vds_interface.addr as interface_address
 FROM gluster_volume_bricks
 INNER JOIN vds_static ON vds_static.vds_id = gluster_volume_bricks.server_id
-INNER JOIN gluster_volumes ON gluster_volumes.id = gluster_volume_bricks.volume_id;
+INNER JOIN gluster_volumes ON gluster_volumes.id = gluster_volume_bricks.volume_id
+LEFT OUTER JOIN network on  network.id = gluster_volume_bricks.network_id
+LEFT OUTER JOIN vds_interface ON vds_interface.vds_id = gluster_volume_bricks.server_id
+AND vds_interface.network_name = network.name;
 
-CREATE OR REPLACE VIEW gluster_volume_task_steps
-AS
-SELECT step.*,
-       gluster_volumes.id as volume_id,
-       job.job_id as job_job_id,
-       job.action_type,
-       job.description as job_description,
-       job.status as job_status,
-       job.start_time as job_start_time,
-       job.end_time as job_end_time
-FROM gluster_volumes
+CREATE OR REPLACE VIEW gluster_volume_task_steps AS
+SELECT
+    step.*,
+    gluster_volumes.id AS volume_id,
+    job.job_id AS job_job_id,
+    job.action_type,
+    job.description AS job_description,
+    job.status AS job_status,
+    job.start_time AS job_start_time,
+    job.end_time AS job_end_time
+FROM
+    gluster_volumes
 INNER JOIN job_subject_entity js ON js.entity_id = gluster_volumes.id
 INNER JOIN job on job.job_id = js.job_id
                AND job.action_type in ('StartRebalanceGlusterVolume', 'StartRemoveGlusterVolumeBricks')

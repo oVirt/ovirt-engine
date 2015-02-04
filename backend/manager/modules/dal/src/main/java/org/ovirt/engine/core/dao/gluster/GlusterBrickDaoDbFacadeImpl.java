@@ -53,7 +53,8 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
                         .addValue("new_id", newBrick.getId())
                         .addValue("new_server_id", newBrick.getServerId())
                         .addValue("new_brick_dir", newBrick.getBrickDirectory())
-                        .addValue("new_status", EnumUtils.nameOrNull(newBrick.getStatus())));
+                        .addValue("new_status", EnumUtils.nameOrNull(newBrick.getStatus()))
+                        .addValue("new_network_id", newBrick.getNetworkId()));
     }
 
     @Override
@@ -131,7 +132,8 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
                 .addValue("server_id", brick.getServerId())
                 .addValue("brick_dir", brick.getBrickDirectory())
                 .addValue("brick_order", (brick.getBrickOrder() == null) ? Integer.valueOf(0) : brick.getBrickOrder())
-                .addValue("status", EnumUtils.nameOrNull(brick.getStatus()));
+                .addValue("status", EnumUtils.nameOrNull(brick.getStatus()))
+                .addValue("network_id", brick.getNetworkId());
     }
 
     private static final class GlusterBrickRowMapper implements RowMapper<GlusterBrickEntity> {
@@ -151,6 +153,9 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
             brick.setBrickOrder(rs.getInt("brick_order"));
             brick.setStatus(GlusterStatus.valueOf(rs.getString("status")));
             brick.getAsyncTask().setTaskId(getGuid(rs, "task_id"));
+
+            brick.setNetworkId(getGuid(rs, "network_id"));
+            brick.setNetworkAddress(rs.getString("interface_address"));
             return brick;
         }
     }

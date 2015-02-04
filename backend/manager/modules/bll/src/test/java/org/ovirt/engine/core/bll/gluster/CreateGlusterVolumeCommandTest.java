@@ -31,6 +31,8 @@ import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CreateGlusterVolumeCommandTest {
@@ -50,11 +52,17 @@ public class CreateGlusterVolumeCommandTest {
     @Mock
     GlusterVolumeValidator validator;
 
-    private String serverName = "myhost";
+    @Mock
+    NetworkDao networkDao;
 
-    private Guid clusterId = new Guid("c0dd8ca3-95dd-44ad-a88a-440a6e3d8106");
+    @Mock
+    InterfaceDao interfaceDao;
 
-    private Guid serverId = new Guid("d7f10a21-bbf2-4ffd-aab6-4da0b3b2ccec");
+    private final String serverName = "myhost";
+
+    private final Guid clusterId = new Guid("c0dd8ca3-95dd-44ad-a88a-440a6e3d8106");
+
+    private final Guid serverId = new Guid("d7f10a21-bbf2-4ffd-aab6-4da0b3b2ccec");
 
     private CreateGlusterVolumeCommand cmd;
 
@@ -93,6 +101,8 @@ public class CreateGlusterVolumeCommandTest {
         doReturn(vdsStaticDao).when(command).getVdsStaticDao();
         doReturn(brickDao).when(command).getGlusterBrickDao();
         doReturn(validator).when(command).createVolumeValidator();
+        doReturn(networkDao).when(command).getNetworkDAO();
+        doReturn(interfaceDao).when(command).getInterfaceDAO();
 
         doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
         doReturn(getVdsStatic()).when(vdsStaticDao).get(serverId);
