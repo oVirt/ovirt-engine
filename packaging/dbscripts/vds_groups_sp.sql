@@ -297,10 +297,8 @@ CREATE TYPE host_vm_cluster_rs AS (vds_group_id UUID,hosts bigint,vms bigint);
 Create or replace FUNCTION GetHostsAndVmsForClusters(v_vds_group_ids UUID[]) RETURNS SETOF host_vm_cluster_rs STABLE
    AS $procedure$
 BEGIN
-      RETURN QUERY SELECT groups.vds_group_id,COUNT(DISTINCT vds.vds_id) as host_count,COUNT(DISTINCT vms.vm_guid) as vm_count
+      RETURN QUERY SELECT groups.vds_group_id,(select COUNT(DISTINCT vds.vds_id) from vds_static vds where vds.vds_group_id = groups.vds_group_id) as host_count,(select COUNT(DISTINCT vms.vm_guid) from vm_static vms where vms.vds_group_id = groups.vds_group_id and vms.entity_type::text = 'VM'::text) as vm_count 
       FROM vds_groups groups
-      LEFT JOIN vm_static vms on vms.vds_group_id = groups.vds_group_id and vms.entity_type::text = 'VM'::text
-      LEFT JOIN vds_static vds on vds.vds_group_id = groups.vds_group_id
       WHERE groups.vds_group_id = any(v_vds_group_ids)
       GROUP BY groups.vds_group_id;
 END; $procedure$
