@@ -17,6 +17,8 @@
 
 
 import re
+import gettext
+_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
 from otopi import util

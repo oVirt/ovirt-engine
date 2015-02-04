@@ -21,7 +21,6 @@ Available memory checking plugin.
 """
 
 
-import re
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
