@@ -12,8 +12,6 @@ public class GetFenceConfigurationValueQuery<P extends GetConfigurationValuePara
 
     @Override
     protected void executeQueryCommand() {
-        String returnValue = null;
-        String customReturnValue = null;
         if (shouldReturnValue()) {
             try {
                 final GetConfigurationValueParameters params = getParameters();
