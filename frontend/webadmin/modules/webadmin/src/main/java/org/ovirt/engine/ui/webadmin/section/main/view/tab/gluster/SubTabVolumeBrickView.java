@@ -71,7 +71,7 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
         AbstractTextColumn<GlusterBrickEntity> directoryColumn = new AbstractTextColumn<GlusterBrickEntity>() {
             @Override
             public String getValue(GlusterBrickEntity brick) {
-                return brick.getBrickDirectory();
+                return brick.getQualifiedName();
             }
         };
         directoryColumn.makeSortable();

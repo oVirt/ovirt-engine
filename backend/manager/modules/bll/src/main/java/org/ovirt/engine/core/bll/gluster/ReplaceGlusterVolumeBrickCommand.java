@@ -47,11 +47,11 @@ public class ReplaceGlusterVolumeBrickCommand extends GlusterVolumeCommandBase<G
             return false;
         }
 
-        if (!updateBrickServerName(getParameters().getExistingBrick(), true)) {
+        if (!updateBrickServerAndInterfaceName(getParameters().getExistingBrick(), true)) {
             return false;
         }
 
-        if (!updateBrickServerName(getParameters().getNewBrick(), true)) {
+        if (!updateBrickServerAndInterfaceName(getParameters().getNewBrick(), true)) {
             return false;
         }
 

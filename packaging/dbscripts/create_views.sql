@@ -3028,16 +3028,20 @@ SELECT
 FROM
     gluster_volume_snapshot_schedules
 INNER JOIN gluster_volumes ON gluster_volume_snapshot_schedules.volume_id = gluster_volumes.id;
-CREATE
-OR REPLACE VIEW gluster_volume_bricks_view AS
-SELECT
-    gluster_volume_bricks.*,
-    vds_static.host_name AS vds_name,
-    gluster_volumes.vol_name AS volume_name
-FROM
-    gluster_volume_bricks
+
+CREATE OR REPLACE VIEW gluster_volume_bricks_view
+AS
+SELECT gluster_volume_bricks.*,
+       vds_static.host_name AS vds_name,
+       gluster_volumes.vol_name AS volume_name,
+       vds_interface.addr as interface_address
+FROM gluster_volume_bricks
 INNER JOIN vds_static ON vds_static.vds_id = gluster_volume_bricks.server_id
-INNER JOIN gluster_volumes ON gluster_volumes.id = gluster_volume_bricks.volume_id;
+INNER JOIN gluster_volumes ON gluster_volumes.id = gluster_volume_bricks.volume_id
+LEFT OUTER JOIN network on  network.id = gluster_volume_bricks.network_id
+LEFT OUTER JOIN vds_interface ON vds_interface.vds_id = gluster_volume_bricks.server_id
+AND vds_interface.network_name = network.name;
+
 CREATE
 OR REPLACE VIEW gluster_volume_task_steps AS
 SELECT
