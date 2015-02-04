@@ -593,8 +593,14 @@ public class RsdlBuilder {
     //but for "{api}/hosts/{host:id}/storage" return "storage" (don't truncate last character)
     private String getSingleForm(String prefix) {
         int startIndex = prefix.lastIndexOf('/')+1;
-        int endPos = prefix.endsWith("s") ?  prefix.length() -1 : prefix.length();
-        return prefix.substring(startIndex, endPos);
+        prefix = prefix.substring(startIndex);
+        if (prefix.endsWith("ies")) {
+            return prefix.replaceAll("ies$", "y");
+        }
+        if (prefix.endsWith("s")) {
+            return prefix.replaceAll("s$", "");
+        }
+        return prefix;
     }
 
     /**
