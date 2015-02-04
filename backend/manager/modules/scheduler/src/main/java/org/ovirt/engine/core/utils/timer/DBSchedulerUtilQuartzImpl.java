@@ -4,6 +4,7 @@ import static org.quartz.JobBuilder.newJob;
 import static org.quartz.impl.matchers.GroupMatcher.jobGroupEquals;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -170,6 +171,20 @@ public class DBSchedulerUtilQuartzImpl extends SchedulerUtilBaseImpl implements 
             return null;
         }
         return super.scheduleACronJob(instance, methodName, inputTypes, inputParams, cronExpression);
+    }
+
+    @Override
+    public String scheduleACronJob(Object instance,
+            String methodName,
+            Class<?>[] inputTypes,
+            Object[] inputParams,
+            String cronExpression,
+            Date startAt,
+            Date endBy) {
+        if (!validate(instance, inputTypes)) {
+            return null;
+        }
+        return super.scheduleACronJob(instance, methodName, inputTypes, inputParams, cronExpression, startAt, endBy);
     }
 
     @Override

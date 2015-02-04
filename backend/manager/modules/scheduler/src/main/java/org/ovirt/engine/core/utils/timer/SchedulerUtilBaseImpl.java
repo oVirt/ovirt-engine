@@ -228,9 +228,55 @@ public abstract class SchedulerUtilBaseImpl implements SchedulerUtil {
         } catch (Exception se) {
             log.error("failed to schedule job: {}", se.getMessage());
             log.debug("Exception", se);
+            return null;
         }
         return job.getKey().getName();
     }
+
+    /**
+     * Schedules a cron job with specific delay and end by value
+     *
+     * @param instance
+     *            - the instance to activate the method on timeout
+     * @param methodName
+     *            - the name of the method to activate on the instance
+     * @param inputTypes
+     *            - the method input types
+     * @param inputParams
+     *            - the method input parameters
+     * @param cronExpression
+     *            - cron expression to run this job
+     * @param startAt
+     *            - when to start the task
+     * @param endBy
+     *            - when to end the task
+     * @return the scheduled job id
+     */
+    public String scheduleACronJob(Object instance,
+            String methodName,
+            Class<?>[] inputTypes,
+            Object[] inputParams,
+            String cronExpression,
+            Date startAt,
+            Date endBy) {
+        JobDetail job = createJobWithBasicMapValues(instance, methodName, inputTypes, inputParams);
+        try {
+            String triggerName = generateUniqueNameForInstance(instance, TRIGGER_PREFIX);
+            Trigger trigger = newTrigger()
+                    .withIdentity(triggerName, Scheduler.DEFAULT_GROUP)
+                    .withSchedule(cronSchedule(cronExpression))
+                    .startAt(startAt)
+                    .endAt(endBy)
+                    .build();
+            sched.scheduleJob(job, trigger);
+        } catch (Exception se) {
+            log.error("failed to schedule job: {}", se.getMessage());
+            log.debug("Exception", se);
+            return null;
+        }
+        return job.getKey().getName();
+    }
+
 
     /**
      * reschedule the job associated with the given old trigger with the new trigger.

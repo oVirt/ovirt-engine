@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.utils.timer;
 
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import javax.ejb.Local;
@@ -143,6 +144,34 @@ public interface SchedulerUtil {
                             Class<?>[] inputTypes,
                             Object[] inputParams,
                             String cronExpression);
+
+    /**
+     * Schedules a cron job with specific delay and end by value
+     *
+     * @param instance
+     *            - the instance to activate the method on timeout
+     * @param methodName
+     *            - the name of the method to activate on the instance
+     * @param inputTypes
+     *            - the method input types
+     * @param inputParams
+     *            - the method input parameters
+     * @param cronExpression
+     *            - cron expression to run this job
+     * @param startAt
+     *            - when to start the task
+     * @param endBy
+     *            - when to end the task
+     * @return the scheduled job id
+     */
+    String scheduleACronJob(Object instance,
+                            String methodName,
+                            Class<?>[] inputTypes,
+                            Object[] inputParams,
+                            String cronExpression,
+                            Date startAt,
+                            Date endBy);
+
 
     /**
      * Schedules a job with a configurable delay.
