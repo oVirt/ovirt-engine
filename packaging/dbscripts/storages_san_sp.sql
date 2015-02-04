@@ -536,19 +536,15 @@ DECLARE
   statuses int[];
 BEGIN
 statuses := string_to_array(v_statuses,',')::integer[];
-RETURN QUERY SELECT * FROM (SELECT distinct storage_server_connections.*
-   FROM
-   LUN_storage_server_connection_map LUN_storage_server_connection_map
-   INNER JOIN  LUNs ON LUN_storage_server_connection_map.LUN_id = LUNs.LUN_id
-   INNER JOIN  storage_domains ON LUNs.volume_group_id = storage_domains.storage
-   INNER JOIN  storage_server_connections ON LUN_storage_server_connection_map.storage_server_connection = storage_server_connections.id
-   WHERE     (storage_domains.storage_pool_id = v_storage_pool_id  and storage_domains.status = any(statuses))
-   UNION
-   SELECT distinct storage_server_connections.*
-   FROM         storage_server_connections
-   INNER JOIN  storage_domains ON storage_server_connections.id = storage_domains.storage
-   WHERE     (storage_domains.storage_pool_id = v_storage_pool_id and storage_domains.status = any(statuses))
-   ) connections WHERE (v_storage_type is NULL or connections.storage_type = v_storage_type);
+RETURN QUERY SELECT *
+   FROM storage_server_connections
+   WHERE (v_storage_type is NULL or connections.storage_type = v_storage_type)
+   AND (id in (select storage from storage_domains where storage_domains.storage_pool_id = v_storage_pool_id and storage_domains.status = any(statuses))
+   OR (id in (select lun_storage_server_connection_map.storage_server_connection
+     FROM lun_storage_server_connection_map
+     INNER JOIN luns ON lun_storage_server_connection_map.lun_id = luns.lun_id
+     INNER JOIN storage_domains ON luns.volume_group_id = storage_domains.storage
+     WHERE (storage_domains.storage_pool_id = v_storage_pool_id and storage_domains.status = any(statuses)))));
 END; $procedure$
 LANGUAGE plpgsql;
 
