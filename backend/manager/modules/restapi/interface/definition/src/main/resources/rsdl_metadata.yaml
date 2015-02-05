@@ -2850,7 +2850,7 @@ actions:
           host.power_management.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'},
           host.power_management.pm_proxy--COLLECTION: {propietary : 'xs:string'}, host.power_management.agents.agent--COLLECTION:{type: 'xs:string',
           address: 'xs:string', username: 'xs:string', password: 'xs:string', options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}},
-          host.power_management.kdump_detection: 'xs:boolean'}
+          host.power_management.kdump_detection: 'xs:boolean', host.external_host_provider.id: 'xs:string'}
         description: update the specified host in the system. This is deprecated and is provided only for backwards compatibility
       - mandatoryArguments: {}
         optionalArguments: {host.name: 'xs:string', host.comment: 'xs:string', host.address: 'xs:string',

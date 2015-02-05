@@ -12,6 +12,7 @@ import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CpuTopology;
 import org.ovirt.engine.api.model.Display;
+import org.ovirt.engine.api.model.ExternalHostProvider;
 import org.ovirt.engine.api.model.HardwareInformation;
 import org.ovirt.engine.api.model.Hook;
 import org.ovirt.engine.api.model.Hooks;
@@ -21,24 +22,24 @@ import org.ovirt.engine.api.model.HostStatus;
 import org.ovirt.engine.api.model.HostType;
 import org.ovirt.engine.api.model.HostedEngine;
 import org.ovirt.engine.api.model.IscsiDetails;
-import org.ovirt.engine.api.model.KdumpStatus;
 import org.ovirt.engine.api.model.KSM;
+import org.ovirt.engine.api.model.KdumpStatus;
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
 import org.ovirt.engine.api.model.PmProxies;
 import org.ovirt.engine.api.model.PmProxy;
 import org.ovirt.engine.api.model.PowerManagement;
+import org.ovirt.engine.api.model.SELinux;
 import org.ovirt.engine.api.model.SELinuxMode;
 import org.ovirt.engine.api.model.SPM;
 import org.ovirt.engine.api.model.SSH;
+import org.ovirt.engine.api.model.SpmState;
 import org.ovirt.engine.api.model.StorageManager;
 import org.ovirt.engine.api.model.TransparentHugePages;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.model.VmSummary;
-import org.ovirt.engine.api.model.SELinux;
-import org.ovirt.engine.api.model.SpmState;
 import org.ovirt.engine.api.restapi.model.AuthenticationMethod;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
@@ -106,6 +107,10 @@ public class HostMapper {
         }
         if (model.isSetComment()) {
             entity.setComment(model.getComment());
+        }
+        if (model.isSetExternalHostProvider()) {
+            String providerId = model.getExternalHostProvider().getId();
+            entity.setHostProviderId(providerId == null ? null : GuidUtils.asGuid(providerId));
         }
         return entity;
     }
@@ -288,6 +293,11 @@ public class HostMapper {
         model.setNumaSupported(entity.isNumaSupport());
 
         model.setLiveSnapshotSupport(entity.getLiveSnapshotSupport());
+
+        if (entity.getHostProviderId() != null) {
+            model.setExternalHostProvider(new ExternalHostProvider());
+            model.getExternalHostProvider().setId(entity.getHostProviderId().toString());
+        }
         return model;
     }
 

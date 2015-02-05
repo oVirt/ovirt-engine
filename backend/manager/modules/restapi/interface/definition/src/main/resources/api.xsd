@@ -1941,6 +1941,7 @@
           <xs:element name="numa_supported" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="live_snapshot_support" type="xs:boolean" minOccurs="0" maxOccurs="1" />
           <xs:element ref="katello_errata"  minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="external_host_provider" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
