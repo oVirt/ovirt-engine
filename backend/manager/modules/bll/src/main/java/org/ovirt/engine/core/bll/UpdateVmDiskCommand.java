@@ -155,6 +155,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             return false;
         }
 
+        boolean isDiskInterfaceUpdated = getOldDisk().getDiskInterface() != getNewDisk().getDiskInterface();
         if (!vmsDiskOrSnapshotPluggedTo.isEmpty()) {
             // only virtual drive size can be updated when VMs is running
             if (isAtLeastOneVmIsNotDown(vmsDiskOrSnapshotPluggedTo) && updateParametersRequiringVmDownRequested()) {
@@ -167,7 +168,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 return false;
             }
 
-            boolean isDiskInterfaceUpdated = getOldDisk().getDiskInterface() != getNewDisk().getDiskInterface();
             if (isDiskInterfaceUpdated && !validatePciAndIdeLimit(vmsDiskOrSnapshotPluggedTo)) {
                 return false;
             }
@@ -180,8 +180,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         return validateCanUpdateShareable() && validateCanUpdateReadOnly(diskValidator) &&
                 validateVmPoolProperties() &&
                 validate(diskValidator.isVirtIoScsiValid(getVm())) &&
-                (getOldDisk().getDiskInterface() == getNewDisk().getDiskInterface()
-                || validate(diskValidator.isDiskInterfaceSupported(getVm()))) &&
+                (!isDiskInterfaceUpdated || validate(diskValidator.isDiskInterfaceSupported(getVm()))) &&
                 setAndValidateDiskProfiles();
     }
 
