@@ -1,34 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-    xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor">
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+    xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor" xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 
     <ui:style>
-        .titleLabel {
-            padding-top: 5px;
-        }
-
-        .explanationLabel {
-            padding-top: 5px;
-            padding-left: 5px;
-            padding-bottom: 5px;
-        }
-
-        .treePanel {
-            margin-top: 5px;
-        }
-
-        .buttonPanel {
-            margin-left: 5px;
-            vertical-align: middle;
-        }
-
         .radioButton {
             vertical-align: middle;
             position: relative;
             top: 2px;
-            padding-left: 5px;
         }
 
         .radioButton label {
@@ -40,24 +21,9 @@
             padding-top: 3px;
         }
 
-        .label {
-            color: #FFFFFF;
-            font-size: 12px;
-            font-weight: bold;
-            font-family: Arial,sans-serif;
-            line-height: 30px;
+        .accountBorder {
+            border-bottom: 1px solid #ced8df;
         }
-
-        .nameEditor {
-            width: 290px;
-        }
-
-        .descriptionEditor {
-            position: absolute;
-            right: 2px;
-            width: 325px;
-        }
-
         .expandAllButton {
             line-height: 16px;
             margin-right: 10px;
@@ -67,32 +33,52 @@
             line-height: 16px;
         }
 
+        .treeScrollPanel {
+            height: 256px;
+        }
+
+        .treeRow {
+            padding: 5px 0px 0px 0px;
+        }
     </ui:style>
 
     <d:SimpleDialogPanel width="650px" height="500px">
         <d:content>
-            <g:VerticalPanel>
-                <g:FlowPanel>
-                    <g:HorizontalPanel>
-                        <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" addStyleNames="{style.nameEditor}"/>
-                        <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" addStyleNames="{style.descriptionEditor}"/>
-                    </g:HorizontalPanel>
-                    <g:HorizontalPanel addStyleNames="{style.buttonPanel}">
-                        <g:Label ui:field="accountTypeLabel" addStyleNames="{style.titleLabel}"/>
+            <b:Container>
+                <b:Row>
+                    <b:Column size="LG_5">
+                        <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" usePatternFly="true" />
+                    </b:Column>
+                    <b:Column size="LG_5">
+                        <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" usePatternFly="true" />
+                    </b:Column>
+                </b:Row>
+                <b:Row addStyleNames="{style.accountBorder}">
+                    <b:Column size="LG_12">
+                        <g:Label ui:field="accountTypeLabel" />
                         <g:RadioButton name="accountTypeRadioButton" ui:field="userRadioButtonEditor" addStyleNames="{style.radioButton}"/>
                         <g:RadioButton name="accountTypeRadioButton" ui:field="adminRadioButtonEditor" addStyleNames="{style.radioButton}"/>
-                    </g:HorizontalPanel>
-                    <g:HTML><hr style="width:100%; margin-top:0px; margin-bottom:0px;" /></g:HTML>
-                    <g:Label ui:field="explainationLabel" addStyleNames="{style.explanationLabel}"/>
-                    <g:HorizontalPanel addStyleNames="{style.buttonPanel}">
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="LG_12">
+                        <g:Label ui:field="explanationLabel" />
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="LG_12">
                         <g:Button ui:field="expandAllButton" addStyleNames="{style.expandAllButton}"/>
                         <g:Button ui:field="collapseAllButton" addStyleNames="{style.collapseAllButton}"/>
-                    </g:HorizontalPanel>
-                    <g:ScrollPanel height="300px" addStyleNames="{style.treePanel} rpv_treePanel_pfly_fix">
-                        <we:EntityModelCellTree ui:field="tree"/>
-                    </g:ScrollPanel>
-                </g:FlowPanel>
-            </g:VerticalPanel>
+                    </b:Column>
+                </b:Row>
+                <b:Row>
+                    <b:Column size="LG_12" addStyleNames="{style.treeRow}">
+                        <g:ScrollPanel addStyleNames="{style.treeScrollPanel}">
+                            <we:EntityModelCellTree ui:field="tree"/>
+                        </g:ScrollPanel>
+                    </b:Column>
+                </b:Row>
+            </b:Container>
         </d:content>
     </d:SimpleDialogPanel>
 

@@ -78,7 +78,7 @@ public class RolePopupView extends AbstractModelBoundTreePopupView<RoleModel> im
 
     @UiField
     @Ignore
-    Label explainationLabel;
+    Label explanationLabel;
 
     @UiField
     @Ignore
@@ -160,7 +160,7 @@ public class RolePopupView extends AbstractModelBoundTreePopupView<RoleModel> im
         accountTypeLabel.setText(constants.RoleAccount_TypeLabel());
         userRadioButtonEditor.setText(constants.RoleUserLabel());
         adminRadioButtonEditor.setText(constants.RoleAdminLabel());
-        explainationLabel.setText(constants.RoleCheckBoxes());
+        explanationLabel.setText(constants.RoleCheckBoxes());
         expandAllButton.setText(constants.RoleExpand_AllLabel());
         collapseAllButton.setText(constants.RoleCollapse_AllLabel());
     }
