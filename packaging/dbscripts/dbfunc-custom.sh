@@ -8,12 +8,25 @@ DBFUNC_CUSTOM_CLEAN_TASKS=
 
 dbfunc_common_hook_init_insert_data() {
         # generate new UUIDs for default DC & Cluster
-        "${DBFUNC_COMMON_DBSCRIPTS_DIR}"/uuidgen.sh "${DBFUNC_DB_HOST}" "${DBFUNC_DB_PORT}" "${DBFUNC_DB_USER}" "${DBFUNC_DB_DATABASE}" "${DBFUNC_COMMON_DBSCRIPTS_DIR}"/data "change"
+	local spid="00000002-0002-0002-0002-00000000021c"
+	local gen_spid=$(dbfunc_get_psql_result "select uuid_generate_v1();")
+
+	local clusterid="00000001-0001-0001-0001-0000000000d6"
+	local gen_clusterid=$(dbfunc_get_psql_result "select uuid_generate_v1();")
+
+	# Replace static UUIDs with generated ones
+	sed -i "s/'${spid}'/'${gen_spid}'/g" "${DBFUNC_COMMON_DBSCRIPTS_DIR}"/data/*.sql
+	sed -i "s/'${clusterid}'/'${gen_clusterid}'/g" "${DBFUNC_COMMON_DBSCRIPTS_DIR}"/data/*.sql
+
+	# Apply changes to database
         for script in $(ls "${DBFUNC_COMMON_DBSCRIPTS_DIR}"/data/*insert_*.sql); do
 	    echo "Inserting data from ${script} ..."
 	    dbfunc_psql_die --file="${script}" > /dev/null
         done
-        "${DBFUNC_COMMON_DBSCRIPTS_DIR}"/uuidgen.sh "${DBFUNC_DB_HOST}" "${DBFUNC_DB_PORT}" "${DBFUNC_DB_USER}" "${DBFUNC_DB_DATABASE}" "${DBFUNC_COMMON_DBSCRIPTS_DIR}"/data "restore"
+
+	# Restore previous static UUIDs
+	sed -i "s/'${gen_spid}'/'${spid}'/g" "${DBFUNC_COMMON_DBSCRIPTS_DIR}"/data/*.sql
+	sed -i "s/'${gen_clusterid}'/'${clusterid}'/g" "${DBFUNC_COMMON_DBSCRIPTS_DIR}"/data/*.sql
 }
 
 dbfunc_common_hook_pre_upgrade() {
