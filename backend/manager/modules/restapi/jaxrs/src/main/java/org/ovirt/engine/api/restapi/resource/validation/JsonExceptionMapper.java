@@ -27,20 +27,31 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import org.codehaus.jackson.JsonProcessingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Provider
 public class JsonExceptionMapper implements ExceptionMapper<JsonProcessingException> {
+    private static final Logger log = LoggerFactory.getLogger(JsonExceptionMapper.class);
 
     @Context
     protected UriInfo uriInfo;
+
     @Context
     protected Request request;
+
     @Context
     protected Application application;
 
     @Override
     public Response toResponse(JsonProcessingException exception) {
         try {
+            log.error(
+                "JSON exception while processing \"{}\" request for path \"{}\"",
+                request.getMethod(),
+                uriInfo.getPath()
+            );
+            log.error("Exception", exception);
             return Response.status(Status.BAD_REQUEST)
                     .entity(new UsageFinder().getUsageMessage(application, uriInfo, request))
                     .build();

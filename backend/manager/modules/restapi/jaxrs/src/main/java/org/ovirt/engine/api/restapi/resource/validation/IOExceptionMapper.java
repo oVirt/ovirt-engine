@@ -30,12 +30,15 @@ import javax.ws.rs.ext.Provider;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.UsageMessage;
 import org.ovirt.engine.api.utils.InvalidValueException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This mapper is intended to handle the exceptions thrown by the JAXB message body reader.
  */
 @Provider
 public class IOExceptionMapper implements ExceptionMapper<IOException> {
+    private static final Logger log = LoggerFactory.getLogger(IOExceptionMapper.class);
 
     @Context
     protected UriInfo uriInfo;
@@ -58,6 +61,12 @@ public class IOExceptionMapper implements ExceptionMapper<IOException> {
         // For any other kind of exception generate an error response with information describing the correct syntax for
         // the request:
         try {
+            log.error(
+                "IO exception while processing \"{}\" request for path \"{}\"",
+                request.getMethod(),
+                uriInfo.getPath()
+            );
+            log.error("Exception", exception);
             UsageFinder finder = new UsageFinder();
             UsageMessage usage = finder.getUsageMessage(application, uriInfo, request);
             return Response.status(Status.BAD_REQUEST).entity(usage).build();
