@@ -4,21 +4,27 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
+import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 
 public class UpdateHostValidator extends HostValidator {
 
     private final VDS oldHost;
     private final boolean installHost;
+    private final ProviderDao providerDao;
+    private Provider<?> provider;
 
     public UpdateHostValidator(DbFacade dbFacade, VDS oldHost, VDS updatedHost, boolean installHost) {
         super(dbFacade, updatedHost);
         this.oldHost = oldHost;
         this.installHost = installHost;
+        providerDao = dbFacade.getProviderDao();
     }
 
     public ValidationResult hostExists() {
@@ -92,5 +98,27 @@ public class UpdateHostValidator extends HostValidator {
                 .when(getHost().getProtocol() != oldHost.getProtocol()
                         && oldHost.getStatus() != VDSStatus.Maintenance
                         && oldHost.getStatus() != VDSStatus.InstallingOS);
+    }
+
+    public ValidationResult hostProviderExists() {
+        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST)
+                .when(hostProviderConfigured() && getProvider() == null);
+    }
+
+    public ValidationResult hostProviderTypeMatches() {
+        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_TYPE_MISMATCH)
+                .when(getProvider() != null && getProvider().getType() != ProviderType.FOREMAN);
+    }
+
+    private boolean hostProviderConfigured() {
+        return oldHost.getHostProviderId() == null && getHost().getHostProviderId() != null;
+    }
+
+    private Provider<?> getProvider() {
+        if (getHost().getHostProviderId() != null && provider == null) {
+            provider = providerDao.get(getHost().getHostProviderId());
+        }
+
+        return provider;
     }
 }

@@ -18,6 +18,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
+import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
@@ -27,6 +29,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
@@ -39,6 +42,9 @@ public class UpdateHostValidatorTest {
 
     @Mock
     private VdsDAO hostDao;
+
+    @Mock
+    private ProviderDao providerDao;
 
     @Rule
     public MockConfigRule mockConfigRule = new MockConfigRule();
@@ -297,6 +303,68 @@ public class UpdateHostValidatorTest {
         when(oldHost.getStatus()).thenReturn(VDSStatus.Up);
 
         assertThat(validator.changeProtocolAllowed(), failsWith(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void hostProviderExists() {
+        when(host.getHostProviderId()).thenReturn(Guid.newGuid());
+        when(providerDao.get(any(Guid.class))).thenReturn(mock(Provider.class));
+        when(dbFacade.getProviderDao()).thenReturn(providerDao);
+        validator = new UpdateHostValidator(dbFacade, oldHost, host, false);
+
+        assertThat(validator.hostProviderExists(), isValid());
+    }
+
+    @Test
+    public void hostProviderDoesNotExist() {
+        when(host.getHostProviderId()).thenReturn(Guid.newGuid());
+        when(providerDao.get(any(Guid.class))).thenReturn(null);
+        when(dbFacade.getProviderDao()).thenReturn(providerDao);
+        validator = new UpdateHostValidator(dbFacade, oldHost, host, false);
+
+        assertThat(validator.hostProviderExists(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST));
+    }
+
+    @Test
+    public void hostProviderDoesNotSet() {
+        assertThat(validator.hostProviderExists(), isValid());
+    }
+
+    @Test
+    public void hostProviderNotChanged() {
+        Guid providerId = Guid.newGuid();
+        when(host.getHostProviderId()).thenReturn(providerId);
+        when(oldHost.getHostProviderId()).thenReturn(providerId);
+
+        assertThat(validator.hostProviderExists(), isValid());
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @Test
+    public void hostProviderTypeMatches() {
+        when(host.getHostProviderId()).thenReturn(Guid.newGuid());
+        Provider provider = mock(Provider.class);
+        when(provider.getType()).thenReturn(ProviderType.FOREMAN);
+        when(providerDao.get(any(Guid.class))).thenReturn(provider);
+        when(dbFacade.getProviderDao()).thenReturn(providerDao);
+        validator = new UpdateHostValidator(dbFacade, oldHost, host, false);
+
+        assertThat(validator.hostProviderTypeMatches(), isValid());
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @Test
+    public void hostProviderTypeDoesNotMatch() {
+        when(host.getHostProviderId()).thenReturn(Guid.newGuid());
+        Provider provider = mock(Provider.class);
+        when(provider.getType()).thenReturn(ProviderType.OPENSTACK_IMAGE);
+        when(providerDao.get(any(Guid.class))).thenReturn(provider);
+        when(dbFacade.getProviderDao()).thenReturn(providerDao);
+        validator = new UpdateHostValidator(dbFacade, oldHost, host, false);
+
+        assertThat(validator.hostProviderTypeMatches(),
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_TYPE_MISMATCH));
     }
 
     private String generateRandomName() {
