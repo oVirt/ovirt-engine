@@ -80,6 +80,8 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                 && validate(validator.updatePortAllowed())
                 && validate(validator.clusterNotChanged())
                 && validate(validator.changeProtocolAllowed())
+                && validate(validator.hostProviderExists())
+                && validate(validator.hostProviderTypeMatches())
                 && validateNetworkProviderConfiguration()
                 && isPowerManagementLegal(getParameters().getVdsStaticData().isPmEnabled(),
                         getParameters().getFenceAgents(),
