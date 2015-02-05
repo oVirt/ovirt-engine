@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -65,8 +64,7 @@ public class BaseVmListModelTest extends BaseVmTest {
         ListModel<Quota> quotaListModel = mockQuotaListModel();
         when(model.getQuota()).thenReturn(quotaListModel);
         when(model.getVncKeyboardLayout().getSelectedItem()).thenReturn(VNC_KEYBOARD_LAYOUT);
-        EntityModel<DisplayType> displayTypeEntityModel = mockEntityModel(DISPLAY_TYPE);
-        when(model.getDisplayType().getSelectedItem()).thenReturn(displayTypeEntityModel);
+        when(model.getDisplayType().getSelectedItem()).thenReturn(DISPLAY_TYPE);
         EntityModel<Integer> priorityEntityModel = mockEntityModel(PRIORITY);
         when(model.getPriority().getSelectedItem()).thenReturn(priorityEntityModel);
         when(model.getIsRunAndPause().getEntity()).thenReturn(true);

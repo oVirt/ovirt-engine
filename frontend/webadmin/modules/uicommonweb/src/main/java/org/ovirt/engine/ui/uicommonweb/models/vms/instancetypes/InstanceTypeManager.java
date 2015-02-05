@@ -453,22 +453,15 @@ public abstract class InstanceTypeManager {
 
     protected void updateDefaultDisplayRelatedFields(final VmBase vmBase) {
         // Update display protocol selected item
-        if (model.getDisplayType().getItems() == null) {
+        Collection<DisplayType> displayTypes = model.getDisplayType().getItems();
+        if (displayTypes == null || displayTypes.isEmpty()) {
             return;
         }
 
-        EntityModel<DisplayType> displayProtocol = null;
-        boolean isFirst = true;
-        for (EntityModel<DisplayType> item : model.getDisplayType().getItems()) {
-            if (isFirst) {
-                displayProtocol = item;
-                isFirst = false;
-            }
-            DisplayType dt = item.getEntity();
-            if (dt == vmBase.getDefaultDisplayType()) {
-                displayProtocol = item;
-                break;
-            }
+        // select display protocol
+        DisplayType displayProtocol = displayTypes.iterator().next(); // first by default
+        if (displayTypes.contains(vmBase.getDefaultDisplayType())) {
+            displayProtocol = vmBase.getDefaultDisplayType(); // if display types contain DT of a vm, pick this one
         }
 
         maybeSetSelectedItem(model.getDisplayType(), displayProtocol);

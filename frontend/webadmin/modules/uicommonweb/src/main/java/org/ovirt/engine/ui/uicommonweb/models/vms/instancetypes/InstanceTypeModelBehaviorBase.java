@@ -7,7 +7,6 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmModelBehaviorBase;
@@ -40,8 +39,7 @@ public class InstanceTypeModelBehaviorBase extends VmModelBehaviorBase<UnitVmMod
         getModel().getDisplayType().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                EntityModel<DisplayType> displayType = getModel().getDisplayType().getSelectedItem();
-                enableSinglePCI(displayType.getEntity() == DisplayType.qxl);
+                enableSinglePCI(getModel().getDisplayType().getSelectedItem() == DisplayType.qxl);
             }
         });
 
@@ -58,11 +56,8 @@ public class InstanceTypeModelBehaviorBase extends VmModelBehaviorBase<UnitVmMod
         getModel().initDisplayModels(allGraphicsAndDisplays);
         initGraphicsModel(selectedGrahicsTypes);
 
-        for (EntityModel<DisplayType> displayType : getModel().getDisplayType().getItems()) {
-            if (displayType.getEntity() == selected) {
-                getModel().getDisplayType().setSelectedItem(displayType);
-                break;
-            }
+        if (getModel().getDisplayType().getItems().contains(selected)) {
+            getModel().getDisplayType().setSelectedItem(selected);
         }
     }
 

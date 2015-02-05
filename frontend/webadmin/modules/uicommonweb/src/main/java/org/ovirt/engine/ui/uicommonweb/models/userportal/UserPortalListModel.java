@@ -1250,25 +1250,14 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         }
     }
 
-    private void vmModel_DisplayProtocol_ItemsChanged()
-    {
+    private void vmModel_DisplayProtocol_ItemsChanged() {
         UnitVmModel model = (UnitVmModel) getWindow();
-        if (!model.getIsNew())
-        {
+        if (!model.getIsNew()) {
             UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
-            VM vm = (VM) selectedItem.getEntity();
-            EntityModel<DisplayType> displayType = null;
-
-            for (EntityModel<DisplayType> item : model.getDisplayType().getItems())
-            {
-                DisplayType dt = item.getEntity();
-                if (dt == vm.getDefaultDisplayType())
-                {
-                    displayType = item;
-                    break;
-                }
+            DisplayType displayType = ((VM) selectedItem.getEntity()).getDefaultDisplayType();
+            if (model.getDisplayType().getItems().contains(displayType)) {
+                model.getDisplayType().setSelectedItem(displayType);
             }
-            model.getDisplayType().setSelectedItem(displayType);
         }
     }
 

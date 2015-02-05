@@ -15,7 +15,6 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.CommentVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.NameAndDescriptionVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 
 import java.util.ArrayList;
@@ -203,15 +202,9 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().getProvisioning().setIsAvailable(false);
 
         // Select display protocol.
-        for (EntityModel<DisplayType> model : getModel().getDisplayType().getItems())
-        {
-            DisplayType displayType = model.getEntity();
-
-            if (displayType == template.getDefaultDisplayType())
-            {
-                getModel().getDisplayType().setSelectedItem(model);
-                break;
-            }
+        DisplayType displayType = template.getDefaultDisplayType();
+        if (getModel().getDisplayType().getItems().contains(displayType)) {
+            getModel().getDisplayType().setSelectedItem(displayType);
         }
 
         updateConsoleDevice(template.getId());

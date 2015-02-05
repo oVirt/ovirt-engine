@@ -14,7 +14,7 @@ public class HwOnlyCoreUnitToVmBaseBuilder<T extends VmBase> extends BaseSyncBui
         vm.setMemSizeMb(model.getMemSize().getEntity());
         vm.setNumOfSockets(model.getNumOfSockets().getSelectedItem());
         vm.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity()) / model.getNumOfSockets().getSelectedItem());
-        vm.setDefaultDisplayType(model.getDisplayType().getSelectedItem().getEntity());
+        vm.setDefaultDisplayType(model.getDisplayType().getSelectedItem());
         vm.setNumOfMonitors(model.getNumOfMonitors().getSelectedItem());
         vm.setSmartcardEnabled(model.getIsSmartcardEnabled().getEntity());
         vm.setSsoMethod(model.extractSelectedSsoMethod());

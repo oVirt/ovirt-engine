@@ -454,7 +454,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Path(value = "displayType.selectedItem")
     @WithElementId("displayType")
-    public ListModelListBoxEditor<EntityModel<DisplayType>> displayTypeEditor;
+    public ListModelListBoxEditor<DisplayType> displayTypeEditor;
 
     @UiField(provided = true)
     @Path(value = "graphicsType.selectedItem")
@@ -1289,14 +1289,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         timeZoneEditorWithInfo.setExplanation(applicationTemplates.italicText(constants.timeZoneInfo()));
 
         // Console tab
-        displayTypeEditor = new ListModelListBoxEditor<EntityModel<DisplayType>>(new NullSafeRenderer<EntityModel<DisplayType>>() {
-            @Override
-            public String renderNullSafe(EntityModel<DisplayType> object) {
-                return EnumTranslator.getInstance().get(object.getEntity());
-            }
-        }, new ModeSwitchingVisibilityRenderer());
+        displayTypeEditor = new ListModelListBoxEditor<>(
+                new EnumRenderer<DisplayType>(),
+                new ModeSwitchingVisibilityRenderer());
 
-        graphicsTypeEditor = new ListModelListBoxEditor<UnitVmModel.GraphicsTypes>(new EnumRenderer<UnitVmModel.GraphicsTypes>());
+        graphicsTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer<UnitVmModel.GraphicsTypes>());
 
         usbSupportEditor =
                 new ListModelListBoxEditor<UsbPolicy>(new EnumRenderer<UsbPolicy>(), new ModeSwitchingVisibilityRenderer());
