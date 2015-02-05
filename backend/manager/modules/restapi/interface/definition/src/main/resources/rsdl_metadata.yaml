@@ -2637,6 +2637,7 @@ actions:
       parameterType: Group
       signatures:
       - mandatoryArguments: {group.name: 'xs:string'}
+        optionalArguments: {group.namespace: 'xs:string', group.principal: 'xs:string'}
         description: add a new group to the system
     urlparams: {}
     headers:
@@ -4386,6 +4387,7 @@ actions:
       parameterType: User
       signatures:
       - mandatoryArguments: {user.user_name: 'xs:string', user.domain.id|name: 'xs:string'}
+        optionalArguments: {user.namespace: 'xs:string', user.principal: 'xs:string'}
         description: add a new user to the specified domain with the specified user name
     urlparams: {}
     headers:
