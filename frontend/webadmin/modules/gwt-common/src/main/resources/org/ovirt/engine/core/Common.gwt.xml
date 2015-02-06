@@ -264,6 +264,7 @@
         <include name="common/utils/EnumUtils.java" />
         <include name="common/utils/RpmVersionUtils.java" />
         <include name="common/utils/ListUtils.java" />
+        <include name="common/utils/MapNetworkAttachments.java"/>
         <include name="common/utils/ObjectUtils.java" />
         <include name="common/utils/VmDeviceType.java" />
         <include name="common/utils/VmDeviceCommonUtils.java" />

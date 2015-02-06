@@ -14,7 +14,12 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
  * The Factory also generates Menu Items for these Operations.
  *
  */
+@SuppressWarnings("ChainOfInstanceofChecks")
 public class NetworkOperationFactory {
+
+    public static NetworkOperation operationFor(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+        return operationFor(op1, op2, false);
+    }
 
     /**
      * Gets the valid Operation involving the two operands.<BR>
@@ -25,151 +30,203 @@ public class NetworkOperationFactory {
      * @return
      */
     public static NetworkOperation operationFor(NetworkItemModel<?> op1, NetworkItemModel<?> op2, boolean isDrag) {
-        // no valid operation for external networks or networks attached via label
-        if (op1 instanceof LogicalNetworkModel) {
-            LogicalNetworkModel network = (LogicalNetworkModel) op1;
-            if (network.getNetwork().isExternal() || network.isAttachedViaLabel()) {
+        if (noValidOperationForFirstOperand(op1)) {
+            return NetworkOperation.NULL_OPERATION;
+        }
+
+        boolean unaryOperation = op2 == null;
+        if (unaryOperation) {
+            return handleUnaryOperation(op1, isDrag);
+        } else {
+            return handleBinaryOperation(op1, op2);
+        }
+    }
+
+    private static NetworkOperation handleUnaryOperation(NetworkItemModel<?> op1, boolean isDrag) {
+        // unary operation dragging op1 to nowhere
+
+        // op1 is a bond, break it
+        if (op1 instanceof BondNetworkInterfaceModel) {
+            return NetworkOperation.BREAK_BOND;
+        }
+
+        // op1 is an interface, if it's bonded remove from bond
+        if (op1 instanceof NetworkInterfaceModel) {
+            NetworkInterfaceModel nic = (NetworkInterfaceModel) op1;
+            if (nic.isBonded()) {
+                return NetworkOperation.REMOVE_FROM_BOND;
+            } else {
                 return NetworkOperation.NULL_OPERATION;
             }
         }
 
-        // unary operation dragging op1 to nowhere
-        if (op2 == null) {
-
-            // op1 is a bond, break it
-            if (op1 instanceof BondNetworkInterfaceModel) {
-                return NetworkOperation.BREAK_BOND;
-            }
-            // op1 is an interface, if it's bonded remove from bond
-            else if (op1 instanceof NetworkInterfaceModel) {
-                NetworkInterfaceModel nic = (NetworkInterfaceModel) op1;
-                if (nic.isBonded()) {
-                    return NetworkOperation.REMOVE_FROM_BOND;
-                }
-            }
-            // op1 is a network, detach it if already attached to a NIC
-            else if (op1 instanceof LogicalNetworkModel) {
-                LogicalNetworkModel network = (LogicalNetworkModel) op1;
-                if (network.isAttached()) {
-                    if (!network.isManaged()) {
-                        if (isDrag) {
-                            return NetworkOperation.NULL_OPERATION_UNMANAGED;
-                        } else {
-                            return NetworkOperation.REMOVE_UNMANAGED_NETWORK;
-                        }
+        // op1 is a network, detach it if already attached to a NIC
+        if (op1 instanceof LogicalNetworkModel) {
+            LogicalNetworkModel network = (LogicalNetworkModel) op1;
+            if (network.isAttached()) {
+                if (!network.isManaged()) {
+                    if (isDrag) {
+                        return NetworkOperation.NULL_OPERATION_UNMANAGED;
+                    } else {
+                        return NetworkOperation.REMOVE_UNMANAGED_NETWORK;
                     }
+                } else {
                     return NetworkOperation.DETACH_NETWORK;
                 }
-            }
-            // op1 is a label, if an interface is labelled with it - unlabel
-            else if (op1 instanceof NetworkLabelModel) {
-                NetworkLabelModel label = (NetworkLabelModel) op1;
-                if (label.isAttached()) {
-                    return NetworkOperation.UNLABEL;
-                }
+            } else {
+                return NetworkOperation.NULL_OPERATION;
             }
         }
-        // binary operation joining items together - in most cases valid iff their networks comply
-        else if (op2 instanceof NetworkInterfaceModel) {
-            NetworkInterfaceModel dst = (NetworkInterfaceModel) op2;
 
-            // first collect the networks into one set
-            Set<LogicalNetworkModel> networks = new HashSet<LogicalNetworkModel>();
-            networks.addAll(dst.getItems());
-
-            // op1 is a NIC, verify that it isn't already part of a bond or dragged unto itself
-            if (op1 instanceof NetworkInterfaceModel) {
-                NetworkInterfaceModel src = (NetworkInterfaceModel) op1;
-                if (src.isBonded() || src.equals(dst)) {
-                    return NetworkOperation.NULL_OPERATION;
-                }
-                networks.addAll(src.getItems());
-            }
-            // op1 is a network, verify that it isn't dragged unto the NIC already containing it
-            else if (op1 instanceof LogicalNetworkModel) {
-                if (!networks.add((LogicalNetworkModel) op1)) {
-                    return NetworkOperation.NULL_OPERATION;
-                }
-            }
-            // op1 is a label, verify that it's not applied to the interface already labelled by it
-            else if (op1 instanceof NetworkLabelModel) {
-                NetworkLabelModel src = (NetworkLabelModel) op1;
-                if (dst.equals(src.getInterface())) {
-                    return NetworkOperation.NULL_OPERATION;
-                }
-                networks.addAll(src.getNetworks());
-            }
-
-            // go over the networks and check whether they comply, if not - the reason is important
-            boolean vlanFound = false;
-            String nonVlanVmNetwork = null;
-            int nonVlanCounter = 0;
-            for (LogicalNetworkModel network : networks) {
-                if (!network.isManaged()) {
-                    if (op1 instanceof LogicalNetworkModel) {
-                        return NetworkOperation.NULL_OPERATION_UNMANAGED;
-                    } else if (op1.aggregatesNetworks()) {
-                        dst.setCulpritNetwork(network.getName());
-                        return NetworkOperation.NULL_OPERATION_BATCH_UNMANAGED;
-                    }
-                } else if (!network.isInSync()) {
-                    if (op1 instanceof LogicalNetworkModel) {
-                        return NetworkOperation.NULL_OPERATION_OUT_OF_SYNC;
-                    } else if (op1.aggregatesNetworks()) {
-                        dst.setCulpritNetwork(network.getName());
-                        return NetworkOperation.NULL_OPERATION_BATCH_OUT_OF_SYNC;
-                    }
-                }
-                if (network.hasVlan()) {
-                    vlanFound = true;
-                } else if (network.getNetwork().isVmNetwork()) {
-                    nonVlanVmNetwork = network.getName();
-                    ++nonVlanCounter;
-                } else {
-                    ++nonVlanCounter;
-                }
-                if (nonVlanCounter > 1) {
-                    if (op1 instanceof LogicalNetworkModel) {
-                        return NetworkOperation.NULL_OPERATION_TOO_MANY_NON_VLANS;
-                    } else if (op1.aggregatesNetworks()) {
-                        dst.setCulpritNetwork(network.getName());
-                        return NetworkOperation.NULL_OPERATION_BATCH_TOO_MANY_NON_VLANS;
-                    }
-                } else if (nonVlanVmNetwork != null && vlanFound) {
-                    if (op1 instanceof LogicalNetworkModel) {
-                        return NetworkOperation.NULL_OPERATION_VM_WITH_VLANS;
-                    } else if (op1.aggregatesNetworks()) {
-                        dst.setCulpritNetwork(nonVlanVmNetwork);
-                        return NetworkOperation.NULL_OPERATION_BATCH_VM_WITH_VLANS;
-                    }
-                }
-            }
-
-            // networks comply, all that's left is to return the correct operation
-            if (op1 instanceof LogicalNetworkModel) {
-                return NetworkOperation.ATTACH_NETWORK;
-            } else if (op1 instanceof BondNetworkInterfaceModel) {
-                if (op2 instanceof BondNetworkInterfaceModel) {
-                    return NetworkOperation.JOIN_BONDS;
-                } else {
-                    return NetworkOperation.EXTEND_BOND_WITH;
-                }
-            } else if (op1 instanceof NetworkInterfaceModel) {
-                if (op2 instanceof BondNetworkInterfaceModel) {
-                    return NetworkOperation.ADD_TO_BOND;
-                } else {
-                    return NetworkOperation.BOND_WITH;
-                }
-            } else if (op1 instanceof NetworkLabelModel) {
-                return NetworkOperation.LABEL;
+        // op1 is a label, if an interface is labelled with it - unlabel
+        if (op1 instanceof NetworkLabelModel) {
+            NetworkLabelModel label = (NetworkLabelModel) op1;
+            if (label.isAttached()) {
+                return NetworkOperation.UNLABEL;
+            } else {
+                return NetworkOperation.NULL_OPERATION;
             }
         }
 
         return NetworkOperation.NULL_OPERATION;
     }
 
-    public static NetworkOperation operationFor(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
-        return operationFor(op1, op2, false);
+    private static NetworkOperation handleBinaryOperation(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
+        // binary operation joining items together - in most cases valid iff their networks comply
+        if (op2 instanceof NetworkInterfaceModel) {
+            return binaryOperationWithNetworkInterfaceModelAsSecondOperand(op1, (NetworkInterfaceModel) op2);
+        }
+
+        return NetworkOperation.NULL_OPERATION;
+    }
+
+    private static NetworkOperation binaryOperationWithNetworkInterfaceModelAsSecondOperand(NetworkItemModel<?> op1,
+            NetworkInterfaceModel dst) {
+
+        // first collect the networks into one set
+        Set<LogicalNetworkModel> networks = new HashSet<>();
+        networks.addAll(dst.getItems());
+
+        // op1 is a NIC, verify that it isn't already part of a bond or dragged unto itself
+        if (op1 instanceof NetworkInterfaceModel) {
+            NetworkInterfaceModel src = (NetworkInterfaceModel) op1;
+            if (src.isBonded() || src.equals(dst)) {
+                return NetworkOperation.NULL_OPERATION;
+            }
+
+            networks.addAll(src.getItems());
+        } else if (op1 instanceof LogicalNetworkModel) {
+            // op1 is a network, verify that it isn't dragged unto the NIC already containing it
+            if (!networks.add((LogicalNetworkModel) op1)) {
+                return NetworkOperation.NULL_OPERATION;
+            }
+        } else if(op1 instanceof NetworkLabelModel) {
+            // op1 is a label, verify that it's not applied to the interface already labelled by it
+            NetworkLabelModel src = (NetworkLabelModel) op1;
+            if (dst.equals(src.getInterface())) {
+                return NetworkOperation.NULL_OPERATION;
+            }
+            networks.addAll(src.getNetworks());
+        }
+
+        // go over the networks and check whether they comply, if not - the reason is important
+        boolean vlanFound = false;
+        String nonVlanVmNetwork = null;
+        int nonVlanCounter = 0;
+        for (LogicalNetworkModel network : networks) {
+            if (!network.isManaged()) {
+                if (op1 instanceof LogicalNetworkModel) {
+                    return NetworkOperation.NULL_OPERATION_UNMANAGED;
+                }
+
+                if (op1.aggregatesNetworks()) {
+                    dst.setCulpritNetwork(network.getName());
+                    return NetworkOperation.NULL_OPERATION_BATCH_UNMANAGED;
+                }
+            } else {
+                if (!network.isInSync()) {
+                    if (op1 instanceof LogicalNetworkModel) {
+                        return NetworkOperation.NULL_OPERATION_OUT_OF_SYNC;
+                    }
+
+                    if (op1.aggregatesNetworks()) {
+                        dst.setCulpritNetwork(network.getName());
+                        return NetworkOperation.NULL_OPERATION_BATCH_OUT_OF_SYNC;
+                    }
+                }
+            }
+
+            if (network.hasVlan()) {
+                vlanFound = true;
+            } else {
+                ++nonVlanCounter;
+                if (network.getNetwork().isVmNetwork()) {
+                    nonVlanVmNetwork = network.getName();
+                }
+            }
+
+            if (nonVlanCounter > 1) {
+                if (op1 instanceof LogicalNetworkModel) {
+                    return NetworkOperation.NULL_OPERATION_TOO_MANY_NON_VLANS;
+                }
+
+                if (op1.aggregatesNetworks()) {
+                    dst.setCulpritNetwork(network.getName());
+                    return NetworkOperation.NULL_OPERATION_BATCH_TOO_MANY_NON_VLANS;
+                }
+            } else {
+                if (nonVlanVmNetwork != null && vlanFound) {
+                    if (op1 instanceof LogicalNetworkModel) {
+                        return NetworkOperation.NULL_OPERATION_VM_WITH_VLANS;
+                    }
+
+                    if (op1.aggregatesNetworks()) {
+                        dst.setCulpritNetwork(nonVlanVmNetwork);
+                        return NetworkOperation.NULL_OPERATION_BATCH_VM_WITH_VLANS;
+                    }
+                }
+            }
+        }
+
+        // networks comply, all that's left is to return the correct operation
+        if (op1 instanceof LogicalNetworkModel) {
+            return NetworkOperation.ATTACH_NETWORK;
+        }
+
+        if (op1 instanceof BondNetworkInterfaceModel) {
+            if (dst instanceof BondNetworkInterfaceModel) {
+                return NetworkOperation.JOIN_BONDS;
+            } else {
+                return NetworkOperation.EXTEND_BOND_WITH;
+            }
+        }
+
+        if (op1 instanceof NetworkInterfaceModel) {
+            if (dst instanceof BondNetworkInterfaceModel) {
+                return NetworkOperation.ADD_TO_BOND;
+            } else {
+                return NetworkOperation.BOND_WITH;
+            }
+        }
+
+        if (op1 instanceof NetworkLabelModel) {
+            return NetworkOperation.LABEL;
+        }
+
+        return NetworkOperation.NULL_OPERATION;
+
+    }
+
+    private static boolean noValidOperationForFirstOperand(NetworkItemModel<?> op1) {
+        // no valid operation for external networks or networks attached via label
+        if (op1 instanceof LogicalNetworkModel) {
+            LogicalNetworkModel network = (LogicalNetworkModel) op1;
+            if (network.getNetwork().isExternal() || network.isAttachedViaLabel()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private final List<LogicalNetworkModel> allNetworks;
