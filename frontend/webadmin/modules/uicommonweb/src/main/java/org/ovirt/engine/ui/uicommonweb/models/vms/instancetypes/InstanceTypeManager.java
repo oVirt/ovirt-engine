@@ -471,31 +471,22 @@ public abstract class InstanceTypeManager {
         maybeSetSingleQxlPci(vmBase);
 
         // graphics
-        AsyncDataProvider.getInstance().isSoundcardEnabled(new AsyncQuery(model, new INewAsyncCallback() {
+        Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(vmBase.getId()), new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 deactivate();
-                getModel().getIsSoundcardEnabled().setEntity((Boolean) returnValue);
+                Set<GraphicsType> graphicsTypes = new HashSet<GraphicsType>();
+                List<GraphicsDevice> graphicsDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                for (GraphicsDevice graphicsDevice : graphicsDevices) {
+                    graphicsTypes.add(graphicsDevice.getGraphicsType());
+                }
+                UnitVmModel.GraphicsTypes selected = UnitVmModel.GraphicsTypes.fromGraphicsTypes(graphicsTypes);
+                if (selected != null && getModel().getGraphicsType().getItems().contains(selected)) {
+                    maybeSetSelectedItem(getModel().getGraphicsType(), selected);
+                }
                 activate();
-
-                Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(vmBase.getId()), new AsyncQuery(this, new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        deactivate();
-                        Set<GraphicsType> graphicsTypes = new HashSet<GraphicsType>();
-                        List<GraphicsDevice> graphicsDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                        for (GraphicsDevice graphicsDevice : graphicsDevices) {
-                            graphicsTypes.add(graphicsDevice.getGraphicsType());
-                        }
-                        UnitVmModel.GraphicsTypes selected = UnitVmModel.GraphicsTypes.fromGraphicsTypes(graphicsTypes);
-                        if (selected != null && getModel().getGraphicsType().getItems().contains(selected)) {
-                            maybeSetSelectedItem(getModel().getGraphicsType(), selected);
-                        }
-                        activate();
-                    }
-                }));
             }
-        }), vmBase.getId());
+        }));
     }
 
     protected void maybeSetSingleQxlPci(VmBase vmBase) {
