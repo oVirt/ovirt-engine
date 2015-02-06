@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.gwtbootstrap3.client.ui.constants.Placement;
@@ -13,7 +14,6 @@ import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkCommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperation;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperationFactory.OperationMap;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.dom.client.Element;
@@ -174,7 +174,7 @@ public abstract class NetworkItemPanel<T extends NetworkItemModel<?>> extends Fo
      */
     private MenuBar menuFor(NetworkItemModel<?> item) {
         MenuBar menu = rootMenu(item);
-        OperationMap operationMap = item.getSetupModel().commandsFor(item);
+        Map<NetworkOperation, List<NetworkCommand>> operationMap = item.getSetupModel().commandsFor(item);
         for (final Entry<NetworkOperation, List<NetworkCommand>> entry : operationMap.entrySet()) {
             final List<NetworkCommand> commands = entry.getValue();
             if (entry.getKey().isUnary()) {

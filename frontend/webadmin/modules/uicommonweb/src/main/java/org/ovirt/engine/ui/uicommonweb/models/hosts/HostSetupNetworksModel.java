@@ -50,7 +50,6 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkLabelModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkLabelModel.NewNetworkLabelModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperation;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperationFactory;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperationFactory.OperationMap;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.OperationCandidateEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -220,7 +219,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         return !candidate.isNullOperation();
     }
 
-    public OperationMap commandsFor(NetworkItemModel<?> item) {
+    public Map<NetworkOperation, List<NetworkCommand>> commandsFor(NetworkItemModel<?> item) {
         return operationFactory.commandsFor(item, allNics);
     }
 

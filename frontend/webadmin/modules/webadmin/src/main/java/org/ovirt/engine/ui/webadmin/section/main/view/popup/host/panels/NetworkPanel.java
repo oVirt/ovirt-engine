@@ -1,10 +1,12 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 
+import java.util.List;
+import java.util.Map;
+
 import org.ovirt.engine.ui.common.utils.ElementUtils;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkCommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperation;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperationFactory.OperationMap;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -156,7 +158,7 @@ public abstract class NetworkPanel extends NetworkItemPanel<LogicalNetworkModel>
         if (item.isManaged()) {
             item.edit();
         } else {
-            OperationMap operationMap = item.getSetupModel().commandsFor(item);
+            Map<NetworkOperation, List<NetworkCommand>> operationMap = item.getSetupModel().commandsFor(item);
             final NetworkCommand detach = operationMap.get(NetworkOperation.REMOVE_UNMANAGED_NETWORK).get(0);
             item.getSetupModel().onOperation(NetworkOperation.REMOVE_UNMANAGED_NETWORK, detach);
         }

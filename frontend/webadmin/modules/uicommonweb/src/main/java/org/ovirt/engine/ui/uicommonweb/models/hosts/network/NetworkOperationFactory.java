@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -14,23 +15,6 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
  *
  */
 public class NetworkOperationFactory {
-
-    @SuppressWarnings("serial")
-    public static class OperationMap extends HashMap<NetworkOperation, List<NetworkCommand>> {
-        protected void addCommand(NetworkOperation operation, NetworkCommand command) {
-            List<NetworkCommand> menuItems = getItems(operation);
-            menuItems.add(command);
-        }
-
-        private List<NetworkCommand> getItems(NetworkOperation operation) {
-            if (containsKey(operation)) {
-                return get(operation);
-            }
-            List<NetworkCommand> menuItems = new ArrayList<NetworkCommand>();
-            put(operation, menuItems);
-            return menuItems;
-        }
-    }
 
     /**
      * Gets the valid Operation involving the two operands.<BR>
@@ -211,14 +195,14 @@ public class NetworkOperationFactory {
      * @param allNics
      * @return
      */
-    public OperationMap commandsFor(NetworkItemModel<?> item, List<VdsNetworkInterface> allNics) {
-        OperationMap operations = new OperationMap();
+    public Map<NetworkOperation, List<NetworkCommand>> commandsFor(NetworkItemModel<?> item, List<VdsNetworkInterface> allNics) {
+        Map<NetworkOperation, List<NetworkCommand>> operations = new HashMap<>();
         // with nics
         for (NetworkInterfaceModel nic : nics) {
             NetworkOperation operation = operationFor(item, nic);
             if (!operation.isNullOperation()) {
                 assertBinary(item, nic, operation);
-                operations.addCommand(operation, operation.getCommand(item, nic, allNics));
+                addToOperationMultiMap(operations, operation, operation.getCommand(item, nic, allNics));
             }
         }
         // with networks
@@ -226,7 +210,7 @@ public class NetworkOperationFactory {
             NetworkOperation operation = operationFor(item, network);
             if (!operation.isNullOperation()) {
                 assertBinary(item, network, operation);
-                operations.addCommand(operation, operation.getCommand(item, network, allNics));
+                addToOperationMultiMap(operations, operation, operation.getCommand(item, network, allNics));
             }
         }
 
@@ -235,11 +219,23 @@ public class NetworkOperationFactory {
         if (!operation.isNullOperation()) {
             assert operation.isUnary() : "Operation " + operation.name() //$NON-NLS-1$
                     + " is Binary, while a Uniary Operation is expected for " + item.getName(); //$NON-NLS-1$
-            operations.addCommand(operation, operation.getCommand(item, null, allNics));
+            addToOperationMultiMap(operations, operation, operation.getCommand(item, null, allNics));
         }
 
         return operations;
 
+    }
+
+    private void addToOperationMultiMap(Map<NetworkOperation, List<NetworkCommand>> operationsMap,
+            NetworkOperation operation,
+            NetworkCommand command) {
+
+        List<NetworkCommand> menuItems = operationsMap.get(operation);
+        if (menuItems == null) {
+            menuItems = new ArrayList<>();
+            operationsMap.put(operation, menuItems);
+        }
+        menuItems.add(command);
     }
 
     private void assertBinary(NetworkItemModel<?> op1, NetworkItemModel<?> op2, NetworkOperation operation) {
