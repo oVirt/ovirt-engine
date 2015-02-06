@@ -44,6 +44,8 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -273,6 +275,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 addPermission();
                 addVmTemplateImages(srcDeviceIdToTargetDeviceIdMapping);
                 addVmInterfaces(srcDeviceIdToTargetDeviceIdMapping);
+                Set<GraphicsType> graphicsToSkip = getParameters().getGraphicsDevices().keySet();
                 if (isVmInDb) {
                     VmDeviceUtils.copyVmDevices(getVmId(),
                             getVmTemplateId(),
@@ -281,7 +284,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                             getParameters().isConsoleEnabled(),
                             getParameters().isVirtioScsiEnabled(),
                             VmDeviceUtils.isBalloonEnabled(getVmId()),
-                            getParameters().getGraphicsDevices().keySet(),
+                            graphicsToSkip,
                             false);
                 } else {
                     // for instance type and new template without a VM
@@ -292,12 +295,13 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                             getParameters().isConsoleEnabled(),
                             getParameters().isVirtioScsiEnabled(),
                             getParameters().isBalloonEnabled(),
-                            getParameters().getGraphicsDevices().keySet(),
+                            graphicsToSkip,
                             false);
                 }
 
                 updateWatchdog(getVmTemplateId());
                 updateRngDevice(getVmTemplateId());
+                addGraphicsDevice();
 
                 setSucceeded(true);
                 return null;
@@ -313,6 +317,21 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         pendingAsyncTasks = !getReturnValue().getVdsmTaskIdList().isEmpty();
         if (!pendingAsyncTasks) {
             endSuccessfullySynchronous();
+        }
+    }
+
+    /**
+     * Add graphics based on parameters.
+     */
+    private void addGraphicsDevice() {
+        for (GraphicsDevice graphicsDevice : getParameters().getGraphicsDevices().values()) {
+            if (graphicsDevice == null) {
+                continue;
+            }
+
+            graphicsDevice.setVmId(getVmTemplateId());
+            GraphicsParameters parameters = new GraphicsParameters(graphicsDevice).setVm(false);
+            getBackend().runInternalAction(VdcActionType.AddGraphicsDevice, parameters);
         }
     }
 

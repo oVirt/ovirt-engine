@@ -16,15 +16,13 @@ public class GraphicsParameters extends VdcActionParametersBase {
         return vm;
     }
 
-    public void setVm(boolean vm) {
+    public GraphicsParameters setVm(boolean vm) {
         this.vm = vm;
+        return this;
     }
 
     public GraphicsDevice getDev() {
         return dev;
     }
 
-    public void setDev(GraphicsDevice dev) {
-        this.dev = dev;
-    }
 }
