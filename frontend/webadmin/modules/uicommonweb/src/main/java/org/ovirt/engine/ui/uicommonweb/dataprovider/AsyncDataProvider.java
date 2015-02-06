@@ -80,6 +80,8 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
+import org.ovirt.engine.core.common.console.ConsoleOptions.WanDisableEffects;
+import org.ovirt.engine.core.common.console.ConsoleOptions.WanColorDepth;
 import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -179,8 +181,6 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.LocalStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.NfsStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.PosixStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
-import org.ovirt.engine.ui.uicommonweb.models.vms.WanColorDepth;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
@@ -854,10 +854,10 @@ public class AsyncDataProvider {
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
                 if (source == null) {
-                    return new ArrayList<WANDisableEffects>();
+                    return new ArrayList<WanDisableEffects>();
                 }
 
-                List<WANDisableEffects> res = new ArrayList<WANDisableEffects>();
+                List<WanDisableEffects> res = new ArrayList<WanDisableEffects>();
                 String fromDb = (String) source;
                 for (String value : fromDb.split(",")) {//$NON-NLS-1$
                     if (value == null) {
@@ -869,7 +869,7 @@ public class AsyncDataProvider {
                         continue;
                     }
 
-                    res.add(WANDisableEffects.fromString(trimmedValue));
+                    res.add(WanDisableEffects.fromString(trimmedValue));
                 }
 
                 return res;

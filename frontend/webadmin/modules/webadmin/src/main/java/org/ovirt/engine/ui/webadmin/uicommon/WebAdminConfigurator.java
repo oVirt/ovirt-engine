@@ -2,12 +2,12 @@ package org.ovirt.engine.ui.webadmin.uicommon;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.console.ConsoleOptions.WanDisableEffects;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.uicommon.DocumentationPathTranslator;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
-import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -61,7 +61,7 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
     @Override
     public void configure(ISpice spice) {
         super.configure(spice);
-        spice.setWANDisableEffects(new ArrayList<WANDisableEffects>());
+        spice.setWANDisableEffects(new ArrayList<WanDisableEffects>());
         spice.setWanOptionsEnabled(false);
     }
 

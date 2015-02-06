@@ -1,94 +1,75 @@
 package org.ovirt.engine.ui.common.uicommon;
 
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
-import org.ovirt.engine.ui.uicommonweb.TypeResolver;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.console.ConsoleOptions;
 
 public class AbstractVnc {
 
-    private String vncHost;
-    private String vncPort;
-    private String ticket;
-    private String title;
-    private boolean remapCtrlAltDelete;
-
-    private final ConsoleUtils consoleUtils = (ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class);
-    private int ticketValiditySeconds;
-    private String toggleFullscreenHotKey;
-    private String releaseCursorHotKey;
-
-    public AbstractVnc() {
-        setRemapCtrlAltDelete((Boolean) AsyncDataProvider.getInstance()
-                .getConfigValuePreConverted(ConfigurationValues.RemapCtrlAltDelDefault));
-    }
+    private final ConsoleOptions consoleOptions = new ConsoleOptions(GraphicsType.VNC);
 
     public String getTitle() {
-        return title;
+        return consoleOptions.getTitle();
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        consoleOptions.setTitle(title);
     }
 
     public String getVncHost() {
-        return vncHost;
+        return consoleOptions.getHost();
     }
 
     public String getVncPort() {
-        return vncPort;
+        Integer port = consoleOptions.getPort();
+        return (port == null)
+                ? null
+                : port.toString();
     }
 
     public String getTicket() {
-        return ticket;
+        return consoleOptions.getTicket();
     }
 
     public void setVncHost(String vncHost) {
-        this.vncHost = vncHost;
+        consoleOptions.setHost(vncHost);
     }
 
     public void setVncPort(String vncPort) {
-        this.vncPort = vncPort;
+        consoleOptions.setPort((vncPort == null)
+                ? null
+                : Integer.parseInt(vncPort));
     }
 
     public void setTicket(String ticket) {
-        this.ticket = ticket;
+        consoleOptions.setTicket(ticket);
     }
 
     public boolean isRemapCtrlAltDelete() {
-        return remapCtrlAltDelete;
+        return consoleOptions.isRemapCtrlAltDelete();
     }
 
     public void setRemapCtrlAltDelete(boolean remapCtrlAltDelete) {
-        this.remapCtrlAltDelete = remapCtrlAltDelete;
+        consoleOptions.setRemapCtrlAltDelete(remapCtrlAltDelete);
     }
 
     protected String getSecureAttentionMapping() {
-        return consoleUtils.getRemapCtrlAltDelHotkey();
-    }
-
-    public int getTicketValiditySeconds() {
-        return ticketValiditySeconds;
-    }
-
-    public void setTicketValiditySeconds(int ticketValiditySeconds) {
-        this.ticketValiditySeconds = ticketValiditySeconds;
+        return ConsoleOptions.SECURE_ATTENTION_MAPPING;
     }
 
     public String getToggleFullscreenHotKey() {
-        return toggleFullscreenHotKey;
+        return consoleOptions.getToggleFullscreenHotKey();
     }
 
     public void setToggleFullscreenHotKey(String toggleFullscreenHotKey) {
-        this.toggleFullscreenHotKey = toggleFullscreenHotKey;
+        consoleOptions.setToggleFullscreenHotKey(toggleFullscreenHotKey);
     }
 
     public String getReleaseCursorHotKey() {
-        return releaseCursorHotKey;
+        return consoleOptions.getReleaseCursorHotKey();
     }
 
     public void setReleaseCursorHotKey(String releaseCursorHotKey) {
-        this.releaseCursorHotKey = releaseCursorHotKey;
+        consoleOptions.setReleaseCursorHotKey(releaseCursorHotKey);
     }
 
 }

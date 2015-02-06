@@ -186,6 +186,9 @@
         <include name="common/locks/LockInfo.java" />
 		<include name="common/job/*.java" />
 
+		<!-- Console -->
+		<include name="common/console/*.java" />
+
 		<!-- Profiles -->
 		<include name="common/businessentities/profiles/DiskProfile.java" />
 		<include name="common/businessentities/profiles/CpuProfile.java" />

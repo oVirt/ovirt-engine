@@ -8,8 +8,6 @@ public interface IVnc {
     void setTitle(String title);
     boolean isRemapCtrlAltDelete();
     void setRemapCtrlAltDelete(boolean remapCtrlAltDelete);
-    void setTicketValiditySeconds(int seconds);
-    int getTicketValiditySeconds();
     void setToggleFullscreenHotKey(String toggleFullscreenHotKey);
     void setReleaseCursorHotKey(String releaseCursorHotKey);
 

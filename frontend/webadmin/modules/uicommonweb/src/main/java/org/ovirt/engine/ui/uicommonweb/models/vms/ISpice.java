@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.console.ConsoleOptions.WanColorDepth;
+import org.ovirt.engine.core.common.console.ConsoleOptions.WanDisableEffects;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -119,9 +121,9 @@ public interface ISpice {
 
     void setUsbAutoShare(boolean value);
 
-    void setWANDisableEffects(List<WANDisableEffects> disableEffects);
+    void setWANDisableEffects(List<WanDisableEffects> disableEffects);
 
-    List<WANDisableEffects> getWANDisableEffects();
+    List<WanDisableEffects> getWANDisableEffects();
 
     void setWANColorDepth(WanColorDepth colorDepth);
 

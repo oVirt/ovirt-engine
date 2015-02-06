@@ -17,8 +17,6 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
     private final ClientAgentType clientAgentType;
     private final Configurator configurator;
 
-    private static final String SECURE_ATTENTION_MAPPING = "ctrl+alt+end";// $NON-NLS-1$
-
     @Inject
     public ConsoleUtilsImpl(Configurator configurator, ClientAgentType clientAgentType) {
         this.configurator = configurator;
@@ -51,11 +49,6 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
     @Override
     public boolean webBasedClientsSupported() {
         return configurator.isWebSocketProxyDefined() && !configurator.isClientWindowsExplorer();
-    }
-
-    @Override
-    public String getRemapCtrlAltDelHotkey() {
-        return SECURE_ATTENTION_MAPPING;
     }
 
     @Override

@@ -20,8 +20,8 @@ public class SpiceHtml5Impl extends AbstractSpice implements ISpiceHtml5 {
 
     @Override
     public void connect() {
-        boolean sslTarget = securePort == -1 ? false : true;
-        WebClientConsoleInvoker invoker = new WebClientConsoleInvoker(CLIENT_PAGE, config, getHost(), String.valueOf(sslTarget ? securePort : port), getPassword(), sslTarget);
+        boolean sslTarget = consoleOptions.getSecurePort() == -1 ? false : true;
+        WebClientConsoleInvoker invoker = new WebClientConsoleInvoker(CLIENT_PAGE, config, getHost(), String.valueOf(sslTarget ? consoleOptions.getSecurePort() : consoleOptions.getPort()), getPassword(), sslTarget);
         invoker.invokeClient();
     }
 

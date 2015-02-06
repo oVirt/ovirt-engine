@@ -160,7 +160,6 @@ public class VncConsoleModel extends ConsoleModel {
         vncImpl.setTitle(getClientTitle());
         vncImpl.setToggleFullscreenHotKey(getToggleFullScreenKeys());
         vncImpl.setReleaseCursorHotKey(getReleaseCursorKeys());
-        vncImpl.setTicketValiditySeconds(TICKET_VALIDITY_SECONDS);
 
         vncImpl.invokeClient();
     }

@@ -16,6 +16,4 @@ public interface ConsoleUtils {
 
     public boolean webBasedClientsSupported();
 
-    public String getRemapCtrlAltDelHotkey();
-
 }

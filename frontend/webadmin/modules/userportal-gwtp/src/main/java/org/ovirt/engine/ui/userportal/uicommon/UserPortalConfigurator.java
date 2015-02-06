@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.userportal.uicommon;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.console.ConsoleOptions.WanColorDepth;
+import org.ovirt.engine.core.common.console.ConsoleOptions.WanDisableEffects;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.uicommon.DocumentationPathTranslator;
@@ -11,8 +13,6 @@ import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
-import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
-import org.ovirt.engine.ui.uicommonweb.models.vms.WanColorDepth;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.userportal.place.UserPortalPlaceManager;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
+
 
 public class UserPortalConfigurator extends Configurator implements IEventListener<Configurator.FileFetchEventArgs> {
 
@@ -82,7 +83,7 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
             @SuppressWarnings("unchecked")
             @Override
             public void onSuccess(Object target, Object returnValue) {
-                spice.setWANDisableEffects((List<WANDisableEffects>) returnValue);
+                spice.setWANDisableEffects((List<WanDisableEffects>) returnValue);
             }
         }));
     }

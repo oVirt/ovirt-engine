@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.uicommon;
 
+import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IVnc;
@@ -13,7 +14,8 @@ public class VncNativeImpl extends AbstractVnc implements IVnc {
                 .append("\nhost=").append(getVncHost()) //$NON-NLS-1$
                 .append("\nport=").append(getVncPort()) //$NON-NLS-1$
                 .append("\npassword=").append(getTicket()) //$NON-NLS-1$
-                .append("\n# Password is valid for ").append(getTicketValiditySeconds()).append(" seconds.") //$$NON-NLS-1$NON-NLS-2$
+                .append("\n# Password is valid for ") //$NON-NLS-1$
+                .append(ConsoleOptions.TICKET_VALIDITY_SECONDS).append(" seconds.") //$NON-NLS-1$
                 .append("\ndelete-this-file=1") //$NON-NLS-1$
                 .append("\ntitle=").append(getTitle()); //$NON-NLS-1$
 
