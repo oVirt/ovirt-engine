@@ -140,6 +140,10 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
         if (removeSnapshotMemory) {
             removeMemory(snapshot, useTaskManagerToRemoveMemory);
+            if (!snapshotHasImages) {
+                // no async tasks - ending command manually
+                endVmCommand();
+            }
         }
 
         setSucceeded(true);
