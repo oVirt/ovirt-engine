@@ -609,7 +609,7 @@ public abstract class AbstractDiskModel extends DiskModel
         return isStatusUp;
     }
 
-    private void diskStorageType_EntityChanged() {
+    protected void diskStorageType_EntityChanged() {
         boolean isInVm = getVm() != null;
         boolean isDiskImage = getDiskStorageType().getEntity() == DiskStorageType.IMAGE;
         boolean isLunDisk = getDiskStorageType().getEntity() == DiskStorageType.LUN;

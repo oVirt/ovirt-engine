@@ -18,8 +18,10 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.ValueEventArgs;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -444,6 +446,13 @@ public abstract class SanStorageModel extends SanStorageModelBase
         }
     }
 
+    private EventDefinition lunSelectionChangedEventDefinition = new EventDefinition("lunSelectionChanged", SanStorageModel.class); //$NON-NLS-1$
+    private Event lunSelectionChangedEvent = new Event(lunSelectionChangedEventDefinition);
+
+    public Event getLunSelectionChangedEvent() {
+        return lunSelectionChangedEvent;
+    }
+
     final IEventListener<PropertyChangedEventArgs> lunModelEventListener = new IEventListener<PropertyChangedEventArgs>() {
         @Override
         public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
@@ -481,6 +490,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
                         }
                     }
                 }
+                lunSelectionChangedEvent.raise(this, new ValueEventArgs<LunModel>(selectedLunModel));
             }
         }
     };

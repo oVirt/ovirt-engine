@@ -21,14 +21,48 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.ValueEventArgs;
+import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class NewDiskModel extends AbstractDiskModel
 {
+    private boolean descriptionDerivedFromLunId;
+
+    private IEventListener lunSelectionChangedEventListener = new IEventListener() {
+        @Override
+        public void eventRaised(Event ev, Object sender, EventArgs args) {
+            String description = getDescription().getEntity();
+            if (description == null || description.isEmpty() ||
+                    (!description.isEmpty() && descriptionDerivedFromLunId)) {
+                LunModel selectedLunModel = ((ValueEventArgs<LunModel>) args).getValue();
+                if (selectedLunModel.getLunId() != null) {
+                    int numOfChars = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.PopulateDirectLUNDiskDescriptionWithLUNId);
+                    if (numOfChars == 0) {
+                        return;
+                    }
+                    String newDescription;
+                    if (numOfChars <= -1 || numOfChars >= selectedLunModel.getLunId().length()) {
+                        newDescription = selectedLunModel.getLunId();
+                    }
+                    else {
+                        newDescription = selectedLunModel.getLunId().substring(selectedLunModel.getLunId().length() - numOfChars);
+                    }
+                    getDescription().setEntity(newDescription);
+                    descriptionDerivedFromLunId = true;
+                }
+            }
+        }
+    };
+
     public NewDiskModel() {
     }
 
@@ -180,5 +214,23 @@ public class NewDiskModel extends AbstractDiskModel
     protected void updateVolumeType(StorageType storageType) {
         getVolumeType().setSelectedItem(storageType.isBlockDomain() ? VolumeType.Preallocated : VolumeType.Sparse);
         volumeType_SelectedItemChanged();
+    }
+
+    @Override
+    public void setSanStorageModel(SanStorageModel sanStorageModel) {
+        super.setSanStorageModel(sanStorageModel);
+
+        if (!sanStorageModel.getLunSelectionChangedEvent().getListeners().contains(lunSelectionChangedEventListener)) {
+            sanStorageModel.getLunSelectionChangedEvent().addListener(lunSelectionChangedEventListener);
+        }
+    }
+
+    @Override
+    protected void diskStorageType_EntityChanged() {
+        super.diskStorageType_EntityChanged();
+        if (descriptionDerivedFromLunId) {
+            getDescription().setEntity(null);
+        }
+        descriptionDerivedFromLunId = false;
     }
 }

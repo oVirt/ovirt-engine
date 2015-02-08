@@ -1086,6 +1086,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     DirectLUNDiskEnabled,
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("0")
+    PopulateDirectLUNDiskDescriptionWithLUNId,
+
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
     FilteringLUNsEnabled,

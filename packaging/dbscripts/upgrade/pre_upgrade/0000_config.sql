@@ -105,6 +105,7 @@ select fn_db_add_config_value('DefaultGeneralTimeZone','Etc/GMT','general');
 select fn_db_add_config_value('DefaultWorkgroup','WORKGROUP','general');
 select fn_db_add_config_value('DisableFenceAtStartupInSec','300','general');
 select fn_db_add_config_value('DirectLUNDiskEnabled','false','3.0');
+select fn_db_add_config_value('PopulateDirectLUNDiskDescriptionWithLUNId','4','general');
 --Handling NetBIOS Domain Name
 select fn_db_add_config_value('DomainName','example.com','general');
 -- Host time drift
