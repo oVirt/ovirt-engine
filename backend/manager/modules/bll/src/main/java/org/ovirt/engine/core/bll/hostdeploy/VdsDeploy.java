@@ -39,6 +39,7 @@ import org.ovirt.ovirt_host_deploy.constants.GlusterEnv;
 import org.ovirt.ovirt_host_deploy.constants.TuneEnv;
 import org.ovirt.ovirt_host_deploy.constants.KdumpEnv;
 import org.ovirt.ovirt_host_deploy.constants.OpenStackEnv;
+import org.ovirt.ovirt_host_deploy.constants.VMConsoleEnv;
 import org.ovirt.ovirt_host_deploy.constants.VdsmEnv;
 import org.ovirt.ovirt_host_deploy.constants.VirtEnv;
 import org.slf4j.Logger;
@@ -84,6 +85,8 @@ public class VdsDeploy extends VdsDeployBase {
 
     private String _certificate;
     private String _iptables = "";
+
+    private String _sercon_certificate;
 
     private OpenstackNetworkProviderProperties _openStackAgentProperties = null;
     private MessagingConfiguration _messagingConfiguration = null;
@@ -570,6 +573,34 @@ public class VdsDeploy extends VdsDeployBase {
                     Config.<Integer>getValue(ConfigValues.FenceKdumpMessageInterval)
             );
             return true;
+        }},
+        new Callable<Boolean>() {@CallWhen("VMCONSOLE_ENABLE")
+        public Boolean call() throws Exception {
+            Integer support = (Integer)_parser.cliEnvironmentGet(
+                VMConsoleEnv.SUPPORT
+            );
+            if (support == null || support != Const.VMCONSOLE_SUPPORT_V1) {
+                removeCustomizationCondition("VMCONSOLE_ENABLE");
+            }
+            return true;
+        }},
+        new Callable<Boolean>() {@CallWhen("VMCONSOLE_ENABLE")
+        public Boolean call() throws Exception {
+            _parser.cliEnvironmentSet(
+                VMConsoleEnv.ENABLE,
+                true
+            );
+            return true;
+        }},
+        new Callable<Boolean>() {@CallWhen("VMCONSOLE_ENABLE")
+        public Boolean call() throws Exception {
+            _parser.cliEnvironmentSet(
+                VMConsoleEnv.CAKEY,
+                PKIResources.Resource.CACertificate.toString(
+                    PKIResources.Format.OPENSSH_PUBKEY
+                ).replace("\n", "")
+            );
+            return true;
         }}
     );
 
@@ -647,6 +678,14 @@ public class VdsDeploy extends VdsDeployBase {
                 unknown = false;
             }
         }
+        else if (bevent instanceof Event.QueryValue) {
+            Event.QueryValue event = (Event.QueryValue)bevent;
+
+            if (org.ovirt.ovirt_host_deploy.constants.Queries.VMCONSOLE_CERTIFICATE.equals(event.name)) {
+                event.value = _sercon_certificate.replace("\n", "");
+                unknown = false;
+            }
+        }
         else if (bevent instanceof Event.QueryMultiString) {
             Event.QueryMultiString event = (Event.QueryMultiString)bevent;
 
@@ -668,6 +707,22 @@ public class VdsDeploy extends VdsDeployBase {
                 );
                 _certificate = OpenSslCAWrapper.signCertificateRequest(
                     StringUtils.join(event.value, "\n"),
+                    _vds.getHostName()
+                );
+                unknown = false;
+            }
+            else if (Displays.VMCONSOLE_CERTIFICATE_REQUEST.equals(event.name)) {
+                _messages.post(
+                    InstallerMessages.Severity.INFO,
+                    "Enrolling serial console certificate"
+                );
+                String name = String.format("%s-ssh", _vds.getHostName());
+                String cer = OpenSslCAWrapper.signCertificateRequest(
+                    StringUtils.join(event.value, "\n"),
+                    name
+                );
+                _sercon_certificate = OpenSslCAWrapper.signOpenSSHCertificate(
+                    name,
                     _vds.getHostName()
                 );
                 unknown = false;
@@ -724,6 +779,16 @@ public class VdsDeploy extends VdsDeployBase {
         if (doFirewall) {
             _iptables = _getIpTables();
             addCustomizationCondition(COND_IPTABLES_OVERRIDE);
+        }
+    }
+
+    /**
+     * Enable serial console setup.
+     * @param doVMConsole enable.
+     */
+    public void setVMConsole(boolean doVMConsole) {
+        if (doVMConsole) {
+            addCustomizationCondition("VMCONSOLE_ENABLE");
         }
     }
 

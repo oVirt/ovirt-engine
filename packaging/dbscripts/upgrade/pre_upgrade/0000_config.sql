@@ -374,6 +374,9 @@ select fn_db_add_config_value('IPTablesConfigForVirt',
 # libvirt tls
 -A INPUT -p tcp --dport 16514 -j ACCEPT
 
+# serial consoles
+-A INPUT -p tcp -m multiport --dports 2223 -j ACCEPT
+
 # guest consoles
 -A INPUT -p tcp -m multiport --dports 5900:6923 -j ACCEPT
 
@@ -826,6 +829,9 @@ select fn_db_update_config_value('IPTablesConfigForVirt',
 '
 # libvirt tls
 -A INPUT -p tcp --dport 16514 -j ACCEPT
+
+# serial consoles
+-A INPUT -p tcp -m multiport --dports 2223 -j ACCEPT
 
 # guest consoles
 -A INPUT -p tcp -m multiport --dports 5900:6923 -j ACCEPT

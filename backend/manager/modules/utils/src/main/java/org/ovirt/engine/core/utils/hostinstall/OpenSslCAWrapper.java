@@ -64,6 +64,28 @@ public class OpenSslCAWrapper {
         ).getPath());
     }
 
+    public static String signOpenSSHCertificate(
+        String hostname,
+        String principal
+    ) throws IOException {
+        EngineLocalConfig config = EngineLocalConfig.getInstance();
+
+        if (
+            !new OpenSslCAWrapper().signOpenSSHCertificate(
+                new File(new File(config.getUsrDir(), "bin"), "pki-enroll-openssh-cert.sh"),
+                hostname,
+                principal
+            )
+        ) {
+            throw new RuntimeException("OpenSSH certificate enrollment failed");
+        }
+
+        return FileUtil.readAllText(
+            new File(new File(config.getPKIDir(), "certs"),
+            String.format("%s-cert.pub", hostname)
+        ).getPath());
+    }
+
     public final boolean signCertificateRequest(
         File executable,
         String hostname
@@ -89,6 +111,34 @@ public class OpenSslCAWrapper {
             returnValue = false;
         }
         log.debug("End of signCertificateRequest");
+        return returnValue;
+    }
+
+    public final boolean signOpenSSHCertificate(
+        File executable,
+        String hostname,
+        String principal
+    ) {
+        log.debug("Entered signOpenSSHCertificate");
+        boolean returnValue = true;
+        if (executable.exists()) {
+            int days = Config.<Integer> getValue(ConfigValues.VdsCertificateValidityInYears) * 365;
+            returnValue = runCommandArray(
+                new String[] {
+                    executable.getAbsolutePath(),
+                    String.format("--name=%s", hostname),
+                    "--host",
+                    String.format("--id=%s", hostname),
+                    String.format("--principals=%s", principal),
+                    String.format("--days=%s", days)
+                },
+                Config.<Integer> getValue(ConfigValues.SignCertTimeoutInSeconds)
+            );
+        } else {
+            log.error("Sign certificate request file '{}' not found", executable.getPath());
+            returnValue = false;
+        }
+        log.debug("End of signOpenSSHCertificate");
         return returnValue;
     }
 

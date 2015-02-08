@@ -225,6 +225,9 @@ public abstract class VdsDeployBase implements SSHDialog.Sink, Closeable {
     protected void addCustomizationCondition(String cond) {
         _customizationConditions.add(cond);
     }
+    protected void removeCustomizationCondition(String cond) {
+        _customizationConditions.remove(cond);
+    }
 
     /*
      * Termination dialog.
