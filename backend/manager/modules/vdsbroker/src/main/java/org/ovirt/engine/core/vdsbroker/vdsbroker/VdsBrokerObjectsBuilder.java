@@ -818,6 +818,9 @@ public class VdsBrokerObjectsBuilder {
 
     public static void updateNumaStatisticsData(VDS vds, Map<String, Object> xmlRpcStruct) {
         List<VdsNumaNode> vdsNumaNodes = new ArrayList<>();
+        if (vds.getNumaNodeList() != null && !vds.getNumaNodeList().isEmpty()) {
+            vdsNumaNodes.addAll(vds.getNumaNodeList());
+        }
         List<CpuStatistics> cpuStatsData = new ArrayList<>();
         if (xmlRpcStruct.containsKey(VdsProperties.CPU_STATS)) {
             Map<String, Map<String, Object>> cpuStats = (Map<String, Map<String, Object>>)
@@ -834,8 +837,24 @@ public class VdsBrokerObjectsBuilder {
             }
             DecimalFormat percentageFormatter = new DecimalFormat("#.##");
             for (Map.Entry<Integer, List<CpuStatistics>> item : numaNodeCpuStats.entrySet()) {
-                VdsNumaNode node = buildVdsNumaNodeStatistics(percentageFormatter, item);
-                vdsNumaNodes.add(node);
+                VdsNumaNode nodeWithStatistics = buildVdsNumaNodeStatistics(percentageFormatter, item);
+                if (vdsNumaNodes.isEmpty()) {
+                    vdsNumaNodes.add(nodeWithStatistics);
+                } else {
+                    boolean foundNumaNode = false;
+                    // append the statistics to the correct numaNode (search by its Index.)
+                    for (VdsNumaNode currNumaNode : vdsNumaNodes) {
+                        if (currNumaNode.getIndex() == nodeWithStatistics.getIndex()) {
+                            currNumaNode.setNumaNodeStatistics(nodeWithStatistics.getNumaNodeStatistics());
+                            foundNumaNode = true;
+                            break;
+                        }
+                    }
+                    // append new numaNode (contains only statistics) if not found existing
+                    if (!foundNumaNode) {
+                        vdsNumaNodes.add(nodeWithStatistics);
+                    }
+                }
             }
         }
         if (xmlRpcStruct.containsKey(VdsProperties.NUMA_NODE_FREE_MEM_STAT)) {
@@ -843,7 +862,7 @@ public class VdsBrokerObjectsBuilder {
                     xmlRpcStruct.get(VdsProperties.NUMA_NODE_FREE_MEM_STAT);
             for (Map.Entry<String, Map<String, Object>> item : memStats.entrySet()) {
                 VdsNumaNode node = NumaUtils.getVdsNumaNodeByIndex(vdsNumaNodes, Integer.valueOf(item.getKey()));
-                if (node != null) {
+                if (node != null && node.getNumaNodeStatistics() != null) {
                     node.getNumaNodeStatistics().setMemFree(AssignLongValue(item.getValue(),
                             VdsProperties.NUMA_NODE_FREE_MEM));
                     node.getNumaNodeStatistics().setMemUsagePercent(AssignIntValue(item.getValue(),

@@ -337,10 +337,11 @@ public class VdsUpdateRunTimeInfo {
                 nodesMap.put(node.getIndex(), node);
             }
             for (VdsNumaNode node : updateNumaNodes) {
-                if (nodesMap.containsKey(node.getIndex())) {
-                    node.setId(nodesMap.get(node.getIndex()).getId());
+                VdsNumaNode dbNode = nodesMap.get(node.getIndex());
+                if (dbNode != null) {
                     if (node.getNumaNodeStatistics() != null) {
-                        vdsNumaNodesToSave.add(node);
+                        dbNode.setNumaNodeStatistics(node.getNumaNodeStatistics());
+                        vdsNumaNodesToSave.add(dbNode);
                     }
                 }
             }
