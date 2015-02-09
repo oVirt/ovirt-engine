@@ -209,6 +209,7 @@ public class AddVmCommandTest {
         final int domainSizeGB = 20;
         final int sizeRequired = 5;
         AddVmCommand<AddVmParameters> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired);
+        cmd.postConstruct();
         doReturn(true).when(cmd).validateCustomProperties(any(VmStatic.class), any(ArrayList.class));
         doReturn(true).when(cmd).validateSpaceRequirements();
         assertTrue("vm could not be added", cmd.canAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
@@ -253,7 +254,6 @@ public class AddVmCommandTest {
     public void canAddVmWithVirtioScsiControllerNotSupportedOs() {
         VM vm = createVm();
         AddVmFromTemplateCommand<AddVmParameters> cmd = createVmFromTemplateCommand(vm);
-
         VDSGroup vdsGroup = createVdsGroup();
 
         mockStorageDomainDAOGetForStoragePool();
@@ -404,6 +404,7 @@ public class AddVmCommandTest {
         mockDAOs(result);
         mockBackend(result);
         initCommandMethods(result);
+        result.postConstruct();
         return result;
     }
 

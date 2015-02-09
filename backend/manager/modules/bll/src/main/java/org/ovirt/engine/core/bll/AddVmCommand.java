@@ -132,6 +132,11 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         setVmName(parameters.getVm().getName());
         parameters.setVmId(getVmId());
         setStorageDomainId(getParameters().getStorageDomainId());
+    }
+
+    @Override
+    protected void postConstruct() {
+        T parameters = getParameters();
         if (parameters.getVmStaticData() != null) {
             Guid templateIdToUse = getParameters().getVmStaticData().getVmtGuid();
 
