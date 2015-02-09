@@ -418,6 +418,7 @@ class ConfigEnv(object):
 
     TOTAL_MEMORY_MB = 'OVESETUP_CONFIG/totalMemoryMB'
 
+
 @util.export
 @util.codegen
 @osetupattrsclass
