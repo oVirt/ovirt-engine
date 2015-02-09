@@ -598,7 +598,15 @@ public enum HelpTag {
 
     remove_cpu_profile("remove_cpu_profile", HelpTagType.WEBADMIN, "Clusters Tab > Cpu Profiles sub-tab -> Remove Cpu Profile dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    numa_support("numa_support", HelpTagType.WEBADMIN, "Host Tab > NUMA Support"); //$NON-NLS-1$ //$NON-NLS-2$
+    numa_support("numa_support", HelpTagType.WEBADMIN, "Host Tab > NUMA Support"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    host_devices("host_devices", HelpTagType.UNKNOWN), //$NON-NLS-1$
+
+    add_host_device("add_host_device", HelpTagType.WEBADMIN, "VMs Tab > Host Devices Sub-Tab > Add Host Device(s)"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    remove_host_device("remove_host_device", HelpTagType.WEBADMIN, "VMs Tab > Host Devices Sub-Tab > Remove Host Device(s)"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    repin_host("repin_host", HelpTagType.WEBADMIN, "VMs Tab > Host Devices Sub-Tab > Pin to another Host"); //$NON-NLS-1$ //$NON-NLS-2$
 
     public final String name;
 

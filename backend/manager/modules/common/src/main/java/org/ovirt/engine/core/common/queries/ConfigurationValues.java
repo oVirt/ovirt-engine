@@ -160,7 +160,8 @@ public enum ConfigurationValues {
     CORSSupport,
     CORSAllowedOrigins,
     CinderProviderSupported,
-    NetworkSriovSupported;
+    NetworkSriovSupported,
+    HostDevicePassthroughCapabilities;
 
     public static enum ConfigAuthType {
         Admin,

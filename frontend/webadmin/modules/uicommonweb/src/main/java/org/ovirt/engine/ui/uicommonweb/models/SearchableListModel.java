@@ -957,7 +957,7 @@ public abstract class SearchableListModel<E, T> extends SortedListModel<T> imple
             @Override
             public void onSuccess(Object model, Object ReturnValue)
             {
-                setItems((Collection) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                setItems((Collection<T>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
             }
         };
 

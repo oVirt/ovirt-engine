@@ -179,6 +179,10 @@
         <include name="common/businessentities/VmRngDevice.java" />
         <include name="common/businessentities/UserProfile.java" />
         <include name="common/locks/LockInfo.java" />
+        <include name="common/businessentities/VmHostDevice.java" />
+        <include name="common/businessentities/HostDevice.java" />
+        <include name="common/businessentities/HostDeviceId.java" />
+        <include name="common/businessentities/HostDeviceView.java" />
         <include name="common/job/*.java" />
 
         <!-- Console -->

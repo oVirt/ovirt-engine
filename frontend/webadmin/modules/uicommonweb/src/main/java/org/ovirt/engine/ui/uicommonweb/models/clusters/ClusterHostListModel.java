@@ -27,6 +27,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHooksListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.HostDeviceListModel;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -39,12 +40,13 @@ public class ClusterHostListModel extends HostListModel<VDSGroup> {
     public ClusterHostListModel(final HostGeneralModel hostGeneralModel,
             final HostGlusterSwiftListModel hostGlusterSwiftListModel, final HostBricksListModel hostBricksListModel,
             final HostVmListModel hostVmListModel, final HostEventListModel hostEventListModel,
-            final HostInterfaceListModel hostInterfaceListModel,
+            final HostInterfaceListModel hostInterfaceListModel, final HostDeviceListModel hostDeviceListModel,
             final HostHardwareGeneralModel hostHardwareGeneralModel, final HostHooksListModel hostHooksListModel,
             final PermissionListModel<VDS> permissionListModel,
             final HostGlusterStorageDevicesListModel gusterStorageDeviceListModel) {
         super(hostGeneralModel, hostGlusterSwiftListModel, hostBricksListModel, hostVmListModel, hostEventListModel,
                 hostInterfaceListModel,
+                hostDeviceListModel,
                 hostHardwareGeneralModel,
                 hostHooksListModel,
                 permissionListModel,

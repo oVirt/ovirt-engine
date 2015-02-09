@@ -15,5 +15,5 @@ public class AffinityGroupPopupPresenterWidget extends AbstractModelBoundPopupPr
     public AffinityGroupPopupPresenterWidget(EventBus eventBus, ViewDef view) {
         super(eventBus, view);
     }
-
 }
+

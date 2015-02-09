@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.gin;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -155,6 +156,8 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.HostDeviceListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.VmHostDeviceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
@@ -313,6 +316,8 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     SearchableDetailModelProvider<AuditLog, VmListModel<Void>, VmEventListModel> getSubTabVirtualMachineEventModelProvider();
 
+    SearchableDetailModelProvider<HostDeviceView, VmListModel<Void>, VmHostDeviceListModel> getSubTabVirtualMachineHostDeviceModelProvider();
+
     // Host
 
     DetailModelProvider<HostListModel<Void>, HostGeneralModel> getSubTabHostGeneralModelProvider();
@@ -322,6 +327,8 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
     SearchableDetailModelProvider<VM, HostListModel<Void>, HostVmListModel> getSubTabHostVmModelProvider();
 
     SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel<Void>, HostInterfaceListModel> getSubTabHostInterfaceModelProvider();
+
+    SearchableDetailModelProvider<HostDeviceView, HostListModel<Void>, HostDeviceListModel> getSubTabHostDeviceModelProvider();
 
     SearchableDetailModelProvider<Map<String, String>, HostListModel<Void>, HostHooksListModel> getSubTabHostHookModelProvider();
 

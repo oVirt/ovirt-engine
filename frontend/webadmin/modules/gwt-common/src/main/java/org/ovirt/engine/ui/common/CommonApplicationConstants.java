@@ -2128,4 +2128,13 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Creation Date")
     String permissionsCreationDate();
+
+    @DefaultStringValue("Add device")
+    String addVmHostDevice();
+
+    @DefaultStringValue("Remove device")
+    String removeVmHostDevice();
+
+    @DefaultStringValue("Pin to another host")
+    String repinVmHost();
 }

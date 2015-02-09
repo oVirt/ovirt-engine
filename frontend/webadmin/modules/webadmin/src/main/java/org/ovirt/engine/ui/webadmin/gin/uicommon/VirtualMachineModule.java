@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -35,6 +36,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.VmHostDeviceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
@@ -45,6 +47,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopup
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.ImportVmsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.hostdev.AddVmHostDevicePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.hostdev.VmRepinHostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.AffinityGroupPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
@@ -374,6 +378,40 @@ public class VirtualMachineModule extends AbstractGinModule {
         return result;
     }
 
+    @Provides
+    @Singleton
+    public SearchableDetailModelProvider<HostDeviceView, VmListModel<Void>, VmHostDeviceListModel> getVmHostDeviceListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<AddVmHostDevicePopupPresenterWidget> addPopupProvider,
+            final Provider<VmRepinHostPopupPresenterWidget> repinPopupProvider,
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<VmListModel<Void>> mainModelProvider,
+            final Provider<VmHostDeviceListModel> modelProvider) {
+        SearchableDetailTabModelProvider<HostDeviceView, VmListModel<Void>, VmHostDeviceListModel> result =
+                new SearchableDetailTabModelProvider<HostDeviceView, VmListModel<Void>, VmHostDeviceListModel>(eventBus, defaultConfirmPopupProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmHostDeviceListModel source, UICommand lastExecutedCommand, Model windowModel) {
+                        if (lastExecutedCommand == getModel().getAddCommand()) {
+                            return addPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getRepinHostCommand()) {
+                            return repinPopupProvider.get();
+                        }
+                        return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                    }
+
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(VmHostDeviceListModel source, UICommand lastExecutedCommand) {
+                        if (lastExecutedCommand == getModel().getRemoveCommand()) {
+                            return removeConfirmPopupProvider.get();
+                        }
+                        return super.getConfirmModelPopup(source, lastExecutedCommand);
+                    }
+                };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
+    }
+
     @Override
     protected void configure() {
         bind(new TypeLiteral<VmListModel<Void>>() {}).in(Singleton.class);
@@ -386,6 +424,7 @@ public class VirtualMachineModule extends AbstractGinModule {
         bind(VmSnapshotListModel.class).in(Singleton.class);
         bind(VmAffinityGroupListModel.class).in(Singleton.class);
         bind(new TypeLiteral<VmAppListModel<VM>>() {}).in(Singleton.class);
+        bind(VmHostDeviceListModel.class).in(Singleton.class);
         bind(new TypeLiteral<PermissionListModel<VM>>(){}).in(Singleton.class);
 
         // Form Detail Models

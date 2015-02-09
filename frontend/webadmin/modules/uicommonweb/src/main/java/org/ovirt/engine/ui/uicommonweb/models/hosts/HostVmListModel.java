@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.VmHostDeviceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
@@ -34,9 +35,10 @@ public class HostVmListModel extends VmListModel<VDS> {
             PermissionListModel<VM> permissionListModel,
             VmAffinityGroupListModel vmAffinityGroupListModel,
             VmSessionsModel vmSessionsModel,
-            Provider<ImportVmsModel> importVmsModelProvider) {
+            Provider<ImportVmsModel> importVmsModelProvider,
+            VmHostDeviceListModel vmHostDeviceListModel) {
         super(vmGeneralModel, vmInterfaceListModel, vmDiskListModel, vmSnapshotListModel, vmEventListModel,
-                vmAppListModel, permissionListModel, vmAffinityGroupListModel, vmSessionsModel, importVmsModelProvider);
+                vmAppListModel, permissionListModel, vmAffinityGroupListModel, vmSessionsModel, importVmsModelProvider, vmHostDeviceListModel);
     }
 
     @Override

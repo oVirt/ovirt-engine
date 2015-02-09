@@ -87,6 +87,7 @@ import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.VmBaseListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.AttachCdModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.VmHostDeviceListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -445,9 +446,10 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             final VmDiskListModel vmDiskListModel, final VmSnapshotListModel vmSnapshotListModel,
             final VmEventListModel vmEventListModel, final VmAppListModel<VM> vmAppListModel,
             final PermissionListModel<VM> permissionListModel, final VmAffinityGroupListModel vmAffinityGroupListModel,
-            final VmSessionsModel vmSessionsModel, final Provider<ImportVmsModel> importVmsModelProvider) {
+            final VmSessionsModel vmSessionsModel, final Provider<ImportVmsModel> importVmsModelProvider,
+            final VmHostDeviceListModel vmHostDeviceListModel) {
         setDetailList(vmGeneralModel, vmInterfaceListModel, vmDiskListModel, vmSnapshotListModel, vmEventListModel,
-                vmAppListModel, permissionListModel, vmAffinityGroupListModel, vmSessionsModel);
+                vmAppListModel, permissionListModel, vmAffinityGroupListModel, vmSessionsModel, vmHostDeviceListModel);
         this.importVmsModelProvider = importVmsModelProvider;
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
         setHelpTag(HelpTag.virtual_machines);
@@ -511,7 +513,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             final VmDiskListModel vmDiskListModel, final VmSnapshotListModel vmSnapshotListModel,
             final VmEventListModel vmEventListModel, final VmAppListModel<VM> vmAppListModel,
             final PermissionListModel<VM> permissionListModel, final VmAffinityGroupListModel vmAffinityGroupListModel,
-            final VmSessionsModel vmSessionsModel) {
+            final VmSessionsModel vmSessionsModel, final VmHostDeviceListModel vmHostDeviceListModel) {
         List<HasEntity<VM>> list = new ArrayList<>();
         list.add(vmGeneralModel);
         list.add(vmInterfaceListModel);
@@ -523,6 +525,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         list.add(permissionListModel);
         list.add(vmAffinityGroupListModel);
         list.add(vmSessionsModel);
+        list.add(vmHostDeviceListModel);
         setDetailModels(list);
     }
 

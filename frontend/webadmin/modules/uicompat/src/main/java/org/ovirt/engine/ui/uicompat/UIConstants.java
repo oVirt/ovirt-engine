@@ -2752,4 +2752,16 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Specific networks")
     String specificNetworksAllowed();
+
+    @DefaultStringValue("Host Devices")
+    String hostDevicesTitle();
+
+    @DefaultStringValue("Remove Host Device(s)")
+    String removeHostDevices();
+
+    @DefaultStringValue("Add Host Devices")
+    String addVmHostDevicesTitle();
+
+    @DefaultStringValue("Pin VM to Host")
+    String repinHostTitle();
 }

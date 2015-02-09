@@ -86,6 +86,7 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.NumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.HostDeviceListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -393,7 +394,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
     public HostListModel(final HostGeneralModel hostGeneralModel,
             final HostGlusterSwiftListModel hostGlusterSwiftListModel, final HostBricksListModel hostBricksListModel,
             final HostVmListModel hostVmListModel, final HostEventListModel hostEventListModel,
-            final HostInterfaceListModel hostInterfaceListModel,
+            final HostInterfaceListModel hostInterfaceListModel, final HostDeviceListModel hostDeviceListModel,
             final HostHardwareGeneralModel hostHardwareGeneralModel, final HostHooksListModel hostHooksListModel,
             final PermissionListModel<VDS> permissionListModel,
             final HostGlusterStorageDevicesListModel glusterStorageDeviceListModel) {
@@ -404,7 +405,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         this.privateHostEventListModel = hostEventListModel;
         this.glusterStorageDeviceListModel = glusterStorageDeviceListModel;
 
-        setDetailList(hostInterfaceListModel, hostHardwareGeneralModel, hostHooksListModel, permissionListModel);
+        setDetailList(hostInterfaceListModel, hostHardwareGeneralModel, hostHooksListModel, permissionListModel, hostDeviceListModel);
 
         setTitle(ConstantsManager.getInstance().getConstants().hostsTitle());
         setHelpTag(HelpTag.hosts);
@@ -442,8 +443,8 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
     }
 
     private void setDetailList(final HostInterfaceListModel hostInterfaceListModel,
-            final HostHardwareGeneralModel hostHardwareGeneralModel, final HostHooksListModel hostHooksListModel,
-            final PermissionListModel<VDS> permissionListModel) {
+                               final HostHardwareGeneralModel hostHardwareGeneralModel, final HostHooksListModel hostHooksListModel,
+                               final PermissionListModel<VDS> permissionListModel, final HostDeviceListModel hostDeviceListModel) {
         generalModel.getRequestEditEvent().addListener(this);
         generalModel.getRequestGOToEventsTabEvent().addListener(this);
 
@@ -452,6 +453,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         list.add(hostHardwareGeneralModel);
         list.add(getHostVmListModel());
         list.add(hostInterfaceListModel);
+        list.add(hostDeviceListModel);
         list.add(getHostEventListModel());
         list.add(hostHooksListModel);
         list.add(getGlusterSwiftModel());

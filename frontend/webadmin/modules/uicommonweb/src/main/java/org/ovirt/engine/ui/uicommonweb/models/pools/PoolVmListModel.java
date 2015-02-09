@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.VmHostDeviceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
@@ -50,9 +51,9 @@ public class PoolVmListModel extends VmListModel<VmPool> {
             final VmDiskListModel vmDiskListModel, final VmSnapshotListModel vmSnapshotListModel,
             final VmEventListModel vmEventListModel, final VmAppListModel<VM> vmAppListModel,
             final PermissionListModel<VM> permissionListModel, final VmAffinityGroupListModel vmAffinityGroupListModel,
-            final VmSessionsModel vmSessionsModel, final Provider<ImportVmsModel> importVmsModelProvider) {
+            final VmSessionsModel vmSessionsModel, final Provider<ImportVmsModel> importVmsModelProvider, VmHostDeviceListModel vmHostDeviceListModel) {
         super(vmGeneralModel, vmInterfaceListModel, vmDiskListModel, vmSnapshotListModel, vmEventListModel,
-                vmAppListModel, permissionListModel, vmAffinityGroupListModel, vmSessionsModel, importVmsModelProvider);
+                vmAppListModel, permissionListModel, vmAffinityGroupListModel, vmSessionsModel, importVmsModelProvider, vmHostDeviceListModel);
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
         setHelpTag(HelpTag.virtual_machines);
         setHashName("virtual_machines"); //$NON-NLS-1$

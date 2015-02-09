@@ -1277,6 +1277,10 @@ public class AsyncDataProvider {
                 SearchType.VDS), aQuery);
     }
 
+    public void getHostListByClusterId(AsyncQuery aQuery, Guid clusterId) {
+        Frontend.getInstance().runQuery(VdcQueryType.GetHostsByClusterId, new IdQueryParameters(clusterId), aQuery);
+    }
+
     public void getHostListByDataCenter(AsyncQuery aQuery, Guid spId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
@@ -1291,6 +1295,14 @@ public class AsyncDataProvider {
             }
         };
         Frontend.getInstance().runQuery(VdcQueryType.GetAllVdsByStoragePool, new IdQueryParameters(spId), aQuery);
+    }
+
+    public void getHostDevicesByHostId(AsyncQuery aQuery, Guid hostId) {
+        Frontend.getInstance().runQuery(VdcQueryType.GetExtendedHostDevicesByHostId, new IdQueryParameters(hostId), aQuery);
+    }
+
+    public void getConfiguredVmHostDevices(AsyncQuery aQuery, Guid vmId) {
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmHostDevices, new IdQueryParameters(vmId), aQuery);
     }
 
     public void getVmDiskList(AsyncQuery aQuery, Guid vmId, boolean isRefresh) {

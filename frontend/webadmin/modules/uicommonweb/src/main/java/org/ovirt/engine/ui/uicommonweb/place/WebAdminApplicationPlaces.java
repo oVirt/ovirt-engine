@@ -179,6 +179,9 @@ public class WebAdminApplicationPlaces {
     public static final String virtualMachineVirtualDiskSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
             + "disks"; //$NON-NLS-1$
 
+    public static final String virtualMachineHostDeviceSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
+            + "host_devices"; //$NON-NLS-1$
+
     public static final String virtualMachineSnapshotSubTabPlace = virtualMachineMainTabPlace + SUB_TAB_PREFIX
             + "snapshots"; //$NON-NLS-1$
 
@@ -215,6 +218,9 @@ public class WebAdminApplicationPlaces {
 
     public static final String hostInterfaceSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
             + "network_interfaces"; //$NON-NLS-1$
+
+    public static final String hostDeviceSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
+            + "devices"; // $NON-NLS-1$
 
     public static final String hostHookSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
             + "host_hooks"; //$NON-NLS-1$

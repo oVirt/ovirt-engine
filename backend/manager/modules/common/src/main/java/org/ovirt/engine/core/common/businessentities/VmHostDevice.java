@@ -15,6 +15,7 @@ public class VmHostDevice extends VmDevice {
     public VmHostDevice(VmDevice device) {
         this();
         setId(device.getId());
+        setDevice(device.getDevice());
         setSpecParams(device.getSpecParams());
     }
 

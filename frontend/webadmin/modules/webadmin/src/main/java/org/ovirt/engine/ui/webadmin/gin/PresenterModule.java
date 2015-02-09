@@ -75,6 +75,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.MultipleHo
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksBondPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksManagementPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.hostdev.AddVmHostDevicePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.hostdev.VmRepinHostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.instancetypes.InstanceTypesPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.macpool.SharedMacPoolPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolEditPopupPresenterWidget;
@@ -185,6 +187,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.VolumeSub
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostGeneralSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostBrickPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostDevicePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralHardwarePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralInfoPresenter;
@@ -258,6 +261,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.Su
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineApplicationPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineGeneralPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineHostDevicePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineNetworkInterfacePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachinePermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineSessionsPresenter;
@@ -377,6 +381,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskAttachPopup
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskRemovePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmExportPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.AddVmHostDevicePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmMakeTemplatePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmMigratePopupView;
@@ -384,6 +389,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmNextRunConfigur
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRemovePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRepinHostPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRunOncePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmSnapshotCreatePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmSnapshotCustomPreviewPopupView;
@@ -446,6 +452,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.VolumeSubTabPa
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.HostGeneralSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.HostSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostBrickView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostDeviceView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGeneralHardwareView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGeneralInfoView;
@@ -519,6 +526,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabV
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineApplicationView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineGeneralView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineHostDeviceView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineNetworkInterfaceView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachinePermissionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine.SubTabVirtualMachineSessionsView;
@@ -861,6 +869,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabHostInterfacePresenter.ViewDef.class,
                 SubTabHostInterfaceView.class,
                 SubTabHostInterfacePresenter.ProxyDef.class);
+        bindPresenter(SubTabHostDevicePresenter.class,
+                SubTabHostDevicePresenter.ViewDef.class,
+                SubTabHostDeviceView.class,
+                SubTabHostDevicePresenter.ProxyDef.class);
         bindPresenter(SubTabHostHookPresenter.class,
                 SubTabHostHookPresenter.ViewDef.class,
                 SubTabHostHookView.class,
@@ -927,6 +939,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabVirtualMachineEventPresenter.ViewDef.class,
                 SubTabVirtualMachineEventView.class,
                 SubTabVirtualMachineEventPresenter.ProxyDef.class);
+        bindPresenter(SubTabVirtualMachineHostDevicePresenter.class,
+                SubTabVirtualMachineHostDevicePresenter.ViewDef.class,
+                SubTabVirtualMachineHostDeviceView.class,
+                SubTabVirtualMachineHostDevicePresenter.ProxyDef.class);
 
         // Pool
         bindPresenter(PoolSubTabPanelPresenter.class,
@@ -1511,6 +1527,15 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(ImportVmsPopupPresenterWidget.class,
                 ImportVmsPopupPresenterWidget.ViewDef.class,
                 ImportVmsPopupView.class);
+
+        // Host Devices
+        bindPresenterWidget(AddVmHostDevicePopupPresenterWidget.class,
+                AddVmHostDevicePopupPresenterWidget.ViewDef.class,
+                AddVmHostDevicePopupView.class);
+
+        bindPresenterWidget(VmRepinHostPopupPresenterWidget.class,
+                VmRepinHostPopupPresenterWidget.ViewDef.class,
+                VmRepinHostPopupView.class);
 
         // Volume
         bindPresenter(VolumeSubTabPanelPresenter.class,

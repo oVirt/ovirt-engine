@@ -82,6 +82,7 @@ import org.ovirt.engine.ui.uicompat.IEqualityComparer;
 @SuppressWarnings("unused")
 public final class Linq
 {
+
     public static class AuditLogComparer implements Comparator<AuditLog>, Serializable
     {
         private static final long serialVersionUID = 7488030875073130111L;
@@ -1653,5 +1654,14 @@ public final class Linq
                 return source.getId().equals(id);
             }
         });
+    }
+
+    public static VDS findHostById(Collection<VDS> items, Guid hostId) {
+        for (VDS host : items) {
+            if (host.getId().equals(hostId)) {
+                return host;
+            }
+        }
+        return null;
     }
 }

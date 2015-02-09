@@ -521,6 +521,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Disks")
     String virtualMachineVirtualDiskSubTabLabel();
 
+    @DefaultStringValue("Host Devices")
+    String virtualMachineHostDeviceSubTabLabel();
+
     @DefaultStringValue("Snapshots")
     String virtualMachineSnapshotSubTabLabel();
 
@@ -553,6 +556,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Network Interfaces")
     String hostIfaceSubTabLabel();
+
+    @DefaultStringValue("Host Devices")
+    String hostDeviceSubTabLabel();
 
     @DefaultStringValue("Host Hooks")
     String hostHookSubTabLabel();
@@ -4317,4 +4323,43 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Via Label")
     String vfsConfigViaLabel();
+
+    @DefaultStringValue("IOMMU Group")
+    String iommuGroup();
+
+    @DefaultStringValue("Capability")
+    String capability();
+
+    @DefaultStringValue("Product")
+    String product();
+
+    @DefaultStringValue("Product Name")
+    String productName();
+
+    @DefaultStringValue("Product Id")
+    String productId();
+
+    @DefaultStringValue("Vendor")
+    String vendor();
+
+    @DefaultStringValue("Vendor Name")
+    String vendorName();
+
+    @DefaultStringValue("Vendor Id")
+    String vendorId();
+
+    @DefaultStringValue("Available Host Devices")
+    String availableHostDevices();
+
+    @DefaultStringValue("Host Devices to be attached")
+    String selectedHostDevices();
+
+    @DefaultStringValue("Pinned Host")
+    String pinnedHost();
+
+    @DefaultStringValue("Currently in use by")
+    String currentlyUsedByVm();
+
+    @DefaultStringValue("Attached to VMs")
+    String attachedToVms();
 }

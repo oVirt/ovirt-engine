@@ -2127,6 +2127,11 @@ public enum ConfigValues {
     @DefaultValueAttribute("1")
     BackupAlertPeriodInDays,
 
+    @TypeConverterAttribute(List.class)
+    @DefaultValueAttribute("pci,scsi,usb_device")
+    @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
+    HostDevicePassthroughCapabilities,
+
     Invalid
 
 }

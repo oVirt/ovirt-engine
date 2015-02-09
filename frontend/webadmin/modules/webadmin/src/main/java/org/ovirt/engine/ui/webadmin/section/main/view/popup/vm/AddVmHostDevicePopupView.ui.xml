@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+	xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+
+	<ui:with field="constants" type="org.ovirt.engine.ui.webadmin.ApplicationConstants" />
+
+	<d:SimpleDialogPanel width="1200px" height="800px">
+		<d:content>
+			<g:FlowPanel>
+				<g:FlowPanel>
+					<e:ListModelListBoxEditor ui:field="pinnedHostEditor" />
+				</g:FlowPanel>
+				<e:ListModelListBoxEditor ui:field="capabilityEditor" label="{constants.capability}" />
+				<w:HorizontalSplitTable ui:field="splitTable" />
+			</g:FlowPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+</ui:UiBinder>
