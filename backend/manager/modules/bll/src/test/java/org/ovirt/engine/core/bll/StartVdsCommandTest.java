@@ -5,7 +5,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.stub;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.LinkedList;
@@ -41,13 +47,6 @@ import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
-
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.stub;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.times;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StartVdsCommandTest {
@@ -160,7 +159,7 @@ public class StartVdsCommandTest {
         retValue.setSucceeded(true);
         FenceStatusReturnValue stat = new FenceStatusReturnValue(status, "");
         retValue.setReturnValue(stat);
-        when(executor.checkStatus()).thenReturn(retValue);
+        when(executor.checkHostStatus()).thenReturn(retValue);
     }
 
     private VDSFenceReturnValue createStatus(String value) {
@@ -285,7 +284,7 @@ public class StartVdsCommandTest {
     public void onFailureRetryWaitForStatus() {
         mockVdsSingleAgent();
         mockExecutor(agent1, true);
-        when(executor.checkStatus()).thenReturn(createStatus("off")).thenReturn(createStatus("on"));
+        when(executor.checkHostStatus()).thenReturn(createStatus("off")).thenReturn(createStatus("on"));
         command.executeCommand();
         assertTrue(command.getSucceeded());
     }
