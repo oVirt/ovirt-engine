@@ -4036,6 +4036,7 @@ actions:
           template.origin: xs:string
           template.high_availability.priority: 'xs:int'
           template.timezone: xs:string
+          template.storage_domain.id: 'xs:string'
           template.domain.name: xs:string
           template.type: xs:string
           template.stateless: 'xs:boolean'
@@ -4072,7 +4073,7 @@ actions:
           template.soundcard_enabled: xs:boolean
           template.custom_emulated_machine: xs:string
           template.custom_cpu_model: xs:string
-          template.vm.disks.disk--COLLECTION: {disk.id: 'xs:string', storage_domains.storage_domain--COLLECTION: {storage_domain.id: 'xs:string'}}
+          template.vm.disks.disk--COLLECTION: {disk.id: 'xs:string', disk.alias: 'xs:string', storage_domains.storage_domain--COLLECTION: {storage_domain.id: 'xs:string'}}
           template.permissions.clone: xs:boolean
           template.version.version_name: xs:string
           template.version.base_template.id: xs:string

@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VirtIOSCSI;
 import org.ovirt.engine.api.resource.TemplateResource;
 import org.ovirt.engine.api.resource.TemplatesResource;
+import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.DisplayHelper;
@@ -118,7 +120,7 @@ public class BackendTemplatesResource
             params.setDestinationStorageDomainId(asGuid(template.getStorageDomain().getId()));
             isDomainSet = true;
         }
-        params.setDiskInfoDestinationMap(getDiskToDestinationMap(template.getVm(),
+        params.setDiskInfoDestinationMap(getDestinationTemplateDiskMap(template.getVm(),
                 params.getDestinationStorageDomainId(),
                 isDomainSet));
 
@@ -140,24 +142,50 @@ public class BackendTemplatesResource
         return getEntity(VDSGroup.class, VdcQueryType.GetVdsGroupByVdsGroupId, new IdQueryParameters(id), "GetVdsGroupByVdsGroupId");
     }
 
-    protected HashMap<Guid, DiskImage> getDiskToDestinationMap(VM vm, Guid storageDomainId, boolean isDomainSet) {
-        HashMap<Guid, DiskImage> diskToDestinationMap = null;
+    protected HashMap<Guid, DiskImage> getDestinationTemplateDiskMap(VM vm, Guid storageDomainId, boolean isTemplateGeneralStorageDomainSet) {
+        HashMap<Guid, DiskImage> destinationTemplateDiskMap = null;
         if (vm.isSetDisks() && vm.getDisks().isSetDisks()) {
-            diskToDestinationMap = new HashMap<Guid, DiskImage>();
+            destinationTemplateDiskMap = new HashMap<Guid, DiskImage>();
+            Map<Guid, org.ovirt.engine.core.common.businessentities.Disk> vmSourceDisks = queryVmDisksMap(vm);
+
             for (Disk disk : vm.getDisks().getDisks()) {
-                if (disk.isSetId() && disk.isSetStorageDomains() && disk.getStorageDomains().isSetStorageDomains()
-                        && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
-                    DiskImage diskImage = new DiskImage();
-                    diskImage.setId(asGuid(disk.getId()));
-                    diskImage.setStorageIds(new ArrayList<Guid>());
-                    Guid newStorageDomainId = isDomainSet ? storageDomainId : asGuid(disk.getStorageDomains()
-                            .getStorageDomains().get(0).getId());
-                    diskImage.getStorageIds().add(newStorageDomainId);
-                    diskToDestinationMap.put(diskImage.getId(), diskImage);
+                if (!disk.isSetId()) {
+                    continue;
                 }
+
+                Guid currDiskID = asGuid(disk.getId());
+                org.ovirt.engine.core.common.businessentities.Disk sourceDisk = vmSourceDisks.get(currDiskID);
+
+                // VM template can only have disk images
+                if (sourceDisk == null || !isDiskImage(sourceDisk)) {
+                    continue;
+                }
+
+                DiskImage destinationDisk = (DiskImage) DiskMapper.map(disk, sourceDisk);
+                if (isTemplateGeneralStorageDomainSet) {
+                    destinationDisk.setStorageIds(new ArrayList<>(Arrays.asList(storageDomainId)));
+                }
+
+                // Since domain can be changed, do not set profile and quota for this disk.
+                destinationDisk.setDiskProfileId(null);
+                destinationDisk.setQuotaId(null);
+
+                destinationTemplateDiskMap.put(destinationDisk.getId(), destinationDisk);
             }
         }
-        return diskToDestinationMap;
+        return destinationTemplateDiskMap;
+    }
+
+    private boolean isDiskImage(org.ovirt.engine.core.common.businessentities.Disk disk) {
+        return disk.getDiskStorageType() == org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType.IMAGE;
+    }
+
+    private Map<Guid, org.ovirt.engine.core.common.businessentities.Disk> queryVmDisksMap(VM vm) {
+        List<org.ovirt.engine.core.common.businessentities.Disk> vmDisks =
+                getBackendCollection(org.ovirt.engine.core.common.businessentities.Disk.class,
+                        VdcQueryType.GetAllDisksByVmId,
+                        new IdQueryParameters(asGuid(vm.getId())));
+        return Entities.businessEntitiesById(vmDisks);
     }
 
     @Override
