@@ -238,13 +238,7 @@ public class PermissionListModel<T> extends SearchableListModel<T>
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (DbUser user : items)
         {
-            Permissions tempVar2 = new Permissions();
-            tempVar2.setad_element_id(user.getId());
-            tempVar2.setrole_id(role.getId());
-            Permissions perm = tempVar2;
-            perm.setObjectId(getEntityGuid());
-            perm.setObjectType(this.getObjectType());
-
+            Permissions perm = new Permissions(user.getId(), role.getId(), getEntityGuid(), getObjectType());
             if (user.isGroup())
             {
                 DbGroup group = new DbGroup();
