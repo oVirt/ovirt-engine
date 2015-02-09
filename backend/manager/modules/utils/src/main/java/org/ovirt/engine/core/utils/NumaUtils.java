@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 public class NumaUtils {
-
     public static VdsNumaNode getVdsNumaNodeByIndex(List<VdsNumaNode> numaNodes, int index) {
         for (VdsNumaNode numaNode : numaNodes) {
             if (index == numaNode.getIndex()) {
