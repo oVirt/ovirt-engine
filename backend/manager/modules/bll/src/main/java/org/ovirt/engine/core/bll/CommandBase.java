@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.TransactionRolledbackLocalException;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -217,6 +218,17 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     protected CommandBase(Guid commandId) {
         this.context = new CommandContext(new EngineContext());
         this.commandId = commandId;
+    }
+
+    /**
+     * Implement this method whenever you need extra initialization of the command after the
+     * constructor. All DB calls or other interaction with the command dependencies for initialization
+     * should be done here. It is ensured that all injected dependencies were injected at the time calling.
+     *
+     * @see PostConstruct
+     */
+    @PostConstruct
+    protected void postConstruct() {
     }
 
     protected List<SPMAsyncTaskHandler> initTaskHandlers() {
