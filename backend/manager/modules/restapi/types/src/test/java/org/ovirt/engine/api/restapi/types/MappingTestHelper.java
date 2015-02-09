@@ -128,7 +128,7 @@ public class MappingTestHelper {
     private static void descend(Method method, Object model, List<Class<?>> seen, int level) throws Exception {
         Object child = method.getParameterTypes()[0].newInstance();
         method.invoke(model, child);
-        if (level == 1 || unseen(method, seen)) {
+        if (level == 1 || (unseen(method, seen) && (level <= 3))) {
             populate(child, child.getClass(), seen, ++level);
         }
     }
