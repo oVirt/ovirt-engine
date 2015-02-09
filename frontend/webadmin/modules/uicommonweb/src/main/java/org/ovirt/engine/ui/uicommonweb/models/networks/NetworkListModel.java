@@ -160,7 +160,6 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
             networkModel.getDataCenters().setItems(Arrays.asList(dc));
             networkModel.getDataCenters().setSelectedItem(dc);
             networkModel.getDataCenters().setIsChangable(false);
-            networkModel.stopProgress();
             return;
         }
 
