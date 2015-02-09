@@ -102,16 +102,12 @@ public class UpdateHostValidator extends HostValidator {
 
     public ValidationResult hostProviderExists() {
         return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST)
-                .when(hostProviderConfigured() && getProvider() == null);
+                .when(getHost().getHostProviderId() != null && getProvider() == null);
     }
 
     public ValidationResult hostProviderTypeMatches() {
         return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_TYPE_MISMATCH)
                 .when(getProvider() != null && getProvider().getType() != ProviderType.FOREMAN);
-    }
-
-    private boolean hostProviderConfigured() {
-        return oldHost.getHostProviderId() == null && getHost().getHostProviderId() != null;
     }
 
     private Provider<?> getProvider() {

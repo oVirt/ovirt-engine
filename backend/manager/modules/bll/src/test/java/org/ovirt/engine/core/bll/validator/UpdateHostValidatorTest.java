@@ -331,15 +331,6 @@ public class UpdateHostValidatorTest {
         assertThat(validator.hostProviderExists(), isValid());
     }
 
-    @Test
-    public void hostProviderNotChanged() {
-        Guid providerId = Guid.newGuid();
-        when(host.getHostProviderId()).thenReturn(providerId);
-        when(oldHost.getHostProviderId()).thenReturn(providerId);
-
-        assertThat(validator.hostProviderExists(), isValid());
-    }
-
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Test
     public void hostProviderTypeMatches() {
