@@ -101,7 +101,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
             } else {
                 final org.ovirt.engine.core.common.businessentities.network.Network managementNetwork =
                         getEntity(org.ovirt.engine.core.common.businessentities.network.Network.class,
-                                VdcQueryType.GetNetworkByByNameAndDataCenter,
+                                VdcQueryType.GetNetworkByNameAndDataCenter,
                                 new IdAndNameQueryParameters(dataCenterId, rawManagementNetwork.getName()),
                                 String.format("Network: %s", rawManagementNetwork.getName()));
 

@@ -6,12 +6,12 @@ import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.queries.IdAndNameQueryParameters;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
-public class GetNetworkByByNameAndDataCenterQuery<P extends IdAndNameQueryParameters> extends QueriesCommandBase<P> {
+public class GetNetworkByNameAndDataCenterQuery<P extends IdAndNameQueryParameters> extends QueriesCommandBase<P> {
 
     @Inject
     private NetworkDao networkDao;
 
-    public GetNetworkByByNameAndDataCenterQuery(P parameters) {
+    public GetNetworkByNameAndDataCenterQuery(P parameters) {
         super(parameters);
     }
 
