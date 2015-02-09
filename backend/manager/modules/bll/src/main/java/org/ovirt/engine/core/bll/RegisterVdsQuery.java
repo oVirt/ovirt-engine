@@ -250,7 +250,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         return returnValue;
     }
 
-    private boolean updateExistingHost(VDS vds, boolean IsPending) {
+    private boolean updateExistingHost(VDS vds, boolean pending) {
         boolean returnValue = true;
         vds.setHostName(vds.getHostName());
         vds.setPort(getParameters().getVdsPort());
@@ -260,10 +260,10 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                 getStrippedVdsUniqueId(),
                 getStrippedVdsUniqueId(),
                 getParameters().getVdsPort(),
-                IsPending);
+                pending);
         UpdateVdsActionParameters p = new UpdateVdsActionParameters(vds.getStaticData(), "", false);
-        p.setInstallHost(!IsPending);
-        p.setReinstallOrUpgrade(!IsPending);
+        p.setInstallHost(!pending);
+        p.setReinstallOrUpgrade(!pending);
         p.setAuthMethod(VdsOperationActionParameters.AuthenticationMethod.PublicKey);
         if (vds.isFenceAgentsExist()) {
             p.setFenceAgents(vds.getFenceAgents());
@@ -279,7 +279,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                     getStrippedVdsUniqueId(),
                     getStrippedVdsUniqueId(),
                     getParameters().getVdsPort(),
-                    IsPending);
+                    pending);
 
             CaptureCommandErrorsToLogger(rc, "RegisterVdsQuery::Register");
             returnValue = false;
@@ -294,7 +294,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
         return returnValue;
     }
 
-    private boolean registerNewHost(Guid vdsGroupId, boolean IsPending) {
+    private boolean registerNewHost(Guid vdsGroupId, boolean pending) {
         boolean returnValue = true;
 
         VdsStatic vds = new VdsStatic(getParameters().getVdsHostName(),
@@ -312,10 +312,10 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                         getParameters().getVdsHostName(),
                         getStrippedVdsUniqueId(),
                         getParameters().getVdsPort(),
-                        IsPending);
+                        pending);
 
             AddVdsActionParameters p = new AddVdsActionParameters(vds, "");
-            p.setPending(IsPending);
+            p.setPending(pending);
 
             VdcReturnValueBase ret = Backend.getInstance().runInternalAction(VdcActionType.AddVds, p);
 
@@ -331,7 +331,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
             } else {
                 log.info(
                         "RegisterVdsQuery::Register - Registered a new VDS '{}' - Name: '{}', Hostname: '{}', UniqueID: '{}'",
-                        IsPending ? "pending approval" : "automatically approved",
+                        pending ? "pending approval" : "automatically approved",
                         getParameters().getVdsName(),
                         getParameters().getVdsHostName(),
                         getStrippedVdsUniqueId());
