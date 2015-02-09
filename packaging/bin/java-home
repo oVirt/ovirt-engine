@@ -31,7 +31,7 @@ validjre() {
 # our specific java look only this one
 #
 if [ -n "${OVIRT_ENGINE_JAVA_HOME}" ]; then
-	if validjre "${OVIRT_ENGINE_JAVA_HOME}"; then
+	if [ -n "${OVIRT_ENGINE_JAVA_HOME_FORCE}" ] || validjre "${OVIRT_ENGINE_JAVA_HOME}"; then
 		echo "${OVIRT_ENGINE_JAVA_HOME}"
 		exit 0
 	else
