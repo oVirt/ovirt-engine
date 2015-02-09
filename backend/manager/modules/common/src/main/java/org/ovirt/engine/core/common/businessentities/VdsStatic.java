@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.HashMap;
+
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -108,6 +109,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     @Size(max = BusinessEntitiesDefinitions.SSH_KEY_FINGERPRINT_SIZE)
     private String sshKeyFingerprint;
 
+    @EditableField
     private Guid hostProviderId;
 
     public boolean isAutoRecoverable() {
