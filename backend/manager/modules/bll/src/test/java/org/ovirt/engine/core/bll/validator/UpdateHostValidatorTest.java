@@ -355,7 +355,7 @@ public class UpdateHostValidatorTest {
         validator = new UpdateHostValidator(dbFacade, oldHost, host, false);
 
         assertThat(validator.hostProviderTypeMatches(),
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_TYPE_MISMATCH));
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_HOST_PROVIDER_TYPE_MISMATCH));
     }
 
     private String generateRandomName() {

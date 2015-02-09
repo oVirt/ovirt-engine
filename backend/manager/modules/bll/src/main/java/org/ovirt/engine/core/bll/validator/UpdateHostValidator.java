@@ -106,7 +106,7 @@ public class UpdateHostValidator extends HostValidator {
     }
 
     public ValidationResult hostProviderTypeMatches() {
-        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_TYPE_MISMATCH)
+        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_HOST_PROVIDER_TYPE_MISMATCH)
                 .when(getProvider() != null && getProvider().getType() != ProviderType.FOREMAN);
     }
 
