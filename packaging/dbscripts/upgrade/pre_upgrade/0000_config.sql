@@ -690,6 +690,9 @@ select fn_db_update_config_value('IPTablesConfig','
 -A INPUT -i lo -j ACCEPT
 # vdsm
 -A INPUT -p tcp --dport @VDSM_PORT@ -j ACCEPT
+# rpc.statd
+-A INPUT -p tcp --dport 111 -j ACCEPT
+-A INPUT -p udp --dport 111 -j ACCEPT
 # SSH
 -A INPUT -p tcp --dport @SSH_PORT@ -j ACCEPT
 # snmp
@@ -711,12 +714,10 @@ select fn_db_update_config_value('IPTablesConfigForGluster',
 -A INPUT -p tcp -m tcp --dport 8080  -j ACCEPT
 
 # portmapper
--A INPUT -p udp -m udp --dport 111   -j ACCEPT
 -A INPUT -p tcp -m tcp --dport 38465 -j ACCEPT
 -A INPUT -p tcp -m tcp --dport 38466 -j ACCEPT
 
 # nfs
--A INPUT -p tcp -m tcp --dport 111   -j ACCEPT
 -A INPUT -p tcp -m tcp --dport 38467 -j ACCEPT
 -A INPUT -p tcp -m tcp --dport 2049  -j ACCEPT
 -A INPUT -p tcp -m tcp --dport 38469 -j ACCEPT
