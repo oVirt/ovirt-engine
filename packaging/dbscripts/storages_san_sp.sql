@@ -538,7 +538,7 @@ BEGIN
 statuses := string_to_array(v_statuses,',')::integer[];
 RETURN QUERY SELECT *
    FROM storage_server_connections
-   WHERE (v_storage_type is NULL or connections.storage_type = v_storage_type)
+   WHERE (v_storage_type is NULL or storage_server_connections.storage_type = v_storage_type)
    AND (id in (select storage from storage_domains where storage_domains.storage_pool_id = v_storage_pool_id and storage_domains.status = any(statuses))
    OR (id in (select lun_storage_server_connection_map.storage_server_connection
      FROM lun_storage_server_connection_map
