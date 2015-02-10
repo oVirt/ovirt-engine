@@ -170,7 +170,9 @@ public class UpdateStoragePoolCommandTest {
     public void lowerVersionMgmtNetworkAndRegularNetworks() {
         storagePoolWithLowerVersion();
         addNonDefaultClusterToPool();
+        addManagementNetworkToPool();
         addNonManagementNetworksToPool(2);
+        setupNetworkValidator(true);
         canDoActionFailed(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
     }
 
@@ -436,6 +438,10 @@ public class UpdateStoragePoolCommandTest {
         when(vdsDao.getAllForStoragePool(any(Guid.class))).thenReturn(hosts);
     }
 
+    private void addManagementNetworkToPool() {
+        addManagementNetworksToPool(1);
+    }
+
     private void addManagementNetworksToPool(int numberOfNetworks) {
         for (int i=0; i<numberOfNetworks; i++) {
             final Guid managementNetworkId = Guid.newGuid();
@@ -461,8 +467,8 @@ public class UpdateStoragePoolCommandTest {
         addNonManagementNetworksToPool(1);
     }
 
-    private void addNonManagementNetworksToPool(int numberOfNetwworks) {
-        for (int i = 0; i< numberOfNetwworks; i++) {
+    private void addNonManagementNetworksToPool(int numberOfNetworks) {
+        for (int i = 0; i < numberOfNetworks; i++) {
             final Guid networkId = Guid.newGuid();
             Network network = createNetwork(networkId);
             network.setId(networkId);
