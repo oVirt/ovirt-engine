@@ -24,7 +24,6 @@ public class PauseGlusterVolumeGeoRepSessionCommand extends GeoRepSessionCommand
     @Override
     protected boolean canDoAction() {
         if (!super.canDoAction()) {
-
             return false;
         }
         if (getGeoRepSession().getStatus() == GeoRepSessionStatus.PASSIVE) {
@@ -52,7 +51,7 @@ public class PauseGlusterVolumeGeoRepSessionCommand extends GeoRepSessionCommand
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        if(getSucceeded()) {
+        if (getSucceeded()) {
             return AuditLogType.GLUSTER_VOLUME_GEO_REP_PAUSE;
         } else {
             return AuditLogType.GLUSTER_VOLUME_GEO_REP_PAUSE_FAILED;

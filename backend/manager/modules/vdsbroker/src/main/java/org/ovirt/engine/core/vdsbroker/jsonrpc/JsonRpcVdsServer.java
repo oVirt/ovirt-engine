@@ -1189,8 +1189,8 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepResume(String volumeName, String slaveHostName, String slaveVolumeName, boolean force) {
-        JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepResume").withParameter("volumeName", volumeName)
+    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionResume(String volumeName, String slaveHostName, String slaveVolumeName, boolean force) {
+        JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepSessionResume").withParameter("volumeName", volumeName)
                 .withParameter("remoteHost", slaveHostName)
                 .withParameter("remoteVolumeName", slaveVolumeName)
                 .withParameter("force", force).build();
@@ -1309,8 +1309,8 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepPause(String masterVolumeName, String slaveHost, String slaveVolumeName, boolean force) {
-        JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepPause").withParameter("volumeName", masterVolumeName)
+    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionPause(String masterVolumeName, String slaveHost, String slaveVolumeName, boolean force) {
+        JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepSessionPause").withParameter("volumeName", masterVolumeName)
                 .withParameter("remoteHost", slaveHost)
                 .withParameter("remoteVolumeName", slaveVolumeName)
                 .withParameter("force", force).build();
@@ -1319,8 +1319,8 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepStart(String volumeName, String remoteHost, String remoteVolumeName, Boolean force) {
-        JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepStart").withParameter("volumeName", volumeName)
+    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionStart(String volumeName, String remoteHost, String remoteVolumeName, Boolean force) {
+        JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepSessionStart").withParameter("volumeName", volumeName)
                 .withParameter("remoteHost", remoteHost)
                 .withParameter("remoteVolumeName", remoteVolumeName)
                 .withParameter("force", force).build();
