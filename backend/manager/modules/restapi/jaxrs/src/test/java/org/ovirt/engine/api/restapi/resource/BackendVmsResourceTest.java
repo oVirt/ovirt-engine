@@ -348,12 +348,10 @@ public class BackendVmsResourceTest
                 new Object[]{GUIDS[0]},
                 getTemplateEntity(0));
 
-        Disks disks = new Disks();
-        disks.getDisks().add(new Disk());
         setUpCreationExpectations(VdcActionType.AddVmFromScratch,
                 AddVmParameters.class,
-                new String[]{"StorageDomainId", "DiskInfoList"},
-                new Object[]{Guid.Empty, mapDisks(disks)},
+                new String[]{"StorageDomainId"},
+                new Object[]{Guid.Empty},
                 true,
                 true,
                 GUIDS[0],
@@ -369,68 +367,12 @@ public class BackendVmsResourceTest
         model.getCluster().setId(GUIDS[1].toString());
         model.setTemplate(new Template());
         model.getTemplate().setId(DEFAULT_TEMPLATE_ID);
-        model.setDisks(disks);
 
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof VM);
         verifyModel((VM) response.getEntity(), 0);
         assertNull(((VM) response.getEntity()).getCreationStatus());
-    }
-
-    @Test
-    public void testAddFromScratchWithStorageDomain() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        setUpHttpHeaderExpectations("Expect", "201-created");
-        setUpGetPayloadExpectations(2, 0);
-        setUpGetBallooningExpectations(2, 0);
-        setUpGetConsoleExpectations(new int[]{0, 0});
-        setUpGetVmOvfExpectations(new int[]{0, 0});
-        setUpGetVirtioScsiExpectations(new int[]{0, 0});
-        setUpGetSoundcardExpectations(new int[]{0, 0});
-        setUpGetRngDeviceExpectations(new int[]{0, 0});
-        setUpGetCertuficateExpectations(2, 0);
-        setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
-                                     IdQueryParameters.class,
-                                     new String[] { "Id" },
-                                     new Object[] { GUIDS[0] },
-                                     getEntity(0));
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[1] },
-                getVdsGroupEntity());
-        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
-                                     GetVmTemplateParameters.class,
-                                     new String[] { "Id" },
-                                     new Object[] { GUIDS[0] },
-                                     getTemplateEntity(0));
-        setUpCreationExpectations(VdcActionType.AddVmFromScratch,
-                                  AddVmParameters.class,
-                                  new String[] { "StorageDomainId" },
-                                  new Object[] { GUIDS[1] },
-                                  true,
-                                  true,
-                                  GUIDS[0],
-                                  asList(GUIDS[1]),
-                                  asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
-                                  VdcQueryType.GetVmByVmId,
-                                  IdQueryParameters.class,
-                                  new String[] { "Id" },
-                                  new Object[] { GUIDS[0] },
-                                  getEntity(0));
-        VM model = getModel(0);
-        addStorageDomainToModel(model);
-        model.setCluster(new Cluster());
-        model.getCluster().setId(GUIDS[1].toString());
-        model.setTemplate(new Template());
-        model.getTemplate().setId(DEFAULT_TEMPLATE_ID);
-
-        Response response = collection.add(model);
-        assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof VM);
-        verifyModel((VM) response.getEntity(), 0);
-        assertNull(((VM)response.getEntity()).getCreationStatus());
     }
 
     @Test

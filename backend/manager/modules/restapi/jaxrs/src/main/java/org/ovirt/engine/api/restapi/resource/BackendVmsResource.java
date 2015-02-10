@@ -171,7 +171,7 @@ public class BackendVmsResource extends
                 if (vm.isSetDisks() && vm.getDisks().isSetClone() && vm.getDisks().isClone()) {
                     response = cloneVmFromTemplate(staticVm, vm, templateEntity, instanceTypeEntity, cluster);
                 } else if (Guid.Empty.equals(templateId)) {
-                    response = addVmFromScratch(staticVm, vm, storageDomainId, instanceTypeEntity, cluster);
+                    response = addVmFromScratch(staticVm, vm, instanceTypeEntity, cluster);
                 } else {
                     response = addVm(staticVm, vm, storageDomainId, templateEntity, instanceTypeEntity, cluster);
                 }
@@ -483,12 +483,10 @@ public class BackendVmsResource extends
         }
     }
 
-    protected Response addVmFromScratch(VmStatic staticVm, VM vm, Guid storageDomainId, InstanceType instanceType, VDSGroup cluster) {
+    protected Response addVmFromScratch(VmStatic staticVm, VM vm, InstanceType instanceType, VDSGroup cluster) {
         AddVmParameters params = new AddVmParameters(staticVm);
-        params.setDiskInfoList(mapDisks(vm.getDisks()));
         params.setVmPayload(getPayload(vm));
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
-        params.setStorageDomainId(storageDomainId);
         addDevicesToParams(params, vm, null, instanceType, staticVm.getOsId(), cluster);
         DisplayHelper.setGraphicsToParams(vm.getDisplay(), params);
 
