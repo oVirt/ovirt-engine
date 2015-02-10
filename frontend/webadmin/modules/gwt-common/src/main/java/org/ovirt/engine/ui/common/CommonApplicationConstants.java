@@ -48,12 +48,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("<< Prev")
     String actionTablePrevPageButtonLabel();
 
-    @DefaultStringValue("This feature is not implemented in this version.")
-    String featureNotImplementedMessage();
-
-    @DefaultStringValue("This feature is not implemented but available in UserPortal for users assigned with PowerUser role.")
-    String featureNotImplementedButAvailInUserPortalMessage();
-
     // Table columns
 
     @DefaultStringValue("Disk Activate/Deactivate while VM is running, is supported only for Clusters of version 3.1 and above")

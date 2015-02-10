@@ -66,29 +66,6 @@ public interface ActionButtonDefinition<T> extends HasInitializeHandlers {
     String getUniqueId();
 
     /**
-     * Indicates whether the functionality bound to this action button is implemented.
-     * <p>
-     * This is only relevant for a tech-preview of the given application, where not all buttons might be implemented.
-     * <p>
-     * TODO: This is temporary and should be cleaned up when WebAdmin will be fully implemented!
-     *
-     * @return Whether the functionality bound to this action button is implemented or not.
-     */
-    boolean isImplemented();
-
-    /**
-     * If {@link #isImplemented} is {@code true}, this method indicates whether this action button is available in
-     * UserPortal.
-     * <p>
-     * This is only affecting the message that will be shown when the button is clicked.
-     * <p>
-     * TODO: This is temporary and should be cleaned up when WebAdmin will be fully implemented!
-     *
-     * @return Whether this action button is available in UserPortal or not.
-     */
-    boolean isImplInUserPortal();
-
-    /**
      * Indicates whether this action button is available only from the corresponding context menu.
      */
     CommandLocation getCommandLocation();

@@ -11,7 +11,6 @@ import org.ovirt.engine.ui.common.idhandler.ProvidesElementId;
 import org.ovirt.engine.ui.common.system.HeaderOffsetChangeEvent;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableModelProvider;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
-import org.ovirt.engine.ui.common.widget.FeatureNotImplementedYetPopup;
 import org.ovirt.engine.ui.common.widget.MenuBar;
 import org.ovirt.engine.ui.common.widget.PopupPanel;
 import org.ovirt.engine.ui.common.widget.TitleMenuItemSeparator;
@@ -344,25 +343,20 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
         newActionButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                if (buttonDef.isImplemented()) {
-                    if (buttonDef instanceof UiMenuBarButtonDefinition) {
-                        actionPanelPopupPanel.asPopupPanel().addAutoHidePartner(newActionButton.asToggleButton()
-                                .getElement());
-                        if (newActionButton.asToggleButton().isDown()) {
-                            updateContextMenu(actionPanelPopupPanel.getMenuBar(),
-                                    ((UiMenuBarButtonDefinition<T>) buttonDef).getSubActions(),
-                                    actionPanelPopupPanel.asPopupPanel());
-                            actionPanelPopupPanel.asPopupPanel()
-                                    .showRelativeToAndFitToScreen(newActionButton.asWidget());
-                        } else {
-                            actionPanelPopupPanel.asPopupPanel().hide();
-                        }
+                if (buttonDef instanceof UiMenuBarButtonDefinition) {
+                    actionPanelPopupPanel.asPopupPanel().addAutoHidePartner(newActionButton.asToggleButton()
+                            .getElement());
+                    if (newActionButton.asToggleButton().isDown()) {
+                        updateContextMenu(actionPanelPopupPanel.getMenuBar(),
+                                ((UiMenuBarButtonDefinition<T>) buttonDef).getSubActions(),
+                                actionPanelPopupPanel.asPopupPanel());
+                        actionPanelPopupPanel.asPopupPanel()
+                                .showRelativeToAndFitToScreen(newActionButton.asWidget());
                     } else {
-                        buttonDef.onClick(getSelectedItems());
+                        actionPanelPopupPanel.asPopupPanel().hide();
                     }
                 } else {
-                    new FeatureNotImplementedYetPopup((Widget) event.getSource(),
-                            buttonDef.isImplInUserPortal()).show();
+                    buttonDef.onClick(getSelectedItems());
                 }
             }
         });

@@ -96,16 +96,6 @@ public abstract class UiMenuBarButtonDefinition<T> extends ImageUiCommandButtonD
     }
 
     @Override
-    public boolean isImplemented() {
-        return true;
-    }
-
-    @Override
-    public boolean isImplInUserPortal() {
-        return false;
-    }
-
-    @Override
     public void update() {
         // Do nothing
     }

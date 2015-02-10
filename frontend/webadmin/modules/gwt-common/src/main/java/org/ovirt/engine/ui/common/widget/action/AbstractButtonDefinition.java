@@ -25,12 +25,6 @@ public abstract class AbstractButtonDefinition<T> implements ActionButtonDefinit
 
     protected final SafeHtml title;
 
-    // Indicates whether the given feature is implemented in WebAdmin
-    private final boolean implInWebAdmin;
-
-    // Indicates whether the given feature is implemented in UserPortal
-    private final boolean implInUserPortal;
-
     // Indicates whether the given feature is available only from a context menu
     private final CommandLocation commandLocation;
 
@@ -42,22 +36,13 @@ public abstract class AbstractButtonDefinition<T> implements ActionButtonDefinit
     private boolean isCascaded = false;
 
     public AbstractButtonDefinition(EventBus eventBus, String title,
-            boolean implInWebAdmin, boolean implInUserPortal,
             CommandLocation commandLocation, boolean subTitledAction,
             String toolTip) {
         this.eventBus = eventBus;
         this.title = SafeHtmlUtils.fromSafeConstant(title);
-        this.implInWebAdmin = implInWebAdmin;
-        this.implInUserPortal = implInUserPortal;
         this.commandLocation = commandLocation;
         this.subTitledAction = subTitledAction;
         this.toolTip = toolTip;
-    }
-
-    public AbstractButtonDefinition(EventBus eventBus, String title,
-            CommandLocation commandLocation, boolean subTitledAction,
-            String toolTip) {
-        this(eventBus, title, true, false, commandLocation, subTitledAction, toolTip);
     }
 
     public AbstractButtonDefinition(EventBus eventBus, String title,
@@ -133,16 +118,6 @@ public abstract class AbstractButtonDefinition<T> implements ActionButtonDefinit
     @Override
     public String getTitle() {
         return title.asString();
-    }
-
-    @Override
-    public boolean isImplemented() {
-        return implInWebAdmin;
-    }
-
-    @Override
-    public boolean isImplInUserPortal() {
-        return implInUserPortal;
     }
 
     @Override
