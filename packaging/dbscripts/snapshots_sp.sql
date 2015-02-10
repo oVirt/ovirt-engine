@@ -144,7 +144,7 @@ BEGIN
     SELECT  snapshots.*
     FROM    snapshots
     JOIN    images ON snapshots.snapshot_id = images.vm_snapshot_id
-    JOIN    image_storage_domain_map ON image_storage_domain_map.storage_domain_id = v_storage_id;
+    JOIN    image_storage_domain_map ON image_storage_domain_map.storage_domain_id = v_storage_id and image_storage_domain_map.image_id=images.image_guid;
 END; $procedure$
 LANGUAGE plpgsql;
 
