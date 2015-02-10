@@ -40,6 +40,9 @@ public class DisconnectHostFromStoragePoolServersCommand extends
     }
 
     private void disconnectStorageByType(StorageType storageType, List<StorageServerConnections> connections) {
+        if (storageType == StorageType.ISCSI) {
+            connections = ISCSIStorageHelper.updateIfaces(connections, getVds().getId());
+        }
         VDSReturnValue vdsReturnValue = runVdsCommand(
                         VDSCommandType.DisconnectStorageServer,
                         new StorageServerConnectionManagementVDSParameters(getVds().getId(), getStoragePool().getId(),
