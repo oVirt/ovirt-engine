@@ -3,15 +3,6 @@
 --
 
 --
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner:
---
-
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
-
-
-SET search_path = public, pg_catalog;
-
---
 -- Name: all_storage_usage_rs; Type: TYPE; Schema: public; Owner: engine
 --
 
