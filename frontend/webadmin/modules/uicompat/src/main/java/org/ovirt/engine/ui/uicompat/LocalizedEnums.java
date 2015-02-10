@@ -764,6 +764,12 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String VdcActionType___DeleteGeoRepSession();
 
+    String VdcActionType___StartGlusterVolumeGeoRep();
+
+    String VdcActionType___PauseGlusterVolumeGeoRepSession();
+
+    String VdcActionType___ResumeGeoRepSession();
+
     String VdcActionType___ConnectStorageToVds();
 
     String VdcActionType___AddVnicProfile();

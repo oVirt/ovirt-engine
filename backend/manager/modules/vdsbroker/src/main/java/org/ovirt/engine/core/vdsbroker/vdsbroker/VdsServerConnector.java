@@ -232,7 +232,7 @@ public interface VdsServerConnector {
 
     public Map<String, Object> glusterVolumeRebalanceStart(String volumeName, Boolean fixLayoutOnly, Boolean force);
 
-    public Map<String, Object> glusterVolumeGeoRepResume(String volumeName, String slaveHostName, String slaveVolumeName, boolean force);
+    public Map<String, Object> glusterVolumeGeoRepSessionResume(String volumeName, String slaveHostName, String slaveVolumeName, boolean force);
 
     public Map<String, Object> glusterVolumeRebalanceStop(String volumeName);
 
@@ -265,9 +265,9 @@ public interface VdsServerConnector {
 
     public Map<String, Object> glusterVolumeProfileStop(String volumeName);
 
-    public Map<String, Object> glusterVolumeGeoRepStart(String volumeName, String remoteHost, String remoteVolumeName, Boolean force);
+    public Map<String, Object> glusterVolumeGeoRepSessionStart(String volumeName, String remoteHost, String remoteVolumeName, Boolean force);
 
-    public Map<String, Object> glusterVolumeGeoRepPause(String masterVolumeName, String slaveHost, String slaveVolumeName, boolean force);
+    public Map<String, Object> glusterVolumeGeoRepSessionPause(String masterVolumeName, String slaveHost, String slaveVolumeName, boolean force);
 
     public Map<String, Object> glusterVolumeStatus(String volumeName, String brickName, String volumeStatusOption);
 

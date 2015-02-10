@@ -26,9 +26,9 @@ public class StartGlusterVolumeGeoRepCommand extends GeoRepSessionCommandBase<Gl
         GlusterGeoRepSession session = getGeoRepSession();
         VDSReturnValue returnValue = runVdsCommand(VDSCommandType.StartGlusterVolumeGeoRep, new GlusterVolumeGeoRepSessionVDSParameters(upServer.getId(), getGlusterVolumeName(), session.getSlaveHostName(), session.getSlaveVolumeName()));
         setSucceeded(returnValue.getSucceeded());
-        if(getSucceeded()) {
-            getGeoRepSession().setStatus(GeoRepSessionStatus.ACTIVE);
-            getGlusterGeoRepDao().updateSession(getGeoRepSession());
+        if (getSucceeded()) {
+            session.setStatus(GeoRepSessionStatus.INITIALIZING);
+            getGlusterGeoRepDao().updateSession(session);
         } else {
             handleVdsError(AuditLogType.GLUSTER_VOLUME_GEO_REP_START_FAILED_EXCEPTION, returnValue.getVdsError().getMessage());
             return;

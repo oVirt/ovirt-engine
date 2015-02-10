@@ -1103,9 +1103,9 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepResume(String volumeName, String slaveHostName, String slaveVolumeName, boolean force) {
+    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionResume(String volumeName, String slaveHostName, String slaveVolumeName, boolean force) {
         try{
-            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterVolumeGeoRepResume(volumeName, slaveHostName, slaveVolumeName, force);
+            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterVolumeGeoRepSessionResume(volumeName, slaveHostName, slaveVolumeName, force);
             StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {
@@ -1209,18 +1209,18 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepPause(String masterVolumeName, String slaveHost, String slaveVolumeName, boolean force) {
+    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionPause(String masterVolumeName, String slaveHost, String slaveVolumeName, boolean force) {
         try {
-            return new StatusOnlyReturnForXmlRpc(vdsServer.glusterVolumeGeoRepPause(masterVolumeName, slaveHost, slaveVolumeName, force));
+            return new StatusOnlyReturnForXmlRpc(vdsServer.glusterVolumeGeoRepSessionPause(masterVolumeName, slaveHost, slaveVolumeName, force));
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);
         }
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepStart(String volumeName, String remoteHost, String remoteVolumeName, Boolean force) {
+    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionStart(String volumeName, String remoteHost, String remoteVolumeName, Boolean force) {
         try {
-            return new StatusOnlyReturnForXmlRpc(vdsServer.glusterVolumeGeoRepStart(volumeName, remoteHost, remoteVolumeName, force));
+            return new StatusOnlyReturnForXmlRpc(vdsServer.glusterVolumeGeoRepSessionStart(volumeName, remoteHost, remoteVolumeName, force));
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);
         }

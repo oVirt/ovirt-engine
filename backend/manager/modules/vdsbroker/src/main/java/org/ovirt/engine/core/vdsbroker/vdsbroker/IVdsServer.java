@@ -277,8 +277,9 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc glusterVolumeProfileStop(String volumeName);
 
-    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepStart(String volumeName, String remoteHost, String remoteVolumeName, Boolean force);
-    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepPause(String masterVolumeName, String slaveHost, String slaveVolumeName, boolean force);
+    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionStart(String volumeName, String remoteHost, String remoteVolumeName, Boolean force);
+
+    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionPause(String masterVolumeName, String slaveHost, String slaveVolumeName, boolean force);
 
     GlusterVolumeStatusReturnForXmlRpc glusterVolumeStatus(Guid clusterId,
             String volumeName,
@@ -333,5 +334,5 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc updateVmPolicy(Map info);
 
-    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepResume(String volumeName, String slaveHostName, String slaveVolumeName, boolean force);
+    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionResume(String volumeName, String slaveHostName, String slaveVolumeName, boolean force);
 }

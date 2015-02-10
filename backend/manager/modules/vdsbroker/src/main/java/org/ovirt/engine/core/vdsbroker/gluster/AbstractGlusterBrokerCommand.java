@@ -30,7 +30,7 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
         case AddBricksToGlusterVolumeFailed:
         case GlusterVolumeSetOptionFailed:
         case GlusterVolumeRebalanceStartFailed:
-        case GlusterVolumeGeoRepStartFailedException:
+        case GlusterVolumeGeoRepSessionStartFailed:
         case GlusterVolumeDeleteFailed:
         case GlusterVolumeReplaceBrickStartFailed:
         case GlusterVolumeListFailed:
@@ -38,7 +38,7 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
         case GlusterVolumeResetOptionsFailed:
         case GlusterVolumeRemoveBricksFailed:
         case GlusterVolumeProfileStartFailed:
-        case GlusterVolumeGeoRepPauseFailed:
+        case GlusterVolumeGeoRepSessionPauseFailed:
         case GlusterVolumeProfileStopFailed:
         case GlusterAddHostFailed:
         case GlusterHostRemoveFailedException:
@@ -64,7 +64,7 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
         case GlusterVolumeRebalanceStopFailed:
         case GlusterVolumeStatusAllFailedException:
         case GlusterVolumeRebalanceStatusFailedException:
-        case GlusterVolumeGeoRepResumeFailed:
+        case GlusterVolumeGeoRepSessionResumeFailed:
         case GlusterVolumeRemoveBricksStartFailed:
         case GlusterVolumeRemoveBricksStopFailed:
         case GlusterVolumeRemoveBrickStatusFailed:
@@ -75,7 +75,7 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
         case GlfsInitException:
         case GlfsFiniException:
         case GlusterGeoRepSessionDeleteFailedException:
-        case GlusterVolumeGeoRepStopFailedException:
+        case GlusterVolumeGeoRepSessionStopFailed:
             // Capture error from gluster command and record failure
             getVDSReturnValue().setVdsError(new VDSError(returnStatus, getReturnStatus().mMessage));
             getVDSReturnValue().setSucceeded(false);

@@ -722,7 +722,7 @@ public interface VdsmErrors extends ConstantsWithLookup {
     String GlusterVolumeRebalanceStartFailed();
 
     @DefaultStringValue("Resume of geo-replication session failed on gluster volume")
-    String GlusterVolumeGeoRepResumeFailed();
+    String GlusterVolumeGeoRepSessionResumeFailed();
 
     @DefaultStringValue("Gluster Volume Rebalance Stop Failed.")
     String GlusterVolumeRebalanceStopFailed();
@@ -740,13 +740,13 @@ public interface VdsmErrors extends ConstantsWithLookup {
     String GlusterVolumeProfileStartFailed();
 
     @DefaultStringValue("Gluster volume geo-replication start failed")
-    String GlusterVolumeGeoRepStartFailed();
+    String GlusterVolumeGeoRepSessionStartFailed();
 
     @DefaultStringValue("Gluster Volume Profile Stop Failed.")
     String GlusterVolumeProfileStopFailed();
 
     @DefaultStringValue("Failed to pause the geo-replication session.")
-    String GlusterVolumeGeoRepPauseFailed();
+    String GlusterVolumeGeoRepSessionPauseFailed();
 
     String ACTIVATE_NIC_FAILED();
 
@@ -831,7 +831,7 @@ public interface VdsmErrors extends ConstantsWithLookup {
     String GlusterGeoRepSessionDeleteFailedException();
 
     @DefaultStringValue("Failed to stop geo-replication session")
-    String GlusterVolumeGeoRepStopFailedException();
+    String GlusterVolumeGeoRepSessionStopFailed();
 
     @DefaultStringValue("Reverting back to last known saved configuration.")
     String SETUP_NETWORKS_ROLLBACK();

@@ -11,7 +11,7 @@ public class StartGlusterVolumeGeoRepVDSCommand<P extends GlusterVolumeGeoRepSes
     @Override
     protected void executeVdsBrokerCommand() {
         GlusterVolumeGeoRepSessionVDSParameters parameters = getParameters();
-        status = getBroker().glusterVolumeGeoRepStart(parameters.getVolumeName(), parameters.getSlaveHost(), parameters.getSlaveVolume(), parameters.getForce());
+        status = getBroker().glusterVolumeGeoRepSessionStart(parameters.getVolumeName(), parameters.getSlaveHost(), parameters.getSlaveVolume(), parameters.getForce());
         proceedProxyReturnValue();
     }
 

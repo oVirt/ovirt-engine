@@ -8,6 +8,7 @@ public enum GeoRepSessionStatus {
     STOPPED("STOPPED"),
     PARTIAL_FAULTY("PARTIAL FAULTY"),
     UNKNOWN("UNKNOWN"),
+    PAUSED("PAUSED"),
     FAULTY("FAULTY");
 
     private String statusMsg;
