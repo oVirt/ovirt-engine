@@ -586,6 +586,7 @@ actions:
           disk.quota.id: xs:string
           disk.disk_profile.id: xs:string
           disk.sgio: xs:string
+          disk.uses_scsi_reservation: xs:boolean
           disk.read_only: xs:boolean
           description: update the size, boot flag and other parameters of the disk attached to the virtual machine
 - name: /vms/{vm:id}/disks|rel=add
@@ -622,6 +623,7 @@ actions:
           disk.wipe_after_delete: xs:boolean
           disk.quota.id: xs:string
           disk.sgio: xs:string
+          disk.uses_scsi_reservation: xs:boolean
           disk.lun_storage.host: xs:string
         description: add a new direct lun disk to the virtual machine, this operation does not require size but needs lun connection details
       - mandatoryArguments: {disk.id: 'xs:string'}

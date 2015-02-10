@@ -380,7 +380,8 @@ public final class ImagesHandler {
                 null,
                 true,
                 false,
-                null);
+                null,
+                false);
     }
 
     /**

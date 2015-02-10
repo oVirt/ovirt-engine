@@ -154,7 +154,8 @@ public class ImportRepoImageCopyTaskHandler
                 null,
                 true,
                 Boolean.FALSE,
-                null);
+                null,
+                false);
     }
 
     @Override

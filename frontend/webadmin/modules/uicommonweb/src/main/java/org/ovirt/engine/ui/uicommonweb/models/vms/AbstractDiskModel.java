@@ -69,6 +69,7 @@ public abstract class AbstractDiskModel extends DiskModel
     private EntityModel<Boolean> isPlugged;
     private EntityModel<Boolean> isReadOnly;
     private EntityModel<Boolean> isDirectLunDiskAvaialable;
+    private EntityModel<Boolean> isUsingScsiReservation;
     private EntityModel<Boolean> isScsiPassthrough;
     private EntityModel<Boolean> isSgIoUnfiltered;
     private EntityModel<String> sizeExtend;
@@ -133,6 +134,14 @@ public abstract class AbstractDiskModel extends DiskModel
 
     public void setIsDirectLunDiskAvaialable(EntityModel<Boolean> isDirectLunDiskAvaialable) {
         this.isDirectLunDiskAvaialable = isDirectLunDiskAvaialable;
+    }
+
+    public EntityModel<Boolean> getIsUsingScsiReservation() {
+        return isUsingScsiReservation;
+    }
+
+    public void setIsUsingScsiReservation(EntityModel<Boolean> isUsingScsiReservation) {
+        this.isUsingScsiReservation = isUsingScsiReservation;
     }
 
     public EntityModel<Boolean> getIsScsiPassthrough() {
@@ -255,6 +264,9 @@ public abstract class AbstractDiskModel extends DiskModel
         getIsReadOnly().setEntity(false);
         getIsReadOnly().getEntityChangedEvent().addListener(this);
 
+        setIsUsingScsiReservation(new EntityModel<Boolean>());
+        getIsUsingScsiReservation().setEntity(false);
+
         setIsScsiPassthrough(new EntityModel<Boolean>());
         getIsScsiPassthrough().setIsAvailable(false);
         getIsScsiPassthrough().setEntity(true);
@@ -336,6 +348,12 @@ public abstract class AbstractDiskModel extends DiskModel
         onSaveCommand.setIsDefault(true);
         getCommands().add(onSaveCommand);
         getCommands().add(getCancelCommand());
+
+        // Update data
+        if (getVm() != null) {
+            updateBootableDiskAvailable();
+            getIsUsingScsiReservation().setIsAvailable(true);
+        }
         updateDatacenters();
     }
 
@@ -703,8 +721,10 @@ public abstract class AbstractDiskModel extends DiskModel
         DiskInterface diskInterface = getDiskInterface().getSelectedItem();
         getIsSgIoUnfiltered().setIsAvailable(isLunDisk && DiskInterface.VirtIO_SCSI.equals(diskInterface));
         getIsScsiPassthrough().setIsAvailable(isLunDisk && DiskInterface.VirtIO_SCSI.equals(diskInterface));
+        getIsUsingScsiReservation().setIsAvailable(isLunDisk && DiskInterface.VirtIO_SCSI.equals(diskInterface));
 
         updateScsiPassthroguhChangeability();
+        updateScsiReservationChangeability();
         updateReadOnlyChangeability();
         updatePlugChangeability();
     }
@@ -724,6 +744,22 @@ public abstract class AbstractDiskModel extends DiskModel
             return;
         }
         getIsSgIoUnfiltered().setIsChangable(isEditEnabled());
+    }
+
+    protected void updateScsiReservationChangeability() {
+        boolean isSgioUnfiltered = getIsSgIoUnfiltered().getEntity();
+        if (getVm() != null) {
+            if (isSgioUnfiltered) {
+                getIsUsingScsiReservation().setIsChangable(true);
+            } else {
+                getIsUsingScsiReservation().setIsChangable(false);
+                getIsUsingScsiReservation().setEntity(false);
+            }
+        } else {
+            getIsUsingScsiReservation().setIsAvailable(false);
+            getIsUsingScsiReservation().setEntity(false);
+            getIsUsingScsiReservation().setIsChangable(false);
+        }
     }
 
     protected void updateReadOnlyChangeability() {
@@ -917,6 +953,11 @@ public abstract class AbstractDiskModel extends DiskModel
                     lunDisk.setSgio(!getIsScsiPassthrough().getEntity() ? null :
                             getIsSgIoUnfiltered().getEntity() ?
                                     ScsiGenericIO.UNFILTERED : ScsiGenericIO.FILTERED);
+                    lunDisk.setUsingScsiReservation(getIsUsingScsiReservation().getEntity());
+                } else {
+                    getIsScsiPassthrough().setEntity(false);
+                    lunDisk.setSgio(null);
+                    lunDisk.setUsingScsiReservation(false);
                 }
                 setDisk(lunDisk);
                 break;
@@ -935,12 +976,6 @@ public abstract class AbstractDiskModel extends DiskModel
                 break;
         }
 
-        if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
-            DiskProfile selectedDiskProfile = getDiskProfile().getSelectedItem();
-            if (selectedDiskProfile != null) {
-                ((DiskImage) getDisk()).setDiskProfileId(selectedDiskProfile.getId());
-            }
-        }
         getDisk().setDiskAlias(getAlias().getEntity());
         getDisk().setDiskDescription(getDescription().getEntity());
         getDisk().setDiskInterface(getDiskInterface().getSelectedItem());
@@ -977,8 +1012,12 @@ public abstract class AbstractDiskModel extends DiskModel
             if (sender == getIsReadOnly()) {
                 updateScsiPassthroguhChangeability();
             } else if (sender == getIsScsiPassthrough()) {
+                updateScsiPassthroguhChangeability();
                 updateSgIoUnfilteredChangeability();
                 updateReadOnlyChangeability();
+                updateScsiReservationChangeability();
+            } else if (sender == getIsSgIoUnfiltered()) {
+                updateScsiReservationChangeability();
             } else if (sender == getDiskStorageType()) {
                 diskStorageType_EntityChanged();
             }

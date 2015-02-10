@@ -83,6 +83,11 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
     private String logicalName;
 
     /**
+     * A flag indicates whether the device uses scsi reservation.
+     */
+    private boolean usingScsiReservation;
+
+    /**
      * Map of custom properties
      */
     private Map<String, String> customProperties;
@@ -102,6 +107,20 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
                     Map<String, String> customProperties,
                     Guid snapshotId,
                     String logicalName) {
+        this(id, type, device, address, bootOrder, specParams, isManaged, isPlugged, isReadOnly, alias, customProperties, snapshotId, logicalName, false);
+    }
+
+    public VmDevice(VmDeviceId id, VmDeviceGeneralType type, String device, String address,
+                    int bootOrder,
+                    Map<String, Object> specParams,
+                    boolean isManaged,
+                    Boolean isPlugged,
+                    Boolean isReadOnly,
+                    String alias,
+                    Map<String, String> customProperties,
+                    Guid snapshotId,
+                    String logicalName,
+                    boolean isUsingScsiReservation) {
         this.id = id;
         this.type = type;
         this.device = device;
@@ -115,6 +134,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         this.customProperties = customProperties;
         this.snapshotId = snapshotId;
         this.logicalName = logicalName;
+        this.usingScsiReservation = isUsingScsiReservation;
     }
 
     @Override
@@ -240,6 +260,14 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         return customProperties;
     }
 
+    public boolean isUsingScsiReservation() {
+        return usingScsiReservation;
+    }
+
+    public void setUsingScsiReservation(boolean usesScsiReservation) {
+        this.usingScsiReservation = usesScsiReservation;
+    }
+
     public void setCustomProperties(Map<String, String> customProperties) {
         this.customProperties = customProperties;
     }
@@ -261,6 +289,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         result = prime * result + (customProperties == null ? 0 : customProperties.hashCode());
         result = prime * result + (snapshotId == null ? 0 : snapshotId.hashCode());
         result = prime * result + (logicalName == null ? 0 : logicalName.hashCode());
+        result = prime * result + (usingScsiReservation ? 1231 : 1237);
         return result;
     }
 
@@ -288,7 +317,8 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
                 && alias.equals(other.alias)
                 && ObjectUtils.objectsEqual(customProperties, other.customProperties)
                 && ObjectUtils.objectsEqual(snapshotId, other.snapshotId)
-                && ObjectUtils.objectsEqual(logicalName, other.logicalName));
+                && ObjectUtils.objectsEqual(logicalName, other.logicalName)
+                && usingScsiReservation == other.usingScsiReservation);
     }
 
     @Override
@@ -307,6 +337,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
                 .append("customProperties", getCustomProperties())
                 .append("snapshotId", getSnapshotId())
                 .append("logicalName", getLogicalName())
+                .append("usingScsiReservation", isUsingScsiReservation())
                 .build();
     }
 

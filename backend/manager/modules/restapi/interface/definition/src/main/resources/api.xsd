@@ -3687,6 +3687,7 @@
           <xs:element ref="quota" minOccurs="0" maxOccurs="1"/>
           <xs:element name="lun_storage" type="Storage" minOccurs="0"/>
           <xs:element name="sgio" type="xs:string" minOccurs="0"/>
+          <xs:element name="uses_scsi_reservation" type="xs:boolean" minOccurs="0"/>
           <xs:element ref="snapshot" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="disk_profile" minOccurs="0" maxOccurs="1"/>
           <xs:element name="logical_name" type="xs:string" minOccurs="0" maxOccurs="1"/>

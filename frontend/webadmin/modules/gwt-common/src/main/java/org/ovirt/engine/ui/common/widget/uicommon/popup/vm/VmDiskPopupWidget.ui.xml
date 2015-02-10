@@ -89,6 +89,10 @@
                     <ge:EntityModelCheckBoxEditor ui:field="isReadOnlyEditor" addStyleNames="{style.checkBoxEditor}"/>
                     <ge:EntityModelCheckBoxEditor ui:field="isScsiPassthroughEditor" addStyleNames="{style.checkBoxEditor}"/>
                     <ge:EntityModelCheckBoxEditor ui:field="isSgIoUnfilteredEditor" addStyleNames="{style.checkBoxEditor} {style.checkBoxSecondary}"/>
+					<g:HorizontalPanel>
+						<ge:EntityModelCheckBoxEditor ui:field="isUsingScsiReservationEditor" addStyleNames="{style.checkBoxEditor} {style.checkBoxSecondary}"/>
+						<d:InfoIcon ui:field="scsiReservationInfoIcon" addStyleNames="{style.infoIcon}" visible="false"/>
+					</g:HorizontalPanel>
 				</g:VerticalPanel>
 			</g:HorizontalPanel>
 			<g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}" />

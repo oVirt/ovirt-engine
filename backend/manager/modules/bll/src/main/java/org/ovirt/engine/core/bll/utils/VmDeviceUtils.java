@@ -91,7 +91,8 @@ public class VmDeviceUtils {
                             getMemExpr(entity.getNumOfMonitors(), entity.getSingleQxlPci()),
                             true,
                             false,
-                            null);
+                            null,
+                            false);
                 }
             }
             updateUSBSlots(oldVmBase, entity);
@@ -136,7 +137,8 @@ public class VmDeviceUtils {
                 new SmartcardSpecParams(),
                 true,
                 false,
-                null);
+                null,
+                false);
     }
 
     private static void updateConsoleDevice(VmBase newVmBase, Boolean consoleEnabled) {
@@ -192,7 +194,8 @@ public class VmDeviceUtils {
                 new HashMap<String, Object>(),
                 true,
                 false,
-                null);
+                null,
+                false);
     }
 
     private static void addVirtioScsiController(Guid vmId) {
@@ -202,7 +205,8 @@ public class VmDeviceUtils {
                 new HashMap<String, Object>(),
                 true,
                 false,
-                null);
+                null,
+                false);
     }
 
     /**
@@ -251,7 +255,8 @@ public class VmDeviceUtils {
                     new HashMap<String, Object>(),
                     true,
                     true,
-                    null);
+                    null,
+                    false);
         }
     }
 
@@ -310,7 +315,7 @@ public class VmDeviceUtils {
                 //add CD if not exists
                 if (addCD) {
                     setCdPath(specParams, "", isoPath);
-                    addManagedDevice(new VmDeviceId(Guid.newGuid(), dstId) , VmDeviceGeneralType.DISK, VmDeviceType.CDROM, specParams, true, true, null);
+                    addManagedDevice(new VmDeviceId(Guid.newGuid(), dstId) , VmDeviceGeneralType.DISK, VmDeviceType.CDROM, specParams, true, true, null, false);
                     hasAlreadyCD = true;
                     addCD = false;
                 }
@@ -475,7 +480,8 @@ public class VmDeviceUtils {
                 new HashMap<String, Object>(),
                 true,
                 true,
-                null);
+                null,
+                false);
     }
 
     public static void copyVmDevices(Guid srcId,
@@ -521,7 +527,8 @@ public class VmDeviceUtils {
                 getMemExpr(vm.getNumOfMonitors(), vm.getSingleQxlPci()),
                 true,
                 true,
-                null);
+                null,
+                false);
     }
 
     private static void setCdPath(Map<String, Object> specParams, String srcCdPath, String isoPath) {
@@ -551,7 +558,8 @@ public class VmDeviceUtils {
                 Collections.<String, Object> emptyMap(),
                 plugged,
                 false,
-                null);
+                null,
+                false);
     }
 
     /**
@@ -573,7 +581,7 @@ public class VmDeviceUtils {
             Boolean readOnly,
             String address,
             Map<String, String> customProp) {
-        VmDevice managedDevice = addManagedDevice(id, type, device, specParams, plugged, readOnly, customProp);
+        VmDevice managedDevice = addManagedDevice(id, type, device, specParams, plugged, readOnly, customProp, false);
         if (StringUtils.isNotBlank(address)){
             managedDevice.setAddress(address);
         }
@@ -583,33 +591,39 @@ public class VmDeviceUtils {
     /**
      * adds managed device to vm_device
      *
-     * @param id
-     * @param type
-     * @param device
+     * @param id device id
+     * @param type device type
+     * @param device the device
+     * @param specParams device spec params
+     * @param is_plugged is device plugged-in
+     * @param isReadOnly is device read-only
      * @param customProp device custom properties
+     * @param isUsingScsiReservation is device using scsi reservation
      * @return New created VmDevice instance
      */
     public static VmDevice addManagedDevice(VmDeviceId id,
-            VmDeviceGeneralType type,
-            VmDeviceType device,
-            Map<String, Object> specParams,
-            boolean is_plugged,
-            Boolean isReadOnly,
-            Map<String, String> customProp) {
+                                            VmDeviceGeneralType type,
+                                            VmDeviceType device,
+                                            Map<String, Object> specParams,
+                                            boolean is_plugged,
+                                            Boolean isReadOnly,
+                                            Map<String, String> customProp,
+                                            boolean isUsingScsiReservation) {
         VmDevice managedDevice =
-            new VmDevice(id,
-                    type,
-                    device.getName(),
-                    "",
-                    0,
-                    specParams,
-                    true,
-                    is_plugged,
-                    isReadOnly,
-                    "",
-                    customProp,
-                    null,
-                    null);
+                new VmDevice(id,
+                        type,
+                        device.getName(),
+                        "",
+                        0,
+                        specParams,
+                        true,
+                        is_plugged,
+                        isReadOnly,
+                        "",
+                        customProp,
+                        null,
+                        null,
+                        isUsingScsiReservation);
         dao.save(managedDevice);
         // If we add Disk/Interface/CD/Floppy, we have to recalculate boot order
         if (type == VmDeviceGeneralType.DISK || type == VmDeviceGeneralType.INTERFACE) {
@@ -932,7 +946,8 @@ public class VmDeviceUtils {
                     getUsbSlotSpecParams(),
                     true,
                     false,
-                    null);
+                    null,
+                    false);
         }
     }
 
@@ -945,7 +960,8 @@ public class VmDeviceUtils {
                     getUsbControllerSpecParams(EHCI_MODEL, 1, index),
                     true,
                     false,
-                    null);
+                    null,
+                    false);
             for (int companionIndex = 1; companionIndex <= COMPANION_USB_CONTROLLERS; companionIndex++) {
                 VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
                         VmDeviceGeneralType.CONTROLLER,
@@ -953,7 +969,8 @@ public class VmDeviceUtils {
                         getUsbControllerSpecParams(UHCI_MODEL, companionIndex, index),
                         true,
                         false,
-                        null);
+                        null,
+                        false);
             }
         }
     }
@@ -1021,10 +1038,11 @@ public class VmDeviceUtils {
         VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.newGuid(), dstId),
                 VmDeviceGeneralType.DISK,
                 VmDeviceType.CDROM,
-                Collections.<String, Object> singletonMap(VdsProperties.Path, ""),
+                Collections.<String, Object>singletonMap(VdsProperties.Path, ""),
                 true,
                 true,
-                null);
+                null,
+                false);
     }
 
     private static void updateMemoryBalloon(VmBase newVm, boolean shouldHaveBalloon) {
@@ -1039,7 +1057,7 @@ public class VmDeviceUtils {
                 // add a balloon device
                 Map<String, Object> specParams = new HashMap<String, Object>();
                 specParams.put(VdsProperties.Model, VdsProperties.Virtio);
-                addManagedDevice(new VmDeviceId(Guid.newGuid(), id) , VmDeviceGeneralType.BALLOON, VmDeviceType.MEMBALLOON, specParams, true, true, null);
+                addManagedDevice(new VmDeviceId(Guid.newGuid(), id) , VmDeviceGeneralType.BALLOON, VmDeviceType.MEMBALLOON, specParams, true, true, null, false);
             }
             else {
                 // remove the balloon device

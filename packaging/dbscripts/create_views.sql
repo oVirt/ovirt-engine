@@ -435,7 +435,8 @@ SELECT
     vm_device.is_plugged,
     vm_device.is_readonly,
     vm_device.logical_name,
-    vm_device.vm_id
+    vm_device.vm_id,
+    vm_device.is_using_scsi_reservation
 FROM
     all_disks_including_snapshots
     JOIN vm_device ON vm_device.device_id = all_disks_including_snapshots.image_group_id
@@ -2871,7 +2872,8 @@ SELECT
     alias,
     custom_properties,
     snapshot_id,
-    logical_name
+    logical_name,
+    is_using_scsi_reservation
 FROM
     vm_device;
 -- Permissions on VNIC Profiles

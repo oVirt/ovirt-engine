@@ -79,6 +79,11 @@
         max-width: 300px;
       }
 
+      .migrationSelectInfoIcon {
+          display: inline;
+          float: left;
+      }
+
       .migrationDowntimeInfoIcon {
         display: inline;
         float: left;
@@ -625,7 +630,10 @@
                     </g:FlowPanel>
                         <g:Label addStyleNames="{style.slimSectionLabel}" text="{constants.runMigrationOptionsVmPopup}" />
                         <g:VerticalPanel width="100%" addStyleNames="{style.hostRunMigrationOptions}">
-                             <ge:EntityModelDetachableWidget ui:field="migrationModeEditorWithDetachable" addStyleNames="{style.migrationSelect}" contentWidgetContainerStyle="{style.migrationModeContentWidgetEditor}" />
+                            <g:HorizontalPanel>
+                                <ge:EntityModelDetachableWidget ui:field="migrationModeEditorWithDetachable" addStyleNames="{style.migrationSelect}" contentWidgetContainerStyle="{style.migrationModeContentWidgetEditor}" />
+                                <d:InfoIcon ui:field="migrationSelectInfoIcon" addStyleNames="{style.migrationSelectInfoIcon} avmpw_infoIcon_pfly_fix" />
+                            </g:HorizontalPanel>
                              <g:FlowPanel addStyleNames="{style.migrationDowntimePanel}">
                                <ge:EntityModelDetachableWidget ui:field="overrideMigrationDowntimeEditorWithDetachable" addStyleNames="{style.overrideMigrationDowntime} avmpw_overrideMigrationDowntime_pfly_fix" contentWidgetContainerStyle="{style.overrideMigrationDowntimeContentEditor}" />
                                <g:Label text="{constants.overrideMigrationDowntimeLabel}" addStyleNames="{style.migrationDowntimeLabel} avmpw_migrationDowntimeLabel_pfly_fix" />

@@ -630,6 +630,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public InfoIcon migrationDowntimeInfoIcon;
 
     @UiField(provided = true)
+    public InfoIcon migrationSelectInfoIcon;
+
+    @UiField(provided = true)
     @Path(value = "migrationDowntime.entity")
     @WithElementId("migrationDowntime")
     public IntegerEntityModelTextBoxOnlyEditor migrationDowntimeEditor;
@@ -948,6 +951,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 new InfoIcon(templates.italicText(constants.isVirtioScsiEnabledInfo()));
         final Integer defaultMaximumMigrationDowntime = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultMaximumMigrationDowntime);
         migrationDowntimeInfoIcon = new InfoIcon(templates.italicText(messages.migrationDowntimeInfo(defaultMaximumMigrationDowntime)));
+        migrationSelectInfoIcon = new InfoIcon(templates.italicText(messages.migrationSelectInfo()));
         priorityEditor = new EntityModelCellTable<ListModel<EntityModel<Integer>>>(
                 (Resources) GWT.create(ButtonCellTableResources.class));
         disksAllocationView = new DisksAllocationView();

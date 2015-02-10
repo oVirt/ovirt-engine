@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -40,6 +41,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -192,6 +194,7 @@ public class UpdateVmCommandTest {
     @Test
     public void testValidName() {
         prepareVmToPassCanDoAction();
+        mockVmValidator();
 
         boolean c = command.canDoAction();
         assertTrue("canDoAction should have passed.", c);
@@ -211,6 +214,7 @@ public class UpdateVmCommandTest {
         prepareVmToPassCanDoAction();
         vm.setName("vm1");
         mockSameNameQuery(true);
+        mockVmValidator();
 
         assertTrue("canDoAction should have passed.", command.canDoAction());
     }
@@ -231,6 +235,7 @@ public class UpdateVmCommandTest {
     @Test
     public void testValidDedicatedHost() {
         prepareVmToPassCanDoAction();
+        mockVmValidator();
 
         VDS vds = new VDS();
         vds.setVdsGroupId(group.getId());
@@ -256,7 +261,11 @@ public class UpdateVmCommandTest {
         graphicsDevice.setDeviceId(Guid.Empty);
         graphicsDevice.setVmId(vm.getId());
 
-        when(vmDeviceDAO.getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.GRAPHICS)).thenReturn(Arrays.asList(graphicsDevice));
+        mockVmDevice(graphicsDevice);
+    }
+
+    private void mockVmDevice(VmDevice vmDevice) {
+        when(vmDeviceDAO.getVmDeviceByVmIdAndType(vm.getId(), vmDevice.getType())).thenReturn(Arrays.asList(vmDevice));
         doReturn(vmDeviceDAO).when(dbFacade).getVmDeviceDao();
     }
 
@@ -295,10 +304,7 @@ public class UpdateVmCommandTest {
         disk.setPlugged(true);
 
         mockDiskDaoGetAllForVm(Collections.singletonList(disk), true);
-
-        VmValidator vmValidator = spy(new VmValidator(vm));
-        doReturn(vmValidator).when(command).createVmValidator(vm);
-        doReturn(diskDAO).when(vmValidator).getDiskDao();
+        mockVmValidator();
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS);
@@ -308,7 +314,8 @@ public class UpdateVmCommandTest {
     public void testCanEditARunningVM() {
         prepareVmToPassCanDoAction();
         vm.setStatus(VMStatus.Up);
-        mockDiskDaoGetAllForVm(Collections.<Disk> emptyList(), true);
+        mockDiskDaoGetAllForVm(Collections.<Disk>emptyList(), true);
+        mockVmValidator();
 
         doReturn(vmDeviceDAO).when(command).getVmDeviceDao();
         doReturn(true).when(command).areUpdatedFieldsLegal();
@@ -344,6 +351,43 @@ public class UpdateVmCommandTest {
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI);
+    }
+
+    @Test
+    public void testMigratoinCanBeSetWhenVMUsesScsiReservation() {
+        prepareVmToPassCanDoAction();
+        vm.setMigrationSupport(MigrationSupport.MIGRATABLE);
+        VmDevice device = createVmDevice();
+        device.setUsingScsiReservation(false);
+
+        mockVmDevice(device);
+        mockVmValidator();
+
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    }
+
+    private void mockVmValidator() {
+        VmValidator vmValidator = spy(new VmValidator(vm));
+        doReturn(vmValidator).when(command).createVmValidator(vm);
+        doReturn(dbFacade).when(vmValidator).getDbFacade();
+        doReturn(diskDAO).when(vmValidator).getDiskDao();
+    }
+
+    private VmDevice createVmDevice() {
+        return new VmDevice(new VmDeviceId(Guid.Empty, vm.getId()),
+                VmDeviceGeneralType.DISK,
+                "device",
+                "address",
+                1,
+                new HashMap<String, Object>(),
+                true,
+                true,
+                true,
+                "alias",
+                new HashMap<String, String>(),
+                Guid.newGuid(),
+                "logical",
+                true);
     }
 
     private void prepareVmToPassCanDoAction() {

@@ -47,6 +47,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -390,23 +391,29 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 getVmStaticDAO().incrementDbGeneration(getVm().getId());
                 updateDeviceProperties();
                 getBaseDiskDao().update(disk);
-                if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-                    DiskImage diskImage = (DiskImage) disk;
-                    diskImage.setQuotaId(getQuotaId());
-                    if (unlockImage && diskImage.getImageStatus() == ImageStatus.LOCKED) {
-                        diskImage.setImageStatus(ImageStatus.OK);
-                    }
-                    getImageDao().update(diskImage.getImage());
-                    updateQuota(diskImage);
-                    updateDiskProfile();
-                } else if (disk.getDiskStorageType() == DiskStorageType.CINDER) {
-                    CinderDisk cinderDisk = (CinderDisk) disk;
-                    setStorageDomainId(cinderDisk.getStorageIds().get(0));
-                    getCinderBroker().updateDisk(cinderDisk);
-                    if (unlockImage && cinderDisk.getImageStatus() == ImageStatus.LOCKED) {
-                        cinderDisk.setImageStatus(ImageStatus.OK);
-                    }
-                    getImageDao().update(cinderDisk.getImage());
+                switch (disk.getDiskStorageType()) {
+                    case IMAGE:
+                        DiskImage diskImage = (DiskImage) disk;
+                        diskImage.setQuotaId(getQuotaId());
+                        if (unlockImage && diskImage.getImageStatus() == ImageStatus.LOCKED) {
+                            diskImage.setImageStatus(ImageStatus.OK);
+                        }
+                        getImageDao().update(diskImage.getImage());
+                        updateQuota(diskImage);
+                        updateDiskProfile();
+                        break;
+                    case CINDER:
+                        CinderDisk cinderDisk = (CinderDisk) disk;
+                        setStorageDomainId(cinderDisk.getStorageIds().get(0));
+                        getCinderBroker().updateDisk(cinderDisk);
+                        if (unlockImage && cinderDisk.getImageStatus() == ImageStatus.LOCKED) {
+                            cinderDisk.setImageStatus(ImageStatus.OK);
+                        }
+                        getImageDao().update(cinderDisk.getImage());
+                        break;
+                    case LUN:
+                        updateLunProperties((LunDisk)getNewDisk());
+                        break;
                 }
 
                 reloadDisks();
@@ -423,7 +430,15 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 }
 
                 if (getOldDisk().getDiskInterface() != getNewDisk().getDiskInterface()) {
+                    vmDeviceForVm.setAddress("");
                     getVmDeviceDao().clearDeviceAddress(getOldDisk().getId());
+                }
+            }
+
+            private void updateLunProperties(LunDisk lunDisk) {
+                if (updateIsUsingScsiReservationRequested(lunDisk)) {
+                    vmDeviceForVm.setUsingScsiReservation(lunDisk.isUsingScsiReservation());
+                    getVmDeviceDao().update(vmDeviceForVm);
                 }
             }
         });
@@ -753,6 +768,12 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     protected boolean updateReadOnlyRequested() {
         Boolean readOnlyNewValue = getNewDisk().getReadOnly();
         return readOnlyNewValue != null && !getVmDeviceForVm().getIsReadOnly().equals(readOnlyNewValue);
+    }
+
+    private boolean updateIsUsingScsiReservationRequested(LunDisk lunDisk) {
+        Boolean isUsingScsiReservationNewValue = lunDisk.isUsingScsiReservation();
+        return isUsingScsiReservationNewValue != null &&
+               getVmDeviceForVm().isUsingScsiReservation() != isUsingScsiReservationNewValue;
     }
 
     protected boolean updateWipeAfterDeleteRequested() {

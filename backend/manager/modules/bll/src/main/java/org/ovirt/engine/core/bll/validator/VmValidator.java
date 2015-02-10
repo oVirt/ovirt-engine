@@ -17,6 +17,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -245,6 +247,23 @@ public class VmValidator {
             if (!passthroughVnics.isEmpty()) {
                 return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_OF_PASSTHROUGH_VNICS_IS_NOT_SUPPORTED,
                         replacements);
+            }
+        }
+        return ValidationResult.VALID;
+    }
+
+    /**
+     * Checks whether VM uses lun with scsi reservation true.
+     * @return If scsi lun with scsi reservation is plugged to VM
+     */
+    public ValidationResult isVmPluggedDiskNotUsingScsiReservation() {
+        for (VM vm : vms) {
+            List<VmDevice> devices = getDbFacade().getVmDeviceDao().getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.DISK);
+            for (VmDevice device : devices) {
+                if (device.getIsPlugged() && device.isUsingScsiReservation()) {
+                    return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_USES_SCSI_RESERVATION,
+                            String.format("$VmName %s", vm.getName()));
+                }
             }
         }
         return ValidationResult.VALID;

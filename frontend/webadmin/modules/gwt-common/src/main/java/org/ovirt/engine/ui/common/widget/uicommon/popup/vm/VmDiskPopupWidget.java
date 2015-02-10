@@ -159,6 +159,11 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     EntityModelCheckBoxEditor isReadOnlyEditor;
 
     @UiField(provided = true)
+    @Path("isUsingScsiReservation.entity")
+    @WithElementId("isUsingScsiReservation")
+    EntityModelCheckBoxEditor isUsingScsiReservationEditor;
+
+    @UiField(provided = true)
     @Path("isScsiPassthrough.entity")
     @WithElementId("isScsiPassthrough")
     EntityModelCheckBoxEditor isScsiPassthroughEditor;
@@ -171,6 +176,10 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     @UiField(provided = true)
     @Ignore
     InfoIcon interfaceInfoIcon;
+
+    @UiField(provided = true)
+    @Ignore
+    InfoIcon scsiReservationInfoIcon;
 
     @UiField
     VerticalPanel createDiskPanel;
@@ -233,6 +242,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         isBootableEditor.setLabel(constants.isBootableVmDiskPopup());
         isShareableEditor.setLabel(constants.isShareableVmDiskPopup());
         isReadOnlyEditor.setLabel(constants.isReadOnlyVmDiskPopup());
+        isUsingScsiReservationEditor.setLabel(constants.isUsingScsiReservationEditor());
         isScsiPassthroughEditor.setLabel(constants.isScsiPassthroughEditor());
         isSgIoUnfilteredEditor.setLabel(constants.isSgIoUnfilteredEditor());
     }
@@ -261,10 +271,13 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         isBootableEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isShareableEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isReadOnlyEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        isUsingScsiReservationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isScsiPassthroughEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isSgIoUnfilteredEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         interfaceInfoIcon = new InfoIcon(templates.italicText(constants.diskInterfaceInfo()));
+
+        scsiReservationInfoIcon = new InfoIcon(templates.italicText(constants.scsiReservationInfoIcon()));
     }
 
     @Override
@@ -281,6 +294,13 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 boolean isDirectLunDiskAvaialable = ((EntityModel<Boolean>) sender).getEntity();
                 externalDiskPanel.setVisible(isDirectLunDiskAvaialable);
+            }
+        });
+
+        disk.getIsUsingScsiReservation().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                scsiReservationInfoIcon.setVisible(disk.getIsUsingScsiReservation().getEntity());
             }
         });
 
@@ -482,8 +502,9 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         isBootableEditor.setTabIndex(nextTabIndex++);
         isShareableEditor.setTabIndex(nextTabIndex++);
         isReadOnlyEditor.setTabIndex(nextTabIndex++);
-        isScsiPassthroughEditor.setTabIndex(nextTabIndex++);
+        isScsiPassthroughEditor.setTabIndexes(nextTabIndex++);
         isSgIoUnfilteredEditor.setTabIndex(nextTabIndex++);
+        isUsingScsiReservationEditor.setTabIndex(nextTabIndex++);
 
         return nextTabIndex;
     }

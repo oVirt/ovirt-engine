@@ -87,6 +87,12 @@ public class EditDiskModel extends AbstractDiskModel
                     diskModel.getStorageDomain().setSelectedItem(storageDomain);
                 }
             }), storageDomainId);
+        } else if (getDisk().getDiskStorageType() == DiskStorageType.LUN) {
+            LunDisk lunDisk = (LunDisk) getDisk();
+            getDiskStorageType().setEntity(DiskStorageType.LUN);
+            getSize().setEntity(lunDisk.getLun().getDeviceSize());
+            getSizeExtend().setIsAvailable(false);
+            getIsUsingScsiReservation().setEntity(lunDisk.isUsingScsiReservation());
         }
     }
 

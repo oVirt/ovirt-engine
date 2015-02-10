@@ -895,7 +895,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             getModel().getMigrationMode().setSelectedItem(MigrationSupport.MIGRATABLE);
         }
         getModel().getMigrationMode().setIsChangable(!haHost);
-
     }
 
     public void updateCpuSharesAmountChangeability() {

@@ -363,6 +363,11 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             return false;
         }
 
+        VmValidator vmValidator = new VmValidator(vm);
+        if (!validate(vmValidator.isVmPluggedDiskNotUsingScsiReservation())) {
+            return false;
+        }
+
         if (!FeatureSupported.isMigrationSupported(getVdsGroup().getArchitecture(), getVdsGroup().getCompatibilityVersion())) {
             return failCanDoAction(VdcBllMessages.MIGRATION_IS_NOT_SUPPORTED);
         }
@@ -396,8 +401,6 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         if (!vm.isQualifyToMigrate()) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING);
         }
-
-        VmValidator vmValidator = new VmValidator(vm);
 
         if (!validate(vmValidator.vmNotHavingPluggedDiskSnapshots(VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_PLUGGED_DISK_SNAPSHOT))
                 || !validate(vmValidator.vmNotHavingPassthroughVnics())) {

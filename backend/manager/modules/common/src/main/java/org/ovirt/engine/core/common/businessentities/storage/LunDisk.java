@@ -14,6 +14,8 @@ public class LunDisk extends Disk {
      */
     private LUNs lun;
 
+    private Boolean usingScsiReservation;
+
     @Override
     public DiskStorageType getDiskStorageType() {
         return DiskStorageType.LUN;
@@ -37,10 +39,19 @@ public class LunDisk extends Disk {
         return false;
     }
 
+    public Boolean isUsingScsiReservation() {
+        return usingScsiReservation;
+    }
+
+    public void setUsingScsiReservation(Boolean value) {
+        this.usingScsiReservation = value;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
+        result = prime * result + ((usingScsiReservation == null) ? 0 : usingScsiReservation.hashCode());
         result = prime * result + ((lun == null) ? 0 : lun.hashCode());
         return result;
     }
@@ -57,6 +68,7 @@ public class LunDisk extends Disk {
             return false;
         }
         LunDisk other = (LunDisk) obj;
-        return (ObjectUtils.objectsEqual(lun, other.lun));
+        return (ObjectUtils.objectsEqual(lun, other.lun)
+                && ObjectUtils.objectsEqual(usingScsiReservation, other.usingScsiReservation));
     }
 }

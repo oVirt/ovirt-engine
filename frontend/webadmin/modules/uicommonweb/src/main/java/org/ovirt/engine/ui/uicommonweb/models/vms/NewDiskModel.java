@@ -83,6 +83,10 @@ public class NewDiskModel extends AbstractDiskModel
             // Read only disk can be created only in the scope of VM.
             getIsReadOnly().setIsAvailable(false);
             getIsPlugged().setEntity(false);
+
+            // set using scsi reservation to be invisible
+            getIsUsingScsiReservation().setIsAvailable(false);
+            getIsUsingScsiReservation().setEntity(false);
         }
 
         getSizeExtend().setIsAvailable(false);

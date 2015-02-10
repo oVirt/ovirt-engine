@@ -138,6 +138,9 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("Represents maximum number of milliseconds the VM can be down during live migration. Value of 0 means that VDSM default will be used. (Current engine-wide default is {0}ms)")
     String migrationDowntimeInfo(Integer milliseconds);
 
+    @DefaultMessage("When at least one of the VM activated disks use SCSI reservation, migration option is ignored and VM cannot be migrated.")
+    String migrationSelectInfo();
+
     @DefaultMessage("Hot add CPUs by changing the number of sockets." +
             " Please consult documentation for your guest operating system to ensure it has proper support for CPU Hot Add")
     String hotPlugUnplugCpuWarning();

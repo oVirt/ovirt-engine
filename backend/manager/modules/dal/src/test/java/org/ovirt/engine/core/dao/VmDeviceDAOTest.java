@@ -5,11 +5,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -47,15 +46,7 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
 
     @Override
     protected VmDevice generateNewEntity() {
-        Map<String, String> customProp = new LinkedHashMap<>();
-        customProp.put("prop1", "value1");
-        return new VmDevice(new VmDeviceId(Guid.newGuid(), EXISTING_VM_ID),
-                VmDeviceGeneralType.DISK,
-                "floppy",
-                "type:'drive', controller:'0', bus:'0', unit:'1'",
-                2,
-                new HashMap<String, Object>(),
-                true, false, false, "alias", customProp, null, null);
+        return createVmDevice(EXISTING_VM_ID);
     }
 
     @Override
@@ -242,5 +233,24 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
         dao.removeVmDevicesByVmIdAndType(EXISTING_VM_ID, VmDeviceGeneralType.HOSTDEV);
         assertFalse(dao.existsVmDeviceByVmIdAndType(EXISTING_VM_ID, VmDeviceGeneralType.HOSTDEV));
         assertTrue(dao.existsVmDeviceByVmIdAndType(EXISTING_VM_ID_2, VmDeviceGeneralType.HOSTDEV));
+    }
+
+    public void testUpdateVmDeviceUsingScsiReservationProperty() {
+        VmDevice vmDevice = dao.get(getExistingEntityId());
+        boolean usingScsiReservation = !vmDevice.isUsingScsiReservation();
+        vmDevice.setUsingScsiReservation(usingScsiReservation);
+        dao.update(vmDevice);
+        dao.get(getExistingEntityId());
+        assertEquals(vmDevice.isUsingScsiReservation(), usingScsiReservation);
+    }
+
+    private VmDevice createVmDevice(Guid vmGuid) {
+        return new VmDevice(new VmDeviceId(Guid.newGuid(), vmGuid),
+                VmDeviceGeneralType.DISK,
+                "floppy",
+                "type:'drive', controller:'0', bus:'0', unit:'1'",
+                2,
+                new HashMap<String, Object>(),
+                true, false, false, "alias", Collections.singletonMap("prop1", "value1"), null, null);
     }
 }

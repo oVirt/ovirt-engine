@@ -149,7 +149,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     protected boolean checkIfLunDiskCanBeAdded(DiskValidator diskValidator) {
-        LUNs lun = ((LunDisk) getParameters().getDiskInfo()).getLun();
+        LunDisk lunDisk = ((LunDisk) getParameters().getDiskInfo());
+        LUNs lun = lunDisk.getLun();
 
         switch (lun.getLunType()) {
         case UNKNOWN:
@@ -187,6 +188,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
 
         if (getVds() != null && !validate(diskValidator.isLunDiskVisible(lun, getVds()))) {
+            return false;
+        }
+
+        if (!validate(diskValidator.isUsingScsiReservationValid(getVm(), lunDisk))) {
             return false;
         }
 
@@ -410,7 +415,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 getBaseDiskDao().save(getParameters().getDiskInfo());
                 getDiskLunMapDao().save(new DiskLunMap(getParameters().getDiskInfo().getId(), lun.getLUN_id()));
                 if (getVm() != null) {
-                    addManagedDeviceForDisk(getParameters().getDiskInfo().getId());
+                    addManagedDeviceForDisk(getParameters().getDiskInfo().getId(), ((LunDisk) getParameters().getDiskInfo()).isUsingScsiReservation());
                 }
                 return null;
             }
@@ -420,14 +425,19 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         setSucceeded(true);
     }
 
-    protected VmDevice addManagedDeviceForDisk(Guid diskId) {
+    protected VmDevice addManagedDeviceForDisk(Guid diskId, Boolean isUsingScsiReservation) {
         return VmDeviceUtils.addManagedDevice(new VmDeviceId(diskId, getVmId()),
                 VmDeviceGeneralType.DISK,
                 VmDeviceType.DISK,
                 null,
                 shouldDiskBePlugged(),
                 Boolean.TRUE.equals(getParameters().getDiskInfo().getReadOnly()),
-                null);
+                null,
+                Boolean.TRUE.equals(isUsingScsiReservation));
+    }
+
+    protected VmDevice addManagedDeviceForDisk(Guid diskId) {
+        return addManagedDeviceForDisk(diskId, false);
     }
 
     protected boolean shouldDiskBePlugged() {

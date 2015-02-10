@@ -1193,6 +1193,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Read Only")
     String isReadOnlyVmDiskPopup();
 
+    @DefaultStringValue("Using SCSI Reservation")
+    String isUsingScsiReservationEditor();
+
     @DefaultStringValue("Enable SCSI Pass-Through")
     String isScsiPassthroughEditor();
 
@@ -1799,6 +1802,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("VirtIO-SCSI can be enabled from Resource Allocation tab on VM dialog")
     String diskInterfaceInfo();
+
+    @DefaultStringValue("When one of the activated VM disks uses SCSI reservation, the VM can't be migrated.")
+    String scsiReservationInfoIcon();
 
     @DefaultStringValue("FQDN")
     String fqdn();

@@ -237,4 +237,42 @@ public class DiskValidatorTest {
         assertThat(lunValidator.isLunDiskVisible(lunDisk.getLun(), vds),
                 failsWith(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_INVALID));
     }
+
+    @Test
+    public void testIsUsingScsiReservationValidWhenSgioIsUnFiltered() {
+        setupForLun();
+
+        LunDisk lunDisk1 = createLunDisk(ScsiGenericIO.UNFILTERED, true);
+
+        assertThat(lunValidator.isUsingScsiReservationValid(createVM(), lunDisk1),
+                isValid());
+    }
+
+    @Test
+    public void testIsUsingScsiReservationValidWhenSgioIsFiltered() {
+        setupForLun();
+
+        LunDisk lunDisk1 = createLunDisk(ScsiGenericIO.FILTERED, true);
+
+        assertThat(lunValidator.isUsingScsiReservationValid(createVM(), lunDisk1),
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_SGIO_IS_FILTERED));
+    }
+
+    @Test
+    public void testIsUsingScsiReservationValidWhenAddingFloatingDisk() {
+        setupForLun();
+
+        LunDisk lunDisk1 = createLunDisk(ScsiGenericIO.UNFILTERED, true);
+
+        assertThat(lunValidator.isUsingScsiReservationValid(null, lunDisk1),
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_SCSI_RESERVATION_NOT_VALID_FOR_FLOATING_DISK));
+    }
+
+    private LunDisk createLunDisk(ScsiGenericIO sgio, boolean isUsingScsiReservation) {
+        LunDisk lunDisk = createLunDisk();
+        lunDisk.setSgio(sgio);
+        lunDisk.setUsingScsiReservation(isUsingScsiReservation);
+
+        return lunDisk;
+    }
 }

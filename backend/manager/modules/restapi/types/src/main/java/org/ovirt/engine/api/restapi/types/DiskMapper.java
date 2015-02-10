@@ -96,6 +96,9 @@ public class DiskMapper {
         }
         if (disk.isSetLunStorage()) {
             ((LunDisk)engineDisk).setLun(StorageLogicalUnitMapper.map(disk.getLunStorage(), null));
+            if (disk.isSetUsesScsiReservation()) {
+                ((LunDisk) engineDisk).setUsingScsiReservation(disk.isUsesScsiReservation());
+            }
             if (disk.isSetSgio() && engineDisk.getDiskInterface() == map(DiskInterface.VIRTIO_SCSI, null)) {
                 ScsiGenericIO scsiGenericIO = ScsiGenericIO.fromValue(disk.getSgio());
                 if (scsiGenericIO != null) {
@@ -185,6 +188,7 @@ public class DiskMapper {
             mapDiskImageToDiskFields((DiskImage) entity, model);
         } else {
             model.setLunStorage(StorageLogicalUnitMapper.map(((LunDisk) entity).getLun(), new Storage()));
+            model.setUsesScsiReservation(((LunDisk) entity).isUsingScsiReservation());
             if (entity.getSgio() != null && entity.getDiskInterface() == map(DiskInterface.VIRTIO_SCSI, null)) {
                 model.setSgio(map(entity.getSgio(), null));
             }

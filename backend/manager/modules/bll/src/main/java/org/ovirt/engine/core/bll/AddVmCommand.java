@@ -904,7 +904,8 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                     payload.getSpecParams(),
                     true,
                     true,
-                    null);
+                    null,
+                    false);
         }
     }
 

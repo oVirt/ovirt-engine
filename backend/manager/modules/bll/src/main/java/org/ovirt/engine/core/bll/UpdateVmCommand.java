@@ -383,7 +383,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                         payload.getSpecParams(),
                         true,
                         true,
-                        null);
+                        null,
+                        false);
             }
         }
     }

@@ -508,6 +508,15 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM is pinned to Host.")
     String ACTION_TYPE_FAILED_VM_IS_PINNED_TO_HOST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. VM uses SCSI reservation.")
+    String ACTION_TYPE_FAILED_VM_USES_SCSI_RESERVATION();
+
+    @DefaultStringValue("Cannot ${action} ${type}. SCSI reservation can be set only when SGIO is unfiltered.")
+    String ACTION_TYPE_FAILED_SGIO_IS_FILTERED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. SCSI reservation cannot be set when adding floating disks.")
+    String ACTION_TYPE_FAILED_SCSI_RESERVATION_NOT_VALID_FOR_FLOATING_DISK();
+
     @DefaultStringValue("Note: The VM is pinned to Host '${VdsName}' but cannot run on it.")
     String VM_PINNED_TO_HOST_CANNOT_RUN_ON_THE_DEFAULT_VDS();
 
