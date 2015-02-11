@@ -64,6 +64,9 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
         }
 
         List<LUNs> lunsOnStorage = getLUNsFromVgInfo(getStorageDomain().getStorage());
+        if (lunsOnStorage.isEmpty()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_PROBLEM_WITH_CANDIDATE_INFO);
+        }
         if (CollectionUtils.containsAny(Entities.getIds(lunsOnStorage), Entities.getIds(getAllLuns()))) {
             log.info("There are existing luns in the system which are part of VG id '{}'",
                     getStorageDomain().getStorage());
