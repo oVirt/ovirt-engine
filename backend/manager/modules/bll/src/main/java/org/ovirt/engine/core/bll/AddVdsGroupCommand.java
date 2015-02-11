@@ -14,7 +14,7 @@ import org.ovirt.engine.core.bll.validator.ClusterValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.AddClusterOperationParameters;
+import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
@@ -25,7 +25,7 @@ import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
-public class AddVdsGroupCommand<T extends AddClusterOperationParameters>
+public class AddVdsGroupCommand<T extends ManagementNetworkOnClusterOperationParameters>
         extends VdsGroupOperationCommandBase<T> {
 
     public static final String DefaultNetworkDescription = "Management Network";

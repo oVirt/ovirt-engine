@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.action.AddClusterOperationParameters;
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
+import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -734,7 +734,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         model.startProgress(null);
 
         Frontend.getInstance().runAction(model.getIsNew() ? VdcActionType.AddVdsGroup : VdcActionType.UpdateVdsGroup,
-                model.getIsNew() ? new AddClusterOperationParameters(cluster) :
+                model.getIsNew() ? new ManagementNetworkOnClusterOperationParameters(cluster) :
                                    new VdsGroupOperationParameters(cluster),
                 new IFrontendActionAsyncCallback() {
                     @Override

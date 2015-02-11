@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.action.AddClusterOperationParameters;
+import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.ApproveVdsParameters;
@@ -1349,7 +1349,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         model.startProgress(null);
 
-        Frontend.getInstance().runAction(VdcActionType.AddVdsGroup, new AddClusterOperationParameters(cluster),
+        Frontend.getInstance().runAction(VdcActionType.AddVdsGroup, new ManagementNetworkOnClusterOperationParameters(cluster),
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {

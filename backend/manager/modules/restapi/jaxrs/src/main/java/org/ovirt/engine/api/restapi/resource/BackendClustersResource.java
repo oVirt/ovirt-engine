@@ -10,7 +10,7 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.resource.ClustersResource;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
-import org.ovirt.engine.core.common.action.AddClusterOperationParameters;
+import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -111,7 +111,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
         return managementNetworkId;
     }
 
-    protected AddClusterOperationParameters createAddCommandParams(Cluster cluster, StoragePool dataCenter) {
+    protected ManagementNetworkOnClusterOperationParameters createAddCommandParams(Cluster cluster, StoragePool dataCenter) {
         VDSGroup clusterEntity = map(cluster, map(dataCenter));
 
         if (!(cluster.isSetErrorHandling() && cluster.getErrorHandling().isSetOnError())) {
@@ -120,7 +120,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
 
         final Guid managementNetworkId = getManagementNetworkId(cluster, dataCenter.getId());
 
-        return new AddClusterOperationParameters(clusterEntity, managementNetworkId);
+        return new ManagementNetworkOnClusterOperationParameters(clusterEntity, managementNetworkId);
     }
 
     @Override

@@ -10,7 +10,7 @@ import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Version;
-import org.ovirt.engine.core.common.action.AddClusterOperationParameters;
+import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -110,7 +110,7 @@ public class BackendClustersResourceTest extends
                                    null);
 
         setUpCreationExpectations(VdcActionType.AddVdsGroup,
-                                  AddClusterOperationParameters.class,
+                                  ManagementNetworkOnClusterOperationParameters.class,
                                   new String[] { "VdsGroup.CompatibilityVersion" },
                                   new Object[] { new org.ovirt.engine.core.compat.Version(2, 2) },
                                   true,
@@ -147,7 +147,7 @@ public class BackendClustersResourceTest extends
                                    null);
 
         setUpCreationExpectations(VdcActionType.AddVdsGroup,
-                                  AddClusterOperationParameters.class,
+                                  ManagementNetworkOnClusterOperationParameters.class,
                                   new String[] { "VdsGroup.CompatibilityVersion" },
                                   new Object[] { new org.ovirt.engine.core.compat.Version(2, 3) },
                                   true,
@@ -190,7 +190,7 @@ public class BackendClustersResourceTest extends
                                    setUpStoragePool(-1));
 
         setUriInfo(setUpActionExpectations(VdcActionType.AddVdsGroup,
-                                           AddClusterOperationParameters.class,
+                                           ManagementNetworkOnClusterOperationParameters.class,
                                            new String[] {},
                                            new Object[] {},
                                            canDo,
@@ -223,7 +223,7 @@ public class BackendClustersResourceTest extends
                 null);
 
         setUpCreationExpectations(VdcActionType.AddVdsGroup,
-                                  AddClusterOperationParameters.class,
+                                  ManagementNetworkOnClusterOperationParameters.class,
                                   new String[] {},
                                   new Object[] {},
                                   true,
@@ -263,7 +263,7 @@ public class BackendClustersResourceTest extends
                 setUpStoragePool(1));
 
         setUriInfo(setUpActionExpectations(VdcActionType.AddVdsGroup,
-                                           AddClusterOperationParameters.class,
+                                           ManagementNetworkOnClusterOperationParameters.class,
                                            new String[] {},
                                            new Object[] {},
                                            canDo,
