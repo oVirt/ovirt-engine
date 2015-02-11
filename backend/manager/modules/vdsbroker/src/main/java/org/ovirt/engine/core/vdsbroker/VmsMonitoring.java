@@ -238,47 +238,47 @@ public class VmsMonitoring {
         List<Guid> succeededToRunVms = new ArrayList<>();
 
         // now loop over the result and act
-        for (VmAnalyzer vmUpdater : vmAnalyzers) {
+        for (VmAnalyzer vmAnalyzer : vmAnalyzers) {
 
             // rerun all vms from rerun list
-            if (vmUpdater.isRerun()) {
-                log.error("Rerun VM '{}'. Called from VDS '{}'", vmUpdater.getDbVm().getId(), vdsManager.getVdsName());
-                ResourceManager.getInstance().RerunFailedCommand(vmUpdater.getDbVm().getId(), vdsManager.getVdsId());
+            if (vmAnalyzer.isRerun()) {
+                log.error("Rerun VM '{}'. Called from VDS '{}'", vmAnalyzer.getDbVm().getId(), vdsManager.getVdsName());
+                ResourceManager.getInstance().RerunFailedCommand(vmAnalyzer.getDbVm().getId(), vdsManager.getVdsId());
             }
 
-            if (vmUpdater.isSuccededToRun()) {
-                vdsManager.succeededToRunVm(vmUpdater.getDbVm().getId());
-                succeededToRunVms.add(vmUpdater.getDbVm().getId());
+            if (vmAnalyzer.isSuccededToRun()) {
+                vdsManager.succeededToRunVm(vmAnalyzer.getDbVm().getId());
+                succeededToRunVms.add(vmAnalyzer.getDbVm().getId());
             }
 
             // Refrain from auto-start HA VM during its re-run attempts.
-            if (vmUpdater.isAutoVmToRun() && !vmUpdater.isRerun()) {
-                autoVmsToRun.add(vmUpdater.getDbVm().getId());
+            if (vmAnalyzer.isAutoVmToRun() && !vmAnalyzer.isRerun()) {
+                autoVmsToRun.add(vmAnalyzer.getDbVm().getId());
             }
 
             // process all vms that their ip changed.
-            if (vmUpdater.isClientIpChanged()) {
-                final VmDynamic vmDynamic = vmUpdater.getVdsmVm().getVmDynamic();
+            if (vmAnalyzer.isClientIpChanged()) {
+                final VmDynamic vmDynamic = vmAnalyzer.getVdsmVm().getVmDynamic();
                 getVdsEventListener().processOnClientIpChange(vmDynamic.getId(),
                         vmDynamic.getClientIp());
             }
 
             // process all vms that powering up.
-            if (vmUpdater.isPoweringUp()) {
-                getVdsEventListener().processOnVmPoweringUp(vmUpdater.getVdsmVm().getVmDynamic().getId());
+            if (vmAnalyzer.isPoweringUp()) {
+                getVdsEventListener().processOnVmPoweringUp(vmAnalyzer.getVdsmVm().getVmDynamic().getId());
             }
 
-            if (vmUpdater.isMovedToDown()) {
-                movedToDownVms.add(vmUpdater.getDbVm().getId());
+            if (vmAnalyzer.isMovedToDown()) {
+                movedToDownVms.add(vmAnalyzer.getDbVm().getId());
             }
 
-            if (vmUpdater.isRemoveFromAsync()) {
-                ResourceManager.getInstance().RemoveAsyncRunningVm(vmUpdater.getDbVm().getId());
+            if (vmAnalyzer.isRemoveFromAsync()) {
+                ResourceManager.getInstance().RemoveAsyncRunningVm(vmAnalyzer.getDbVm().getId());
             }
 
-            if (vmUpdater.isHostedEngineUnmanaged()) {
+            if (vmAnalyzer.isHostedEngineUnmanaged()) {
                 // @since 3.6 - we take existing HE VM and reimport it
-                importHostedEngineVM(getVmInfo(Collections.singletonList(vmUpdater.getVdsmVm()
+                importHostedEngineVM(getVmInfo(Collections.singletonList(vmAnalyzer.getVdsmVm()
                         .getVmDynamic()
                         .getId()
                         .toString()))[0]);
