@@ -15,10 +15,10 @@ import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
-import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -43,7 +43,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
-public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extends
+public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperationParameters> extends
         VdsGroupOperationCommandBase<T>  implements RenamedEntityInfoProvider{
 
     @Inject
@@ -404,11 +404,21 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
     }
 
     private boolean validateManagementNetworkAttachement() {
-        final Network managementNetwork =
-                getDefaultManagementNetworkFinder().findDefaultManagementNetwork(getVdsGroup().getStoragePoolId());
-        if (managementNetwork == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DEFAULT_MANAGEMENT_NETWORK_NOT_FOUND);
-            return false;
+        final Network managementNetwork;
+        final Guid managementNetworkId = getParameters().getManagementNetworkId();
+        if (managementNetworkId == null) {
+            managementNetwork =
+                    getDefaultManagementNetworkFinder().findDefaultManagementNetwork(getVdsGroup().getStoragePoolId());
+            if (managementNetwork == null) {
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DEFAULT_MANAGEMENT_NETWORK_NOT_FOUND);
+                return false;
+            }
+        } else {
+            managementNetwork = getNetworkDAO().get(managementNetworkId);
+            if (managementNetwork == null) {
+                addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS);
+                return false;
+            }
         }
 
         managementNetworkCluster = createManagementNetworkCluster(managementNetwork);

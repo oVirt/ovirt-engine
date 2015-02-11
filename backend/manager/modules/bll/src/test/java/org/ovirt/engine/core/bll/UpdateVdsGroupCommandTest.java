@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -17,7 +17,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
 import org.ovirt.engine.core.bll.network.cluster.UpdateClusterNetworkClusterValidator;
-import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
+import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -35,6 +35,7 @@ import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 import static org.junit.Assert.assertFalse;
@@ -50,7 +51,6 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 @RunWith(MockitoJUnitRunner.class)
 public class UpdateVdsGroupCommandTest {
 
-
     private static final Version VERSION_1_0 = new Version(1, 0);
     private static final Version VERSION_1_1 = new Version(1, 1);
     private static final Version VERSION_1_2 = new Version(1, 2);
@@ -59,16 +59,22 @@ public class UpdateVdsGroupCommandTest {
     private static final Guid DEFAULT_VDS_GROUP_ID = new Guid("99408929-82CF-4DC7-A532-9D998063FA95");
     private static final Guid TEST_MANAGEMENT_NETWORK_ID = Guid.newGuid();
 
-    private static final Map<String, String> migrationMap = new HashMap<>();
+    private static final Map<String, String> migrationMap = Collections.unmodifiableMap(
+            new HashMap<String, String>() {{
+                put("undefined", "true");
+                put("x86_64", "true");
+                put("ppc64", "false");
+            }});
 
-    static {
-        migrationMap.put("undefined", "true");
-        migrationMap.put("x86_64", "true");
-        migrationMap.put("ppc64", "false");
-    }
+    private static final Set<Version> versions = Collections.unmodifiableSet(
+            new HashSet<Version>() {{
+                add(VERSION_1_0);
+                add(VERSION_1_1);
+                add(VERSION_1_2);
+            }});
 
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(
+    @Rule
+    public MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.IsMigrationSupported, VERSION_1_0.getValue(), migrationMap),
             mockConfig(ConfigValues.IsMigrationSupported, VERSION_1_1.getValue(), migrationMap),
             mockConfig(ConfigValues.IsMigrationSupported, VERSION_1_2.getValue(), migrationMap)
@@ -85,12 +91,15 @@ public class UpdateVdsGroupCommandTest {
     @Mock
     private VmDAO vmDao;
     @Mock
+    private NetworkDao networkDao;
+    @Mock
     private DefaultManagementNetworkFinder defaultManagementNetworkFinder;
     @Mock
     private UpdateClusterNetworkClusterValidator networkClusterValidator;
 
     @Mock
     private Network mockManagementNetwork = createManagementNetwork();
+    private Guid managementNetworkId;
 
     private Network createManagementNetwork() {
         final Network network = new Network();
@@ -98,7 +107,7 @@ public class UpdateVdsGroupCommandTest {
         return network;
     }
 
-    private UpdateVdsGroupCommand<VdsGroupOperationParameters> cmd;
+    private UpdateVdsGroupCommand<ManagementNetworkOnClusterOperationParameters> cmd;
 
     @Test
     public void nameInUse() {
@@ -258,6 +267,36 @@ public class UpdateVdsGroupCommandTest {
     }
 
     @Test
+    public void detachedClusterMovesToDcWithNonExistentManagementNetwork() {
+        managementNetworkNotFoundById();
+
+        createCommandWithDefaultVdsGroup();
+        oldGroupIsDetachedDefault();
+        setupCpu();
+
+        canDoActionFailedWithReason(VdcBllMessages.NETWORK_NOT_EXISTS);
+    }
+
+    @Test
+    public void detachedClusterMovesToDcWithExistingManagementNetwork() {
+
+        prepareManagementNetworkMocks();
+
+        mcr.mockConfigValue(ConfigValues.AutoRegistrationDefaultVdsGroupID, Guid.Empty);
+        createCommandWithDefaultVdsGroup();
+        oldGroupIsDetachedDefault();
+        setupCpu();
+        storagePoolIsLocalFS();
+
+        assertTrue(cmd.canDoAction());
+    }
+
+    private void managementNetworkNotFoundById() {
+        managementNetworkId = TEST_MANAGEMENT_NETWORK_ID;
+        when(networkDao.get(TEST_MANAGEMENT_NETWORK_ID)).thenReturn(null);
+    }
+
+    @Test
     public void invalidDefaultManagementNetworkAttachement() {
         newDefaultManagementNetworkFound();
         final VdcBllMessages expected = VdcBllMessages.Unassigned;
@@ -294,11 +333,13 @@ public class UpdateVdsGroupCommandTest {
     }
 
     private void newDefaultManagementNetworkFound() {
+        managementNetworkId = null;
         when(defaultManagementNetworkFinder.findDefaultManagementNetwork(DC_ID1)).
                 thenReturn(mockManagementNetwork);
     }
 
     private void noNewDefaultManagementNetworkFound() {
+        managementNetworkId = null;
         when(defaultManagementNetworkFinder.findDefaultManagementNetwork(DC_ID1)).
                 thenReturn(null);
     }
@@ -421,8 +462,13 @@ public class UpdateVdsGroupCommandTest {
 
     private void createCommand(final VDSGroup group) {
         setValidCpuVersionMap();
-        VdsGroupOperationParameters params = new VdsGroupOperationParameters(group);
-        cmd = spy(new UpdateVdsGroupCommand<VdsGroupOperationParameters>(params));
+        final ManagementNetworkOnClusterOperationParameters param;
+        if (managementNetworkId == null) {
+            param = new ManagementNetworkOnClusterOperationParameters(group);
+        } else {
+            param = new ManagementNetworkOnClusterOperationParameters(group, managementNetworkId);
+        }
+        cmd = spy(new UpdateVdsGroupCommand<>(param));
 
         doReturn(0).when(cmd).compareCpuLevels(any(VDSGroup.class));
 
@@ -431,6 +477,7 @@ public class UpdateVdsGroupCommandTest {
         doReturn(storagePoolDAO).when(cmd).getStoragePoolDAO();
         doReturn(glusterVolumeDao).when(cmd).getGlusterVolumeDao();
         doReturn(vmDao).when(cmd).getVmDAO();
+        doReturn(networkDao).when(cmd).getNetworkDAO();
         doReturn(defaultManagementNetworkFinder).when(cmd).getDefaultManagementNetworkFinder();
         doReturn(networkClusterValidator).when(cmd).createManagementNetworkClusterValidator();
         doReturn(true).when(cmd).validateClusterPolicy();
@@ -443,7 +490,7 @@ public class UpdateVdsGroupCommandTest {
 
         when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createDefaultVdsGroup());
         when(vdsGroupDAO.getByName(anyString())).thenReturn(createDefaultVdsGroup());
-        List<VDSGroup> vdsGroupList = new ArrayList<VDSGroup>();
+        List<VDSGroup> vdsGroupList = new ArrayList<>();
         vdsGroupList.add(createDefaultVdsGroup());
         when(vdsGroupDAO.getByName(anyString(), anyBoolean())).thenReturn(vdsGroupList);
     }
@@ -631,16 +678,8 @@ public class UpdateVdsGroupCommandTest {
         doReturn(false).when(cmd).isArchitectureUpdatable();
     }
 
-    private static void setValidCpuVersionMap() {
-        mcr.mockConfigValue(ConfigValues.SupportedClusterLevels, createVersionSet());
-    }
-
-    private static Set<Version> createVersionSet() {
-        Set<Version> versions = new HashSet<Version>();
-        versions.add(VERSION_1_0);
-        versions.add(VERSION_1_1);
-        versions.add(VERSION_1_2);
-        return versions;
+    private void setValidCpuVersionMap() {
+        mcr.mockConfigValue(ConfigValues.SupportedClusterLevels, versions);
     }
 
     private void canDoActionFailedWithReason(final VdcBllMessages message) {

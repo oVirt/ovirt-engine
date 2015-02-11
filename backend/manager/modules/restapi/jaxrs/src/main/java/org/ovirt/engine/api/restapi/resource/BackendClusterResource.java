@@ -12,9 +12,9 @@ import org.ovirt.engine.api.resource.gluster.GlusterVolumesResource;
 import org.ovirt.engine.api.restapi.resource.gluster.BackendGlusterHooksResource;
 import org.ovirt.engine.api.restapi.resource.gluster.BackendGlusterVolumesResource;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -64,7 +64,7 @@ public class BackendClusterResource<P extends BackendClustersResource>
     protected class UpdateParametersProvider implements ParametersProvider<Cluster, VDSGroup> {
         @Override
         public VdcActionParametersBase getParameters(Cluster incoming, VDSGroup entity) {
-            return new VdsGroupOperationParameters(map(incoming, entity));
+            return new ManagementNetworkOnClusterOperationParameters(map(incoming, entity));
         }
     }
 

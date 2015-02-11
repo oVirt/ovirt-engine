@@ -7,8 +7,8 @@ import javax.ws.rs.WebApplicationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -91,7 +91,7 @@ public class BackendClusterResourceTest
         setUpManagementNetworkExpectation();
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVdsGroup,
-                                           VdsGroupOperationParameters.class,
+                                           ManagementNetworkOnClusterOperationParameters.class,
                                            new String[] {},
                                            new Object[] {},
                                            true,
@@ -128,7 +128,7 @@ public class BackendClusterResourceTest
         setUpGetEntityExpectations(1);
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVdsGroup,
-                                           VdsGroupOperationParameters.class,
+                                           ManagementNetworkOnClusterOperationParameters.class,
                                            new String[] {},
                                            new Object[] {},
                                            canDo,

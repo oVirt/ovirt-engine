@@ -6,10 +6,10 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
-import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -91,7 +91,8 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
 
                     // use suppress in order to update group even if action fails
                     // (out of the transaction)
-                    VdsGroupOperationParameters tempVar = new VdsGroupOperationParameters(grp);
+                    ManagementNetworkOnClusterOperationParameters tempVar =
+                            new ManagementNetworkOnClusterOperationParameters(grp);
                     tempVar.setTransactionScopeOption(TransactionScopeOption.Suppress);
                     tempVar.setIsInternalCommand(true);
                     runInternalAction(VdcActionType.UpdateVdsGroup, tempVar);
