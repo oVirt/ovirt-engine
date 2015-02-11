@@ -1,17 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import org.ovirt.engine.core.common.action.SetVmTicketParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -22,28 +18,13 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class VncConsoleModel extends ConsoleModel {
 
-    private ClientConsoleMode consoleMode;
-
     public enum ClientConsoleMode { Native, NoVnc }
 
-    private String host;
-
-    private String otp64 = null;
-
+    private ClientConsoleMode consoleMode;
     private IVnc vncImpl;
-
-    private String getHost() {
-        return host;
-    }
-
-    private String getOtp64() {
-        return otp64;
-    }
 
     public VncConsoleModel(VM myVm, Model parentModel) {
         super(myVm, parentModel);
@@ -92,14 +73,14 @@ public class VncConsoleModel extends ConsoleModel {
         }
         getLogger().debug("VNC console info..."); //$NON-NLS-1$
 
-        UICommand setVmTicketCommand = new UICommand("setVmCommand", new BaseCommandTarget() { //$NON-NLS-1$
+        UICommand invokeConsoleCommand = new UICommand("invokeConsoleCommand", new BaseCommandTarget() { //$NON-NLS-1$
             @Override
             public void executeCommand(UICommand uiCommand) {
-                setVmTicket();
+                invokeConsole();
             }
         });
 
-        executeCommandWithConsoleSafenessWarning(setVmTicketCommand);
+        executeCommandWithConsoleSafenessWarning(invokeConsoleCommand);
     }
 
     @Override
@@ -107,61 +88,26 @@ public class VncConsoleModel extends ConsoleModel {
         return getEntity().getGraphicsInfos().containsKey(GraphicsType.VNC);
     }
 
-    private void setVmTicket() {
+    private void invokeConsole() {
         final GraphicsInfo vncInfo = getEntity().getGraphicsInfos().get(GraphicsType.VNC);
         if (vncInfo == null) {
             throw new IllegalStateException("Trying to invoke VNC console but VM GraphicsInfo is null."); //$NON-NLS-1$
         }
 
-        Frontend.getInstance().runAction(VdcActionType.SetVmTicket, new SetVmTicketParameters(getEntity().getId(),
-                    null,
-                ConsoleOptions.TICKET_VALIDITY_SECONDS, GraphicsType.VNC), new IFrontendActionAsyncCallback() {
+        final AsyncQuery configureCallback = new AsyncQuery(new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                vncImpl.setOptions((ConsoleOptions) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                vncImpl.getOptions().setTitle(getClientTitle());
+                vncImpl.invokeClient();
+            }
+        });
 
-                @Override
-                public void executed(FrontendActionAsyncResult result) {
-
-                    VdcReturnValueBase ticketReturnValue = result.getReturnValue();
-                    if (ticketReturnValue != null && ticketReturnValue.getActionReturnValue() != null)
-                    {
-                        otp64 = (String) ticketReturnValue.getActionReturnValue();
-                        // Determine the display IP.
-                        String displayIp = vncInfo.getIp();
-                        if (StringHelper.isNullOrEmpty(displayIp)
-                                || "0".equals(displayIp)) //$NON-NLS-1$
-                        {
-                            AsyncQuery _asyncQuery = new AsyncQuery();
-                            _asyncQuery.setModel(this);
-                            _asyncQuery.asyncCallback = new INewAsyncCallback() {
-                                @Override
-                                public void onSuccess(Object model, Object ReturnValue)
-                                {
-                                    VncConsoleModel.this.host = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                                    VncConsoleModel.this.setAndInvokeClient();
-                                }
-                            };
-
-                            Frontend.getInstance().runQuery(VdcQueryType.GetManagementInterfaceAddressByVmId,
-                                    new IdQueryParameters(getEntity().getId()), _asyncQuery);
-                        }
-                        else {
-                            VncConsoleModel.this.host = displayIp;
-                            setAndInvokeClient();
-                        }
-                    }
-                }
-            });
-    }
-
-    private void setAndInvokeClient() {
-        vncImpl.getOptions().setHost(getHost());
-        GraphicsInfo vncInfo = getEntity().getGraphicsInfos().get(GraphicsType.VNC);
-        vncImpl.getOptions().setPort(vncInfo.getPort());
-        vncImpl.getOptions().setTicket(getOtp64());
-        vncImpl.getOptions().setTitle(getClientTitle());
-        vncImpl.getOptions().setToggleFullscreenHotKey(getToggleFullScreenKeys());
-        vncImpl.getOptions().setReleaseCursorHotKey(getReleaseCursorKeys());
-
-        vncImpl.invokeClient();
+        vncImpl.getOptions().setVmId(getEntity().getId());
+        Frontend.getInstance().runQuery(
+                VdcQueryType.ConfigureConsoleOptions,
+                new ConfigureConsoleOptionsParams(vncImpl.getOptions(), true),
+                configureCallback);
     }
 
 }

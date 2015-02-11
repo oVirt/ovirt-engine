@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 
 public abstract class AbstractSpice {
 
-    protected final ConsoleOptions consoleOptions = new ConsoleOptions(GraphicsType.SPICE);
+    protected ConsoleOptions consoleOptions = new ConsoleOptions(GraphicsType.SPICE);
 
     // long term todo - move these events to plugin impl
     protected Event<EventArgs> disconnectedEvent = new Event<>(SpiceConsoleModel.spiceDisconnectedEventDefinition);
@@ -17,6 +17,10 @@ public abstract class AbstractSpice {
 
     public ConsoleOptions getOptions() {
         return consoleOptions;
+    }
+
+    public void setOptions(ConsoleOptions consoleOptions) {
+        this.consoleOptions = consoleOptions;
     }
 
     public Event<EventArgs> getDisconnectedEvent() {

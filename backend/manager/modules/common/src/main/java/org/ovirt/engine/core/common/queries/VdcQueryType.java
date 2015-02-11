@@ -394,6 +394,8 @@ public enum VdcQueryType implements Serializable {
     GetRngDevice(VdcQueryAuthType.User),
     GetGraphicsDevices(VdcQueryAuthType.User),
 
+    ConfigureConsoleOptions(VdcQueryAuthType.User),
+
     GetDeviceCustomProperties(VdcQueryAuthType.User),
 
     // Scheduling

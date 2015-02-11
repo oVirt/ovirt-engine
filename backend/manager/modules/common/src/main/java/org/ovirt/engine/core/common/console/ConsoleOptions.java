@@ -49,6 +49,8 @@ public class ConsoleOptions implements Serializable{
     private List<WanDisableEffects> wanDisableEffects;
 
     public static final int TICKET_VALIDITY_SECONDS = 120;
+    public static final int SPICE_USB_DEFAULT_PORT = 32023;
+    public static final int SET_SPICE_DISABLE_USB_LISTEN_PORT = 0;
     public static final String SECURE_ATTENTION_MAPPING = "ctrl+alt+end";
 
     public ConsoleOptions() {
@@ -56,7 +58,6 @@ public class ConsoleOptions implements Serializable{
         setWanColorDepth(WanColorDepth.depth16);
         setWanOptionsEnabled(false);
         setNoTaskMgrExecution(false);
-        // todo in follow-up (Phase 3): setup remap c-a-d default
     }
 
     public ConsoleOptions(GraphicsType graphicsType) {
@@ -318,7 +319,6 @@ public class ConsoleOptions implements Serializable{
     public void setWanDisableEffects(List<WanDisableEffects> wanDisableEffects) {
         this.wanDisableEffects = wanDisableEffects;
     }
-
 
     public enum WanColorDepth {
         depth16(16),

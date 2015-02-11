@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
-import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.action.ShutdownVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -17,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.console.ConsoleOptions;
@@ -25,14 +23,10 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
+import org.ovirt.engine.core.common.queries.ConfigureConsoleOptionsParams;
 import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -49,11 +43,9 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
-public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultipleQueryAsyncCallback {
+public class SpiceConsoleModel extends ConsoleModel {
 
     public enum ClientConsoleMode { Native, Plugin, Auto, Html5 }
 
@@ -171,13 +163,13 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 getspice().getOptions().setWanOptionsEnabled(false);
             }
 
-            UICommand setVmTicketCommand = new UICommand("setVmCommand", new BaseCommandTarget() { //$NON-NLS-1$
+            UICommand invokeConsoleCommand = new UICommand("invokeConsoleCommand", new BaseCommandTarget() { //$NON-NLS-1$
                 @Override
                 public void executeCommand(UICommand uiCommand) {
-                    setVmTicket();
+                    invokeConsole();
                 }
             });
-            executeCommandWithConsoleSafenessWarning(setVmTicketCommand);
+            executeCommandWithConsoleSafenessWarning(invokeConsoleCommand);
         }
     }
 
@@ -266,144 +258,79 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
     }
 
     private void executeQuery(final VM vm) {
-        AsyncQuery _asyncQuery0 = new AsyncQuery();
-        _asyncQuery0.setModel(this);
-
-        _asyncQuery0.asyncCallback = new INewAsyncCallback() {
+        final AsyncQuery imagesListQuery = new AsyncQuery();
+        imagesListQuery.setModel(this);
+        imagesListQuery.asyncCallback = new INewAsyncCallback() {
             @Override
-            public void onSuccess(Object model0, Object result0) {
-                SpiceConsoleModel thisSpiceConsoleModel = (SpiceConsoleModel) model0;
-                VM thisVm = thisSpiceConsoleModel.getEntity();
-
-                StorageDomain isoDomain = null;
-                if (result0 != null) {
-                    isoDomain = (StorageDomain) result0;
-                }
-
-                ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
-                queryTypeList.add(VdcQueryType.GetConfigurationValue);
-                queryTypeList.add(VdcQueryType.GetConfigurationValue);
-                queryTypeList.add(VdcQueryType.GetConfigurationValue);
-                queryTypeList.add(VdcQueryType.GetConfigurationValue);
-                queryTypeList.add(VdcQueryType.GetVdsCertificateSubjectByVmId);
-                queryTypeList.add(VdcQueryType.GetCACertificate);
-
-                ArrayList<VdcQueryParametersBase> parametersList =
-                        new ArrayList<VdcQueryParametersBase>();
-                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SSLEnabled, AsyncDataProvider.getInstance().getDefaultConfigurationVersion()));
-                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.CipherSuite, AsyncDataProvider.getInstance().getDefaultConfigurationVersion()));
-                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SpiceSecureChannels,
-                        thisVm.getVdsGroupCompatibilityVersion().toString()));
-                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.EnableSpiceRootCertificateValidation, AsyncDataProvider.getInstance().getDefaultConfigurationVersion()));
-                parametersList.add(new IdQueryParameters(thisVm.getId()));
-                parametersList.add(new VdcQueryParametersBase());
-
-                if (isoDomain != null) {
-                    queryTypeList.add(VdcQueryType.GetImagesListByStoragePoolId);
-
-                    GetImagesListByStoragePoolIdParameters getIsoParams =
-                            new GetImagesListByStoragePoolIdParameters(vm.getStoragePoolId(), ImageFileType.ISO);
-                    parametersList.add(getIsoParams);
-                }
-
-                Frontend.getInstance().runMultipleQueries(queryTypeList, parametersList, thisSpiceConsoleModel);
+            public void onSuccess(Object model, Object returnValue) {
+                List<RepoImage> repoImages = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                ((SpiceConsoleModel) model).invokeClient(repoImages);
             }
         };
 
-        AsyncDataProvider.getInstance().getIsoDomainByDataCenterId(_asyncQuery0, vm.getStoragePoolId());
-    }
+        AsyncQuery isoDomainQuery = new AsyncQuery();
+        isoDomainQuery.setModel(this);
+        isoDomainQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object result) {
+                StorageDomain isoDomain = (StorageDomain) result;
+                if (isoDomain != null) {
+                    GetImagesListByStoragePoolIdParameters getIsoParams =
+                            new GetImagesListByStoragePoolIdParameters(vm.getStoragePoolId(), ImageFileType.ISO);
 
-    private String ticket;
-
-    @Override
-    public void executed(FrontendMultipleQueryAsyncResult result) {
-        List<VdcQueryReturnValue> returnValues = result.getReturnValues();
-
-        boolean success = true;
-        for (VdcQueryReturnValue returnValue : returnValues) {
-            if (!returnValue.getSucceeded()) {
-                success = false;
-                break;
-            }
-        }
-
-        if (!success) {
-            boolean enableSpiceRootCertificateValidation = (Boolean) result.getReturnValues().get(3).getReturnValue();
-            VdcQueryReturnValue caCertificateReturnValue = result.getReturnValues().get(5);
-
-            // If only the caCertificate query failed - ignore failure (goto onSuccess)
-            if (!caCertificateReturnValue.getSucceeded() && !enableSpiceRootCertificateValidation) {
-                // Verify that all queries (except caCertificate) succeeded
-                // If succeeded goto 'onSuccess'; Otherwise, 'onFailure'.
-                for (VdcQueryReturnValue returnValue : returnValues) {
-                    if (!returnValue.getSucceeded() && returnValue != caCertificateReturnValue) {
-                        return;
-                    }
+                    Frontend.getInstance().runQuery(
+                            VdcQueryType.GetImagesListByStoragePoolId,
+                            getIsoParams,
+                            imagesListQuery);
+                } else {
+                    ((SpiceConsoleModel) model).invokeClient(null);
                 }
             }
-        }
+        };
 
-        String cipherSuite = null;
-        String spiceSecureChannels = null;
+        AsyncDataProvider.getInstance().getIsoDomainByDataCenterId(isoDomainQuery, vm.getStoragePoolId());
+    }
 
-        boolean isSSLEnabled = (Boolean) returnValues.get(0).getReturnValue();
-        if (isSSLEnabled) {
-            cipherSuite = (String) returnValues.get(1).getReturnValue();
-            spiceSecureChannels = (String) returnValues.get(2).getReturnValue();
-        }
-
-        String certificateSubject = ""; //$NON-NLS-1$
-        String caCertificate = ""; //$NON-NLS-1$
-
-        if ((Boolean) returnValues.get(3).getReturnValue()) {
-            certificateSubject = (String) returnValues.get(4).getReturnValue();
-            caCertificate = (String) returnValues.get(5).getReturnValue();
-        }
-
-        GraphicsInfo spiceInfo = getEntity().getGraphicsInfos().get(GraphicsType.SPICE);
+    public void invokeClient(final List<RepoImage> repoImages) {
+        final GraphicsInfo spiceInfo = getEntity().getGraphicsInfos().get(GraphicsType.SPICE);
         if (spiceInfo == null) {
             throw new IllegalStateException("Trying to invoke SPICE console but VM GraphicsInfo is null.");//$NON-NLS-1$
         }
-        ConsoleOptions options = getspice().getOptions();
-        options.setSmartcardEnabled(getEntity().isSmartcardEnabled());
-        int port = 0;
-        if (spiceInfo.getPort() != null) {
-            port = spiceInfo.getPort();
-        }
-        options.setPort(port);
-        options.setTicket(ticket);
-        options.setNumberOfMonitors(getEntity().getNumOfMonitors());
-        options.setGuestHostName(getEntity().getVmHost().split("[ ]", -1)[0]); //$NON-NLS-1$
-        if (spiceInfo.getTlsPort() != null) {
-            options.setSecurePort(spiceInfo.getTlsPort());
-        }
-        if (!StringHelper.isNullOrEmpty(spiceSecureChannels)) {
-            options.setSslChanels(spiceSecureChannels);
-        }
-        if (!StringHelper.isNullOrEmpty(cipherSuite)) {
-            options.setCipherSuite(cipherSuite);
-        }
 
-        options.setHostSubject(certificateSubject);
-        options.setTrustStore(caCertificate);
+        final ConsoleOptions options = getspice().getOptions();
+        options.setVmId(getEntity().getId());
+        // configure options
+        Frontend.getInstance().runQuery(
+                VdcQueryType.ConfigureConsoleOptions,
+                new ConfigureConsoleOptionsParams(options, true),
+                new AsyncQuery(new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        final ConsoleOptions options = ((VdcQueryReturnValue) returnValue).getReturnValue();
 
-        options.setTitle(getClientTitle());
+                        options.setTitle(getClientTitle());
+                        options.setAdminConsole(getConfigurator().getSpiceAdminConsole() ? true : !getEntity().getHasSpiceDriver());
+                        if (!options.isSpiceProxyEnabled()) {
+                            options.setSpiceProxy(null); // override spice proxy from backend
+                        }
+                        createAndSetMenu(options, repoImages);
 
-        options.setSpiceProxy(determineSpiceProxy());
+                        // Subscribe to events.
+                        getspice().getDisconnectedEvent().addListener(SpiceConsoleModel.this);
+                        getspice().getMenuItemSelectedEvent().addListener(SpiceConsoleModel.this);
 
-        // If 'AdminConsole' is true, send true; otherwise, false should be sent only for VMs with SPICE driver
-        // installed.
-        options.setAdminConsole(getConfigurator().getSpiceAdminConsole() ? true : !getEntity().getHasSpiceDriver());
+                        try {
+                            getspice().setOptions(options);
+                            getspice().invokeClient();
+                        } catch (RuntimeException ex) {
+                            getLogger().error("Exception on Spice connect", ex); //$NON-NLS-1$
+                        }
+                    }
+                }));
+    }
 
-        // Update 'UsbListenPort' value
-        options.setUsbListenPort(getConfigurator().getIsUsbEnabled()
-                && getEntity().getUsbPolicy() == UsbPolicy.ENABLED_LEGACY ? getConfigurator().getSpiceDefaultUsbPort()
-                : getConfigurator().getSpiceDisableUsbListenPort());
-
-        options.setToggleFullscreenHotKey(getToggleFullScreenKeys());
-        options.setReleaseCursorHotKey(getReleaseCursorKeys());
-
-        // Create menu.
+    // todo move to spicepluginimpl
+    private void createAndSetMenu(ConsoleOptions options, List<RepoImage> repoImages) {
         int id = 1;
         menu = new SpiceMenu();
 
@@ -411,30 +338,24 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 new SpiceMenuContainerItem(id, ConstantsManager.getInstance().getConstants().changeCd());
         id++;
 
-        ArrayList<String> isos = new ArrayList<String>();
+        ArrayList<String> isos = new ArrayList<>();
 
-        if (returnValues.size() > 6) {
-            ArrayList<RepoImage> repoList = returnValues.get(6).getReturnValue();
-            for (RepoImage repoImage : repoList) {
+        if (repoImages != null) {
+            for (RepoImage repoImage : repoImages) {
                 isos.add(repoImage.getRepoImageId());
             }
         }
 
-        isos =
-                isos.size() > 0 ? isos
-                        : new ArrayList<String>(Arrays.asList(new String[] { ConstantsManager.getInstance()
-                                .getConstants()
-                                .noCds() }));
-
+        isos = isos.size() > 0
+                ? isos
+                : new ArrayList<>(Arrays.asList(new String[]{ConstantsManager.getInstance().getConstants().noCds()}));
         Collections.sort(isos);
-
         for (String fileName : isos) {
             changeCDItem.getItems().add(new SpiceMenuCommandItem(id, fileName, CommandChangeCD));
             id++;
         }
         changeCDItem.getItems().add(new SpiceMenuCommandItem(id, getEjectLabel(), CommandChangeCD));
         id++;
-
         menu.getItems().add(changeCDItem);
         menu.getItems().add(new SpiceMenuSeparatorItem(id));
         id++;
@@ -451,87 +372,9 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 .stopSpiceConsole(), CommandStop));
 
         options.setMenu(menu.toString());
-
-        // Subscribe to events.
-        getspice().getDisconnectedEvent().addListener(this);
-        getspice().getMenuItemSelectedEvent().addListener(this);
-
-        String displayIp = spiceInfo.getIp();
-        if (StringHelper.isNullOrEmpty(displayIp) || "0".equals(displayIp)) { //$NON-NLS-1$
-            determineIpAndConnect(getEntity().getId());
-        }
-        else {
-            // Try to connect.
-            options.setHost(displayIp);
-            spiceConnect();
-        }
     }
 
-    private String determineSpiceProxy() {
-        if (!getspice().getOptions().isSpiceProxyEnabled()) {
-            return null;
-        }
-
-        if (!StringHelper.isNullOrEmpty(getEntity().getVmPoolSpiceProxy())) {
-            return getEntity().getVmPoolSpiceProxy();
-        }
-
-        if (!StringHelper.isNullOrEmpty(getEntity().getVdsGroupSpiceProxy())) {
-            return getEntity().getVdsGroupSpiceProxy();
-        }
-
-        String globalSpiceProxy = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);
-        if (!StringHelper.isNullOrEmpty(globalSpiceProxy)) {
-            return globalSpiceProxy;
-        }
-
-        return null;
-    }
-
-    private void determineIpAndConnect(Guid vmId) {
-        if (vmId == null) {
-            return;
-        }
-
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                SpiceConsoleModel spiceConsoleModel = (SpiceConsoleModel) model;
-                String address =
-                        (String) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                spiceConsoleModel.getspice().getOptions().setHost(address);
-                spiceConsoleModel.spiceConnect();
-            }
-        };
-
-        Frontend.getInstance().runQuery(VdcQueryType.GetManagementInterfaceAddressByVmId,
-                new IdQueryParameters(vmId),
-                _asyncQuery);
-    }
-
-    private void setVmTicket() {
-        // Create ticket for single sign on.
-        Frontend.getInstance().runAction(VdcActionType.SetVmTicket, new SetVmTicketParameters(getEntity().getId(), null, ConsoleOptions.TICKET_VALIDITY_SECONDS, GraphicsType.SPICE),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-
-                        SpiceConsoleModel spiceConsoleModel = (SpiceConsoleModel) result.getState();
-                        spiceConsoleModel.postSendVmTicket(result.getReturnValue());
-
-                    }
-                }, this);
-    }
-
-    public void postSendVmTicket(VdcReturnValueBase returnValue) {
-        if (returnValue == null || !returnValue.getSucceeded()) {
-            return;
-        }
-
-        ticket = (String) returnValue.getActionReturnValue();
-
+    public void invokeConsole() { // todo refactor this later
         // Only if the VM has agent and we connect through user-portal
         // we attempt to perform SSO (otherwise an error will be thrown)
         if (!getConfigurator().getIsAdmin() && getEntity().getStatus() == VMStatus.Up
@@ -619,15 +462,6 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
     private void logSsoOnDesktopFailed(ILogger logger, String vmName) {
         logger.info("SpiceConsoleManager::Connect: Failed to perform SSO on Destkop " //$NON-NLS-1$
                 + vmName + ", cancel open spice console request."); //$NON-NLS-1$
-    }
-
-    public void spiceConnect()
-    {
-        try {
-            getspice().invokeClient();
-        } catch (RuntimeException ex) {
-            getLogger().error("Exception on Spice connect", ex); //$NON-NLS-1$
-        }
     }
 
     private static final String CommandStop = "Stop"; //$NON-NLS-1$

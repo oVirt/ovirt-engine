@@ -45,8 +45,6 @@ public abstract class Configurator {
         documentationLangPath = currentLocale.replaceAll("_", "-") + "/"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
         setSpiceVersion(new Version(4, 4));
-        setSpiceDefaultUsbPort(32023);
-        setSpiceDisableUsbListenPort(0);
         setBackendPort("8700"); //$NON-NLS-1$
         setLogLevel("INFO"); //$NON-NLS-1$
         setPollingTimerInterval(5000);
@@ -54,8 +52,6 @@ public abstract class Configurator {
 
     protected static final String DEFAULT_USB_FILTER = "-1,-1,-1,-1,0"; //$NON-NLS-1$
     protected String usbFilter = DEFAULT_USB_FILTER;
-
-    private boolean isInitialized;
 
     /**
      * Gets or sets the value specifying what is the desired Spice version.
@@ -78,36 +74,6 @@ public abstract class Configurator {
 
     protected void setIsAdmin(boolean value) {
         privateIsAdmin = value;
-    }
-
-    private int privateSpiceDefaultUsbPort;
-
-    public int getSpiceDefaultUsbPort() {
-        return privateSpiceDefaultUsbPort;
-    }
-
-    protected void setSpiceDefaultUsbPort(int value) {
-        privateSpiceDefaultUsbPort = value;
-    }
-
-    private int privateSpiceDisableUsbListenPort;
-
-    public int getSpiceDisableUsbListenPort() {
-        return privateSpiceDisableUsbListenPort;
-    }
-
-    protected void setSpiceDisableUsbListenPort(int value) {
-        privateSpiceDisableUsbListenPort = value;
-    }
-
-    private boolean privateIsUsbEnabled;
-
-    public boolean getIsUsbEnabled() {
-        return privateIsUsbEnabled;
-    }
-
-    protected void setIsUsbEnabled(boolean value) {
-        privateIsUsbEnabled = value;
     }
 
     private boolean privateSpiceAdminConsole;
@@ -273,22 +239,6 @@ public abstract class Configurator {
         spice.getOptions().setFullScreen(getSpiceFullScreen());
         spice.getOptions().setUsbFilter(getUsbFilter());
         updateSpiceUsbAutoShare(spice);
-
-        if (!isInitialized) {
-            updateIsUsbEnabled();
-            isInitialized = true;
-        }
-    }
-
-    private void updateIsUsbEnabled() {
-        // Get 'EnableUSBAsDefault' value from database
-        AsyncDataProvider.getInstance().isUSBEnabledByDefault(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object target, Object returnValue) {
-                // Update IsUsbEnabled value
-                setIsUsbEnabled((Boolean) returnValue);
-            }
-        }));
     }
 
     private void updateSpiceUsbAutoShare(final ISpice spice) {

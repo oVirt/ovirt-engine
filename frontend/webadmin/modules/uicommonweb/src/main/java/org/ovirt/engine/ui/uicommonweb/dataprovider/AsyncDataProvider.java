@@ -1941,20 +1941,6 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetAllVmTemplates, params, aQuery);
     }
 
-    public void isUSBEnabledByDefault(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                return source != null ? ((Boolean) source).booleanValue() : false;
-            }
-        };
-        getConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.EnableUSBAsDefault,
-                        getDefaultConfigurationVersion()),
-                aQuery);
-    }
-
     public void getStorageConnectionById(AsyncQuery aQuery, String id, boolean isRefresh) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
