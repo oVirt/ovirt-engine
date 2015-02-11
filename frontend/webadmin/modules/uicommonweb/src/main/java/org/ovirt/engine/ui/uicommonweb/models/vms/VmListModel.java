@@ -2535,7 +2535,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             return;
         }
 
-        ImportVmsModel model = importVmsModelProvider.get();
+        final ImportVmsModel model = importVmsModelProvider.get();
         model.init();
         setWindow(model);
 
@@ -2549,6 +2549,27 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         .setTitle(ConstantsManager.getInstance().getConstants().cancel())
         .setIsCancel(true)
         );
+
+        model.initImportFromExportDomainModel(
+                new UICommand(CMD_RESTORE_FROM_EXPORT_DOMAIN, new BaseCommandTarget() {
+                    @Override
+                    public void executeCommand(UICommand uiCommand) {
+                        onRestoreFromExportDomain();
+                    }
+                }).setTitle(ConstantsManager.getInstance().getConstants().ok())
+                  .setIsDefault(true)
+                ,
+                new UICommand(CMD_BACK, new BaseCommandTarget() {
+                    @Override
+                    public void executeCommand(UICommand uiCommand) {
+                        setWindow(null); // remove current window first
+                        setWindow(model);
+                    }
+                }).setTitle(ConstantsManager.getInstance().getConstants().back())
+                ,
+                new UICommand(CMD_CANCEL, this).setIsCancel(true)
+                    .setTitle(ConstantsManager.getInstance().getConstants().cancel())
+                );
     }
 
     private void cloneVm() {
@@ -2586,31 +2607,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         ImportVmFromExportDomainModel model = importVmsModel.getSpecificImportModel();
         setWindow(null); // remove import-vms window first
         setWindow(model);
-
-        model.getCommands().add(new UICommand(CMD_RESTORE_FROM_EXPORT_DOMAIN, new BaseCommandTarget() {
-            @Override
-            public void executeCommand(UICommand uiCommand) {
-                onRestoreFromExportDomain();
-            }
-        })
-        .setTitle(ConstantsManager.getInstance().getConstants().ok())
-        .setIsDefault(true)
-        );
-
-        model.getCommands().add(new UICommand(CMD_BACK, new BaseCommandTarget() {
-            @Override
-            public void executeCommand(UICommand uiCommand) {
-                setWindow(null); // remove current window first
-                setWindow(importVmsModel);
-            }
-                })
-                        .setTitle(ConstantsManager.getInstance().getConstants().back())
-        );
-
-        model.getCommands().add(new UICommand(CMD_CANCEL, this)
-        .setTitle(ConstantsManager.getInstance().getConstants().cancel())
-        .setIsCancel(true)
-        );
     }
 
     private void connectToConsoles() {

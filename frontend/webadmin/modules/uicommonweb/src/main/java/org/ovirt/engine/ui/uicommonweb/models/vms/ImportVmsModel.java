@@ -45,6 +45,7 @@ public class ImportVmsModel extends ListWithDetailsModel {
     private UICommand cancelImportCommand = new UICommand(null, this);
 
     private Provider<ImportVmFromExportDomainModel> importFromExportDomainModelProvider;
+    private ImportVmFromExportDomainModel importVmFromExportDomainModel;
 
     private EntityModel<Boolean> importSourceValid;
 
@@ -59,16 +60,22 @@ public class ImportVmsModel extends ListWithDetailsModel {
         setImportSourceValid(new EntityModel<Boolean>(true));
     }
 
+    public void initImportFromExportDomainModel(UICommand ... commands) {
+        importVmFromExportDomainModel = importFromExportDomainModelProvider.get();
+        importVmFromExportDomainModel.setTitle(ConstantsManager.getInstance().getConstants().importVirtualMachinesTitle());
+        importVmFromExportDomainModel.setHelpTag(HelpTag.import_virtual_machine);
+        importVmFromExportDomainModel.setHashName("import_virtual_machine"); //$NON-NLS-1$
+        for (UICommand command : commands) {
+            importVmFromExportDomainModel.getCommands().add(command);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public ImportVmFromExportDomainModel getSpecificImportModel() {
-        ImportVmFromExportDomainModel model = importFromExportDomainModelProvider.get();
-        model.init(getVmsToImport(), exportDomain.getId());
-        model.setEntity(exportDomain.getId());
-        model.setTitle(ConstantsManager.getInstance().getConstants().importVirtualMachinesTitle());
-        model.setHelpTag(HelpTag.import_virtual_machine);
-        model.setHashName("import_virtual_machine"); //$NON-NLS-1$
-
-        return model;
+        importVmFromExportDomainModel.setEntity(null);
+        importVmFromExportDomainModel.init(getVmsToImport(), exportDomain.getId());
+        importVmFromExportDomainModel.setEntity(exportDomain.getId());
+        return importVmFromExportDomainModel;
     }
 
     public void init() {
