@@ -129,10 +129,6 @@ public class VmsMonitoringTest {
                         return vmInfo;
                     }
 
-                    @Override
-                    protected List<VmDynamic> getPoweringUpVms() {
-                        return poweringUpVms;
-                    }
                 }
         );
     }
