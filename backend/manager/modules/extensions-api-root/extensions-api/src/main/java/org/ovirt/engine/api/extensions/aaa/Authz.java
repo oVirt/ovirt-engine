@@ -113,7 +113,7 @@ public class Authz {
          * Used for user login.
          *
          * <p>
-         * Input: Either one of the following:
+         * Input: Either one of AUTH_RECORD or PRINCIPAL must be present:
          * <ul>
          * <li>{@link Authn.InvokeKeys#AUTH_RECORD}[O] - authentication record.</li>
          * <li>{@link Authz.InvokeKeys#PRINCIPAL}[O] - principal.</li>
@@ -194,7 +194,7 @@ public class Authz {
      */
     public static class Capabilities {
         /**
-         * Provider resolves groups recursively. This implies provider ignores
+         * Provider always resolves groups recursively. This implies provider ignores
          * {@link QueryFlags#RESOLVE_GROUPS_RECURSIVE} flag.
          */
         public static final long RECURSIVE_GROUP_RESOLUTION = (1 << 0);
