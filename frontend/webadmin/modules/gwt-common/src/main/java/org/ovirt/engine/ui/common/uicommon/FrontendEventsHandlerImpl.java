@@ -68,7 +68,7 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
             if (isRaiseErrorModalPanel(actions.get(actionNum++), v.getFault())) {
                 String description =
                         (v.getDescription() != null && !"".equals(v.getDescription().trim())) || returnValues.size() == 1 ? v.getDescription() : ConstantsManager.getInstance().getConstants().action() + " " + actionNum; //$NON-NLS-1$ //$NON-NLS-2$
-                if (!v.getCanDoActionMessages().isEmpty()) {
+                if (!v.getCanDoAction()) {
                     for (String canDo : v.getCanDoActionMessages()) {
                         errors.add(new Message(description, canDo));
                     }
