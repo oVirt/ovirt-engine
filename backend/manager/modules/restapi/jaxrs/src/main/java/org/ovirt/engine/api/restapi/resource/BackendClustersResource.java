@@ -9,7 +9,6 @@ import org.ovirt.engine.api.model.Clusters;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.resource.ClustersResource;
-import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.ManagementNetworkOnClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
@@ -17,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.IdAndNameQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -31,8 +29,12 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
     static final String[] SUB_COLLECTIONS = { "networks", "permissions", "glustervolumes", "glusterhooks",
             "affinitygroups", "cpuprofiles" };
     static final String[] VIRT_ONLY_MODE_COLLECTIONS_TO_HIDE = {"glustervolumes", "glusterhooks" };
+
+    private final ManagementNetworkFinder managementNetworkFinder;
+
     public BackendClustersResource() {
         super(Cluster.class, VDSGroup.class, SUB_COLLECTIONS);
+        managementNetworkFinder = new ManagementNetworkFinder(this);
     }
 
     @Override
@@ -91,34 +93,14 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
         return getStoragePool(cluster.getDataCenter(), this);
     }
 
-    private Guid getManagementNetworkId(Cluster cluster, Guid dataCenterId) {
-        Guid managementNetworkId = null;
-        if (cluster.isSetManagementNetwork()) {
-            validateParameters(cluster.getManagementNetwork(), "id|name");
-            final Network rawManagementNetwork = cluster.getManagementNetwork();
-            if (rawManagementNetwork.isSetId()) {
-                managementNetworkId = GuidUtils.asGuid(rawManagementNetwork.getId());
-            } else {
-                final org.ovirt.engine.core.common.businessentities.network.Network managementNetwork =
-                        getEntity(org.ovirt.engine.core.common.businessentities.network.Network.class,
-                                VdcQueryType.GetNetworkByNameAndDataCenter,
-                                new IdAndNameQueryParameters(dataCenterId, rawManagementNetwork.getName()),
-                                String.format("Network: %s", rawManagementNetwork.getName()));
-
-                managementNetworkId = managementNetwork.getId();
-            }
-        }
-        return managementNetworkId;
-    }
-
-    protected ManagementNetworkOnClusterOperationParameters createAddCommandParams(Cluster cluster, StoragePool dataCenter) {
+    private ManagementNetworkOnClusterOperationParameters createAddCommandParams(Cluster cluster, StoragePool dataCenter) {
         VDSGroup clusterEntity = map(cluster, map(dataCenter));
 
         if (!(cluster.isSetErrorHandling() && cluster.getErrorHandling().isSetOnError())) {
             clusterEntity.setMigrateOnError(null);
         }
 
-        final Guid managementNetworkId = getManagementNetworkId(cluster, dataCenter.getId());
+        final Guid managementNetworkId = managementNetworkFinder.getManagementNetworkId(cluster, dataCenter.getId());
 
         return new ManagementNetworkOnClusterOperationParameters(clusterEntity, managementNetworkId);
     }
@@ -162,7 +144,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
                         clusterId.toString(),
                         false);
         if (network != null) {
-            final Network managementNetwork = new org.ovirt.engine.api.model.Network();
+            final Network managementNetwork = new Network();
             managementNetwork.setCluster(cluster);
             managementNetwork.setId(network.getId().toString());
             cluster.setManagementNetwork(managementNetwork);

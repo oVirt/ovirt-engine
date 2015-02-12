@@ -1,8 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
-
-
 import java.util.List;
+
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 

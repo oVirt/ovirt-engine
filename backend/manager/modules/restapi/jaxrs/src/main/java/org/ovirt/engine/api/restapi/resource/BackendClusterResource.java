@@ -27,10 +27,12 @@ public class BackendClusterResource<P extends BackendClustersResource>
         extends AbstractBackendSubResource<Cluster, VDSGroup> implements ClusterResource {
 
     protected final P parent;
+    private final ManagementNetworkFinder managementNetworkFinder;
 
     public BackendClusterResource(String id, P parent) {
         super(id, Cluster.class, VDSGroup.class, SUB_COLLECTIONS);
         this.parent = parent;
+        managementNetworkFinder = new ManagementNetworkFinder(this);
     }
 
     @Override
@@ -61,10 +63,22 @@ public class BackendClusterResource<P extends BackendClustersResource>
                                                              VdcObjectType.VdsGroups));
     }
 
-    protected class UpdateParametersProvider implements ParametersProvider<Cluster, VDSGroup> {
+    private class UpdateParametersProvider implements ParametersProvider<Cluster, VDSGroup> {
         @Override
         public VdcActionParametersBase getParameters(Cluster incoming, VDSGroup entity) {
-            return new ManagementNetworkOnClusterOperationParameters(map(incoming, entity));
+            final VDSGroup cluster = map(incoming, entity);
+            final ManagementNetworkOnClusterOperationParameters managementNetworkOnClusterOperationParameters;
+            final Guid dcId = getDataCenterId(cluster);
+            if (dcId == null) {
+                managementNetworkOnClusterOperationParameters =
+                        new ManagementNetworkOnClusterOperationParameters(cluster);
+            } else {
+                final Guid managementNetworkId =
+                        managementNetworkFinder.getManagementNetworkId(incoming, dcId);
+                managementNetworkOnClusterOperationParameters =
+                        new ManagementNetworkOnClusterOperationParameters(cluster, managementNetworkId);
+            }
+            return managementNetworkOnClusterOperationParameters;
         }
     }
 
@@ -91,5 +105,9 @@ public class BackendClusterResource<P extends BackendClustersResource>
     @Override
     public AssignedCpuProfilesResource getCpuProfilesResource() {
         return inject(new BackendAssignedCpuProfilesResource(id));
+    }
+
+    protected Guid getDataCenterId(VDSGroup cluster) {
+        return cluster.getStoragePoolId();
     }
 }
