@@ -455,7 +455,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
     }
 
     private boolean isPathEditable(StorageDomain storage) {
-        if (storage.getStorageType().isFileDomain() && !storage.getStorageType().equals(StorageType.GLUSTERFS)) {
+        if (storage.getStorageType().isFileDomain()) {
             StorageDomainType storageDomainType = storage.getStorageDomainType();
             return storageDomainType.isInternalDomain() && isStorageStatusValidForPathEditing(storage);
         }
@@ -1386,7 +1386,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         if (storageModel.getType().equals(StorageType.NFS)) {
             updateNFSProperties(storageModel);
         }
-        else if (storageModel.getType().equals(StorageType.POSIXFS)) {
+        else if (storageModel instanceof PosixStorageModel) {
             updatePosixProperties(storageModel);
         }
 

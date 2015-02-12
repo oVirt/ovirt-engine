@@ -54,8 +54,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     protected boolean canDoAction() {
         StorageServerConnections newConnectionDetails = getConnection();
         StorageType storageType = newConnectionDetails.getstorage_type();
-        if ((!storageType.isFileDomain() && !storageType.equals(StorageType.ISCSI))
-                || storageType.equals(StorageType.GLUSTERFS)) {
+        if (!storageType.isFileDomain() && !storageType.equals(StorageType.ISCSI)) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE_TYPE);
         }
 
