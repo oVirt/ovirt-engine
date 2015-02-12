@@ -21,10 +21,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-public interface DiskSnapshotResource extends ReadOnlyResource<DiskSnapshot> {
+public interface DiskSnapshotResource {
 
     @GET
-    @Override
     public DiskSnapshot get();
 
 }

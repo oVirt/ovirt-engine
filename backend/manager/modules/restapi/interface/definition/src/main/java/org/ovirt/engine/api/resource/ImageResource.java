@@ -20,6 +20,7 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.Image;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -27,7 +28,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-public interface ImageResource extends ReadOnlyResource<Image> {
+public interface ImageResource {
+
+    @GET
+    public Image get();
 
     @Path("{action: (import)}/{oid}")
     public ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
