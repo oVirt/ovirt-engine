@@ -239,6 +239,14 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
     protected void initMainTable() {
         this.table = new ListModelObjectCellTable<>();
 
+        AbstractTextColumn<Object> nameColumn = new AbstractTextColumn<Object>() {
+            @Override
+            public String getValue(Object object) {
+                return ((ImportVmData) object).getVm().getName();
+            }
+        };
+        table.addColumn(nameColumn, constants.nameVm(), "150px"); //$NON-NLS-1$
+
         AbstractCheckboxColumn<Object> collapseSnapshotsColumn =
                 new AbstractCheckboxColumn<Object>(new FieldUpdater<Object, Boolean>() {
             @Override
@@ -296,14 +304,6 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
             }
         };
         table.addColumn(cloneVMColumn, constants.cloneVM(), "50px"); //$NON-NLS-1$
-
-        AbstractTextColumn<Object> nameColumn = new AbstractTextColumn<Object>() {
-            @Override
-            public String getValue(Object object) {
-                return ((ImportVmData) object).getVm().getName();
-            }
-        };
-        table.addColumn(nameColumn, constants.nameVm(), "150px"); //$NON-NLS-1$
 
         AbstractTextColumn<Object> originColumn = new AbstractEnumColumn<Object, OriginType>() {
             @Override
