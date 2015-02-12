@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll.utils;
 
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
-import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -17,8 +15,6 @@ import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class is made to keep all producers of bll dependencies, generally singletons from other jars in one place for the
@@ -30,23 +26,9 @@ import org.slf4j.LoggerFactory;
  * Producers could be declared either by a field or by a method, to get more control on the production of an instance
  *
  * There is no need to instantiate this class and there is no visible usage to it but to the dependency scanner
- *
- *
  */
-@ApplicationScoped
+@Singleton
 public class BllCDIAdapter {
-
-    /**
-     * this producer enables injection of Logger instance. Its not intended to be used as protected instance as the
-     * runtime instance is the declaring class so use directly as a private member.
-     * <code>
-     * @Inject private Logger log; </code>
-     * @param injectionPoint
-     */
-    @Produces
-    public Logger produceLogger(InjectionPoint injectionPoint) {
-        return LoggerFactory.getLogger(injectionPoint.getMember().getDeclaringClass());
-    }
 
     @Produces
     private NetworkDao produceNetworkDao(DbFacade dbFacade) {
@@ -104,7 +86,7 @@ public class BllCDIAdapter {
         return dbFacade.getVdsDao();
     }
 
-    protected BllCDIAdapter() {
+    private BllCDIAdapter() {
         // hide me
     }
 }
