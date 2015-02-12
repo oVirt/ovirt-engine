@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.ui.common.widget.label.LabelWithTextOverflow;
+import org.ovirt.engine.ui.common.widget.label.LabelWithTextTruncation;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkLabelModel;
 
@@ -34,7 +34,7 @@ public class NetworkLabelPanel extends NetworkItemPanel {
         titleRow.setWidth("100%"); //$NON-NLS-1$
         titleRow.setHeight("27px"); //$NON-NLS-1$
 
-        LabelWithTextOverflow titleLabel = new LabelWithTextOverflow(item.getName());
+        LabelWithTextTruncation titleLabel = new LabelWithTextTruncation(item.getName());
         titleLabel.setWidth("185px"); //$NON-NLS-1$
         titleLabel.setHeight("100%"); //$NON-NLS-1$
         Image labelImage = new Image(resources.bond());

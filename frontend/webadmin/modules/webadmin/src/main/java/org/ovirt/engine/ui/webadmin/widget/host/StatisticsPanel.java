@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.widget.host;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.widget.TogglePanel;
-import org.ovirt.engine.ui.common.widget.label.LabelWithTextOverflow;
+import org.ovirt.engine.ui.common.widget.label.LabelWithTextTruncation;
 import org.ovirt.engine.ui.common.widget.renderer.RxTxRateRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.SumUpRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterface;
@@ -57,7 +57,7 @@ class StatisticsElementPanel extends TogglePanel {
         row.getColumnFormatter().setWidth(6, "100px"); //$NON-NLS-1$
 
         // MAC
-        LabelWithTextOverflow macLabel = new LabelWithTextOverflow(hostInterface.getMAC());
+        LabelWithTextTruncation macLabel = new LabelWithTextTruncation(hostInterface.getMAC());
         macLabel.setWidth("120px"); //$NON-NLS-1$
         row.setWidget(0, 0, macLabel);
 

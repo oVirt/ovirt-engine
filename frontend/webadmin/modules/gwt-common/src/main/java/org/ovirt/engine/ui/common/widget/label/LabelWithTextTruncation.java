@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.label;
 
 import org.ovirt.engine.ui.common.utils.ElementUtils;
+import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 
 import com.google.gwt.dom.client.Style.Overflow;
 import com.google.gwt.dom.client.Style.TextOverflow;
@@ -11,25 +12,27 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.Label;
 
-/*
- * In case the label's text is cropped, the text is visually trimmed. To let the user know that the text was trimmed
- * '...' (three dots) are appended to the string. The tooltip contains the full text
- * string.
+/**
+ * A Label that supports text truncation. If the entire Label content doesn't fit in the space allotted,
+ * the text is truncated, and an ellipse (...) is appended to the string. The full text will be rendered
+ * in a tooltip.
  */
-public class LabelWithTextOverflow extends Composite implements IsEditor<LeafValueEditor<String>>, HasEnabled {
+public class LabelWithTextTruncation extends Composite implements IsEditor<LeafValueEditor<String>>, HasEnabled {
 
+    WidgetTooltip tooltip;
     private Label label;
     private boolean enabled = true;
 
-    public LabelWithTextOverflow() {
+    public LabelWithTextTruncation() {
         label = new Label();
-        initWidget(label);
+        tooltip = new WidgetTooltip(label);
+        initWidget(tooltip.asWidget());
         getElement().getStyle().setWhiteSpace(WhiteSpace.NOWRAP);
         getElement().getStyle().setOverflow(Overflow.HIDDEN);
         getElement().getStyle().setTextOverflow(TextOverflow.ELLIPSIS);
     }
 
-    public LabelWithTextOverflow(String text) {
+    public LabelWithTextTruncation(String text) {
         this();
         setText(text);
     }
@@ -49,10 +52,11 @@ public class LabelWithTextOverflow extends Composite implements IsEditor<LeafVal
         }
 
         if (ElementUtils.detectOverflowUsingScrollWidth(label.getElement())) {
-            label.setTitle(getText());
+            tooltip.setText(getText());
         } else {
-            label.setTitle(null);
+            tooltip.setText(null);
         }
+        tooltip.reconfigure();
     }
 
     @Override
@@ -74,6 +78,6 @@ public class LabelWithTextOverflow extends Composite implements IsEditor<LeafVal
     @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-        getElement().getStyle().setColor(enabled ? "#333333" : "gray"); //$NON-NLS-1$ $NON-NLS-2$
+        getElement().getStyle().setColor(enabled ? "#333333" : "gray"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 }

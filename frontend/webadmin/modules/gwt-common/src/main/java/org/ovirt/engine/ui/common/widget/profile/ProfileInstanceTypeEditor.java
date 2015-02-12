@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
-import org.ovirt.engine.ui.common.widget.label.LabelWithTextOverflow;
+import org.ovirt.engine.ui.common.widget.label.LabelWithTextTruncation;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VnicInstanceType;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -41,7 +41,7 @@ public class ProfileInstanceTypeEditor extends AbstractModelBoundPopupWidget<Vni
 
     @UiField
     @Path(value = "networkInterface.name")
-    LabelWithTextOverflow vnicLabel;
+    LabelWithTextTruncation vnicLabel;
 
     @UiField
     @Path(value = "selectedItem")
