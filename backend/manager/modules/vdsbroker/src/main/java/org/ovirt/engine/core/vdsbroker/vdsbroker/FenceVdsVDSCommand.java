@@ -4,17 +4,17 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
-import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
+import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
+import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
 import org.ovirt.engine.core.common.vdscommands.FenceVdsVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends VdsBrokerCommand<P> {
-    private FenceStatusReturnForXmlRpc _result;
-
     /**
      * VDS which acts as fence proxy
      */
@@ -51,35 +51,29 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
         // ignore starting already started host or stopping already stopped host.
         if (getParameters().getAction() == FenceActionType.STATUS
                 || !isAlreadyInRequestedStatus()) {
-            _result = fenceNode(getParameters().getAction());
+            FenceStatusReturnForXmlRpc result = fenceNode(getParameters().getAction());
 
-            getVDSReturnValue().setSucceeded(false);
-            if (getParameters().getAction() == FenceActionType.STATUS && _result.power != null) {
-                String stat = _result.power.toLowerCase();
-                String msg = _result.mStatus.mMessage;
-                if ("on".equals(stat) || "off".equals(stat)) {
-                    getVDSReturnValue().setSucceeded(true);
-                } else {
-                    if (!getParameters().getTargetVdsID().equals(Guid.Empty)) {
-                        alertPowerManagementStatusFailed(msg);
-                    }
+            FenceOperationResult actionResult = new FenceOperationResult(
+                    getParameters().getAction(),
+                    result.mStatus.mCode,
+                    result.mStatus.mMessage,
+                    result.power,
+                    result.operationStatus);
+            setReturnValue(actionResult);
+            getVDSReturnValue().setSucceeded(actionResult.getStatus() != Status.ERROR);
 
-                }
-                FenceStatusReturnValue fenceStatusReturnValue = new FenceStatusReturnValue(stat, msg);
-                setReturnValue(fenceStatusReturnValue);
-            } else {
-                FenceStatusReturnValue fenceStatusReturnValue = new FenceStatusReturnValue(
-                        _result.operationStatus,
-                        _result.mStatus.mMessage != null ? _result.mStatus.mMessage : ""
-                );
-                setReturnValue(fenceStatusReturnValue);
-                getVDSReturnValue().setSucceeded(_result.mStatus.mCode == 0);
+            if (getParameters().getAction() == FenceActionType.STATUS
+                    && actionResult.getPowerStatus() == PowerStatus.UNKNOWN
+                    && !getParameters().getTargetVdsID().equals(Guid.Empty)) {
+                alertPowerManagementStatusFailed(actionResult.getMessage());
             }
+
         } else {
             // start/stop action was skipped, host is already turned on/off
             alertActionSkippedAlreadyInStatus();
             getVDSReturnValue().setSucceeded(true);
-            setReturnValue(new FenceStatusReturnValue(FenceStatusReturnValue.SKIPPED_DUE_TO_STATUS, ""));
+            setReturnValue(
+                    new FenceOperationResult(Status.SKIPPED_ALREADY_IN_STATUS, PowerStatus.UNKNOWN));
         }
     }
 
@@ -112,16 +106,23 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
      * and a Start command is issued command should do nothing.
      */
     private boolean isAlreadyInRequestedStatus() {
-        boolean ret = false;
-        FenceActionType action = getParameters().getAction();
-        _result = fenceNode(FenceActionType.STATUS);
-        if (_result.power != null) {
-            String powerStatus = _result.power.toLowerCase();
-            if ((action == FenceActionType.START && powerStatus.equals("on")) ||
-                    action == FenceActionType.STOP && powerStatus.equals("off"))
-                ret = true;
-        }
-        return ret;
+        FenceStatusReturnForXmlRpc result = fenceNode(FenceActionType.STATUS);
+        FenceOperationResult actionResult = new FenceOperationResult(
+                FenceActionType.STATUS,
+                result.mStatus.mCode,
+                result.mStatus.mMessage,
+                result.power,
+                result.operationStatus);
+
+        return actionResult.getStatus() == Status.SUCCESS
+                && actionResult.getPowerStatus() == getRequestedPowerStatus(getParameters().getAction());
+    }
+
+    /**
+     * Returns requested power status for specified fence operations
+     */
+    protected PowerStatus getRequestedPowerStatus(FenceActionType fenceAction) {
+        return fenceAction == FenceActionType.START ? PowerStatus.ON : PowerStatus.OFF;
     }
 
     protected FenceStatusReturnForXmlRpc fenceNode(FenceActionType fenceAction) {
@@ -142,11 +143,17 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return _result.mStatus != null ? _result.mStatus : new StatusForXmlRpc();
-    }
-
-    @Override
-    protected Object getReturnValueFromBroker() {
-        return _result;
+        StatusForXmlRpc status = new StatusForXmlRpc();
+        FenceOperationResult result = (FenceOperationResult) getReturnValue();
+        if (result == null) {
+            // unexpected error happened
+            status.mCode = 1;
+            status.mMessage = "";
+        } else {
+            // status result from action result
+            status.mCode = result.getStatus() == Status.ERROR ? 1 : 0;
+            status.mMessage = result.getMessage();
+        }
+        return status;
     }
 }
