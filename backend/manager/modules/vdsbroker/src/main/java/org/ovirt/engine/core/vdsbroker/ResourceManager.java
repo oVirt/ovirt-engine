@@ -34,6 +34,8 @@ import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
 import org.ovirt.engine.core.common.qualifiers.VmDeleted;
 import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
@@ -49,6 +51,8 @@ import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FutureVDSCommand;
+import org.ovirt.vdsm.jsonrpc.client.events.EventSubscriber;
+import org.ovirt.vdsm.jsonrpc.client.reactors.ReactorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,12 +74,13 @@ public class ResourceManager {
     private static final String VDSCommandPrefix = "VDSCommand";
 
     private static final Logger log = LoggerFactory.getLogger(ResourceManager.class);
+    private int parallelism;
 
     @Inject
     private AuditLogDirector auditLogDirector;
 
     private ResourceManager() {
-
+        this.parallelism = Config.<Integer> getValue(ConfigValues.EventProcessingPoolSize);
     }
 
     /**
@@ -490,5 +495,9 @@ public class ResourceManager {
 
     public void onVmDelete(@Observes @VmDeleted Guid vmId) {
         vmManagers.remove(vmId);
+    }
+
+    public void subscribe(EventSubscriber subscriber) {
+        ReactorFactory.getWorker(this.parallelism).getPublisher().subscribe(subscriber);
     }
 }

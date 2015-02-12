@@ -514,6 +514,7 @@ select fn_db_add_config_value('VdsRequestQueueName','jms.topic.vdsm_requests','g
 select fn_db_add_config_value('VdsResponseQueueName','jms.topic.vdsm_responses','general');
 select fn_db_add_config_value('IrsRequestQueueName','jms.topic.vdsm_irs_requests','general');
 select fn_db_add_config_value('IrsResponseQueueName','jms.topic.vdsm_irs_responses','general');
+select fn_db_add_config_value('EventProcessingPoolSize','10','general');
 select fn_db_add_config_value('TimeToReduceFailedRunOnVdsInMinutes','30','general');
 select fn_db_add_config_value('UnknownTaskPrePollingLapse','60000','general');
 select fn_db_add_config_value('UserSessionHardLimit','600','general');

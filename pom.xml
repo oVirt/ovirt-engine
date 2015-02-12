@@ -73,7 +73,7 @@
     <otopi.version>1.2.0</otopi.version>
     <ovirt-host-deploy.version>1.3.0</ovirt-host-deploy.version>
     <org.ovirt.engine.api.ovirt-engine-extensions-api.version>0.0.0-SNAPSHOT</org.ovirt.engine.api.ovirt-engine-extensions-api.version>
-    <vdsm-jsonrpc-java.version>1.1.0-SNAPSHOT</vdsm-jsonrpc-java.version>
+    <vdsm-jsonrpc-java.version>1.1.1-SNAPSHOT</vdsm-jsonrpc-java.version>
     <slf4j.version>1.7.5</slf4j.version>
     <gwt.version>2.6.1</gwt.version>
     <findbugs.version>2.5.2</findbugs.version>

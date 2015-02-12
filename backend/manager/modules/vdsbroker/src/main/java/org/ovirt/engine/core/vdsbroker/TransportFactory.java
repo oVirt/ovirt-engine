@@ -25,6 +25,7 @@ public class TransportFactory {
                     port, connectionTimeOut, clientTimeOut, clientRetries, heartbeat,
                     Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication),
                     Config.<String> getValue(ConfigValues.VdsmSSLProtocol),
+                    Config.<Integer> getValue(ConfigValues.EventProcessingPoolSize),
                     Config.<String> getValue(ConfigValues.IrsRequestQueueName),
                     Config.<String> getValue(ConfigValues.IrsResponseQueueName)));
         } else if (VdsProtocol.XML == vdsProtocol){
@@ -55,6 +56,7 @@ public class TransportFactory {
                     port, connectionTimeOut, clientTimeOut, clientRetries, heartbeat,
                     Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication),
                     Config.<String> getValue(ConfigValues.VdsmSSLProtocol),
+                    Config.<Integer> getValue(ConfigValues.EventProcessingPoolSize),
                     Config.<String> getValue(ConfigValues.VdsRequestQueueName),
                     Config.<String> getValue(ConfigValues.VdsResponseQueueName)),
                     returnValue.getSecond());

@@ -404,6 +404,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("jms.queue.irsreponses")
     IrsResponseQueueName,
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10")
+    EventProcessingPoolSize,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("oVirt")
