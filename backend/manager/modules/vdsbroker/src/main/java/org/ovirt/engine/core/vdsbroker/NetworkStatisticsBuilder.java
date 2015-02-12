@@ -19,6 +19,10 @@ public class NetworkStatisticsBuilder {
         totalStatsReported = FeatureSupported.totalNetworkStatisticsReported(version);
     }
 
+    public boolean isTotalStatsReported() {
+        return totalStatsReported;
+    }
+
     /**
      * Updates an existing NetworkInterface entity with recent statistics stored in a new NetworkInterface entity.
      *
@@ -39,7 +43,7 @@ public class NetworkStatisticsBuilder {
         existingStats.setReceiveDropRate(reportedStats.getReceiveDropRate());
         existingStats.setTransmitDropRate(reportedStats.getTransmitDropRate());
 
-        if (!totalStatsReported) {
+        if (!isTotalStatsReported()) {
             existingStats.setReceiveRate(reportedStats.getReceiveRate());
             existingStats.setTransmitRate(reportedStats.getTransmitRate());
             existingStats.setReceivedBytes(null);
@@ -94,14 +98,18 @@ public class NetworkStatisticsBuilder {
                 }
 
                 // current and previous sampled values are up-to-date - try to compute rate
-                stats.rate = computeRelativeRatePercentage(stats.current - previous);
+                stats.rate = computeRatePercentage(stats.current - previous);
             }
         }
 
         return stats;
     }
 
-    private Double computeRelativeRatePercentage(long byteDiff) {
+    public static double truncatePercentage(double value) {
+        return Math.min(100, value);
+    }
+
+    private Double computeRatePercentage(long byteDiff) {
         if (currentTime == null || previousTime == null || currentTime <= previousTime || speed == null
                 || speed.equals(0)) {
             return null;
@@ -110,7 +118,7 @@ public class NetworkStatisticsBuilder {
         long megabitDiff = BITS_IN_BYTE * byteDiff / BITS_IN_MEGABIT;
         double timeDiffInSeconds = currentTime - previousTime;
         double rateInMbps = megabitDiff / timeDiffInSeconds;
-        return 100 * rateInMbps / speed;
+        return truncatePercentage(100 * rateInMbps / speed);
     }
 
     private static class EffectiveStats {

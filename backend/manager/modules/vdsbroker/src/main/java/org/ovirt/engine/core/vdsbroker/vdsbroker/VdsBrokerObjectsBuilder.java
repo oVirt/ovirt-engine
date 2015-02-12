@@ -909,7 +909,7 @@ public class VdsBrokerObjectsBuilder {
                             .setStatus(AssignInterfaceStatusValue(dict, VdsProperties.iface_status));
 
                     if (!NetworkUtils.isVlan(existingIface) && !existingIface.isBondSlave()) {
-                        Double ifaceUsage = computeInterfaceUsage(existingIface);
+                        Double ifaceUsage = computeInterfaceUsage(existingIface, statsBuilder.isTotalStatsReported());
                         if (ifaceUsage != null) {
                             networkUsage = (int) Math.max(networkUsage, ifaceUsage);
                         }
@@ -1027,9 +1027,19 @@ public class VdsBrokerObjectsBuilder {
         iface.setSpeed(AssignIntValue(dict, VdsProperties.INTERFACE_SPEED));
     }
 
-    private static Double computeInterfaceUsage(VdsNetworkInterface iface) {
-        Double receiveRate = truncatePercentage(iface.getStatistics().getReceiveRate());
-        Double transmitRate = truncatePercentage(iface.getStatistics().getTransmitRate());
+    private static Double computeInterfaceUsage(VdsNetworkInterface iface, boolean totalStatsReported) {
+        Double receiveRate = iface.getStatistics().getReceiveRate();
+        Double transmitRate = iface.getStatistics().getTransmitRate();
+
+        /**
+         * TODO: only needed if rate reported by vdsm (in which case can't be null) - remove in 4.0 and turn
+         * NetworkStatisticsBuilder.truncatePercentage() private
+         */
+        if (!totalStatsReported) {
+            receiveRate = NetworkStatisticsBuilder.truncatePercentage(receiveRate);
+            transmitRate = NetworkStatisticsBuilder.truncatePercentage(transmitRate);
+        }
+
         if (receiveRate == null) {
             return transmitRate;
         } else if (transmitRate == null) {
@@ -1037,10 +1047,6 @@ public class VdsBrokerObjectsBuilder {
         } else {
             return Math.max(receiveRate, transmitRate);
         }
-    }
-
-    private static Double truncatePercentage(Double value) {
-        return value == null ? null : Math.min(100, value);
     }
 
     public static void updateNumaStatisticsData(VDS vds, Map<String, Object> xmlRpcStruct) {
