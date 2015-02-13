@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource.externalhostproviders;
 
 import static org.ovirt.engine.api.restapi.utils.HexUtils.hex2string;
 
+import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.KatelloErratum;
 import org.ovirt.engine.api.resource.externalhostproviders.KatelloErratumResource;
@@ -22,8 +23,8 @@ public class BackendHostKatelloErratumResource extends AbstractBackendSubResourc
 
     @Override
     public KatelloErratum get() {
-        return performGet(VdcQueryType.GetErratumByIdForHost,
-                new HostErratumQueryParameters(asGuid(hostId), hex2string(id)));
+        return performGet(VdcQueryType.GetErratumByIdForHost, new HostErratumQueryParameters(asGuid(hostId),
+                hex2string(id)), Host.class);
     }
 
     @Override
@@ -37,6 +38,13 @@ public class BackendHostKatelloErratumResource extends AbstractBackendSubResourc
         host.setId(hostId);
         erratum.setHost(host);
         return super.addParents(erratum);
+    }
+
+    @Override
+    protected KatelloErratum addLinks(KatelloErratum model,
+            Class<? extends BaseResource> suggestedParent,
+            String... subCollectionMembersToExclude) {
+        return super.addLinks(model, Host.class);
     }
 
     @Override

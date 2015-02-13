@@ -62,6 +62,7 @@ public class ApiRootLinksCreator {
         links.add(createLink("externalhostproviders", baseUri));
         links.add(createLink("openstackimageproviders", baseUri));
         links.add(createLink("openstacknetworkproviders", baseUri));
+        links.add(createLink("katelloerrata", baseUri));
         return links;
     }
 

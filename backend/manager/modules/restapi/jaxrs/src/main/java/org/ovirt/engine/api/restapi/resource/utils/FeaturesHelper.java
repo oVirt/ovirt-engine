@@ -541,8 +541,8 @@ public class FeaturesHelper {
 
     private void addErrataForHostsFeature(Features features) {
         Feature feature = new Feature();
-        feature.setName("Katello Host Errata");
-        feature.setDescription("View available Katello Errata for hosts.");
+        feature.setName("Katello Errata");
+        feature.setDescription("View available Katello Errata for hosts and system.");
         features.getFeature().add(feature);
     }
 

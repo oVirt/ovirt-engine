@@ -6736,3 +6736,20 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
+- name: /katelloerrata|rel=get
+  description: get the list of errata available for the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /katelloerrata/{katelloerratum:id}|rel=get
+  description: get the details of the specific erratum available for the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}

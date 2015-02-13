@@ -31,8 +31,8 @@ import org.ovirt.engine.api.restapi.resource.BackendApiResource;
 import org.ovirt.engine.api.restapi.resource.BackendBookmarksResource;
 import org.ovirt.engine.api.restapi.resource.BackendCapabilitiesResource;
 import org.ovirt.engine.api.restapi.resource.BackendClustersResource;
-import org.ovirt.engine.api.restapi.resource.BackendDataCentersResource;
 import org.ovirt.engine.api.restapi.resource.BackendCpuProfilesResource;
+import org.ovirt.engine.api.restapi.resource.BackendDataCentersResource;
 import org.ovirt.engine.api.restapi.resource.BackendDiskProfilesResource;
 import org.ovirt.engine.api.restapi.resource.BackendDisksResource;
 import org.ovirt.engine.api.restapi.resource.BackendEventsResource;
@@ -58,6 +58,7 @@ import org.ovirt.engine.api.restapi.resource.aaa.BackendDomainsResource;
 import org.ovirt.engine.api.restapi.resource.aaa.BackendGroupsResource;
 import org.ovirt.engine.api.restapi.resource.aaa.BackendUsersResource;
 import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendExternalHostProvidersResource;
+import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendSystemKatelloErrataResource;
 import org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackImageProvidersResource;
 import org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackNetworkProvidersResource;
 import org.ovirt.engine.api.restapi.resource.validation.IOExceptionMapper;
@@ -154,6 +155,7 @@ public class BackendApplication extends Application {
         addResource(new BackendExternalHostProvidersResource());
         addResource(new BackendOpenStackImageProvidersResource());
         addResource(new BackendOpenStackNetworkProvidersResource());
+        addResource(new BackendSystemKatelloErrataResource());
 
         final SessionProcessor processor = new SessionProcessor();
         processor.setBackend(backend);

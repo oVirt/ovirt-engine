@@ -247,6 +247,7 @@ import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostResource;
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostsResource;
 import org.ovirt.engine.api.resource.externalhostproviders.KatelloErrataResource;
 import org.ovirt.engine.api.resource.externalhostproviders.KatelloErratumResource;
+import org.ovirt.engine.api.resource.externalhostproviders.SystemKatelloErrataResource;
 import org.ovirt.engine.api.resource.gluster.GlusterBrickResource;
 import org.ovirt.engine.api.resource.gluster.GlusterBricksResource;
 import org.ovirt.engine.api.resource.gluster.GlusterHookResource;
@@ -564,6 +565,7 @@ public class LinkHelper {
         TYPES.put(Agent.class, map);
 
         map = new ParentToCollectionMap(KatelloErratumResource.class, KatelloErrataResource.class, Host.class);
+        map.add(KatelloErratumResource.class, SystemKatelloErrataResource.class, NO_PARENT);
         TYPES.put(KatelloErratum.class, map);
     }
 
