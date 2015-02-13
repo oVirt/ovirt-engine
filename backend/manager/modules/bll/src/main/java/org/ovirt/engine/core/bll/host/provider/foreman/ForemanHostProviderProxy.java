@@ -338,7 +338,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                     objectMapper.readValue(runHttpGetMethod(relativeUrl), ContentHostsWrapper.class);
             return Arrays.asList(wrapper.getResults());
         } catch (IOException e) {
-            return null;
+            return Collections.emptyList();
         }
     }
 
