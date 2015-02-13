@@ -175,8 +175,8 @@
                                 <e:ListModelListBoxEditor ui:field="cpuEditor" />
                                 <e:ListModelListBoxEditor ui:field="versionEditor" />
                                 <g:VerticalPanel ui:field="servicesCheckboxPanel">
-                                    <ge:EntityModelCheckBoxEditor ui:field="enableOvirtServiceEditor"  addStyleNames="cpv_enableOvirtService_pfly_fix"/>
-                                    <ge:EntityModelCheckBoxEditor ui:field="enableGlusterServiceEditor" addStyleNames="cpv_enableGlusterService_pfly_fix" />
+                                    <ge:EntityModelCheckBoxEditor ui:field="enableOvirtServiceEditor" />
+                                    <ge:EntityModelCheckBoxEditor ui:field="enableGlusterServiceEditor" />
                                 </g:VerticalPanel>
                                 <g:VerticalPanel ui:field="servicesRadioPanel">
                                     <ge:EntityModelRadioButtonEditor ui:field="enableOvirtServiceOptionEditor" />
