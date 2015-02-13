@@ -60,6 +60,8 @@ public enum VdcQueryType implements Serializable {
     GetHostDeviceByHostIdAndDeviceName,
     GetErrataForHost,
     GetErratumByIdForHost,
+    GetErrataForSystem,
+    GetErratumByIdForSystem,
 
     // VdsStatic Queries
     GetVdsStaticByName,
