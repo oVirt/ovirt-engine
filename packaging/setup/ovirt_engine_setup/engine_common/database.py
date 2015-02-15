@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import os
 import tempfile
 import datetime
 import socket
+import re
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -37,6 +38,8 @@ from ovirt_engine import util as outil
 
 from ovirt_engine_setup import dialog
 from ovirt_engine_setup import util as osetuputil
+from ovirt_engine_setup.engine_common \
+    import constants as oengcommcons
 
 
 @util.export
@@ -591,31 +594,147 @@ class OvirtUtils(base.Base):
             # existing. When doing that, verify with both pg 8 and 9.
         )
 
-    def _checkDbEncoding(self, environment, name):
+    @staticmethod
+    def _lower_equal(key, current, expected):
+        return current.lower() == expected.lower()
 
+    @staticmethod
+    def _error_message(key, current, expected, format_str, name):
+        return format_str.format(
+            key=key,
+            current=current,
+            expected=expected,
+            name=name,
+        )
+
+    def _pg_conf_info(self):
+        return (
+            {
+                'key': 'server_encoding',
+                'expected': 'UTF8',
+                'ok': self._lower_equal,
+                'check_on_use': True,
+                'needed_on_create': False,
+                'error_msg': _(
+                    'Encoding of the {name} database is {current}. '
+                    '{name} installation is only supported on servers '
+                    'with default encoding set to {expected}. Please fix the '
+                    'default DB encoding before you continue.'
+                )
+            },
+            {
+                'key': 'max_connections',
+                'expected': self.environment[
+                    oengcommcons.ProvisioningEnv.POSTGRES_MAX_CONN
+                ],
+                'ok': lambda key, current, expected: (
+                    int(current) >= int(expected)
+                ),
+                'check_on_use': True,
+                'needed_on_create': True,
+                'error_msg': _(
+                    '{name} requires {key} to be at least {expected}. '
+                    'Please fix {key} before you continue.'
+                )
+            },
+            {
+                'key': 'listen_addresses',
+                'expected': self.environment[
+                    oengcommcons.ProvisioningEnv.POSTGRES_LISTEN_ADDRESS
+                ],
+                'ok': self._lower_equal,
+                'check_on_use': False,
+                'needed_on_create': True,
+                'error_msg': None,
+            },
+            {
+                'key': 'lc_messages',
+                'expected': self.environment[
+                    oengcommcons.ProvisioningEnv.POSTGRES_LC_MESSAGES
+                ],
+                'ok': self._lower_equal,
+                'check_on_use': True,
+                'needed_on_create': True,
+                'error_msg': _(
+                    '{name} requires {key} to be {expected}. '
+                    'Please fix {key} before you continue.'
+                )
+            },
+        )
+
+    _RE_KEY_VALUE = re.compile(
+        flags=re.VERBOSE,
+        pattern=r"""
+            ^
+            \s*
+            (?P<key>\w+)
+            \s*
+            =
+            \s*
+            (?P<value>\w+)
+        """,
+    )
+
+    def _checkDbConf(self, environment, name):
         statement = Statement(
             environment=environment,
             dbenvkeys=self._dbenvkeys,
         )
-        encoding = statement.execute(
-            statement="""
-                show server_encoding
-            """,
-            ownConnection=True,
-            transaction=False,
-        )[0]['server_encoding']
-        if encoding.lower() != 'utf8':
-            raise RuntimeError(
-                _(
-                    'Encoding of the {name} database is {encoding}. '
-                    '{name} installation is only supported on servers '
-                    'with default encoding set to UTF8. Please fix the '
-                    'default DB encoding before you continue'
-                ).format(
-                    encoding=encoding,
-                    name=name,
+        for item in [
+            i for i in self._pg_conf_info() if i['check_on_use']
+        ]:
+            key = item['key']
+            expected = item['expected']
+            current = statement.execute(
+                statement='show {key}'.format(key=key),
+                ownConnection=True,
+                transaction=False,
+            )[0][key]
+            if not item['ok'](key, current, expected):
+                raise RuntimeError(
+                    self._error_message(
+                        key=key,
+                        current=current,
+                        expected=expected,
+                        format_str=item['error_msg'],
+                        name=name
+                    )
                 )
+
+    def getUpdatedPGConf(self, content):
+        needUpdate = True
+        confs_ok = {}
+        edit_params = {}
+        for item in self._pg_conf_info():
+            key = item['key']
+            confs_ok[key] = False
+            if item['needed_on_create']:
+                edit_params[key] = item['expected']
+        for l in content:
+            m = self._RE_KEY_VALUE.match(l)
+            if m is not None:
+                for item in [
+                    i for i in self._pg_conf_info()
+                    if i['needed_on_create'] and m.group('key') == i['key']
+                ]:
+                    if item['ok'](
+                        key=key,
+                        current=m.group('value'),
+                        expected=item['expected']
+                    ):
+                        confs_ok[item['key']] = True
+                    else:
+                        break
+            if False not in confs_ok.values():
+                needUpdate = False
+                break
+
+        if needUpdate:
+            content = osetuputil.editConfigContent(
+                content=content,
+                params=edit_params,
             )
+        return needUpdate, content
 
     def getCredentials(
         self,
@@ -808,7 +927,7 @@ class OvirtUtils(base.Base):
             if interactive:
                 try:
                     self.tryDatabaseConnect(dbenv)
-                    self._checkDbEncoding(environment=dbenv, name=name)
+                    self._checkDbConf(environment=dbenv, name=name)
                     self.environment.update(dbenv)
                     connectionValid = True
                 except RuntimeError as e:
@@ -830,6 +949,9 @@ class OvirtUtils(base.Base):
             ] = self.isNewDatabase()
         except:
             self.logger.debug('database connection failed', exc_info=True)
+
+        if not self.environment[self._dbenvkeys['newDatabase']]:
+            self._checkDbConf(environment=dbenv, name=name)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

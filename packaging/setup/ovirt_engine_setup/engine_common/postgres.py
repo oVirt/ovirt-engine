@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013-2014 Red Hat, Inc.
+# Copyright (C) 2013-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -71,19 +71,6 @@ class Provisioning(base.Base):
             \s+
             (?P<param>\w+)
             $
-        """,
-    )
-
-    _RE_KEY_VALUE = re.compile(
-        flags=re.VERBOSE,
-        pattern=r"""
-            ^
-            \s*
-            (?P<key>\w+)
-            \s*
-            =
-            \s*
-            (?P<value>\w+)
         """,
     )
 
@@ -274,35 +261,13 @@ class Provisioning(base.Base):
         ) as f:
             content = f.read().splitlines()
 
-        needUpdate = True
-        maxConnOK = False
-        listenAddrOK = False
-        for l in content:
-            m = self._RE_KEY_VALUE.match(l)
-            if m is not None:
-                if m.group('key') == 'max_connections':
-                    if int(m.group('value')) >= int(maxconn):
-                        maxConnOK = True
-                    else:
-                        break
-                elif m.group('key') == 'listen_addresses':
-                    if m.group('value') == listenaddr:
-                        listenAddrOK = True
-                    else:
-                        break
-            if (maxConnOK and listenAddrOK):
-                needUpdate = False
-                break
+        dbovirtutils = database.OvirtUtils(
+            plugin=self,
+            dbenvkeys=self._dbenvkeys,
+        )
+        needUpdate, content = dbovirtutils.getUpdatedPGConf(content)
 
         if needUpdate:
-            content = osetuputil.editConfigContent(
-                content=content,
-                params={
-                    'max_connections': maxconn,
-                    'listen_addresses': listenaddr
-                },
-            )
-
             transaction.append(
                 filetransaction.FileTransaction(
                     name=self.environment[

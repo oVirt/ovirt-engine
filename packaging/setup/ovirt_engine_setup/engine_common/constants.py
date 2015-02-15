@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013-2014 Red Hat, Inc.
+# Copyright (C) 2013-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -146,6 +146,7 @@ class Defaults(object):
     DEFAULT_POSTGRES_PROVISIONING_SERVICE = 'postgresql'
     DEFAULT_POSTGRES_PROVISIONING_MAX_CONN = 150
     DEFAULT_POSTGRES_PROVISIONING_LISTEN_ADDRESS = "'*'"
+    DEFAULT_POSTGRES_PROVISIONING_LC_MESSAGES = "'en_US.UTF-8'"
 
 
 @util.export
@@ -239,6 +240,7 @@ class ProvisioningEnv(object):
     POSTGRES_SERVICE = 'OVESETUP_PROVISIONING/postgresService'
     POSTGRES_MAX_CONN = 'OVESETUP_PROVISIONING/postgresMaxConn'
     POSTGRES_LISTEN_ADDRESS = 'OVESETUP_PROVISIONING/postgresListenAddress'
+    POSTGRES_LC_MESSAGES = 'OVESETUP_PROVISIONING/postgresLCMessages'
 
 
 @util.export
