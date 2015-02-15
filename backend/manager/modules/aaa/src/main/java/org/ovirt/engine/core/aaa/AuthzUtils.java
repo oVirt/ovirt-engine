@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.ovirt.engine.api.extensions.Base;
-import org.ovirt.engine.api.extensions.ExtKey;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.api.extensions.aaa.Authz;
@@ -35,21 +34,38 @@ public class AuthzUtils {
     }
 
     public static ExtMap fetchPrincipalRecord(final ExtensionProxy extension, ExtMap authRecord) {
-        return fetchPrincipalRecordImpl(extension, Authn.InvokeKeys.AUTH_RECORD, authRecord, true, true);
+        return fetchPrincipalRecordImpl(
+                extension,
+                new ExtMap().mput(
+                    Authn.InvokeKeys.AUTH_RECORD,
+                    authRecord
+                ).mput(
+                    Authz.InvokeKeys.PRINCIPAL,
+                    authRecord.get(Authn.AuthRecord.PRINCIPAL)
+                ),
+                true,
+                true
+        );
     }
 
     public static ExtMap fetchPrincipalRecord(final ExtensionProxy extension, String principal, boolean resolveGroups, boolean resolveGroupsRecursive) {
-        return fetchPrincipalRecordImpl(extension, Authz.InvokeKeys.PRINCIPAL, principal, resolveGroups, resolveGroupsRecursive);
+        return fetchPrincipalRecordImpl(
+                extension,
+                new ExtMap().mput(
+                    Authz.InvokeKeys.PRINCIPAL,
+                    principal
+                ),
+                resolveGroups,
+                resolveGroupsRecursive
+        );
     }
 
-    private static ExtMap fetchPrincipalRecordImpl(final ExtensionProxy extension, ExtKey key, Object value, boolean resolveGroups, boolean resolveGroupsRecursive) {
+    private static ExtMap fetchPrincipalRecordImpl(final ExtensionProxy extension, ExtMap m, boolean resolveGroups, boolean resolveGroupsRecursive) {
         ExtMap ret = null;
-        ExtMap output = extension.invoke(new ExtMap().mput(
-                Base.InvokeKeys.COMMAND,
-                Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD
-                ).mput(
-                        key,
-                        value
+        ExtMap output = extension.invoke(
+                m.mput(
+                        Base.InvokeKeys.COMMAND,
+                        Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD
                 ).mput(
                         Authz.InvokeKeys.QUERY_FLAGS,
                         (
