@@ -311,6 +311,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     public void onRemoval() {
     }
 
+    @Override
     public ContentHost findContentHost(VdsStatic host) {
         final String hostNameFact = "facts.network.hostname:" + host.getHostName();
         final List<ContentHost> contentHosts =

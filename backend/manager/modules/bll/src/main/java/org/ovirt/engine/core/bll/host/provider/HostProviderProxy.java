@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.host.provider;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.host.provider.foreman.ContentHost;
 import org.ovirt.engine.core.bll.provider.ProviderProxy;
 import org.ovirt.engine.core.common.businessentities.Erratum;
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
@@ -19,6 +20,7 @@ public interface HostProviderProxy extends ProviderProxy {
     List<ExternalComputeResource> getComputeResources();
     List<Erratum> getErrataForHost(VdsStatic host);
     Erratum getErratumForHost(VdsStatic host, String erratumId);
+    ContentHost findContentHost(VdsStatic host);
 
     void provisionHost(VDS vds,
                        ExternalHostGroup hg,
@@ -27,4 +29,5 @@ public interface HostProviderProxy extends ProviderProxy {
                        String discoverName,
                        String rootPassword,
                        String ip);
+
 }
