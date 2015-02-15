@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 
 public interface HostProviderProxy extends ProviderProxy {
 
@@ -18,9 +17,9 @@ public interface HostProviderProxy extends ProviderProxy {
     List<ExternalDiscoveredHost> getDiscoveredHosts();
     List<ExternalHostGroup> getHostGroups();
     List<ExternalComputeResource> getComputeResources();
-    List<Erratum> getErrataForHost(VdsStatic host);
-    Erratum getErratumForHost(VdsStatic host, String erratumId);
-    ContentHost findContentHost(VdsStatic host);
+    List<Erratum> getErrataForHost(String hostName);
+    Erratum getErratumForHost(String hostName, String erratumId);
+    ContentHost findContentHost(String hostName);
 
     void provisionHost(VDS vds,
                        ExternalHostGroup hg,

@@ -5,7 +5,6 @@ import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.queries.HostErratumQueryParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class GetErratumByIdForHostQuery<P extends HostErratumQueryParameters> extends QueriesCommandBase<P> {
 
@@ -20,10 +19,11 @@ public class GetErratumByIdForHostQuery<P extends HostErratumQueryParameters> ex
             return;
         }
 
-        Provider<?> provider = DbFacade.getInstance().getProviderDao().get(host.getHostProviderId());
+        Provider<?> provider = getDbFacade().getProviderDao().get(host.getHostProviderId());
         if (provider != null) {
             HostProviderProxy proxy = (HostProviderProxy) ProviderProxyFactory.getInstance().create(provider);
-            getQueryReturnValue().setReturnValue(proxy.getErratumForHost(host, getParameters().getErratumId()));
+            getQueryReturnValue().setReturnValue(proxy.getErratumForHost(host.getHostName(),
+                    getParameters().getErratumId()));
         }
     }
 }

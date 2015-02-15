@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.ExternalOperatingSystem;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.uutils.crypto.CryptMD5;
@@ -312,13 +311,13 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     }
 
     @Override
-    public ContentHost findContentHost(VdsStatic host) {
-        final String hostNameFact = "facts.network.hostname:" + host.getHostName();
+    public ContentHost findContentHost(String hostName) {
+        final String hostNameFact = "facts.network.hostname:" + hostName;
         final List<ContentHost> contentHosts =
                 runContentHostListMethod(CONTENT_HOSTS_ENTRY_POINT + String.format(SEARCH_QUERY_FORMAT, hostNameFact));
 
         if (contentHosts.isEmpty()) {
-            log.error("Failed to find host on provider by host name '{}' ", host.getHostName());
+            log.error("Failed to find host on provider by host name '{}' ", hostName);
             return null;
         }
 
@@ -377,8 +376,8 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     }
 
     @Override
-    public List<Erratum> getErrataForHost(VdsStatic host) {
-        ContentHost contentHost = findContentHost(host);
+    public List<Erratum> getErrataForHost(String hostName) {
+        ContentHost contentHost = findContentHost(hostName);
         if (contentHost == null) {
             return Collections.emptyList();
         }
@@ -387,8 +386,8 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     }
 
     @Override
-    public Erratum getErratumForHost(VdsStatic host, String erratumId) {
-        ContentHost contentHost = findContentHost(host);
+    public Erratum getErratumForHost(String hostName, String erratumId) {
+        ContentHost contentHost = findContentHost(hostName);
         if (contentHost == null) {
             return null;
         }
