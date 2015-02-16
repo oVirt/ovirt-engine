@@ -596,7 +596,9 @@ class OvirtUtils(base.Base):
 
     @staticmethod
     def _lower_equal(key, current, expected):
-        return current.lower() == expected.lower()
+        return (
+            current.strip(' \t"\'').lower() == expected.strip(' \t"\'').lower()
+        )
 
     @staticmethod
     def _error_message(key, current, expected, format_str, name):
