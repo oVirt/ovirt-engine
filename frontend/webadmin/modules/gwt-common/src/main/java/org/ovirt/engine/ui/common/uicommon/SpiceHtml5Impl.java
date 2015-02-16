@@ -12,16 +12,17 @@ public class SpiceHtml5Impl extends AbstractSpice implements ISpiceHtml5 {
     private final WebsocketProxyConfig config;
 
     public SpiceHtml5Impl() {
-        super();
-
         this.config = new WebsocketProxyConfig(
-                (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.WebSocketProxy), getHost());
+                (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.WebSocketProxy),
+                getOptions().getHost());
     }
 
     @Override
-    public void connect() {
+    public void invokeClient() {
         boolean sslTarget = consoleOptions.getSecurePort() == -1 ? false : true;
-        WebClientConsoleInvoker invoker = new WebClientConsoleInvoker(CLIENT_PAGE, config, getHost(), String.valueOf(sslTarget ? consoleOptions.getSecurePort() : consoleOptions.getPort()), getPassword(), sslTarget);
+        int port = sslTarget ? consoleOptions.getSecurePort() : consoleOptions.getPort();
+        WebClientConsoleInvoker invoker =
+                new WebClientConsoleInvoker(CLIENT_PAGE, config, getOptions().getHost(), port, getOptions().getTicket(), sslTarget);
         invoker.invokeClient();
     }
 

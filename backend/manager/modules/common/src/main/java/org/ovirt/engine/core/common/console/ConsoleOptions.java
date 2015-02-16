@@ -35,14 +35,12 @@ public class ConsoleOptions implements Serializable{
     private String cipherSuite;
     private String hostSubject;
     private String trustStore;
-    private String[] localizedStrings;
     private String menu;
     private boolean noTaskMgrExecution;
     private WanColorDepth wanColorDepth;
     private boolean wanOptionsEnabled;
     private boolean smartcardEnabled = false;
     private String spiceProxy = null;
-    private int ticketValiditySeconds;
     // the user can choose to disable the smartcard even when it is enabled, but can not choose to enable it, when it is
     // disabled
     private boolean smartcardEnabledOverridden = false;
@@ -234,14 +232,6 @@ public class ConsoleOptions implements Serializable{
         this.trustStore = trustStore;
     }
 
-    public String[] getLocalizedStrings() {
-        return localizedStrings;
-    }
-
-    public void setLocalizedStrings(String[] localizedStrings) {
-        this.localizedStrings = localizedStrings;
-    }
-
     public String getMenu() {
         return menu;
     }
@@ -300,14 +290,6 @@ public class ConsoleOptions implements Serializable{
 
     public void setSpiceProxy(String spiceProxy) {
         this.spiceProxy = spiceProxy;
-    }
-
-    public int getTicketValiditySeconds() {
-        return ticketValiditySeconds;
-    }
-
-    public void setTicketValiditySeconds(int ticketValiditySeconds) {
-        this.ticketValiditySeconds = ticketValiditySeconds;
     }
 
     /**

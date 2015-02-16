@@ -236,12 +236,12 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
 
             @Override
             protected void updateModel(ISpice spice, boolean value) {
-                spice.setOverrideEnabledSmartcard(value);
+                spice.getOptions().setSmartcardEnabledOverridden(value);
             }
 
             @Override
             protected boolean extractBoolean(ISpice spice) {
-                return spice.isSmartcardEnabledOverridden();
+                return spice.getOptions().isSmartcardEnabledOverridden();
             }
 
         });
@@ -251,12 +251,12 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
 
             @Override
             protected void updateModel(ISpice spice, boolean value) {
-                spice.setWanOptionsEnabled(value);
+                spice.getOptions().setWanOptionsEnabled(value);
             }
 
             @Override
             protected boolean extractBoolean(ISpice spice) {
-                return spice.isWanOptionsEnabled();
+                return spice.getOptions().isWanOptionsEnabled();
             }
 
         });
@@ -265,12 +265,12 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         remapCtrlAltDeleteSpice = new EntityModelValueCheckBoxEditor<ConsoleModel>(Align.RIGHT, new SpiceRenderer() {
             @Override
             protected void updateModel(ISpice spice, boolean value) {
-                spice.setRemapCtrlAltDel(value);
+                spice.getOptions().setRemapCtrlAltDelete(value);
             }
 
             @Override
             protected boolean extractBoolean(ISpice spice) {
-                return spice.isRemapCtrlAltDel();
+                return spice.getOptions().isRemapCtrlAltDelete();
             }
 
         });
@@ -278,12 +278,12 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         remapCtrlAltDeleteVnc = new EntityModelValueCheckBoxEditor<ConsoleModel>(Align.RIGHT, new VncRenderer() {
             @Override
             protected void updateModel(IVnc vnc, boolean value) {
-                vnc.setRemapCtrlAltDelete(value);
+                vnc.getOptions().setRemapCtrlAltDelete(value);
             }
 
             @Override
             protected boolean extractBoolean(IVnc vnc) {
-                return vnc.isRemapCtrlAltDelete();
+                return vnc.getOptions().isRemapCtrlAltDelete();
             }
         });
 
@@ -291,12 +291,12 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
 
             @Override
             protected void updateModel(ISpice spice, boolean value) {
-                spice.setUsbAutoShare(value);
+                spice.getOptions().setUsbAutoShare(value);
             }
 
             @Override
             protected boolean extractBoolean(ISpice spice) {
-                return spice.getUsbAutoShare();
+                return spice.getOptions().isUsbAutoShare();
             }
         });
         enableUsbAutoshare.setLabel(constants.usbAutoshare());
@@ -305,12 +305,12 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
 
             @Override
             protected void updateModel(ISpice spice, boolean value) {
-                spice.setFullScreen(value);
+                spice.getOptions().setFullScreen(value);
             }
 
             @Override
             protected boolean extractBoolean(ISpice spice) {
-                return spice.isFullScreen();
+                return spice.getOptions().isFullScreen();
             }
         });
         openInFullScreen.setLabel(constants.openInFullScreen());
@@ -319,12 +319,12 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
 
             @Override
             protected void updateModel(ISpice spice, boolean value) {
-                spice.setSpiceProxyEnabled(value);
+                spice.getOptions().setSpiceProxyEnabled(value);
             }
 
             @Override
             protected boolean extractBoolean(ISpice spice) {
-                return spice.isSpiceProxyEnabled();
+                return spice.getOptions().isSpiceProxyEnabled();
             }
         });
         enableSpiceProxy.setLabel(constants.enableSpiceProxy());

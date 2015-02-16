@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -114,7 +115,7 @@ public class VncConsoleModel extends ConsoleModel {
 
         Frontend.getInstance().runAction(VdcActionType.SetVmTicket, new SetVmTicketParameters(getEntity().getId(),
                     null,
-                    TICKET_VALIDITY_SECONDS, GraphicsType.VNC), new IFrontendActionAsyncCallback() {
+                ConsoleOptions.TICKET_VALIDITY_SECONDS, GraphicsType.VNC), new IFrontendActionAsyncCallback() {
 
                 @Override
                 public void executed(FrontendActionAsyncResult result) {
@@ -152,14 +153,13 @@ public class VncConsoleModel extends ConsoleModel {
     }
 
     private void setAndInvokeClient() {
-        vncImpl.setVncHost(getHost());
+        vncImpl.getOptions().setHost(getHost());
         GraphicsInfo vncInfo = getEntity().getGraphicsInfos().get(GraphicsType.VNC);
-        Integer port = vncInfo.getPort();
-        vncImpl.setVncPort(port == null ? null : port.toString());
-        vncImpl.setTicket(getOtp64());
-        vncImpl.setTitle(getClientTitle());
-        vncImpl.setToggleFullscreenHotKey(getToggleFullScreenKeys());
-        vncImpl.setReleaseCursorHotKey(getReleaseCursorKeys());
+        vncImpl.getOptions().setPort(vncInfo.getPort());
+        vncImpl.getOptions().setTicket(getOtp64());
+        vncImpl.getOptions().setTitle(getClientTitle());
+        vncImpl.getOptions().setToggleFullscreenHotKey(getToggleFullScreenKeys());
+        vncImpl.getOptions().setReleaseCursorHotKey(getReleaseCursorKeys());
 
         vncImpl.invokeClient();
     }

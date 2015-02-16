@@ -220,7 +220,7 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
 
         ConsoleProtocol selectedProcotol = vmConsoles.getSelectedProcotol();
         boolean smartcardEnabled = selectedProcotol == ConsoleProtocol.SPICE && vmConsoles.getVm().isSmartcardEnabled();
-        boolean smartcardOverriden = vmConsoles.getConsoleModel(SpiceConsoleModel.class).getspice().isSmartcardEnabledOverridden();
+        boolean smartcardOverriden = vmConsoles.getConsoleModel(SpiceConsoleModel.class).getspice().getOptions().isSmartcardEnabledOverridden();
 
         if (smartcardEnabled && !smartcardOverriden) {
             return messages.consoleWithSmartcard(consoleTypeToName.get(selectedProcotol));

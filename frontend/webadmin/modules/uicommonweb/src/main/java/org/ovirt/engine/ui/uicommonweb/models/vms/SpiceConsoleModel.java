@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import com.google.gwt.user.client.Window;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.console.ConsoleOptions;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -60,9 +60,6 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
     public static EventDefinition spiceDisconnectedEventDefinition;
     public static EventDefinition spiceConnectedEventDefinition;
     public static EventDefinition spiceMenuItemSelectedEventDefinition;
-    public static EventDefinition usbAutoShareChangedEventDefinition;
-    public static EventDefinition wanColorDepthChangedEventDefinition;
-    public static EventDefinition wanDisableEffectsChangeEventDefinition;
 
     private SpiceMenu menu;
     private ISpice privatespice;
@@ -80,9 +77,6 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         spiceDisconnectedEventDefinition = new EventDefinition("SpiceDisconnected", SpiceConsoleModel.class); //$NON-NLS-1$
         spiceConnectedEventDefinition = new EventDefinition("SpiceConnected", SpiceConsoleModel.class); //$NON-NLS-1$
         spiceMenuItemSelectedEventDefinition = new EventDefinition("SpiceMenuItemSelected", SpiceConsoleModel.class); //$NON-NLS-1$
-        usbAutoShareChangedEventDefinition = new EventDefinition("UsbAutoShareChanged", SpiceConsoleModel.class); //$NON-NLS-1$
-        wanColorDepthChangedEventDefinition = new EventDefinition("ColorDepthChanged", SpiceConsoleModel.class); //$NON-NLS-1$
-        wanDisableEffectsChangeEventDefinition = new EventDefinition("DisableEffectsChange", SpiceConsoleModel.class); //$NON-NLS-1$
     }
 
     public SpiceConsoleModel(VM myVm, Model parentModel) {
@@ -147,7 +141,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
         if (getEntity() != null) {
             boolean isSpiceProxyDefined = consoleUtils.isSpiceProxyDefined(getEntity());
-            getspice().setSpiceProxyEnabled(isSpiceProxyDefined);
+            getspice().getOptions().setSpiceProxyEnabled(isSpiceProxyDefined);
         }
     }
 
@@ -166,13 +160,6 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
     protected void connect() {
         if (getEntity() != null) {
             getLogger().debug("Connecting to Spice console..."); //$NON-NLS-1$
-            // Check a spice version.
-            if (getConfigurator().getIsAdmin()
-                    && getspice().getCurrentVersion().compareTo(getspice().getDesiredVersion()) < 0)
-            {
-                Window.alert("Spice client version is not as desired (" + getspice().getDesiredVersion() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
-                return;
-            }
 
             // Don't connect if there VM is not running on any host.
             if (getEntity().getRunOnVds() == null) {
@@ -181,7 +168,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
             // If it is not windows or SPICE guest agent is not installed, make sure the WAN options are disabled.
             if (!AsyncDataProvider.getInstance().isWindowsOsType(getEntity().getVmOsId()) || !getEntity().getHasSpiceDriver()) {
-                getspice().setWanOptionsEnabled(false);
+                getspice().getOptions().setWanOptionsEnabled(false);
             }
 
             UICommand setVmTicketCommand = new UICommand("setVmCommand", new BaseCommandTarget() { //$NON-NLS-1$
@@ -377,47 +364,44 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         if (spiceInfo == null) {
             throw new IllegalStateException("Trying to invoke SPICE console but VM GraphicsInfo is null.");//$NON-NLS-1$
         }
-        getspice().setSmartcardEnabled(getEntity().isSmartcardEnabled());
-        Integer port = spiceInfo.getPort();
-        getspice().setPort(port == null ? 0 : port);
-        getspice().setPassword(ticket);
-        getspice().setTicketValiditySeconds(TICKET_VALIDITY_SECONDS);
-        getspice().setNumberOfMonitors(getEntity().getNumOfMonitors());
-        getspice().setGuestHostName(getEntity().getVmHost().split("[ ]", -1)[0]); //$NON-NLS-1$
+        ConsoleOptions options = getspice().getOptions();
+        options.setSmartcardEnabled(getEntity().isSmartcardEnabled());
+        int port = 0;
+        if (spiceInfo.getPort() != null) {
+            port = spiceInfo.getPort();
+        }
+        options.setPort(port);
+        options.setTicket(ticket);
+        options.setNumberOfMonitors(getEntity().getNumOfMonitors());
+        options.setGuestHostName(getEntity().getVmHost().split("[ ]", -1)[0]); //$NON-NLS-1$
         if (spiceInfo.getTlsPort() != null) {
-            getspice().setSecurePort(spiceInfo.getTlsPort());
+            options.setSecurePort(spiceInfo.getTlsPort());
         }
         if (!StringHelper.isNullOrEmpty(spiceSecureChannels)) {
-            getspice().setSslChanels(spiceSecureChannels);
+            options.setSslChanels(spiceSecureChannels);
         }
         if (!StringHelper.isNullOrEmpty(cipherSuite)) {
-            getspice().setCipherSuite(cipherSuite);
+            options.setCipherSuite(cipherSuite);
         }
 
-        getspice().setHostSubject(certificateSubject);
-        getspice().setTrustStore(caCertificate);
+        options.setHostSubject(certificateSubject);
+        options.setTrustStore(caCertificate);
 
-        getspice().setTitle(getClientTitle());
+        options.setTitle(getClientTitle());
 
-        getspice().setSpiceProxy(determineSpiceProxy());
+        options.setSpiceProxy(determineSpiceProxy());
 
         // If 'AdminConsole' is true, send true; otherwise, false should be sent only for VMs with SPICE driver
         // installed.
-        getspice().setAdminConsole(getConfigurator().getSpiceAdminConsole() ? true : !getEntity().getHasSpiceDriver());
+        options.setAdminConsole(getConfigurator().getSpiceAdminConsole() ? true : !getEntity().getHasSpiceDriver());
 
         // Update 'UsbListenPort' value
-        getspice().setUsbListenPort(getConfigurator().getIsUsbEnabled()
+        options.setUsbListenPort(getConfigurator().getIsUsbEnabled()
                 && getEntity().getUsbPolicy() == UsbPolicy.ENABLED_LEGACY ? getConfigurator().getSpiceDefaultUsbPort()
                 : getConfigurator().getSpiceDisableUsbListenPort());
 
-        getspice().setToggleFullscreenHotKey(getToggleFullScreenKeys());
-        getspice().setReleaseCursorHotKey(getReleaseCursorKeys());
-
-        getspice().setLocalizedStrings(new String[]{
-                ConstantsManager.getInstance().getConstants().usb(),
-                ConstantsManager.getInstance()
-                        .getConstants()
-                        .usbDevicesNoUsbdevicesClientSpiceUsbRedirectorNotInstalled()});
+        options.setToggleFullscreenHotKey(getToggleFullScreenKeys());
+        options.setReleaseCursorHotKey(getReleaseCursorKeys());
 
         // Create menu.
         int id = 1;
@@ -466,9 +450,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 .getConstants()
                 .stopSpiceConsole(), CommandStop));
 
-        getspice().setMenu(menu.toString());
-
-        getspice().setGuestID(getEntity().getId().toString());
+        options.setMenu(menu.toString());
 
         // Subscribe to events.
         getspice().getDisconnectedEvent().addListener(this);
@@ -480,13 +462,13 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         }
         else {
             // Try to connect.
-            getspice().setHost(displayIp);
+            options.setHost(displayIp);
             spiceConnect();
         }
     }
 
     private String determineSpiceProxy() {
-        if (!getspice().isSpiceProxyEnabled()) {
+        if (!getspice().getOptions().isSpiceProxyEnabled()) {
             return null;
         }
 
@@ -519,7 +501,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 SpiceConsoleModel spiceConsoleModel = (SpiceConsoleModel) model;
                 String address =
                         (String) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                spiceConsoleModel.getspice().setHost(address);
+                spiceConsoleModel.getspice().getOptions().setHost(address);
                 spiceConsoleModel.spiceConnect();
             }
         };
@@ -531,7 +513,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
     private void setVmTicket() {
         // Create ticket for single sign on.
-        Frontend.getInstance().runAction(VdcActionType.SetVmTicket, new SetVmTicketParameters(getEntity().getId(), null, TICKET_VALIDITY_SECONDS, GraphicsType.SPICE),
+        Frontend.getInstance().runAction(VdcActionType.SetVmTicket, new SetVmTicketParameters(getEntity().getId(), null, ConsoleOptions.TICKET_VALIDITY_SECONDS, GraphicsType.SPICE),
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -642,7 +624,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
     public void spiceConnect()
     {
         try {
-            getspice().connect();
+            getspice().invokeClient();
         } catch (RuntimeException ex) {
             getLogger().error("Exception on Spice connect", ex); //$NON-NLS-1$
         }

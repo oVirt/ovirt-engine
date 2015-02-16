@@ -126,7 +126,7 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
         try {
             vmConsoles.getConsoleModel(VncConsoleModel.class).setVncImplementation(VncConsoleModel.ClientConsoleMode
                     .valueOf(clientStorage.getLocalItem(keyMaker.make(VNC_CLIENT_MODE))));
-            asVnc(vmConsoles).setRemapCtrlAltDelete(readBool(keyMaker.make(REMAP_CAD_VNC)));
+            asVnc(vmConsoles).getOptions().setRemapCtrlAltDelete(readBool(keyMaker.make(REMAP_CAD_VNC)));
         } catch (Exception e) {
             logger.log(Level.WARNING, "Failed loading VNC data. Exception message: " + e.getMessage()); //$NON-NLS-1$
         }
@@ -139,19 +139,19 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
         clientStorage.setLocalItem(keyMaker.make(SPICE_CLIENT_MODE),
                 consoleModel.getClientConsoleMode().toString());
 
-        storeBool(keyMaker.make(OPEN_IN_FULL_SCREEN), spice.isFullScreen());
-        storeBool(keyMaker.make(SMARTCARD_ENABLED_OVERRIDDEN), spice.isSmartcardEnabledOverridden());
-        storeBool(keyMaker.make(WAN_OPTIONS), spice.isWanOptionsEnabled());
-        storeBool(keyMaker.make(USB_AUTOSHARE), spice.getUsbAutoShare());
-        storeBool(keyMaker.make(SPICE_PROXY_ENABLED), spice.isSpiceProxyEnabled());
-        storeBool(keyMaker.make(REMAP_CAD_SPICE), spice.isRemapCtrlAltDel());
+        storeBool(keyMaker.make(OPEN_IN_FULL_SCREEN), spice.getOptions().isFullScreen());
+        storeBool(keyMaker.make(SMARTCARD_ENABLED_OVERRIDDEN), spice.getOptions().isSmartcardEnabledOverridden());
+        storeBool(keyMaker.make(WAN_OPTIONS), spice.getOptions().isWanOptionsEnabled());
+        storeBool(keyMaker.make(USB_AUTOSHARE), spice.getOptions().isUsbAutoShare());
+        storeBool(keyMaker.make(SPICE_PROXY_ENABLED), spice.getOptions().isSpiceProxyEnabled());
+        storeBool(keyMaker.make(REMAP_CAD_SPICE), spice.getOptions().isRemapCtrlAltDelete());
     }
 
     private void storeVncData(VmConsoles vmConsoles, KeyMaker keyMaker) {
         VncConsoleModel consoleModel = vmConsoles.getConsoleModel(VncConsoleModel.class);
         if (consoleModel != null) {
             clientStorage.setLocalItem(keyMaker.make(VNC_CLIENT_MODE), consoleModel.getClientConsoleMode().toString());
-            storeBool(keyMaker.make(REMAP_CAD_VNC), consoleModel.getVncImpl().isRemapCtrlAltDelete());
+            storeBool(keyMaker.make(REMAP_CAD_VNC), consoleModel.getVncImpl().getOptions().isRemapCtrlAltDelete());
         }
     }
 
@@ -183,17 +183,17 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
 
         ISpice spice = asSpice(vmConsoles);
         if (vmConsoles.getConsoleModel(SpiceConsoleModel.class).isWanOptionsAvailableForMyVm()) {
-            spice.setWanOptionsEnabled(readBool(keyMaker.make(WAN_OPTIONS)));
+            spice.getOptions().setWanOptionsEnabled(readBool(keyMaker.make(WAN_OPTIONS)));
         }
 
         if (consoleUtils.isSpiceProxyDefined(vmConsoles.getVm())) {
-            spice.setSpiceProxyEnabled(readBool(keyMaker.make(SPICE_PROXY_ENABLED)));
+            spice.getOptions().setSpiceProxyEnabled(readBool(keyMaker.make(SPICE_PROXY_ENABLED)));
         }
 
-        spice.setFullScreen(readBool(keyMaker.make(OPEN_IN_FULL_SCREEN)));
-        spice.setOverrideEnabledSmartcard(readBool(keyMaker.make(SMARTCARD_ENABLED_OVERRIDDEN)));
-        spice.setUsbAutoShare(readBool(keyMaker.make(USB_AUTOSHARE)));
-        spice.setRemapCtrlAltDel(readBool(keyMaker.make(REMAP_CAD_SPICE)));
+        spice.getOptions().setFullScreen(readBool(keyMaker.make(OPEN_IN_FULL_SCREEN)));
+        spice.getOptions().setSmartcardEnabledOverridden(readBool(keyMaker.make(SMARTCARD_ENABLED_OVERRIDDEN)));
+        spice.getOptions().setUsbAutoShare(readBool(keyMaker.make(USB_AUTOSHARE)));
+        spice.getOptions().setRemapCtrlAltDelete(readBool(keyMaker.make(REMAP_CAD_SPICE)));
     }
 
     protected ISpice asSpice(VmConsoles vmConsoles) {

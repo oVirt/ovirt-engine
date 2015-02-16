@@ -166,10 +166,6 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
                 getView().edit(model);
             }
         };
-
-        spice.getUsbAutoShareChangedEvent().addListener(viewUpdatingListener);
-        spice.getWANColorDepthChangedEvent().addListener(viewUpdatingListener);
-        spice.getWANDisableEffectsChangeEvent().addListener(viewUpdatingListener);
     }
 
     private void removeListeners(ConsolePopupModel model) {
@@ -181,10 +177,6 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         if (spice == null) {
             return;
         }
-
-        spice.getUsbAutoShareChangedEvent().removeListener(viewUpdatingListener);
-        spice.getWANColorDepthChangedEvent().removeListener(viewUpdatingListener);
-        spice.getWANDisableEffectsChangeEvent().removeListener(viewUpdatingListener);
     }
 
     private void initView(ConsolePopupModel model) {
@@ -214,10 +206,10 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         ISpice spice = model.getVmConsoles().getConsoleModel(SpiceConsoleModel.class).getspice();
         if (spice != null) {
-            if (!spice.isWanOptionsEnabled()) {
+            if (!spice.getOptions().isWanOptionsEnabled()) {
                 getView().selectWanOptionsEnabled(false);
             }
-            spiceProxyUserPreference = vmConsoles.getConsoleModel(SpiceConsoleModel.class).getspice().isSpiceProxyEnabled();
+            spiceProxyUserPreference = vmConsoles.getConsoleModel(SpiceConsoleModel.class).getspice().getOptions().isSpiceProxyEnabled();
         }
 
         if (!consoleUtils.isBrowserPluginSupported(ConsoleProtocol.SPICE)) {

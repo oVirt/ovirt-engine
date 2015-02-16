@@ -21,13 +21,13 @@ public class WebClientConsoleInvoker {
     private final String host;
     private final String port;
 
-    public WebClientConsoleInvoker(String clientPage, WebsocketProxyConfig proxyConfig, String host, String port, String password, boolean useSsl) {
+    public WebClientConsoleInvoker(String clientPage, WebsocketProxyConfig proxyConfig, String host, Integer port, String password, boolean useSsl) {
         this.clientPage = clientPage;
         this.proxyConfig = proxyConfig;
         this.host = host;
-        this.port = port;
         this.password = password;
         this.useSsl = useSsl;
+        this.port = (port == null) ? null : port.toString();
     }
 
     public void invokeClient() {

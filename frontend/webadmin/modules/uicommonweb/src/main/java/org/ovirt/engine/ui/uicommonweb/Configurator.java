@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ISpicePlugin;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 
@@ -263,12 +264,14 @@ public abstract class Configurator {
     }
 
     public void configure(ISpice spice) {
-        spice.setDesiredVersion(getSpiceVersion());
-        spice.setCurrentVersion(getSpiceVersion());
-        spice.setAdminConsole(getSpiceAdminConsole());
-        spice.setFullScreen(getSpiceFullScreen());
-        spice.setSpiceBaseURL(getSpiceBaseURL());
-        spice.setUsbFilter(getUsbFilter());
+        if (spice instanceof ISpicePlugin) {
+            ((ISpicePlugin) spice).setPluginVersion(getSpiceVersion());
+            ((ISpicePlugin) spice).setSpiceBaseURL(getSpiceBaseURL());
+        }
+
+        spice.getOptions().setAdminConsole(getSpiceAdminConsole());
+        spice.getOptions().setFullScreen(getSpiceFullScreen());
+        spice.getOptions().setUsbFilter(getUsbFilter());
         updateSpiceUsbAutoShare(spice);
 
         if (!isInitialized) {
@@ -293,7 +296,7 @@ public abstract class Configurator {
                                                                             new INewAsyncCallback() {
                                                                                 @Override
                                                                                 public void onSuccess(Object target, Object returnValue) {
-                                                                                    spice.setUsbAutoShare((Boolean) returnValue);
+                                                                                    spice.getOptions().setUsbAutoShare((Boolean) returnValue);
                                                                                 }
                                                                             }));
     }

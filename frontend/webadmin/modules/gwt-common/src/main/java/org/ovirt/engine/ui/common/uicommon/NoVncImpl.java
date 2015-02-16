@@ -13,12 +13,16 @@ public class NoVncImpl extends AbstractVnc implements INoVnc {
 
     public NoVncImpl() {
         this.config = new WebsocketProxyConfig(
-                (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.WebSocketProxy), getVncHost());
+                (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.WebSocketProxy),
+                getOptions().getHost());
     }
 
     @Override
     public void invokeClient() {
-        WebClientConsoleInvoker invoker = new WebClientConsoleInvoker(CLIENT_PAGE, config, getVncHost(), getVncPort(), getTicket(), false);
+        WebClientConsoleInvoker invoker =
+                new WebClientConsoleInvoker(CLIENT_PAGE, config,
+                        getOptions().getHost(), getOptions().getPort(),
+                        getOptions().getTicket(), false);
         invoker.invokeClient();
     }
 

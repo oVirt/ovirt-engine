@@ -1895,12 +1895,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("No host found in 'UP' state in the cluster, please select another cluster.")
     String volumeEmptyClusterValidationMsg();
 
-    @DefaultStringValue("USB")
-    String usb();
-
-    @DefaultStringValue("USB Devices,No USB devices,Client's SPICE USB Redirector is not installed")
-    String usbDevicesNoUsbdevicesClientSpiceUsbRedirectorNotInstalled();
-
     @DefaultStringValue("Change CD")
     String changeCd();
 

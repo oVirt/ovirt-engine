@@ -7,8 +7,6 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextArea;
-import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
-import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -35,8 +33,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public abstract class ConsoleModel extends EntityModel<VM> {
     public static final String GET_ATTACHMENT_SERVLET_URL = BaseContextPathData.getInstance().getPath()
             + "services/attachment/"; //$NON-NLS-1$
-
-    protected static final int TICKET_VALIDITY_SECONDS = 120;
 
     private static String EJECT_LABEL;
 
@@ -319,11 +315,4 @@ public abstract class ConsoleModel extends EntityModel<VM> {
         return getEntity().getName() + ":%d" + releaseCursorMsg; //$NON-NLS-1$
     }
 
-    protected Integer extractDisplayPort(GraphicsType graphicsType) {
-        GraphicsInfo graphicsInfo = getEntity().getGraphicsInfos().get(graphicsType);
-        if (graphicsInfo != null && graphicsInfo.getPort() != null) {
-            return graphicsInfo.getPort();
-        }
-        return 0;
-    }
 }
