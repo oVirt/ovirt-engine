@@ -122,7 +122,7 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
     * Handles cases where fencing operation was skipped (host is already in requested state)
     */
     private void handleSkippedOperation() {
-        FenceStatusReturnValue fenceStatusReturnValue = new FenceStatusReturnValue(FenceStatusReturnValue.SKIPPED, "");
+        FenceStatusReturnValue fenceStatusReturnValue = new FenceStatusReturnValue(FenceStatusReturnValue.SKIPPED_DUE_TO_STATUS, "");
         AuditLogableBase auditLogable = new AuditLogableBase();
         auditLogable.addCustomValue("HostName",
                 (DbFacade.getInstance().getVdsDao().get(getParameters().getTargetVdsID())).getName());
