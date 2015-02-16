@@ -16,7 +16,9 @@
 
 package org.ovirt.engine.api.resource;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
@@ -39,4 +41,8 @@ public interface ExternalProviderResource<R extends ExternalProvider> extends Up
     @Actionable
     @Path("importcertificates")
     public Response importCertificates(Action action);
+
+    @PUT
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    public R update(R resource);
 }
