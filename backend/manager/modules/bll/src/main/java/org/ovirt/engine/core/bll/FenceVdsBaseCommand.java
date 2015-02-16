@@ -469,7 +469,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     }
 
     private void handleError(VDSStatus lastStatus, final VDSReturnValue vdsReturnValue, FenceAgentOrder order) {
-        if (!((FenceStatusReturnValue) (vdsReturnValue.getReturnValue())).getIsSkipped()) {
+        if (!((FenceStatusReturnValue) (vdsReturnValue.getReturnValue())).getIsSkippedDueToStatus()) {
             // Since this is a non-transactive command , restore last status
             setSucceeded(false);
             log.errorFormat("Failed to {0} VDS using {1} Power Management agent", getParameters().getAction()
@@ -685,7 +685,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         if (returnValue instanceof FenceStatusReturnValue) {
             fenceResult = (FenceStatusReturnValue) returnValue;
         }
-        return fenceResult != null && fenceResult.getIsSkipped();
+        return fenceResult != null && fenceResult.getIsSkippedDueToPolicy();
     }
 
     protected void handleFencingSkippedDueToPolicy(VDSReturnValue vdsReturnValue) {
