@@ -38,7 +38,8 @@ public class AbstractGeneralModel<E> extends EntityModel<E> {
             return;
         }
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(entityId), new AsyncQuery(
+        Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices,
+                new IdQueryParameters(entityId).withoutRefresh(), new AsyncQuery(
             this,
             new INewAsyncCallback() {
                 @Override
