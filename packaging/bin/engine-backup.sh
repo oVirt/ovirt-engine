@@ -645,6 +645,18 @@ verifyConnection() {
 		>> "${LOG}" 2>&1 \
 		|| logdie "Can't connect to database '${database}'. Please see '${0} --help'."
 
+	PGPASSFILE="${MYPGPASS}" psql \
+		-w \
+		-t \
+		-U "${user}" \
+		-h "${host}" \
+		-p "${port}" \
+		-d "${database}" \
+		-c "show lc_messages" \
+		2> /dev/null \
+		| grep -q '^ *en_US.UTF-8$' \
+		|| logdie "lc_messages is set to an unsupported value in postgresql.conf. Please set it to en_US.UTF-8 and restart postgresql."
+
 	local IGNORED_PATTERN=$(cat << __EOF | tr '\012' '|' | sed 's/|$//'
 ^create extension
 ^create procedural language
