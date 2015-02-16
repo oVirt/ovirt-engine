@@ -23,7 +23,7 @@ public class AddRngDeviceCommand extends AbstractRngDeviceCommand<RngDeviceParam
             return false;
         }
 
-        if (getTemplateType() != VmEntityType.INSTANCE_TYPE) {
+        if (getTemplateType() != VmEntityType.INSTANCE_TYPE && !isBlankTemplate()) {
             if (!validate(getVirtioRngValidator().canAddRngDevice(getVdsGroup(), getParameters().getRngDevice()))) {
                 return false;
             }

@@ -25,6 +25,7 @@ public abstract class AbstractRngDeviceCommand<T extends RngDeviceParameters> ex
     private VmBase cachedEntity = null;
     private VmEntityType templateType = null;
     private List<VmDevice> cachedRngDevices = null;
+    private boolean blankTemplate = false;
 
     protected AbstractRngDeviceCommand(T parameters, CommandContext context) {
         super(parameters, context);
@@ -39,6 +40,8 @@ public abstract class AbstractRngDeviceCommand<T extends RngDeviceParameters> ex
         if (getParameters().isVm()) {
             cachedEntity = getVmStaticDAO().get(vmId);
         } else {
+            blankTemplate = VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(vmId);
+
             VmTemplate template = getVmTemplateDAO().get(vmId);
             templateType = template.getTemplateType();
             cachedEntity = template;
@@ -102,4 +105,7 @@ public abstract class AbstractRngDeviceCommand<T extends RngDeviceParameters> ex
         return templateType;
     }
 
+    public boolean isBlankTemplate() {
+        return blankTemplate;
+    }
 }
