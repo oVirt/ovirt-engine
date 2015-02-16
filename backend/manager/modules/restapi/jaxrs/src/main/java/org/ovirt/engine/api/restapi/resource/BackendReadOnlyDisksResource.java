@@ -4,8 +4,6 @@ import java.util.List;
 
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
-import org.ovirt.engine.api.model.StorageDomain;
-import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.resource.ReadOnlyDevicesResource;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -23,21 +21,10 @@ public class BackendReadOnlyDisksResource
     @Override
     public Disks list() {
         IdQueryParameters queryParams = new IdQueryParameters(parentId);
-        List<org.ovirt.engine.core.common.businessentities.StorageDomain> storageDomains = getBackendCollection(org.ovirt.engine.core.common.businessentities.StorageDomain.class, VdcQueryType.GetStorageDomainsByVmTemplateId, queryParams);
         List<org.ovirt.engine.core.common.businessentities.Disk> backendCollection = getBackendCollection(queryType, queryParams);
         Disks disks = mapCollection(backendCollection, false);
         for (Disk disk : disks.getDisks()) {
             disk.setVm(null);
-            if (disk.isSetStorageDomains()) {
-                disk.getStorageDomains().getStorageDomains().clear();
-            } else {
-                disk.setStorageDomains(new StorageDomains());
-            }
-            for (org.ovirt.engine.core.common.businessentities.StorageDomain sd : storageDomains) {
-                StorageDomain storageDomain = new StorageDomain();
-                storageDomain.setId(sd.getId().toString());
-                disk.getStorageDomains().getStorageDomains().add(storageDomain);
-            }
             addLinks(disk);
         }
         return disks;

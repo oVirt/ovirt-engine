@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
@@ -51,16 +50,14 @@ public class BackendReadOnlyDisksResourceTest
     public void testList() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
         setUpEntityQueryExpectations(1, null);
-        setUpGetStorageDomainsQueryExpectations(1);
         control.replay();
         collection.setUriInfo(uriInfo);
         List<Disk> disks = getCollection();
         for (Disk disk : disks) {
             assertNotNull(disk.getStorageDomains());
             List<StorageDomain> storageDomains = disk.getStorageDomains().getStorageDomains();
-            assertEquals(storageDomains.size(), 2);
-            assertEquals(storageDomains.get(0).getId(), GUIDS[2].toString());
-            assertEquals(storageDomains.get(1).getId(), GUIDS[3].toString());
+            assertEquals(storageDomains.size(), 1);
+            assertEquals(storageDomains.get(0).getId(), GUIDS[0].toString());
         }
         verifyCollection(disks);
     }
@@ -71,7 +68,6 @@ public class BackendReadOnlyDisksResourceTest
         UriInfo uriInfo = setUpUriExpectations(null);
 
         setUpEntityQueryExpectations(1, FAILURE);
-        setUpGetStorageDomainsQueryExpectations(1);
         control.replay();
         collection.setUriInfo(uriInfo);
         try {
@@ -90,7 +86,6 @@ public class BackendReadOnlyDisksResourceTest
 
         Throwable t = new RuntimeException(FAILURE);
         setUpEntityQueryExpectations(1, t);
-        setUpGetStorageDomainsQueryExpectations(1);
         control.replay();
         collection.setUriInfo(uriInfo);
         try {
@@ -109,7 +104,6 @@ public class BackendReadOnlyDisksResourceTest
 
         Throwable t = new RuntimeException(FAILURE);
         setUpEntityQueryExpectations(1, t);
-        setUpGetStorageDomainsQueryExpectations(1);
         control.replay();
         collection.setUriInfo(uriInfo);
         try {
@@ -121,27 +115,4 @@ public class BackendReadOnlyDisksResourceTest
             locales.clear();
         }
     }
-
-    private int setUpGetStorageDomainsQueryExpectations(int times) {
-        while (times-- > 0) {
-            setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainsByVmTemplateId,
-                    IdQueryParameters.class,
-                                         new String[] { "Id" },
-                                         new Object[] { PARENT_ID },
-                                         getStorageDomains(),
-                                         null);
-        }
-        return times;
-    }
-
-        protected List<org.ovirt.engine.core.common.businessentities.StorageDomain> getStorageDomains() {
-            List<org.ovirt.engine.core.common.businessentities.StorageDomain> storageDomains = new ArrayList<org.ovirt.engine.core.common.businessentities.StorageDomain>();
-            org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain = new org.ovirt.engine.core.common.businessentities.StorageDomain();
-            storageDomain.setId(GUIDS[2]);
-            storageDomains.add(storageDomain);
-            storageDomain = new org.ovirt.engine.core.common.businessentities.StorageDomain();
-            storageDomain.setId(GUIDS[3]);
-            storageDomains.add(storageDomain);
-            return storageDomains;
-        }
 }
