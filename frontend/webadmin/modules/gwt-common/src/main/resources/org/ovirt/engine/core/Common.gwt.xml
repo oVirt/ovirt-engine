@@ -86,6 +86,9 @@
         <include name="common/businessentities/network/IpConfiguration.java" />
         <include name="common/businessentities/network/IPv4Address.java"/>
         <include name="common/businessentities/network/NetworkAttachment.java" />
+        <include name="common/businessentities/network/ReportedConfigurations.java"/>
+        <include name="common/businessentities/network/ReportedConfiguration.java"/>
+        <include name="common/businessentities/network/ReportedConfigurationType.java"/>
 
         <include name="common/businessentities/Commented.java" />
         <include name="common/businessentities/Reasoned.java" />

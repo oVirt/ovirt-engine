@@ -38,6 +38,7 @@ public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
 
     private Map<String, String> properties;
     private boolean overrideConfiguration;
+    private ReportedConfigurations reportedConfigurations;
 
     public static long getSerialVersionUID() {
         return serialVersionUID;
@@ -108,6 +109,14 @@ public class NetworkAttachment implements IVdcQueryable, BusinessEntity<Guid> {
 
     public void setOverrideConfiguration(boolean overrideConfiguration) {
         this.overrideConfiguration = overrideConfiguration;
+    }
+
+    public void setReportedConfigurations(ReportedConfigurations reportedConfigurations) {
+        this.reportedConfigurations = reportedConfigurations;
+    }
+
+    public ReportedConfigurations getReportedConfigurations() {
+        return reportedConfigurations;
     }
 
     @Override
