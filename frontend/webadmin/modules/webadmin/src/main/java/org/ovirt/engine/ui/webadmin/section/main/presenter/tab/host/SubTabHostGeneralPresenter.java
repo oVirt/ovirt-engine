@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
@@ -113,7 +114,12 @@ public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, Hos
 
         // Review the alerts and add those that are active:
         if (model.getHasUpgradeAlert()) {
-            addTextAlert(view, messages.hostHasUpgradeAlert());
+            if (model.getEntity().getStatus() == VDSStatus.Maintenance) {
+                addTextAlert(view, messages.hostInMaintenanceHasUpgradeAlert());
+            }
+            else {
+                addTextAlert(view, messages.hostHasUpgradeAlert());
+            }
         }
         if (model.getHasReinstallAlertNonResponsive()) {
             addTextAlert(view, messages.hostHasReinstallAlertNonResponsive());
