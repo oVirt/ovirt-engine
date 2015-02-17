@@ -5,10 +5,12 @@ import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.DataCenterStatus;
 import org.ovirt.engine.api.model.MacPool;
+import org.ovirt.engine.api.model.QuotaModeType;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 
@@ -53,6 +55,10 @@ public class DataCenterMapper {
             entity.setMacPoolId(GuidUtils.asGuid(model.getMacPool().getId()));
         }
 
+        if (model.isSetQuotaMode()) {
+            entity.setQuotaEnforcementType(map(QuotaModeType.fromValue(model.getQuotaMode())));
+        }
+
         return entity;
     }
 
@@ -89,6 +95,10 @@ public class DataCenterMapper {
             model.getMacPool().setId(entity.getMacPoolId().toString());
         }
 
+        if (entity.getQuotaEnforcementType() != null) {
+            model.setQuotaMode(map(entity.getQuotaEnforcementType()).value());
+        }
+
         return model;
     }
 
@@ -108,6 +118,34 @@ public class DataCenterMapper {
         case Up:
             return DataCenterStatus.UP;
         default: throw new IllegalStateException("Enum mapping failed");
+        }
+    }
+
+    @Mapping(from = QuotaEnforcementTypeEnum.class, to = QuotaModeType.class)
+    public static QuotaModeType map(QuotaEnforcementTypeEnum type) {
+        switch (type) {
+        case DISABLED:
+            return QuotaModeType.DISABLED;
+        case HARD_ENFORCEMENT:
+            return QuotaModeType.ENABLED;
+        case SOFT_ENFORCEMENT:
+            return QuotaModeType.AUDIT;
+        default:
+            throw new IllegalArgumentException("Unknown quota enforcement type \"" + type + "\"");
+        }
+    }
+
+    @Mapping(from = QuotaModeType.class, to = QuotaEnforcementTypeEnum.class)
+    public static QuotaEnforcementTypeEnum map(QuotaModeType type) {
+        switch (type) {
+        case DISABLED:
+            return QuotaEnforcementTypeEnum.DISABLED;
+        case ENABLED:
+            return QuotaEnforcementTypeEnum.HARD_ENFORCEMENT;
+        case AUDIT:
+            return QuotaEnforcementTypeEnum.SOFT_ENFORCEMENT;
+        default:
+            throw new IllegalArgumentException("Unknown quota mode type \"" + type + "\"");
         }
     }
 }

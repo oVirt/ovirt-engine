@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource.validation;
 
 import org.ovirt.engine.api.model.DataCenter;
+import org.ovirt.engine.api.model.QuotaModeType;
 import org.ovirt.engine.api.model.StorageFormat;
 import org.ovirt.engine.api.model.StorageType;
 
@@ -17,6 +18,9 @@ public class DataCenterValidator implements Validator<DataCenter> {
             }
             if (dataCenter.isSetStorageFormat()) {
                 validateEnum(StorageFormat.class, dataCenter.getStorageFormat(), true);
+            }
+            if (dataCenter.isSetQuotaMode()) {
+                validateEnum(QuotaModeType.class, dataCenter.getQuotaMode(), true);
             }
         }
     }

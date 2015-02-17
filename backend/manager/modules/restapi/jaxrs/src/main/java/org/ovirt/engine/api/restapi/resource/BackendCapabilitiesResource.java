@@ -88,6 +88,8 @@ import org.ovirt.engine.api.model.PowerManagementStates;
 import org.ovirt.engine.api.model.PowerManagementStatus;
 import org.ovirt.engine.api.model.PowerManagers;
 import org.ovirt.engine.api.model.QosTypes;
+import org.ovirt.engine.api.model.QuotaModeType;
+import org.ovirt.engine.api.model.QuotaModeTypes;
 import org.ovirt.engine.api.model.ReportedDeviceType;
 import org.ovirt.engine.api.model.ReportedDeviceTypes;
 import org.ovirt.engine.api.model.RngSource;
@@ -308,6 +310,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         // External tasks types
         addStepEnumTypes(version, StepEnum.values());
         addInheritableBooleans(version, InheritableBoolean.values());
+        addQuotaModeTypes(version);
 
         version.setFeatures(featuresHelper.getFeatures(v));
 
@@ -640,10 +643,10 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
 
     private List<PowerManagement> getPowerManagers(Version version) {
         return FenceOptionsParser.parse(
-            getFenceConfigurationValue(String.class, ConfigurationValues.VdsFenceOptionMapping, version),
-            getConfigurationValueDefault(String.class, ConfigurationValues.VdsFenceOptionTypes),
-            true
-        );
+                getFenceConfigurationValue(String.class, ConfigurationValues.VdsFenceOptionMapping, version),
+                getConfigurationValueDefault(String.class, ConfigurationValues.VdsFenceOptionTypes),
+                true
+                );
     }
 
     private List<StorageType> getStorageTypes(Version version) {
@@ -807,7 +810,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
 
     private void addHostProtocols(VersionCaps version, HostProtocol[] values) {
         version.setHostProtocols(new HostProtocols());
-        for (HostProtocol protocol: values) {
+        for (HostProtocol protocol : values) {
             version.getHostProtocols().getHostProtocols().add(protocol.value());
         }
     }
@@ -1000,6 +1003,15 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
                 types.getMessageBrokerTypes().add(type.value());
             }
             version.setMessageBrokerTypes(types);
+        }
+    }
+
+    private void addQuotaModeTypes(VersionCaps version) {
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_6)) {
+            version.setQuotaModeTypes(new QuotaModeTypes());
+            for (QuotaModeType mode : QuotaModeType.values()) {
+                version.getQuotaModeTypes().getQuotaModeTypes().add(mode.value());
+            }
         }
     }
 

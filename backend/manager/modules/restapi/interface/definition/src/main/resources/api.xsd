@@ -670,6 +670,7 @@
           <xs:element ref="network_plugin_types" minOccurs="0"/>
           <xs:element ref="message_broker_types" minOccurs="0"/>
           <xs:element ref="display_disconnect_actions" minOccurs="0" />
+          <xs:element ref="quota_mode_types" minOccurs="0" />
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -1202,6 +1203,21 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:element name="quota_mode_types" type="QuotaModeTypes"/>
+
+  <xs:complexType name="QuotaModeTypes">
+    <xs:sequence>
+      <xs:element name="quota_mode_type" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="QuotaModeTypes"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+
   <!-- Architecture Capabilities -->
 
   <xs:element name="architecture_capability" type="ArchitectureCapability"/>
@@ -1447,6 +1463,7 @@
             <xs:element name="supported_versions" type="SupportedVersions" minOccurs="0" />
             <xs:element ref="status" minOccurs="0" maxOccurs="1" />
             <xs:element ref="mac_pool" minOccurs="0" />
+            <xs:element name="quota_mode" type="xs:string" minOccurs="0" maxOccurs="1" />
             <!-- also rel="files" and rel="storagedomains" links -->
         </xs:sequence>
       </xs:extension>

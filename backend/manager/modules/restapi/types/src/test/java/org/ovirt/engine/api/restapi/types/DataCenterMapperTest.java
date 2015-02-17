@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.types;
 import org.junit.Test;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.DataCenterStatus;
+import org.ovirt.engine.api.model.QuotaModeType;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -17,6 +18,7 @@ public class DataCenterMapperTest extends
     @Override
     protected DataCenter postPopulate(DataCenter model) {
         model.setStorageFormat(MappingTestHelper.shuffle(StorageFormat.class).value());
+        model.setQuotaMode(MappingTestHelper.shuffle(QuotaModeType.class).value());
         return model;
     }
 
@@ -30,6 +32,7 @@ public class DataCenterMapperTest extends
         assertEquals(model.isLocal(), transform.isLocal());
         assertEquals(model.getStorageFormat(), transform.getStorageFormat());
         assertEquals(model.getMacPool().getId(), transform.getMacPool().getId());
+        assertEquals(model.getQuotaMode(), transform.getQuotaMode());
     }
 
     @Test
