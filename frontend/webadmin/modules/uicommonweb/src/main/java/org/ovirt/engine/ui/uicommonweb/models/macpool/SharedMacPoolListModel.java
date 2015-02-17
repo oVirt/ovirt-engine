@@ -14,14 +14,14 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 import com.google.inject.Inject;
 
-public class SharedMacPoolListModel extends ListWithDetailsModel {
+public class SharedMacPoolListModel extends ListWithSimpleDetailsModel<Void, MacPool> {
 
     private static final String CMD_REMOVE = "OnRemove"; //$NON-NLS-1$
     private static final String CMD_CANCEL = "Cancel"; //$NON-NLS-1$
@@ -44,7 +44,7 @@ public class SharedMacPoolListModel extends ListWithDetailsModel {
     }
 
     @Inject
-    public SharedMacPoolListModel(final PermissionListModel<SharedMacPoolListModel> permissionListModel) {
+    public SharedMacPoolListModel(final PermissionListModel<MacPool> permissionListModel) {
         setDetailList(permissionListModel);
         newCommand = new UICommand("New", this); //$NON-NLS-1$
         editCommand = new UICommand("Edit", this); //$NON-NLS-1$
@@ -54,8 +54,8 @@ public class SharedMacPoolListModel extends ListWithDetailsModel {
         updateActionAvailability();
     }
 
-    private void setDetailList(final PermissionListModel<SharedMacPoolListModel> permissionListModel) {
-        List<EntityModel> list = new ArrayList<EntityModel>();
+    private void setDetailList(final PermissionListModel<MacPool> permissionListModel) {
+        List<HasEntity<MacPool>> list = new ArrayList<>();
         list.add(permissionListModel);
 
         setDetailModels(list);
@@ -78,7 +78,7 @@ public class SharedMacPoolListModel extends ListWithDetailsModel {
         if (getSelectedItems() == null || getSelectedItems().isEmpty()) {
             removeAllowed = false;
         } else {
-            for (MacPool macPool : (Iterable<MacPool>) getSelectedItems()) {
+            for (MacPool macPool : getSelectedItems()) {
                 if (macPool.isDefaultPool()) {
                     removeAllowed = false;
                     break;
@@ -105,7 +105,7 @@ public class SharedMacPoolListModel extends ListWithDetailsModel {
         model.setTitle(ConstantsManager.getInstance().getConstants().editSharedMacPoolTitle());
         model.setHashName("edit_shared_mac_pool"); //$NON-NLS-1$
         model.setHelpTag(HelpTag.edit_shared_mac_pool);
-        model.setEntity((MacPool) getSelectedItem());
+        model.setEntity(getSelectedItem());
         setWindow(model);
     }
 
@@ -121,7 +121,7 @@ public class SharedMacPoolListModel extends ListWithDetailsModel {
         model.getCommands().add(tempVar2);
 
         List<String> macPoolNames = new ArrayList<String>();
-        for (MacPool macPool : (Iterable<MacPool>) getSelectedItems()) {
+        for (MacPool macPool : getSelectedItems()) {
             macPoolNames.add(macPool.getName());
         }
         model.setItems(macPoolNames);
@@ -136,7 +136,7 @@ public class SharedMacPoolListModel extends ListWithDetailsModel {
     private void onRemove() {
         cancel();
         ArrayList<VdcActionParametersBase> params = new ArrayList<VdcActionParametersBase>();
-        for (MacPool macPool : (Iterable<MacPool>) getSelectedItems()) {
+        for (MacPool macPool : getSelectedItems()) {
             params.add(new RemoveMacPoolByIdParameters(macPool.getId()));
         }
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveMacPool, params);

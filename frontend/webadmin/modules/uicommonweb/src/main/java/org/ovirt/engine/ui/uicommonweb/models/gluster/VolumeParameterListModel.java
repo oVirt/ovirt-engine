@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -24,7 +23,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
-public class VolumeParameterListModel extends SearchableListModel {
+public class VolumeParameterListModel extends SearchableListModel<GlusterVolumeEntity, GlusterVolumeOptionEntity> {
 
     private UICommand addParameterCommand;
     private UICommand editParameterCommand;
@@ -98,8 +97,7 @@ public class VolumeParameterListModel extends SearchableListModel {
     {
         getEditParameterCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1);
         getResetParameterCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1);
-        getResetAllParameterCommand().setIsExecutionAllowed(getItems() != null
-                && ((List<GlusterVolumeOptionEntity>) getItems()).size() > 0);
+        getResetAllParameterCommand().setIsExecutionAllowed(getItems() != null && getItems().size() > 0);
     }
 
     private void addParameter() {
@@ -107,7 +105,7 @@ public class VolumeParameterListModel extends SearchableListModel {
             return;
         }
 
-        GlusterVolumeEntity volume = (GlusterVolumeEntity) getEntity();
+        GlusterVolumeEntity volume = getEntity();
         if (volume == null)
         {
             return;
@@ -160,7 +158,7 @@ public class VolumeParameterListModel extends SearchableListModel {
             return;
         }
 
-        GlusterVolumeEntity volume = (GlusterVolumeEntity) getEntity();
+        GlusterVolumeEntity volume = getEntity();
 
         VolumeParameterModel model = (VolumeParameterModel) getWindow();
 
@@ -171,8 +169,8 @@ public class VolumeParameterListModel extends SearchableListModel {
 
         GlusterVolumeOptionEntity option = new GlusterVolumeOptionEntity();
         option.setVolumeId(volume.getId());
-        option.setKey((String) model.getSelectedKey().getEntity());
-        option.setValue((String) model.getValue().getEntity());
+        option.setKey(model.getSelectedKey().getEntity());
+        option.setValue(model.getValue().getEntity());
 
         model.startProgress(null);
 
@@ -209,7 +207,7 @@ public class VolumeParameterListModel extends SearchableListModel {
             return;
         }
 
-        GlusterVolumeEntity volume = (GlusterVolumeEntity) getEntity();
+        GlusterVolumeEntity volume = getEntity();
         if (volume == null)
         {
             return;
@@ -252,7 +250,7 @@ public class VolumeParameterListModel extends SearchableListModel {
 
                 innerParameterModel.getKeyList().setItems(optionInfoList);
 
-                GlusterVolumeOptionEntity selectedOption = (GlusterVolumeOptionEntity) getSelectedItem();
+                GlusterVolumeOptionEntity selectedOption = getSelectedItem();
                 innerParameterModel.getDescription().setEntity(""); //$NON-NLS-1$
                 innerParameterModel.getSelectedKey().setEntity(selectedOption.getKey());
                 innerParameterModel.getValue().setEntity(selectedOption.getValue());
@@ -284,7 +282,7 @@ public class VolumeParameterListModel extends SearchableListModel {
         {
             return;
         }
-        GlusterVolumeOptionEntity selectedOption = (GlusterVolumeOptionEntity) getSelectedItem();
+        GlusterVolumeOptionEntity selectedOption = getSelectedItem();
 
         ConfirmationModel model = new ConfirmationModel();
         setWindow(model);
@@ -315,7 +313,7 @@ public class VolumeParameterListModel extends SearchableListModel {
         {
             return;
         }
-        GlusterVolumeOptionEntity selectedOption = (GlusterVolumeOptionEntity) getSelectedItem();
+        GlusterVolumeOptionEntity selectedOption = getSelectedItem();
 
         ResetGlusterVolumeOptionsParameters parameters =
                 new ResetGlusterVolumeOptionsParameters(selectedOption.getVolumeId(), selectedOption, false);
@@ -366,7 +364,7 @@ public class VolumeParameterListModel extends SearchableListModel {
         {
             return;
         }
-        GlusterVolumeEntity volume = (GlusterVolumeEntity) getEntity();
+        GlusterVolumeEntity volume = getEntity();
 
         ResetGlusterVolumeOptionsParameters parameters =
                 new ResetGlusterVolumeOptionsParameters(volume.getId(), null, false);
@@ -398,7 +396,7 @@ public class VolumeParameterListModel extends SearchableListModel {
         if (getEntity() == null) {
             return;
         }
-        GlusterVolumeEntity glusterVolumeEntity = (GlusterVolumeEntity) getEntity();
+        GlusterVolumeEntity glusterVolumeEntity = getEntity();
         ArrayList<GlusterVolumeOptionEntity> list = new ArrayList<GlusterVolumeOptionEntity>();
         for (GlusterVolumeOptionEntity glusterVolumeOption : glusterVolumeEntity.getOptions()) {
             list.add(glusterVolumeOption);

@@ -213,7 +213,7 @@ public class DataCenterModel extends Model
         getQuotaEnforceTypeListModel().setItems(list);
         getQuotaEnforceTypeListModel().setSelectedItem(list.get(0));
 
-        setMacPoolListModel(new SortedListModel<MacPool>(new Linq.SharedMacPoolComparator()));
+        setMacPoolListModel(new SortedListModel<>(new Linq.SharedMacPoolComparator()));
         setMacPoolModel(new MacPoolModel());
         getMacPoolModel().setIsChangable(false);
         getMacPoolListModel().getItemsChangedEvent().addListener(this);

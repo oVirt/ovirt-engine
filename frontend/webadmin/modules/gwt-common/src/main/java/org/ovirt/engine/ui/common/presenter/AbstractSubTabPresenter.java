@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.ActionTable;
 import org.ovirt.engine.ui.common.widget.table.HasActionTable;
 import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -41,7 +41,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
  * @param <P>
  *            Proxy type.
  */
-public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel, D extends EntityModel, V extends AbstractSubTabPresenter.ViewDef<T>, P extends TabContentProxyPlace<?>>
+public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel, D extends HasEntity<?>, V extends AbstractSubTabPresenter.ViewDef<T>, P extends TabContentProxyPlace<?>>
         extends AbstractTabPresenter<V, P> {
 
     // TODO(vszocs) use HasActionTable<I> instead of raw type HasActionTable, this will

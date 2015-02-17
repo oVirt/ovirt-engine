@@ -4,19 +4,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class VolumeEventListModel extends SubTabEventListModel
-{
-
-    @Override
-    public GlusterVolumeEntity getEntity()
-    {
-        return (GlusterVolumeEntity) ((super.getEntity() instanceof GlusterVolumeEntity) ? super.getEntity() : null);
-    }
-
-    public void setEntity(GlusterVolumeEntity value)
-    {
-        super.setEntity(value);
-    }
+public class VolumeEventListModel extends SubTabEventListModel<GlusterVolumeEntity> {
 
     @Override
     protected void onEntityContentChanged()

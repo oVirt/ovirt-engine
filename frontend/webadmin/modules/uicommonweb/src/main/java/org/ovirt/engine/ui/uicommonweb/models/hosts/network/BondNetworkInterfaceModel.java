@@ -34,11 +34,11 @@ public class BondNetworkInterfaceModel extends NetworkInterfaceModel {
     public void breakBond() {
         // remove bond name
         for (NetworkInterfaceModel bonded : getBonded()) {
-            bonded.getEntity().setBondName(null);
+            bonded.getIface().setBondName(null);
         }
     }
 
     public String getBondOptions() {
-        return getEntity().getBondOptions();
+        return getIface().getBondOptions();
     }
 }

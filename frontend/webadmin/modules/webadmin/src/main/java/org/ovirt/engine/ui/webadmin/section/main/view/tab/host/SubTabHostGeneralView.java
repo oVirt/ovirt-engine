@@ -42,7 +42,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListModel, HostGeneralModel> implements SubTabHostGeneralPresenter.ViewDef, Editor<HostGeneralModel> {
+public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListModel<Void>, HostGeneralModel> implements SubTabHostGeneralPresenter.ViewDef, Editor<HostGeneralModel> {
 
     interface Driver extends SimpleBeanEditorDriver<HostGeneralModel, SubTabHostGeneralView> {
     }
@@ -127,7 +127,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
     }
 
     @Inject
-    public SubTabHostGeneralView(DetailModelProvider<HostListModel, HostGeneralModel> modelProvider,
+    public SubTabHostGeneralView(DetailModelProvider<HostListModel<Void>, HostGeneralModel> modelProvider,
             ApplicationResources resources) {
         super(modelProvider);
 

@@ -25,7 +25,7 @@ public class SubTabDataCenterPermissionView extends AbstractSubTabPermissionsVie
 
     @Inject
     public SubTabDataCenterPermissionView(SearchableDetailModelProvider<Permissions, DataCenterListModel,
-            PermissionListModel<DataCenterListModel>> modelProvider,
+            PermissionListModel<StoragePool>> modelProvider,
             EventBus eventBus,
             ClientStorage clientStorage, ApplicationConstants constants) {
         super(modelProvider, eventBus, clientStorage, constants);

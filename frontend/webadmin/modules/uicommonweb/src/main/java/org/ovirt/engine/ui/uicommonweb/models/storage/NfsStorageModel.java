@@ -11,6 +11,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -192,11 +193,11 @@ public class NfsStorageModel extends Model implements IStorageModel {
     @Override
     public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
-        if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition) && sender == getPath()) {
+        if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition) && sender == getPath()) {
             // Notify about path change.
             getPathChangedEvent().raise(this, EventArgs.EMPTY);
         }
-        else if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition) && sender == getOverride()) {
+        else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition) && sender == getOverride()) {
             override_EntityChanged(args);
         }
     }

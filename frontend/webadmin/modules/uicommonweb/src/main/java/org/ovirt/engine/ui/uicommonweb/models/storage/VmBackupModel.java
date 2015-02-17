@@ -262,8 +262,8 @@ public class VmBackupModel extends ManageBackupModel {
 
         objectsToClone = new ArrayList<Object>();
         for (Object object : (ArrayList<Object>) importModel.getItems()) {
-            ImportEntityData item = (ImportEntityData) object;
-            if ((Boolean) item.getClone().getEntity()) {
+            ImportEntityData<Object> item = (ImportEntityData<Object>) object;
+            if (item.getClone().getEntity()) {
                 objectsToClone.add(object);
             }
         }
@@ -299,7 +299,7 @@ public class VmBackupModel extends ManageBackupModel {
                 }
                 for (Object object : objectsToClone) {
                     setObjectName(object, suffix, true);
-                    cloneObjectMap.put((Guid) ((IVdcQueryable) (((ImportEntityData) object).getEntity())).getQueryableId(),
+                    cloneObjectMap.put((Guid) ((IVdcQueryable) (((ImportEntityData<Object>) object).getEntity())).getQueryableId(),
                             object);
                 }
             }
@@ -312,7 +312,7 @@ public class VmBackupModel extends ManageBackupModel {
                     return;
                 }
                 setObjectName(object, vmName, false);
-                cloneObjectMap.put((Guid) ((IVdcQueryable) ((ImportEntityData) object).getEntity()).getQueryableId(),
+                cloneObjectMap.put((Guid) ((IVdcQueryable) ((ImportEntityData<Object>) object).getEntity()).getQueryableId(),
                         object);
             }
             objectsToClone.remove(object);
@@ -437,7 +437,7 @@ public class VmBackupModel extends ManageBackupModel {
             }
 
             prm.setForceOverride(true);
-            prm.setCopyCollapse((Boolean) ((ImportVmData) item).getCollapseSnapshots().getEntity());
+            prm.setCopyCollapse(((ImportVmData) item).getCollapseSnapshots().getEntity());
 
             Map<Guid, Guid> map = new HashMap<Guid, Guid>();
             for (Map.Entry<Guid, Disk> entry : vm.getDiskMap().entrySet()) {
@@ -459,7 +459,7 @@ public class VmBackupModel extends ManageBackupModel {
             prm.setImageToDestinationDomainMap(map);
 
             if (((ImportVmData) item).isExistsInSystem() ||
-                    (Boolean) ((ImportVmData) item).getClone().getEntity()) {
+                    ((ImportVmData) item).getClone().getEntity()) {
                 if (!cloneObjectMap.containsKey(vm.getId())) {
                     continue;
                 }
@@ -563,10 +563,9 @@ public class VmBackupModel extends ManageBackupModel {
                             @Override
                             public void onSuccess(Object model1,
                                     Object ReturnValue1) {
-                                VmBackupModel backupModel1 = (VmBackupModel) model1;
                                 ArrayList<VM> vms = ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
                                 Collections.sort(vms, new Linq.VmComparator());
-                                backupModel1.setItems(vms);
+                                setItems((ArrayList) vms);
                             }
                         };
                         GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(

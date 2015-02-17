@@ -45,8 +45,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class PermissionListModel<T> extends SearchableListModel<T>
-{
+public class PermissionListModel<E> extends SearchableListModel<E, Permissions> {
 
     private UICommand privateAddCommand;
 

@@ -14,7 +14,7 @@ public class NetworkLabelModel extends NetworkItemModel<NetworkStatus> {
     public NetworkLabelModel(String label, HostSetupNetworksModel setupModel) {
         super(setupModel);
         this.label = label;
-        labelNetworks = new ArrayList<LogicalNetworkModel>();
+        labelNetworks = new ArrayList<>();
     }
 
     @Override

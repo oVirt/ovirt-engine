@@ -14,13 +14,13 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.IModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class EditVnicProfileModel extends VnicProfileModel {
 
-    public EditVnicProfileModel(EntityModel sourceModel,
+    public EditVnicProfileModel(IModel sourceModel,
             Version dcCompatibilityVersion,
             VnicProfile profile,
             Guid dcId,
@@ -40,7 +40,7 @@ public class EditVnicProfileModel extends VnicProfileModel {
         updatePortMirroringChangability();
     }
 
-    public EditVnicProfileModel(EntityModel sourceModel, Version dcCompatibilityVersion, VnicProfile profile, Guid dcId) {
+    public EditVnicProfileModel(IModel sourceModel, Version dcCompatibilityVersion, VnicProfile profile, Guid dcId) {
         this(sourceModel, dcCompatibilityVersion, profile, dcId, true);
     }
 
@@ -65,7 +65,7 @@ public class EditVnicProfileModel extends VnicProfileModel {
             @Override
             public void onSuccess(Object model, Object ReturnValue)
             {
-                Collection<VM> vms = (Collection<VM>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                Collection<VM> vms = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 if (vms != null && !vms.isEmpty()) {
                     getPortMirroring().setChangeProhibitionReason(ConstantsManager.getInstance()
                             .getConstants()

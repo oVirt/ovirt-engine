@@ -22,12 +22,11 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
-public abstract class AffinityGroupListModel<T extends BusinessEntity<Guid>> extends SearchableListModel<AffinityGroup> {
+public abstract class AffinityGroupListModel<E extends BusinessEntity<Guid>> extends SearchableListModel<E, AffinityGroup> {
     private UICommand newCommand;
     private UICommand editCommand;
     private UICommand removeCommand;
     private final VdcQueryType queryType;
-    private T parentEntity;
 
     public AffinityGroupListModel(VdcQueryType queryType) {
         this.queryType = queryType;
@@ -45,7 +44,6 @@ public abstract class AffinityGroupListModel<T extends BusinessEntity<Guid>> ext
     @Override
     protected void onEntityChanged() {
         super.onEntityChanged();
-        setParentEntity((T) getEntity());
         getSearchCommand().execute();
     }
 
@@ -69,8 +67,8 @@ public abstract class AffinityGroupListModel<T extends BusinessEntity<Guid>> ext
 
     @Override
     protected void syncSearch() {
-        if (getParentEntity() != null) {
-            super.syncSearch(queryType, new IdQueryParameters(getParentEntity().getId()));
+        if (getEntity() != null) {
+            super.syncSearch(queryType, new IdQueryParameters(getEntity().getId()));
         }
     }
 
@@ -97,14 +95,6 @@ public abstract class AffinityGroupListModel<T extends BusinessEntity<Guid>> ext
 
     private void setRemoveCommand(UICommand removeCommand) {
         this.removeCommand = removeCommand;
-    }
-
-    public T getParentEntity() {
-        return parentEntity;
-    }
-
-    private void setParentEntity(T parentEntity) {
-        this.parentEntity = parentEntity;
     }
 
     private void newEntity() {

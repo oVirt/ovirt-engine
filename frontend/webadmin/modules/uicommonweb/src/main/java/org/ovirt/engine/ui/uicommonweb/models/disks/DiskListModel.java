@@ -24,8 +24,9 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
-import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
@@ -46,7 +47,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.inject.Inject;
 
-public class DiskListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
+public class DiskListModel extends ListWithSimpleDetailsModel<Void, DiskImage> implements ISupportSystemTreeContext
 {
     private UICommand privateNewCommand;
 
@@ -175,7 +176,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
     @Inject
     public DiskListModel(final DiskVmListModel diskVmListModel, final DiskTemplateListModel diskTemplateListModel,
             final DiskStorageListModel diskStorageListModel, final DiskGeneralModel diskGeneralModel,
-            final PermissionListModel<DiskListModel> permissionListModel) {
+            final PermissionListModel<Disk> permissionListModel) {
         this.diskVmListModel = diskVmListModel;
         this.diskTemplateListModel = diskTemplateListModel;
         this.diskStorageListModel = diskStorageListModel;
@@ -207,18 +208,19 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
     }
 
     private void setDetailList(final DiskGeneralModel diskGeneralModel,
-            final PermissionListModel<DiskListModel> permissionListModel) {
+            final PermissionListModel<Disk> permissionListModel) {
         diskVmListModel.setIsAvailable(false);
         diskTemplateListModel.setIsAvailable(false);
         diskStorageListModel.setIsAvailable(false);
 
-        List<EntityModel> list = new ArrayList<EntityModel>();
+        List<HasEntity<? extends Disk>> list = new ArrayList<>();
         list.add(diskGeneralModel);
         list.add(diskVmListModel);
         list.add(diskTemplateListModel);
         list.add(diskStorageListModel);
         list.add(permissionListModel);
-        setDetailModels(list);
+        // TODO: find better type bound for list
+        setDetailModels((List) list);
     }
 
 
@@ -236,14 +238,13 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
     }
 
     @Override
-    public void setItems(Collection value)
+    public void setItems(Collection<DiskImage> disks)
     {
-        if (value == null) {
+        if (disks == null) {
             super.setItems(null);
             return;
         }
 
-        ArrayList<Disk> disks = Linq.<Disk> cast(value);
         super.setItems(disks);
     }
 
@@ -252,7 +253,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
     {
         if (getSelectedItem() != null)
         {
-            Disk disk = (Disk) getSelectedItem();
+            Disk disk = getSelectedItem();
 
             diskVmListModel.setIsAvailable(disk.getVmEntityType() == null || !disk.getVmEntityType().isTemplateType());
             diskTemplateListModel.setIsAvailable(disk.getVmEntityType() != null && disk.getVmEntityType().isTemplateType());
@@ -322,7 +323,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
     {
         ArrayList<VdcActionParametersBase> parameterList = new ArrayList<VdcActionParametersBase>();
 
-        for (Disk disk : (ArrayList<Disk>) getSelectedItems())
+        for (Disk disk : getSelectedItems())
         {
             parameterList.add(new GetDiskAlignmentParameters(disk.getId()));
         }
@@ -498,8 +499,8 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
 
     private void updateActionAvailability()
     {
-        Disk disk = (Disk) getSelectedItem();
-        ArrayList<Disk> disks = getSelectedItems() != null ? (ArrayList<Disk>) getSelectedItems() : null;
+        Disk disk = getSelectedItem();
+        ArrayList<Disk> disks = getSelectedItems() != null ? (ArrayList) getSelectedItems() : null;
         boolean shouldAllowEdit = true;
         if (disk != null) {
             shouldAllowEdit = !disk.isOvfStore() && !(disk.getDiskStorageType() == DiskStorageType.IMAGE &&
@@ -514,8 +515,8 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         getExportCommand().setIsExecutionAllowed(isExportCommandAvailable());
         updateCopyAndMoveCommandAvailability(disks);
 
-        ChangeQuotaModel.updateChangeQuotaActionAvailability(getItems() != null ? (List<Disk>) getItems() : null,
-                getSelectedItems() != null ? (List<Disk>) getSelectedItems() : null,
+        ChangeQuotaModel.updateChangeQuotaActionAvailability(getItems() != null ? (List) getItems() : null,
+                getSelectedItems() != null ? (List) getSelectedItems() : null,
                 getSystemTreeSelectedItem(),
                 getChangeQuotaCommand());
     }
@@ -604,7 +605,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
     }
 
     private boolean isExportCommandAvailable() {
-        ArrayList<Disk> disks = (ArrayList<Disk>) getSelectedItems();
+        List<DiskImage> disks = getSelectedItems();
 
         if (disks == null || disks.isEmpty()) {
             return false;

@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("deprecation")
-public class ProviderGeneralModel extends EntityModel {
+public class ProviderGeneralModel extends EntityModel<Provider> {
 
     private static final String PROPERTY_NAME = "Name"; //$NON-NLS-1$
     private static final String PROPERTY_TYPE = "Type"; //$NON-NLS-1$
@@ -44,7 +44,7 @@ public class ProviderGeneralModel extends EntityModel {
     }
 
     private void updateProperties() {
-        Provider provider = (Provider) getEntity();
+        Provider provider = getEntity();
 
         setName(provider.getName());
         setType(provider.getType());

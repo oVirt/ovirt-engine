@@ -1529,11 +1529,11 @@ public final class Linq
         }
     }
 
-    public final static class ImportEntityComparator implements Comparator<ImportEntityData>, Serializable {
+    public final static class ImportEntityComparator<T> implements Comparator<ImportEntityData<T>>, Serializable {
         final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
         @Override
-        public int compare(ImportEntityData entity1, ImportEntityData entity2) {
+        public int compare(ImportEntityData<T> entity1, ImportEntityData<T> entity2) {
             return lexoNumeric.compare(entity1.getName(), entity2.getName());
         }
     }

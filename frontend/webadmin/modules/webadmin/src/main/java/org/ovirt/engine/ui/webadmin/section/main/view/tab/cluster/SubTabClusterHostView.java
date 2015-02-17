@@ -23,7 +23,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
 
 import com.google.gwt.core.client.GWT;
 
-public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS, ClusterListModel, ClusterHostListModel>
+public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS, ClusterListModel<Void>, ClusterHostListModel>
         implements SubTabClusterHostPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabClusterHostView> {
@@ -31,7 +31,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
     }
 
     @Inject
-    public SubTabClusterHostView(SearchableDetailModelProvider<VDS, ClusterListModel, ClusterHostListModel> modelProvider, ApplicationConstants constants) {
+    public SubTabClusterHostView(SearchableDetailModelProvider<VDS, ClusterListModel<Void>, ClusterHostListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         initTable(constants);
         initWidget(getTable());

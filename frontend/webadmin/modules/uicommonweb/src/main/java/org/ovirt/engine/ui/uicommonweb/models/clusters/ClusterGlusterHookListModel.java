@@ -30,7 +30,7 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
-public class ClusterGlusterHookListModel extends SearchableListModel {
+public class ClusterGlusterHookListModel extends SearchableListModel<VDSGroup, GlusterHookEntity> {
 
     private UICommand enableHookCommand;
 
@@ -82,11 +82,6 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
         this.syncWithServersCommand = syncWithServersCommand;
     }
 
-    @Override
-    public VDSGroup getEntity() {
-        return (VDSGroup) super.getEntity();
-    }
-
     public ClusterGlusterHookListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().glusterHooksTitle());
         setHelpTag(HelpTag.gluster_hooks);
@@ -114,8 +109,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
         }
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (Object item : getSelectedItems()) {
-            GlusterHookEntity hook = (GlusterHookEntity) item;
+        for (GlusterHookEntity hook : getSelectedItems()) {
             list.add(new GlusterHookParameters(hook.getId()));
         }
         Frontend.getInstance().runMultipleAction(VdcActionType.EnableGlusterHook, list, null, null);
@@ -138,8 +132,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
         model.setMessage(ConstantsManager.getInstance().getConstants().disableGlusterHooksMessage());
 
         ArrayList<String> list = new ArrayList<String>();
-        for (Object item : getSelectedItems()) {
-            GlusterHookEntity hook = (GlusterHookEntity) item;
+        for (GlusterHookEntity hook : getSelectedItems()) {
             list.add(hook.getName());
         }
         model.setItems(list);
@@ -195,7 +188,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
             return;
         }
 
-        GlusterHookEntity hookEntity = (GlusterHookEntity) getSelectedItem();
+        GlusterHookEntity hookEntity = getSelectedItem();
 
         if (hookEntity == null) {
             return;
@@ -243,7 +236,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
             return;
         }
 
-        final GlusterHookEntity hookEntity = (GlusterHookEntity) getSelectedItem();
+        final GlusterHookEntity hookEntity = getSelectedItem();
 
         if (hookEntity == null)
         {
@@ -332,10 +325,10 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
         ArrayList<IFrontendActionAsyncCallback> callbacks = new ArrayList<IFrontendActionAsyncCallback>();
 
-        if ((Boolean) resolveConflictsModel.getResolveContentConflict().getEntity()) {
+        if (resolveConflictsModel.getResolveContentConflict().getEntity()) {
             actionTypes.add(VdcActionType.UpdateGlusterHook);
             GlusterServerHook serverHook =
-                    (GlusterServerHook) resolveConflictsModel.getServerHooksList().getSelectedItem();
+                    resolveConflictsModel.getServerHooksList().getSelectedItem();
             Guid serverId = (serverHook == null) ? null : serverHook.getServerId();
             parameters.add(new GlusterHookManageParameters(hookEntity.getId(), serverId));
             IFrontendActionAsyncCallback callback = new IFrontendActionAsyncCallback() {
@@ -350,8 +343,8 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
             callbacks.add(callback);
         }
 
-        if ((Boolean) resolveConflictsModel.getResolveStatusConflict().getEntity()) {
-            boolean isEnable = (Boolean) resolveConflictsModel.getResolveStatusConflictEnable().getEntity();
+        if (resolveConflictsModel.getResolveStatusConflict().getEntity()) {
+            boolean isEnable = resolveConflictsModel.getResolveStatusConflictEnable().getEntity();
             actionTypes.add(isEnable ? VdcActionType.EnableGlusterHook : VdcActionType.DisableGlusterHook);
             parameters.add(new GlusterHookParameters(hookEntity.getId()));
             IFrontendActionAsyncCallback callback = new IFrontendActionAsyncCallback() {
@@ -366,8 +359,8 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
             callbacks.add(callback);
         }
 
-        if ((Boolean) resolveConflictsModel.getResolveMissingConflict().getEntity()) {
-            boolean isAdd = (Boolean) resolveConflictsModel.getResolveMissingConflictCopy().getEntity();
+        if (resolveConflictsModel.getResolveMissingConflict().getEntity()) {
+            boolean isAdd = resolveConflictsModel.getResolveMissingConflictCopy().getEntity();
             actionTypes.add(isAdd ? VdcActionType.AddGlusterHook : VdcActionType.RemoveGlusterHook);
             parameters.add(new GlusterHookManageParameters(hookEntity.getId()));
             IFrontendActionAsyncCallback callback = new IFrontendActionAsyncCallback() {
@@ -449,9 +442,9 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
                 }
             }
             allowViewContent = (getSelectedItems().size() == 1
-                    && ((GlusterHookEntity) getSelectedItems().get(0)).getContentType() == GlusterHookContentType.TEXT);
+                    && getSelectedItems().get(0).getContentType() == GlusterHookContentType.TEXT);
             allowResolveConflict = (getSelectedItems().size() == 1
-                    && ((GlusterHookEntity) getSelectedItems().get(0)).hasConflicts());
+                    && getSelectedItems().get(0).hasConflicts());
         }
         getEnableHookCommand().setIsExecutionAllowed(allowEnable);
         getDisableHookCommand().setIsExecutionAllowed(allowDisable);

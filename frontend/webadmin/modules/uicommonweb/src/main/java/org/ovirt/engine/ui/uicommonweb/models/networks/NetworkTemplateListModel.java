@@ -21,7 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveVmTemplateInterfaceModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class NetworkTemplateListModel extends SearchableListModel
+public class NetworkTemplateListModel extends SearchableListModel<NetworkView, PairQueryable<VmNetworkInterface, VmTemplate>>
 {
     private UICommand removeCommand;
 
@@ -62,17 +62,6 @@ public class NetworkTemplateListModel extends SearchableListModel
     }
 
     @Override
-    public NetworkView getEntity()
-    {
-        return (NetworkView) super.getEntity();
-    }
-
-    public void setEntity(NetworkView value)
-    {
-        super.setEntity(value);
-    }
-
-    @Override
     protected void onEntityChanged()
     {
         super.onEntityChanged();
@@ -81,7 +70,7 @@ public class NetworkTemplateListModel extends SearchableListModel
     }
 
     @Override
-    public void setEntity(Object value)
+    public void setEntity(NetworkView value)
     {
         if (value == null || !value.equals(getEntity())) {
             super.setEntity(value);
@@ -148,9 +137,7 @@ public class NetworkTemplateListModel extends SearchableListModel
         }
 
         List<VmNetworkInterface> vnics = new ArrayList<VmNetworkInterface>();
-        for (Object item : getSelectedItems())
-        {
-            PairQueryable<VmNetworkInterface, VmTemplate> pair = (PairQueryable<VmNetworkInterface, VmTemplate>) item;
+        for (PairQueryable<VmNetworkInterface, VmTemplate> pair : getSelectedItems()) {
             vnics.add(pair.getFirst());
         }
         RemoveVmTemplateInterfaceModel model = new RemoveVmTemplateInterfaceModel(this, vnics, true);

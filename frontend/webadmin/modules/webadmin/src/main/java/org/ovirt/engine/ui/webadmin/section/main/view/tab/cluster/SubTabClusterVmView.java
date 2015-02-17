@@ -21,7 +21,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
 import com.google.gwt.core.client.GWT;
 
-public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, ClusterListModel, ClusterVmListModel>
+public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, ClusterListModel<Void>, ClusterVmListModel>
         implements SubTabClusterVmPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabClusterVmView> {
@@ -29,7 +29,7 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
     }
 
     @Inject
-    public SubTabClusterVmView(SearchableDetailModelProvider<VM, ClusterListModel, ClusterVmListModel> modelProvider, ApplicationConstants constants) {
+    public SubTabClusterVmView(SearchableDetailModelProvider<VM, ClusterListModel<Void>, ClusterVmListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         initTable(constants);
         initWidget(getTable());

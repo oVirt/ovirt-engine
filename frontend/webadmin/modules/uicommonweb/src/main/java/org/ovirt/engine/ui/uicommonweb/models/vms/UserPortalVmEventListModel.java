@@ -18,7 +18,7 @@ public class UserPortalVmEventListModel extends VmEventListModel {
             return;
         }
 
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
         super.syncSearch(VdcQueryType.GetAllAuditLogsByVMId, new IdQueryParameters(vm.getId()));
     }
 

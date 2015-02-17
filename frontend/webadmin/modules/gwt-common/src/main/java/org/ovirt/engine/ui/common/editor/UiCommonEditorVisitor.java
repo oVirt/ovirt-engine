@@ -33,13 +33,13 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
 
     private final UiCommonEventMap eventMap;
-    private final Map<String, EntityModel> ownerModels;
+    private final Map<String, Model> ownerModels;
     private int tabIndexCounter = 0;
 
     /**
      * A Visitor for UICommon Edited Models.
      */
-    public UiCommonEditorVisitor(UiCommonEventMap eventMap, Map<String, EntityModel> ownerModels) {
+    public UiCommonEditorVisitor(UiCommonEventMap eventMap, Map<String, Model> ownerModels) {
         this.eventMap = eventMap;
         this.ownerModels = ownerModels;
     }
@@ -95,7 +95,7 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
 
         // Handle owner entity models
         if (ownerModels.containsKey(absolutePath)) {
-            EntityModel ownerModel = ownerModels.get(absolutePath);
+            Model ownerModel = ownerModels.get(absolutePath);
 
             // If this editor edits a ListModel, initialize it
             if (editor instanceof TakesConstrainedValueEditor && ownerModel instanceof ListModel) {
@@ -107,7 +107,7 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
                 ownerModel.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
                     @Override
                     public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                        EntityModel ownerModel = (EntityModel) sender;
+                        Model ownerModel = (Model) sender;
                         String propName = args.propertyName;
 
                         // IsValid
@@ -210,7 +210,7 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
         }
     }
 
-    void onIsValidPropertyChange(HasValidation editor, EntityModel model) {
+    void onIsValidPropertyChange(HasValidation editor, Model model) {
         if (model.getIsValid()) {
             editor.markAsValid();
         } else {
@@ -218,7 +218,7 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
         }
     }
 
-    void onIsChangablePropertyChange(HasEnabledWithHints editor, EntityModel model) {
+    void onIsChangablePropertyChange(HasEnabledWithHints editor, Model model) {
         if (model.getIsChangable()) {
             editor.setEnabled(true);
         } else {
@@ -226,13 +226,13 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
         }
     }
 
-    void onChangeProhibitionReasonChange(HasEnabledWithHints editor, EntityModel model) {
+    void onChangeProhibitionReasonChange(HasEnabledWithHints editor, Model model) {
         if (!editor.isEnabled()) {
             editor.disable(model.getChangeProhibitionReason());
         }
     }
 
-    void onIsAvailablePropertyChange(HasAccess editor, EntityModel model) {
+    void onIsAvailablePropertyChange(HasAccess editor, Model model) {
         boolean isAvailable = model.getIsAvailable();
         editor.setAccessible(isAvailable);
     }

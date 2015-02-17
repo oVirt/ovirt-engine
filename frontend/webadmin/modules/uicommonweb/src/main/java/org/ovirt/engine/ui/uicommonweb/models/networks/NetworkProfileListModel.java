@@ -20,7 +20,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveVnicProfileModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class NetworkProfileListModel extends SearchableListModel
+public class NetworkProfileListModel extends SearchableListModel<NetworkView, VnicProfileView>
 {
     private UICommand newCommand;
     private UICommand editCommand;
@@ -84,7 +84,7 @@ public class NetworkProfileListModel extends SearchableListModel
         EditVnicProfileModel model =
                 new EditVnicProfileModel(this,
                         getEntity().getCompatibilityVersion(),
-                        (VnicProfileView) getSelectedItem(),
+                        getSelectedItem(),
                         getEntity().getDataCenterId());
         setWindow(model);
 
@@ -108,15 +108,6 @@ public class NetworkProfileListModel extends SearchableListModel
 
     public void cancel() {
         setWindow(null);
-    }
-
-    @Override
-    public NetworkView getEntity() {
-        return (NetworkView) ((super.getEntity() instanceof NetworkView) ? super.getEntity() : null);
-    }
-
-    public void setEntity(NetworkView value) {
-        super.setEntity(value);
     }
 
     @Override

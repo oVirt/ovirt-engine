@@ -15,7 +15,7 @@ import com.google.inject.Inject;
 public class CpuProfileListModel extends ProfileListModel<CpuProfile, CpuQos, VDSGroup> {
 
     @Inject
-    public CpuProfileListModel(final PermissionListModel<CpuProfileListModel> permissionListModel) {
+    public CpuProfileListModel(final PermissionListModel<CpuProfile> permissionListModel) {
         super(permissionListModel);
         setTitle(ConstantsManager.getInstance().getConstants().cpuProfileTitle());
         setHelpTag(HelpTag.cpu_profiles);
@@ -29,7 +29,7 @@ public class CpuProfileListModel extends ProfileListModel<CpuProfile, CpuQos, VD
 
     @Override
     protected ProfileBaseModel<CpuProfile, CpuQos, VDSGroup> getEditProfileModel() {
-        return new EditCpuProfileModel(this, (CpuProfile) getSelectedItem(), getStoragePoolId());
+        return new EditCpuProfileModel(this, getSelectedItem(), getStoragePoolId());
     }
 
     @Override
@@ -43,13 +43,8 @@ public class CpuProfileListModel extends ProfileListModel<CpuProfile, CpuQos, VD
     }
 
     @Override
-    protected VDSGroup getParentEntity() {
-        return (VDSGroup) getEntity();
-    }
-
-    @Override
     protected Guid getStoragePoolId() {
-        return getParentEntity() != null ? getParentEntity().getStoragePoolId() : null;
+        return getEntity() != null ? getEntity().getStoragePoolId() : null;
     }
 
     @Override

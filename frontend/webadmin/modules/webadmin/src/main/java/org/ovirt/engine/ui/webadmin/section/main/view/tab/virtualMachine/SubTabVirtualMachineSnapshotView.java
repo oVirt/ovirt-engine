@@ -19,7 +19,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabVirtualMachineSnapshotView extends AbstractSubTabTableWidgetView<VM, Snapshot, VmListModel, VmSnapshotListModel> implements SubTabVirtualMachineSnapshotPresenter.ViewDef {
+public class SubTabVirtualMachineSnapshotView extends AbstractSubTabTableWidgetView<VM, Snapshot, VmListModel<Void>, VmSnapshotListModel> implements SubTabVirtualMachineSnapshotPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabVirtualMachineSnapshotView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -27,7 +27,7 @@ public class SubTabVirtualMachineSnapshotView extends AbstractSubTabTableWidgetV
 
     @SuppressWarnings("unchecked")
     @Inject
-    public SubTabVirtualMachineSnapshotView(SearchableDetailModelProvider<Snapshot, VmListModel, VmSnapshotListModel> modelProvider,
+    public SubTabVirtualMachineSnapshotView(SearchableDetailModelProvider<Snapshot, VmListModel<Void>, VmSnapshotListModel> modelProvider,
             EventBus eventBus,
             ClientStorage clientStorage,
             CommonApplicationConstants constants,

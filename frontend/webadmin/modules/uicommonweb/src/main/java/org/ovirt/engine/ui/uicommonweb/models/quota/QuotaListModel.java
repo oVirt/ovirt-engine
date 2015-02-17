@@ -28,9 +28,9 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
-import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -45,7 +45,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 import com.google.inject.Inject;
 
-public class QuotaListModel extends ListWithDetailsModel implements ISupportSystemTreeContext {
+public class QuotaListModel<E> extends ListWithSimpleDetailsModel<E, Quota> implements ISupportSystemTreeContext {
 
     private static final String COPY_OF = "Copy_of_"; //$NON-NLS-1$
 
@@ -109,7 +109,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
             final QuotaStorageListModel quotaStorageListModel, final QuotaVmListModel quotaVmListModel,
             final QuotaTemplateListModel quotaTemplateListModel, final QuotaUserListModel quotaUserListModel,
             final QuotaPermissionListModel quotaPermissionListModel, final QuotaEventListModel quotaEventListModel) {
-        List<EntityModel> list = new ArrayList<EntityModel>();
+        List<HasEntity<Quota>> list = new ArrayList<>();
         list.add(quotaClusterListModel);
         list.add(quotaStorageListModel);
         list.add(quotaVmListModel);
@@ -280,7 +280,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         if (!model.validate()) {
             return;
         }
-        Quota quota = (Quota) model.getEntity();
+        Quota quota = model.getEntity();
         quota.setQuotaName(model.getName().getEntity());
         quota.setDescription(model.getDescription().getEntity());
         quota.setStoragePoolId(model.getDataCenter().getSelectedItem().getId());
@@ -292,7 +292,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
         if (model.getGlobalClusterQuota().getEntity()) {
             QuotaVdsGroup quotaVdsGroup;
-            for (QuotaVdsGroup iter : (ArrayList<QuotaVdsGroup>) model.getQuotaClusters().getItems()) {
+            for (QuotaVdsGroup iter : model.getQuotaClusters().getItems()) {
                 quota.setGlobalQuotaVdsGroup(new QuotaVdsGroup());
                 quota.getGlobalQuotaVdsGroup().setMemSizeMB(iter.getMemSizeMB());
                 quota.getGlobalQuotaVdsGroup().setVirtualCpu(iter.getVirtualCpu());
@@ -302,7 +302,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
             quota.setGlobalQuotaVdsGroup(null);
             ArrayList<QuotaVdsGroup> quotaClusterList = new ArrayList<QuotaVdsGroup>();
             QuotaVdsGroup quotaVdsGroup;
-            for (QuotaVdsGroup iter : (ArrayList<QuotaVdsGroup>) model.getAllDataCenterClusters().getItems()) {
+            for (QuotaVdsGroup iter : model.getAllDataCenterClusters().getItems()) {
                 quotaVdsGroup = iter;
                 if (quotaVdsGroup.getMemSizeMB() != null) {
                     quotaClusterList.add(quotaVdsGroup);
@@ -313,7 +313,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
         if (model.getGlobalStorageQuota().getEntity()) {
             QuotaStorage quotaStorage;
-            for (QuotaStorage iter : (ArrayList<QuotaStorage>) model.getQuotaStorages().getItems()) {
+            for (QuotaStorage iter : model.getQuotaStorages().getItems()) {
                 quota.setGlobalQuotaStorage(new QuotaStorage());
                 quota.getGlobalQuotaStorage().setStorageSizeGB(iter.getStorageSizeGB());
                 quota.getQuotaStorages().clear();
@@ -322,7 +322,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
             quota.setGlobalQuotaStorage(null);
             ArrayList<QuotaStorage> quotaStorageList = new ArrayList<QuotaStorage>();
             QuotaStorage quotaStorage;
-            for (QuotaStorage iter : (ArrayList<QuotaStorage>) model.getAllDataCenterStorages().getItems()) {
+            for (QuotaStorage iter : model.getAllDataCenterStorages().getItems()) {
                 quotaStorage = iter;
                 if (quotaStorage.getStorageSizeGB() != null) {
                     quotaStorageList.add(quotaStorage);
@@ -360,7 +360,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
     private boolean hasUnlimitedSpecificQuota() {
         QuotaModel model = (QuotaModel) getWindow();
         if (model.getSpecificClusterQuota().getEntity()) {
-            for (QuotaVdsGroup quotaVdsGroup : (ArrayList<QuotaVdsGroup>) model.getAllDataCenterClusters().getItems()) {
+            for (QuotaVdsGroup quotaVdsGroup : model.getAllDataCenterClusters().getItems()) {
                 if (QuotaVdsGroup.UNLIMITED_MEM.equals(quotaVdsGroup.getMemSizeMB())
                         || QuotaVdsGroup.UNLIMITED_VCPU.equals(quotaVdsGroup.getVirtualCpu())) {
                     return true;
@@ -369,7 +369,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         }
 
         if (model.getSpecificStorageQuota().getEntity()) {
-            for (QuotaStorage quotaStorage : (ArrayList<QuotaStorage>) model.getAllDataCenterStorages().getItems()) {
+            for (QuotaStorage quotaStorage : model.getAllDataCenterStorages().getItems()) {
                 if (QuotaStorage.UNLIMITED.equals(quotaStorage.getStorageSizeGB())) {
                     return true;
                 }
@@ -379,7 +379,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
     }
 
     private void editQuota(boolean isClone) {
-        Quota outer_quota = (Quota) getSelectedItem();
+        Quota outer_quota = getSelectedItem();
         final QuotaModel qModel = new QuotaModel();
         qModel.getName().setEntity(outer_quota.getQuotaName());
 
@@ -421,7 +421,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                final Quota quota = (Quota) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                final Quota quota = ((VdcQueryReturnValue) returnValue).getReturnValue();
                 qModel.setEntity(quota);
                 if (quota.getGlobalQuotaVdsGroup() != null) {
                     QuotaVdsGroup cluster =

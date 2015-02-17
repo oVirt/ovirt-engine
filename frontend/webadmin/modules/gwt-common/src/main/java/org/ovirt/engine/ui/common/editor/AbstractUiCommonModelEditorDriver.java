@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.editor;
 
 import java.util.Map;
 
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -98,6 +97,6 @@ public abstract class AbstractUiCommonModelEditorDriver<T extends Model, E exten
      *
      * @return
      */
-    protected abstract Map<String, EntityModel> getOwnerModels();
+    protected abstract Map<String, Model> getOwnerModels();
 
 }

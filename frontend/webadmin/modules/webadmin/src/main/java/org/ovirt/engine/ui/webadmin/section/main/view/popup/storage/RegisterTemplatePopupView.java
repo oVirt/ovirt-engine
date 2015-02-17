@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -14,12 +15,15 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.Registe
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class RegisterTemplatePopupView extends RegisterEntityPopupView
+public class RegisterTemplatePopupView extends RegisterEntityPopupView<VmTemplate>
         implements RegisterTemplatePopupPresenterWidget.ViewDef {
 
+    interface Driver extends SimpleBeanEditorDriver<RegisterEntityModel<VmTemplate>, RegisterEntityPopupView<VmTemplate>> {
+    }
+
     @Inject
-    public RegisterTemplatePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources, constants);
+    public RegisterTemplatePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, Driver driver) {
+        super(eventBus, resources, constants, driver);
     }
 
     private VmTemplate getEntity(Object object) {
@@ -89,18 +93,18 @@ public class RegisterTemplatePopupView extends RegisterEntityPopupView
     }
 
     @Override
-    protected void createInfoPanel(RegisterEntityModel model) {
+    protected void createInfoPanel(RegisterEntityModel<VmTemplate> model) {
         registerEntityInfoPanel = new RegisterTemplateInfoPanel(model);
         entityInfoContainer.add(registerEntityInfoPanel);
     }
 
     @Override
-    public void edit(RegisterEntityModel object) {
+    public void edit(RegisterEntityModel<VmTemplate> object) {
         super.edit(object);
     }
 
     @Override
-    public RegisterEntityModel flush() {
+    public RegisterEntityModel<VmTemplate> flush() {
         return super.flush();
     }
 }

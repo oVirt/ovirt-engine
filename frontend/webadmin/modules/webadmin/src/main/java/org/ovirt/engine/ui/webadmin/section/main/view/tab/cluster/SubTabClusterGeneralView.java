@@ -36,7 +36,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, ClusterListModel, ClusterGeneralModel>
+public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, ClusterListModel<Void>, ClusterGeneralModel>
         implements SubTabClusterGeneralPresenter.ViewDef, Editor<ClusterGeneralModel> {
 
     interface Driver extends SimpleBeanEditorDriver<ClusterGeneralModel, SubTabClusterGeneralView> {
@@ -85,7 +85,7 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
     private final ApplicationConstants constants;
 
     @Inject
-    public SubTabClusterGeneralView(final DetailModelProvider<ClusterListModel, ClusterGeneralModel> modelProvider,
+    public SubTabClusterGeneralView(final DetailModelProvider<ClusterListModel<Void>, ClusterGeneralModel> modelProvider,
             ApplicationResources resources, ApplicationConstants constants) {
         super(modelProvider);
         this.constants = constants;

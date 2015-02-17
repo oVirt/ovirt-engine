@@ -8,8 +8,8 @@ import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ImportFcpStorageModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -95,7 +95,7 @@ public class ImportFcpStorageView extends AbstractStorageView<ImportFcpStorageMo
         storageDomainsTable.addColumn(storageIdColumn, constants.storageIdVgName(), "50%"); //$NON-NLS-1$
     }
 
-    private void onIsValidPropertyChange(EntityModel model) {
+    private void onIsValidPropertyChange(Model model) {
         if (model.getIsValid()) {
             markAsValid();
         } else {

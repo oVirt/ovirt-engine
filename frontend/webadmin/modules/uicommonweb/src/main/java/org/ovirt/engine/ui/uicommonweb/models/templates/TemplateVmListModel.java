@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -18,18 +19,13 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class TemplateVmListModel extends VmListModel {
-
-    @Override
-    public VmTemplate getEntity() {
-        return (VmTemplate) ((super.getEntity() instanceof VmTemplate) ? super.getEntity() : null);
-    }
+public class TemplateVmListModel extends VmListModel<VmTemplate> {
 
     @Inject
     public TemplateVmListModel(final VmGeneralModel vmGeneralModel, final VmInterfaceListModel vmInterfaceListModel,
             final VmDiskListModel vmDiskListModel, final VmSnapshotListModel vmSnapshotListModel,
-            final VmEventListModel vmEventListModel, final VmAppListModel vmAppListModel,
-            final PermissionListModel<VmListModel> permissionListModel,
+            final VmEventListModel vmEventListModel, final VmAppListModel<VM> vmAppListModel,
+            final PermissionListModel<VM> permissionListModel,
             final VmAffinityGroupListModel vmAffinityGroupListModel, final VmSessionsModel vmSessionsModel,
             Provider<ImportVmsModel> importVmsModelProvider) {
         super(vmGeneralModel, vmInterfaceListModel, vmDiskListModel, vmSnapshotListModel, vmEventListModel,

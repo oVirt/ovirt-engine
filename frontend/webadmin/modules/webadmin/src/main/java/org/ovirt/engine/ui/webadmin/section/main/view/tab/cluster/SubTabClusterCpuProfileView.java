@@ -18,7 +18,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabClusterCpuProfileView extends AbstractSubTabTableWidgetView<VDSGroup, CpuProfile, ClusterListModel, CpuProfileListModel>
+public class SubTabClusterCpuProfileView extends AbstractSubTabTableWidgetView<VDSGroup, CpuProfile, ClusterListModel<Void>, CpuProfileListModel>
         implements SubTabClusterCpuProfilePresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabClusterCpuProfileView> {
@@ -26,7 +26,7 @@ public class SubTabClusterCpuProfileView extends AbstractSubTabTableWidgetView<V
     }
 
     @Inject
-    public SubTabClusterCpuProfileView(SearchableDetailModelProvider<CpuProfile, ClusterListModel, CpuProfileListModel> modelProvider,
+    public SubTabClusterCpuProfileView(SearchableDetailModelProvider<CpuProfile, ClusterListModel<Void>, CpuProfileListModel> modelProvider,
             CpuProfilePermissionModelProvider permissionModelProvider,
             EventBus eventBus,
             ClientStorage clientStorage,

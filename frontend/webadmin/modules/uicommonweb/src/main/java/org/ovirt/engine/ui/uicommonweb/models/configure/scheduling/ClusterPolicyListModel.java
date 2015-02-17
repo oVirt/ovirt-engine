@@ -20,9 +20,9 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui.RoleListModel.CommandType;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -31,7 +31,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.inject.Inject;
 
-public class ClusterPolicyListModel extends ListWithDetailsModel {
+public class ClusterPolicyListModel extends ListWithSimpleDetailsModel<Object, ClusterPolicy> {
     public static final String COPY_OF = "Copy_of_"; //$NON-NLS-1$
     private ManagePolicyUnitModel policyUnitModel;
     private ArrayList<PolicyUnit> policyUnits;
@@ -58,14 +58,14 @@ public class ClusterPolicyListModel extends ListWithDetailsModel {
     }
 
     private void setDetailList(final ClusterPolicyClusterListModel clusterPolicyClusterListModel) {
-        List<EntityModel> list = new ArrayList<EntityModel>();
+        List<HasEntity<ClusterPolicy>> list = new ArrayList<>();
         list.add(clusterPolicyClusterListModel);
 
         setDetailModels(list);
     }
 
     public List<PolicyUnit> getBalancePolicyUnits() {
-        ArrayList<PolicyUnit> list = new ArrayList<PolicyUnit>();
+        ArrayList<PolicyUnit> list = new ArrayList<>();
         for (PolicyUnit policyUnit : getPolicyUnits()) {
             if (policyUnit.getPolicyUnitType() == PolicyUnitType.LOAD_BALANCING) {
                 list.add(policyUnit);
@@ -76,7 +76,7 @@ public class ClusterPolicyListModel extends ListWithDetailsModel {
     }
 
     public ArrayList<PolicyUnit> getFilterPolicyUnits() {
-        ArrayList<PolicyUnit> list = new ArrayList<PolicyUnit>();
+        ArrayList<PolicyUnit> list = new ArrayList<>();
         for (PolicyUnit policyUnit : getPolicyUnits()) {
             if (policyUnit.getPolicyUnitType() == PolicyUnitType.FILTER) {
                 list.add(policyUnit);
@@ -134,11 +134,10 @@ public class ClusterPolicyListModel extends ListWithDetailsModel {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                ClusterPolicyListModel clusterPolicyListModel = (ClusterPolicyListModel) model;
                 ArrayList<ClusterPolicy> list =
                         (ArrayList<ClusterPolicy>) ((VdcQueryReturnValue) returnValue).getReturnValue();
                 Collections.sort(list, new Linq.ClusterPolicyComparator());
-                clusterPolicyListModel.setItems(list);
+                setItems(list);
             }
         });
 
@@ -227,7 +226,7 @@ public class ClusterPolicyListModel extends ListWithDetailsModel {
             return;
         }
 
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         for (ClusterPolicy item : Linq.<ClusterPolicy> cast(getSelectedItems())) {
             list.add(item.getName());
         }

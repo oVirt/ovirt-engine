@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
-public class VmDiskListModelBase extends SearchableListModel
+public class VmDiskListModelBase<E> extends SearchableListModel<E, Disk>
 {
     private EntityModel<DiskStorageType> diskViewType;
 
@@ -32,7 +32,7 @@ public class VmDiskListModelBase extends SearchableListModel
 
     @SuppressWarnings("rawtypes")
     @Override
-    public void setItems(Collection value)
+    public void setItems(Collection<Disk> value)
     {
         ArrayList<Disk> disks = value != null ? Linq.<Disk> cast(value) : new ArrayList<Disk>();
         ArrayList<Disk> filteredDisks = new ArrayList<Disk>();

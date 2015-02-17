@@ -9,16 +9,16 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ImportEntityData extends EntityModel {
+public abstract class ImportEntityData<E> extends EntityModel<E> {
     boolean isExistsInSystem;
-    private EntityModel clone;
+    private EntityModel<Boolean> clone;
     private ListModel<VDSGroup> cluster;
     private ListModel<Quota> clusterQuota;
 
     public ImportEntityData() {
-        setClone(new EntityModel(false));
-        setCluster(new ListModel());
-        setClusterQuota(new ListModel());
+        setClone(new EntityModel<>(false));
+        setCluster(new ListModel<VDSGroup>());
+        setClusterQuota(new ListModel<Quota>());
     }
 
     public boolean isExistsInSystem() {
@@ -29,11 +29,11 @@ public abstract class ImportEntityData extends EntityModel {
         this.isExistsInSystem = isExistsInSystem;
     }
 
-    public EntityModel getClone() {
+    public EntityModel<Boolean> getClone() {
         return clone;
     }
 
-    public void setClone(EntityModel clone) {
+    public void setClone(EntityModel<Boolean> clone) {
         this.clone = clone;
     }
 

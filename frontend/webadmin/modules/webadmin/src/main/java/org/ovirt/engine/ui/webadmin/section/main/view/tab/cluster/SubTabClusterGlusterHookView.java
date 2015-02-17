@@ -24,7 +24,7 @@ import com.google.gwt.core.client.GWT;
 
 public class SubTabClusterGlusterHookView
         extends
-        AbstractSubTabTableView<VDSGroup, GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel>
+        AbstractSubTabTableView<VDSGroup, GlusterHookEntity, ClusterListModel<Void>, ClusterGlusterHookListModel>
         implements SubTabClusterGlusterHookPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabClusterGlusterHookView> {
@@ -33,7 +33,7 @@ public class SubTabClusterGlusterHookView
 
     @Inject
     public SubTabClusterGlusterHookView(
-            SearchableDetailModelProvider<GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel> modelProvider,
+            SearchableDetailModelProvider<GlusterHookEntity, ClusterListModel<Void>, ClusterGlusterHookListModel> modelProvider,
             ApplicationConstants constants) {
         super(modelProvider);
         initTable(constants);

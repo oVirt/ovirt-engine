@@ -19,13 +19,13 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
 
-    private final SearchableListModel<?> sourceListModel;
+    private final SearchableListModel<?, ?> sourceListModel;
     private final UICommand okCommand;
     private final UICommand cancelCommand;
     private ClusterNetworkModel managementNetwork;
     private boolean needsAnyChange;
 
-    public ClusterNetworkManageModel(SearchableListModel<?> sourceListModel) {
+    public ClusterNetworkManageModel(SearchableListModel<?, ?> sourceListModel) {
         this.sourceListModel = sourceListModel;
 
         cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$

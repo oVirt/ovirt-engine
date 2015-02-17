@@ -23,7 +23,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabVirtualMachineAffinityGroupPresenter extends AbstractSubTabPresenter<VM, VmListModel, VmAffinityGroupListModel, SubTabVirtualMachineAffinityGroupPresenter.ViewDef, SubTabVirtualMachineAffinityGroupPresenter.ProxyDef> {
+public class SubTabVirtualMachineAffinityGroupPresenter extends AbstractSubTabPresenter<VM, VmListModel<Void>, VmAffinityGroupListModel, SubTabVirtualMachineAffinityGroupPresenter.ViewDef, SubTabVirtualMachineAffinityGroupPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.virtualMachineAffinityGroupsSubTabPlace)
@@ -35,14 +35,14 @@ public class SubTabVirtualMachineAffinityGroupPresenter extends AbstractSubTabPr
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<AffinityGroup, VmListModel, VmAffinityGroupListModel> modelProvider) {
+            SearchableDetailModelProvider<AffinityGroup, VmListModel<Void>, VmAffinityGroupListModel> modelProvider) {
         return new ModelBoundTabData(applicationConstants.affinityGroupSubTabLabel(), 6, modelProvider);
     }
 
     @Inject
     public SubTabVirtualMachineAffinityGroupPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<AffinityGroup, VmListModel, VmAffinityGroupListModel> modelProvider) {
+            SearchableDetailModelProvider<AffinityGroup, VmListModel<Void>, VmAffinityGroupListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
     }

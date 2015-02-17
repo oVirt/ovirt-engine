@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.BrickStatusColumn;
 
 import com.google.gwt.core.client.GWT;
 
-public class SubTabHostBrickView extends AbstractSubTabTableView<VDS, GlusterBrickEntity, HostListModel, HostBricksListModel>
+public class SubTabHostBrickView extends AbstractSubTabTableView<VDS, GlusterBrickEntity, HostListModel<Void>, HostBricksListModel>
         implements SubTabHostBrickPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabHostBrickView> {
@@ -24,7 +24,7 @@ public class SubTabHostBrickView extends AbstractSubTabTableView<VDS, GlusterBri
     }
 
     @Inject
-    public SubTabHostBrickView(SearchableDetailModelProvider<GlusterBrickEntity, HostListModel, HostBricksListModel> modelProvider, ApplicationConstants constants) {
+    public SubTabHostBrickView(SearchableDetailModelProvider<GlusterBrickEntity, HostListModel<Void>, HostBricksListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         initTable(constants);
         initWidget(getTable());

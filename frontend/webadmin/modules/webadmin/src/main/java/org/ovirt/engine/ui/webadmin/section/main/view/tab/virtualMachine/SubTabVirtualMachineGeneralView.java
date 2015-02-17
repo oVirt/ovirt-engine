@@ -24,7 +24,7 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SubTabVirtualMachineGeneralView extends AbstractSubTabFormView<VM, VmListModel, VmGeneralModel> implements SubTabVirtualMachineGeneralPresenter.ViewDef, Editor<VmGeneralModel> {
+public class SubTabVirtualMachineGeneralView extends AbstractSubTabFormView<VM, VmListModel<Void>, VmGeneralModel> implements SubTabVirtualMachineGeneralPresenter.ViewDef, Editor<VmGeneralModel> {
 
     interface ViewUiBinder extends UiBinder<Widget, SubTabVirtualMachineGeneralView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -54,7 +54,7 @@ public class SubTabVirtualMachineGeneralView extends AbstractSubTabFormView<VM, 
     FlowPanel alertsList;
 
     @Inject
-    public SubTabVirtualMachineGeneralView(DetailModelProvider<VmListModel, VmGeneralModel> modelProvider, ApplicationConstants constants) {
+    public SubTabVirtualMachineGeneralView(DetailModelProvider<VmListModel<Void>, VmGeneralModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         this.form = new VmGeneralModelForm(modelProvider, constants);
 

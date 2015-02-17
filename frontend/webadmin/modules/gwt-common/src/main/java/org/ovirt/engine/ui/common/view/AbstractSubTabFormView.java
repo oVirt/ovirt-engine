@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.common.view;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.ActionTable;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 
 /**
@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
  * @param <D>
  *            Detail model type.
  */
-public abstract class AbstractSubTabFormView<T, M extends ListWithDetailsModel, D extends EntityModel> extends AbstractView implements AbstractSubTabPresenter.ViewDef<T> {
+public abstract class AbstractSubTabFormView<T, M extends ListWithDetailsModel, D extends HasEntity<?>> extends AbstractView implements AbstractSubTabPresenter.ViewDef<T> {
 
     private final DetailModelProvider<M, D> modelProvider;
 

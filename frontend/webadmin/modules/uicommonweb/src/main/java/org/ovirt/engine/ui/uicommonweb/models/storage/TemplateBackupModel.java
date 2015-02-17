@@ -13,11 +13,9 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
@@ -189,11 +187,11 @@ public class TemplateBackupModel extends VmBackupModel
             ImportVmTemplateParameters importVmTemplateParameters =
                     new ImportVmTemplateParameters(model.getStoragePool().getId(),
                             getEntity().getId(), Guid.Empty,
-                            ((VDSGroup) model.getCluster().getSelectedItem()).getId(),
+                            model.getCluster().getSelectedItem().getId(),
                             template);
             if (importModel.getClusterQuota().getSelectedItem() != null &&
                     importModel.getClusterQuota().getIsAvailable()) {
-                importVmTemplateParameters.setQuotaId(((Quota) importModel.getClusterQuota().getSelectedItem()).getId());
+                importVmTemplateParameters.setQuotaId(importModel.getClusterQuota().getSelectedItem().getId());
             }
 
             CpuProfile cpuProfile = importModel.getCpuProfiles().getSelectedItem();
@@ -212,7 +210,7 @@ public class TemplateBackupModel extends VmBackupModel
 
             importVmTemplateParameters.setImageToDestinationDomainMap(map);
 
-            if (importData.isExistsInSystem() || (Boolean) importData.getClone().getEntity()) {
+            if (importData.isExistsInSystem() || importData.getClone().getEntity()) {
                 if (!cloneObjectMap.containsKey(template.getId())) {
                     continue;
                 }
@@ -313,12 +311,10 @@ public class TemplateBackupModel extends VmBackupModel
                             @Override
                             public void onSuccess(Object model1, Object ReturnValue1)
                             {
-                                TemplateBackupModel backupModel1 = (TemplateBackupModel) model1;
                                 ArrayList<Map.Entry<VmTemplate, List<DiskImage>>> items =
                                         new ArrayList<Map.Entry<VmTemplate, List<DiskImage>>>();
-                                HashMap<VmTemplate, List<DiskImage>> dictionary =
-                                        (HashMap<VmTemplate, List<DiskImage>>) ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
-                                ArrayList<VmTemplate> list = new ArrayList<VmTemplate>();
+                                HashMap<VmTemplate, List<DiskImage>> dictionary = ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
+                                ArrayList<VmTemplate> list = new ArrayList<>();
                                 for (Map.Entry<VmTemplate, List<DiskImage>> item : dictionary.entrySet())
                                 {
                                     items.add(item);
@@ -328,7 +324,7 @@ public class TemplateBackupModel extends VmBackupModel
                                     list.add(template);
                                 }
                                 Collections.sort(list, new Linq.VmTemplateComparator());
-                                backupModel1.setItems(list);
+                                setItems((ArrayList) list);
                                 TemplateBackupModel.this.extendedItems = items;
                             }
                         };

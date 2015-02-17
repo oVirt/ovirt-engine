@@ -52,6 +52,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleModelsCache;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
@@ -232,7 +233,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     private final VmInterfaceListModel vmInterfaceListModel;
     private final UserPortalPermissionListModel permissionListModel;
     private final UserPortalVmEventListModel vmEventListModel;
-    private final VmAppListModel vmAppListModel;
+    private final VmAppListModel<VM> vmAppListModel;
     private final PoolGeneralModel poolGeneralModel;
     private final PoolDiskListModel poolDiskListModel;
     private final PoolInterfaceListModel poolInterfaceListModel;
@@ -290,7 +291,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             final UserPortalVmSnapshotListModel userPortalVmSnapshotListModel, final VmMonitorModel vmMonitorModel,
             final VmDiskListModel vmDiskListModel, final VmInterfaceListModel vmInterfaceListModel,
             final UserPortalPermissionListModel userPortalPermissionListModel,
-            final UserPortalVmEventListModel userPortalVmEventListModel, final VmAppListModel vmAppListModel,
+            final UserPortalVmEventListModel userPortalVmEventListModel, final VmAppListModel<VM> vmAppListModel,
             final PoolGeneralModel poolGeneralModel, final PoolDiskListModel poolDiskListModel,
             final PoolInterfaceListModel poolInterfaceListModel) {
         this.vmGeneralModel = vmGeneralModel;
@@ -339,7 +340,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         vmAppListModel.setIsAvailable(true);
         vmSessionsModel.setIsAvailable(true);
 
-        List<EntityModel> list = new ArrayList<EntityModel>();
+        List<HasEntity<? /* extends VmOrPool */>> list = new ArrayList<>();
         list.add(vmGeneralModel);
         list.add(poolGeneralModel);
         list.add(vmInterfaceListModel);
@@ -353,7 +354,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         list.add(vmMonitorModel);
         list.add(vmSessionsModel);
 
-        setDetailModels(list);
+        setDetailModels((List) list);
     }
 
     @Override
@@ -414,22 +415,6 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                         userPortalListModel.onVmAndPoolLoad();
                     }
                 }));
-    }
-
-    @Override
-    protected Object provideDetailModelEntity(Object selectedItem)
-    {
-        // Each item in this list model is not a business entity,
-        // therefore select an Entity property to provide it to
-        // the detail models.
-
-        EntityModel model = (EntityModel) selectedItem;
-        if (model == null)
-        {
-            return null;
-        }
-
-        return model.getEntity();
     }
 
     @Override

@@ -74,7 +74,7 @@ public class HostModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MainModelProvider<VDS, HostListModel> getHostListProvider(EventBus eventBus,
+    public MainModelProvider<VDS, HostListModel<Void>> getHostListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<HostPopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
@@ -84,13 +84,13 @@ public class HostModule extends AbstractGinModule {
             final Provider<ConfigureLocalStoragePopupPresenterWidget> configureLocalStoragePopupProvider,
             final Provider<HostInstallPopupPresenterWidget> installPopupProvider,
             final Provider<NumaSupportPopupPresenterWidget> numaSupportPopupProvider,
-            final Provider<HostListModel> modelProvider,
+            final Provider<HostListModel<Void>> modelProvider,
             final Provider<CommonModel> commonModelProvider) {
-        MainTabModelProvider<VDS, HostListModel> result =
-                new MainTabModelProvider<VDS, HostListModel>(eventBus, defaultConfirmPopupProvider,
+        MainTabModelProvider<VDS, HostListModel<Void>> result =
+                new MainTabModelProvider<VDS, HostListModel<Void>>(eventBus, defaultConfirmPopupProvider,
                         commonModelProvider) {
                     @Override
-                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostListModel source,
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostListModel<Void> source,
                             UICommand lastExecutedCommand, Model windowModel) {
                         if (lastExecutedCommand == getModel().getNewCommand()
                                 || lastExecutedCommand == getModel().getEditCommand()
@@ -111,7 +111,7 @@ public class HostModule extends AbstractGinModule {
                     }
 
                     @Override
-                    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(HostListModel source,
+                    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(HostListModel<Void> source,
                             UICommand lastExecutedCommand) {
                         if (lastExecutedCommand == getModel().getRemoveCommand()) {
                             return removeConfirmPopupProvider.get();
@@ -139,12 +139,12 @@ public class HostModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public DetailModelProvider<HostListModel, HostGeneralModel> getHostGeneralProvider(EventBus eventBus,
+    public DetailModelProvider<HostListModel<Void>, HostGeneralModel> getHostGeneralProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            final Provider<HostListModel> mainModelProvider,
+            final Provider<HostListModel<Void>> mainModelProvider,
             final Provider<HostGeneralModel> modelProvider) {
-        DetailTabModelProvider<HostListModel, HostGeneralModel> result =
-                new DetailTabModelProvider<HostListModel, HostGeneralModel>(
+        DetailTabModelProvider<HostListModel<Void>, HostGeneralModel> result =
+                new DetailTabModelProvider<HostListModel<Void>, HostGeneralModel>(
                         eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostGeneralModel source,
@@ -161,7 +161,7 @@ public class HostModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel> getHostInterfaceListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel<Void>, HostInterfaceListModel> getHostInterfaceListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<DetachConfirmationPopupPresenterWidget> detachConfirmPopupProvider,
             final Provider<HostManagementConfirmationPopupPresenterWidget> hostManagementConfirmationdetachConfirmPopupProvider,
@@ -173,10 +173,10 @@ public class HostModule extends AbstractGinModule {
             final Provider<SetupNetworksBondPopupPresenterWidget> setupNetworksBondPopupProvider,
             final Provider<HostNicPopupPresenterWidget> hostNicPopupProvider,
             final Provider<HostSetupNetworksPopupPresenterWidget> hostSetupNetworksPopupProvider,
-            final Provider<HostListModel> mainModelProvider,
+            final Provider<HostListModel<Void>> mainModelProvider,
             final Provider<HostInterfaceListModel> modelProvider) {
-        SearchableDetailTabModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel> result =
-                new SearchableDetailTabModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel>(
+        SearchableDetailTabModelProvider<HostInterfaceLineModel, HostListModel<Void>, HostInterfaceListModel> result =
+                new SearchableDetailTabModelProvider<HostInterfaceLineModel, HostListModel<Void>, HostInterfaceListModel>(
                         eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(HostInterfaceListModel source,
@@ -244,13 +244,13 @@ public class HostModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<VM, HostListModel, HostVmListModel> getHostVmListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<VM, HostListModel<Void>, HostVmListModel> getHostVmListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VmMigratePopupPresenterWidget> migratePopupProvider,
-            final Provider<HostListModel> mainModelProvider,
+            final Provider<HostListModel<Void>> mainModelProvider,
             final Provider<HostVmListModel> modelProvider) {
-        SearchableDetailTabModelProvider<VM, HostListModel, HostVmListModel> result =
-                new SearchableDetailTabModelProvider<VM, HostListModel, HostVmListModel>(
+        SearchableDetailTabModelProvider<VM, HostListModel<Void>, HostVmListModel> result =
+                new SearchableDetailTabModelProvider<VM, HostListModel<Void>, HostVmListModel>(
                         eventBus, defaultConfirmPopupProvider) {
 
                     @Override
@@ -269,13 +269,13 @@ public class HostModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<AuditLog, HostListModel, HostEventListModel> getHostEventListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<AuditLog, HostListModel<Void>, HostEventListModel> getHostEventListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<EventPopupPresenterWidget> eventPopupProvider,
-            final Provider<HostListModel> mainModelProvider,
+            final Provider<HostListModel<Void>> mainModelProvider,
             final Provider<HostEventListModel> modelProvider) {
-        SearchableDetailTabModelProvider<AuditLog, HostListModel, HostEventListModel> result =
-                new SearchableDetailTabModelProvider<AuditLog, HostListModel, HostEventListModel>(
+        SearchableDetailTabModelProvider<AuditLog, HostListModel<Void>, HostEventListModel> result =
+                new SearchableDetailTabModelProvider<AuditLog, HostListModel<Void>, HostEventListModel>(
                         eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostEventListModel source,
@@ -295,7 +295,7 @@ public class HostModule extends AbstractGinModule {
 
     @Override
     protected void configure() {
-        bind(HostListModel.class).in(Singleton.class);
+        bind(new TypeLiteral<HostListModel<Void>>() {}).in(Singleton.class);
         bind(HostGeneralModel.class).in(Singleton.class);
         bind(HostHardwareGeneralModel.class).in(Singleton.class);
         bind(HostHooksListModel.class).in(Singleton.class);
@@ -304,25 +304,26 @@ public class HostModule extends AbstractGinModule {
         bind(HostVmListModel.class).in(Singleton.class);
         bind(HostGlusterSwiftListModel.class).in(Singleton.class);
         bind(HostEventListModel.class).in(Singleton.class);
-        bind(new TypeLiteral<PermissionListModel<HostListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<VDS>>(){}).in(Singleton.class);
 
         // Form Detail Models
-        bind(new TypeLiteral<DetailModelProvider<HostListModel, HostHardwareGeneralModel>>(){})
-            .to(new TypeLiteral<DetailTabModelProvider<HostListModel, HostHardwareGeneralModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<DetailModelProvider<HostListModel<Void>, HostHardwareGeneralModel>>(){})
+            .to(new TypeLiteral<DetailTabModelProvider<HostListModel<Void>, HostHardwareGeneralModel>>(){}).in(Singleton.class);
 
         // Search-able Detail Models
-        bind(new TypeLiteral<SearchableDetailModelProvider<Map<String, String>, HostListModel, HostHooksListModel>>(){})
-            .to(new TypeLiteral<SearchableDetailTabModelProvider<Map<String, String>, HostListModel, HostHooksListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<Map<String, String>, HostListModel<Void>, HostHooksListModel>>(){})
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<Map<String, String>, HostListModel<Void>, HostHooksListModel>>(){})
             .in(Singleton.class);
-        bind(new TypeLiteral<SearchableDetailModelProvider<GlusterBrickEntity, HostListModel, HostBricksListModel>>(){})
-            .to(new TypeLiteral<SearchableDetailTabModelProvider<GlusterBrickEntity, HostListModel, HostBricksListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<GlusterBrickEntity, HostListModel<Void>, HostBricksListModel>>(){})
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<GlusterBrickEntity, HostListModel<Void>, HostBricksListModel>>(){})
             .in(Singleton.class);
-        bind(new TypeLiteral<SearchableDetailModelProvider<GlusterServerService, HostListModel, HostGlusterSwiftListModel>>(){})
-            .to(new TypeLiteral<SearchableDetailTabModelProvider<GlusterServerService, HostListModel, HostGlusterSwiftListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<GlusterServerService, HostListModel<Void>, HostGlusterSwiftListModel>>(){})
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<GlusterServerService, HostListModel<Void>, HostGlusterSwiftListModel>>(){})
             .in(Singleton.class);
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, HostListModel, PermissionListModel<HostListModel>>>(){})
-            .to(new TypeLiteral<PermissionModelProvider<HostListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, HostListModel<Void>, PermissionListModel<VDS>>>(){})
+            .to(new TypeLiteral<PermissionModelProvider<VDS, HostListModel<Void>>>() {
+            }).in(Singleton.class);
     }
 
 }

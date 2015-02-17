@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.pools;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -12,7 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class PoolInterfaceListModel extends SearchableListModel
+public class PoolInterfaceListModel extends SearchableListModel<VmPool, VmNetworkInterface>
 {
     public PoolInterfaceListModel()
     {
@@ -26,7 +27,7 @@ public class PoolInterfaceListModel extends SearchableListModel
     {
         super.onEntityChanged();
 
-        VmPool pool = (VmPool) getEntity();
+        VmPool pool = getEntity();
         if (pool != null)
         {
             AsyncQuery _asyncQuery = new AsyncQuery();
@@ -37,13 +38,11 @@ public class PoolInterfaceListModel extends SearchableListModel
                 {
                     if (result != null)
                     {
-                        VM vm = (VM) ((VdcQueryReturnValue) result).getReturnValue();
+                        VM vm = ((VdcQueryReturnValue) result).getReturnValue();
                         if (vm == null) {
                            return;
                         }
-                        PoolInterfaceListModel poolInterfaceListModel = (PoolInterfaceListModel) model;
-                        poolInterfaceListModel.syncSearch(VdcQueryType.GetVmInterfacesByVmId,
-                                new IdQueryParameters(vm.getId()));
+                        syncSearch(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()));
                     }
                 }
             };

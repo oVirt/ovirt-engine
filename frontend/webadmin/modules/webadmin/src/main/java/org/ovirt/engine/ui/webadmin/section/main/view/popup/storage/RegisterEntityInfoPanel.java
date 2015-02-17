@@ -38,7 +38,7 @@ import com.google.gwt.user.client.ui.TabLayoutPanel;
 
 import org.ovirt.engine.ui.webadmin.widget.table.cell.CustomSelectionCell;
 
-public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
+public abstract class RegisterEntityInfoPanel<T> extends TabLayoutPanel {
 
     protected static final ApplicationConstants constants = GWT.create(ApplicationConstants.class);
     protected static final ApplicationTemplates templates = GWT.create(ApplicationTemplates.class);
@@ -48,9 +48,9 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
     protected EntityModelCellTable<ListModel> nicsTable;
     protected EntityModelCellTable<ListModel> appsTable;
 
-    protected RegisterEntityModel registerEntityModel;
+    protected RegisterEntityModel<T> registerEntityModel;
 
-    public RegisterEntityInfoPanel(RegisterEntityModel registerEntityModel) {
+    public RegisterEntityInfoPanel(RegisterEntityModel<T> registerEntityModel) {
         super(templates.TAB_BAR_HEIGHT, Style.Unit.PX);
         this.registerEntityModel = registerEntityModel;
 
@@ -60,7 +60,7 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
 
     protected abstract void init();
 
-    public abstract void updateTabsData(ImportEntityData importEntityData);
+    public abstract void updateTabsData(ImportEntityData<T> importEntityData);
 
     private void addStyles() {
         getElement().getStyle().setPosition(Style.Position.STATIC);
@@ -145,11 +145,11 @@ public abstract class RegisterEntityInfoPanel extends TabLayoutPanel {
         disksTable.setSelectionModel(new NoSelectionModel());
     }
 
-    private Column getDiskQuotaColumn() {
+    private Column<DiskImage, String> getDiskQuotaColumn() {
         CustomSelectionCell customSelectionCell = new CustomSelectionCell(new ArrayList<String>());
         customSelectionCell.setStyle("input-group col-xs-11"); //$NON-NLS-1$
 
-        Column column = new Column<DiskImage, String>(customSelectionCell) {
+        Column<DiskImage, String> column = new Column<DiskImage, String>(customSelectionCell) {
             @Override
             public String getValue(DiskImage disk) {
                 List<Quota> quotas = (List<Quota>) registerEntityModel.getStorageQuota().getItems();

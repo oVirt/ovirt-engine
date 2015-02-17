@@ -13,7 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 
 import com.google.gwt.event.shared.EventBus;
 
-public class PermissionListModelTable<P extends PermissionListModel> extends AbstractModelBoundTableWidget<Permissions, P> {
+public class PermissionListModelTable<P extends PermissionListModel<?>> extends AbstractModelBoundTableWidget<Permissions, P> {
 
     public PermissionListModelTable(
             SearchableTableModelProvider<Permissions, P> modelProvider,

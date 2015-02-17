@@ -15,6 +15,8 @@ public class ImportCloneModel extends ConfirmationModel {
     EntityModel<String> suffix;
     EntityModel<String> name;
 
+    private Object entity;
+
     public EntityModel<Boolean> getNoClone() {
         return noClone;
     }
@@ -53,6 +55,14 @@ public class ImportCloneModel extends ConfirmationModel {
 
     public void setSuffix(EntityModel<String> suffix) {
         this.suffix = suffix;
+    }
+
+    public Object getEntity() {
+        return entity;
+    }
+
+    public void setEntity(Object entity) {
+        this.entity = entity;
     }
 
     public ImportCloneModel() {

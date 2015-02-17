@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 
 public class ImportVmGeneralSubTabView extends SubTabVirtualMachineGeneralView implements IsWidget {
 
-    public ImportVmGeneralSubTabView(DetailModelProvider<VmListModel, VmGeneralModel> modelProvider, ApplicationConstants constants) {
+    public ImportVmGeneralSubTabView(DetailModelProvider<VmListModel<Void>, VmGeneralModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider, constants);
     }
 

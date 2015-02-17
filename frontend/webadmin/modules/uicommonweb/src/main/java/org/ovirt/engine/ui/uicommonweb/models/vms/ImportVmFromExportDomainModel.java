@@ -37,6 +37,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -62,11 +63,11 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
     private final VmImportDiskListModel importDiskListModel;
     private StoragePool storagePool;
     private boolean hasQuota;
-    private final Map<Guid, List<Disk>> missingTemplateDiskMap = new HashMap<Guid, List<Disk>>();
+    private final Map<Guid, List<Disk>> missingTemplateDiskMap = new HashMap<>();
     protected ArrayList<StorageDomain> filteredStorageDomains;
     private Map<Guid, ArrayList<Quota>> storageQuotaMap;
-    private final Map<Guid, List<Disk>> templateDiskMap = new HashMap<Guid, List<Disk>>();
-    private final Map<Guid, ImportDiskData> diskImportDataMap = new HashMap<Guid, ImportDiskData>();
+    private final Map<Guid, List<Disk>> templateDiskMap = new HashMap<>();
+    private final Map<Guid, ImportDiskData> diskImportDataMap = new HashMap<>();
 
     public StoragePool getStoragePool() {
         return storagePool;
@@ -90,9 +91,9 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
         return storageDiskListModel;
     }
 
-    private final ClusterListModel cluster;
+    private final ClusterListModel<Void> cluster;
 
-    public ClusterListModel getCluster() {
+    public ClusterListModel<Void> getCluster() {
         return cluster;
     }
 
@@ -113,13 +114,13 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
 //        return cpuProfiles;
 //    }
 
-    private final QuotaListModel clusterQuota;
+    private final QuotaListModel<Void> clusterQuota;
 
-    public QuotaListModel getClusterQuota() {
+    public QuotaListModel<Void> getClusterQuota() {
         return clusterQuota;
     }
 
-    protected List<VM> disksToConvert = new ArrayList<VM>();
+    protected List<VM> disksToConvert = new ArrayList<>();
 
     public List<VM> getDisksToConvert() {
         return disksToConvert;
@@ -141,7 +142,7 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
         public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
             if (hasQuota) {
                 Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForVdsGroup,
-                    new IdQueryParameters(((VDSGroup) getCluster().getSelectedItem()).getId()),
+                    new IdQueryParameters(getCluster().getSelectedItem().getId()),
                     new AsyncQuery(ImportVmFromExportDomainModel.this,
                             new INewAsyncCallback() {
 
@@ -164,7 +165,7 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
                                 }
                             }));
             }
-            fetchCpuProfiles(((VDSGroup) getCluster().getSelectedItem()).getId());
+            fetchCpuProfiles(getCluster().getSelectedItem().getId());
         }
     };
 
@@ -176,7 +177,7 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
 
     @Inject
     public ImportVmFromExportDomainModel(final VmImportDiskListModel vmImportDiskListModel,
-            final StorageDiskListModel storageDomain, final ClusterListModel cluster, final QuotaListModel clusterQuota,
+            final StorageDiskListModel storageDomain, final ClusterListModel<Void> cluster, final QuotaListModel clusterQuota,
             final VmImportGeneralModel vmImportGeneralModel, final VmImportInterfaceListModel vmImportInterfaceListModel,
             final VmImportAppListModel vmImportAppListModel) {
         importDiskListModel = vmImportDiskListModel;
@@ -191,7 +192,7 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
             final VmImportInterfaceListModel vmImportInterfaceListModel,
             final VmImportAppListModel vmImportAppListModel) {
         getClusterQuota().setIsAvailable(false);
-        List<EntityModel> list = new ArrayList<EntityModel>();
+        List<HasEntity> list = new ArrayList<>();
         list.add(vmImportGeneralModel);
         list.add(vmImportInterfaceListModel);
         list.add(importDiskListModel);
@@ -253,15 +254,14 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
                                            ArrayList<StorageDomain> storageDomains =
                                                    (ArrayList<StorageDomain>) returnValue;
                                            // filter storage domains
-                                           filteredStorageDomains =
-                                                   new ArrayList<StorageDomain>();
+                                           filteredStorageDomains = new ArrayList<>();
                                            for (StorageDomain domain : storageDomains) {
                                                if (Linq.isDataActiveStorageDomain(domain)) {
                                                    filteredStorageDomains.add(domain);
                                                }
                                            }
 
-                                           getStorage().setItems(filteredStorageDomains);
+                                           getStorage().setItems((ArrayList) filteredStorageDomains);
                                            if (hasQuota) {
                                                initQuotaForStorageDomains();
                                            } else {
@@ -296,14 +296,14 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
     }
 
     private void initQuotaForStorageDomains() {
-        ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
+        ArrayList<VdcQueryType> queryTypeList = new ArrayList<>();
         ArrayList<VdcQueryParametersBase> queryParamsList =
-                new ArrayList<VdcQueryParametersBase>();
+                new ArrayList<>();
         for (StorageDomain storage : filteredStorageDomains) {
             queryTypeList.add(VdcQueryType.GetAllRelevantQuotasForStorage);
             queryParamsList.add(new IdQueryParameters(storage.getId()));
         }
-        storageQuotaMap = new HashMap<Guid, ArrayList<Quota>>();
+        storageQuotaMap = new HashMap<>();
         Frontend.getInstance().runMultipleQueries(queryTypeList,
                 queryParamsList,
                 new IFrontendMultipleQueryAsyncCallback() {
@@ -313,7 +313,7 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
                                 result.getReturnValues();
                         boolean noQuota = true;
                         for (int i = 0; i < filteredStorageDomains.size(); i++) {
-                            ArrayList<Quota> quotaList = (ArrayList<Quota>) returnValueList.get(i)
+                            ArrayList<Quota> quotaList = returnValueList.get(i)
                                     .getReturnValue();
                             if (noQuota
                                     && !quotaList.isEmpty()) {
@@ -398,8 +398,8 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
             }
         }
         if (!templateDiskMap.isEmpty()) {
-            ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
-            final ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<VdcQueryParametersBase>();
+            ArrayList<VdcQueryType> queryTypeList = new ArrayList<>();
+            final ArrayList<VdcQueryParametersBase> queryParamsList = new ArrayList<>();
             for (Guid templateId : templateDiskMap.keySet()) {
                 queryTypeList.add(VdcQueryType.GetVmTemplatesDisks);
                 queryParamsList.add(new IdQueryParameters(templateId));
@@ -409,7 +409,7 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
                 public void executed(FrontendMultipleQueryAsyncResult result) {
                     List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
                     Map<Guid, ArrayList<StorageDomain>> templateDisksStorageDomains =
-                            new HashMap<Guid, ArrayList<StorageDomain>>();
+                            new HashMap<>();
                     for (VdcQueryReturnValue returnValue : returnValueList) {
                         for (DiskImage diskImage : (ArrayList<DiskImage>) returnValue.getReturnValue()) {
                             templateDisksStorageDomains.put(diskImage.getImageId(),
@@ -443,7 +443,7 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
     }
 
     private Collection<Disk> extractRootDisks(VM vm) {
-        Set<Disk> rootDisks = new HashSet<Disk>();
+        Set<Disk> rootDisks = new HashSet<>();
 
         for (DiskImage candidate : vm.getImages()) {
             if (isRoot(candidate, vm.getImages())) {
@@ -476,7 +476,7 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
                     public void onSuccess(Object model, Object returnValue) {
                         Map<VmTemplate, List<DiskImage>> dictionary =
                                 (HashMap<VmTemplate, List<DiskImage>>) ((VdcQueryReturnValue) returnValue).getReturnValue();
-                        Map<Guid, Guid> tempMap = new HashMap<Guid, Guid>();
+                        Map<Guid, Guid> tempMap = new HashMap<>();
                         for (Entry<VmTemplate, List<DiskImage>> entry : dictionary.entrySet()) {
                             tempMap.put(entry.getKey().getId(), null);
                         }
@@ -531,7 +531,7 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
     }
 
     private ArrayList<StorageDomain> getStorageDomainsByIds(ArrayList<Guid> getstorage_ids) {
-        ArrayList<StorageDomain> domains = new ArrayList<StorageDomain>();
+        ArrayList<StorageDomain> domains = new ArrayList<>();
         for (Guid storageDomainId : getstorage_ids) {
             for (StorageDomain storageDomain : filteredStorageDomains) {
                 if (storageDomainId.equals(storageDomain.getId())) {
@@ -564,6 +564,11 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
         data.setStorageQuotaList(storageQuotaMap);
         diskImportDataMap.put(diskId, data);
 
+    }
+
+    @Override
+    protected Object provideDetailModelEntity(Object selectedItem) {
+        return selectedItem;
     }
 
     @Override
@@ -625,7 +630,7 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
                         List<VM> vmList =
                                 ((VdcQueryReturnValue) returnValue).getReturnValue();
 
-                        List<ImportVmData> vmDataList = new ArrayList<ImportVmData>();
+                        List<ImportVmData> vmDataList = new ArrayList<>();
 
                         for (VM vm : (Iterable<VM>) value) {
                             ImportVmData vmData = new ImportVmData(vm);

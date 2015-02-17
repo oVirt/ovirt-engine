@@ -23,7 +23,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabClusterAffinityGroupPresenter extends AbstractSubTabPresenter<VDSGroup, ClusterListModel, ClusterAffinityGroupListModel, SubTabClusterAffinityGroupPresenter.ViewDef, SubTabClusterAffinityGroupPresenter.ProxyDef> {
+public class SubTabClusterAffinityGroupPresenter extends AbstractSubTabPresenter<VDSGroup, ClusterListModel<Void>, ClusterAffinityGroupListModel, SubTabClusterAffinityGroupPresenter.ViewDef, SubTabClusterAffinityGroupPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.clusterAffinityGroupsSubTabPlace)
@@ -35,14 +35,14 @@ public class SubTabClusterAffinityGroupPresenter extends AbstractSubTabPresenter
 
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<AffinityGroup, ClusterListModel, ClusterAffinityGroupListModel> modelProvider) {
+            SearchableDetailModelProvider<AffinityGroup, ClusterListModel<Void>, ClusterAffinityGroupListModel> modelProvider) {
         return new ModelBoundTabData(applicationConstants.affinityGroupSubTabLabel(), 6, modelProvider);
     }
 
     @Inject
     public SubTabClusterAffinityGroupPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<AffinityGroup, ClusterListModel, ClusterAffinityGroupListModel> modelProvider) {
+            SearchableDetailModelProvider<AffinityGroup, ClusterListModel<Void>, ClusterAffinityGroupListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 ClusterSubTabPanelPresenter.TYPE_SetTabContent);
     }

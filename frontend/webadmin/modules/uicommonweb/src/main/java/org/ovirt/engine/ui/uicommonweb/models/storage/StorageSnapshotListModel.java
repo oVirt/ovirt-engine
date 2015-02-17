@@ -29,7 +29,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
-public class StorageSnapshotListModel extends SearchableListModel
+public class StorageSnapshotListModel extends SearchableListModel<StorageDomain, DiskImage>
 {
     private UICommand privateRemoveCommand;
 
@@ -56,17 +56,6 @@ public class StorageSnapshotListModel extends SearchableListModel
         super.onEntityChanged();
 
         getSearchCommand().execute();
-    }
-
-    @Override
-    public StorageDomain getEntity()
-    {
-        return (StorageDomain) super.getEntity();
-    }
-
-    public void setEntity(StorageDomain value)
-    {
-        super.setEntity(value);
     }
 
     @Override
@@ -170,7 +159,7 @@ public class StorageSnapshotListModel extends SearchableListModel
         ConfirmationModel model = (ConfirmationModel) getWindow();
         ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
 
-        Map<Guid, List<Guid>> diskImageIdsMap = groupImageIdsByDiskId((List<DiskImage>) getSelectedItems());
+        Map<Guid, List<Guid>> diskImageIdsMap = groupImageIdsByDiskId(getSelectedItems());
         for (List<Guid> imageIds : diskImageIdsMap.values()) {
             RemoveDiskSnapshotsParameters parameters = new RemoveDiskSnapshotsParameters(new ArrayList<Guid>(imageIds));
             paramerterList.add(parameters);

@@ -48,7 +48,7 @@ public class ImportTemplatePopupView extends ImportVmFromExportDomainPopupView i
         }) {
             @Override
             public Boolean getValue(Object model) {
-                return (Boolean) ((ImportTemplateData) model).getClone().getEntity();
+                return ((ImportTemplateData) model).getClone().getEntity();
             }
 
             @Override

@@ -22,9 +22,9 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
-import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -35,7 +35,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class VnicProfileListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
+public class VnicProfileListModel extends ListWithSimpleDetailsModel<VnicProfileView, VnicProfileView> implements ISupportSystemTreeContext
 {
     private UICommand newCommand;
     private UICommand editCommand;
@@ -48,7 +48,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
     public VnicProfileListModel(final Provider<CommonModel> commonModelProvider,
             final VnicProfileVmListModel vNicProfileVmListModel,
             final VnicProfileTemplateListModel vNicProfileTemplateListModel,
-            final PermissionListModel<VnicProfileListModel> permissionListModel) {
+            final PermissionListModel<VnicProfileView> permissionListModel) {
         this.commonModelProvider = commonModelProvider;
         setDetailList(vNicProfileVmListModel, vNicProfileTemplateListModel, permissionListModel);
         setTitle(ConstantsManager.getInstance().getConstants().vnicProfilesTitle());
@@ -75,8 +75,8 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
 
     private void setDetailList(final VnicProfileVmListModel vNicProfileVmListModel,
             final VnicProfileTemplateListModel vNicProfileTemplateListModel,
-            final PermissionListModel<VnicProfileListModel> permissionListModel) {
-        List<EntityModel> list = new ArrayList<EntityModel>();
+            final PermissionListModel<VnicProfileView> permissionListModel) {
+        List<HasEntity<VnicProfileView>> list = new ArrayList<>();
 
         list.add(vNicProfileVmListModel);
         list.add(vNicProfileTemplateListModel);
@@ -100,7 +100,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
     }
 
     public void edit() {
-        final VnicProfileView profile = (VnicProfileView) getSelectedItem();
+        final VnicProfileView profile = getSelectedItem();
 
         if (getWindow() != null)
         {
@@ -159,8 +159,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
                 @Override
                 public void onSuccess(Object model, Object ReturnValue)
                 {
-                    Collection<Network> networks =
-                            (Collection<Network>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                    Collection<Network> networks = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
 
                     profileModel.getNetwork().setItems(networks);
 
@@ -300,11 +299,6 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
 
     private void onSystemTreeSelectedItemChanged() {
         updateActionAvailability();
-    }
-
-    @Override
-    public VnicProfileView getEntity() {
-        return (VnicProfileView) super.getEntity();
     }
 
     @Override

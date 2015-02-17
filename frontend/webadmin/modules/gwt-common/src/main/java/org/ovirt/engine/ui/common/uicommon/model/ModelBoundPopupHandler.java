@@ -7,6 +7,7 @@ import java.util.Set;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommonweb.models.IModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -24,7 +25,7 @@ import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
  * @param <M>
  *            Model type.
  */
-public class ModelBoundPopupHandler<M extends Model> {
+public class ModelBoundPopupHandler<M extends IModel> {
 
     private final ModelBoundPopupResolver<M> popupResolver;
     private final EventBus eventBus;

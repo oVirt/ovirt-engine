@@ -52,7 +52,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ProvidePropertyChangedEvent;
 
 @SuppressWarnings("unused")
-public class HostInterfaceListModel extends SearchableListModel
+public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkInterface>
 {
     private UICommand privateEditCommand;
 
@@ -172,21 +172,14 @@ public class HostInterfaceListModel extends SearchableListModel
         }
     }
 
-    @Override
-    public VDS getEntity()
-    {
-        return (VDS) super.getEntity();
-    }
-
     public void setEntity(VDS value)
     {
         if (super.getEntity() != null)
         {
-            VDS currentItem = ((VDS) super.getEntity());
-            VDS newItem = value;
+            VDS currentItem = super.getEntity();
 
             Guid currentItemId = currentItem.getId();
-            Guid newItemId = newItem.getId();
+            Guid newItemId = value.getId();
 
             if (currentItemId.equals(newItemId))
             {
@@ -618,7 +611,7 @@ public class HostInterfaceListModel extends SearchableListModel
         else if (sender instanceof HostInterface)
         {
             HostInterface model = (HostInterface) sender;
-            Object selectItem = null;
+            VdsNetworkInterface selectItem = null;
 
             if (model.getIsSelected())
             {

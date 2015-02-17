@@ -5,18 +5,17 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.IProvidePropertyChangedEvent;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ProvidePropertyChangedEvent;
 
 import com.google.gwt.event.shared.HasHandlers;
 
-public class EntityModel<T> extends Model implements HasHandlers {
+public class EntityModel<T> extends Model implements HasHandlers, HasEntity<T> {
 
-    public static final EventDefinition entityChangedEventDefinition;
     private Event<EventArgs> privateEntityChangedEvent;
 
+    @Override
     public Event<EventArgs> getEntityChangedEvent()
     {
         return privateEntityChangedEvent;
@@ -29,11 +28,13 @@ public class EntityModel<T> extends Model implements HasHandlers {
 
     private T entity;
 
+    @Override
     public T getEntity()
     {
         return entity;
     }
 
+    @Override
     public void setEntity(T value)
     {
         if (entity != value)
@@ -68,14 +69,9 @@ public class EntityModel<T> extends Model implements HasHandlers {
         }
     }
 
-    static
-    {
-        entityChangedEventDefinition = new EventDefinition("EntityChanged", EntityModel.class); //$NON-NLS-1$
-    }
-
     public EntityModel()
     {
-        setEntityChangedEvent(new Event<EventArgs>(entityChangedEventDefinition));
+        setEntityChangedEvent(new Event<>(entityChangedEventDefinition));
     }
 
     public EntityModel(T entity) {

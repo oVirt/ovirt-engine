@@ -60,19 +60,19 @@ public class ClusterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MainModelProvider<VDSGroup, ClusterListModel> getClusterListProvider(EventBus eventBus,
+    public MainModelProvider<VDSGroup, ClusterListModel<Void>> getClusterListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<ClusterPopupPresenterWidget> popupProvider,
             final Provider<GuidePopupPresenterWidget> guidePopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<ReportPresenterWidget> reportWindowProvider,
             final Provider<MultipleHostsPopupPresenterWidget> addMultipleHostsPopupProvider,
-            final Provider<ClusterListModel> clusterProvider,
+            final Provider<ClusterListModel<Void>> clusterProvider,
             final Provider<CommonModel> commonModelProvider) {
-        MainTabModelProvider<VDSGroup, ClusterListModel> result = new MainTabModelProvider<VDSGroup, ClusterListModel>
+        MainTabModelProvider<VDSGroup, ClusterListModel<Void>> result = new MainTabModelProvider<VDSGroup, ClusterListModel<Void>>
                 (eventBus, defaultConfirmPopupProvider, commonModelProvider) {
             @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ClusterListModel source,
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ClusterListModel<Void> source,
                     UICommand lastExecutedCommand, Model windowModel) {
                 if (lastExecutedCommand == getModel().getNewCommand()
                         || lastExecutedCommand == getModel().getEditCommand()) {
@@ -87,7 +87,7 @@ public class ClusterModule extends AbstractGinModule {
             }
 
             @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(ClusterListModel source,
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(ClusterListModel<Void> source,
                     UICommand lastExecutedCommand) {
                 if (lastExecutedCommand == getModel().getRemoveCommand()) {
                     return removeConfirmPopupProvider.get();
@@ -113,15 +113,15 @@ public class ClusterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public DetailModelProvider<ClusterListModel, ClusterGeneralModel> getClusterGeneralProvider(EventBus eventBus,
+    public DetailModelProvider<ClusterListModel<Void>, ClusterGeneralModel> getClusterGeneralProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<MultipleHostsPopupPresenterWidget> multipleHostsProvider,
             final Provider<DetachGlusterHostsPopupPresenterWidget> detachHostsProvider,
             final Provider<ManageGlusterSwiftPopupPresenterWidget> manageGlusterSwiftProvider,
-            final Provider<ClusterListModel> clusterProvider,
+            final Provider<ClusterListModel<Void>> clusterProvider,
             final Provider<ClusterGeneralModel> detailProvider) {
-        DetailTabModelProvider<ClusterListModel, ClusterGeneralModel> result =
-                new DetailTabModelProvider<ClusterListModel, ClusterGeneralModel>(
+        DetailTabModelProvider<ClusterListModel<Void>, ClusterGeneralModel> result =
+                new DetailTabModelProvider<ClusterListModel<Void>, ClusterGeneralModel>(
                         eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ClusterGeneralModel source,
@@ -146,14 +146,14 @@ public class ClusterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<Network, ClusterListModel, ClusterNetworkListModel> getClusterNetworkListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<Network, ClusterListModel<Void>, ClusterNetworkListModel> getClusterNetworkListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<NewClusterNetworkPopupPresenterWidget> popupProvider,
             final Provider<ClusterManageNetworkPopupPresenterWidget> managePopupProvider,
-            final Provider<ClusterListModel> mainModelProvider,
+            final Provider<ClusterListModel<Void>> mainModelProvider,
             final Provider<ClusterNetworkListModel> modelProvider) {
-        SearchableDetailTabModelProvider<Network, ClusterListModel, ClusterNetworkListModel> result =
-                new SearchableDetailTabModelProvider<Network, ClusterListModel, ClusterNetworkListModel>(
+        SearchableDetailTabModelProvider<Network, ClusterListModel<Void>, ClusterNetworkListModel> result =
+                new SearchableDetailTabModelProvider<Network, ClusterListModel<Void>, ClusterNetworkListModel>(
                         eventBus, defaultConfirmPopupProvider) {
 
                     @Override
@@ -176,15 +176,15 @@ public class ClusterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel> getClusterGlusterHookListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<GlusterHookEntity, ClusterListModel<Void>, ClusterGlusterHookListModel> getClusterGlusterHookListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<DefaultConfirmationPopupPresenterWidget> confirmPopupProvider,
             final Provider<GlusterHookContentPopupPresenterWidget> contentPopupProvider,
             final Provider<GlusterHookResolveConflictsPopupPresenterWidget> resolveConflictsPopupProvider,
-            final Provider<ClusterListModel> mainModelProvider,
+            final Provider<ClusterListModel<Void>> mainModelProvider,
             final Provider<ClusterGlusterHookListModel> modelProvider) {
-        SearchableDetailTabModelProvider<GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel> result =
-                new SearchableDetailTabModelProvider<GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel>(
+        SearchableDetailTabModelProvider<GlusterHookEntity, ClusterListModel<Void>, ClusterGlusterHookListModel> result =
+                new SearchableDetailTabModelProvider<GlusterHookEntity, ClusterListModel<Void>, ClusterGlusterHookListModel>(
                         eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ClusterGlusterHookListModel source,
@@ -215,14 +215,14 @@ public class ClusterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<AffinityGroup, ClusterListModel, ClusterAffinityGroupListModel> getAffinityGroupListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<AffinityGroup, ClusterListModel<Void>, ClusterAffinityGroupListModel> getAffinityGroupListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<AffinityGroupPopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
-            final Provider<ClusterListModel> mainModelProvider,
+            final Provider<ClusterListModel<Void>> mainModelProvider,
             final Provider<ClusterAffinityGroupListModel> modelProvider) {
-        SearchableDetailTabModelProvider<AffinityGroup, ClusterListModel, ClusterAffinityGroupListModel> result =
-                new SearchableDetailTabModelProvider<AffinityGroup, ClusterListModel, ClusterAffinityGroupListModel>(
+        SearchableDetailTabModelProvider<AffinityGroup, ClusterListModel<Void>, ClusterAffinityGroupListModel> result =
+                new SearchableDetailTabModelProvider<AffinityGroup, ClusterListModel<Void>, ClusterAffinityGroupListModel>(
                         eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ClusterAffinityGroupListModel source,
@@ -252,14 +252,14 @@ public class ClusterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<CpuProfile, ClusterListModel, CpuProfileListModel> getStorageCpuProfileListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<CpuProfile, ClusterListModel<Void>, CpuProfileListModel> getStorageCpuProfileListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<CpuProfilePopupPresenterWidget> profilePopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
-            final Provider<ClusterListModel> mainModelProvider,
+            final Provider<ClusterListModel<Void>> mainModelProvider,
             final Provider<CpuProfileListModel> modelProvider) {
-        SearchableDetailTabModelProvider<CpuProfile, ClusterListModel, CpuProfileListModel> result =
-                new SearchableDetailTabModelProvider<CpuProfile, ClusterListModel, CpuProfileListModel>(eventBus,
+        SearchableDetailTabModelProvider<CpuProfile, ClusterListModel<Void>, CpuProfileListModel> result =
+                new SearchableDetailTabModelProvider<CpuProfile, ClusterListModel<Void>, CpuProfileListModel>(eventBus,
                         defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(CpuProfileListModel source,
@@ -291,7 +291,7 @@ public class ClusterModule extends AbstractGinModule {
 
     @Override
     protected void configure() {
-        bind(ClusterListModel.class).in(Singleton.class);
+        bind(new TypeLiteral<ClusterListModel<Void>> (){}).in(Singleton.class);
         bind(ClusterGeneralModel.class).in(Singleton.class);
         bind(ClusterHostListModel.class).in(Singleton.class);
         bind(ClusterNetworkListModel.class).in(Singleton.class);
@@ -300,25 +300,25 @@ public class ClusterModule extends AbstractGinModule {
         bind(ClusterGlusterHookListModel.class).in(Singleton.class);
         bind(ClusterAffinityGroupListModel.class).in(Singleton.class);
         bind(CpuProfileListModel.class).in(Singleton.class);
-        bind(new TypeLiteral<PermissionListModel<ClusterListModel>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<PermissionListModel<CpuProfileListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<VDSGroup>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<CpuProfile>>(){}).in(Singleton.class);
 
         // Form Detail Models
-        bind(new TypeLiteral<DetailModelProvider<ClusterListModel, ClusterServiceModel>>(){})
-            .to(new TypeLiteral<DetailTabModelProvider<ClusterListModel, ClusterServiceModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<DetailModelProvider<ClusterListModel<Void>, ClusterServiceModel>>(){})
+            .to(new TypeLiteral<DetailTabModelProvider<ClusterListModel<Void>, ClusterServiceModel>>(){}).in(Singleton.class);
         // Search-able Detail Models
-        bind(new TypeLiteral<SearchableDetailModelProvider<VDS, ClusterListModel, ClusterHostListModel>>(){})
-            .to(new TypeLiteral<SearchableDetailTabModelProvider<VDS, ClusterListModel, ClusterHostListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<VDS, ClusterListModel<Void>, ClusterHostListModel>>(){})
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<VDS, ClusterListModel<Void>, ClusterHostListModel>>(){})
             .in(Singleton.class);
-        bind(new TypeLiteral<SearchableDetailModelProvider<VM, ClusterListModel, ClusterVmListModel>>(){})
-            .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, ClusterListModel, ClusterVmListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<VM, ClusterListModel<Void>, ClusterVmListModel>>(){})
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, ClusterListModel<Void>, ClusterVmListModel>>(){})
             .in(Singleton.class);
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, ClusterListModel, PermissionListModel<ClusterListModel>>>(){})
-            .to(new TypeLiteral<PermissionModelProvider<ClusterListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, ClusterListModel<Void>, PermissionListModel<VDSGroup>>>(){})
+            .to(new TypeLiteral<PermissionModelProvider<VDSGroup, ClusterListModel<Void>>>(){}).in(Singleton.class);
         // Cpu Profile permission list model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, CpuProfileListModel, PermissionListModel<CpuProfileListModel>>>(){})
-            .to(new TypeLiteral<PermissionModelProvider<CpuProfileListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, CpuProfileListModel, PermissionListModel<CpuProfile>>>(){})
+            .to(new TypeLiteral<PermissionModelProvider<CpuProfile, CpuProfileListModel>>(){}).in(Singleton.class);
 
     }
 

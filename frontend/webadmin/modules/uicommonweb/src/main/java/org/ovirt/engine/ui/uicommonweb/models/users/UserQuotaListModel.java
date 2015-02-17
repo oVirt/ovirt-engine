@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class UserQuotaListModel extends SearchableListModel
+public class UserQuotaListModel extends SearchableListModel<DbUser, Quota>
 {
     public UserQuotaListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().quotaTitle());
@@ -59,7 +59,7 @@ public class UserQuotaListModel extends SearchableListModel
             }
         };
         GetQuotasByAdElementIdQueryParameters parameters = new GetQuotasByAdElementIdQueryParameters();
-        parameters.setAdElementId(((DbUser) getEntity()).getId());
+        parameters.setAdElementId(getEntity().getId());
 
         parameters.setRefresh(getIsQueryFirstTime());
 

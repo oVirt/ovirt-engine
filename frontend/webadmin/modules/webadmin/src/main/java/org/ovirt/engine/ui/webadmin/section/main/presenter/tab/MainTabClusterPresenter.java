@@ -23,7 +23,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class MainTabClusterPresenter extends AbstractMainTabWithDetailsPresenter<VDSGroup, ClusterListModel, MainTabClusterPresenter.ViewDef, MainTabClusterPresenter.ProxyDef> {
+public class MainTabClusterPresenter extends AbstractMainTabWithDetailsPresenter<VDSGroup, ClusterListModel<Void>, MainTabClusterPresenter.ViewDef, MainTabClusterPresenter.ProxyDef> {
 
     @GenEvent
     public class ClusterSelectionChange {
@@ -42,13 +42,13 @@ public class MainTabClusterPresenter extends AbstractMainTabWithDetailsPresenter
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            MainModelProvider<VDSGroup, ClusterListModel> modelProvider) {
+            MainModelProvider<VDSGroup, ClusterListModel<Void>> modelProvider) {
         return new ModelBoundTabData(applicationConstants.clusterMainTabLabel(), 1, modelProvider);
     }
 
     @Inject
     public MainTabClusterPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, MainModelProvider<VDSGroup, ClusterListModel> modelProvider) {
+            PlaceManager placeManager, MainModelProvider<VDSGroup, ClusterListModel<Void>> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

@@ -22,7 +22,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabClusterServicePresenter extends AbstractSubTabPresenter<VDSGroup, ClusterListModel, ClusterServiceModel, SubTabClusterServicePresenter.ViewDef, SubTabClusterServicePresenter.ProxyDef> {
+public class SubTabClusterServicePresenter extends AbstractSubTabPresenter<VDSGroup, ClusterListModel<Void>, ClusterServiceModel, SubTabClusterServicePresenter.ViewDef, SubTabClusterServicePresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.clusterServiceSubTabPlace)
@@ -34,13 +34,13 @@ public class SubTabClusterServicePresenter extends AbstractSubTabPresenter<VDSGr
 
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            DetailModelProvider<ClusterListModel, ClusterServiceModel> modelProvider) {
+            DetailModelProvider<ClusterListModel<Void>, ClusterServiceModel> modelProvider) {
         return new ModelBoundTabData(applicationConstants.clusterServiceSubTabLabel(), 4, modelProvider);
     }
 
     @Inject
     public SubTabClusterServicePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, DetailModelProvider<ClusterListModel, ClusterServiceModel> modelProvider) {
+            PlaceManager placeManager, DetailModelProvider<ClusterListModel<Void>, ClusterServiceModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 ClusterSubTabPanelPresenter.TYPE_SetTabContent);
     }

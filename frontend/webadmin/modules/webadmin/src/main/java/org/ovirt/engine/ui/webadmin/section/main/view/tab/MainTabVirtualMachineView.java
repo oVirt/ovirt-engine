@@ -49,7 +49,7 @@ import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
-public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableView<VM, VmListModel> implements MainTabVirtualMachinePresenter.ViewDef {
+public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableView<VM, VmListModel<Void>> implements MainTabVirtualMachinePresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<MainTabVirtualMachineView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -58,7 +58,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
     private final CommonApplicationConstants commonConstants;
 
     @Inject
-    public MainTabVirtualMachineView(MainModelProvider<VM, VmListModel> modelProvider,
+    public MainTabVirtualMachineView(MainModelProvider<VM, VmListModel<Void>> modelProvider,
             ApplicationResources resources, ApplicationConstants constants,
             CommonApplicationConstants commonConstants) {
         super(modelProvider);

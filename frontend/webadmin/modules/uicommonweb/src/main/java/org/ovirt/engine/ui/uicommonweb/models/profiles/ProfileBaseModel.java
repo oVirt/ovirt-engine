@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.IModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
@@ -31,7 +32,7 @@ public abstract class ProfileBaseModel<P extends ProfileBase, Q extends QosBase,
 
     private EntityModel<String> name;
     private EntityModel<String> description;
-    private final EntityModel sourceModel;
+    private final IModel sourceModel;
     private ListModel<R> parentListModel;
     private ListModel<Q> qos;
     private P profile;
@@ -78,7 +79,7 @@ public abstract class ProfileBaseModel<P extends ProfileBase, Q extends QosBase,
         this.profile = profile;
     }
 
-    public EntityModel getSourceModel() {
+    public IModel getSourceModel() {
         return sourceModel;
     }
 
@@ -86,7 +87,7 @@ public abstract class ProfileBaseModel<P extends ProfileBase, Q extends QosBase,
         return defaultQosId;
     }
 
-    public ProfileBaseModel(EntityModel sourceModel,
+    public ProfileBaseModel(IModel sourceModel,
             Guid dcId,
             Guid defaultQosId,
             VdcActionType vdcActionType) {

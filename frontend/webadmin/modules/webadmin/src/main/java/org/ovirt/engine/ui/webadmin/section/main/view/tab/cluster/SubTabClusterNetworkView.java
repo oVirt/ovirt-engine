@@ -34,7 +34,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.inject.Inject;
 
-public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, Network, ClusterListModel, ClusterNetworkListModel>
+public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, Network, ClusterListModel<Void>, ClusterNetworkListModel>
         implements SubTabClusterNetworkPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabClusterNetworkView> {
@@ -47,7 +47,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
     private final SafeHtml managementImage;
 
     @Inject
-    public SubTabClusterNetworkView(SearchableDetailModelProvider<Network, ClusterListModel, ClusterNetworkListModel> modelProvider,
+    public SubTabClusterNetworkView(SearchableDetailModelProvider<Network, ClusterListModel<Void>, ClusterNetworkListModel> modelProvider,
             ApplicationConstants constants,
             ApplicationTemplates templates,
             ApplicationResources resources) {

@@ -10,11 +10,14 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Test;
-import org.ovirt.engine.ui.uicommonweb.Configurator;
-import org.ovirt.engine.ui.uicommonweb.ILogger;
+import org.ovirt.engine.ui.uicommonweb.junit.UiCommonSetup;
 
 public class SortedListModelTest {
+
+    @ClassRule
+    public static UiCommonSetup setup = new UiCommonSetup();
 
     static class TestItem {
 
@@ -85,17 +88,7 @@ public class SortedListModelTest {
 
     @Before
     public void setUp() {
-        testedModel = new SortedListModel<TestItem>() {
-            @Override
-            protected Configurator lookupConfigurator() {
-                return null;
-            }
-
-            @Override
-            protected ILogger lookupLogger() {
-                return null;
-            }
-        };
+        testedModel = new SortedListModel<>();
     }
 
     @Test

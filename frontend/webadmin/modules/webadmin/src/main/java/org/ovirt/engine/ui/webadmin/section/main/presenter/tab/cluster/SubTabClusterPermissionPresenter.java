@@ -23,8 +23,8 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabClusterPermissionPresenter extends AbstractSubTabPresenter<VDSGroup, ClusterListModel,
-    PermissionListModel<ClusterListModel>, SubTabClusterPermissionPresenter.ViewDef, SubTabClusterPermissionPresenter.ProxyDef> {
+public class SubTabClusterPermissionPresenter extends AbstractSubTabPresenter<VDSGroup, ClusterListModel<Void>,
+    PermissionListModel<VDSGroup>, SubTabClusterPermissionPresenter.ViewDef, SubTabClusterPermissionPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.clusterPermissionSubTabPlace)
@@ -36,14 +36,14 @@ public class SubTabClusterPermissionPresenter extends AbstractSubTabPresenter<VD
 
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<Permissions, ClusterListModel, PermissionListModel<ClusterListModel>> modelProvider) {
+            SearchableDetailModelProvider<Permissions, ClusterListModel<Void>, PermissionListModel<VDSGroup>> modelProvider) {
         return new ModelBoundTabData(applicationConstants.clusterPermissionSubTabLabel(), 8, modelProvider);
     }
 
     @Inject
     public SubTabClusterPermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<Permissions, ClusterListModel, PermissionListModel<ClusterListModel>> modelProvider) {
+            SearchableDetailModelProvider<Permissions, ClusterListModel<Void>, PermissionListModel<VDSGroup>> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 ClusterSubTabPanelPresenter.TYPE_SetTabContent);
     }

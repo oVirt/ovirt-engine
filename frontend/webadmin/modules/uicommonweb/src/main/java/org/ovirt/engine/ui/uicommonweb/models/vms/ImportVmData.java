@@ -8,13 +8,13 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
-public class ImportVmData extends ImportEntityData {
+public class ImportVmData extends ImportEntityData<VM> {
 
     private boolean templateExistsInSetup = true;
-    private EntityModel collapseSnapshots;
+    private EntityModel<Boolean> collapseSnapshots;
 
     public ImportVmData(VM vm) {
-        setCollapseSnapshots(new EntityModel(true));
+        setCollapseSnapshots(new EntityModel<>(true));
 
         setEntity(vm);
         getClone().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
@@ -51,24 +51,24 @@ public class ImportVmData extends ImportEntityData {
     }
 
     public VM getVm() {
-        return (VM) getEntity();
+        return getEntity();
     }
 
-    public EntityModel getCollapseSnapshots() {
+    public EntityModel<Boolean> getCollapseSnapshots() {
         return collapseSnapshots;
     }
 
-    public void setCollapseSnapshots(EntityModel collapseSnapshots) {
+    public void setCollapseSnapshots(EntityModel<Boolean> collapseSnapshots) {
         this.collapseSnapshots = collapseSnapshots;
     }
 
     @Override
     public ArchitectureType getArchType() {
-        return ((VM) getEntity()).getClusterArch();
+        return getEntity().getClusterArch();
     }
 
     @Override
     public String getName() {
-        return ((VM) getEntity()).getName();
+        return getEntity().getName();
     }
 }

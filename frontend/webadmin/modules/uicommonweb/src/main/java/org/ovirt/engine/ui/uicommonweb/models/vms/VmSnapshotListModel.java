@@ -53,7 +53,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
 @SuppressWarnings("unused")
-public class VmSnapshotListModel extends SearchableListModel
+public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
 {
     // This constant is intendend to be exported to a generic UTILS class later on
     private final static String DATE_FORMAT = "yyyy-MM-dd, HH:mm"; //$NON-NLS-1$
@@ -304,7 +304,7 @@ public class VmSnapshotListModel extends SearchableListModel
     }
 
     @Override
-    public void setEntity(Object value) {
+    public void setEntity(VM value) {
         updateIsMemorySnapshotSupported(value);
         updateIsLiveMergeSupported(value);
         super.setEntity(value);
@@ -326,7 +326,7 @@ public class VmSnapshotListModel extends SearchableListModel
     @Override
     protected void syncSearch()
     {
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
         if (vm == null)
         {
             return;
@@ -358,7 +358,7 @@ public class VmSnapshotListModel extends SearchableListModel
                 return;
             }
 
-            Snapshot snapshot = (Snapshot) getSelectedItem();
+            Snapshot snapshot = getSelectedItem();
             ConfirmationModel model = new ConfirmationModel();
             setWindow(model);
             model.setTitle(ConstantsManager.getInstance().getConstants().deleteSnapshotTitle());
@@ -377,14 +377,14 @@ public class VmSnapshotListModel extends SearchableListModel
 
     private void onRemove()
     {
-        Snapshot snapshot = (Snapshot) getSelectedItem();
+        Snapshot snapshot = getSelectedItem();
         if (snapshot == null)
         {
             cancel();
             return;
         }
 
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
         if (vm != null)
         {
             Frontend.getInstance().runAction(VdcActionType.RemoveSnapshot,
@@ -398,7 +398,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
     private void undo()
     {
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
         if (vm != null)
         {
             Frontend.getInstance().runAction(VdcActionType.RestoreAllSnapshots,
@@ -410,7 +410,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
     private void commit()
     {
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
         if (vm != null)
         {
             Frontend.getInstance().runAction(VdcActionType.RestoreAllSnapshots,
@@ -421,12 +421,12 @@ public class VmSnapshotListModel extends SearchableListModel
     }
 
     private void preview() {
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
         if (vm == null) {
             return;
         }
 
-        final Snapshot snapshot = (Snapshot) getSelectedItem();
+        final Snapshot snapshot = getSelectedItem();
         AsyncDataProvider.getInstance().getVmConfigurationBySnapshot(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
@@ -460,7 +460,7 @@ public class VmSnapshotListModel extends SearchableListModel
     }
 
     private void updateVmActiveDisks() {
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
         if (vm == null) {
             return;
         }
@@ -497,7 +497,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
     private void customPreview()
     {
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
         if (vm == null) {
             return;
         }
@@ -507,7 +507,7 @@ public class VmSnapshotListModel extends SearchableListModel
         model.initialize();
 
         // Update according to the selected snapshot
-        Snapshot selectedSnapshot = (Snapshot) getSelectedItem();
+        Snapshot selectedSnapshot = getSelectedItem();
         if (selectedSnapshot != null) {
             model.setSnapshotModel(getSnapshotsMap().get(selectedSnapshot.getId()));
         }
@@ -522,13 +522,13 @@ public class VmSnapshotListModel extends SearchableListModel
     }
 
     private void onPreview() {
-        Snapshot snapshot = (Snapshot) getSelectedItem();
+        Snapshot snapshot = getSelectedItem();
         if (snapshot == null) {
             cancel();
             return;
         }
 
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
         SnapshotModel snapshotModel = (SnapshotModel) getWindow();
         boolean memory = false;
         List<DiskImage> disks = null;
@@ -559,7 +559,7 @@ public class VmSnapshotListModel extends SearchableListModel
     }
 
     private void onCustomPreview() {
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
         PreviewSnapshotModel previewSnapshotModel = (PreviewSnapshotModel) getWindow();
         Snapshot snapshot = previewSnapshotModel.getSnapshotModel().getEntity();
         boolean memory = Boolean.TRUE.equals(previewSnapshotModel.getSnapshotModel().getMemory().getEntity());
@@ -591,7 +591,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
     private void newEntity()
     {
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
         if (vm == null || getWindow() != null) {
             return;
         }
@@ -625,7 +625,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
     private void cloneVM()
     {
-        Snapshot snapshot = (Snapshot) getSelectedItem();
+        Snapshot snapshot = getSelectedItem();
         if (snapshot == null)
         {
             return;
@@ -636,7 +636,7 @@ public class VmSnapshotListModel extends SearchableListModel
             return;
         }
 
-        VM selectedVm = (VM) getEntity();
+        VM selectedVm = getEntity();
 
         UnitVmModel model = new UnitVmModel(new CloneVmFromSnapshotModelBehavior());
         model.getVmType().setSelectedItem(selectedVm.getVmType());
@@ -679,7 +679,7 @@ public class VmSnapshotListModel extends SearchableListModel
     {
         UnitVmModel model = (UnitVmModel) getWindow();
         CloneVmFromSnapshotModelBehavior behavior = (CloneVmFromSnapshotModelBehavior) model.getBehavior();
-        Snapshot snapshot = (Snapshot) getSelectedItem();
+        Snapshot snapshot = getSelectedItem();
         if (snapshot == null)
         {
             cancel();
@@ -753,8 +753,8 @@ public class VmSnapshotListModel extends SearchableListModel
             return;
         }
 
-        VM vm = (VM) getEntity();
-        Snapshot snapshot = (Snapshot) getSelectedItem();
+        VM vm = getEntity();
+        Snapshot snapshot = getSelectedItem();
         List<VM> vmList = vm != null ? Collections.singletonList(vm) : Collections.<VM> emptyList();
 
         boolean isVmDown = vm != null && vm.getStatus() == VMStatus.Down;
@@ -792,7 +792,7 @@ public class VmSnapshotListModel extends SearchableListModel
     }
 
     public Snapshot getLocked() {
-        for (Snapshot snapshot : (ArrayList<Snapshot>) getItems()) {
+        for (Snapshot snapshot : getItems()) {
             if (snapshot.getStatus() == SnapshotStatus.LOCKED) {
                 return snapshot;
             }
@@ -838,14 +838,14 @@ public class VmSnapshotListModel extends SearchableListModel
             return;
         }
 
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
 
         AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 VmSnapshotListModel model = (VmSnapshotListModel) target;
                 StoragePool dataCenter = (StoragePool) returnValue;
-                VM vm = (VM) model.getEntity();
+                VM vm = model.getEntity();
 
                 Version minClusterVersion = vm.getVdsGroupCompatibilityVersion();
                 Version minDcVersion = dataCenter.getCompatibilityVersion();

@@ -4,19 +4,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class TemplateEventListModel extends SubTabEventListModel
-{
-
-    @Override
-    public VmTemplate getEntity()
-    {
-        return (VmTemplate) ((super.getEntity() instanceof VmTemplate) ? super.getEntity() : null);
-    }
-
-    public void setEntity(VmTemplate value)
-    {
-        super.setEntity(value);
-    }
+public class TemplateEventListModel extends SubTabEventListModel<VmTemplate> {
 
     @Override
     protected void onEntityContentChanged()

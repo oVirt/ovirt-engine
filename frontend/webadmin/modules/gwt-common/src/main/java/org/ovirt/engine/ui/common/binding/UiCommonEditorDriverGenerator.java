@@ -179,10 +179,10 @@ public class UiCommonEditorDriverGenerator extends AbstractEditorDriverGenerator
         logger.log(Type.DEBUG, "Starting to write OwnerModels"); //$NON-NLS-1$
         sw.println();
         sw.println("@Override"); //$NON-NLS-1$
-        sw.println("protected java.util.Map<String, org.ovirt.engine.ui.uicommonweb.models.EntityModel> getOwnerModels() {"); //$NON-NLS-1$
+        sw.println("protected java.util.Map<String, org.ovirt.engine.ui.uicommonweb.models.Model> getOwnerModels() {"); //$NON-NLS-1$
         sw.indent();
 
-        sw.println("java.util.Map<String, org.ovirt.engine.ui.uicommonweb.models.EntityModel> regs = new java.util.HashMap<String, org.ovirt.engine.ui.uicommonweb.models.EntityModel>();"); //$NON-NLS-1$
+        sw.println("java.util.Map<String, org.ovirt.engine.ui.uicommonweb.models.Model> regs = new java.util.HashMap<String, org.ovirt.engine.ui.uicommonweb.models.Model>();"); //$NON-NLS-1$
 
         logger.log(Type.DEBUG, "Going over Editor Fields"); //$NON-NLS-1$
         for (EditorData editorData : model.getEditorData()) {

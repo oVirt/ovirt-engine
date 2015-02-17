@@ -463,8 +463,8 @@ public class StorageModule extends AbstractGinModule {
         bind(VmBackupModel.class).in(Singleton.class);
         bind(StorageEventListModel.class).in(Singleton.class);
         bind(DiskProfileListModel.class).in(Singleton.class);
-        bind(new TypeLiteral<PermissionListModel<StorageListModel>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<PermissionListModel<DiskProfileListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<StorageDomain>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<DiskProfile>>(){}).in(Singleton.class);
 
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<StorageListModel, StorageGeneralModel>>(){})
@@ -477,11 +477,11 @@ public class StorageModule extends AbstractGinModule {
            .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, StorageListModel, StorageVmListModel>>(){})
            .in(Singleton.class);
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, StorageListModel, PermissionListModel<StorageListModel>>>(){})
-           .to(new TypeLiteral<PermissionModelProvider<StorageListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, StorageListModel, PermissionListModel<StorageDomain>>>(){})
+           .to(new TypeLiteral<PermissionModelProvider<StorageDomain, StorageListModel>>(){}).in(Singleton.class);
         // Permission Disk Profiles
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, DiskProfileListModel, PermissionListModel<DiskProfileListModel>>>(){})
-           .to(new TypeLiteral<PermissionModelProvider<DiskProfileListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, DiskProfileListModel, PermissionListModel<DiskProfile>>>(){})
+           .to(new TypeLiteral<PermissionModelProvider<DiskProfile, DiskProfileListModel>>(){}).in(Singleton.class);
     }
 
 }

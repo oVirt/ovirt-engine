@@ -6,12 +6,12 @@ import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.IModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class NewVnicProfileModel extends VnicProfileModel {
 
-    public NewVnicProfileModel(EntityModel sourceModel,
+    public NewVnicProfileModel(IModel sourceModel,
             Version dcCompatibilityVersion,
             boolean customPropertiesVisible,
             Guid dcId) {
@@ -22,7 +22,7 @@ public class NewVnicProfileModel extends VnicProfileModel {
         getPortMirroring().setEntity(false);
     }
 
-    public NewVnicProfileModel(EntityModel sourceModel, Version dcCompatibilityVersion, Guid dcId) {
+    public NewVnicProfileModel(IModel sourceModel, Version dcCompatibilityVersion, Guid dcId) {
         this(sourceModel, dcCompatibilityVersion, true, dcId);
     }
 
@@ -43,7 +43,7 @@ public class NewVnicProfileModel extends VnicProfileModel {
     @Override
     protected VdcActionParametersBase getActionParameters() {
         VnicProfileParameters parameters = new VnicProfileParameters(getProfile());
-        parameters.setPublicUse((Boolean) getPublicUse().getEntity());
+        parameters.setPublicUse(getPublicUse().getEntity());
         return parameters;
     }
 }

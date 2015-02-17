@@ -23,10 +23,11 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
     private String errorMessage;
     private NetworkInterfaceModel attachedToNic;
     private NetworkInterfaceModel vlanNicModel;
+    private Network network;
 
     public LogicalNetworkModel(Network network, HostSetupNetworksModel setupModel) {
         super(setupModel);
-        setEntity(network);
+        setNetwork(network);
         management = network.getCluster() != null && network.getCluster().isManagement();
     }
 
@@ -42,17 +43,17 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         networksOnTarget.add(this);
 
         if (!hasVlan()) {
-            restoreNetworkParameters(targetNic.getEntity());
+            restoreNetworkParameters(targetNic.getIface());
         }
 
         if (isManagement()) {
             // mark the nic as a management nic
-            targetNic.getEntity().setType(2);
+            targetNic.getIface().setType(2);
         }
         if (!createBridge) {
             return null;
         }
-        VdsNetworkInterface targetNicEntity = targetNic.getEntity();
+        VdsNetworkInterface targetNicEntity = targetNic.getIface();
 
         if (hasVlan()) {
             // create vlan bridge (eth0.1)
@@ -61,16 +62,16 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             bridge.setNetworkName(getName());
             bridge.setBaseInterface(targetNic.getName());
             bridge.setVlanId(getVlanId());
-            bridge.setMtu(getEntity().getMtu());
+            bridge.setMtu(getNetwork().getMtu());
             bridge.setVdsId(targetNicEntity.getVdsId());
             bridge.setVdsName(targetNicEntity.getVdsName());
-            bridge.setBridged(getEntity().isVmNetwork());
+            bridge.setBridged(getNetwork().isVmNetwork());
             restoreNetworkParameters(bridge);
             return bridge;
         } else {
             targetNicEntity.setNetworkName(getName());
-            targetNicEntity.setMtu(getEntity().getMtu());
-            targetNicEntity.setBridged(getEntity().isVmNetwork());
+            targetNicEntity.setMtu(getNetwork().getMtu());
+            targetNicEntity.setBridged(getNetwork().isVmNetwork());
             return null;
         }
     }
@@ -104,10 +105,10 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         List<LogicalNetworkModel> nicNetworks = attachingNic.getItems();
         nicNetworks.remove(this);
         // clear network name
-        VdsNetworkInterface nicEntity = attachingNic.getEntity();
+        VdsNetworkInterface nicEntity = attachingNic.getIface();
 
         NetworkParameters netParams = new NetworkParameters();
-        VdsNetworkInterface detachedDevice = hasVlan() ? vlanNicModel.getEntity() : nicEntity;
+        VdsNetworkInterface detachedDevice = hasVlan() ? vlanNicModel.getIface() : nicEntity;
         netParams.setBootProtocol(detachedDevice.getBootProtocol());
         netParams.setAddress(detachedDevice.getAddress());
         netParams.setSubnet(detachedDevice.getSubnet());
@@ -144,9 +145,9 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         DcNetworkParams dcNetParams = getSetupModel().getNetDcParams(getName());
 
         if (dcNetParams != null) {
-            getEntity().setVlanId(dcNetParams.getVlanId());
-            getEntity().setMtu(dcNetParams.getMtu());
-            getEntity().setVmNetwork(dcNetParams.isVmNetwork());
+            getNetwork().setVlanId(dcNetParams.getVlanId());
+            getNetwork().setMtu(dcNetParams.getMtu());
+            getNetwork().setVmNetwork(dcNetParams.isVmNetwork());
         }
 
     }
@@ -159,23 +160,26 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         return vlanNicModel;
     }
 
-    @Override
-    public Network getEntity() {
-        return (Network) super.getEntity();
+    public Network getNetwork() {
+        return network;
+    }
+
+    public void setNetwork(Network network) {
+        this.network = network;
     }
 
     @Override
     public String getName() {
-        return getEntity().getName();
+        return getNetwork().getName();
     }
 
     @Override
     public NetworkStatus getStatus() {
-        return (getEntity().getCluster() == null ? null : getEntity().getCluster().getStatus());
+        return (getNetwork().getCluster() == null ? null : getNetwork().getCluster().getStatus());
     }
 
     public int getVlanId() {
-        Integer vlanId = getEntity().getVlanId();
+        Integer vlanId = getNetwork().getVlanId();
         return vlanId == null ? -1 : vlanId;
     }
 
@@ -234,7 +238,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             return null;
         }
 
-        VdsNetworkInterface nic = hasVlan() ? getVlanNicModel().getEntity() : getAttachedToNic().getEntity();
+        VdsNetworkInterface nic = hasVlan() ? getVlanNicModel().getIface() : getAttachedToNic().getIface();
         return nic.getNetworkImplementationDetails();
     }
 

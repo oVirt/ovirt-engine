@@ -29,7 +29,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
-public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSGroup, ClusterListModel> implements
+public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSGroup, ClusterListModel<Void>> implements
     MainTabClusterPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<MainTabClusterView> {
@@ -37,7 +37,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
     }
 
     @Inject
-    public MainTabClusterView(MainModelProvider<VDSGroup, ClusterListModel> modelProvider,
+    public MainTabClusterView(MainModelProvider<VDSGroup, ClusterListModel<Void>> modelProvider,
             ApplicationResources resources, ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);

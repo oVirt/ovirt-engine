@@ -5,7 +5,7 @@ import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -21,7 +21,7 @@ import com.google.inject.Provider;
  * Basic {@link ModelProvider} implementation
  * @param <M> Model type.
  */
-public abstract class TabModelProvider<M extends EntityModel> implements ModelProvider<M>, ModelBoundPopupResolver<M>, HasHandlers {
+public abstract class TabModelProvider<M extends HasEntity> implements ModelProvider<M>, ModelBoundPopupResolver<M>, HasHandlers {
 
     private final EventBus eventBus;
     private final ModelBoundPopupHandler<M> popupHandler;

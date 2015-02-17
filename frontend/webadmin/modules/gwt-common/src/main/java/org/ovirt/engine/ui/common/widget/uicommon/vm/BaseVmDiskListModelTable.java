@@ -19,7 +19,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.RadioButton;
 
-public class BaseVmDiskListModelTable<T extends VmDiskListModelBase> extends AbstractModelBoundTableWidget<Disk, T> {
+public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends AbstractModelBoundTableWidget<Disk, T> {
 
     private CommonApplicationConstants constants;
     private DisksViewRadioGroup disksViewRadioGroup;

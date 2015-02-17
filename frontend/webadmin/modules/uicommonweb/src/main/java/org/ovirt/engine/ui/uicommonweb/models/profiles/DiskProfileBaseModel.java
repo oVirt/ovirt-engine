@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.IModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public abstract class DiskProfileBaseModel extends ProfileBaseModel<DiskProfile, StorageQos, StorageDomain> {
@@ -23,7 +23,7 @@ public abstract class DiskProfileBaseModel extends ProfileBaseModel<DiskProfile,
         EMPTY_QOS.setId(Guid.Empty);
     }
 
-    public DiskProfileBaseModel(EntityModel sourceModel,
+    public DiskProfileBaseModel(IModel sourceModel,
             Guid dcId,
             Guid defaultQosId,
             VdcActionType vdcActionType) {

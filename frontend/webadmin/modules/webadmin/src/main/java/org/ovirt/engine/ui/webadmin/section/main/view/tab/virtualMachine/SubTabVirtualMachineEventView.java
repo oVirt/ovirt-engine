@@ -15,7 +15,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabVirtualMachineEventView extends AbstractSubTabEventView<VM, VmListModel, VmEventListModel>
+public class SubTabVirtualMachineEventView extends AbstractSubTabEventView<VM, VmListModel<Void>, VmEventListModel>
         implements SubTabVirtualMachineEventPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabVirtualMachineEventView> {
@@ -23,7 +23,7 @@ public class SubTabVirtualMachineEventView extends AbstractSubTabEventView<VM, V
     }
 
     @Inject
-    public SubTabVirtualMachineEventView(SearchableDetailModelProvider<AuditLog, VmListModel, VmEventListModel> modelProvider,
+    public SubTabVirtualMachineEventView(SearchableDetailModelProvider<AuditLog, VmListModel<Void>, VmEventListModel> modelProvider,
             EventBus eventBus,
             ClientStorage clientStorage, ApplicationConstants constants) {
         super(modelProvider, eventBus, clientStorage, constants);

@@ -24,7 +24,7 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
-public class UserPermissionListModel extends SearchableListModel
+public class UserPermissionListModel extends SearchableListModel<DbUser, Permissions>
 {
 
     private UICommand privateRemoveCommand;
@@ -37,17 +37,6 @@ public class UserPermissionListModel extends SearchableListModel
     private void setRemoveCommand(UICommand value)
     {
         privateRemoveCommand = value;
-    }
-
-    @Override
-    public DbUser getEntity()
-    {
-        return (DbUser) ((super.getEntity() instanceof DbUser) ? super.getEntity() : null);
-    }
-
-    public void setEntity(DbUser value)
-    {
-        super.setEntity(value);
     }
 
     public UserPermissionListModel()
@@ -92,16 +81,14 @@ public class UserPermissionListModel extends SearchableListModel
             @Override
             public void onSuccess(Object model, Object ReturnValue)
             {
-                SearchableListModel searchableListModel = (SearchableListModel) model;
-                ArrayList<Permissions> list =
-                        (ArrayList<Permissions>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                ArrayList<Permissions> list = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 ArrayList<Permissions> newList = new ArrayList<Permissions>();
                 for (Permissions permission : list) {
                     if (!permission.getrole_id().equals(ApplicationGuids.quotaConsumer.asGuid())) {
                         newList.add(permission);
                     }
                 }
-                searchableListModel.setItems(newList);
+                setItems(newList);
             }
         };
 
@@ -195,7 +182,7 @@ public class UserPermissionListModel extends SearchableListModel
     {
         boolean isInherited = false;
 
-        Permissions p = (Permissions) getSelectedItem();
+        Permissions p = getSelectedItem();
         if (p != null && getEntity() != null) {
             isInherited = !p.getad_element_id().equals(getEntity().getId());
         }

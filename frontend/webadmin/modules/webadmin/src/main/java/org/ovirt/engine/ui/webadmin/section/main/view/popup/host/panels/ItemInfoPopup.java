@@ -78,7 +78,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
 
     private void showNetwork(LogicalNetworkModel networkModel) {
         contents.removeAllRows();
-        Network entity = networkModel.getEntity();
+        Network entity = networkModel.getNetwork();
         addRow(templates.titleSetupNetworkTooltip(networkModel.getName()));
 
         // Not managed
@@ -138,7 +138,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
 
     private void showNic(NetworkInterfaceModel nic) {
         contents.removeAllRows();
-        VdsNetworkInterface entity = nic.getEntity();
+        VdsNetworkInterface entity = nic.getIface();
         NetworkBootProtocol bootProtocol = entity.getBootProtocol();
         addRow(templates.titleSetupNetworkTooltip(nic.getName()));
         addRow(constants.bootProtocolItemInfo(), RENDERER.render(bootProtocol));

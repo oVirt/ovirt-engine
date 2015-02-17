@@ -13,7 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class QuotaClusterListModel extends SearchableListModel {
+public class QuotaClusterListModel extends SearchableListModel<Quota, Quota> {
 
     public QuotaClusterListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().clustersTitle());
@@ -30,12 +30,11 @@ public class QuotaClusterListModel extends SearchableListModel {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                QuotaClusterListModel quotaClusterListModel = (QuotaClusterListModel) model;
-                quotaClusterListModel.setItems((ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                setItems((ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue());
 
             }
         };
-        IdQueryParameters params = new IdQueryParameters(((Quota) getEntity()).getId());
+        IdQueryParameters params = new IdQueryParameters(getEntity().getId());
         Frontend.getInstance().runQuery(VdcQueryType.GetQuotaVdsGroupByQuotaId,
                 params,
                 asyncQuery);

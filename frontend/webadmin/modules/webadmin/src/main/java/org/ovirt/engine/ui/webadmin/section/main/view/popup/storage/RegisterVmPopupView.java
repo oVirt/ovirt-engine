@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -14,12 +15,15 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.Registe
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class RegisterVmPopupView extends RegisterEntityPopupView
+public class RegisterVmPopupView extends RegisterEntityPopupView<VM>
         implements RegisterVmPopupPresenterWidget.ViewDef {
 
+    interface Driver extends SimpleBeanEditorDriver<RegisterEntityModel<VM>, RegisterEntityPopupView<VM>> {
+    }
+
     @Inject
-    public RegisterVmPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources, constants);
+    public RegisterVmPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, Driver driver) {
+        super(eventBus, resources, constants, driver);
     }
 
     private VM getEntity(Object object) {
@@ -27,7 +31,7 @@ public class RegisterVmPopupView extends RegisterEntityPopupView
     }
 
     @Override
-    protected void createEntityTable(RegisterEntityModel model) {
+    protected void createEntityTable(RegisterEntityModel<VM> model) {
         AbstractTextColumnWithTooltip<Object> nameColumn = new AbstractTextColumnWithTooltip<Object>() {
             @Override
             public String getValue(Object object) {
@@ -89,18 +93,8 @@ public class RegisterVmPopupView extends RegisterEntityPopupView
     }
 
     @Override
-    protected void createInfoPanel(RegisterEntityModel model) {
+    protected void createInfoPanel(RegisterEntityModel<VM> model) {
         registerEntityInfoPanel = new RegisterVmInfoPanel(model);
         entityInfoContainer.add(registerEntityInfoPanel);
-    }
-
-    @Override
-    public void edit(RegisterEntityModel object) {
-        super.edit(object);
-    }
-
-    @Override
-    public RegisterEntityModel flush() {
-        return super.flush();
     }
 }

@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolInterfaceListModel;
@@ -77,7 +77,7 @@ public class SideTabExtendedVirtualMachinePresenter extends AbstractSideTabWithD
     @Override
     protected String createRequestToken() {
         String requestToken = super.createRequestToken();
-        EntityModel model = modelProvider.getModel().getActiveDetailModel();
+        HasEntity<?> model = modelProvider.getModel().getActiveDetailModel();
         if (model instanceof PoolGeneralModel ||
                 model instanceof PoolInterfaceListModel ||
                 model instanceof PoolDiskListModel

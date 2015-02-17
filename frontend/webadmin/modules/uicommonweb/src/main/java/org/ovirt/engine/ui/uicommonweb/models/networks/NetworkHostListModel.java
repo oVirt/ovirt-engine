@@ -24,7 +24,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
-public class NetworkHostListModel extends SearchableListModel
+public class NetworkHostListModel extends SearchableListModel<NetworkView, PairQueryable<VdsNetworkInterface, VDS>>
 {
     private UICommand setupNetworksCommand;
     private NetworkHostFilter viewFilterType;
@@ -84,7 +84,7 @@ public class NetworkHostListModel extends SearchableListModel
             @Override
             public void onSuccess(final Object model, Object ReturnValue) {
                 if (model.equals(getViewFilterType())) {
-                    final Iterable returnList = (Iterable) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                    final Iterable returnList = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                     if (NetworkHostFilter.unattached.equals(getViewFilterType())) {
                         final List<PairQueryable<VdsNetworkInterface, VDS>> items =
                                 new ArrayList<PairQueryable<VdsNetworkInterface, VDS>>();
@@ -126,8 +126,7 @@ public class NetworkHostListModel extends SearchableListModel
                     return;
                 }
 
-                attachedByLabelInterfaces =
-                        (Collection<VdsNetworkInterface>) ((VdcQueryReturnValue) returnValueObj).getReturnValue();
+                attachedByLabelInterfaces = ((VdcQueryReturnValue) returnValueObj).getReturnValue();
                 setItems(items);
             }
         };
@@ -150,7 +149,7 @@ public class NetworkHostListModel extends SearchableListModel
 
         HostSetupNetworksModel setupNetworksWindowModel =
                 new HostSetupNetworksModel(this,
-                        ((PairQueryable<VdsNetworkInterface, VDS>) getSelectedItem()).getSecond());
+                        getSelectedItem().getSecond());
         setWindow(setupNetworksWindowModel);
     }
 
@@ -214,16 +213,6 @@ public class NetworkHostListModel extends SearchableListModel
     public void setViewFilterType(NetworkHostFilter viewFilterType) {
         this.viewFilterType = viewFilterType;
         search();
-    }
-
-    @Override
-    public NetworkView getEntity() {
-        return (NetworkView) ((super.getEntity() instanceof NetworkView) ? super.getEntity() : null);
-    }
-
-    public void setEntity(NetworkView value)
-    {
-        super.setEntity(value);
     }
 
     @Override

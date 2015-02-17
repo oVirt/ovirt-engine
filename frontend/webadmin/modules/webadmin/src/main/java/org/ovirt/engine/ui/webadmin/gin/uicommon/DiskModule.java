@@ -117,8 +117,8 @@ public class DiskModule extends AbstractGinModule {
             .to(new TypeLiteral<SearchableDetailTabModelProvider<StorageDomain, DiskListModel, DiskStorageListModel>>(){})
             .in(Singleton.class);
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, DiskListModel, PermissionListModel<DiskListModel>>>(){})
-            .to(new TypeLiteral<PermissionModelProvider<DiskListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, DiskListModel, PermissionListModel<Disk>>>(){})
+            .to(new TypeLiteral<PermissionModelProvider<Disk, DiskListModel>>(){}).in(Singleton.class);
 
     }
 

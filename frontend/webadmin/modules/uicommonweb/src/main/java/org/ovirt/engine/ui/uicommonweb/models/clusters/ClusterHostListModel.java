@@ -32,7 +32,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.inject.Inject;
 
-public class ClusterHostListModel extends HostListModel {
+public class ClusterHostListModel extends HostListModel<VDSGroup> {
 
     @Inject
     public ClusterHostListModel(final HostGeneralModel hostGeneralModel,
@@ -40,7 +40,7 @@ public class ClusterHostListModel extends HostListModel {
             final HostVmListModel hostVmListModel, final HostEventListModel hostEventListModel,
             final HostInterfaceListModel hostInterfaceListModel,
             final HostHardwareGeneralModel hostHardwareGeneralModel, final HostHooksListModel hostHooksListModel,
-            final PermissionListModel<HostListModel> permissionListModel) {
+            final PermissionListModel<VDS> permissionListModel) {
         super(hostGeneralModel, hostGlusterSwiftListModel, hostBricksListModel, hostVmListModel, hostEventListModel,
                 hostInterfaceListModel, hostHardwareGeneralModel, hostHooksListModel, permissionListModel);
         setUpdateMomPolicyCommand(new UICommand("updateMomPolicyCommand", this)); //$NON-NLS-1$
@@ -48,15 +48,6 @@ public class ClusterHostListModel extends HostListModel {
     }
 
     private UICommand updateMomPolicyCommand;
-
-    @Override
-    public VDSGroup getEntity() {
-        return (VDSGroup) ((super.getEntity() instanceof VDSGroup) ? super.getEntity() : null);
-    }
-
-    public void setEntity(VDSGroup value) {
-        super.setEntity(value);
-    }
 
     @Override
     protected void onEntityChanged() {
@@ -138,8 +129,7 @@ public class ClusterHostListModel extends HostListModel {
 
     private void updateMomPolicy() {
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (Object item : getSelectedItems()) {
-            VDS vds = (VDS) item;
+        for (VDS vds : getSelectedItems()) {
             list.add(new VdsActionParameters(vds.getId()));
         }
 

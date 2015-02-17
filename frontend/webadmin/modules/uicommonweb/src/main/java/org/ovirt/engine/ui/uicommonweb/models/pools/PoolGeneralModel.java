@@ -27,8 +27,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.Translator;
 
 @SuppressWarnings("unused")
-public class PoolGeneralModel extends AbstractGeneralModel
-{
+public class PoolGeneralModel extends AbstractGeneralModel<VmPool> {
 
     public static final EventDefinition updateCompleteEventDefinition;
     private Event<EventArgs> privateUpdateCompleteEvent;
@@ -408,7 +407,7 @@ public class PoolGeneralModel extends AbstractGeneralModel
 
     private void updateProperties()
     {
-        final VmPool pool = (VmPool) getEntity();
+        final VmPool pool = getEntity();
 
 
         setName(pool.getName());

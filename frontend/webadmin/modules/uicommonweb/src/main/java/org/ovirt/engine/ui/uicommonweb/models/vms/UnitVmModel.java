@@ -50,6 +50,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -1598,7 +1599,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getHostCpu().getEntityChangedEvent().addListener(this);
 
         setWatchdogAction(new NotChangableForVmInPoolListModel<VmWatchdogAction>());
-        getWatchdogAction().getEntityChangedEvent().addListener(this);
+        getWatchdogAction().getSelectedItemChangedEvent().addListener(this);
         ArrayList<VmWatchdogAction> watchDogActions = new ArrayList<VmWatchdogAction>();
         for (VmWatchdogAction action : VmWatchdogAction.values()) {
             watchDogActions.add(action);
@@ -1606,7 +1607,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getWatchdogAction().setItems(watchDogActions);
 
         setWatchdogModel(new NotChangableForVmInPoolListModel<VmWatchdogType>());
-        getWatchdogModel().getEntityChangedEvent().addListener(this);
+        getWatchdogModel().getSelectedItemChangedEvent().addListener(this);
 
         setIsAutoAssign(new NotChangableForVmInPoolEntityModel<Boolean>());
         getIsAutoAssign().getEntityChangedEvent().addListener(this);
@@ -1661,7 +1662,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         setCpuSharesAmountSelection(new NotChangableForVmInPoolListModel<CpuSharesAmount>());
         getCpuSharesAmountSelection().setItems(Arrays.asList(CpuSharesAmount.values()));
-        getCpuSharesAmountSelection().getEntityChangedEvent().addListener(this);
+        getCpuSharesAmountSelection().getSelectedItemChangedEvent().addListener(this);
         getCpuSharesAmountSelection().getSelectedItemChangedEvent().addListener(this);
         getCpuSharesAmountSelection().setSelectedItem(CpuSharesAmount.DISABLED);
 
@@ -1823,9 +1824,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             }
             else if (sender == getBaseTemplate()) {
                 behavior.baseTemplateSelectedItemChanged();
+            } else if (sender == getWatchdogModel()) {
+                watchdogModelSelectedItemChanged(sender, args);
             }
         }
-        else if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition))
+        else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition))
         {
             if (sender == getVmInitEnabled()) {
                 vmInitEnabledChanged();
@@ -1860,8 +1863,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 if (getProvisioningClone_IsSelected().getEntity()) {
                     getProvisioning().setEntity(true);
                 }
-            } else if (sender == getWatchdogModel()) {
-                WatchdogModel_EntityChanged(sender, args);
             } else if (sender == getIsHighlyAvailable()) {
                 behavior.updateMigrationAvailability();
             } else if (sender == getOverrideMigrationDowntime()) {
@@ -1897,8 +1898,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         behavior.vmTypeChanged(getVmType().getSelectedItem());
     }
 
-    private void WatchdogModel_EntityChanged(Object sender, EventArgs args) {
-        if (getWatchdogModel().getEntity() == null) {
+    private void watchdogModelSelectedItemChanged(Object sender, EventArgs args) {
+        if (getWatchdogModel().getSelectedItem() == null) {
             getWatchdogAction().setIsChangable(false);
             getWatchdogAction().setSelectedItem(null); //$NON-NLS-1$
         } else {

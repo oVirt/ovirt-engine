@@ -4,19 +4,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class DataCenterEventListModel extends SubTabEventListModel
-{
-
-    @Override
-    public StoragePool getEntity()
-    {
-        return (StoragePool) ((super.getEntity() instanceof StoragePool) ? super.getEntity() : null);
-    }
-
-    public void setEntity(StoragePool value)
-    {
-        super.setEntity(value);
-    }
+public class DataCenterEventListModel extends SubTabEventListModel<StoragePool> {
 
     @Override
     protected void onEntityContentChanged()

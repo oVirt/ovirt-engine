@@ -45,7 +45,7 @@ public class SetupNetworksJoinBondsModel extends SetupNetworksBondModel {
         getBondingOptions().setItems(bondOptions);
         getBondingOptions().setSelectedItem(pairForBondOption.get(target.getBondOptions()));
 
-        setLabelsModel(new NicLabelModel(Arrays.asList(source.getEntity(), target.getEntity()), suggestedLabels, labelToIface));
+        setLabelsModel(new NicLabelModel(Arrays.asList(source.getIface(), target.getIface()), suggestedLabels, labelToIface));
     }
 
     private void addBondOptionIfMissing(String candidateOption) {

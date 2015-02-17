@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.AbstractSubTabAffinity
 
 import com.google.gwt.core.client.GWT;
 
-public class SubTabClusterAffinityGroupView extends AbstractSubTabAffinityGroupsView<VDSGroup, ClusterListModel, ClusterAffinityGroupListModel>
+public class SubTabClusterAffinityGroupView extends AbstractSubTabAffinityGroupsView<VDSGroup, ClusterListModel<Void>, ClusterAffinityGroupListModel>
         implements SubTabClusterAffinityGroupPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabClusterAffinityGroupView> {
@@ -22,7 +22,7 @@ public class SubTabClusterAffinityGroupView extends AbstractSubTabAffinityGroups
     }
 
     @Inject
-    public SubTabClusterAffinityGroupView(SearchableDetailModelProvider<AffinityGroup, ClusterListModel, ClusterAffinityGroupListModel> modelProvider,
+    public SubTabClusterAffinityGroupView(SearchableDetailModelProvider<AffinityGroup, ClusterListModel<Void>, ClusterAffinityGroupListModel> modelProvider,
             ApplicationConstants constants) {
         super(modelProvider, constants);
     }

@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class DiskStorageListModel extends SearchableListModel
+public class DiskStorageListModel extends SearchableListModel<DiskImage, StorageDomain>
 {
     public DiskStorageListModel()
     {
@@ -38,7 +38,7 @@ public class DiskStorageListModel extends SearchableListModel
     @Override
     protected void syncSearch()
     {
-        DiskImage diskImage = (DiskImage) getEntity();
+        DiskImage diskImage = getEntity();
         if (diskImage == null)
         {
             return;
@@ -50,8 +50,7 @@ public class DiskStorageListModel extends SearchableListModel
             @Override
             public void onSuccess(Object model, Object returnValue)
             {
-                SearchableListModel searchableListModel = (SearchableListModel) model;
-                searchableListModel.setItems((ArrayList<StorageDomain>) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                setItems((ArrayList<StorageDomain>) ((VdcQueryReturnValue) returnValue).getReturnValue());
             }
         };
 

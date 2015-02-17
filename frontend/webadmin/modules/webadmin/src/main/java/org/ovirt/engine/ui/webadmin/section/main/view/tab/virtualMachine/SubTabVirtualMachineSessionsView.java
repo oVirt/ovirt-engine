@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
 public class SubTabVirtualMachineSessionsView
-    extends AbstractSubTabFormView<VM, VmListModel, VmSessionsModel>
+    extends AbstractSubTabFormView<VM, VmListModel<Void>, VmSessionsModel>
     implements SubTabVirtualMachineSessionsPresenter.ViewDef {
 
     interface ViewUiBinder extends UiBinder<Widget, SubTabVirtualMachineSessionsView> {
@@ -32,7 +32,7 @@ public class SubTabVirtualMachineSessionsView
     VmSessionsModelForm form;
 
     @Inject
-    public SubTabVirtualMachineSessionsView(DetailModelProvider<VmListModel, VmSessionsModel> modelProvider,
+    public SubTabVirtualMachineSessionsView(DetailModelProvider<VmListModel<Void>, VmSessionsModel> modelProvider,
             ApplicationConstants constants) {
         super(modelProvider);
 

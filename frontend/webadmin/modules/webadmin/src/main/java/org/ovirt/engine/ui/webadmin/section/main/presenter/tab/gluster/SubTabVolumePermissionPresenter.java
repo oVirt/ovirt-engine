@@ -24,13 +24,13 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabVolumePermissionPresenter extends AbstractSubTabPresenter<GlusterVolumeEntity, VolumeListModel,
-    PermissionListModel<VolumeListModel>, SubTabVolumePermissionPresenter.ViewDef,
+    PermissionListModel<GlusterVolumeEntity>, SubTabVolumePermissionPresenter.ViewDef,
     SubTabVolumePermissionPresenter.ProxyDef> {
 
     @TabInfo(container = VolumeSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
             SearchableDetailModelProvider<Permissions, VolumeListModel,
-            PermissionListModel<VolumeListModel>> modelProvider) {
+            PermissionListModel<GlusterVolumeEntity>> modelProvider) {
         return new ModelBoundTabData(applicationConstants.volumePermissionSubTabLabel(), 3, modelProvider);
     }
 
@@ -38,7 +38,7 @@ public class SubTabVolumePermissionPresenter extends AbstractSubTabPresenter<Glu
     public SubTabVolumePermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
             SearchableDetailModelProvider<Permissions, VolumeListModel,
-            PermissionListModel<VolumeListModel>> modelProvider) {
+            PermissionListModel<GlusterVolumeEntity>> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 VolumeSubTabPanelPresenter.TYPE_SetTabContent);
     }

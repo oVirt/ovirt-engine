@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class UserGeneralModel extends EntityModel
+public class UserGeneralModel extends EntityModel<DbUser>
 {
     public UserGeneralModel()
     {
@@ -70,7 +70,7 @@ public class UserGeneralModel extends EntityModel
 
     private void updateProperties()
     {
-        DbUser user = (DbUser) getEntity();
+        DbUser user = getEntity();
 
         setDomain(user.getDomain());
         setEmail(user.getEmail());

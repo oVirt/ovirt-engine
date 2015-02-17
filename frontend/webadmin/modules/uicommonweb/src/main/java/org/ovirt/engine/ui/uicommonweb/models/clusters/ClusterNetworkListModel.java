@@ -29,7 +29,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.ClusterNewNetworkModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class ClusterNetworkListModel extends SearchableListModel
+public class ClusterNetworkListModel extends SearchableListModel<VDSGroup, Network>
 {
 
     private UICommand privateNewNetworkCommand;
@@ -69,17 +69,6 @@ public class ClusterNetworkListModel extends SearchableListModel
     }
 
     private final Network displayNetwork = null;
-
-    @Override
-    public VDSGroup getEntity()
-    {
-        return (VDSGroup) ((super.getEntity() instanceof VDSGroup) ? super.getEntity() : null);
-    }
-
-    public void setEntity(VDSGroup value)
-    {
-        super.setEntity(value);
-    }
 
     public ClusterNetworkListModel()
     {
@@ -126,13 +115,12 @@ public class ClusterNetworkListModel extends SearchableListModel
             @Override
             public void onSuccess(Object model, Object ReturnValue)
             {
-                SearchableListModel searchableListModel = (SearchableListModel) model;
                 final List<Network> newItems = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 Collections.sort(newItems, new NetworkInClusterComparator());
                 for (Network network : newItems) {
                     network.getCluster().setId(new NetworkClusterId(getEntity().getId(), network.getId()));
                 }
-                searchableListModel.setItems(newItems);
+                setItems(newItems);
             }
         };
 
@@ -208,10 +196,9 @@ public class ClusterNetworkListModel extends SearchableListModel
     }
 
     @Override
-    protected void entityChanging(Object newValue, Object oldValue)
+    protected void entityChanging(VDSGroup newValue, VDSGroup oldValue)
     {
-        VDSGroup vdsGroup = (VDSGroup) newValue;
-        getNewNetworkCommand().setIsExecutionAllowed(vdsGroup != null && vdsGroup.getStoragePoolId() != null);
+        getNewNetworkCommand().setIsExecutionAllowed(newValue != null && newValue.getStoragePoolId() != null);
     }
 
     @Override
@@ -230,7 +217,7 @@ public class ClusterNetworkListModel extends SearchableListModel
 
     private void updateActionAvailability()
     {
-        Network network = (Network) getSelectedItem();
+        Network network = getSelectedItem();
 
         // CanRemove = SelectedItems != null && SelectedItems.Count > 0;
         getSetAsDisplayCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() == 1

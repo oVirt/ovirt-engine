@@ -720,7 +720,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
             }
         });
 
-        object.getProviders().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+        object.getProviders().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 object.updateHosts();

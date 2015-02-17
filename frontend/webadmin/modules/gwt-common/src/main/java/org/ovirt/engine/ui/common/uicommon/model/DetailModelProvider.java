@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.uicommon.model;
 
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 
 /**
@@ -13,7 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
  * @param <D>
  *            Detail model type.
  */
-public interface DetailModelProvider<M extends ListWithDetailsModel, D extends EntityModel> extends ModelProvider<D> {
+public interface DetailModelProvider<M extends ListWithDetailsModel, D extends HasEntity> extends ModelProvider<D> {
 
     /**
      * Notifies main model that the corresponding sub tab has been selected.

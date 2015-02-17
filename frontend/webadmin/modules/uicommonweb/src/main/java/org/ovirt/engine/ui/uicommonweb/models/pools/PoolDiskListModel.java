@@ -13,8 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModelBase;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class PoolDiskListModel extends VmDiskListModelBase
-{
+public class PoolDiskListModel extends VmDiskListModelBase<VmPool> {
     private VM vm;
 
     public VM getVM() {
@@ -37,7 +36,7 @@ public class PoolDiskListModel extends VmDiskListModelBase
     {
         super.onEntityChanged();
 
-        VmPool pool = (VmPool) getEntity();
+        VmPool pool = getEntity();
         if (pool != null)
         {
             AsyncQuery _asyncQuery = new AsyncQuery();
@@ -48,14 +47,13 @@ public class PoolDiskListModel extends VmDiskListModelBase
                 {
                     if (result != null)
                     {
-                        VM vm = (VM) ((VdcQueryReturnValue) result).getReturnValue();
+                        VM vm = ((VdcQueryReturnValue) result).getReturnValue();
                         if (vm == null) {
                             return;
                         }
 
-                        PoolDiskListModel poolDiskListModel = (PoolDiskListModel) model;
-                        poolDiskListModel.setVM(vm);
-                        poolDiskListModel.syncSearch();
+                        setVM(vm);
+                        syncSearch();
                     }
                 }
             };

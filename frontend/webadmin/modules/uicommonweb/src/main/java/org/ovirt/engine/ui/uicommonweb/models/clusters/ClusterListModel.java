@@ -39,6 +39,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsAndReportsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
@@ -61,7 +62,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.inject.Inject;
 
-public class ClusterListModel extends ListWithDetailsAndReportsModel implements ISupportSystemTreeContext {
+public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGroup> implements ISupportSystemTreeContext {
 
     private UICommand privateNewCommand;
 
@@ -133,10 +134,10 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
         }
         else
         {
-            ArrayList<Object> items = new ArrayList<Object>();
-            for (Object i : getSelectedItems())
+            ArrayList<Object> items = new ArrayList<>();
+            for (VDSGroup vdsGroup : getSelectedItems())
             {
-                items.add(((VDSGroup) i).getId());
+                items.add(vdsGroup.getId());
             }
             return items.toArray(new Object[] {});
         }
@@ -190,7 +191,7 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
             final ClusterAffinityGroupListModel clusterAffinityGroupListModel,
             final CpuProfileListModel cpuProfileListModel, final ClusterGeneralModel clusterGeneralModel,
             final ClusterNetworkListModel clusterNetworkListModel, final ClusterHostListModel clusterHostListModel,
-            final PermissionListModel<ClusterListModel> permissionListModel) {
+            final PermissionListModel<VDSGroup> permissionListModel) {
         this.clusterVmListModel = clusterVmListModel;
         this.clusterServiceModel = clusterServiceModel;
         this.clusterGlusterHookListModel = clusterGlusterHookListModel;
@@ -227,7 +228,7 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
         model.setHashName("new_cluster_-_guide_me"); //$NON-NLS-1$
 
         if (getGuideContext() == null) {
-            VDSGroup cluster = (VDSGroup) getSelectedItem();
+            VDSGroup cluster = getSelectedItem();
             setGuideContext(cluster.getId());
         }
 
@@ -235,7 +236,7 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
-                        ClusterListModel clusterListModel = (ClusterListModel) target;
+                        ClusterListModel<Void> clusterListModel = (ClusterListModel<Void>) target;
                         ClusterGuideModel model = (ClusterGuideModel) clusterListModel.getWindow();
                         model.setEntity((VDSGroup) returnValue);
 
@@ -250,8 +251,8 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
 
     private void setDetailList(final ClusterGeneralModel clusterGeneralModel,
             final ClusterNetworkListModel clusterNetworkListModel, final ClusterHostListModel clusterHostListModel,
-            final PermissionListModel<ClusterListModel> permissionListModel) {
-        List<EntityModel> list = new ArrayList<EntityModel>();
+            final PermissionListModel<VDSGroup> permissionListModel) {
+        List<HasEntity<VDSGroup>> list = new ArrayList<>();
         list.add(clusterGeneralModel);
         list.add(clusterNetworkListModel);
         list.add(clusterHostListModel);
@@ -267,7 +268,7 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
     @Override
     protected void updateDetailsAvailability() {
         super.updateDetailsAvailability();
-        VDSGroup vdsGroup = (VDSGroup) getSelectedItem();
+        VDSGroup vdsGroup = getSelectedItem();
         getClusterVmListModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsVirtService());
         getClusterServiceModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsGlusterService()
                 && GlusterFeaturesUtil.isGlusterVolumeServicesSupported(vdsGroup.getCompatibilityVersion()));
@@ -320,7 +321,7 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
             @Override
             public void onSuccess(Object model, Object result)
             {
-                ClusterListModel clModel = (ClusterListModel) model;
+                ClusterListModel<Void> clModel = (ClusterListModel<Void>) model;
                 ClusterModel cModel = (ClusterModel) clModel.getWindow();
                 ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
 
@@ -355,7 +356,7 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
 
     public void edit()
     {
-        final VDSGroup cluster = (VDSGroup) getSelectedItem();
+        final VDSGroup cluster = getSelectedItem();
 
         if (getWindow() != null)
         {
@@ -465,7 +466,7 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
         model.setHelpTag(HelpTag.remove_cluster);
         model.setHashName("remove_cluster"); //$NON-NLS-1$
 
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         for (VDSGroup a : Linq.<VDSGroup> cast(getSelectedItems()))
         {
             list.add(a.getName());
@@ -487,7 +488,7 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
             return;
         }
 
-        ArrayList<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> prms = new ArrayList<>();
         for (Object a : getSelectedItems())
         {
             prms.add(new VdsGroupParametersBase(((VDSGroup) a).getId()));
@@ -514,7 +515,7 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
 
         boolean validateCpu =
                 (model.getIsNew() && model.getEnableOvirtService().getEntity())
-                        || (model.getIsEdit() && ((VDSGroup) getSelectedItem()).getCpuName() != null);
+                        || (model.getIsEdit() && getSelectedItem().getCpuName() != null);
 
         if (!model.validate(validateCpu))
         {
@@ -531,7 +532,7 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
     }
 
     private void onSaveConfirmCV(ClusterModel model) {
-        if (!model.getVersion().getSelectedItem().equals(((VDSGroup) getSelectedItem()).getCompatibilityVersion())) {
+        if (!model.getVersion().getSelectedItem().equals(getSelectedItem().getCompatibilityVersion())) {
             final ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
             confirmModel.setTitle(ConstantsManager.getInstance()
@@ -558,7 +559,7 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
 
         // CPU thread support is being turned off either explicitly or via version change
         if (!model.getVersionSupportsCpuThreads().getEntity() && model.getCountThreadsAsCores().getEntity()
-                && ((VDSGroup) getSelectedItem()).getCountThreadsAsCores()) {
+                && getSelectedItem().getCountThreadsAsCores()) {
             ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
             confirmModel.setTitle(ConstantsManager.getInstance()
@@ -607,7 +608,7 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
                 ClusterModel clusterModel = (ClusterModel) model;
                 Integer activeVms = (Integer) result;
 
-                ServerCpu vdsCpu = getVdsGroupServerCpu(clusterModel, (VDSGroup) getSelectedItem());
+                ServerCpu vdsCpu = getVdsGroupServerCpu(clusterModel, getSelectedItem());
                 if (activeVms > 0 && vdsCpu != null && clusterModel.getCPU().getSelectedItem().getLevel() < vdsCpu.getLevel()) {
                     cpuLevelConfirmationWindow();
                 } else {
@@ -615,7 +616,7 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
                 }
             }
         };
-        AsyncDataProvider.getInstance().getNumberOfActiveVmsInCluster(_asyncQuery, ((VDSGroup) getSelectedItem()).getId());
+        AsyncDataProvider.getInstance().getNumberOfActiveVmsInCluster(_asyncQuery, getSelectedItem().getId());
     }
 
     private void cpuLevelConfirmationWindow() {
@@ -737,7 +738,7 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
 
-                        ClusterListModel localModel = (ClusterListModel) result.getState();
+                        ClusterListModel<Void> localModel = (ClusterListModel<Void>) result.getState();
                         if (model.getIsImportGlusterConfiguration().getEntity()) {
                             localModel.postOnSaveInternalWithImport(result.getReturnValue());
                         }
@@ -783,13 +784,13 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
                     onGlusterHostsWithoutFingerprint(hostMap, clusterModel);
                     return;
                 }
-                ArrayList<EntityModel<HostDetailModel>> list = new ArrayList<EntityModel<HostDetailModel>>();
+                ArrayList<EntityModel<HostDetailModel>> list = new ArrayList<>();
                 for (Map.Entry<String, String> host : hostMap.entrySet())
                 {
                     HostDetailModel hostModel = new HostDetailModel(host.getKey(), host.getValue());
                     hostModel.setName(host.getKey());
                     hostModel.setPassword("");//$NON-NLS-1$
-                    EntityModel<HostDetailModel> entityModel = new EntityModel<HostDetailModel>(hostModel);
+                    EntityModel<HostDetailModel> entityModel = new EntityModel<>(hostModel);
                     list.add(entityModel);
                 }
                 importClusterHosts(clusterModel, list);
@@ -808,7 +809,7 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
 
     private void onGlusterHostsWithoutFingerprint(Map<String, String> hostMap, ClusterModel clusterModel)
     {
-        ArrayList<String> problematicHosts = new ArrayList<String>();
+        ArrayList<String> problematicHosts = new ArrayList<>();
         for (Map.Entry<String, String> host : hostMap.entrySet())
         {
             if (host.getValue() == null || host.getValue().equals("")) //$//$NON-NLS-1$
@@ -891,7 +892,7 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
 
     private void addHosts(final MultipleHostsModel hostsModel) {
         hostsModel.startProgress(null);
-        ArrayList<VdcActionParametersBase> parametersList = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> parametersList = new ArrayList<>();
         for (Object object : hostsModel.getHosts().getItems()) {
             HostDetailModel hostDetailModel = (HostDetailModel) ((EntityModel) object).getEntity();
 
@@ -1104,12 +1105,12 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
     private void checkForNonResponsiveHosts(final ConfirmationModel confirmModel) {
         startProgress(null);
         Frontend.getInstance().runQuery(VdcQueryType.GetHostsByClusterId,
-                new IdQueryParameters(((VDSGroup) getSelectedItem()).getId()),
+                new IdQueryParameters(getSelectedItem().getId()),
                 new AsyncQuery(this, new INewAsyncCallback() {
 
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
-                        ClusterListModel model = (ClusterListModel) target;
+                        ClusterListModel<Void> model = (ClusterListModel<Void>) target;
                         ArrayList<VDS> hosts = null;
                         if (returnValue instanceof ArrayList) {
                             hosts = (ArrayList<VDS>) returnValue;

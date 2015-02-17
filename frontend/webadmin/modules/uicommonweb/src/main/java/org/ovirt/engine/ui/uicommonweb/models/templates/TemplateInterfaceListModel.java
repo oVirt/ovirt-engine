@@ -20,7 +20,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class TemplateInterfaceListModel extends SearchableListModel
+public class TemplateInterfaceListModel extends SearchableListModel<VmTemplate, VmNetworkInterface>
 {
 
     private UICommand privateNewCommand;
@@ -61,13 +61,6 @@ public class TemplateInterfaceListModel extends SearchableListModel
 
     private VDSGroup cluster = null;
 
-    // TODO: Check if we really need the following property.
-    private VmTemplate getEntityStronglyTyped()
-    {
-        Object tempVar = getEntity();
-        return (VmTemplate) ((tempVar instanceof VmTemplate) ? tempVar : null);
-    }
-
     public TemplateInterfaceListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().networkInterfacesTitle());
@@ -93,7 +86,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
     @Override
     public void search()
     {
-        if (getEntityStronglyTyped() != null)
+        if (getEntity() != null)
         {
             super.search();
         }
@@ -108,7 +101,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
         }
 
         super.syncSearch(VdcQueryType.GetTemplateInterfacesByTemplateId,
-                new IdQueryParameters(getEntityStronglyTyped().getId()));
+                new IdQueryParameters(getEntity().getId()));
     }
 
     private void newEntity()
@@ -119,8 +112,8 @@ public class TemplateInterfaceListModel extends SearchableListModel
         }
 
         VmInterfaceModel model =
-                NewTemplateInterfaceModel.createInstance(getEntityStronglyTyped(),
-                        getEntityStronglyTyped().getStoragePoolId(),
+                NewTemplateInterfaceModel.createInstance(getEntity(),
+                        getEntity().getStoragePoolId(),
                         cluster.getCompatibilityVersion(),
                         (ArrayList<VmNetworkInterface>) getItems(),
                         this);
@@ -137,8 +130,8 @@ public class TemplateInterfaceListModel extends SearchableListModel
         }
 
         VmInterfaceModel model =
-                EditTemplateInterfaceModel.createInstance(getEntityStronglyTyped(),
-                        getEntityStronglyTyped().getStoragePoolId(),
+                EditTemplateInterfaceModel.createInstance(getEntity(),
+                        getEntity().getStoragePoolId(),
                         cluster.getCompatibilityVersion(),
                         (ArrayList<VmNetworkInterface>) getItems(),
                         (VmNetworkInterface) getSelectedItem(),
@@ -208,7 +201,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
     }
 
     @Override
-    public void setEntity(Object value) {
+    public void setEntity(VmTemplate value) {
         cluster = null;
         super.setEntity(value);
 
@@ -220,8 +213,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
                     cluster = (VDSGroup) returnValue;
                     updateActionAvailability();
                 }
-            }),
-                    ((VmTemplate) getEntity()).getVdsGroupId());
+            }), getEntity().getVdsGroupId());
         }
     }
 

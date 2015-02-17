@@ -24,7 +24,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabVnicProfilePermissionPresenter extends AbstractSubTabPresenter<VnicProfileView, VnicProfileListModel,
-    PermissionListModel<VnicProfileListModel>, SubTabVnicProfilePermissionPresenter.ViewDef,
+    PermissionListModel<VnicProfileView>, SubTabVnicProfilePermissionPresenter.ViewDef,
     SubTabVnicProfilePermissionPresenter.ProxyDef> {
 
     @ProxyCodeSplit
@@ -38,7 +38,7 @@ public class SubTabVnicProfilePermissionPresenter extends AbstractSubTabPresente
     @TabInfo(container = VnicProfileSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
             SearchableDetailModelProvider<Permissions, VnicProfileListModel,
-            PermissionListModel<VnicProfileListModel>> modelProvider) {
+            PermissionListModel<VnicProfileView>> modelProvider) {
         return new ModelBoundTabData(applicationConstants.vnicProfilePermissionSubTabLabel(), 2,
                 modelProvider);
     }
@@ -47,7 +47,7 @@ public class SubTabVnicProfilePermissionPresenter extends AbstractSubTabPresente
     public SubTabVnicProfilePermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
             SearchableDetailModelProvider<Permissions, VnicProfileListModel,
-            PermissionListModel<VnicProfileListModel>> modelProvider) {
+            PermissionListModel<VnicProfileView>> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, VnicProfileSubTabPanelPresenter.TYPE_SetTabContent);
     }
 

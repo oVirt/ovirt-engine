@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.common.widget.tab;
 
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -24,7 +24,7 @@ public class ModelBoundTab extends SimpleTab implements HasHandlers {
         registerModelEventListeners(tabData.getModelProvider());
     }
 
-    void registerModelEventListeners(final ModelProvider<? extends EntityModel> modelProvider) {
+    void registerModelEventListeners(final ModelProvider<? extends HasEntity> modelProvider) {
         modelProvider.getModel().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {

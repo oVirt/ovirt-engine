@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.storage.IscsiStorageModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -191,7 +191,7 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
 
     }
 
-    void onIsValidPropertyChange(EntityModel model) {
+    void onIsValidPropertyChange(Model model) {
         if (model.getIsValid()) {
             markAsValid();
         } else {

@@ -33,7 +33,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class PoolVmListModel extends VmListModel {
+public class PoolVmListModel extends VmListModel<VmPool> {
 
     private UICommand privateDetachCommand;
 
@@ -45,16 +45,11 @@ public class PoolVmListModel extends VmListModel {
         privateDetachCommand = value;
     }
 
-    @Override
-    public VmPool getEntity() {
-        return (VmPool) super.getEntity();
-    }
-
     @Inject
     public PoolVmListModel(final VmGeneralModel vmGeneralModel, final VmInterfaceListModel vmInterfaceListModel,
             final VmDiskListModel vmDiskListModel, final VmSnapshotListModel vmSnapshotListModel,
-            final VmEventListModel vmEventListModel, final VmAppListModel vmAppListModel,
-            final PermissionListModel<VmListModel> permissionListModel, final VmAffinityGroupListModel vmAffinityGroupListModel,
+            final VmEventListModel vmEventListModel, final VmAppListModel<VM> vmAppListModel,
+            final PermissionListModel<VM> permissionListModel, final VmAffinityGroupListModel vmAffinityGroupListModel,
             final VmSessionsModel vmSessionsModel, final Provider<ImportVmsModel> importVmsModelProvider) {
         super(vmGeneralModel, vmInterfaceListModel, vmDiskListModel, vmSnapshotListModel, vmEventListModel,
                 vmAppListModel, permissionListModel, vmAffinityGroupListModel, vmSessionsModel, importVmsModelProvider);
@@ -102,9 +97,8 @@ public class PoolVmListModel extends VmListModel {
         model.setHashName("detach_virtual_machine"); //$NON-NLS-1$
 
         ArrayList<String> list = new ArrayList<String>();
-        for (Object item : getSelectedItems()) {
-            VM a = (VM) item;
-            list.add(a.getName());
+        for (VM item : getSelectedItems()) {
+            list.add(item.getName());
         }
         Collections.sort(list);
         model.setItems(list);

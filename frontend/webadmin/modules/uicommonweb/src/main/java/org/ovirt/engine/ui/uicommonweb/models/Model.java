@@ -32,8 +32,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.inject.Inject;
 
-public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvidePropertyChangedEvent, HasHandlers
-{
+public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvidePropertyChangedEvent, HasHandlers, IModel {
     /**
      * The GWT event bus.
      */
@@ -63,11 +62,13 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
 
     private Model window;
 
+    @Override
     public Model getWindow()
     {
         return window;
     }
 
+    @Override
     public void setWindow(Model value)
     {
         if (window != value)
@@ -79,11 +80,13 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
 
     private Model confirmWindow;
 
+    @Override
     public Model getConfirmWindow()
     {
         return confirmWindow;
     }
 
+    @Override
     public void setConfirmWindow(Model value)
     {
         if (confirmWindow != value)
@@ -95,6 +98,7 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
 
     private Model widgetModel;
 
+    @Override
     public Model getWidgetModel()
     {
         return widgetModel;
@@ -135,6 +139,7 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
 
     private UICommand privateLastExecutedCommand;
 
+    @Override
     public UICommand getLastExecutedCommand()
     {
         return privateLastExecutedCommand;
@@ -150,6 +155,7 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
     /**
      * Represents a progress operation on the model.
      */
+    @Override
     public ProgressModel getProgress()
     {
         return progress;
@@ -186,6 +192,7 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
         privatehashName = value;
     }
 
+    @Override
     public String getHashName()
     {
         return gethashName();
@@ -306,6 +313,7 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
 
     private boolean isAvailable;
 
+    @Override
     public boolean getIsAvailable()
     {
         return isAvailable && ApplicationModeHelper.isAvailableInMode(getAvailableInModes());

@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 
 import com.google.gwt.core.client.GWT;
 
-public class SubTabHostHookView extends AbstractSubTabTableView<VDS, Map<String, String>, HostListModel, HostHooksListModel>
+public class SubTabHostHookView extends AbstractSubTabTableView<VDS, Map<String, String>, HostListModel<Void>, HostHooksListModel>
         implements SubTabHostHookPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabHostHookView> {
@@ -31,7 +31,7 @@ public class SubTabHostHookView extends AbstractSubTabTableView<VDS, Map<String,
     private static final String PROPERTY_VALUE = "PropertyValue"; //$NON-NLS-1$
 
     @Inject
-    public SubTabHostHookView(SearchableDetailModelProvider<Map<String, String>, HostListModel, HostHooksListModel> modelProvider, ApplicationConstants constants) {
+    public SubTabHostHookView(SearchableDetailModelProvider<Map<String, String>, HostListModel<Void>, HostHooksListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         initTable(constants);
         initWidget(getTable());

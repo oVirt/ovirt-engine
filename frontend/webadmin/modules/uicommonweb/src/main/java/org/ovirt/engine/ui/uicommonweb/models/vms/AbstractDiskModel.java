@@ -41,6 +41,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModel;
@@ -899,7 +900,7 @@ public abstract class AbstractDiskModel extends DiskModel
     public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition)) {
+        if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
             if (sender == getIsReadOnly()) {
                 updateScsiPassthroguhChangeability();
             } else if (sender == getIsScsiPassthrough()) {

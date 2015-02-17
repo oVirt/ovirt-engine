@@ -20,24 +20,23 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
-import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.inject.Inject;
 
-public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase, R extends BusinessEntity<Guid>> extends ListWithDetailsModel {
+public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase, R extends BusinessEntity<Guid>> extends ListWithSimpleDetailsModel<R, P> {
     private UICommand newCommand;
     private UICommand editCommand;
     private UICommand removeCommand;
     private Map<Guid, Q> qosMap;
-    final PermissionListModel<? extends SearchableListModel> permissionListModel;
+    final PermissionListModel<P> permissionListModel;
 
     @Inject
-    public ProfileListModel(final PermissionListModel<? extends SearchableListModel> permissionListModel) {
+    public ProfileListModel(final PermissionListModel<P> permissionListModel) {
         this.permissionListModel = permissionListModel;
         setDetailList();
         setTitle(ConstantsManager.getInstance().getConstants().diskProfilesTitle());
@@ -52,7 +51,7 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
     }
 
     private void setDetailList() {
-        List<EntityModel> list = new ArrayList<EntityModel>();
+        List<HasEntity<P>> list = new ArrayList<>();
         list.add(permissionListModel);
         setDetailModels(list);
     }
@@ -64,8 +63,6 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
     protected abstract RemoveProfileModel<P> getRemoveProfileModel();
 
     protected abstract QosType getQosType();
-
-    protected abstract R getParentEntity();
 
     protected abstract Guid getStoragePoolId();
 
@@ -104,8 +101,8 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
     }
 
     private void initProfileParentList(ProfileBaseModel<P, Q, R> model) {
-        model.getParentListModel().setItems(Arrays.<R> asList(getParentEntity()));
-        model.getParentListModel().setSelectedItem(getParentEntity());
+        model.getParentListModel().setItems(Arrays.<R> asList(getEntity()));
+        model.getParentListModel().setSelectedItem(getEntity());
         model.getParentListModel().setIsChangable(false);
     }
 
@@ -161,7 +158,7 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
 
     private void fetchProfiles() {
         Frontend.getInstance().runQuery(getQueryType(),
-                new IdQueryParameters(ProfileListModel.this.getParentEntity().getId()),
+                new IdQueryParameters(getEntity().getId()),
                 new AsyncQuery(new INewAsyncCallback() {
 
                     @Override
@@ -181,7 +178,7 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
     }
 
     private void updateActionAvailability() {
-        R parentEntity = getParentEntity();
+        R parentEntity = getEntity();
 
         getNewCommand().setIsExecutionAllowed(parentEntity != null);
         getEditCommand().setIsExecutionAllowed((getSelectedItems() != null && getSelectedItems().size() == 1));
@@ -247,7 +244,7 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
         return qosMap.get(qosId);
     }
 
-    public PermissionListModel<? extends SearchableListModel> getPermissionListModel() {
+    public PermissionListModel<P> getPermissionListModel() {
         return permissionListModel;
     }
 }

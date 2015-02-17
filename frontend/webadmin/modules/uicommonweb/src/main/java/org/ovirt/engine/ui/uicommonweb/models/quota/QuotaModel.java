@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.quota;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -18,7 +19,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
-public class QuotaModel extends EntityModel {
+public class QuotaModel extends EntityModel<Quota> {
 
     UICommand editQuotaClusterCommand;
     UICommand editQuotaStorageCommand;

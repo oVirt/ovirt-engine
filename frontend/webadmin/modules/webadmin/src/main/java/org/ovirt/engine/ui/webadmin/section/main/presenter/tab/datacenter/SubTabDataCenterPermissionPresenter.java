@@ -24,7 +24,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabDataCenterPermissionPresenter extends AbstractSubTabPresenter<StoragePool, DataCenterListModel,
-    PermissionListModel<DataCenterListModel>, SubTabDataCenterPermissionPresenter.ViewDef,
+    PermissionListModel<StoragePool>, SubTabDataCenterPermissionPresenter.ViewDef,
     SubTabDataCenterPermissionPresenter.ProxyDef> {
 
     @ProxyCodeSplit
@@ -38,7 +38,7 @@ public class SubTabDataCenterPermissionPresenter extends AbstractSubTabPresenter
     @TabInfo(container = DataCenterSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
             SearchableDetailModelProvider<Permissions, DataCenterListModel,
-            PermissionListModel<DataCenterListModel>> modelProvider) {
+            PermissionListModel<StoragePool>> modelProvider) {
         return new ModelBoundTabData(applicationConstants.dataCenterPermissionSubTabLabel(), 5, modelProvider);
     }
 
@@ -46,7 +46,7 @@ public class SubTabDataCenterPermissionPresenter extends AbstractSubTabPresenter
     public SubTabDataCenterPermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
             SearchableDetailModelProvider<Permissions, DataCenterListModel,
-            PermissionListModel<DataCenterListModel>> modelProvider) {
+            PermissionListModel<StoragePool>> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 DataCenterSubTabPanelPresenter.TYPE_SetTabContent);
     }

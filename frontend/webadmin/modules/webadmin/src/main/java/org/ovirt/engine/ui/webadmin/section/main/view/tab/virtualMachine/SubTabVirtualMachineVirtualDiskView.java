@@ -17,7 +17,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabVirtualMachineVirtualDiskView extends AbstractSubTabTableWidgetView<VM, Disk, VmListModel, VmDiskListModel> implements SubTabVirtualMachineVirtualDiskPresenter.ViewDef {
+public class SubTabVirtualMachineVirtualDiskView extends AbstractSubTabTableWidgetView<VM, Disk, VmListModel<Void>, VmDiskListModel> implements SubTabVirtualMachineVirtualDiskPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabVirtualMachineVirtualDiskView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -25,7 +25,7 @@ public class SubTabVirtualMachineVirtualDiskView extends AbstractSubTabTableWidg
 
     @Inject
     public SubTabVirtualMachineVirtualDiskView(
-            SearchableDetailModelProvider<Disk, VmListModel, VmDiskListModel> modelProvider,
+            SearchableDetailModelProvider<Disk, VmListModel<Void>, VmDiskListModel> modelProvider,
             EventBus eventBus, ClientStorage clientStorage, ApplicationResources resources,
             ApplicationConstants constants) {
         super(new VmDiskListModelTable(modelProvider, eventBus, clientStorage, resources, true));

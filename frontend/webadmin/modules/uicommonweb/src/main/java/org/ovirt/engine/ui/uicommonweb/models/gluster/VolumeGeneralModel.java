@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class VolumeGeneralModel extends EntityModel {
+public class VolumeGeneralModel extends EntityModel<GlusterVolumeEntity> {
     private String name;
     private String volumeId;
     private String volumeType;
@@ -114,7 +114,7 @@ public class VolumeGeneralModel extends EntityModel {
         if (getEntity() == null) {
             return;
         }
-        GlusterVolumeEntity entity = (GlusterVolumeEntity) getEntity();
+        GlusterVolumeEntity entity = getEntity();
         setName(entity.getName());
         setVolumeId(entity.getId() != null ? entity.getId().toString() : null);
         setVolumeType(entity.getVolumeType() != null ? entity.getVolumeType().toString() : null);

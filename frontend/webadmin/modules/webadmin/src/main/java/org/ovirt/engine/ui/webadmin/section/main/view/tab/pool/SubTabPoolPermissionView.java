@@ -25,7 +25,7 @@ public class SubTabPoolPermissionView extends AbstractSubTabPermissionsView<VmPo
 
     @Inject
     public SubTabPoolPermissionView(SearchableDetailModelProvider<Permissions, PoolListModel,
-            PermissionListModel<PoolListModel>> modelProvider, EventBus eventBus,
+            PermissionListModel<VmPool>> modelProvider, EventBus eventBus,
             ClientStorage clientStorage, ApplicationConstants constants) {
         super(modelProvider, eventBus, clientStorage, constants);
     }

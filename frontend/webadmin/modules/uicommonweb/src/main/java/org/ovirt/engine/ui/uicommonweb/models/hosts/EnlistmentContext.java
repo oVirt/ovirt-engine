@@ -5,9 +5,9 @@ import org.ovirt.engine.core.compat.Guid;
 @SuppressWarnings("unused")
 public class EnlistmentContext {
 
-    private HostListModel model;
+    private HostListModel<?> model;
 
-    public HostListModel getModel() {
+    public HostListModel<?> getModel() {
         return model;
     }
 
@@ -41,7 +41,7 @@ public class EnlistmentContext {
         oldClusterId = value;
     }
 
-    public EnlistmentContext(HostListModel model) {
+    public EnlistmentContext(HostListModel<?> model) {
         this.model = model;
     }
 }

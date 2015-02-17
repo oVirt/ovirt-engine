@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.IModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class NewVmInterfaceModel extends VmInterfaceModel {
@@ -25,7 +25,7 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
             Guid dcId,
             Version clusterCompatibilityVersion,
             ArrayList<VmNetworkInterface> vmNicList,
-            EntityModel sourceModel) {
+            IModel sourceModel) {
         NewVmInterfaceModel instance = new NewVmInterfaceModel(vm,
                 vmStatus,
                 dcId,
@@ -41,7 +41,7 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
             Guid dcId,
             Version clusterCompatibilityVersion,
             ArrayList<VmNetworkInterface> vmNicList,
-            EntityModel sourceModel) {
+            IModel sourceModel) {
         super(vm,
                 vmStatus,
                 dcId,

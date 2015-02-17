@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.configure.scheduling;
 
 import java.util.Collection;
 
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -11,7 +12,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
-public class ClusterPolicyClusterListModel extends SearchableListModel {
+public class ClusterPolicyClusterListModel extends SearchableListModel<ClusterPolicy, VDSGroup> {
     public ClusterPolicyClusterListModel() {
         setSearchPageSize(1000);
     }
@@ -24,8 +25,7 @@ public class ClusterPolicyClusterListModel extends SearchableListModel {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                ClusterPolicyClusterListModel clusterPolicyClusterListModel = (ClusterPolicyClusterListModel) model;
-                clusterPolicyClusterListModel.setItems((Collection) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                setItems((Collection) ((VdcQueryReturnValue) returnValue).getReturnValue());
             }
         });
 
@@ -39,11 +39,6 @@ public class ClusterPolicyClusterListModel extends SearchableListModel {
     protected void onEntityChanged() {
         super.onEntityChanged();
         search();
-    }
-
-    @Override
-    public ClusterPolicy getEntity() {
-        return (ClusterPolicy) super.getEntity();
     }
 
     @Override

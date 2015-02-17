@@ -4,12 +4,12 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.IModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class EditCpuProfileModel extends CpuProfileBaseModel {
 
-    public EditCpuProfileModel(EntityModel sourceModel,
+    public EditCpuProfileModel(IModel sourceModel,
             CpuProfile profile,
             Guid dataCenterId) {
         super(sourceModel,

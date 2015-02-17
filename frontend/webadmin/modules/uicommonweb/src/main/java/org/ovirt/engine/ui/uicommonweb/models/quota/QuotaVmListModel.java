@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class QuotaVmListModel extends SearchableListModel {
+public class QuotaVmListModel extends SearchableListModel<Quota, VM> {
 
     public QuotaVmListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().vmsTitle());

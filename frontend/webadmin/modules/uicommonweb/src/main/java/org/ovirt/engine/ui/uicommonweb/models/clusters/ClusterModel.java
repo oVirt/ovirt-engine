@@ -35,6 +35,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.FilteredListModel;
@@ -1368,7 +1369,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                 architectureSelectedItemChanged(args);
             }
         }
-        else if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition))
+        else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition))
         {
             EntityModel senderEntityModel = (EntityModel) sender;
 

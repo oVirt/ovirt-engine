@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm;
 
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;
@@ -15,7 +16,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabExtendedVmApplicationView extends AbstractSubTabTableWidgetView<UserPortalItemModel, String, UserPortalListModel, VmAppListModel>
+public class SubTabExtendedVmApplicationView extends AbstractSubTabTableWidgetView<UserPortalItemModel, String, UserPortalListModel, VmAppListModel<VM>>
         implements SubTabExtendedVmApplicationPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabExtendedVmApplicationView> {
@@ -24,7 +25,7 @@ public class SubTabExtendedVmApplicationView extends AbstractSubTabTableWidgetVi
 
     @Inject
     public SubTabExtendedVmApplicationView(
-            UserPortalSearchableDetailModelProvider<String, UserPortalListModel, VmAppListModel> modelProvider,
+            UserPortalSearchableDetailModelProvider<String, UserPortalListModel, VmAppListModel<VM>> modelProvider,
             EventBus eventBus, ClientStorage clientStorage, ApplicationConstants constants) {
         super(new VmAppListModelTable(modelProvider, eventBus, clientStorage, constants));
         ViewIdHandler.idHandler.generateAndSetIds(this);

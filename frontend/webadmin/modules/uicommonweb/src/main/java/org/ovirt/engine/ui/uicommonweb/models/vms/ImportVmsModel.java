@@ -26,13 +26,13 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class ImportVmsModel extends ListWithDetailsModel {
+public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
     private ListModel<StoragePool> dataCenters;
     private ListModel<ImportSource> importSources;
@@ -119,7 +119,7 @@ public class ImportVmsModel extends ListWithDetailsModel {
         return new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object ReturnValue) {
-                List<StorageDomain> storageDomains = (List<StorageDomain>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                List<StorageDomain> storageDomains = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
 
                Guid exportDomainId = findExportDomainId(storageDomains);
                if (exportDomainId != null) {

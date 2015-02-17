@@ -23,7 +23,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class MainTabHostPresenter extends AbstractMainTabWithDetailsPresenter<VDS, HostListModel, MainTabHostPresenter.ViewDef, MainTabHostPresenter.ProxyDef> {
+public class MainTabHostPresenter extends AbstractMainTabWithDetailsPresenter<VDS, HostListModel<Void>, MainTabHostPresenter.ViewDef, MainTabHostPresenter.ProxyDef> {
 
     @GenEvent
     public class HostSelectionChange {
@@ -42,13 +42,13 @@ public class MainTabHostPresenter extends AbstractMainTabWithDetailsPresenter<VD
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            MainModelProvider<VDS, HostListModel> modelProvider) {
+            MainModelProvider<VDS, HostListModel<Void>> modelProvider) {
         return new ModelBoundTabData(applicationConstants.hostMainTabLabel(), 2, modelProvider);
     }
 
     @Inject
     public MainTabHostPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, MainModelProvider<VDS, HostListModel> modelProvider) {
+            PlaceManager placeManager, MainModelProvider<VDS, HostListModel<Void>> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

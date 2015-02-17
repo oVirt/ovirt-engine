@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.AbstractSubTabPermissi
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 
-public class SubTabHostPermissionView extends AbstractSubTabPermissionsView<VDS, HostListModel>
+public class SubTabHostPermissionView extends AbstractSubTabPermissionsView<VDS, HostListModel<Void>>
         implements SubTabHostPermissionPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabHostPermissionView> {
@@ -24,8 +24,8 @@ public class SubTabHostPermissionView extends AbstractSubTabPermissionsView<VDS,
     }
 
     @Inject
-    public SubTabHostPermissionView(SearchableDetailModelProvider<Permissions, HostListModel,
-            PermissionListModel<HostListModel>> modelProvider, EventBus eventBus,
+    public SubTabHostPermissionView(SearchableDetailModelProvider<Permissions, HostListModel<Void>,
+            PermissionListModel<VDS>> modelProvider, EventBus eventBus,
             ClientStorage clientStorage, ApplicationConstants constants) {
         super(modelProvider, eventBus, clientStorage, constants);
     }

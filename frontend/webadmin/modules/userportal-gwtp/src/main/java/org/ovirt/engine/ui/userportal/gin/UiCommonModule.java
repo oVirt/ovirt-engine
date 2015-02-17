@@ -78,7 +78,7 @@ public class UiCommonModule extends BaseUiCommonModule {
         bind(UserPortalVmSnapshotListModel.class).in(Singleton.class);
         bind(new TypeLiteral<UserPortalPermissionListModel<UserPortalListModel>>(){}).in(Singleton.class);
         bind(UserPortalVmEventListModel.class).in(Singleton.class);
-        bind(VmAppListModel.class).in(Singleton.class);
+        bind(new TypeLiteral<VmAppListModel<VM>>() {}).in(Singleton.class);
         bind(VmMonitorModel.class).in(Singleton.class);
         bind(PoolInterfaceListModel.class).in(Singleton.class);
         bind(VmSessionsModel.class).in(Singleton.class);
@@ -113,7 +113,7 @@ public class UiCommonModule extends BaseUiCommonModule {
         bind(VmPermissionListModelProvider.class).in(Singleton.class);
         bind(new TypeLiteral<UserPortalSearchableDetailModelProvider<AuditLog, UserPortalListModel,
                 UserPortalVmEventListModel>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<UserPortalSearchableDetailModelProvider<String, UserPortalListModel, VmAppListModel>>(){})
+        bind(new TypeLiteral<UserPortalSearchableDetailModelProvider<String, UserPortalListModel, VmAppListModel<VM>>>(){})
             .in(Singleton.class);
         bind(VmMonitorModelProvider.class).in(Singleton.class);
         bind(new TypeLiteral<UserPortalSearchableDetailModelProvider<VmNetworkInterface, UserPortalListModel,

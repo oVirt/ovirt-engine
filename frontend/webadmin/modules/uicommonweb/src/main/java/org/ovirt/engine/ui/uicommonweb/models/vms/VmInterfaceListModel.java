@@ -23,7 +23,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class VmInterfaceListModel extends SearchableListModel
+public class VmInterfaceListModel extends SearchableListModel<VM, VmNetworkInterface>
 {
 
     private UICommand privateNewCommand;
@@ -160,7 +160,7 @@ public class VmInterfaceListModel extends SearchableListModel
                 EditVmInterfaceModel.createInstance(getEntity().getStaticData(), getEntity(),
                         getEntity().getVdsGroupCompatibilityVersion(),
                         (ArrayList<VmNetworkInterface>) getItems(),
-                        (VmNetworkInterface) getSelectedItem(), this);
+                        getSelectedItem(), this);
         setWindow(model);
     }
 
@@ -259,12 +259,12 @@ public class VmInterfaceListModel extends SearchableListModel
     }
 
     @Override
-    protected void onSelectedItemChanging(Object newValue, Object oldValue) {
+    protected void onSelectedItemChanging(VmNetworkInterface newValue, VmNetworkInterface oldValue) {
         initSelectionGeustAgentData(newValue);
         super.onSelectedItemChanging(newValue, oldValue);
     }
 
-    private void initSelectionGeustAgentData(Object selectedItem) {
+    private void initSelectionGeustAgentData(VmNetworkInterface selectedItem) {
         if (selectedItem == null || getGuestAgentData() == null){
             setSelectionGuestAgentData(null);
             return;
@@ -273,7 +273,7 @@ public class VmInterfaceListModel extends SearchableListModel
 
         for (VmGuestAgentInterface guestInterface : getGuestAgentData()) {
             if (ObjectUtils.objectsEqual(guestInterface.getMacAddress(),
-                    ((VmNetworkInterface) selectedItem).getMacAddress())) {
+                    selectedItem.getMacAddress())) {
                 selectionInterfaces.add(guestInterface);
             }
         }
@@ -289,12 +289,7 @@ public class VmInterfaceListModel extends SearchableListModel
     }
 
     @Override
-    public VM getEntity() {
-        return (VM) super.getEntity();
-    }
-
-    @Override
-    public void setItems(Collection value) {
+    public void setItems(Collection<VmNetworkInterface> value) {
         super.setItems(value);
         if (getSelectedItem() == null && (getSelectedItems() == null || getSelectedItems().size() == 0)) {
             if (value != null && value.iterator().hasNext()) {

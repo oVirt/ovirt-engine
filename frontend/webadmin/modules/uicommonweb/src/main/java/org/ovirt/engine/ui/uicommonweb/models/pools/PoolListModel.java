@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -43,8 +42,9 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
-import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -63,7 +63,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.inject.Inject;
 
-public class PoolListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
+public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> implements ISupportSystemTreeContext
 {
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
@@ -127,7 +127,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
             Object[] keys = new Object[getSelectedItems().size()];
             for (int i = 0; i < getSelectedItems().size(); i++)
             {
-                keys[i] = ((VmPool) getSelectedItems().get(i)).getVmPoolId();
+                keys[i] = getSelectedItems().get(i).getVmPoolId();
             }
             return keys;
         }
@@ -135,7 +135,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
 
     @Inject
     public PoolListModel(final PoolGeneralModel poolGeneralModel, final PoolVmListModel poolVmListModel,
-            final PermissionListModel<PoolListModel> permissionListModel) {
+            final PermissionListModel<VmPool> permissionListModel) {
         setDetailList(poolGeneralModel, poolVmListModel, permissionListModel);
         setTitle(ConstantsManager.getInstance().getConstants().poolsTitle());
         setApplicationPlace(WebAdminApplicationPlaces.poolMainTabPlace);
@@ -156,8 +156,8 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
     }
 
     private void setDetailList(final PoolGeneralModel poolGeneralModel, final PoolVmListModel poolVmListModel,
-            final PermissionListModel<PoolListModel> permissionListModel) {
-        List<EntityModel> list = new ArrayList<EntityModel>();
+            final PermissionListModel<VmPool> permissionListModel) {
+        List<HasEntity<VmPool>> list = new ArrayList<>();
         list.add(poolGeneralModel);
         list.add(poolVmListModel);
         list.add(permissionListModel);
@@ -181,12 +181,6 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
     @Override
     public boolean supportsServerSideSorting() {
         return true;
-    }
-
-    @Override
-    public void search()
-    {
-        super.search();
     }
 
     public void newEntity()
@@ -219,7 +213,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
 
     public void edit()
     {
-        final VmPool pool = (VmPool) getSelectedItem();
+        final VmPool pool = getSelectedItem();
 
         if (getWindow() != null)
         {
@@ -234,7 +228,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                 new AsyncQuery(this, new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object modell, Object result) {
-                        final VM vm = (VM) ((VdcQueryReturnValue) result).getReturnValue();
+                        final VM vm = ((VdcQueryReturnValue) result).getReturnValue();
 
                         final ExistingPoolModelBehavior behavior = new ExistingPoolModelBehavior(vm);
                         behavior.getPoolModelBehaviorInitializedEvent().addListener(new IEventListener<EventArgs>() {
@@ -548,8 +542,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
         getEditCommand().setIsExecutionAllowed(getSelectedItem() != null && getSelectedItems() != null
                 && getSelectedItems().size() == 1 && hasVms(getSelectedItem()));
 
-        getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
-                && VdcActionUtils.canExecute(getSelectedItems(), VmPool.class, VdcActionType.RemoveVmPool));
+        getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0);
     }
 
     private boolean hasVms(Object selectedItem) {

@@ -13,9 +13,9 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
-import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -23,7 +23,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 import com.google.inject.Inject;
 
-public class ProviderListModel extends ListWithDetailsModel implements ISupportSystemTreeContext {
+public class ProviderListModel extends ListWithSimpleDetailsModel<Void, Provider> implements ISupportSystemTreeContext {
 
     private static final String CMD_ADD = "Add"; //$NON-NLS-1$
     private static final String CMD_EDIT = "Edit"; //$NON-NLS-1$
@@ -65,7 +65,7 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
 
     private void setModelList(final ProviderGeneralModel providerGeneralModel,
             final ProviderNetworkListModel providerNetworkListModel) {
-        List<EntityModel> list = new ArrayList<EntityModel>();
+        List<HasEntity<Provider>> list = new ArrayList<>();
         list.add(providerGeneralModel);
         list.add(providerNetworkListModel);
         setDetailModels(list);
@@ -99,7 +99,7 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
     @Override
     protected void updateDetailsAvailability() {
         super.updateDetailsAvailability();
-        Provider provider = (Provider) getSelectedItem();
+        Provider provider = getSelectedItem();
         if (provider != null) {
             providerNetworkListModel.setIsAvailable(provider.getType()
                     .getProvidedTypes()
@@ -185,7 +185,7 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
         if (getWindow() != null) {
             return;
         }
-        setWindow(new EditProviderModel(this, (Provider) getSelectedItem()));
+        setWindow(new EditProviderModel(this, getSelectedItem()));
     }
 
     private void remove() {

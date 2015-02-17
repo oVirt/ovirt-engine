@@ -32,7 +32,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class AdElementListModel extends SearchableListModel<EntityModel<DbUser>>
+public class AdElementListModel extends SearchableListModel<Object, EntityModel<DbUser>>
 {
 
     private EntityModel<Boolean> searchInProgress;

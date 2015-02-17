@@ -18,17 +18,10 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class VmAppListModel extends SearchableListModel
+public class VmAppListModel<E> extends SearchableListModel<E, String>
 {
-
     @Override
-    public Collection getItems()
-    {
-        return items;
-    }
-
-    @Override
-    public void setItems(Collection value)
+    public void setItems(Collection<String> value)
     {
         if (items != value)
         {

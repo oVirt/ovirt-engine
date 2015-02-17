@@ -36,7 +36,7 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class SystemTreeModel extends SearchableListModel<SystemTreeItemModel> implements IFrontendMultipleQueryAsyncCallback {
+public class SystemTreeModel extends SearchableListModel<Void, SystemTreeItemModel> implements IFrontendMultipleQueryAsyncCallback {
 
     public static final EventDefinition resetRequestedEventDefinition;
     public static final EventDefinition beforeItemsChangedEventDefinition;
@@ -206,8 +206,8 @@ public class SystemTreeModel extends SearchableListModel<SystemTreeItemModel> im
 
     public SystemTreeModel()
     {
-        setResetRequestedEvent(new Event<EventArgs>(resetRequestedEventDefinition));
-        setBeforeItemsChangedEvent(new Event<EventArgs>(beforeItemsChangedEventDefinition));
+        setResetRequestedEvent(new Event<>(resetRequestedEventDefinition));
+        setBeforeItemsChangedEvent(new Event<>(beforeItemsChangedEventDefinition));
 
         setResetCommand(new UICommand("Reset", this)); //$NON-NLS-1$
         setExpandAllCommand(new UICommand("ExpandAll", this)); //$NON-NLS-1$
@@ -335,8 +335,8 @@ public class SystemTreeModel extends SearchableListModel<SystemTreeItemModel> im
      */
     private void doNetworksSearch() {
         // Networks
-        ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
-        ArrayList<VdcQueryParametersBase> queryParamList = new ArrayList<VdcQueryParametersBase>();
+        ArrayList<VdcQueryType> queryTypeList = new ArrayList<>();
+        ArrayList<VdcQueryParametersBase> queryParamList = new ArrayList<>();
 
         for (StoragePool dataCenter : getDataCenters()) {
             queryTypeList.add(VdcQueryType.GetAllNetworks);
@@ -359,7 +359,7 @@ public class SystemTreeModel extends SearchableListModel<SystemTreeItemModel> im
                 for (int i = 0; i < returnValueList.size(); i++) {
                     VdcQueryReturnValue returnValue = returnValueList.get(i);
                     if (returnValue.getSucceeded() && returnValue.getReturnValue() != null) {
-                        dcNetworkList = (List<Network>) returnValue.getReturnValue();
+                        dcNetworkList = returnValue.getReturnValue();
                         dcId = getDataCenters().get(i).getId();
                         getNetworkMap().put(dcId, dcNetworkList);
                     }
@@ -374,8 +374,8 @@ public class SystemTreeModel extends SearchableListModel<SystemTreeItemModel> im
      */
     private void doStorageSearch() {
         // Storages
-        ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
-        ArrayList<VdcQueryParametersBase> queryParamList = new ArrayList<VdcQueryParametersBase>();
+        ArrayList<VdcQueryType> queryTypeList = new ArrayList<>();
+        ArrayList<VdcQueryParametersBase> queryParamList = new ArrayList<>();
 
         for (StoragePool dataCenter : getDataCenters()) {
             queryTypeList.add(VdcQueryType.GetStorageDomainsByStoragePoolId);
@@ -458,7 +458,7 @@ public class SystemTreeModel extends SearchableListModel<SystemTreeItemModel> im
     {
         List<StorageDomain> storageDomains = null;
         int count = -1;
-        treeItemById = new HashMap<Guid, SystemTreeItemModel>();
+        treeItemById = new HashMap<>();
 
         // Build tree items.
         SystemTreeItemModel systemItem = new SystemTreeItemModel();
@@ -479,7 +479,7 @@ public class SystemTreeModel extends SearchableListModel<SystemTreeItemModel> im
             if (!returnValue.getSucceeded()) {
                 continue;
             }
-            storageDomains = (List<StorageDomain>) returnValue.getReturnValue();
+            storageDomains = returnValue.getReturnValue();
 
             SystemTreeItemModel dataCenterItem = new SystemTreeItemModel();
             dataCenterItem.setType(SystemTreeItemType.DataCenter);
@@ -629,7 +629,7 @@ public class SystemTreeModel extends SearchableListModel<SystemTreeItemModel> im
             ApplicationModeHelper.filterSystemTreeByApplictionMode(systemItem);
         }
         List<SystemTreeItemModel> newItems =
-                new ArrayList<SystemTreeItemModel>(Arrays.asList(new SystemTreeItemModel[] { systemItem }));
+                new ArrayList<>(Arrays.asList(new SystemTreeItemModel[] { systemItem }));
         if (items == null || items.size() == 0 || !newItems.get(0).equals(items.toArray()[0], true)) {
             setItems(newItems);
         }

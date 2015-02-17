@@ -83,10 +83,10 @@ public class CommonModel extends ListModel<SearchableListModel> {
     private boolean executingSearch;
 
     private final DataCenterListModel dataCenterListModel;
-    private final ClusterListModel clusterListModel;
-    private final HostListModel hostListModel;
+    private final ClusterListModel<Void> clusterListModel;
+    private final HostListModel<Void> hostListModel;
     private final StorageListModel storageListModel;
-    private final VmListModel vmListModel;
+    private final VmListModel<Void> vmListModel;
     private final PoolListModel poolListModel;
     private final TemplateListModel templateListModel;
     private final UserListModel userListModel;
@@ -112,10 +112,10 @@ public class CommonModel extends ListModel<SearchableListModel> {
 
     @Inject
     private CommonModel(final DataCenterListModel dataCenterListModel,
-            final ClusterListModel clusterListModel,
-            final HostListModel hostListModel,
+            final ClusterListModel<Void> clusterListModel,
+            final HostListModel<Void> hostListModel,
             final StorageListModel storageListModel,
-            final VmListModel vmListModel,
+            final VmListModel<Void> vmListModel,
             final PoolListModel poolListModel,
             final TemplateListModel templateListModel,
             final UserListModel userListModel,
@@ -592,8 +592,8 @@ public class CommonModel extends ListModel<SearchableListModel> {
 
             oldValue.setItems(null);
 
-            ListWithDetailsModel listWithDetails =
-                    (ListWithDetailsModel) ((oldValue instanceof ListWithDetailsModel) ? oldValue : null);
+            ListWithDetailsModel<?, ?, ?> listWithDetails =
+                    (ListWithDetailsModel<?, ?, ?>) ((oldValue instanceof ListWithDetailsModel) ? oldValue : null);
             if (listWithDetails != null) {
                 listWithDetails.setActiveDetailModel(null);
             }
@@ -1025,7 +1025,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
         return dataCenterListModel;
     }
 
-    public HostListModel getHostList() {
+    public HostListModel<Void> getHostList() {
         return hostListModel;
     }
 
@@ -1033,7 +1033,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
         return templateListModel;
     }
 
-    public VmListModel getVmList() {
+    public VmListModel<Void> getVmList() {
         return vmListModel;
     }
 
@@ -1049,7 +1049,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
         return networkListModel;
     }
 
-    public ClusterListModel getClusterList() {
+    public ClusterListModel<Void> getClusterList() {
         return clusterListModel;
     }
 

@@ -35,7 +35,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
 @SuppressWarnings("unused")
-public class HostGeneralModel extends EntityModel
+public class HostGeneralModel extends EntityModel<VDS>
 {
     private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
     private static final UIMessages messages = ConstantsManager.getInstance().getMessages();
@@ -105,20 +105,13 @@ public class HostGeneralModel extends EntityModel
     private boolean updateUpgradeAlert;
 
     @Override
-    public VDS getEntity()
+    public void setEntity(VDS vds)
     {
-        return (VDS) super.getEntity();
-    }
-
-    @Override
-    public void setEntity(Object value)
-    {
-        VDS vds = (VDS) value;
         updateUpgradeAlert = vds == null || getEntity() == null
             || !vds.getId().equals(getEntity().getId())
             || !vds.getStatus().equals(getEntity().getStatus());
 
-        super.setEntity(value);
+        super.setEntity(vds);
     }
 
     // 1st column in General tab

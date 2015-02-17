@@ -44,7 +44,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
-public class VolumeBrickListModel extends SearchableListModel {
+public class VolumeBrickListModel extends SearchableListModel<GlusterVolumeEntity, GlusterBrickEntity> {
 
     @Override
     protected String getListName() {
@@ -187,7 +187,7 @@ public class VolumeBrickListModel extends SearchableListModel {
 
     private void updateActionAvailability()
     {
-        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+        GlusterVolumeEntity volumeEntity = getEntity();
 
         boolean allowRemove = true;
         boolean allowReplace = true;
@@ -216,7 +216,7 @@ public class VolumeBrickListModel extends SearchableListModel {
 
             if (getSelectedItems().size() == 1) {
                 allowReplace = true;
-                allowAdvanced = volumeEntity.isOnline() && ((GlusterBrickEntity) getSelectedItems().get(0)).isOnline();
+                allowAdvanced = volumeEntity.isOnline() && getSelectedItems().get(0).isOnline();
             }
             else {
                 allowReplace = false;
@@ -271,7 +271,7 @@ public class VolumeBrickListModel extends SearchableListModel {
     @Override
     protected void syncSearch() {
         if (getEntity() != null) {
-            GlusterVolumeEntity glusterVolumeEntity = (GlusterVolumeEntity) getEntity();
+            GlusterVolumeEntity glusterVolumeEntity = getEntity();
             // If the items are same, just fire the item changed event to make sure that items are displayed
             if (getItems() == glusterVolumeEntity.getBricks()) {
                 getItemsChangedEvent().raise(this, EventArgs.EMPTY);
@@ -289,7 +289,7 @@ public class VolumeBrickListModel extends SearchableListModel {
             return;
         }
 
-        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+        GlusterVolumeEntity volumeEntity = getEntity();
 
         if (volumeEntity == null) {
             return;
@@ -397,7 +397,7 @@ public class VolumeBrickListModel extends SearchableListModel {
             return;
         }
 
-        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+        GlusterVolumeEntity volumeEntity = getEntity();
         if (volumeEntity == null)
         {
             return;
@@ -467,7 +467,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         cancelConfirmation();
 
         VolumeBrickModel volumeBrickModel = (VolumeBrickModel) getWindow();
-        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+        GlusterVolumeEntity volumeEntity = getEntity();
 
         ArrayList<GlusterBrickEntity> brickList = new ArrayList<GlusterBrickEntity>();
         for (Object model : volumeBrickModel.getBricks().getItems())
@@ -483,7 +483,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                         brickList,
                         volumeBrickModel.getReplicaCountValue(),
                         volumeBrickModel.getStripeCountValue(),
-                        (Boolean) volumeBrickModel.getForce().getEntity());
+                volumeBrickModel.getForce().getEntity());
 
         Frontend.getInstance().runAction(VdcActionType.AddBricksToGlusterVolume, parameter, new IFrontendActionAsyncCallback() {
 
@@ -555,7 +555,7 @@ public class VolumeBrickListModel extends SearchableListModel {
             return;
         }
 
-        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+        GlusterVolumeEntity volumeEntity = getEntity();
 
         RemoveBrickModel removeBrickModel = new RemoveBrickModel();
         removeBrickModel.setHelpTag(HelpTag.volume_remove_bricks);
@@ -796,7 +796,7 @@ public class VolumeBrickListModel extends SearchableListModel {
             return;
         }
 
-        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+        GlusterVolumeEntity volumeEntity = getEntity();
 
         GlusterVolumeRemoveBricksParameters parameter =
                 new GlusterVolumeRemoveBricksParameters(volumeEntity.getId(), getSelectedItems());
@@ -819,7 +819,7 @@ public class VolumeBrickListModel extends SearchableListModel {
 
         model.startProgress(null);
 
-        boolean isMigrate = (Boolean) model.getMigrateData().getEntity();
+        boolean isMigrate = model.getMigrateData().getEntity();
 
         Frontend.getInstance().runAction(isMigrate ? VdcActionType.StartRemoveGlusterVolumeBricks
                 : VdcActionType.GlusterVolumeRemoveBricks, parameter, new IFrontendActionAsyncCallback() {
@@ -1147,7 +1147,7 @@ public class VolumeBrickListModel extends SearchableListModel {
             return;
         }
 
-        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+        GlusterVolumeEntity volumeEntity = getEntity();
 
         if (volumeEntity == null)
         {
@@ -1204,25 +1204,25 @@ public class VolumeBrickListModel extends SearchableListModel {
             return;
         }
 
-        GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+        GlusterVolumeEntity volumeEntity = getEntity();
         if (volumeEntity == null)
         {
             return;
         }
 
-        GlusterBrickEntity existingBrick = (GlusterBrickEntity) getSelectedItem();
+        GlusterBrickEntity existingBrick = getSelectedItem();
         if (existingBrick == null)
         {
             return;
         }
 
-        VDS server = (VDS) replaceBrickModel.getServers().getSelectedItem();
+        VDS server = replaceBrickModel.getServers().getSelectedItem();
 
         GlusterBrickEntity newBrick = new GlusterBrickEntity();
         newBrick.setVolumeId(volumeEntity.getId());
         newBrick.setServerId(server.getId());
         newBrick.setServerName(server.getHostName());
-        newBrick.setBrickDirectory((String) replaceBrickModel.getBrickDirectory().getEntity());
+        newBrick.setBrickDirectory(replaceBrickModel.getBrickDirectory().getEntity());
 
         replaceBrickModel.startProgress(null);
 
@@ -1247,7 +1247,7 @@ public class VolumeBrickListModel extends SearchableListModel {
     }
 
     private void showBrickAdvancedDetails() {
-        final GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
+        final GlusterVolumeEntity volumeEntity = getEntity();
         AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
@@ -1279,7 +1279,7 @@ public class VolumeBrickListModel extends SearchableListModel {
     }
 
     private void onShowBrickAdvancedDetails(GlusterVolumeEntity volumeEntity) {
-        final GlusterBrickEntity brickEntity = (GlusterBrickEntity) getSelectedItem();
+        final GlusterBrickEntity brickEntity = getSelectedItem();
 
         final BrickAdvancedDetailsModel brickModel = new BrickAdvancedDetailsModel();
         setWindow(brickModel);
@@ -1302,7 +1302,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                     return;
                 }
 
-                GlusterVolumeAdvancedDetails advDetails = (GlusterVolumeAdvancedDetails) returnValue.getReturnValue();
+                GlusterVolumeAdvancedDetails advDetails = returnValue.getReturnValue();
                 brickModel.getBrick().setEntity(brickEntity.getQualifiedName());
                 if (advDetails != null && advDetails.getBrickDetails() != null
                         && advDetails.getBrickDetails().size() == 1)

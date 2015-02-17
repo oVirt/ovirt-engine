@@ -256,14 +256,14 @@ public class VolumeModule extends AbstractGinModule {
         bind(VolumeEventListModel.class).in(Singleton.class);
         bind(VolumeGeoRepListModel.class).in(Singleton.class);
         bind(GlusterVolumeSnapshotListModel.class).in(Singleton.class);
-        bind(new TypeLiteral<PermissionListModel<VolumeListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<GlusterVolumeEntity>>(){}).in(Singleton.class);
 
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<VolumeListModel, VolumeGeneralModel>>(){})
             .to(new TypeLiteral<DetailTabModelProvider<VolumeListModel, VolumeGeneralModel>>(){}).in(Singleton.class);
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, VolumeListModel, PermissionListModel<VolumeListModel>>>(){})
-           .to(new TypeLiteral<PermissionModelProvider<VolumeListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, VolumeListModel, PermissionListModel<GlusterVolumeEntity>>>(){})
+           .to(new TypeLiteral<PermissionModelProvider<GlusterVolumeEntity, VolumeListModel>>(){}).in(Singleton.class);
     }
 
 }

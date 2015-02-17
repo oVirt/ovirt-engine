@@ -5,21 +5,9 @@ import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class QuotaEventListModel extends SubTabEventListModel
-{
+public class QuotaEventListModel extends SubTabEventListModel<Quota> {
     public QuotaEventListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().eventsTitle());
-    }
-
-    @Override
-    public Quota getEntity()
-    {
-        return (Quota) ((super.getEntity() instanceof Quota) ? super.getEntity() : null);
-    }
-
-    public void setEntity(Quota value)
-    {
-        super.setEntity(value);
     }
 
     @Override

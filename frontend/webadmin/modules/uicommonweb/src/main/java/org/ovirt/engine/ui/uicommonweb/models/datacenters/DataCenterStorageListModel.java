@@ -42,7 +42,7 @@ import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class DataCenterStorageListModel extends SearchableListModel
+public class DataCenterStorageListModel extends SearchableListModel<StoragePool, StorageDomain>
 {
 
     private UICommand privateAttachStorageCommand;
@@ -115,12 +115,6 @@ public class DataCenterStorageListModel extends SearchableListModel
     private void setMaintenanceCommand(UICommand value)
     {
         privateMaintenanceCommand = value;
-    }
-
-    @Override
-    public StoragePool getEntity()
-    {
-        return (StoragePool) super.getEntity();
     }
 
     public void setEntity(StoragePool value)
@@ -211,8 +205,7 @@ public class DataCenterStorageListModel extends SearchableListModel
             @Override
             public void onSuccess(Object model, Object ReturnValue)
             {
-                SearchableListModel searchableListModel = (SearchableListModel) model;
-                searchableListModel.setItems((ArrayList<StorageDomain>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                setItems((ArrayList<StorageDomain>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
             }
         };
 

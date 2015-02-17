@@ -25,7 +25,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
-public class VolumeGeoRepListModel extends SearchableListModel{
+public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEntity, GlusterGeoRepSession> {
 
     private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
     private static final UIMessages messages = ConstantsManager.getInstance().getMessages();
@@ -185,7 +185,7 @@ public class VolumeGeoRepListModel extends SearchableListModel{
             return;
         }
         if (getSelectedItems() != null && getSelectedItems().size() == 1) {
-            GlusterGeoRepSession selectedSession = (GlusterGeoRepSession)getSelectedItem();
+            GlusterGeoRepSession selectedSession = getSelectedItem();
             GeoRepSessionStatus sessionStatus = selectedSession.getStatus();
             allowStartSessionCommand =
                     sessionStatus == GeoRepSessionStatus.NOTSTARTED || sessionStatus == GeoRepSessionStatus.STOPPED;
@@ -264,7 +264,7 @@ public class VolumeGeoRepListModel extends SearchableListModel{
             String action,
             VdcActionType actionType,
             String actionProgressText) {
-        GlusterGeoRepSession selectedSession = (GlusterGeoRepSession) getSelectedItem();
+        GlusterGeoRepSession selectedSession = getSelectedItem();
         if (selectedSession == null) {
             return;
         }
@@ -274,7 +274,7 @@ public class VolumeGeoRepListModel extends SearchableListModel{
     }
 
     private void initializeGeoRepActionConfirmation(String title, HelpTag helpTag, String hashName, String forceHelp, String forceLabelText, String commandName) {
-        GlusterGeoRepSession selectedSession = (GlusterGeoRepSession) getSelectedItem();
+        GlusterGeoRepSession selectedSession = getSelectedItem();
         GlusterVolumeGeoRepActionConfirmationModel cModel = new GlusterVolumeGeoRepActionConfirmationModel();
         cModel.setTitle(title);
         cModel.setHelpTag(helpTag);
@@ -303,12 +303,6 @@ public class VolumeGeoRepListModel extends SearchableListModel{
                 new GlusterVolumeParameters(getEntity().getId()));
     }
 
-    @Override
-    public GlusterVolumeEntity getEntity()
-    {
-        return (GlusterVolumeEntity) super.getEntity();
-    }
-
     public void setEntity(GlusterVolumeEntity value)
     {
         super.setEntity(value);
@@ -319,7 +313,7 @@ public class VolumeGeoRepListModel extends SearchableListModel{
         final GlusterVolumeGeoRepActionConfirmationModel cModel = (GlusterVolumeGeoRepActionConfirmationModel) getWindow();
         cModel.startProgress(null);
         boolean force = cModel.getForce().getEntity();
-        GlusterGeoRepSession selectedSession = (GlusterGeoRepSession)getSelectedItem();
+        GlusterGeoRepSession selectedSession = getSelectedItem();
         GlusterVolumeGeoRepSessionParameters sessionParamters = new GlusterVolumeGeoRepSessionParameters(selectedSession.getMasterVolumeId(), selectedSession.getId());
         sessionParamters.setForce(force);
         Frontend.getInstance().runAction(actionType, sessionParamters, new IFrontendActionAsyncCallback() {

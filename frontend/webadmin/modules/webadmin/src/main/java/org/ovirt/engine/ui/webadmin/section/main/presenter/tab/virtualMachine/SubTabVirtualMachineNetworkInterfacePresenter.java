@@ -23,7 +23,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabVirtualMachineNetworkInterfacePresenter extends AbstractSubTabPresenter<VM, VmListModel, VmInterfaceListModel, SubTabVirtualMachineNetworkInterfacePresenter.ViewDef, SubTabVirtualMachineNetworkInterfacePresenter.ProxyDef> {
+public class SubTabVirtualMachineNetworkInterfacePresenter extends AbstractSubTabPresenter<VM, VmListModel<Void>, VmInterfaceListModel, SubTabVirtualMachineNetworkInterfacePresenter.ViewDef, SubTabVirtualMachineNetworkInterfacePresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.virtualMachineNetworkInterfaceSubTabPlace)
@@ -35,14 +35,14 @@ public class SubTabVirtualMachineNetworkInterfacePresenter extends AbstractSubTa
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<VmNetworkInterface, VmListModel, VmInterfaceListModel> modelProvider) {
+            SearchableDetailModelProvider<VmNetworkInterface, VmListModel<Void>, VmInterfaceListModel> modelProvider) {
         return new ModelBoundTabData(applicationConstants.virtualMachineNetworkInterfaceSubTabLabel(), 2, modelProvider);
     }
 
     @Inject
     public SubTabVirtualMachineNetworkInterfacePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<VmNetworkInterface, VmListModel, VmInterfaceListModel> modelProvider) {
+            SearchableDetailModelProvider<VmNetworkInterface, VmListModel<Void>, VmInterfaceListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
     }

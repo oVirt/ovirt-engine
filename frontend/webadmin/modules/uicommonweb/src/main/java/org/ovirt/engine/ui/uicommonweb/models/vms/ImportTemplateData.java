@@ -4,23 +4,23 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 
 
-public class ImportTemplateData extends ImportEntityData {
+public class ImportTemplateData extends ImportEntityData<VmTemplate> {
 
     public ImportTemplateData(VmTemplate template) {
         setEntity(template);
     }
 
     public VmTemplate getTemplate() {
-        return (VmTemplate) getEntity();
+        return getEntity();
     }
 
     @Override
     public ArchitectureType getArchType() {
-        return ((VmTemplate) getEntity()).getClusterArch();
+        return getEntity().getClusterArch();
     }
 
     @Override
     public String getName() {
-        return ((VmTemplate) getEntity()).getName();
+        return getEntity().getName();
     }
 }

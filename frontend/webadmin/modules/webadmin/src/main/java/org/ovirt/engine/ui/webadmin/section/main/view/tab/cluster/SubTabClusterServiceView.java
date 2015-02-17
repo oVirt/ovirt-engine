@@ -34,7 +34,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, ClusterListModel, ClusterServiceModel>
+public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, ClusterListModel<Void>, ClusterServiceModel>
         implements SubTabClusterServicePresenter.ViewDef, Editor<ClusterServiceModel> {
 
     interface Driver extends SimpleBeanEditorDriver<ClusterServiceModel, SubTabClusterServiceView> {
@@ -74,7 +74,7 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
-    public SubTabClusterServiceView(final DetailModelProvider<ClusterListModel, ClusterServiceModel> modelProvider,
+    public SubTabClusterServiceView(final DetailModelProvider<ClusterListModel<Void>, ClusterServiceModel> modelProvider,
             ApplicationConstants constants) {
         super(modelProvider);
         servicesTable = new EntityModelCellTable<ListModel>(false, true);

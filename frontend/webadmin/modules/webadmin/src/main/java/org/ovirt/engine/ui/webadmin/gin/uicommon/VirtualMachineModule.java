@@ -80,7 +80,7 @@ public class VirtualMachineModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MainModelProvider<VM, VmListModel> getVmListProvider(EventBus eventBus,
+    public MainModelProvider<VM, VmListModel<Void>> getVmListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<AssignTagsPopupPresenterWidget> assignTagsPopupProvider,
             final Provider<VmMakeTemplatePopupPresenterWidget> makeTemplatePopupProvider,
@@ -101,12 +101,12 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<ImportCloneDialogPresenterWidget> importClonePopupProvider,
             final Provider<CloneVmPopupPresenterWidget> cloneVmProvider,
             final Provider<ImportVmFromExportDomainPopupPresenterWidget> importVmFromExportDomainPopupProvider,
-            final Provider<VmListModel> modelProvider,
+            final Provider<VmListModel<Void>> modelProvider,
             final Provider<CommonModel> commonModelProvider) {
-        MainTabModelProvider<VM, VmListModel> result =
-                new MainTabModelProvider<VM, VmListModel>(eventBus, defaultConfirmPopupProvider, commonModelProvider) {
+        MainTabModelProvider<VM, VmListModel<Void>> result =
+                new MainTabModelProvider<VM, VmListModel<Void>>(eventBus, defaultConfirmPopupProvider, commonModelProvider) {
                     @Override
-                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmListModel source,
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmListModel<Void> source,
                             UICommand lastExecutedCommand, Model windowModel) {
                         if (lastExecutedCommand == getModel().getAssignTagsCommand()) {
                             return assignTagsPopupProvider.get();
@@ -145,7 +145,7 @@ public class VirtualMachineModule extends AbstractGinModule {
                     }
 
                     @Override
-                    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(VmListModel source,
+                    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(VmListModel<Void> source,
                             UICommand lastExecutedCommand) {
                         if (lastExecutedCommand == getModel().getRemoveCommand()) {
                             return vmRemoveConfirmPopupProvider.get();
@@ -176,17 +176,17 @@ public class VirtualMachineModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<Disk, VmListModel, VmDiskListModel> getVmDiskListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<Disk, VmListModel<Void>, VmDiskListModel> getVmDiskListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VmDiskPopupPresenterWidget> popupProvider,
             final Provider<VmDiskAttachPopupPresenterWidget> attachPopupProvider,
             final Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<DisksAllocationPopupPresenterWidget> movePopupProvider,
             final Provider<ChangeQuotaPopupPresenterWidget> changeQutoaPopupProvider,
-            final Provider<VmListModel> mainModelProvider,
+            final Provider<VmListModel<Void>> mainModelProvider,
             final Provider<VmDiskListModel> modelProvider) {
-        SearchableDetailTabModelProvider<Disk, VmListModel, VmDiskListModel> result =
-                new SearchableDetailTabModelProvider<Disk, VmListModel, VmDiskListModel>(
+        SearchableDetailTabModelProvider<Disk, VmListModel<Void>, VmDiskListModel> result =
+                new SearchableDetailTabModelProvider<Disk, VmListModel<Void>, VmDiskListModel>(
                         eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmDiskListModel source,
@@ -224,14 +224,14 @@ public class VirtualMachineModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<VmNetworkInterface, VmListModel, VmInterfaceListModel> getVmInterfaceListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<VmNetworkInterface, VmListModel<Void>, VmInterfaceListModel> getVmInterfaceListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VmInterfacePopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
-            final Provider<VmListModel> mainModelProvider,
+            final Provider<VmListModel<Void>> mainModelProvider,
             final Provider<VmInterfaceListModel> modelProvider) {
-        SearchableDetailTabModelProvider<VmNetworkInterface, VmListModel, VmInterfaceListModel> result =
-                new SearchableDetailTabModelProvider<VmNetworkInterface, VmListModel, VmInterfaceListModel>(
+        SearchableDetailTabModelProvider<VmNetworkInterface, VmListModel<Void>, VmInterfaceListModel> result =
+                new SearchableDetailTabModelProvider<VmNetworkInterface, VmListModel<Void>, VmInterfaceListModel>(
                         eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmInterfaceListModel source,
@@ -264,13 +264,13 @@ public class VirtualMachineModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<AuditLog, VmListModel, VmEventListModel> getVmEventListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<AuditLog, VmListModel<Void>, VmEventListModel> getVmEventListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<EventPopupPresenterWidget> eventPopupProvider,
-            final Provider<VmListModel> mainModelProvider,
+            final Provider<VmListModel<Void>> mainModelProvider,
             final Provider<VmEventListModel> modelProvider) {
-        SearchableDetailTabModelProvider<AuditLog, VmListModel, VmEventListModel> result =
-                new SearchableDetailTabModelProvider<AuditLog, VmListModel, VmEventListModel>(
+        SearchableDetailTabModelProvider<AuditLog, VmListModel<Void>, VmEventListModel> result =
+                new SearchableDetailTabModelProvider<AuditLog, VmListModel<Void>, VmEventListModel>(
                         eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmEventListModel source,
@@ -290,16 +290,16 @@ public class VirtualMachineModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<Snapshot, VmListModel, VmSnapshotListModel> getVmSnapshotListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<Snapshot, VmListModel<Void>, VmSnapshotListModel> getVmSnapshotListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VmSnapshotCreatePopupPresenterWidget> createPopupProvider,
             final Provider<VmClonePopupPresenterWidget> cloneVmPopupProvider,
             final Provider<VmSnapshotPreviewPopupPresenterWidget> previewPopupProvider,
             final Provider<VmSnapshotCustomPreviewPopupPresenterWidget> customPreviewPopupProvider,
-            final Provider<VmListModel> mainModelProvider,
+            final Provider<VmListModel<Void>> mainModelProvider,
             final Provider<VmSnapshotListModel> modelProvider) {
-        SearchableDetailTabModelProvider<Snapshot, VmListModel, VmSnapshotListModel> result =
-                new SearchableDetailTabModelProvider<Snapshot, VmListModel, VmSnapshotListModel>(
+        SearchableDetailTabModelProvider<Snapshot, VmListModel<Void>, VmSnapshotListModel> result =
+                new SearchableDetailTabModelProvider<Snapshot, VmListModel<Void>, VmSnapshotListModel>(
                         eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmSnapshotListModel source,
@@ -325,14 +325,14 @@ public class VirtualMachineModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<AffinityGroup, VmListModel, VmAffinityGroupListModel> getAffinityGroupListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<AffinityGroup, VmListModel<Void>, VmAffinityGroupListModel> getAffinityGroupListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<AffinityGroupPopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
-            final Provider<VmListModel> mainModelProvider,
+            final Provider<VmListModel<Void>> mainModelProvider,
             final Provider<VmAffinityGroupListModel> modelProvider) {
-        SearchableDetailTabModelProvider<AffinityGroup, VmListModel, VmAffinityGroupListModel> result =
-                new SearchableDetailTabModelProvider<AffinityGroup, VmListModel, VmAffinityGroupListModel>(
+        SearchableDetailTabModelProvider<AffinityGroup, VmListModel<Void>, VmAffinityGroupListModel> result =
+                new SearchableDetailTabModelProvider<AffinityGroup, VmListModel<Void>, VmAffinityGroupListModel>(
                         eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmAffinityGroupListModel source,
@@ -363,7 +363,7 @@ public class VirtualMachineModule extends AbstractGinModule {
 
     @Override
     protected void configure() {
-        bind(VmListModel.class).in(Singleton.class);
+        bind(new TypeLiteral<VmListModel<Void>>() {}).in(Singleton.class);
         bind(VmGeneralModel.class).in(Singleton.class);
         bind(VmSessionsModel.class).in(Singleton.class);
         bind(VmDiskListModel.class).in(Singleton.class);
@@ -371,21 +371,21 @@ public class VirtualMachineModule extends AbstractGinModule {
         bind(VmEventListModel.class).in(Singleton.class);
         bind(VmSnapshotListModel.class).in(Singleton.class);
         bind(VmAffinityGroupListModel.class).in(Singleton.class);
-        bind(VmAppListModel.class).in(Singleton.class);
-        bind(new TypeLiteral<PermissionListModel<VmListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<VmAppListModel<VM>>() {}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<VM>>(){}).in(Singleton.class);
 
         // Form Detail Models
-        bind(new TypeLiteral<DetailModelProvider<VmListModel, VmGeneralModel>>(){})
-            .to(new TypeLiteral<DetailTabModelProvider<VmListModel, VmGeneralModel>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<DetailModelProvider<VmListModel, VmSessionsModel>>(){})
-           .to(new TypeLiteral<DetailTabModelProvider<VmListModel, VmSessionsModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<DetailModelProvider<VmListModel<Void>, VmGeneralModel>>(){})
+            .to(new TypeLiteral<DetailTabModelProvider<VmListModel<Void>, VmGeneralModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<DetailModelProvider<VmListModel<Void>, VmSessionsModel>>(){})
+           .to(new TypeLiteral<DetailTabModelProvider<VmListModel<Void>, VmSessionsModel>>(){}).in(Singleton.class);
         // Search-able Detail Models
-        bind(new TypeLiteral<SearchableDetailModelProvider<String, VmListModel, VmAppListModel>>(){})
-           .to(new TypeLiteral<SearchableDetailTabModelProvider<String, VmListModel, VmAppListModel>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<String, VmListModel<Void>, VmAppListModel<VM>>>(){})
+           .to(new TypeLiteral<SearchableDetailTabModelProvider<String, VmListModel<Void>, VmAppListModel<VM>>>(){})
            .in(Singleton.class);
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, VmListModel, PermissionListModel<VmListModel>>>(){})
-           .to(new TypeLiteral<PermissionModelProvider<VmListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, VmListModel<Void>, PermissionListModel<VM>>>(){})
+           .to(new TypeLiteral<PermissionModelProvider<VM, VmListModel<Void>>>() {}).in(Singleton.class);
     }
 
 }

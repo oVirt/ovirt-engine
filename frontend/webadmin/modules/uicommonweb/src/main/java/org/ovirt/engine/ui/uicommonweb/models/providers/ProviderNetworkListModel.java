@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.providers;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
+import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -12,7 +13,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 import com.google.inject.Inject;
 
-public class ProviderNetworkListModel extends SearchableListModel {
+public class ProviderNetworkListModel extends SearchableListModel<Provider, NetworkView> {
 
     private static final String CMD_DISCOVER = "Discover"; //$NON-NLS-1$
 
@@ -41,11 +42,6 @@ public class ProviderNetworkListModel extends SearchableListModel {
     @Override
     protected String getListName() {
         return "ProviderNetworkListModel"; //$NON-NLS-1$
-    }
-
-    @Override
-    public Provider getEntity() {
-        return (Provider) super.getEntity();
     }
 
     @Override

@@ -3,12 +3,12 @@ package org.ovirt.engine.ui.uicommonweb.models.profiles;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.IModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class NewDiskProfileModel extends DiskProfileBaseModel {
 
-    public NewDiskProfileModel(EntityModel sourceModel,
+    public NewDiskProfileModel(IModel sourceModel,
             Guid dcId) {
         super(sourceModel, dcId, null, VdcActionType.AddDiskProfile);
         setTitle(ConstantsManager.getInstance().getConstants().diskProfileTitle());

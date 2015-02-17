@@ -23,7 +23,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabVirtualMachineVirtualDiskPresenter extends AbstractSubTabPresenter<VM, VmListModel, VmDiskListModel, SubTabVirtualMachineVirtualDiskPresenter.ViewDef, SubTabVirtualMachineVirtualDiskPresenter.ProxyDef> {
+public class SubTabVirtualMachineVirtualDiskPresenter extends AbstractSubTabPresenter<VM, VmListModel<Void>, VmDiskListModel, SubTabVirtualMachineVirtualDiskPresenter.ViewDef, SubTabVirtualMachineVirtualDiskPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.virtualMachineVirtualDiskSubTabPlace)
@@ -35,14 +35,14 @@ public class SubTabVirtualMachineVirtualDiskPresenter extends AbstractSubTabPres
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<Disk, VmListModel, VmDiskListModel> modelProvider) {
+            SearchableDetailModelProvider<Disk, VmListModel<Void>, VmDiskListModel> modelProvider) {
         return new ModelBoundTabData(applicationConstants.virtualMachineVirtualDiskSubTabLabel(), 3, modelProvider);
     }
 
     @Inject
     public SubTabVirtualMachineVirtualDiskPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<Disk, VmListModel, VmDiskListModel> modelProvider) {
+            SearchableDetailModelProvider<Disk, VmListModel<Void>, VmDiskListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
     }

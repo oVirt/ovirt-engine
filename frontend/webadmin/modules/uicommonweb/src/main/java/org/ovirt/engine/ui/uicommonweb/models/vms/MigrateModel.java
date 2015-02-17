@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -25,7 +26,7 @@ public class MigrateModel extends Model
 {
 
     private ListModel<VDS> privateHosts;
-    private VmListModel parentModel;
+    private VmListModel<?> parentModel;
     private VM vm;
 
     public ListModel<VDS> getHosts()
@@ -175,7 +176,7 @@ public class MigrateModel extends Model
         privateSelectDestinationHost_IsSelected = value;
     }
 
-    public MigrateModel(VmListModel parentModel)
+    public MigrateModel(VmListModel<?> parentModel)
     {
         this.parentModel = parentModel;
         setHosts(new ListModel<VDS>());
@@ -319,7 +320,7 @@ public class MigrateModel extends Model
         {
             loadHosts();
         }
-        else if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition))
+        else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition))
         {
             if (sender == getSelectHostAutomatically_IsSelected())
             {

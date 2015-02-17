@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class DiskVmListModel extends SearchableListModel
+public class DiskVmListModel extends SearchableListModel<Disk, VM>
 {
     private HashMap diskVmMap;
 
@@ -41,7 +41,7 @@ public class DiskVmListModel extends SearchableListModel
     @Override
     protected void syncSearch()
     {
-        Disk disk = (Disk) getEntity();
+        Disk disk = getEntity();
         if (disk == null)
         {
             return;
@@ -53,8 +53,7 @@ public class DiskVmListModel extends SearchableListModel
             @Override
             public void onSuccess(Object model, Object ReturnValue)
             {
-                SearchableListModel searchableListModel = (SearchableListModel) model;
-                diskVmMap = (HashMap) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                diskVmMap = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
 
                 ArrayList<VM> vmList = new ArrayList<VM>();
                 ArrayList<VM> pluggedList = (ArrayList<VM>) diskVmMap.get(true);
@@ -65,7 +64,7 @@ public class DiskVmListModel extends SearchableListModel
                 if (unPluggedList != null)
                     vmList.addAll(unPluggedList);
 
-                searchableListModel.setItems(vmList);
+                setItems(vmList);
             }
         };
 

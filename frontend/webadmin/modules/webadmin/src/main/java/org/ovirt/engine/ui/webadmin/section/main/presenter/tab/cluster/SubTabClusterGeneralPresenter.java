@@ -34,7 +34,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabClusterGeneralPresenter extends AbstractSubTabPresenter<VDSGroup, ClusterListModel, ClusterGeneralModel, SubTabClusterGeneralPresenter.ViewDef, SubTabClusterGeneralPresenter.ProxyDef> {
+public class SubTabClusterGeneralPresenter extends AbstractSubTabPresenter<VDSGroup, ClusterListModel<Void>, ClusterGeneralModel, SubTabClusterGeneralPresenter.ViewDef, SubTabClusterGeneralPresenter.ProxyDef> {
 
     private final ApplicationConstants constants;
 
@@ -63,13 +63,13 @@ public class SubTabClusterGeneralPresenter extends AbstractSubTabPresenter<VDSGr
 
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            DetailModelProvider<ClusterListModel, ClusterGeneralModel> modelProvider) {
+            DetailModelProvider<ClusterListModel<Void>, ClusterGeneralModel> modelProvider) {
         return new ModelBoundTabData(applicationConstants.clusterGeneralSubTabLabel(), 0, modelProvider);
     }
 
     @Inject
     public SubTabClusterGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, DetailModelProvider<ClusterListModel, ClusterGeneralModel> modelProvider, ApplicationConstants constants) {
+            PlaceManager placeManager, DetailModelProvider<ClusterListModel<Void>, ClusterGeneralModel> modelProvider, ApplicationConstants constants) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 ClusterSubTabPanelPresenter.TYPE_SetTabContent);
         // Inject a reference to the messages:

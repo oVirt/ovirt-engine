@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
-import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -45,8 +44,7 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class VmDiskListModel extends VmDiskListModelBase
-{
+public class VmDiskListModel extends VmDiskListModelBase<VM> {
 
     private UICommand privateNewCommand;
 
@@ -230,17 +228,6 @@ public class VmDiskListModel extends VmDiskListModelBase
     }
 
     @Override
-    public VM getEntity()
-    {
-        return (VM) super.getEntity();
-    }
-
-    public void setEntity(VM value)
-    {
-        super.setEntity(value);
-    }
-
-    @Override
     protected void onEntityChanged()
     {
         super.onEntityChanged();
@@ -315,7 +302,7 @@ public class VmDiskListModel extends VmDiskListModelBase
     }
 
     private void changeQuota() {
-        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) getSelectedItems();
+        ArrayList<DiskImage> disks = (ArrayList) getSelectedItems();
 
         if (disks == null || getWindow() != null)
         {
@@ -341,9 +328,9 @@ public class VmDiskListModel extends VmDiskListModelBase
         for (Object item : model.getItems())
         {
             ChangeQuotaItemModel itemModel = (ChangeQuotaItemModel) item;
-            DiskImage disk = (DiskImage) itemModel.getEntity();
+            DiskImage disk = itemModel.getEntity();
             VdcActionParametersBase parameters =
-                    new ChangeQuotaParameters(((Quota) itemModel.getQuota().getSelectedItem()).getId(),
+                    new ChangeQuotaParameters(itemModel.getQuota().getSelectedItem().getId(),
                             disk.getId(),
                             itemModel.getStorageDomainId(),
                             disk.getStoragePoolId());
@@ -364,7 +351,7 @@ public class VmDiskListModel extends VmDiskListModelBase
 
     private void edit()
     {
-        final Disk disk = (Disk) getSelectedItem();
+        final Disk disk = getSelectedItem();
 
         if (getWindow() != null)
         {
@@ -401,9 +388,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         model.getLatch().setEntity(false);
 
         ArrayList<DiskModel> items = new ArrayList<DiskModel>();
-        for (Object item : getSelectedItems())
-        {
-            Disk disk = (Disk) item;
+        for (Disk disk : getSelectedItems()) {
 
             DiskModel diskModel = new DiskModel();
             diskModel.setDisk(disk);
@@ -427,7 +412,7 @@ public class VmDiskListModel extends VmDiskListModelBase
     private void onRemove() {
         VM vm = getEntity();
         RemoveDiskModel model = (RemoveDiskModel) getWindow();
-        boolean removeDisk = (Boolean) model.getLatch().getEntity();
+        boolean removeDisk = model.getLatch().getEntity();
         VdcActionType actionType = removeDisk ? VdcActionType.RemoveDisk : VdcActionType.DetachDiskFromVm;
         ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
 
@@ -500,8 +485,8 @@ public class VmDiskListModel extends VmDiskListModelBase
         setWindow(model);
 
         ArrayList<String> items = new ArrayList<String>();
-        for (Object selected : getSelectedItems()) {
-            items.add(((Disk) selected).getDiskAlias());
+        for (Disk selected : getSelectedItems()) {
+            items.add(selected.getDiskAlias());
         }
         model.setItems(items);
 
@@ -514,7 +499,7 @@ public class VmDiskListModel extends VmDiskListModelBase
 
     private void move()
     {
-        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) getSelectedItems();
+        ArrayList<DiskImage> disks = (ArrayList) getSelectedItems();
 
         if (disks == null)
         {
@@ -549,7 +534,7 @@ public class VmDiskListModel extends VmDiskListModelBase
     {
         ArrayList<VdcActionParametersBase> parameterList = new ArrayList<VdcActionParametersBase>();
 
-        for (Disk disk : (ArrayList<Disk>) getSelectedItems())
+        for (Disk disk : getSelectedItems())
         {
             parameterList.add(new GetDiskAlignmentParameters(disk.getId()));
         }
@@ -595,7 +580,7 @@ public class VmDiskListModel extends VmDiskListModelBase
 
     private void updateActionAvailability()
     {
-        Disk disk = (Disk) getSelectedItem();
+        Disk disk = getSelectedItem();
 
         getNewCommand().setIsExecutionAllowed(true);
 
@@ -616,7 +601,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         getUnPlugCommand().setIsExecutionAllowed(isPlugCommandAvailable(false));
 
         ChangeQuotaModel.updateChangeQuotaActionAvailability(getItems() != null ? (List<Disk>) getItems() : null,
-                getSelectedItems() != null ? (List<Disk>) getSelectedItems() : null,
+                getSelectedItems() != null ? getSelectedItems() : null,
                 getSystemTreeSelectedItem(),
                 getChangeQuotaCommand());
     }
@@ -816,7 +801,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         if (clusterCompatibilityVersion == null) {
             setIsDiskHotPlugSupported(false);
         } else {
-            setIsDiskHotPlugSupported((Boolean) !AsyncDataProvider.getInstance().getDiskHotpluggableInterfaces(
+            setIsDiskHotPlugSupported(!AsyncDataProvider.getInstance().getDiskHotpluggableInterfaces(
                     getEntity().getOs(), clusterCompatibilityVersion).isEmpty());
         }
     }

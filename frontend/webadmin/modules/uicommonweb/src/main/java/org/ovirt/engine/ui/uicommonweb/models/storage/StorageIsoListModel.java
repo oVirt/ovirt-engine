@@ -21,7 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class StorageIsoListModel extends SearchableListModel
+public class StorageIsoListModel extends SearchableListModel<StorageDomain, RepoImage>
 {
 
     public StorageIsoListModel()
@@ -58,7 +58,7 @@ public class StorageIsoListModel extends SearchableListModel
     }
 
     @Override
-    public void setEntity(Object value)
+    public void setEntity(StorageDomain value)
     {
         if (value == null || !value.equals(getEntity())) {
             super.setEntity(value);
@@ -89,11 +89,11 @@ public class StorageIsoListModel extends SearchableListModel
 
         super.syncSearch();
 
-        StorageDomain storageDomain = (StorageDomain) getEntity();
+        StorageDomain storageDomain = getEntity();
         boolean isDomainActive = storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Active ||
                 storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Mixed;
         if (storageDomain.getStorageDomainType() == StorageDomainType.ISO && !isDomainActive) {
-            setItems(Collections.<StorageDomain>emptyList());
+            setItems(Collections.<RepoImage>emptyList());
             return;
         }
 
@@ -154,7 +154,7 @@ public class StorageIsoListModel extends SearchableListModel
         model.setHelpTag(HelpTag.import_images);
         model.setHashName("import_images"); //$NON-NLS-1$
         model.setEntity(this);
-        model.init((StorageDomain) getEntity(), repoImages);
+        model.init(getEntity(), repoImages);
 
         UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
 
@@ -167,7 +167,7 @@ public class StorageIsoListModel extends SearchableListModel
     }
 
     private void updateActionAvailability() {
-        StorageDomain storageDomain = (StorageDomain) getEntity();
+        StorageDomain storageDomain = getEntity();
         @SuppressWarnings("unchecked")
         ArrayList<RepoImage> selectedImages =
                 getSelectedItems() != null ? (ArrayList<RepoImage>) getSelectedItems() : new ArrayList<RepoImage>();

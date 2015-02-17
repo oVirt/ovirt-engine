@@ -275,8 +275,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     private boolean validateLabelChanges(Collection<LogicalNetworkModel> potentialNetworks) {
         NetworkInterfaceModel mockSrc = new NetworkInterfaceModel(this);
         NetworkInterfaceModel mockDst = new NetworkInterfaceModel(this);
-        mockSrc.setEntity(new VdsNetworkInterface());
-        mockDst.setEntity(new VdsNetworkInterface());
+        mockSrc.setIface(new VdsNetworkInterface());
+        mockDst.setIface(new VdsNetworkInterface());
         mockDst.setItems(new ArrayList<LogicalNetworkModel>(potentialNetworks));
 
         boolean valid = !NetworkOperationFactory.operationFor(mockSrc, mockDst).isNullOperation();
@@ -303,7 +303,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             /*****************
              * Bond Dialog
              *****************/
-            final VdsNetworkInterface entity = ((NetworkInterfaceModel) item).getEntity();
+            final VdsNetworkInterface entity = ((NetworkInterfaceModel) item).getIface();
             editPopup = new SetupNetworksEditBondModel(entity, getFreeLabels(), labelToIface);
             final SetupNetworksBondModel bondDialogModel = (SetupNetworksBondModel) editPopup;
 
@@ -329,7 +329,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             /*******************
              * Interface Dialog
              *******************/
-            final VdsNetworkInterface entity = ((NetworkInterfaceModel) item).getEntity();
+            final VdsNetworkInterface entity = ((NetworkInterfaceModel) item).getIface();
             final HostNicModel interfacePopupModel = new HostNicModel(entity, getFreeLabels(), labelToIface);
             editPopup = interfacePopupModel;
 
@@ -356,15 +356,15 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
              *****************/
             final LogicalNetworkModel logicalNetwork = (LogicalNetworkModel) item;
             final VdsNetworkInterface entity =
-                    logicalNetwork.hasVlan() ? logicalNetwork.getVlanNicModel().getEntity()
-                            : logicalNetwork.getAttachedToNic().getEntity();
+                    logicalNetwork.hasVlan() ? logicalNetwork.getVlanNicModel().getIface()
+                            : logicalNetwork.getAttachedToNic().getIface();
 
             final HostInterfaceModel networkDialogModel;
             String version = getEntity().getVdsGroupCompatibilityVersion().getValue();
             if (logicalNetwork.isManagement()) {
                 networkDialogModel = new HostManagementNetworkModel(true);
                 networkDialogModel.setTitle(ConstantsManager.getInstance().getConstants().editManagementNetworkTitle());
-                networkDialogModel.setEntity(logicalNetwork.getEntity());
+                networkDialogModel.setEntity(logicalNetwork.getNetwork());
                 networkDialogModel.setNoneBootProtocolAvailable(false);
                 networkDialogModel.getInterface().setIsAvailable(false);
             } else {
@@ -379,7 +379,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                                 version));
             }
 
-            networkDialogModel.getNetwork().setSelectedItem(logicalNetwork.getEntity());
+            networkDialogModel.getNetwork().setSelectedItem(logicalNetwork.getNetwork());
             networkDialogModel.setOriginalNetParams(netToBeforeSyncParams.get(logicalNetwork.getName()));
             networkDialogModel.getAddress().setEntity(entity.getAddress());
             networkDialogModel.getSubnet().setEntity(entity.getSubnet());
@@ -396,7 +396,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 if (entity.isQosOverridden()) {
                     networkDialogModel.getQosModel().init(entity.getQos());
                 } else {
-                    Guid qosId = logicalNetwork.getEntity().getQosId();
+                    Guid qosId = logicalNetwork.getNetwork().getQosId();
                     if (qosId != null) {
                         networkDialogModel.startProgress(null);
                         Frontend.getInstance().runQuery(VdcQueryType.GetQosById,
@@ -423,7 +423,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                                 version));
                 // TODO: extract this (and as much surrounding code as possible) into a custom properties utility common
                 // to backend and frontend (lvernia)
-                if (!logicalNetwork.getEntity().isVmNetwork()) {
+                if (!logicalNetwork.getNetwork().isVmNetwork()) {
                     validProperties.remove("bridge_opts"); //$NON-NLS-1$
                 }
                 validProperties.putAll(KeyValueModel.convertProperties((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.UserDefinedNetworkCustomProperties,
@@ -515,8 +515,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             return;
         } else if (operation == NetworkOperation.BOND_WITH || operation == NetworkOperation.JOIN_BONDS) {
             final SetupNetworksBondModel bondPopup;
-            VdsNetworkInterface iface1 = ((NetworkInterfaceModel) networkCommand.getOp1()).getEntity();
-            VdsNetworkInterface iface2 = ((NetworkInterfaceModel) networkCommand.getOp2()).getEntity();
+            VdsNetworkInterface iface1 = ((NetworkInterfaceModel) networkCommand.getOp1()).getIface();
+            VdsNetworkInterface iface2 = ((NetworkInterfaceModel) networkCommand.getOp2()).getIface();
             if (operation == NetworkOperation.BOND_WITH) {
                 bondPopup =
                         new SetupNetworksAddBondModel(getFreeBonds(),
@@ -724,9 +724,9 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                     // The real vlanId, isBridged and mtu configured on the host can be not synced with the values
                     // configured in the networks table (dc networks).
                     // The real values configured on the host should be displayed.
-                    networkModel.getEntity().setVlanId(nic.getVlanId());
-                    networkModel.getEntity().setMtu(nic.getMtu());
-                    networkModel.getEntity().setVmNetwork(nic.isBridged());
+                    networkModel.getNetwork().setVlanId(nic.getVlanId());
+                    networkModel.getNetwork().setMtu(nic.getMtu());
+                    networkModel.getNetwork().setVmNetwork(nic.isBridged());
                 }
 
                 Collection<LogicalNetworkModel> nicNetworks = new ArrayList<LogicalNetworkModel>();
@@ -819,17 +819,17 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     private void initLabeledNetworksErrorMessages(List<LogicalNetworkModel> errorLabelNetworks, Map<String, NetworkInterfaceModel> nicModels){
         for (LogicalNetworkModel networkModel : errorLabelNetworks){
-            NetworkInterfaceModel desiredNic = nicModels.get(labelToIface.get(networkModel.getEntity().getLabel()));
+            NetworkInterfaceModel desiredNic = nicModels.get(labelToIface.get(networkModel.getNetwork().getLabel()));
             NetworkOperation operation = NetworkOperationFactory.operationFor(networkModel, desiredNic);
             UIMessages messages = ConstantsManager.getInstance().getMessages();
             // Should be attached but can't due to conflict
             if (operation.isNullOperation()) {
                 networkModel.setErrorMessage(messages.networkLabelConflict(desiredNic.getName(),
-                        networkModel.getEntity().getLabel())
+                        networkModel.getNetwork().getLabel())
                         + " " + operation.getMessage(networkModel, desiredNic)); //$NON-NLS-1$
             } else {
                 networkModel.setErrorMessage(messages.labeledNetworkNotAttached(desiredNic.getName(),
-                        networkModel.getEntity().getLabel()));
+                        networkModel.getNetwork().getLabel()));
             }
         }
     }

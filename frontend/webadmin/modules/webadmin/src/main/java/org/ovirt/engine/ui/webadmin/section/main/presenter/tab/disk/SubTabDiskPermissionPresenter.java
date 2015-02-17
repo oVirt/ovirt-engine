@@ -24,7 +24,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabDiskPermissionPresenter extends AbstractSubTabPresenter<Disk, DiskListModel,
-    PermissionListModel<DiskListModel>, SubTabDiskPermissionPresenter.ViewDef, SubTabDiskPermissionPresenter.ProxyDef> {
+    PermissionListModel<Disk>, SubTabDiskPermissionPresenter.ViewDef, SubTabDiskPermissionPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.diskPermissionSubTabPlace)
@@ -37,7 +37,7 @@ public class SubTabDiskPermissionPresenter extends AbstractSubTabPresenter<Disk,
     @TabInfo(container = DiskSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
             SearchableDetailModelProvider<Permissions, DiskListModel,
-            PermissionListModel<DiskListModel>> modelProvider) {
+            PermissionListModel<Disk>> modelProvider) {
         return new ModelBoundTabData(applicationConstants.diskPermissionSubTabLabel(), 4, modelProvider);
     }
 
@@ -45,7 +45,7 @@ public class SubTabDiskPermissionPresenter extends AbstractSubTabPresenter<Disk,
     public SubTabDiskPermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
             SearchableDetailModelProvider<Permissions, DiskListModel,
-            PermissionListModel<DiskListModel>> modelProvider) {
+            PermissionListModel<Disk>> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 DiskSubTabPanelPresenter.TYPE_SetTabContent);
     }

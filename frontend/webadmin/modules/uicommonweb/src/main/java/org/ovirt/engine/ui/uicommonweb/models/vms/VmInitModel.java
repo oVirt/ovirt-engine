@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq.IPredicate;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
@@ -809,7 +810,7 @@ public class VmInitModel extends Model {
     }
 
     /* Validate a shared display element, without having to display each shared value */
-    private boolean validateHidden(EntityModel<String> entity, final String value, final String message, final IValidation[] validations) {
+    private boolean validateHidden(Model entity, final String value, final String message, final IValidation[] validations) {
         EntityModel<String> tmp = new EntityModel<String>(value);
         tmp.setIsValid(true);
         tmp.validateEntity(validations);
@@ -871,26 +872,26 @@ public class VmInitModel extends Model {
                                        getHostname().getEntity());
         }
         if (isWindowsOS) {
-            vmInit.setInputLocale((String)getInputLocale().getEntity());
-            vmInit.setUiLanguage((String)getUiLanguage().getEntity());
-            vmInit.setSystemLocale((String)getSystemLocale().getEntity());
-            vmInit.setUserLocale((String)getUserLocale().getEntity());
-            vmInit.setCustomScript((String) getSysprepScript().getEntity());
-            vmInit.setActiveDirectoryOU((String) getActiveDirectoryOU().getEntity());
+            vmInit.setInputLocale(getInputLocale().getEntity());
+            vmInit.setUiLanguage(getUiLanguage().getEntity());
+            vmInit.setSystemLocale(getSystemLocale().getEntity());
+            vmInit.setUserLocale(getUserLocale().getEntity());
+            vmInit.setCustomScript(getSysprepScript().getEntity());
+            vmInit.setActiveDirectoryOU(getActiveDirectoryOU().getEntity());
             if (getSysprepPasswordEnabled()) {
                 vmInit.setRootPassword(getSysprepAdminPassword().getEntity());
             }
             vmInit.setPasswordAlreadyStored(getSysprepPasswordSet().getEntity());
-            vmInit.setOrgName((String) getSysprepOrgName().getEntity());
+            vmInit.setOrgName(getSysprepOrgName().getEntity());
         } else {
-            vmInit.setCustomScript((String) getCustomScript().getEntity());
+            vmInit.setCustomScript(getCustomScript().getEntity());
             if (getRootPasswordEnabled()) {
                 vmInit.setRootPassword(getCloudInitRootPassword().getEntity());
             }
             vmInit.setPasswordAlreadyStored(getCloudInitPasswordSet().getEntity());
         }
 
-        vmInit.setUserName((String) getUserName().getEntity());
+        vmInit.setUserName(getUserName().getEntity());
 
         vmInit.setAuthorizedKeys(getAuthorizedKeys().getEntity());
         if (getRegenerateKeysEnabled().getEntity()) {
@@ -936,7 +937,7 @@ public class VmInitModel extends Model {
                 networkList_SelectedItemChanged();
             }
         }
-        else if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition)) {
+        else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
             if (sender == getNetworkSelectedName()) {
                 networkSelectedName_SelectionChanged();
             } else if (sender == getCloudInitPasswordSet()) {

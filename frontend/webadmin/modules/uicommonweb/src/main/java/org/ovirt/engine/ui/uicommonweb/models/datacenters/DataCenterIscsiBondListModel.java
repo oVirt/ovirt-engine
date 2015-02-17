@@ -21,7 +21,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
-public class DataCenterIscsiBondListModel extends SearchableListModel {
+public class DataCenterIscsiBondListModel extends SearchableListModel<StoragePool, IscsiBond> {
 
     private UICommand addCommand;
     private UICommand editCommand;
@@ -61,11 +61,6 @@ public class DataCenterIscsiBondListModel extends SearchableListModel {
 
     private void setRemoveCommand(UICommand value) {
         removeCommand = value;
-    }
-
-    @Override
-    public StoragePool getEntity() {
-        return (StoragePool) super.getEntity();
     }
 
     public void setEntity(StoragePool value) {
@@ -125,7 +120,7 @@ public class DataCenterIscsiBondListModel extends SearchableListModel {
         model.setTitle(ConstantsManager.getInstance().getConstants().editIscsiBondTitle());
         model.setHelpTag(HelpTag.edit_iscsi_bundle);
         model.setHashName("edit_iscsi_bundle"); //$NON-NLS-1$
-        model.setIscsiBond((IscsiBond) getSelectedItem());
+        model.setIscsiBond(getSelectedItem());
         model.setStoragePool(getEntity());
         setWindow(model);
 
@@ -147,8 +142,8 @@ public class DataCenterIscsiBondListModel extends SearchableListModel {
         model.getLatch().setEntity(false);
 
         ArrayList<String> items = new ArrayList<String>();
-        for (Object selected : getSelectedItems()) {
-            items.add(((IscsiBond) selected).getName());
+        for (IscsiBond selected : getSelectedItems()) {
+            items.add(selected.getName());
         }
         model.setItems(items);
 
@@ -214,8 +209,7 @@ public class DataCenterIscsiBondListModel extends SearchableListModel {
             public void onSuccess(Object model, Object ret)
             {
                 ArrayList<IscsiBond> items = ((VdcQueryReturnValue) ret).getReturnValue();
-                SearchableListModel dataCenterIscsiBondListModel = (SearchableListModel) model;
-                dataCenterIscsiBondListModel.setItems(items);
+                setItems(items);
             }
         };
 

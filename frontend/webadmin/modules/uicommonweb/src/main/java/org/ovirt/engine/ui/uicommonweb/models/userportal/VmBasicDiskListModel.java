@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 @SuppressWarnings("unused")
-public class VmBasicDiskListModel extends SearchableListModel
+public class VmBasicDiskListModel extends SearchableListModel<Object, DiskImage>
 {
     public VmBasicDiskListModel() {
         setIsTimerDisabled(true);
@@ -51,8 +51,7 @@ public class VmBasicDiskListModel extends SearchableListModel
                     List<DiskImage> disks = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                     Collections.sort(disks, new Linq.DiskByAliasComparer());
 
-                    SearchableListModel searchableListModel = (SearchableListModel) model;
-                    searchableListModel.setItems(disks);
+                    setItems(disks);
                 }
             };
 
@@ -86,8 +85,7 @@ public class VmBasicDiskListModel extends SearchableListModel
                                 List<DiskImage> disks = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                                 Collections.sort(disks, new Linq.DiskByAliasComparer());
 
-                                SearchableListModel searchableListModel = (SearchableListModel) model1;
-                                searchableListModel.setItems(disks);
+                                setItems(disks);
                             }
                         };
                         IdQueryParameters queryParameters = new IdQueryParameters(vm.getId());

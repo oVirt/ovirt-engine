@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.IModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -57,7 +58,7 @@ public abstract class VmInterfaceModel extends Model
 
     private UICommand okCommand;
 
-    private final EntityModel sourceModel;
+    private final IModel sourceModel;
     private final Version clusterCompatibilityVersion;
 
     private ProfileBehavior profileBehavior;
@@ -69,7 +70,7 @@ public abstract class VmInterfaceModel extends Model
             Guid dcId,
             Version clusterCompatibilityVersion,
             ArrayList<VmNetworkInterface> vmNicList,
-            EntityModel sourceModel,
+            IModel sourceModel,
             ProfileBehavior profileBehavior)
     {
         this.dcId = dcId;
@@ -130,7 +131,7 @@ public abstract class VmInterfaceModel extends Model
 
     protected abstract void init();
 
-    public EntityModel getSourceModel() {
+    public IModel getSourceModel() {
         return sourceModel;
     }
 

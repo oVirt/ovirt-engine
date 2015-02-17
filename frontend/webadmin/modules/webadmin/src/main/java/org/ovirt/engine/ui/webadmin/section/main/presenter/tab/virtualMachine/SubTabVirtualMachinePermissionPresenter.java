@@ -23,8 +23,8 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabVirtualMachinePermissionPresenter extends AbstractSubTabPresenter<VM, VmListModel,
-    PermissionListModel<VmListModel>, SubTabVirtualMachinePermissionPresenter.ViewDef,
+public class SubTabVirtualMachinePermissionPresenter extends AbstractSubTabPresenter<VM, VmListModel<Void>,
+    PermissionListModel<VM>, SubTabVirtualMachinePermissionPresenter.ViewDef,
     SubTabVirtualMachinePermissionPresenter.ProxyDef> {
 
     @ProxyCodeSplit
@@ -37,14 +37,14 @@ public class SubTabVirtualMachinePermissionPresenter extends AbstractSubTabPrese
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<Permissions, VmListModel, PermissionListModel<VmListModel>> modelProvider) {
+            SearchableDetailModelProvider<Permissions, VmListModel<Void>, PermissionListModel<VM>> modelProvider) {
         return new ModelBoundTabData(applicationConstants.virtualMachinePermissionSubTabLabel(), 7, modelProvider);
     }
 
     @Inject
     public SubTabVirtualMachinePermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<Permissions, VmListModel, PermissionListModel<VmListModel>> modelProvider) {
+            SearchableDetailModelProvider<Permissions, VmListModel<Void>, PermissionListModel<VM>> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
     }

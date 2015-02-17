@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -8,7 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class NetworkGeneralModel extends EntityModel
+public class NetworkGeneralModel extends EntityModel<NetworkView>
 {
     private String name;
     private Boolean vmNetwork;
@@ -42,7 +43,7 @@ public class NetworkGeneralModel extends EntityModel
     }
 
     private void updateProperties() {
-        Network extendedNetwork = (Network) getEntity();
+        Network extendedNetwork = getEntity();
 
         setName(extendedNetwork.getName());
         setId(extendedNetwork.getId());

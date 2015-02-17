@@ -13,19 +13,8 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class UserGroupListModel extends SearchableListModel
+public class UserGroupListModel extends SearchableListModel<DbUser, UserGroup>
 {
-
-    @Override
-    public DbUser getEntity()
-    {
-        return (DbUser) ((super.getEntity() instanceof DbUser) ? super.getEntity() : null);
-    }
-
-    public void setEntity(DbUser value)
-    {
-        super.setEntity(value);
-    }
 
     public UserGroupListModel()
     {

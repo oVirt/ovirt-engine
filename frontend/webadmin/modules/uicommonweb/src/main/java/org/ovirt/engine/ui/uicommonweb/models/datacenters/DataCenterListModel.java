@@ -45,6 +45,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsAndReportsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
@@ -68,7 +69,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class DataCenterListModel extends ListWithDetailsAndReportsModel implements ISupportSystemTreeContext {
+public class DataCenterListModel extends ListWithDetailsAndReportsModel<Void, StoragePool> implements ISupportSystemTreeContext {
 
     private UICommand privateNewCommand;
 
@@ -161,7 +162,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
         }
         else
         {
-            ArrayList<Object> objL = new ArrayList<Object>();
+            ArrayList<Object> objL = new ArrayList<>();
             for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems()))
             {
                 objL.add(a.getId());
@@ -198,7 +199,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
             final DataCenterHostNetworkQosListModel dataCenterHostNetworkQosListModel,
             final DataCenterStorageQosListModel dataCenterStorageQosListModel,
             final DataCenterCpuQosListModel dataCenterCpuQosListModel,
-            final PermissionListModel<DataCenterListModel> permissionListModel,
+            final PermissionListModel<StoragePool> permissionListModel,
             final DataCenterEventListModel dataCenterEventListModel) {
         this.commonModelProvider = commonModelProvider;
         iscsiBondListModel = dataCenterIscsiBondListModel;
@@ -239,7 +240,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
         model.setHelpTag(HelpTag.new_data_center___guide_me);
         model.setHashName("new_data_center_-_guide_me"); //$NON-NLS-1$
         if (getGuideContext() == null) {
-            StoragePool dataCenter = (StoragePool) getSelectedItem();
+            StoragePool dataCenter = getSelectedItem();
             setGuideContext(dataCenter.getId());
         }
 
@@ -267,9 +268,9 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
             final DataCenterHostNetworkQosListModel dataCenterHostNetworkQosListModel,
             final DataCenterStorageQosListModel dataCenterStorageQosListModel,
             final DataCenterCpuQosListModel dataCenterCpuQosListModel,
-            final PermissionListModel<DataCenterListModel> permissionListModel,
+            final PermissionListModel<StoragePool> permissionListModel,
             final DataCenterEventListModel dataCenterEventListModel) {
-        List<EntityModel> list = new ArrayList<EntityModel>();
+        List<HasEntity<StoragePool>> list = new ArrayList<>();
         list.add(dataCenterStorageListModel);
         list.add(iscsiBondListModel);
         list.add(dataCenterNetworkListModel);
@@ -329,7 +330,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
 
     public void edit()
     {
-        StoragePool dataCenter = (StoragePool) getSelectedItem();
+        StoragePool dataCenter = getSelectedItem();
         final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
         if (getWindow() != null)
@@ -389,7 +390,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
             protected void onActionSucceeded(Guid macPoolId) {
                 MacPool macPool = getEntity();
                 macPool.setId(macPoolId);
-                Collection<MacPool> macPools = new ArrayList<MacPool>(dcModel.getMacPoolListModel().getItems());
+                Collection<MacPool> macPools = new ArrayList<>(dcModel.getMacPoolListModel().getItems());
                 macPools.add(macPool);
                 dcModel.getMacPoolListModel().setItems(macPools);
                 dcModel.getMacPoolListModel().setSelectedItem(macPool);
@@ -415,7 +416,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
         model.setHelpTag(HelpTag.remove_data_center);
         model.setHashName("remove_data_center"); //$NON-NLS-1$
 
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems()))
         {
             list.add(a.getName());
@@ -446,7 +447,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
         model.getLatch().setIsAvailable(true);
         model.getLatch().setIsChangable(true);
 
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems()))
         {
             list.add(a.getName());
@@ -476,7 +477,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
             public void onSuccess(Object model, Object returnValue) {
                 windowModel.stopProgress();
                 List<StorageDomain> storageDomainList = (List<StorageDomain>) returnValue;
-                List<EntityModel> models = new ArrayList<EntityModel>();
+                List<EntityModel> models = new ArrayList<>();
                 for (StorageDomain a : storageDomainList) {
                     if (a.getStorageDomainType() == StorageDomainType.Data
                             && (a.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)) {
@@ -535,7 +536,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
                         break;
                     }
                 }
-                List<StorageDomain> items = new ArrayList<StorageDomain>();
+                List<StorageDomain> items = new ArrayList<>();
                 for (EntityModel a : Linq.<EntityModel> cast(windowModel.getItems()))
                 {
                     if (a.getIsSelected())
@@ -550,10 +551,10 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
                         return;
                     }
                     ArrayList<VdcActionParametersBase> parameters =
-                            new ArrayList<VdcActionParametersBase>();
+                            new ArrayList<>();
                     for (StorageDomain a : items)
                     {
-                        parameters.add(new ReconstructMasterParameters(((StoragePool) getSelectedItem()).getId(),
+                        parameters.add(new ReconstructMasterParameters(getSelectedItem().getId(),
                                 a.getId()));
                     }
                     windowModel.startProgress(null);
@@ -575,7 +576,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
                 }
             }
         }),
-                ((StoragePool) getSelectedItem()).getId());
+                getSelectedItem().getId());
     }
 
     public void onRemove()
@@ -587,7 +588,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
             return;
         }
 
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
         for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems()))
         {
             parameters.add(new StoragePoolParametersBase(a.getId()));
@@ -615,7 +616,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
         {
             return;
         }
-        StoragePoolParametersBase tempVar = new StoragePoolParametersBase(((StoragePool) getSelectedItem()).getId());
+        StoragePoolParametersBase tempVar = new StoragePoolParametersBase(getSelectedItem().getId());
         tempVar.setForceDelete(true);
         VdcActionParametersBase parametersBase = tempVar;
         Frontend.getInstance().runAction(VdcActionType.RemoveStoragePool, parametersBase);
@@ -652,7 +653,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
         }
         else if (!dcModel.getIsNew()
                 && getSelectedItem() != null
-                && !dcModel.getVersion().getSelectedItem().equals(((StoragePool) getSelectedItem()).getCompatibilityVersion())) {
+                && !dcModel.getVersion().getSelectedItem().equals(getSelectedItem().getCompatibilityVersion())) {
             final ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
             confirmModel.setTitle(ConstantsManager.getInstance()
@@ -661,7 +662,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
             confirmModel.setHelpTag(HelpTag.change_data_center_compatibility_version);
             confirmModel.setHashName("change_data_center_compatibility_version"); //$NON-NLS-1$
 
-            final StoragePool sp = (StoragePool) getSelectedItem();
+            final StoragePool sp = getSelectedItem();
 
             startProgress(null);
 
@@ -671,7 +672,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
                 @Override
                 public void onSuccess(Object model, Object ReturnValue)
                 {
-                    List<StorageDomain> storages = (List<StorageDomain>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                    List<StorageDomain> storages = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
 
                     StorageDomain storage = null;
                     for (StorageDomain sd : storages) {
@@ -711,7 +712,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
             confirmModel.getCommands().add(tempVar2);
         }
         else if (getSelectedItem() != null
-                && ((StoragePool) getSelectedItem()).getQuotaEnforcementType() != QuotaEnforcementTypeEnum.HARD_ENFORCEMENT
+                && getSelectedItem().getQuotaEnforcementType() != QuotaEnforcementTypeEnum.HARD_ENFORCEMENT
                 && dcModel.getQuotaEnforceTypeListModel().getSelectedItem() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT)
         {
             checkForQuotaInDC(dcModel.getEntity(), this);
@@ -883,7 +884,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
         super.updateDetailsAvailability();
 
         if (getSelectedItem() != null) {
-            StoragePool storagePool = (StoragePool) getSelectedItem();
+            StoragePool storagePool = getSelectedItem();
             quotaListModel.setIsAvailable(storagePool.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED);
             updateIscsiBondListAvailability(storagePool);
         }
@@ -892,7 +893,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
     private void updateActionAvailability()
     {
         ArrayList<StoragePool> items =
-                getSelectedItems() != null ? new ArrayList<StoragePool>(Linq.<StoragePool> cast(getSelectedItems()))
+                getSelectedItems() != null ? new ArrayList<>(Linq.<StoragePool> cast(getSelectedItems()))
                         : new ArrayList<StoragePool>();
 
         boolean isAllDown = true;
@@ -908,7 +909,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
         getEditCommand().setIsExecutionAllowed(getSelectedItem() != null && items.size() == 1);
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0 && isAllDown);
 
-        StoragePool storagePoolItem = (StoragePool) getSelectedItem();
+        StoragePool storagePoolItem = getSelectedItem();
 
         getForceRemoveCommand().setIsExecutionAllowed(storagePoolItem != null
                 && items.size() == 1

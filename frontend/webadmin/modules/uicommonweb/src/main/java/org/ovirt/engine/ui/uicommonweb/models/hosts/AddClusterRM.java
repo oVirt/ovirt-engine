@@ -40,7 +40,7 @@ public class AddClusterRM extends IEnlistmentNotification {
     public void prepare1() {
 
         EnlistmentContext enlistmentContext = (EnlistmentContext) context.enlistment.getContext();
-        HostListModel model = enlistmentContext.getModel();
+        HostListModel<?> model = enlistmentContext.getModel();
         ConfigureLocalStorageModel configureModel = (ConfigureLocalStorageModel) model.getWindow();
 
         ClusterModel clusterModel = configureModel.getCluster();
@@ -67,7 +67,7 @@ public class AddClusterRM extends IEnlistmentNotification {
 
         PreparingEnlistment enlistment = (PreparingEnlistment) context.enlistment;
         EnlistmentContext enlistmentContext = (EnlistmentContext) enlistment.getContext();
-        HostListModel model = enlistmentContext.getModel();
+        HostListModel<?> model = enlistmentContext.getModel();
         ConfigureLocalStorageModel configureModel = (ConfigureLocalStorageModel) model.getWindow();
 
         VDSGroup candidate = configureModel.getCandidateCluster();

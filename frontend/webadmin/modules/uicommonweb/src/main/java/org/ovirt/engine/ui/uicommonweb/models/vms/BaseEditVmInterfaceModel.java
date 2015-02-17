@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.IModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
@@ -29,7 +29,7 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
             Version clusterCompatibilityVersion,
             ArrayList<VmNetworkInterface> vmNicList,
             VmNetworkInterface nic,
-            EntityModel sourceModel) {
+            IModel sourceModel) {
         super(vm,
                 vmStatus,
                 dcId,

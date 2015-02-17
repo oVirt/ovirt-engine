@@ -17,7 +17,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class VnicProfileTemplateListModel extends SearchableListModel
+public class VnicProfileTemplateListModel extends SearchableListModel<VnicProfileView, VmTemplate>
 {
 
     public VnicProfileTemplateListModel() {
@@ -28,15 +28,6 @@ public class VnicProfileTemplateListModel extends SearchableListModel
         setComparator(new Linq.VmTemplateComparator());
 
         updateActionAvailability();
-    }
-
-    @Override
-    public VnicProfileView getEntity() {
-        return (VnicProfileView) super.getEntity();
-    }
-
-    public void setEntity(VnicProfileView value) {
-        super.setEntity(value);
     }
 
     @Override

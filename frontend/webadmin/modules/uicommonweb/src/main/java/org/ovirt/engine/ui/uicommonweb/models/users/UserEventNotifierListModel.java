@@ -32,7 +32,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.Translator;
 
 @SuppressWarnings("unused")
-public class UserEventNotifierListModel extends SearchableListModel
+public class UserEventNotifierListModel extends SearchableListModel<DbUser, event_subscriber>
 {
 
     private UICommand privateManageEventsCommand;
@@ -45,17 +45,6 @@ public class UserEventNotifierListModel extends SearchableListModel
     private void setManageEventsCommand(UICommand value)
     {
         privateManageEventsCommand = value;
-    }
-
-    @Override
-    public DbUser getEntity()
-    {
-        return (DbUser) super.getEntity();
-    }
-
-    public void setEntity(DbUser value)
-    {
-        super.setEntity(value);
     }
 
     public UserEventNotifierListModel()

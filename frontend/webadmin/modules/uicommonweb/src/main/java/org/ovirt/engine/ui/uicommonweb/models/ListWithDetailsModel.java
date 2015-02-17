@@ -6,18 +6,23 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
+/**
+ * @param <E> {@link org.ovirt.engine.ui.uicommonweb.models.SearchableListModel.E}
+ * @param <D> type of the detail entity
+ * @param <T> {@link org.ovirt.engine.ui.uicommonweb.models.SearchableListModel.T}
+ */
 @SuppressWarnings("unused")
-public abstract class ListWithDetailsModel extends SearchableListModel
+public abstract class ListWithDetailsModel<E, D, T> extends SearchableListModel<E, T>
 {
 
-    private List<EntityModel> detailModels;
+    private List<HasEntity<D>> detailModels;
 
-    public List<EntityModel> getDetailModels()
+    public List<HasEntity<D>> getDetailModels()
     {
         return detailModels;
     }
 
-    public void setDetailModels(List<EntityModel> value)
+    public void setDetailModels(List<HasEntity<D>> value)
     {
         if (detailModels != value)
         {
@@ -26,14 +31,14 @@ public abstract class ListWithDetailsModel extends SearchableListModel
         }
     }
 
-    private EntityModel activeDetailModel;
+    private HasEntity<D> activeDetailModel;
 
-    public EntityModel getActiveDetailModel()
+    public HasEntity<D> getActiveDetailModel()
     {
         return activeDetailModel;
     }
 
-    public void setActiveDetailModel(EntityModel value)
+    public void setActiveDetailModel(HasEntity<D> value)
     {
         if (activeDetailModel != value)
         {
@@ -48,7 +53,7 @@ public abstract class ListWithDetailsModel extends SearchableListModel
     {
     }
 
-    private void activeDetailModelChanging(EntityModel newValue, EntityModel oldValue)
+    private void activeDetailModelChanging(HasEntity<D> newValue, HasEntity<D> oldValue)
     {
         // Make sure we had set an entity property of details model.
         if (oldValue != null)
@@ -67,10 +72,7 @@ public abstract class ListWithDetailsModel extends SearchableListModel
         }
     }
 
-    protected Object provideDetailModelEntity(Object selectedItem)
-    {
-        return selectedItem;
-    }
+    protected abstract D provideDetailModelEntity(T selectedItem);
 
     @Override
     protected void onSelectedItemChanged()
@@ -87,8 +89,8 @@ public abstract class ListWithDetailsModel extends SearchableListModel
                         || getActiveDetailModel() == null)
                 {
                     // ActiveDetailModel = DetailModels.FirstOrDefault(AvailabilityDecorator.GetIsAvailable);
-                    EntityModel model = null;
-                    for (EntityModel item : getDetailModels())
+                    HasEntity<D> model = null;
+                    for (HasEntity<D> item : getDetailModels())
                     {
                         if (item.getIsAvailable())
                         {
@@ -115,7 +117,7 @@ public abstract class ListWithDetailsModel extends SearchableListModel
         }
 
         // Synchronize selected item with the entity of an active details model.
-        EntityModel activeDetailModel = getActiveDetailModel();
+        HasEntity<D> activeDetailModel = getActiveDetailModel();
         if (getSelectedItem() != null && activeDetailModel != null)
         {
             if (activeDetailModel instanceof HostInterfaceListModel)
@@ -141,7 +143,7 @@ public abstract class ListWithDetailsModel extends SearchableListModel
         if (getDetailModels() != null)
         {
             // Stop search on all list models.
-            for (EntityModel model : getDetailModels())
+            for (HasEntity<D> model : getDetailModels())
             {
                 if (model instanceof SearchableListModel)
                 {

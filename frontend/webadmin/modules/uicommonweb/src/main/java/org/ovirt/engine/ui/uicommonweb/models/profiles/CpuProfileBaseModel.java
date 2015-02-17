@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.IModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public abstract class CpuProfileBaseModel extends ProfileBaseModel<CpuProfile, CpuQos, VDSGroup> {
@@ -23,7 +23,7 @@ public abstract class CpuProfileBaseModel extends ProfileBaseModel<CpuProfile, C
         EMPTY_QOS.setId(Guid.Empty);
     }
 
-    public CpuProfileBaseModel(EntityModel sourceModel,
+    public CpuProfileBaseModel(IModel sourceModel,
             Guid dcId,
             Guid defaultQosId,
             VdcActionType vdcActionType) {

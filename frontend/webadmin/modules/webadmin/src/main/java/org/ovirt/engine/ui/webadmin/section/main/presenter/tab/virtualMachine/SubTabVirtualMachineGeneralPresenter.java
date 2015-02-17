@@ -27,7 +27,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabVirtualMachineGeneralPresenter extends AbstractSubTabPresenter<VM, VmListModel, VmGeneralModel, SubTabVirtualMachineGeneralPresenter.ViewDef, SubTabVirtualMachineGeneralPresenter.ProxyDef> {
+public class SubTabVirtualMachineGeneralPresenter extends AbstractSubTabPresenter<VM, VmListModel<Void>, VmGeneralModel, SubTabVirtualMachineGeneralPresenter.ViewDef, SubTabVirtualMachineGeneralPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.virtualMachineGeneralSubTabPlace)
@@ -52,14 +52,14 @@ public class SubTabVirtualMachineGeneralPresenter extends AbstractSubTabPresente
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            DetailModelProvider<VmListModel, VmGeneralModel> modelProvider) {
+            DetailModelProvider<VmListModel<Void>, VmGeneralModel> modelProvider) {
         return new ModelBoundTabData(applicationConstants.virtualMachineGeneralSubTabLabel(), 1, modelProvider);
     }
 
     @Inject
     public SubTabVirtualMachineGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            DetailModelProvider<VmListModel, VmGeneralModel> modelProvider) {
+            DetailModelProvider<VmListModel<Void>, VmGeneralModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
     }

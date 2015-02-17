@@ -12,11 +12,11 @@ public class ClusterAffinityGroupListModel extends AffinityGroupListModel<VDSGro
 
     @Override
     protected Guid getClusterId() {
-        return getParentEntity().getId();
+        return getEntity().getId();
     }
 
     @Override
     protected String getClusterName() {
-        return getParentEntity().getName();
+        return getEntity().getName();
     }
 }

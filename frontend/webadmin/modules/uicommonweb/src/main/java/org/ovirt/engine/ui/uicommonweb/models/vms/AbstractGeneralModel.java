@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.Translator;
 
-public class AbstractGeneralModel extends EntityModel {
+public class AbstractGeneralModel<E> extends EntityModel<E> {
 
     private String graphicsType;
 

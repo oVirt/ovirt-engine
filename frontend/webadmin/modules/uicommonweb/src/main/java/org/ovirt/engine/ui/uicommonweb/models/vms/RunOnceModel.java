@@ -36,6 +36,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
@@ -1101,7 +1102,7 @@ public abstract class RunOnceModel extends Model
                 floppyImage_SelectedItemChanged();
             }
         }
-        else if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition))
+        else if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition))
         {
             if (sender == getAttachFloppy())
             {

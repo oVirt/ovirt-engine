@@ -190,8 +190,8 @@ public enum NetworkOperation {
                     // add to nic list
                     allNics.add(bond);
 
-                    nic1.getEntity().setBondName(bondName);
-                    nic2.getEntity().setBondName(bondName);
+                    nic1.getIface().setBondName(bondName);
+                    nic2.getIface().setBondName(bondName);
                 }
             };
         }
@@ -234,7 +234,7 @@ public enum NetworkOperation {
                     allNics.add(bond);
 
                     for (NetworkInterfaceModel nic : nics) {
-                        nic.getEntity().setBondName(bondName);
+                        nic.getIface().setBondName(bondName);
                     }
                 }
             };
@@ -277,7 +277,7 @@ public enum NetworkOperation {
                     // Attach previous nic networks to bond
                     attachNetworks(bond, networksToReatach, allNics);
 
-                    nic.getEntity().setBondName(bond.getEntity().getName());
+                    nic.getIface().setBondName(bond.getIface().getName());
                 }
             };
         }
@@ -334,7 +334,7 @@ public enum NetworkOperation {
                         List<VdsNetworkInterface> allNics, Object... params) {
                     assert op1 instanceof NetworkInterfaceModel;
                     NetworkInterfaceModel nic = (NetworkInterfaceModel) op1;
-                    VdsNetworkInterface entity = nic.getEntity();
+                    VdsNetworkInterface entity = nic.getIface();
                     entity.setBondName(null);
                     // is there are only two nics, break the bond
                     BondNetworkInterfaceModel bond = nic.getBond();
@@ -561,7 +561,7 @@ public enum NetworkOperation {
             LogicalNetworkModel networkToDetach) {
         // remove the vlan device
         if (networkToDetach.hasVlan()) {
-            allNics.remove(networkToDetach.getVlanNicModel().getEntity());
+            allNics.remove(networkToDetach.getVlanNicModel().getIface());
         }
         networkToDetach.detach();
     }
@@ -683,6 +683,6 @@ public enum NetworkOperation {
     }
 
     private static boolean isDisplayNetwork(LogicalNetworkModel logicalNetworkModel) {
-        return logicalNetworkModel.getEntity().getCluster().isDisplay();
+        return logicalNetworkModel.getNetwork().getCluster().isDisplay();
     }
 }

@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.IModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class EditTemplateInterfaceModel extends BaseEditVmInterfaceModel {
@@ -21,7 +21,7 @@ public class EditTemplateInterfaceModel extends BaseEditVmInterfaceModel {
             Version clusterCompatibilityVersion,
             ArrayList<VmNetworkInterface> vmNicList,
             VmNetworkInterface nic,
-            EntityModel sourceModel) {
+            IModel sourceModel) {
         EditTemplateInterfaceModel instance =
                 new EditTemplateInterfaceModel(vm, dcId, clusterCompatibilityVersion, vmNicList, nic, sourceModel);
         instance.init();
@@ -33,7 +33,7 @@ public class EditTemplateInterfaceModel extends BaseEditVmInterfaceModel {
             Version clusterCompatibilityVersion,
             ArrayList<VmNetworkInterface> vmNicList,
             VmNetworkInterface nic,
-            EntityModel sourceModel) {
+            IModel sourceModel) {
         super(vm,
                 VMStatus.Down,
                 dcId,

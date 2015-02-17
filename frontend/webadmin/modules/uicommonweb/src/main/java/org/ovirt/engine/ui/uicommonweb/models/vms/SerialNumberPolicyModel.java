@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
@@ -81,7 +82,7 @@ public class SerialNumberPolicyModel extends Model {
 
     @Override
     public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-        if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition)) {
+        if (ev.matchesDefinition(HasEntity.entityChangedEventDefinition)) {
             if (sender == getOverrideSerialNumberPolicy()) {
                 overrideSerialNumberPolicyChanged();
             } else if (sender == getSerialNumberPolicy()) {

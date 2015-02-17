@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
  * @param <T>
  *            The Item status enum type
  */
-public abstract class NetworkItemModel<T extends Enum<T>> extends ListModel implements Comparable<NetworkItemModel<T>> {
+public abstract class NetworkItemModel<T extends Enum<T>> extends ListModel<LogicalNetworkModel> implements Comparable<NetworkItemModel<T>> {
 
     private final HostSetupNetworksModel setupModel;
 

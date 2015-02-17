@@ -24,7 +24,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
-public class StorageDiskListModel extends SearchableListModel
+public class StorageDiskListModel extends SearchableListModel<StorageDomain, Object>
 {
     private UICommand privateRemoveCommand;
 
@@ -51,17 +51,6 @@ public class StorageDiskListModel extends SearchableListModel
         super.onEntityChanged();
 
         getSearchCommand().execute();
-    }
-
-    @Override
-    public StorageDomain getEntity()
-    {
-        return (StorageDomain) super.getEntity();
-    }
-
-    public void setEntity(StorageDomain value)
-    {
-        super.setEntity(value);
     }
 
     @Override
@@ -106,7 +95,7 @@ public class StorageDiskListModel extends SearchableListModel
                     @Override
                     public void onSuccess(Object model, Object ReturnValue) {
                         StorageDiskListModel storageDiskListModel = (StorageDiskListModel) model;
-                        storageDiskListModel.setItems((ArrayList<DiskImage>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                        storageDiskListModel.setItems((ArrayList) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
                     }
                 }));
     }

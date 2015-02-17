@@ -23,7 +23,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabClusterGlusterHookPresenter extends AbstractSubTabPresenter<VDSGroup, ClusterListModel, ClusterGlusterHookListModel, SubTabClusterGlusterHookPresenter.ViewDef, SubTabClusterGlusterHookPresenter.ProxyDef> {
+public class SubTabClusterGlusterHookPresenter extends AbstractSubTabPresenter<VDSGroup, ClusterListModel<Void>, ClusterGlusterHookListModel, SubTabClusterGlusterHookPresenter.ViewDef, SubTabClusterGlusterHookPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.clusterGlusterHookSubTabPlace)
@@ -35,14 +35,14 @@ public class SubTabClusterGlusterHookPresenter extends AbstractSubTabPresenter<V
 
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel> modelProvider) {
+            SearchableDetailModelProvider<GlusterHookEntity, ClusterListModel<Void>, ClusterGlusterHookListModel> modelProvider) {
         return new ModelBoundTabData(applicationConstants.clusterGlusterHooksSubTabLabel(), 5, modelProvider);
     }
 
     @Inject
     public SubTabClusterGlusterHookPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel> modelProvider) {
+            SearchableDetailModelProvider<GlusterHookEntity, ClusterListModel<Void>, ClusterGlusterHookListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 ClusterSubTabPanelPresenter.TYPE_SetTabContent);
     }

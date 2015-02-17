@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class StorageRegisterTemplateListModel extends StorageRegisterEntityListModel {
+public class StorageRegisterTemplateListModel extends StorageRegisterEntityListModel<VmTemplate> {
 
     public StorageRegisterTemplateListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().templateImportTitle());
@@ -17,7 +17,7 @@ public class StorageRegisterTemplateListModel extends StorageRegisterEntityListM
     }
 
     @Override
-    RegisterEntityModel createRegisterEntityModel() {
+    RegisterEntityModel<VmTemplate> createRegisterEntityModel() {
         RegisterTemplateModel model = new RegisterTemplateModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().importTemplatesTitle());
         model.setHelpTag(HelpTag.register_template);
@@ -27,8 +27,8 @@ public class StorageRegisterTemplateListModel extends StorageRegisterEntityListM
     }
 
     @Override
-    ImportEntityData createImportEntityData(Object entity) {
-        return new ImportTemplateData((VmTemplate) entity);
+    ImportEntityData<VmTemplate> createImportEntityData(VmTemplate entity) {
+        return new ImportTemplateData(entity);
     }
 
     @Override

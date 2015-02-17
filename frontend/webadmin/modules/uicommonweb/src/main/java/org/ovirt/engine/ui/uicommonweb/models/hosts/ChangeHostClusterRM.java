@@ -30,9 +30,9 @@ public class ChangeHostClusterRM extends IEnlistmentNotification {
 
         PreparingEnlistment enlistment = (PreparingEnlistment) context.enlistment;
         EnlistmentContext enlistmentContext = (EnlistmentContext) context.enlistment.getContext();
-        HostListModel model = enlistmentContext.getModel();
+        HostListModel<?> model = enlistmentContext.getModel();
 
-        VDS host = (VDS) model.getSelectedItem();
+        VDS host = model.getSelectedItem();
 
         if (!enlistmentContext.getClusterId().equals(host.getVdsGroupId())) {
 

@@ -26,7 +26,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
 import com.google.gwt.core.client.GWT;
 
-public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListModel, HostVmListModel>
+public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListModel<Void>, HostVmListModel>
         implements SubTabHostVmPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabHostVmView> {
@@ -34,7 +34,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
     }
 
     @Inject
-    public SubTabHostVmView(SearchableDetailModelProvider<VM, HostListModel, HostVmListModel> modelProvider,
+    public SubTabHostVmView(SearchableDetailModelProvider<VM, HostListModel<Void>, HostVmListModel> modelProvider,
         ApplicationResources resources, ApplicationConstants constants) {
         super(modelProvider);
         initTable(resources, constants);

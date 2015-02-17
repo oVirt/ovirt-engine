@@ -17,18 +17,18 @@ public class VmAffinityGroupListModel extends AffinityGroupListModel<VM> {
     protected AffinityGroup getNewAffinityGroup() {
         AffinityGroup affinityGroup = super.getNewAffinityGroup();
         affinityGroup.setEntityIds(new ArrayList<Guid>());
-        affinityGroup.getEntityIds().add(getParentEntity().getId());
+        affinityGroup.getEntityIds().add(getEntity().getId());
         return affinityGroup;
     }
 
     @Override
     protected Guid getClusterId() {
-        return getParentEntity().getVdsGroupId();
+        return getEntity().getVdsGroupId();
     }
 
     @Override
     protected String getClusterName() {
-        return getParentEntity().getVdsGroupName();
+        return getEntity().getVdsGroupName();
     }
 
 }

@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.IModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -25,7 +25,7 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
             Version clusterCompatibilityVersion,
             ArrayList<VmNetworkInterface> vmNicList,
             VmNetworkInterface nic,
-            EntityModel sourceModel) {
+            IModel sourceModel) {
         EditVmInterfaceModel instance =
                 new EditVmInterfaceModel(vmStatic, vm, clusterCompatibilityVersion, vmNicList, nic, sourceModel);
         instance.init();
@@ -36,7 +36,7 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
             Version clusterCompatibilityVersion,
             ArrayList<VmNetworkInterface> vmNicList,
             VmNetworkInterface nic,
-            EntityModel sourceModel) {
+            IModel sourceModel) {
         super(vmStatic,
                 vm.getStatus(),
                 vm.getStoragePoolId(),

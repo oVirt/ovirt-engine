@@ -24,7 +24,7 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabClusterCpuProfilePresenter extends
-        AbstractSubTabPresenter<VDSGroup, ClusterListModel, CpuProfileListModel, SubTabClusterCpuProfilePresenter.ViewDef, SubTabClusterCpuProfilePresenter.ProxyDef> {
+        AbstractSubTabPresenter<VDSGroup, ClusterListModel<Void>, CpuProfileListModel, SubTabClusterCpuProfilePresenter.ViewDef, SubTabClusterCpuProfilePresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.clusterCpuProfileSubTabPlace)
@@ -38,7 +38,7 @@ public class SubTabClusterCpuProfilePresenter extends
 
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<CpuProfile, ClusterListModel, CpuProfileListModel> modelProvider) {
+            SearchableDetailModelProvider<CpuProfile, ClusterListModel<Void>, CpuProfileListModel> modelProvider) {
         return new ModelBoundTabData(applicationConstants.cpuProfilesSubTabLabel(), 7,
                 modelProvider);
     }
@@ -46,7 +46,7 @@ public class SubTabClusterCpuProfilePresenter extends
     @Inject
     public SubTabClusterCpuProfilePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<CpuProfile, ClusterListModel, CpuProfileListModel> modelProvider) {
+            SearchableDetailModelProvider<CpuProfile, ClusterListModel<Void>, CpuProfileListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, ClusterSubTabPanelPresenter.TYPE_SetTabContent);
     }
 

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.uicommon.model;
 
 import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RolePermissionsRemoveConfirmationPopupPresenterWidget;
@@ -16,7 +17,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class DiskProfilePermissionModelProvider extends SearchableDetailTabModelProvider<Permissions, DiskProfileListModel, PermissionListModel<DiskProfileListModel>> {
+public class DiskProfilePermissionModelProvider extends SearchableDetailTabModelProvider<Permissions, DiskProfileListModel, PermissionListModel<DiskProfile>> {
 
     private final Provider<PermissionsPopupPresenterWidget> popupProvider;
     private final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
@@ -32,7 +33,7 @@ public class DiskProfilePermissionModelProvider extends SearchableDetailTabModel
     }
 
     @Override
-    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(PermissionListModel<DiskProfileListModel> source,
+    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(PermissionListModel<DiskProfile> source,
             UICommand lastExecutedCommand, Model windowModel) {
         if (lastExecutedCommand.equals(getModel().getAddCommand())) {
             return popupProvider.get();
@@ -42,7 +43,7 @@ public class DiskProfilePermissionModelProvider extends SearchableDetailTabModel
     }
 
     @Override
-    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(PermissionListModel<DiskProfileListModel> source,
+    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(PermissionListModel<DiskProfile> source,
             UICommand lastExecutedCommand) {
         if (lastExecutedCommand.equals(getModel().getRemoveCommand())) {
             return removeConfirmPopupProvider.get();

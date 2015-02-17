@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 
-public class DiskGeneralModel extends EntityModel
+public class DiskGeneralModel extends EntityModel<Disk>
 {
     private String privateAlias;
 
@@ -201,7 +201,7 @@ public class DiskGeneralModel extends EntityModel
 
     private void updateProperties()
     {
-        Disk disk = (Disk) getEntity();
+        Disk disk = getEntity();
 
         setImage(disk.getDiskStorageType() == DiskStorageType.IMAGE);
         setLun(disk.getDiskStorageType() == DiskStorageType.LUN);

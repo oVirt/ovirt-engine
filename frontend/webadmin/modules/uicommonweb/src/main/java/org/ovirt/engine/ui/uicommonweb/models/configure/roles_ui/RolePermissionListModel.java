@@ -23,7 +23,7 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
-public class RolePermissionListModel extends SearchableListModel
+public class RolePermissionListModel extends SearchableListModel<Role, Permissions>
 {
 
     private UICommand privateRemoveCommand;
@@ -36,17 +36,6 @@ public class RolePermissionListModel extends SearchableListModel
     private void setRemoveCommand(UICommand value)
     {
         privateRemoveCommand = value;
-    }
-
-    @Override
-    public Role getEntity()
-    {
-        return (Role) super.getEntity();
-    }
-
-    public void setEntity(Role value)
-    {
-        super.setEntity(value);
     }
 
     public RolePermissionListModel()
@@ -71,8 +60,7 @@ public class RolePermissionListModel extends SearchableListModel
             @Override
             public void onSuccess(Object model, Object ReturnValue)
             {
-                RolePermissionListModel permissionListModel = (RolePermissionListModel) model;
-                permissionListModel.setItems((Collection) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                setItems((Collection) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
             }
         };
 

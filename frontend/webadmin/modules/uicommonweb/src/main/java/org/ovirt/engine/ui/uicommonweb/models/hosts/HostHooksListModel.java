@@ -18,19 +18,8 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class HostHooksListModel extends SearchableListModel
+public class HostHooksListModel extends SearchableListModel<VDS, HashMap<String, String>>
 {
-
-    @Override
-    public VDS getEntity()
-    {
-        return (VDS) super.getEntity();
-    }
-
-    public void setEntity(VDS value)
-    {
-        super.setEntity(value);
-    }
 
     public HostHooksListModel()
     {
@@ -92,11 +81,9 @@ public class HostHooksListModel extends SearchableListModel
             @Override
             public void onSuccess(Object model, Object ReturnValue)
             {
-                HostHooksListModel hooklistModel = (HostHooksListModel) model;
                 ArrayList<HashMap<String, String>> list =
                         new ArrayList<HashMap<String, String>>();
-                HashMap<String, HashMap<String, HashMap<String, String>>> dictionary =
-                        (HashMap<String, HashMap<String, HashMap<String, String>>>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                HashMap<String, HashMap<String, HashMap<String, String>>> dictionary = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 HashMap<String, String> row;
                 for (Map.Entry<String, HashMap<String, HashMap<String, String>>> keyValuePair : dictionary.entrySet())
                 {
@@ -114,7 +101,7 @@ public class HostHooksListModel extends SearchableListModel
                         }
                     }
                 }
-                hooklistModel.setItems(list);
+                setItems(list);
             }
         };
         IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());

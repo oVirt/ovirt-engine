@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class StorageRegisterVmListModel extends StorageRegisterEntityListModel {
+public class StorageRegisterVmListModel extends StorageRegisterEntityListModel<VM> {
 
     public StorageRegisterVmListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().vmImportTitle());
@@ -27,8 +27,8 @@ public class StorageRegisterVmListModel extends StorageRegisterEntityListModel {
     }
 
     @Override
-    ImportEntityData createImportEntityData(Object entity) {
-        return new ImportVmData((VM) entity);
+    ImportEntityData<VM> createImportEntityData(VM entity) {
+        return new ImportVmData(entity);
     }
 
     @Override

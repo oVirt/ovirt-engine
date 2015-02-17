@@ -14,8 +14,8 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.table.header.SelectAllCheckBoxHeader;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ImportIscsiStorageModel;
 
 import com.google.gwt.core.client.GWT;
@@ -220,7 +220,7 @@ public class ImportIscsiStorageView extends AbstractStorageView<ImportIscsiStora
         storageDomainsTable.addColumn(storageIdColumn, constants.storageIdVgName(), "50%"); //$NON-NLS-1$
     }
 
-    private void onIsValidPropertyChange(EntityModel model) {
+    private void onIsValidPropertyChange(Model model) {
         if (model.getIsValid()) {
             markAsValid();
         } else {

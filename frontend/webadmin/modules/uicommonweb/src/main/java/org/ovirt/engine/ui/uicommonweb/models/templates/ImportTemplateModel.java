@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
@@ -35,7 +36,7 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
 
     @Inject
     public ImportTemplateModel(final VmImportDiskListModel vmImportDiskListModel,
-            final StorageDiskListModel storageDomain, final ClusterListModel cluster, final QuotaListModel clusterQuota,
+            final StorageDiskListModel storageDomain, final ClusterListModel<Void> cluster, final QuotaListModel clusterQuota,
             final TemplateGeneralModel templateGeneralModel, final VmImportInterfaceListModel vmImportInterfaceListModel,
             final VmImportAppListModel vmImportAppListModel, final TemplateImportDiskListModel templateImportDiskListModel,
             final TemplateImportInterfaceListModel templateImportInterfaceListModel) {
@@ -48,7 +49,7 @@ public class ImportTemplateModel extends ImportVmFromExportDomainModel {
 
     private void setDetailList(final TemplateGeneralModel vmGeneralModel,
             final TemplateImportInterfaceListModel templateImportInterfaceListModel) {
-        List<EntityModel> list = new ArrayList<EntityModel>();
+        List<HasEntity> list = new ArrayList<>();
         list.add(vmGeneralModel);
         list.add(templateImportInterfaceListModel);
         list.add(templateImportDiskListModel);

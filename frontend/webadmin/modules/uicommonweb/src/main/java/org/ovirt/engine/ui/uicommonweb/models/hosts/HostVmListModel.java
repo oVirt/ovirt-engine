@@ -23,15 +23,15 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class HostVmListModel extends VmListModel {
+public class HostVmListModel extends VmListModel<VDS> {
     @Inject
     public HostVmListModel(VmGeneralModel vmGeneralModel,
             VmInterfaceListModel vmInterfaceListModel,
             VmDiskListModel vmDiskListModel,
             VmSnapshotListModel vmSnapshotListModel,
             VmEventListModel vmEventListModel,
-            VmAppListModel vmAppListModel,
-            PermissionListModel<VmListModel> permissionListModel,
+            VmAppListModel<VM> vmAppListModel,
+            PermissionListModel<VM> permissionListModel,
             VmAffinityGroupListModel vmAffinityGroupListModel,
             VmSessionsModel vmSessionsModel,
             Provider<ImportVmsModel> importVmsModelProvider) {
@@ -48,11 +48,6 @@ public class HostVmListModel extends VmListModel {
     protected void onEntityChanged() {
         super.onEntityChanged();
         search();
-    }
-
-    @Override
-    public VDS getEntity() {
-        return (VDS) super.getEntity();
     }
 
     @Override

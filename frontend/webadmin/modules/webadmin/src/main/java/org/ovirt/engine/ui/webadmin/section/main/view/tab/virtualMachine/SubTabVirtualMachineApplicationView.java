@@ -15,7 +15,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabVirtualMachineApplicationView extends AbstractSubTabTableWidgetView<VM, String, VmListModel, VmAppListModel> implements SubTabVirtualMachineApplicationPresenter.ViewDef {
+public class SubTabVirtualMachineApplicationView extends AbstractSubTabTableWidgetView<VM, String, VmListModel<Void>, VmAppListModel<VM>> implements SubTabVirtualMachineApplicationPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabVirtualMachineApplicationView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -23,7 +23,7 @@ public class SubTabVirtualMachineApplicationView extends AbstractSubTabTableWidg
 
     @Inject
     public SubTabVirtualMachineApplicationView(
-            SearchableDetailModelProvider<String, VmListModel, VmAppListModel> modelProvider,
+            SearchableDetailModelProvider<String, VmListModel<Void>, VmAppListModel<VM>> modelProvider,
             EventBus eventBus, ClientStorage clientStorage, ApplicationConstants constants) {
         super(new VmAppListModelTable(modelProvider, eventBus, clientStorage, constants));
         ViewIdHandler.idHandler.generateAndSetIds(this);

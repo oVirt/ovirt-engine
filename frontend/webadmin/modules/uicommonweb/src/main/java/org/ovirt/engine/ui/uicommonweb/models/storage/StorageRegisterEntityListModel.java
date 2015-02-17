@@ -19,7 +19,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 
-public abstract class StorageRegisterEntityListModel extends SearchableListModel {
+public abstract class StorageRegisterEntityListModel<T extends IVdcQueryable> extends SearchableListModel<StorageDomain, T> {
 
     private UICommand importCommand;
 
@@ -41,9 +41,9 @@ public abstract class StorageRegisterEntityListModel extends SearchableListModel
         updateActionAvailability();
     }
 
-    abstract RegisterEntityModel createRegisterEntityModel();
+    abstract RegisterEntityModel<T> createRegisterEntityModel();
 
-    abstract ImportEntityData createImportEntityData(Object entity);
+    abstract ImportEntityData<T> createImportEntityData(T entity);
 
     @Override
     protected void onEntityChanged() {
@@ -73,23 +73,13 @@ public abstract class StorageRegisterEntityListModel extends SearchableListModel
     }
 
     @Override
-    public StorageDomain getEntity() {
-        return (StorageDomain) super.getEntity();
-    }
-
-    public void setEntity(StorageDomain value)
-    {
-        super.setEntity(value);
-    }
-
-    @Override
     public void search() {
         if (getEntity() != null) {
             super.search();
         }
     }
 
-    protected <T extends IVdcQueryable> void syncSearch(VdcQueryType vdcQueryType, final Comparator<T> comparator) {
+    protected void syncSearch(VdcQueryType vdcQueryType, final Comparator<T> comparator) {
         if (getEntity() == null) {
             return;
         }
@@ -119,12 +109,12 @@ public abstract class StorageRegisterEntityListModel extends SearchableListModel
         }
     }
 
-    protected List<ImportEntityData> getImportEntities() {
-        List<ImportEntityData> entities = new ArrayList<ImportEntityData>();
-        for (Object item : getSelectedItems()) {
+    protected List<ImportEntityData<T>> getImportEntities() {
+        List<ImportEntityData<T>> entities = new ArrayList<>();
+        for (T item : getSelectedItems()) {
             entities.add(createImportEntityData(item));
         }
-        Collections.sort(entities, new Linq.ImportEntityComparator());
+        Collections.sort(entities, new Linq.ImportEntityComparator<T>());
 
         return entities;
     }
@@ -134,7 +124,7 @@ public abstract class StorageRegisterEntityListModel extends SearchableListModel
             return;
         }
 
-        RegisterEntityModel model = createRegisterEntityModel();
+        RegisterEntityModel<T> model = createRegisterEntityModel();
         model.setStorageDomainId(getEntity().getId());
         setWindow(model);
 

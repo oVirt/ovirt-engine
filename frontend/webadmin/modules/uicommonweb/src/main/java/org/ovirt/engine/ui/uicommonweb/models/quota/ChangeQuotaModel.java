@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.quota;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -91,8 +92,8 @@ public class ChangeQuotaModel extends ListModel<ChangeQuotaItemModel> {
      * @param systemTreeSelectedItem
      * @param changeQuotaCommand
      */
-    public static void updateChangeQuotaActionAvailability(List<Disk> allDisks,
-            List<Disk> selectedDisks,
+    public static void updateChangeQuotaActionAvailability(Collection<? extends Disk> allDisks,
+            Collection<? extends Disk> selectedDisks,
             SystemTreeItemModel systemTreeSelectedItem,
             UICommand changeQuotaCommand) {
         boolean isAvailable = true;

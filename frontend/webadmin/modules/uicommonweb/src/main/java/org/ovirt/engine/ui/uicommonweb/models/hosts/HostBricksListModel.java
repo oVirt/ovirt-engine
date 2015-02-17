@@ -16,19 +16,8 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class HostBricksListModel extends SearchableListModel
+public class HostBricksListModel extends SearchableListModel<VDS, GlusterBrickEntity>
 {
-
-    @Override
-    public VDS getEntity()
-    {
-        return (VDS) super.getEntity();
-    }
-
-    public void setEntity(VDS value)
-    {
-        super.setEntity(value);
-    }
 
     public HostBricksListModel()
     {

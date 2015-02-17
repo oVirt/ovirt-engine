@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class QuotaTemplateListModel extends SearchableListModel {
+public class QuotaTemplateListModel extends SearchableListModel<Quota, VM> {
 
     public QuotaTemplateListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
@@ -39,13 +39,12 @@ public class QuotaTemplateListModel extends SearchableListModel {
             @Override
             public void onSuccess(Object model, Object ReturnValue)
             {
-                QuotaTemplateListModel vmModel = (QuotaTemplateListModel) model;
-                vmModel.setItems((ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
-                vmModel.setIsEmpty(((List) vmModel.getItems()).size() == 0);
+                setItems((ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                setIsEmpty(((List) getItems()).size() == 0);
             }
         };
 
-        IdQueryParameters tempVar = new IdQueryParameters(((Quota) getEntity()).getId());
+        IdQueryParameters tempVar = new IdQueryParameters(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
         Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesRelatedToQuotaId, tempVar, _asyncQuery);
     }

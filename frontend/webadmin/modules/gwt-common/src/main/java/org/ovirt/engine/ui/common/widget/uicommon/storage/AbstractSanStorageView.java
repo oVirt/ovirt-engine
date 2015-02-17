@@ -5,7 +5,7 @@ import java.util.List;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -73,7 +73,7 @@ public abstract class AbstractSanStorageView extends AbstractStorageView<SanStor
         });
     }
 
-    void onIsValidPropertyChange(EntityModel model) {
+    void onIsValidPropertyChange(Model model) {
         if (model.getIsValid()) {
             markAsValid();
         } else {

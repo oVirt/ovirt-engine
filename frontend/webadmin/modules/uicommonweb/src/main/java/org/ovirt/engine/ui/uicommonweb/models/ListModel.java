@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ProvideCollectionChangedEvent;
 import org.ovirt.engine.ui.uicompat.ProvidePropertyChangedEvent;
 
-public class ListModel<T> extends EntityModel<T>
+public class ListModel<T> extends Model
 {
 
     public static final EventDefinition selectedItemChangedEventDefinition;

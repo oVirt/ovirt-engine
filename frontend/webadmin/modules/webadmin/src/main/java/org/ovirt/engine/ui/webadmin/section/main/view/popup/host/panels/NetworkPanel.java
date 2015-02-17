@@ -56,11 +56,11 @@ public abstract class NetworkPanel extends NetworkItemPanel {
             notSyncImage = null;
             alertImage = null;
         } else {
-            monitorImage = network.getEntity().getCluster().isDisplay() ?
+            monitorImage = network.getNetwork().getCluster().isDisplay() ?
                     new Image(resources.networkMonitor()) : null;
             mgmtNetworkImage = network.isManagement() ? new Image(resources.mgmtNetwork()) : null;
-            vmImage = network.getEntity().isVmNetwork() ? new Image(resources.networkVm()) : null;
-            migrationImage = network.getEntity().getCluster().isMigration() ?
+            vmImage = network.getNetwork().isVmNetwork() ? new Image(resources.networkVm()) : null;
+            migrationImage = network.getNetwork().getCluster().isMigration() ?
                     new Image(resources.migrationNetwork()) : null;
             notSyncImage = !network.isInSync() ? new Image(resources.networkNotSyncImage()) : null;
             alertImage = network.getErrorMessage() != null ? new Image(resources.alertImage()) : null;
@@ -69,15 +69,15 @@ public abstract class NetworkPanel extends NetworkItemPanel {
                 mgmtNetworkImage.setStylePrimaryName(style.networkImageBorder());
             }
 
-            if (network.getEntity().isVmNetwork()) {
+            if (network.getNetwork().isVmNetwork()) {
                 vmImage.setStylePrimaryName(style.networkImageBorder());
             }
 
-            if (network.getEntity().getCluster().isDisplay()) {
+            if (network.getNetwork().getCluster().isDisplay()) {
                 monitorImage.setStylePrimaryName(style.networkImageBorder());
             }
 
-            if (network.getEntity().getCluster().isMigration()) {
+            if (network.getNetwork().getCluster().isMigration()) {
                 migrationImage.setStylePrimaryName(style.networkImageBorder());
             }
 

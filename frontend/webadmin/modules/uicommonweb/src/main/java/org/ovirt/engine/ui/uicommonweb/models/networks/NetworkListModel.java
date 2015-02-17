@@ -20,9 +20,9 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
-import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -37,7 +37,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class NetworkListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
+public class NetworkListModel extends ListWithSimpleDetailsModel<NetworkView, NetworkView> implements ISupportSystemTreeContext
 {
     private UICommand newCommand;
     private UICommand importCommand;
@@ -56,7 +56,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
             final NetworkClusterListModel networkClusterListModel,
             final NetworkHostListModel networkHostListModel, final NetworkVmListModel networkVmListModel,
             final NetworkTemplateListModel networkTemplateListModel,
-            final PermissionListModel<NetworkListModel> permissionListModel) {
+            final PermissionListModel<NetworkView> permissionListModel) {
         this.networkExternalSubnetListModel = networkExternalSubnetListModel;
         this.importNetworkModelProvider = importNetworkModelProvider;
         setDetailList(networkGeneralModel, networkProfileListModel, networkClusterListModel, networkHostListModel,
@@ -87,8 +87,8 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
             final NetworkClusterListModel networkClusterListModel,
             final NetworkHostListModel networkHostListModel, final NetworkVmListModel networkVmListModel,
             final NetworkTemplateListModel networkTemplateListModel,
-            final PermissionListModel<NetworkListModel> permissionListModel) {
-        List<EntityModel> list = new ArrayList<EntityModel>();
+            final PermissionListModel<NetworkView> permissionListModel) {
+        List<HasEntity<NetworkView>> list = new ArrayList<>();
 
         list.add(networkGeneralModel);
         list.add(networkProfileListModel);
@@ -124,7 +124,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
 
     public void edit() {
         final UIConstants constants = ConstantsManager.getInstance().getConstants();
-        final Network network = (Network) getSelectedItem();
+        final Network network = getSelectedItem();
 
         if (getWindow() != null)
         {
@@ -195,7 +195,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
     @Override
     protected void updateDetailsAvailability() {
         super.updateDetailsAvailability();
-        NetworkView network = (NetworkView) getSelectedItem();
+        NetworkView network = getSelectedItem();
         networkExternalSubnetListModel.setIsAvailable(network != null && network.isExternal());
     }
 
@@ -283,11 +283,6 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
 
     private void onSystemTreeSelectedItemChanged() {
         updateActionAvailability();
-    }
-
-    @Override
-    public NetworkView getEntity() {
-        return (NetworkView) super.getEntity();
     }
 
     @Override

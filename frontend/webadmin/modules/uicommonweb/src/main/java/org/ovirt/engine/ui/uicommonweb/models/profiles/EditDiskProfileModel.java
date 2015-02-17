@@ -4,12 +4,12 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.IModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class EditDiskProfileModel extends DiskProfileBaseModel {
 
-    public EditDiskProfileModel(EntityModel sourceModel,
+    public EditDiskProfileModel(IModel sourceModel,
             DiskProfile profile,
             Guid dataCenterId) {
         super(sourceModel,

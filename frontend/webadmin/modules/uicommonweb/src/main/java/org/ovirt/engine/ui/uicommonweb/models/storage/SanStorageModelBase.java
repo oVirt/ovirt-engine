@@ -259,12 +259,12 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         setDiscoverTargetsCommand(new UICommand("DiscoverTargets", this)); //$NON-NLS-1$
 
         setAddress(new EntityModel<String>());
-        EntityModel<String> tempVar2 = new EntityModel<String>();
+        EntityModel<String> tempVar2 = new EntityModel<>();
         tempVar2.setEntity("3260"); //$NON-NLS-1$
         setPort(tempVar2);
         setUserName(new EntityModel<String>());
         setPassword(new EntityModel<String>());
-        EntityModel<Boolean> tempVar3 = new EntityModel<Boolean>();
+        EntityModel<Boolean> tempVar3 = new EntityModel<>();
         tempVar3.setEntity(false);
         setUseUserAuth(tempVar3);
         getUseUserAuth().getEntityChangedEvent().addListener(this);
@@ -310,9 +310,9 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             return;
         }
 
-        ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
-        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
-        ArrayList<IFrontendActionAsyncCallback> callbacks = new ArrayList<IFrontendActionAsyncCallback>();
+        ArrayList<VdcActionType> actionTypes = new ArrayList<>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
+        ArrayList<IFrontendActionAsyncCallback> callbacks = new ArrayList<>();
 
         final SanStorageModelBase sanStorageModel = this;
         IFrontendActionAsyncCallback loginCallback = new IFrontendActionAsyncCallback() {
@@ -344,7 +344,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     private void sanTargetModel_LoggedIn(Object sender, EventArgs args)
     {
         SanTargetModel model = (SanTargetModel) sender;
-        targetsToConnect = new ArrayList<SanTargetModel>();
+        targetsToConnect = new ArrayList<>();
         targetsToConnect.add(model);
         connectTargets();
     }
@@ -358,7 +358,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         // Cast to list of SanTargetModel because we get call
         // to this method only from target/LUNs mode.
         List<SanTargetModel> items = (List<SanTargetModel>) getItems();
-        targetsToConnect = new ArrayList<SanTargetModel>();
+        targetsToConnect = new ArrayList<>();
 
         for (SanTargetModel item : items)
         {
@@ -406,7 +406,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
     protected void postDiscoverTargetsInternal(ArrayList<StorageServerConnections> items)
     {
-        ArrayList<SanTargetModel> newItems = new ArrayList<SanTargetModel>();
+        ArrayList<SanTargetModel> newItems = new ArrayList<>();
 
         for (StorageServerConnections a : items)
         {

@@ -19,15 +19,14 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class EventListModel extends ListWithDetailsModel
-{
+public class EventListModel<E> extends ListWithSimpleDetailsModel<E, AuditLog> {
     private UICommand privateRefreshCommand;
 
     public UICommand getRefreshCommand()
@@ -157,7 +156,7 @@ public class EventListModel extends ListWithDetailsModel
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 EventListModel eventListModel = (EventListModel) model;
-                ArrayList<AuditLog> list = (ArrayList<AuditLog>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                ArrayList<AuditLog> list = ((VdcQueryReturnValue) returnValue).getReturnValue();
                 requestingData = false;
                 for (AuditLog auditLog : list) {
                     // in case the corr_id is created in client,
@@ -182,7 +181,7 @@ public class EventListModel extends ListWithDetailsModel
 
     private void details() {
 
-        AuditLog event = (AuditLog) getSelectedItem();
+        AuditLog event = getSelectedItem();
 
         if (getWindow() != null || event == null) {
             return;
@@ -264,7 +263,7 @@ public class EventListModel extends ListWithDetailsModel
     private boolean entitiesChanged = true;
 
     @Override
-    protected void entityChanging(Object newValue, Object oldValue) {
+    protected void entityChanging(E newValue, E oldValue) {
         super.entityChanging(newValue, oldValue);
         entitiesChanged = calculateEntitiesChanged(newValue, oldValue);
     }

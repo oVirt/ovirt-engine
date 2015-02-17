@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class HostGlusterSwiftListModel extends SearchableListModel {
+public class HostGlusterSwiftListModel extends SearchableListModel<VDS, GlusterServerService> {
 
     private UICommand startSwiftCommand;
 
@@ -63,11 +63,6 @@ public class HostGlusterSwiftListModel extends SearchableListModel {
         getStartSwiftCommand().setIsExecutionAllowed(false);
         getStopSwiftCommand().setIsExecutionAllowed(false);
         getRestartSwiftCommand().setIsExecutionAllowed(false);
-    }
-
-    @Override
-    public VDS getEntity() {
-        return (VDS) super.getEntity();
     }
 
     @Override

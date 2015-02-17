@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class GlusterVolumeSnapshotListModel extends SearchableListModel {
+public class GlusterVolumeSnapshotListModel extends SearchableListModel<GlusterVolumeEntity, GlusterVolumeSnapshotEntity> {
     @Override
     public String getListName() {
         return "GlusterVolumeSnapshotListModel"; //$NON-NLS-1$
@@ -66,14 +66,5 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel {
     @Override
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
-    }
-
-    @Override
-    public GlusterVolumeEntity getEntity() {
-        return (GlusterVolumeEntity) super.getEntity();
-    }
-
-    public void setEntity(GlusterVolumeEntity value) {
-        super.setEntity(value);
     }
 }

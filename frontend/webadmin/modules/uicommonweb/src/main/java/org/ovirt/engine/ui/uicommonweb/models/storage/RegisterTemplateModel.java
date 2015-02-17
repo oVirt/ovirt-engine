@@ -14,12 +14,12 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
-public class RegisterTemplateModel extends RegisterEntityModel {
+public class RegisterTemplateModel extends RegisterEntityModel<VmTemplate> {
 
     protected void onSave() {
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
-        for (ImportEntityData entityData : getEntities().getItems()) {
-            VmTemplate vmTemplate = (VmTemplate) entityData.getEntity();
+        for (ImportEntityData<VmTemplate> entityData : getEntities().getItems()) {
+            VmTemplate vmTemplate = entityData.getEntity();
             VDSGroup vdsGroup = entityData.getCluster().getSelectedItem();
 
             ImportVmTemplateParameters params = new ImportVmTemplateParameters();

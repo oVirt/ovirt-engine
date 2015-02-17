@@ -221,7 +221,7 @@ public class TemplateModule extends AbstractGinModule {
         bind(TemplateStorageListModel.class).in(Singleton.class);
         bind(TemplateVmListModel.class).in(Singleton.class);
         bind(TemplateEventListModel.class).in(Singleton.class);
-        bind(new TypeLiteral<PermissionListModel<TemplateListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<VmTemplate>>(){}).in(Singleton.class);
 
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<TemplateListModel, TemplateGeneralModel>>(){})
@@ -231,8 +231,8 @@ public class TemplateModule extends AbstractGinModule {
            .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, TemplateListModel, TemplateVmListModel>>(){})
            .in(Singleton.class);
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, TemplateListModel, PermissionListModel<TemplateListModel>>>(){})
-           .to(new TypeLiteral<PermissionModelProvider<TemplateListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, TemplateListModel, PermissionListModel<VmTemplate>>>(){})
+           .to(new TypeLiteral<PermissionModelProvider<VmTemplate, TemplateListModel>>(){}).in(Singleton.class);
     }
 
 }

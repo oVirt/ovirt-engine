@@ -4,19 +4,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class HostEventListModel extends SubTabEventListModel
-{
-
-    @Override
-    public VDS getEntity()
-    {
-        return (VDS) super.getEntity();
-    }
-
-    public void setEntity(VDS value)
-    {
-        super.setEntity(value);
-    }
+public class HostEventListModel extends SubTabEventListModel<VDS> {
 
     @Override
     protected void onEntityContentChanged()

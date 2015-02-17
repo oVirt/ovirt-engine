@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public abstract class ManageBackupModel extends SearchableListModel
+public abstract class ManageBackupModel extends SearchableListModel<StorageDomain, Object>
 {
 
     private UICommand privateRestoreCommand;
@@ -33,17 +33,6 @@ public abstract class ManageBackupModel extends SearchableListModel
     private void setRemoveCommand(UICommand value)
     {
         privateRemoveCommand = value;
-    }
-
-    @Override
-    public StorageDomain getEntity()
-    {
-        return (StorageDomain) super.getEntity();
-    }
-
-    public void setEntity(StorageDomain value)
-    {
-        super.setEntity(value);
     }
 
     private boolean isRefreshing;

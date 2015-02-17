@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportDiskData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
@@ -186,14 +187,14 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
 
     protected void subTabLayoutPanelSelectionChanged(Integer selectedItem) {
         if (importModel != null) {
-            importModel.setActiveDetailModel(importModel.getDetailModels().get(selectedItem));
+            importModel.setActiveDetailModel((HasEntity<?>) importModel.getDetailModels().get(selectedItem));
         }
     }
 
     protected void initGeneralSubTabView() {
         ScrollPanel generalPanel = new ScrollPanel();
-        DetailModelProvider<VmListModel, VmGeneralModel> modelProvider =
-                new DetailModelProvider<VmListModel, VmGeneralModel>() {
+        DetailModelProvider<VmListModel<Void>, VmGeneralModel> modelProvider =
+                new DetailModelProvider<VmListModel<Void>, VmGeneralModel>() {
                     @Override
                     public VmGeneralModel getModel() {
                         return (VmGeneralModel) importModel.getDetailModels().get(0);
@@ -219,7 +220,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
     }
 
     protected void initAppTable() {
-        appTable = new ListModelObjectCellTable<String, VmAppListModel>();
+        appTable = new ListModelObjectCellTable<>();
 
         appTable.addColumn(new AbstractTextColumnWithTooltip<String>() {
             @Override
@@ -236,7 +237,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
     }
 
     protected void initMainTable() {
-        this.table = new ListModelObjectCellTable<Object, ImportVmFromExportDomainModel>();
+        this.table = new ListModelObjectCellTable<>();
 
         AbstractCheckboxColumn<Object> collapseSnapshotsColumn =
                 new AbstractCheckboxColumn<Object>(new FieldUpdater<Object, Boolean>() {
@@ -250,7 +251,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
                 }) {
             @Override
             public Boolean getValue(Object model) {
-                return (Boolean) ((ImportVmData) model).getCollapseSnapshots().getEntity();
+                return ((ImportVmData) model).getCollapseSnapshots().getEntity();
             }
 
             @Override
@@ -273,7 +274,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         }) {
             @Override
             public Boolean getValue(Object model) {
-                return (Boolean) ((ImportVmData) model).getClone().getEntity();
+                return ((ImportVmData) model).getClone().getEntity();
             }
 
             @Override
@@ -357,7 +358,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
             public void onSelectionChange(SelectionChangeEvent event) {
                 ImportVmData selectedObject =
                         ((SingleSelectionModel<ImportVmData>) event.getSource()).getSelectedObject();
-                customSelectionCellFormatType.setEnabledWithToolTip((Boolean) selectedObject.getCollapseSnapshots()
+                customSelectionCellFormatType.setEnabledWithToolTip(selectedObject.getCollapseSnapshots()
                         .getEntity(),
                         constants.importAllocationModifiedCollapse());
                 // diskTable.edit(importVmModel.getImportDiskListModel());
@@ -371,7 +372,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
     }
 
     private void initNicsTable() {
-        nicTable = new ListModelObjectCellTable<VmNetworkInterface, SearchableListModel>();
+        nicTable = new ListModelObjectCellTable<>();
         nicTable.enableColumnResizing();
         AbstractTextColumnWithTooltip<VmNetworkInterface> nameColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
             @Override
@@ -417,7 +418,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
     }
 
     private void initDiskTable() {
-        diskTable = new ListModelObjectCellTable<DiskImage, SearchableListModel>();
+        diskTable = new ListModelObjectCellTable<>();
         diskTable.enableColumnResizing();
         AbstractTextColumnWithTooltip<DiskImage> aliasColumn = new AbstractTextColumnWithTooltip<DiskImage>() {
             @Override
@@ -478,7 +479,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
     }
 
     protected void addAllocationColumn() {
-        ArrayList<String> allocationTypes = new ArrayList<String>();
+        ArrayList<String> allocationTypes = new ArrayList<>();
         allocationTypes.add(constants.thinAllocation());
         allocationTypes.add(constants.preallocatedAllocation());
 
@@ -528,12 +529,12 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
             public String getValue(DiskImage disk) {
                 ImportDiskData importData = importModel.getDiskImportData(disk.getId());
 
-                ArrayList<String> storageDomainsNameList = new ArrayList<String>();
+                ArrayList<String> storageDomainsNameList = new ArrayList<>();
                 StorageDomain selectedStorageDomain = null;
                 if (importData != null && importData.getStorageDomains() != null) {
                     for (StorageDomain storageDomain : importData.getStorageDomains()) {
                         storageDomainsNameList.add(
-                                new StorageDomainFreeSpaceRenderer<StorageDomain>().render(storageDomain));
+                                new StorageDomainFreeSpaceRenderer<>().render(storageDomain));
                         if (importData.getSelectedStorageDomain() != null) {
                             if (storageDomain.getId().equals(importData.getSelectedStorageDomain().getId())) {
                                 selectedStorageDomain = storageDomain;
@@ -544,7 +545,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
                 ((CustomSelectionCell) getCell()).setOptions(storageDomainsNameList);
                 if (!storageDomainsNameList.isEmpty()) {
                     if (selectedStorageDomain != null) {
-                        return new StorageDomainFreeSpaceRenderer<StorageDomain>().render(selectedStorageDomain);
+                        return new StorageDomainFreeSpaceRenderer<>().render(selectedStorageDomain);
                     } else {
                         return storageDomainsNameList.get(0);
                     }
@@ -583,7 +584,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
             public String getValue(DiskImage disk) {
                 ImportDiskData importData = importModel.getDiskImportData(disk.getId());
 
-                ArrayList<String> storageQuotaList = new ArrayList<String>();
+                ArrayList<String> storageQuotaList = new ArrayList<>();
                 Quota selectedQuota = null;
                 if (importData != null && importData.getQuotaList() != null) {
                     for (Quota quota : importData.getQuotaList()) {
@@ -617,21 +618,21 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
     }
 
     private void initListBoxEditors() {
-        destClusterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        destClusterEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
                 return ((VDSGroup) object).getName();
             }
         });
-        destClusterQuotaEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        destClusterQuotaEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
                 return ((Quota) object).getQuotaName();
             }
         });
-        destStorageEditor = new ListModelListBoxEditor<Object>(new StorageDomainFreeSpaceRenderer());
+        destStorageEditor = new ListModelListBoxEditor<>(new StorageDomainFreeSpaceRenderer());
 
-        cpuProfileEditor = new ListModelListBoxEditor<CpuProfile>(new NullSafeRenderer<CpuProfile>() {
+        cpuProfileEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<CpuProfile>() {
 
             @Override
             protected String renderNullSafe(CpuProfile object) {
@@ -681,8 +682,8 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
                 if (!firstSelection) {
-                    object.setActiveDetailModel(object.getDetailModels().get(0));
-                    setGeneralViewSelection(((ImportEntityData) object.getSelectedItem()).getEntity());
+                    object.setActiveDetailModel((HasEntity<?>) object.getDetailModels().get(0));
+                    setGeneralViewSelection(((ImportEntityData<?>) object.getSelectedItem()).getEntity());
                     firstSelection = true;
                 }
                 splitLayoutPanel.clear();

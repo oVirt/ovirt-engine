@@ -13,7 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 
-public abstract class AbstractUserPortalListModel extends ListWithDetailsModel {
+public abstract class AbstractUserPortalListModel extends ListWithDetailsModel<Void, /* VmOrPool */ Object, UserPortalItemModel> {
     private UICommand editConsoleCommand;
 
     protected ConsoleModelsCache consoleModelsCache;
@@ -35,8 +35,7 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel {
     public List<VmConsoles> getAutoConnectableConsoles() {
         List<VmConsoles> autoConnectableConsoles = new LinkedList<VmConsoles>();
 
-        for (Object item : items) {
-            UserPortalItemModel upItem = (UserPortalItemModel) item;
+        for (UserPortalItemModel upItem : items) {
 
             if (!upItem.isPool() && upItem.getVmConsoles().canConnectToConsole()) {
                 autoConnectableConsoles.add(upItem.getVmConsoles());
@@ -61,6 +60,20 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel {
     public abstract void onVmAndPoolLoad();
 
     @Override
+    protected Object provideDetailModelEntity(UserPortalItemModel selectedItem)
+    {
+        // Each item in this list model is not a business entity,
+        // therefore select an Entity property to provide it to
+        // the detail models.
+        if (selectedItem == null)
+        {
+            return null;
+        }
+
+        return selectedItem.getEntity();
+    }
+
+    @Override
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
 
@@ -78,12 +91,12 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel {
     }
 
     private void editConsole() {
-        if (getWindow() != null || ((UserPortalItemModel) getSelectedItem()).getVmConsoles() == null) {
+        if (getWindow() != null || getSelectedItem().getVmConsoles() == null) {
             return;
         }
 
         ConsolePopupModel model = new ConsolePopupModel();
-        model.setVmConsoles(((UserPortalItemModel) getSelectedItem()).getVmConsoles());
+        model.setVmConsoles(getSelectedItem().getVmConsoles());
         model.setHelpTag(HelpTag.editConsole);
         model.setHashName("editConsole"); //$NON-NLS-1$
         setWindow(model);

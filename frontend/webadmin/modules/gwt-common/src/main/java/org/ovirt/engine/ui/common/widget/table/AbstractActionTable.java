@@ -294,7 +294,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         });
     }
 
-    void addModelSearchStringChangeListener(final SearchableListModel<?> model) {
+    void addModelSearchStringChangeListener(final SearchableListModel<?, ?> model) {
         if (model.supportsServerSideSorting()) {
             model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
                 @Override
@@ -467,7 +467,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             @SuppressWarnings("unchecked")
             @Override
             public void onColumnSort(ColumnSortEvent event) {
-                SearchableListModel<?> model = getDataProvider().getModel();
+                SearchableListModel<?, ?> model = getDataProvider().getModel();
                 Column<?, ?> column = event.getColumn();
 
                 if (column instanceof AbstractSortableColumn) {
@@ -488,7 +488,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
                     else {
                         Comparator<? super T> comparator = sortedColumn.getComparator();
                         if (comparator != null) {
-                           ((SearchableListModel<T>) model).setComparator(comparator, event.isSortAscending());
+                           ((SearchableListModel<?, T>) model).setComparator(comparator, event.isSortAscending());
                             sortApplied = true;
                         }
                     }

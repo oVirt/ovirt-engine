@@ -20,7 +20,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabVirtualMachineNetworkInterfaceView extends AbstractSubTabTableWidgetView<VM, VmNetworkInterface, VmListModel, VmInterfaceListModel> implements SubTabVirtualMachineNetworkInterfacePresenter.ViewDef {
+public class SubTabVirtualMachineNetworkInterfaceView extends AbstractSubTabTableWidgetView<VM, VmNetworkInterface, VmListModel<Void>, VmInterfaceListModel> implements SubTabVirtualMachineNetworkInterfacePresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabVirtualMachineNetworkInterfaceView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -28,7 +28,7 @@ public class SubTabVirtualMachineNetworkInterfaceView extends AbstractSubTabTabl
 
     @Inject
     public SubTabVirtualMachineNetworkInterfaceView(
-            SearchableDetailModelProvider<VmNetworkInterface, VmListModel, VmInterfaceListModel> modelProvider,
+            SearchableDetailModelProvider<VmNetworkInterface, VmListModel<Void>, VmInterfaceListModel> modelProvider,
             EventBus eventBus,
             ClientStorage clientStorage,
             ApplicationConstants constants,

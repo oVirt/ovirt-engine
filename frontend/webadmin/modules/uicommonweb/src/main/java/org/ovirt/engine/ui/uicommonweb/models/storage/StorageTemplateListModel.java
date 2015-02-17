@@ -17,19 +17,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class StorageTemplateListModel extends SearchableListModel
-{
-
-    @Override
-    public StorageDomain getEntity()
-    {
-        return (StorageDomain) super.getEntity();
-    }
-
-    public void setEntity(StorageDomain value)
-    {
-        super.setEntity(value);
-    }
+public class StorageTemplateListModel extends SearchableListModel<StorageDomain, VmTemplate> {
 
     public StorageTemplateListModel()
     {
@@ -44,14 +32,6 @@ public class StorageTemplateListModel extends SearchableListModel
         super.onEntityChanged();
 
         getSearchCommand().execute();
-    }
-
-    @Override
-    public void setEntity(Object value)
-    {
-        if (value == null || !value.equals(getEntity())) {
-            super.setEntity(value);
-        }
     }
 
     @Override
@@ -83,11 +63,10 @@ public class StorageTemplateListModel extends SearchableListModel
             @Override
             public void onSuccess(Object model, Object ReturnValue)
             {
-                StorageTemplateListModel templateModel = (StorageTemplateListModel) model;
                 ArrayList<VmTemplate> templates = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 Collections.sort(templates, new Linq.VmTemplateComparator());
-                templateModel.setItems(templates);
-                templateModel.setIsEmpty(templates.size() == 0);
+                setItems(templates);
+                setIsEmpty(templates.size() == 0);
             }
         };
 

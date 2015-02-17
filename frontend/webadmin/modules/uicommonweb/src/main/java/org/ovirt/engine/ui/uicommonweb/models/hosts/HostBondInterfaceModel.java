@@ -191,13 +191,13 @@ public class HostBondInterfaceModel extends Model
         setAddress(new EntityModel<String>());
         setSubnet(new EntityModel<String>());
         setGateway(new EntityModel<String>());
-        setBond(new SortedListModel<String>(new LexoNumericComparator()));
+        setBond(new SortedListModel<>(new LexoNumericComparator()));
         setNetwork(new ListModel<Network>());
         setBootProtocolAvailable(true);
         setBondingOptions(new ListModel<Map.Entry<String, EntityModel<String>>>());
         Map.Entry<String, EntityModel<String>> defaultItem = null;
         RefObject<Map.Entry<String, EntityModel<String>>> tempRef_defaultItem =
-                new RefObject<Map.Entry<String, EntityModel<String>>>(defaultItem);
+                new RefObject<>(defaultItem);
         ArrayList<Map.Entry<String, EntityModel<String>>> list =
                 AsyncDataProvider.getInstance().getBondingOptionList(tempRef_defaultItem);
         defaultItem = tempRef_defaultItem.argvalue;
@@ -205,7 +205,7 @@ public class HostBondInterfaceModel extends Model
         getBondingOptions().setSelectedItem(defaultItem);
         setCheckConnectivity(new EntityModel<Boolean>());
         getCheckConnectivity().setEntity(false);
-        EntityModel<Boolean> tempVar = new EntityModel<Boolean>();
+        EntityModel<Boolean> tempVar = new EntityModel<>();
         tempVar.setEntity(false);
         setCommitChanges(tempVar);
 

@@ -22,7 +22,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabHostHardwarePresenter extends AbstractSubTabPresenter<VDS, HostListModel, HostHardwareGeneralModel, SubTabHostHardwarePresenter.ViewDef, SubTabHostHardwarePresenter.ProxyDef> {
+public class SubTabHostHardwarePresenter extends AbstractSubTabPresenter<VDS, HostListModel<Void>, HostHardwareGeneralModel, SubTabHostHardwarePresenter.ViewDef, SubTabHostHardwarePresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.hostHardwareSubTabPlace)
@@ -34,13 +34,13 @@ public class SubTabHostHardwarePresenter extends AbstractSubTabPresenter<VDS, Ho
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            DetailModelProvider<HostListModel, HostHardwareGeneralModel> modelProvider) {
+            DetailModelProvider<HostListModel<Void>, HostHardwareGeneralModel> modelProvider) {
         return new ModelBoundTabData(applicationConstants.hostHardwareSubTabLabel(), 6, modelProvider);
     }
 
     @Inject
     public SubTabHostHardwarePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, DetailModelProvider<HostListModel, HostHardwareGeneralModel> modelProvider) {
+            PlaceManager placeManager, DetailModelProvider<HostListModel<Void>, HostHardwareGeneralModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 HostSubTabPanelPresenter.TYPE_SetTabContent);
     }

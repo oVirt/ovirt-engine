@@ -71,6 +71,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsAndReportsModel;
@@ -101,7 +102,7 @@ import org.ovirt.engine.ui.uicompat.UIMessages;
 import com.google.inject.Inject;
 
 @SuppressWarnings("unused")
-public class HostListModel extends ListWithDetailsAndReportsModel implements ISupportSystemTreeContext
+public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> implements ISupportSystemTreeContext
 {
     private final HostGeneralModel generalModel;
 
@@ -372,7 +373,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
             Object[] keys = new Object[getSelectedItems().size()];
             for (int i = 0; i < getSelectedItems().size(); i++)
             {
-                keys[i] = ((VDS) getSelectedItems().get(i)).getId();
+                keys[i] = getSelectedItems().get(i).getId();
             }
             return keys;
         }
@@ -384,7 +385,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
             final HostVmListModel hostVmListModel, final HostEventListModel hostEventListModel,
             final HostInterfaceListModel hostInterfaceListModel,
             final HostHardwareGeneralModel hostHardwareGeneralModel, final HostHooksListModel hostHooksListModel,
-            final PermissionListModel<HostListModel> permissionListModel) {
+            final PermissionListModel<VDS> permissionListModel) {
         this.generalModel = hostGeneralModel;
         this.glusterSwiftModel = hostGlusterSwiftListModel;
         this.hostBricksListModel = hostBricksListModel;
@@ -429,11 +430,11 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
 
     private void setDetailList(final HostInterfaceListModel hostInterfaceListModel,
             final HostHardwareGeneralModel hostHardwareGeneralModel, final HostHooksListModel hostHooksListModel,
-            final PermissionListModel<HostListModel> permissionListModel) {
+            final PermissionListModel<VDS> permissionListModel) {
         generalModel.getRequestEditEvent().addListener(this);
         generalModel.getRequestGOToEventsTabEvent().addListener(this);
 
-        List<EntityModel> list = new ArrayList<EntityModel>();
+        List<HasEntity<VDS>> list = new ArrayList<>();
         list.add(generalModel);
         list.add(hostHardwareGeneralModel);
         list.add(getHostVmListModel());
@@ -475,9 +476,8 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
     {
         ArrayList<Guid> hostIds = new ArrayList<Guid>();
 
-        for (Object item : getSelectedItems())
+        for (VDS vds : getSelectedItems())
         {
-            VDS vds = (VDS) item;
             hostIds.add(vds.getId());
         }
 
@@ -493,7 +493,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
                         public void onSuccess(Object target, Object returnValue) {
 
                             Object[] array = (Object[]) target;
-                            HostListModel hostListModel = (HostListModel) array[0];
+                            HostListModel<Void> hostListModel = (HostListModel<Void>) array[0];
                             TagListModel tagListModel = (TagListModel) array[1];
                             hostListModel.allAttachedTags.addAll((ArrayList<Tags>) returnValue);
                             hostListModel.selectedItemsCounter++;
@@ -508,7 +508,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         }
     }
 
-    private void postGetAttachedTags(HostListModel hostListModel, TagListModel tagListModel)
+    private void postGetAttachedTags(HostListModel<Void> hostListModel, TagListModel tagListModel)
     {
         if (hostListModel.getLastExecutedCommand() == getAssignTagsCommand())
         {
@@ -557,7 +557,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         ArrayList<Guid> tagsToAttach = new ArrayList<Guid>();
         ArrayList<Guid> tagsToDetach = new ArrayList<Guid>();
 
-        if (model.getItems() != null && ((ArrayList<TagModel>) model.getItems()).size() > 0)
+        if (model.getItems() != null && model.getItems().size() > 0)
         {
             ArrayList<TagModel> tags = (ArrayList<TagModel>) model.getItems();
             TagModel rootTag = tags.get(0);
@@ -589,7 +589,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         model.setHelpTag(HelpTag.manual_fence_are_you_sure);
         model.setHashName("manual_fence_are_you_sure"); //$NON-NLS-1$
         ArrayList<VDS> items = new ArrayList<VDS>();
-        items.add((VDS) getSelectedItem());
+        items.add(getSelectedItem());
         model.setItems(items);
 
         model.getLatch().setIsAvailable(true);
@@ -729,7 +729,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
             @Override
             public void onSuccess(Object model, Object result)
             {
-                HostListModel hostListModel = (HostListModel) model;
+                HostListModel<Void> hostListModel = (HostListModel<Void>) model;
                 HostModel innerHostModel = (HostModel) hostListModel.getWindow();
                 ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
                 final UIConstants constants = ConstantsManager.getInstance().getConstants();
@@ -814,9 +814,9 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
             @Override
             public void onSuccess(Object model, Object result)
             {
-                HostListModel hostListModel = (HostListModel) model;
+                HostListModel<Void> hostListModel = (HostListModel<Void>) model;
                 ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
-                VDS host = (VDS) hostListModel.getSelectedItem();
+                VDS host = hostListModel.getSelectedItem();
 
                 final HostModel hostModel = new EditHostModel();
                 hostListModel.setWindow(hostModel);
@@ -1008,7 +1008,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
                         public void executed(FrontendActionAsyncResult result) {
 
                             Object[] array = (Object[]) result.getState();
-                            HostListModel localModel = (HostListModel) array[0];
+                            HostListModel<Void> localModel = (HostListModel<Void>) array[0];
                             boolean localApproveInitiated = (Boolean) array[1];
                             localModel.postOnSaveInternal(result.getReturnValue(), localApproveInitiated);
 
@@ -1035,7 +1035,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
                             public void executed(FrontendActionAsyncResult result) {
 
                                 Object[] array = (Object[]) result.getState();
-                                HostListModel localModel = (HostListModel) array[0];
+                                HostListModel<Void> localModel = (HostListModel<Void>) array[0];
                                 UpdateVdsActionParameters localParameters = (UpdateVdsActionParameters) array[1];
                                 boolean localApproveInitiated = (Boolean) array[2];
                                 VdcReturnValueBase localReturnValue = result.getReturnValue();
@@ -1100,7 +1100,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
                     public void executed(FrontendActionAsyncResult result) {
 
                         Object[] array = (Object[]) result.getState();
-                        HostListModel localModel = (HostListModel) array[0];
+                        HostListModel<Void> localModel = (HostListModel<Void>) array[0];
                         boolean localApproveInitiated = (Boolean) array[1];
                         localModel.postOnSaveInternal(result.getReturnValue(), localApproveInitiated);
 
@@ -1127,7 +1127,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
     private void onApproveInternal()
     {
         HostModel model = (HostModel) getWindow();
-        VDS vds = (VDS) getSelectedItem();
+        VDS vds = getSelectedItem();
         ApproveVdsParameters params = new ApproveVdsParameters(vds.getId());
         if (model.getUserPassword().getEntity() != null) {
             params.setPassword(model.getUserPassword().getEntity().toString());
@@ -1226,9 +1226,9 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
     {
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
 
-        Collections.sort((List<VDS>) getSelectedItems(), new Linq.VdsSPMPriorityComparer());
+        Collections.sort(getSelectedItems(), new Linq.VdsSPMPriorityComparer());
 
-        for (VDS vds : (List<VDS>) getSelectedItems())
+        for (VDS vds : getSelectedItems())
         {
             list.add(new VdsActionParameters(vds.getId()));
         }
@@ -1316,10 +1316,10 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
             @Override
             public void onSuccess(Object model, Object result)
             {
-                HostListModel hostListModel = (HostListModel) model;
+                HostListModel<Void> hostListModel = (HostListModel<Void>) model;
                 HostModel innerHostModel = (HostModel) hostListModel.getWindow();
                 ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
-                VDS host = (VDS) hostListModel.getSelectedItem();
+                VDS host = hostListModel.getSelectedItem();
                 innerHostModel.updateModelFromVds(host, dataCenters, false, getSystemTreeSelectedItem());
                 innerHostModel.setTitle(ConstantsManager.getInstance().getConstants().editAndApproveHostTitle());
                 innerHostModel.setHelpTag(HelpTag.edit_and_approve_host);
@@ -1341,7 +1341,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
 
     public void install()
     {
-        final VDS host = (VDS) getSelectedItem();
+        final VDS host = getSelectedItem();
         InstallModel model = new InstallModel();
         model.setVds(host);
         setWindow(model);
@@ -1388,7 +1388,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
 
     public void onInstall()
     {
-        final VDS host = (VDS) getSelectedItem();
+        final VDS host = getSelectedItem();
         InstallModel model = (InstallModel) getWindow();
         final boolean isOVirt = host.getVdsType() == VDSType.oVirtNode;
 
@@ -1444,7 +1444,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
 
     public void upgrade()
     {
-        final VDS host = (VDS) getSelectedItem();
+        final VDS host = getSelectedItem();
         InstallModel model = new InstallModel();
         model.setVds(host);
         setWindow(model);
@@ -1515,7 +1515,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
 
     public void onUpgrade()
     {
-        final VDS host = (VDS) getSelectedItem();
+        final VDS host = getSelectedItem();
         InstallModel model = (InstallModel) getWindow();
         final boolean isOVirt = host.getVdsType() == VDSType.oVirtNode;
 
@@ -1706,7 +1706,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
 
     private void configureLocalStorage() {
 
-        VDS host = (VDS) getSelectedItem();
+        VDS host = getSelectedItem();
 
         if (getWindow() != null) {
             return;
@@ -1738,7 +1738,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
 
     private void configureLocalStorage3(ConfigureLocalStorageModel model) {
 
-        VDS host = (VDS) getSelectedItem();
+        VDS host = getSelectedItem();
 
         boolean hostSupportLocalStorage = false;
         Version version3_0 = new Version(3, 0);
@@ -1835,7 +1835,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
     @Override
     protected void updateDetailsAvailability() {
         super.updateDetailsAvailability();
-        VDS vds = (VDS) getSelectedItem();
+        VDS vds = getSelectedItem();
         getGlusterSwiftModel().setIsAvailable(vds != null && vds.getVdsGroupSupportsGlusterService()
                 && GlusterFeaturesUtil.isGlusterSwiftSupported(vds.getVdsGroupCompatibilityVersion()));
         getHostBricksListModel().setIsAvailable(vds != null && vds.getVdsGroupSupportsGlusterService());
@@ -1900,7 +1900,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
     }
 
     private void updateAlerts() {
-        final VDS vds = (VDS) getSelectedItem();
+        final VDS vds = getSelectedItem();
         final UIConstants constants = ConstantsManager.getInstance().getConstants();
         if (vds.getVdsType() == VDSType.oVirtNode) {
             AsyncDataProvider.getInstance().getoVirtISOsList(new AsyncQuery(this,
@@ -2058,7 +2058,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
 
         boolean numaVisible = false;
         if (getSelectedItem() != null) {
-            numaVisible = ((VDS) getSelectedItem()).isNumaSupport();
+            numaVisible = getSelectedItem().isNumaSupport();
         }
         getNumaSupportCommand().setIsVisible(numaVisible);
 
@@ -2276,7 +2276,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
             return;
         }
 
-        VDS host = (VDS) getSelectedItem();
+        VDS host = getSelectedItem();
         List<VDS> hosts = getSelectedItems();
 
         NumaSupportModel model = new NumaSupportModel(hosts, host, this);
@@ -2306,7 +2306,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
     }
 
     private void selectAsSPM() {
-        ForceSelectSPMParameters params = new ForceSelectSPMParameters(((VDS) getSelectedItem()).getId());
+        ForceSelectSPMParameters params = new ForceSelectSPMParameters(getSelectedItem().getId());
         Frontend.getInstance().runAction(VdcActionType.ForceSelectSPM, params);
 
     }

@@ -4,19 +4,7 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class UserEventListModel extends SubTabEventListModel
-{
-
-    @Override
-    public DbUser getEntity()
-    {
-        return (DbUser) ((super.getEntity() instanceof DbUser) ? super.getEntity() : null);
-    }
-
-    public void setEntity(DbUser value)
-    {
-        super.setEntity(value);
-    }
+public class UserEventListModel extends SubTabEventListModel<DbUser> {
 
     @Override
     protected void onEntityContentChanged()

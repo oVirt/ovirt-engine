@@ -25,7 +25,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveVmInterfaceModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class NetworkVmListModel extends SearchableListModel
+public class NetworkVmListModel extends SearchableListModel<NetworkView, PairQueryable<VmNetworkInterface, VM>>
 {
     private UICommand removeCommand;
     private NetworkVmFilter viewFilterType;
@@ -63,15 +63,6 @@ public class NetworkVmListModel extends SearchableListModel
     public void setViewFilterType(NetworkVmFilter viewFilterType) {
         this.viewFilterType = viewFilterType;
         search();
-    }
-
-    @Override
-    public NetworkView getEntity() {
-        return (NetworkView) ((super.getEntity() instanceof NetworkView) ? super.getEntity() : null);
-    }
-
-    public void setEntity(NetworkView value) {
-        super.setEntity(value);
     }
 
     @Override

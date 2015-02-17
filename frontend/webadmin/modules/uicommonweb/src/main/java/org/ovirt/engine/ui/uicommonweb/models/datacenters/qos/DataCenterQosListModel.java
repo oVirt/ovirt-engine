@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
-public abstract class DataCenterQosListModel<T extends QosBase, P extends QosParametersModel<T>> extends SearchableListModel {
+public abstract class DataCenterQosListModel<T extends QosBase, P extends QosParametersModel<T>> extends SearchableListModel<StoragePool, T> {
 
     private UICommand newCommand;
     private UICommand editCommand;
@@ -47,15 +47,6 @@ public abstract class DataCenterQosListModel<T extends QosBase, P extends QosPar
     protected abstract QosModel<T, P> getEditQosModel(final T qoS);
 
     protected abstract RemoveQosModel<T> getRemoveQosModel();
-
-    @Override
-    public StoragePool getEntity() {
-        return (StoragePool) super.getEntity();
-    }
-
-    public void setEntity(StoragePool value) {
-        super.setEntity(value);
-    }
 
     @Override
     protected void onEntityChanged() {
@@ -134,7 +125,7 @@ public abstract class DataCenterQosListModel<T extends QosBase, P extends QosPar
     }
 
     public void edit() {
-        T qos = (T) getSelectedItem();
+        T qos = getSelectedItem();
 
         if (getWindow() != null) {
             return;

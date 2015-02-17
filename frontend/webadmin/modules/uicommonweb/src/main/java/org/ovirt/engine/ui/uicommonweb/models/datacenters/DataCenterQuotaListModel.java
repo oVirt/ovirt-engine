@@ -26,7 +26,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.inject.Inject;
 
-public class DataCenterQuotaListModel extends QuotaListModel {
+public class DataCenterQuotaListModel extends QuotaListModel<StoragePool> {
     @Inject
     public DataCenterQuotaListModel(final QuotaClusterListModel quotaClusterListModel,
             final QuotaStorageListModel quotaStorageListModel, final QuotaVmListModel quotaVmListModel,
@@ -37,11 +37,6 @@ public class DataCenterQuotaListModel extends QuotaListModel {
         setTitle(ConstantsManager.getInstance().getConstants().quotaTitle());
         setHelpTag(HelpTag.quota);
         setHashName("quota"); //$NON-NLS-1$
-    }
-
-    @Override
-    public StoragePool getEntity() {
-        return (StoragePool) ((super.getEntity() instanceof StoragePool) ? super.getEntity() : null);
     }
 
     @Override
@@ -61,8 +56,7 @@ public class DataCenterQuotaListModel extends QuotaListModel {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                DataCenterQuotaListModel quotaListModel = (DataCenterQuotaListModel) model;
-                quotaListModel.setItems((ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                setItems((ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue());
 
             }
         };

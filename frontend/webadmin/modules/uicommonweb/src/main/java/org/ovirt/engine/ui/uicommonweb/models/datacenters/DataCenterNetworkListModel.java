@@ -21,7 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class DataCenterNetworkListModel extends SearchableListModel
+public class DataCenterNetworkListModel extends SearchableListModel<StoragePool, Network>
 {
 
     private UICommand privateNewCommand;
@@ -58,17 +58,6 @@ public class DataCenterNetworkListModel extends SearchableListModel
     private void setRemoveCommand(UICommand value)
     {
         privateRemoveCommand = value;
-    }
-
-    @Override
-    public StoragePool getEntity()
-    {
-        return (StoragePool) super.getEntity();
-    }
-
-    public void setEntity(StoragePool value)
-    {
-        super.setEntity(value);
     }
 
     public DataCenterNetworkListModel()
@@ -118,8 +107,7 @@ public class DataCenterNetworkListModel extends SearchableListModel
             {
                 ArrayList<Network> newItems = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 Collections.sort(newItems, new NameableComparator());
-                SearchableListModel searchableListModel = (SearchableListModel) model;
-                searchableListModel.setItems(newItems);
+                setItems(newItems);
             }
         };
 
@@ -141,7 +129,7 @@ public class DataCenterNetworkListModel extends SearchableListModel
 
     public void edit()
     {
-        final Network network = (Network) getSelectedItem();
+        final Network network = getSelectedItem();
 
         if (getWindow() != null)
         {

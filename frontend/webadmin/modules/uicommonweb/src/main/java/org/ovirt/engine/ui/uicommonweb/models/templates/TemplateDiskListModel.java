@@ -3,15 +3,12 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
@@ -36,7 +33,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class TemplateDiskListModel extends SearchableListModel
+public class TemplateDiskListModel extends SearchableListModel<VmTemplate, DiskImage>
 {
     private UICommand privateCopyCommand;
 
@@ -70,11 +67,6 @@ public class TemplateDiskListModel extends SearchableListModel
     private void setChangeQuotaCommand(UICommand value)
     {
         privateChangeQuotaCommand = value;
-    }
-
-    private VmTemplate getEntityStronglyTyped()
-    {
-        return (VmTemplate) ((super.getEntity() instanceof VmTemplate) ? super.getEntity() : null);
     }
 
     protected boolean ignoreStorageDomains;
@@ -120,7 +112,7 @@ public class TemplateDiskListModel extends SearchableListModel
     @Override
     public void search()
     {
-        if (getEntityStronglyTyped() != null)
+        if (getEntity() != null)
         {
             super.search();
         }
@@ -135,7 +127,7 @@ public class TemplateDiskListModel extends SearchableListModel
         }
 
         super.syncSearch(VdcQueryType.GetVmTemplatesDisks,
-                new IdQueryParameters(getEntityStronglyTyped().getId()));
+                new IdQueryParameters(getEntity().getId()));
     }
 
     @Override
@@ -199,8 +191,8 @@ public class TemplateDiskListModel extends SearchableListModel
         getCopyCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
                 && isCopyCommandAvailable());
 
-        ChangeQuotaModel.updateChangeQuotaActionAvailability(getItems() != null ? (List<Disk>) getItems() : null,
-                getSelectedItems() != null ? (List<Disk>) getSelectedItems() : null,
+        ChangeQuotaModel.updateChangeQuotaActionAvailability(getItems() != null ? getItems() : null,
+                getSelectedItems() != null ? getSelectedItems() : null,
                 getSystemTreeSelectedItem(),
                 getChangeQuotaCommand());
     }
@@ -300,9 +292,9 @@ public class TemplateDiskListModel extends SearchableListModel
         for (Object item : model.getItems())
         {
             ChangeQuotaItemModel itemModel = (ChangeQuotaItemModel) item;
-            DiskImage disk = (DiskImage) itemModel.getEntity();
+            DiskImage disk = itemModel.getEntity();
             VdcActionParametersBase parameters =
-                    new ChangeQuotaParameters(((Quota) itemModel.getQuota().getSelectedItem()).getId(),
+                    new ChangeQuotaParameters(itemModel.getQuota().getSelectedItem().getId(),
                             disk.getId(),
                             itemModel.getStorageDomainId(),
                             disk.getStoragePoolId());

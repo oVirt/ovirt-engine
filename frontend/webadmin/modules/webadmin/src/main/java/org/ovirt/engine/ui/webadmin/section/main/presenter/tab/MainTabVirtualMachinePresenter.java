@@ -23,7 +23,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class MainTabVirtualMachinePresenter extends AbstractMainTabWithDetailsPresenter<VM, VmListModel, MainTabVirtualMachinePresenter.ViewDef, MainTabVirtualMachinePresenter.ProxyDef> {
+public class MainTabVirtualMachinePresenter extends AbstractMainTabWithDetailsPresenter<VM, VmListModel<Void>, MainTabVirtualMachinePresenter.ViewDef, MainTabVirtualMachinePresenter.ProxyDef> {
 
     @GenEvent
     public class VirtualMachineSelectionChange {
@@ -42,13 +42,13 @@ public class MainTabVirtualMachinePresenter extends AbstractMainTabWithDetailsPr
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            MainModelProvider<VM, VmListModel> modelProvider) {
+            MainModelProvider<VM, VmListModel<Void>> modelProvider) {
         return new ModelBoundTabData(applicationConstants.virtualMachineMainTabLabel(), 6, modelProvider);
     }
 
     @Inject
     public MainTabVirtualMachinePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, MainModelProvider<VM, VmListModel> modelProvider) {
+            PlaceManager placeManager, MainModelProvider<VM, VmListModel<Void>> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

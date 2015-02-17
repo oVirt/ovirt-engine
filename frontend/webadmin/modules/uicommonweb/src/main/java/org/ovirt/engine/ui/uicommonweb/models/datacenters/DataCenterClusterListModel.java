@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGlusterHookListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterHostListModel;
@@ -15,8 +16,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.inject.Inject;
 
-public class DataCenterClusterListModel extends ClusterListModel
-{
+public class DataCenterClusterListModel extends ClusterListModel<StoragePool> {
     @Inject
     public DataCenterClusterListModel(ClusterVmListModel clusterVmListModel,
             ClusterServiceModel clusterServiceModel,
@@ -26,7 +26,7 @@ public class DataCenterClusterListModel extends ClusterListModel
             ClusterGeneralModel clusterGeneralModel,
             ClusterNetworkListModel clusterNetworkListModel,
             ClusterHostListModel clusterHostListModel,
-            PermissionListModel<ClusterListModel> permissionListModel) {
+            PermissionListModel<VDSGroup> permissionListModel) {
         super(clusterVmListModel,
                 clusterServiceModel,
                 clusterGlusterHookListModel,
@@ -36,17 +36,6 @@ public class DataCenterClusterListModel extends ClusterListModel
                 clusterNetworkListModel,
                 clusterHostListModel,
                 permissionListModel);
-    }
-
-    @Override
-    public StoragePool getEntity()
-    {
-        return (StoragePool) ((super.getEntity() instanceof StoragePool) ? super.getEntity() : null);
-    }
-
-    public void setEntity(StoragePool value)
-    {
-        super.setEntity(value);
     }
 
     @Override

@@ -16,7 +16,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class PermissionModelProvider<M extends ListWithDetailsModel> extends SearchableDetailTabModelProvider<Permissions, M, PermissionListModel<M>> {
+public class PermissionModelProvider<E, M extends ListWithDetailsModel> extends SearchableDetailTabModelProvider<Permissions, M, PermissionListModel<E>> {
 
     private final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
     private final Provider<PermissionsPopupPresenterWidget> permissionPopupProvider;
@@ -32,7 +32,7 @@ public class PermissionModelProvider<M extends ListWithDetailsModel> extends Sea
     }
 
     @Override
-    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(PermissionListModel source,
+    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(PermissionListModel<E> source,
             UICommand lastExecutedCommand) {
         if (lastExecutedCommand == getModel().getRemoveCommand()) {
             return removeConfirmPopupProvider.get();
@@ -42,7 +42,7 @@ public class PermissionModelProvider<M extends ListWithDetailsModel> extends Sea
     }
 
     @Override
-    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(PermissionListModel source,
+    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(PermissionListModel<E> source,
             UICommand lastExecutedCommand, Model windowModel) {
         if (lastExecutedCommand == getModel().getAddCommand()) {
             return permissionPopupProvider.get();

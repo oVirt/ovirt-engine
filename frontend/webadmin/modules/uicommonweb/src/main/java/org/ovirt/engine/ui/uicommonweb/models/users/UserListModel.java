@@ -31,7 +31,8 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
@@ -41,8 +42,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 import com.google.inject.Inject;
 
-public class UserListModel extends ListWithDetailsModel
-{
+public class UserListModel extends ListWithSimpleDetailsModel<Void, DbUser> {
     private UICommand privateAddCommand;
 
     public UICommand getAddCommand()
@@ -124,7 +124,7 @@ public class UserListModel extends ListWithDetailsModel
     private void setDetailList(final UserGeneralModel userGeneralModel, final UserQuotaListModel userQuotaListModel,
             final UserPermissionListModel userPermissionListModel, final UserEventListModel userEventListModel) {
 
-        List<EntityModel> list = new ArrayList<EntityModel>();
+        List<HasEntity<DbUser>> list = new ArrayList<>();
         list.add(userGeneralModel);
         list.add(userQuotaListModel);
         list.add(userPermissionListModel);

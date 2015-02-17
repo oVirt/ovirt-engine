@@ -16,12 +16,13 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
     private boolean bonded = false;
     private BondNetworkInterfaceModel bond;
     private List<NetworkLabelModel> labels;
+    private VdsNetworkInterface iface;
 
     public NetworkInterfaceModel(HostSetupNetworksModel setupModel) {
         super(setupModel);
-        List<LogicalNetworkModel> networks = new ArrayList<LogicalNetworkModel>();
+        List<LogicalNetworkModel> networks = new ArrayList<>();
         setItems(networks);
-        labels = new ArrayList<NetworkLabelModel>();
+        labels = new ArrayList<>();
     }
 
     public NetworkInterfaceModel(VdsNetworkInterface nic,
@@ -40,16 +41,11 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
 
     public NetworkInterfaceModel(VdsNetworkInterface nic, HostSetupNetworksModel setupModel) {
         this(setupModel);
-        setEntity(nic);
+        setIface(nic);
     }
 
     public BondNetworkInterfaceModel getBond() {
         return bond;
-    }
-
-    @Override
-    public VdsNetworkInterface getEntity() {
-        return (VdsNetworkInterface) super.getEntity();
     }
 
     @Override
@@ -65,14 +61,22 @@ public class NetworkInterfaceModel extends NetworkItemModel<InterfaceStatus> {
         return getItems().size() + labels.size();
     }
 
+    public VdsNetworkInterface getIface() {
+        return iface;
+    }
+
+    public void setIface(VdsNetworkInterface iface) {
+        this.iface = iface;
+    }
+
     @Override
     public String getName() {
-        return getEntity().getName();
+        return getIface().getName();
     }
 
     @Override
     public InterfaceStatus getStatus() {
-        return getEntity().getStatistics().getStatus();
+        return getIface().getStatistics().getStatus();
     }
 
     public boolean isBonded() {

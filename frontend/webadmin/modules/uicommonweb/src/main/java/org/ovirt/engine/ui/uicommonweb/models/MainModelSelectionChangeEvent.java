@@ -7,17 +7,17 @@ import com.google.web.bindery.event.shared.HandlerRegistration;
 
 public class MainModelSelectionChangeEvent extends GwtEvent<MainModelSelectionChangeEvent.MainModelSelectionChangeHandler> {
 
-    SearchableListModel<? extends EntityModel<?>> mainModel;
+    SearchableListModel<?, ? extends EntityModel<?>> mainModel;
 
     protected MainModelSelectionChangeEvent() {
         // Possibly for serialization.
     }
 
-    public MainModelSelectionChangeEvent(SearchableListModel<? extends EntityModel<?>> mainModel) {
+    public MainModelSelectionChangeEvent(SearchableListModel<?, ? extends EntityModel<?>> mainModel) {
         this.mainModel = mainModel;
     }
 
-    public static void fire(HasHandlers source, SearchableListModel<? extends EntityModel<?>> mainModel) {
+    public static void fire(HasHandlers source, SearchableListModel<?, ? extends EntityModel<?>> mainModel) {
         MainModelSelectionChangeEvent eventInstance = new MainModelSelectionChangeEvent(mainModel);
         source.fireEvent(eventInstance);
     }
@@ -50,7 +50,7 @@ public class MainModelSelectionChangeEvent extends GwtEvent<MainModelSelectionCh
         handler.onMainModelSelectionChange(this);
     }
 
-    public SearchableListModel<? extends EntityModel<?>> getMainModel() {
+    public SearchableListModel<?, ? extends EntityModel<?>> getMainModel() {
         return mainModel;
     }
 

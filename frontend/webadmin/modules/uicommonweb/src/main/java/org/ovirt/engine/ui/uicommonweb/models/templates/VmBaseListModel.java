@@ -22,11 +22,11 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ExportVmModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
-public abstract class VmBaseListModel<T> extends ListWithDetailsAndReportsModel {
+public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsModel<E, T> {
 
     protected void export()
     {
-        T selectedEntity = (T) getSelectedItem();
+        T selectedEntity = getSelectedItem();
         if (selectedEntity == null)
         {
             return;
@@ -134,7 +134,7 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsAndReportsModel 
     }
 
     protected void showWarningOnExistingEntities(ExportVmModel model, final VdcQueryType getVmOrTemplateQuery) {
-        Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
+        Guid storageDomainId = model.getStorage().getSelectedItem().getId();
         AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(new Object[] { this, model },
                 new INewAsyncCallback() {
                     @Override
@@ -159,16 +159,14 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsAndReportsModel 
             _asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object model, Object result) {
-                    VmBaseListModel listModel = (VmBaseListModel) model;
-                    ExportVmModel windowModel = (ExportVmModel) listModel.getWindow();
+                    ExportVmModel windowModel = (ExportVmModel) getWindow();
                     List<T> foundVms = new ArrayList<T>();
 
                     if (result != null) {
                         VdcQueryReturnValue returnValue = (VdcQueryReturnValue) result;
                         Iterable<T> iterableReturnValue = asIterableReturnValue(returnValue.getReturnValue());
 
-                        for (Object rawSelectedItem : listModel.getSelectedItems()) {
-                            T selectedItem = (T) rawSelectedItem;
+                        for (T selectedItem : getSelectedItems()) {
                             for (T returnValueItem : iterableReturnValue) {
                                 if (entititesEqualsNullSafe(returnValueItem, selectedItem)) {
                                     foundVms.add(selectedItem);
@@ -186,7 +184,7 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsAndReportsModel 
                 }
             };
 
-            Guid storageDomainId = ((StorageDomain) exportModel.getStorage().getSelectedItem()).getId();
+            Guid storageDomainId = exportModel.getStorage().getSelectedItem().getId();
             GetAllFromExportDomainQueryParameters tempVar =
                     new GetAllFromExportDomainQueryParameters(storagePool.getId(), storageDomainId);
             Frontend.getInstance().runQuery(getVmOrTemplateQuery, tempVar, _asyncQuery);

@@ -6,6 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
@@ -18,7 +19,6 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.RegisterVmPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.CustomSelectionCell;
 
 import com.google.gwt.cell.client.FieldUpdater;
@@ -32,11 +32,8 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.inject.Inject;
 
-public abstract class RegisterEntityPopupView extends AbstractModelBoundPopupView<RegisterEntityModel>
-        implements RegisterVmPopupPresenterWidget.ViewDef {
-
-    interface Driver extends SimpleBeanEditorDriver<RegisterEntityModel, RegisterEntityPopupView> {
-    }
+public abstract class RegisterEntityPopupView<E> extends AbstractModelBoundPopupView<RegisterEntityModel<E>>
+        implements AbstractModelBoundPopupPresenterWidget.ViewDef<RegisterEntityModel<E>> {
 
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, RegisterEntityPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -46,13 +43,13 @@ public abstract class RegisterEntityPopupView extends AbstractModelBoundPopupVie
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final Driver driver = GWT.create(Driver.class);
+    private final SimpleBeanEditorDriver<RegisterEntityModel<E>, RegisterEntityPopupView<E>> driver;
 
     protected final ApplicationConstants constants;
 
-    protected RegisterEntityInfoPanel registerEntityInfoPanel;
+    protected RegisterEntityInfoPanel<E> registerEntityInfoPanel;
 
-    private RegisterEntityModel registerEntityModel;
+    private RegisterEntityModel<E> registerEntityModel;
 
     @UiField
     SplitLayoutPanel splitLayoutPanel;
@@ -62,34 +59,36 @@ public abstract class RegisterEntityPopupView extends AbstractModelBoundPopupVie
 
     @UiField(provided = true)
     @Ignore
-    EntityModelCellTable<ListModel> entityTable;
+    EntityModelCellTable<ListModel<ImportEntityData<E>>> entityTable;
 
     @Inject
-    public RegisterEntityPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
+    public RegisterEntityPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants,
+                                   SimpleBeanEditorDriver<RegisterEntityModel<E>, RegisterEntityPopupView<E>> driver) {
         super(eventBus, resources);
         this.constants = constants;
+        this.driver = driver;
 
         initTables();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        driver.initialize(this);
+        this.driver.initialize(this);
 
         asWidget().enableResizeSupport(true);
     }
 
-    abstract protected void createEntityTable(RegisterEntityModel model);
-    abstract protected void createInfoPanel(RegisterEntityModel model);
+    abstract protected void createEntityTable(RegisterEntityModel<E> model);
+    abstract protected void createInfoPanel(RegisterEntityModel<E> model);
 
     private void initTables() {
         // Create the entities main table
-        entityTable = new EntityModelCellTable<ListModel>(false, true);
+        entityTable = new EntityModelCellTable<ListModel<ImportEntityData<E>>>(false, true);
         entityTable.enableColumnResizing();
 
         // Create split layout panel
         splitLayoutPanel = new SplitLayoutPanel(4);
     }
 
-    private void createTables(RegisterEntityModel model) {
+    private void createTables(RegisterEntityModel<E> model) {
         createEntityTable(model);
         createInfoPanel(model);
         entityTable.asEditor().edit(model.getEntities());
@@ -102,15 +101,15 @@ public abstract class RegisterEntityPopupView extends AbstractModelBoundPopupVie
     }
 
     @Override
-    public void edit(final RegisterEntityModel model) {
+    public void edit(final RegisterEntityModel<E> model) {
         registerEntityModel = model;
         driver.edit(model);
 
         model.getEntities().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                ListModel<ImportEntityData> entities = (ListModel<ImportEntityData>) sender;
-                ImportEntityData importEntityData = entities.getSelectedItem();
+                ListModel<ImportEntityData<E>> entities = (ListModel<ImportEntityData<E>>) sender;
+                ImportEntityData<E> importEntityData = entities.getSelectedItem();
                 registerEntityInfoPanel.updateTabsData(importEntityData);
             }
         });
@@ -145,26 +144,26 @@ public abstract class RegisterEntityPopupView extends AbstractModelBoundPopupVie
     }
 
     @Override
-    public RegisterEntityModel flush() {
+    public RegisterEntityModel<E> flush() {
         return driver.flush();
     }
 
-    protected Column getClusterColumn() {
+    protected Column<ImportEntityData<E>, String> getClusterColumn() {
         CustomSelectionCell customSelectionCell = new CustomSelectionCell(new ArrayList<String>());
         customSelectionCell.setStyle("input-group col-xs-11 gwt-ListBox"); //$NON-NLS-1$
 
-        Column column = new Column<ImportEntityData, String>(customSelectionCell) {
+        Column<ImportEntityData<E>, String> column = new Column<ImportEntityData<E>, String>(customSelectionCell) {
             @Override
-            public String getValue(ImportEntityData object) {
+            public String getValue(ImportEntityData<E> object) {
                 ((CustomSelectionCell) getCell()).setOptions(object.getClusterNames());
 
                 return object.getCluster().getSelectedItem() != null ?
                         object.getCluster().getSelectedItem().getName() : constants.empty();
             }
         };
-        column.setFieldUpdater(new FieldUpdater<ImportEntityData, String>() {
+        column.setFieldUpdater(new FieldUpdater<ImportEntityData<E>, String>() {
             @Override
-            public void update(int index, ImportEntityData object, String value) {
+            public void update(int index, ImportEntityData<E> object, String value) {
                 object.selectClusterByName(value);
                 refreshEntityTable();
             }
@@ -173,13 +172,13 @@ public abstract class RegisterEntityPopupView extends AbstractModelBoundPopupVie
         return column;
     }
 
-    protected Column getClusterQuotaColumn() {
+    protected Column<ImportEntityData<E>, String> getClusterQuotaColumn() {
         CustomSelectionCell customSelectionCell = new CustomSelectionCell(new ArrayList<String>());
         customSelectionCell.setStyle("input-group col-xs-11 gwt-ListBox"); //$NON-NLS-1$
 
-        Column column = new Column<ImportEntityData, String>(customSelectionCell) {
+        Column<ImportEntityData<E>, String> column = new Column<ImportEntityData<E>, String>(customSelectionCell) {
             @Override
-            public String getValue(ImportEntityData object) {
+            public String getValue(ImportEntityData<E> object) {
                 Guid clusterId = object.getCluster().getSelectedItem() != null ?
                         object.getCluster().getSelectedItem().getId() : null;
                 List<Quota> quotas = registerEntityModel.getClusterQuotasMap().getEntity().get(clusterId);
@@ -191,9 +190,9 @@ public abstract class RegisterEntityPopupView extends AbstractModelBoundPopupVie
                         object.getClusterQuota().getSelectedItem().getQuotaName() : constants.empty();
             }
         };
-        column.setFieldUpdater(new FieldUpdater<ImportEntityData, String>() {
+        column.setFieldUpdater(new FieldUpdater<ImportEntityData<E>, String>() {
             @Override
-            public void update(int index, ImportEntityData object, String value) {
+            public void update(int index, ImportEntityData<E> object, String value) {
                 registerEntityModel.selectQuotaByName(value, object.getClusterQuota());
 
             }

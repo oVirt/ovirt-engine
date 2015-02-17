@@ -28,11 +28,11 @@ import com.google.inject.Inject;
 
 public class SharedMacPoolView extends Composite {
 
-    private final PermissionModelProvider<SharedMacPoolListModel> permissionModelProvider;
+    private final PermissionModelProvider<MacPool, SharedMacPoolListModel> permissionModelProvider;
     private final SharedMacPoolModelProvider sharedMacPoolModelProvider;
 
     private final SimpleActionTable<MacPool> macPoolTable;
-    private final PermissionListModelTable authorizationTable;
+    private final PermissionListModelTable<PermissionListModel<MacPool>> authorizationTable;
 
     private final EventBus eventBus;
     private final ClientStorage clientStorage;
@@ -44,7 +44,7 @@ public class SharedMacPoolView extends Composite {
 
     @Inject
     public SharedMacPoolView(final SharedMacPoolModelProvider sharedMacPoolModelProvider,
-            final PermissionModelProvider<SharedMacPoolListModel> permissionModelProvider,
+            final PermissionModelProvider<MacPool, SharedMacPoolListModel> permissionModelProvider,
             final EventBus eventBus,
             final ClientStorage clientStorage,
             final MainTableHeaderlessResources headerlessResources,
@@ -63,7 +63,7 @@ public class SharedMacPoolView extends Composite {
         this.resources = resources;
 
         macPoolTable = createMacPoolTable();
-        authorizationTable = new PermissionListModelTable(permissionModelProvider, eventBus, clientStorage);
+        authorizationTable = new PermissionListModelTable<>(permissionModelProvider, eventBus, clientStorage);
         authorizationTable.initTable(constants);
 
         authorizationTable.getTable().getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
@@ -156,7 +156,7 @@ public class SharedMacPoolView extends Composite {
                 final List<MacPool> selectedItems = macPoolTable.getSelectedItems();
                 sharedMacPoolModelProvider.setSelectedItems(selectedItems);
 
-                final PermissionListModel model = permissionModelProvider.getModel();
+                final PermissionListModel<MacPool> model = permissionModelProvider.getModel();
 
                 if (selectedItems.size() == 1) {
                     model.setEntity(selectedItems.get(0));

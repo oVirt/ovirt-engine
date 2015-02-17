@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabEventView;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 
-public class SubTabHostEventView extends AbstractSubTabEventView<VDS, HostListModel, HostEventListModel>
+public class SubTabHostEventView extends AbstractSubTabEventView<VDS, HostListModel<Void>, HostEventListModel>
         implements SubTabHostEventPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabHostEventView> {
@@ -24,7 +24,7 @@ public class SubTabHostEventView extends AbstractSubTabEventView<VDS, HostListMo
     }
 
     @Inject
-    public SubTabHostEventView(SearchableDetailModelProvider<AuditLog, HostListModel, HostEventListModel> modelProvider,
+    public SubTabHostEventView(SearchableDetailModelProvider<AuditLog, HostListModel<Void>, HostEventListModel> modelProvider,
             EventBus eventBus,
             ClientStorage clientStorage, ApplicationConstants constants) {
         super(modelProvider, eventBus, clientStorage, constants);

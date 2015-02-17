@@ -39,7 +39,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.VmCountColumn;
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
-public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, HostListModel> implements MainTabHostPresenter.ViewDef {
+public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, HostListModel<Void>> implements MainTabHostPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<MainTabHostView> {
 
@@ -51,7 +51,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
     ApplicationConstants constants;
 
     @Inject
-    public MainTabHostView(MainModelProvider<VDS, HostListModel> modelProvider, ApplicationConstants constants) {
+    public MainTabHostView(MainModelProvider<VDS, HostListModel<Void>> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
 

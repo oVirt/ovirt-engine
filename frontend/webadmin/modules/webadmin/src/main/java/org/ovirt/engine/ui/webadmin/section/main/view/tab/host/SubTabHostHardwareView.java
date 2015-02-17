@@ -31,7 +31,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class SubTabHostHardwareView extends AbstractSubTabFormView<VDS, HostListModel, HostHardwareGeneralModel> implements SubTabHostHardwarePresenter.ViewDef, Editor<HostHardwareGeneralModel> {
+public class SubTabHostHardwareView extends AbstractSubTabFormView<VDS, HostListModel<Void>, HostHardwareGeneralModel> implements SubTabHostHardwarePresenter.ViewDef, Editor<HostHardwareGeneralModel> {
 
     interface Driver extends SimpleBeanEditorDriver<HostHardwareGeneralModel, SubTabHostHardwareView> {
     }
@@ -69,7 +69,7 @@ public class SubTabHostHardwareView extends AbstractSubTabFormView<VDS, HostList
     }
 
     @Inject
-    public SubTabHostHardwareView(DetailModelProvider<HostListModel, HostHardwareGeneralModel> modelProvider,
+    public SubTabHostHardwareView(DetailModelProvider<HostListModel<Void>, HostHardwareGeneralModel> modelProvider,
             ApplicationResources resources, ApplicationConstants constants) {
         super(modelProvider);
         this.constants = constants;

@@ -4,20 +4,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.uicommonweb.models.events.SubTabEventListModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class StorageEventListModel extends SubTabEventListModel
-{
-
-    // get { return base.Entity as storage_domains; }
-    @Override
-    public StorageDomain getEntity()
-    {
-        return (StorageDomain) super.getEntity();
-    }
-
-    public void setEntity(StorageDomain value)
-    {
-        super.setEntity(value);
-    }
+public class StorageEventListModel extends SubTabEventListModel<StorageDomain> {
 
     @Override
     protected void onEntityContentChanged()

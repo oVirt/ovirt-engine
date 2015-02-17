@@ -44,7 +44,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
     private void prepare1() {
 
         EnlistmentContext enlistmentContext = (EnlistmentContext) context.enlistment.getContext();
-        HostListModel model = enlistmentContext.getModel();
+        HostListModel<?> model = enlistmentContext.getModel();
         ConfigureLocalStorageModel configureModel = (ConfigureLocalStorageModel) model.getWindow();
 
         DataCenterModel dataCenterModel = configureModel.getDataCenter();
@@ -71,7 +71,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
 
         PreparingEnlistment enlistment = (PreparingEnlistment) context.enlistment;
         EnlistmentContext enlistmentContext = (EnlistmentContext) enlistment.getContext();
-        HostListModel model = enlistmentContext.getModel();
+        HostListModel<?> model = enlistmentContext.getModel();
         ConfigureLocalStorageModel configureModel = (ConfigureLocalStorageModel) model.getWindow();
 
         StoragePool candidate = configureModel.getCandidateDataCenter();
@@ -175,9 +175,9 @@ public class AddDataCenterRM extends IEnlistmentNotification {
 
         Enlistment enlistment = context.enlistment;
         EnlistmentContext enlistmentContext = (EnlistmentContext) enlistment.getContext();
-        HostListModel model = enlistmentContext.getModel();
+        HostListModel<?> model = enlistmentContext.getModel();
 
-        VDS host = (VDS) model.getSelectedItem();
+        VDS host = model.getSelectedItem();
 
         // Retrieve host to make sure we have an updated status etc.
         AsyncDataProvider.getInstance().getHostById(new AsyncQuery(this,
@@ -196,7 +196,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
 
         Enlistment enlistment = context.enlistment;
         EnlistmentContext enlistmentContext = (EnlistmentContext) enlistment.getContext();
-        HostListModel model = enlistmentContext.getModel();
+        HostListModel<?> model = enlistmentContext.getModel();
 
         VDS host = context.hostFoundById;
 

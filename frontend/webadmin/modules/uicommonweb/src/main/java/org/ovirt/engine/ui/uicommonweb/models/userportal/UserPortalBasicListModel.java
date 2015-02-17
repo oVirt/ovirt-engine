@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleModelsCache;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
@@ -122,7 +123,7 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
     }
 
     private void setDetailList() {
-        List<EntityModel> list = new ArrayList<EntityModel>();
+        List<HasEntity<Object>> list = new ArrayList<>();
         list.add(getVmBasicDiskListModel());
         setDetailModels(list);
         setActiveDetailModel(getVmBasicDiskListModel());
@@ -182,22 +183,6 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
     }
 
     @Override
-    protected Object provideDetailModelEntity(Object selectedItem)
-    {
-        // Each item in this list model is not a business entity,
-        // therefore select an Entity property to provide it to
-        // the detail models.
-
-        EntityModel model = (EntityModel) selectedItem;
-        if (model == null)
-        {
-            return null;
-        }
-
-        return model.getEntity();
-    }
-
-    @Override
     protected void updateDetailsAvailability()
     {
         super.updateDetailsAvailability();
@@ -235,7 +220,7 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
                     UserPortalBasicListModel userPortalBasicListModel = (UserPortalBasicListModel) model;
                     if (result != null)
                     {
-                        VM vm = (VM) ((VdcQueryReturnValue) result).getReturnValue();
+                        VM vm = ((VdcQueryReturnValue) result).getReturnValue();
                         if (vm != null) {
                             userPortalBasicListModel.updateDetails(vm);
                         }
@@ -352,7 +337,7 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
     @Override
     public UserPortalItemModel getSelectedItem()
     {
-        return (UserPortalItemModel) super.getSelectedItem();
+        return super.getSelectedItem();
     }
 
     @Override

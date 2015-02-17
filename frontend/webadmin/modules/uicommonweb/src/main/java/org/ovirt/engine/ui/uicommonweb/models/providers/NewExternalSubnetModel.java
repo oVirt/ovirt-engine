@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -27,7 +26,7 @@ public class NewExternalSubnetModel extends Model {
     public NewExternalSubnetModel(NetworkView network, SearchableListModel sourceModel) {
         this.sourceModel = sourceModel;
 
-        setNetwork(new ListModel<NetworkView>());
+        setNetwork(new EntityModel<NetworkView>());
         getNetwork().setEntity(network);
         setSubnetModel(new ExternalSubnetModel());
         getSubnetModel().setExternalNetwork(network.getProvidedBy());
@@ -50,7 +49,7 @@ public class NewExternalSubnetModel extends Model {
         return network;
     }
 
-    private void setNetwork(ListModel<NetworkView> network) {
+    private void setNetwork(EntityModel<NetworkView> network) {
         this.network = network;
     }
 

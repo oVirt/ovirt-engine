@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
+import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -11,7 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.models.providers.NewExternalSubnetModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveExternalSubnetModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class NetworkExternalSubnetListModel extends SearchableListModel
+public class NetworkExternalSubnetListModel extends SearchableListModel<NetworkView, ExternalSubnet>
 {
 
     private UICommand newCommand;
@@ -61,11 +62,6 @@ public class NetworkExternalSubnetListModel extends SearchableListModel
 
         RemoveExternalSubnetModel model = new RemoveExternalSubnetModel(this, getSelectedItems());
         setWindow(model);
-    }
-
-    @Override
-    public NetworkView getEntity() {
-        return (NetworkView) super.getEntity();
     }
 
     @Override

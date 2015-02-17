@@ -26,7 +26,7 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class NetworkClusterListModel extends SearchableListModel
+public class NetworkClusterListModel extends SearchableListModel<NetworkView, PairQueryable<VDSGroup, NetworkCluster>>
 {
     private UICommand manageCommand;
 
@@ -47,7 +47,7 @@ public class NetworkClusterListModel extends SearchableListModel
 
             @Override
             public int compare(PairQueryable<VDSGroup, NetworkCluster> arg0,
-                    PairQueryable<VDSGroup, NetworkCluster> arg1) {
+                               PairQueryable<VDSGroup, NetworkCluster> arg1) {
                 return arg0.getFirst().getName().compareTo(arg1.getFirst().getName());
             }
         });
@@ -69,8 +69,7 @@ public class NetworkClusterListModel extends SearchableListModel
 
     private ClusterNetworkManageModel createManageList() {
         List<ClusterNetworkModel> networkManageModelList = new ArrayList<ClusterNetworkModel>();
-        Iterable<PairQueryable<VDSGroup, NetworkCluster>> items =
-                (Iterable<PairQueryable<VDSGroup, NetworkCluster>>) getItems();
+        Iterable<PairQueryable<VDSGroup, NetworkCluster>> items = getItems();
 
         for (PairQueryable<VDSGroup, NetworkCluster> item : items) {
             Network network = (Network) Cloner.clone(getEntity());
@@ -99,15 +98,6 @@ public class NetworkClusterListModel extends SearchableListModel
         listModel.setItems(networkManageModelList);
 
         return listModel;
-    }
-
-    @Override
-    public NetworkView getEntity() {
-        return (NetworkView) ((super.getEntity() instanceof NetworkView) ? super.getEntity() : null);
-    }
-
-    public void setEntity(NetworkView value) {
-        super.setEntity(value);
     }
 
     @Override

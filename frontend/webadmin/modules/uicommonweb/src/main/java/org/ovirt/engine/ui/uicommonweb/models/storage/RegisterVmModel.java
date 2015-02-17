@@ -14,12 +14,12 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 import java.util.ArrayList;
 
-public class RegisterVmModel extends RegisterEntityModel {
+public class RegisterVmModel extends RegisterEntityModel<VM> {
 
     protected void onSave() {
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
-        for (ImportEntityData entityData : getEntities().getItems()) {
-            VM vm = (VM) entityData.getEntity();
+        for (ImportEntityData<VM> entityData : getEntities().getItems()) {
+            VM vm = entityData.getEntity();
             VDSGroup vdsGroup = entityData.getCluster().getSelectedItem();
 
             ImportVmParameters params = new ImportVmParameters();

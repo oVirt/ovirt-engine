@@ -19,7 +19,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
 
-public class SubTabHostGlusterSwiftView extends AbstractSubTabTableView<VDS, GlusterServerService, HostListModel, HostGlusterSwiftListModel>
+public class SubTabHostGlusterSwiftView extends AbstractSubTabTableView<VDS, GlusterServerService, HostListModel<Void>, HostGlusterSwiftListModel>
         implements SubTabHostGlusterSwiftPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabHostGlusterSwiftView> {
@@ -27,7 +27,7 @@ public class SubTabHostGlusterSwiftView extends AbstractSubTabTableView<VDS, Glu
     }
 
     @Inject
-    public SubTabHostGlusterSwiftView(SearchableDetailModelProvider<GlusterServerService, HostListModel, HostGlusterSwiftListModel> modelProvider,
+    public SubTabHostGlusterSwiftView(SearchableDetailModelProvider<GlusterServerService, HostListModel<Void>, HostGlusterSwiftListModel> modelProvider,
             ApplicationConstants constants) {
         super(modelProvider);
         initTable(constants);

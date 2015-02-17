@@ -24,7 +24,7 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabHostEventPresenter extends AbstractSubTabPresenter<VDS, HostListModel, HostEventListModel, SubTabHostEventPresenter.ViewDef, SubTabHostEventPresenter.ProxyDef> {
+public class SubTabHostEventPresenter extends AbstractSubTabPresenter<VDS, HostListModel<Void>, HostEventListModel, SubTabHostEventPresenter.ViewDef, SubTabHostEventPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.hostEventSubTabPlace)
@@ -36,14 +36,14 @@ public class SubTabHostEventPresenter extends AbstractSubTabPresenter<VDS, HostL
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<AuditLog, HostListModel, HostEventListModel> modelProvider) {
+            SearchableDetailModelProvider<AuditLog, HostListModel<Void>, HostEventListModel> modelProvider) {
         return new ModelBoundTabData(applicationConstants.hostEventSubTabLabel(), 7, modelProvider, Align.RIGHT);
     }
 
     @Inject
     public SubTabHostEventPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<AuditLog, HostListModel, HostEventListModel> modelProvider) {
+            SearchableDetailModelProvider<AuditLog, HostListModel<Void>, HostEventListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 HostSubTabPanelPresenter.TYPE_SetTabContent);
     }

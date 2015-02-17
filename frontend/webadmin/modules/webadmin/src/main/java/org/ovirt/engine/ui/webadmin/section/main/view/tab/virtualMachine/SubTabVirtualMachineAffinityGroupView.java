@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.AbstractSubTabAffinity
 
 import com.google.gwt.core.client.GWT;
 
-public class SubTabVirtualMachineAffinityGroupView extends AbstractSubTabAffinityGroupsView<VM, VmListModel, VmAffinityGroupListModel>
+public class SubTabVirtualMachineAffinityGroupView extends AbstractSubTabAffinityGroupsView<VM, VmListModel<Void>, VmAffinityGroupListModel>
         implements SubTabVirtualMachineAffinityGroupPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabVirtualMachineAffinityGroupView> {
@@ -24,7 +24,7 @@ public class SubTabVirtualMachineAffinityGroupView extends AbstractSubTabAffinit
     }
 
     @Inject
-    public SubTabVirtualMachineAffinityGroupView(SearchableDetailModelProvider<AffinityGroup, VmListModel, VmAffinityGroupListModel> modelProvider,
+    public SubTabVirtualMachineAffinityGroupView(SearchableDetailModelProvider<AffinityGroup, VmListModel<Void>, VmAffinityGroupListModel> modelProvider,
             ApplicationConstants constants) {
         super(modelProvider, constants);
     }
@@ -37,7 +37,7 @@ public class SubTabVirtualMachineAffinityGroupView extends AbstractSubTabAffinit
     @Override
     protected List<String> getEntityNames(AffinityGroup object) {
         List<String> entityNames = super.getEntityNames(object);
-        String vmName = getDetailModel().getParentEntity().getName();
+        String vmName = getDetailModel().getEntity().getName();
         for (int i = 0; i < entityNames.size(); i++) {
             if (entityNames.get(i).equals(vmName)) {
                 entityNames.remove(i);

@@ -31,7 +31,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class TagListModel extends SearchableListModel<TagModel>
+public class TagListModel extends SearchableListModel<Void, TagModel>
 {
 
     public static final EventDefinition resetRequestedEventDefinition;
@@ -99,7 +99,7 @@ public class TagListModel extends SearchableListModel<TagModel>
     @Override
     public TagModel getSelectedItem()
     {
-        return (TagModel) super.getSelectedItem();
+        return super.getSelectedItem();
     }
 
     public void setSelectedItem(TagModel value)
@@ -108,13 +108,7 @@ public class TagListModel extends SearchableListModel<TagModel>
     }
 
     @Override
-    public Collection getItems()
-    {
-        return items;
-    }
-
-    @Override
-    public void setItems(Collection value)
+    public void setItems(Collection<TagModel> value)
     {
         if (items != value)
         {
@@ -260,7 +254,7 @@ public class TagListModel extends SearchableListModel<TagModel>
     public SelectionTreeNodeModel createTree(TagModel tag)
     {
         SelectionTreeNodeModel node = new SelectionTreeNodeModel();
-        node.setDescription(tag.getName().getEntity().toString());
+        node.setDescription(tag.getName().getEntity());
         node.setIsSelectedNullable(tag.getSelection());
         node.setIsChangable(tag.getIsChangable());
         node.setIsSelectedNotificationPrevent(true);

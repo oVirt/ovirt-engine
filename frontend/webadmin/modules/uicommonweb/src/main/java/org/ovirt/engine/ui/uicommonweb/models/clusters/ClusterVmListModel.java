@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -20,7 +21,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class ClusterVmListModel extends VmListModel {
+public class ClusterVmListModel extends VmListModel<VDSGroup> {
 
     @Inject
     public ClusterVmListModel(VmGeneralModel vmGeneralModel,
@@ -28,8 +29,8 @@ public class ClusterVmListModel extends VmListModel {
             VmDiskListModel vmDiskListModel,
             VmSnapshotListModel vmSnapshotListModel,
             VmEventListModel vmEventListModel,
-            VmAppListModel vmAppListModel,
-            PermissionListModel<VmListModel> permissionListModel,
+            VmAppListModel<VM> vmAppListModel,
+            PermissionListModel<VM> permissionListModel,
             VmAffinityGroupListModel vmAffinityGroupListModel,
             VmSessionsModel vmSessionsModel,
             Provider<ImportVmsModel> importVmsModelProvider) {
@@ -43,17 +44,6 @@ public class ClusterVmListModel extends VmListModel {
                 vmAffinityGroupListModel,
                 vmSessionsModel,
                 importVmsModelProvider);
-    }
-
-    @Override
-    public VDSGroup getEntity()
-    {
-        return (VDSGroup) ((super.getEntity() instanceof VDSGroup) ? super.getEntity() : null);
-    }
-
-    public void setEntity(VDSGroup value)
-    {
-        super.setEntity(value);
     }
 
     @Override

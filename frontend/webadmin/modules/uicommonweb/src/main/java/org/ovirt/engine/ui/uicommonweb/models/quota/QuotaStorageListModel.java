@@ -13,7 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class QuotaStorageListModel extends SearchableListModel {
+public class QuotaStorageListModel extends SearchableListModel<Quota, Quota> {
 
     public QuotaStorageListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().storageTitle());
@@ -30,12 +30,11 @@ public class QuotaStorageListModel extends SearchableListModel {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                QuotaStorageListModel quotaStorageListModel = (QuotaStorageListModel) model;
-                quotaStorageListModel.setItems((ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                setItems((ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue());
 
             }
         };
-        IdQueryParameters params = new IdQueryParameters(((Quota) getEntity()).getId());
+        IdQueryParameters params = new IdQueryParameters(getEntity().getId());
         Frontend.getInstance().runQuery(VdcQueryType.GetQuotaStorageByQuotaId,
                 params,
                 asyncQuery);

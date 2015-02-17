@@ -31,7 +31,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
-public class QuotaUserListModel extends SearchableListModel {
+public class QuotaUserListModel extends SearchableListModel<Quota, Permissions> {
 
     public QuotaUserListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().usersTitle());
@@ -71,7 +71,7 @@ public class QuotaUserListModel extends SearchableListModel {
     @Override
     protected void syncSearch() {
         super.syncSearch();
-        IdQueryParameters param = new IdQueryParameters(((Quota) getEntity()).getId());
+        IdQueryParameters param = new IdQueryParameters(getEntity().getId());
         param.setRefresh(getIsQueryFirstTime());
 
         AsyncQuery _asyncQuery = new AsyncQuery();
@@ -80,9 +80,7 @@ public class QuotaUserListModel extends SearchableListModel {
             @Override
             public void onSuccess(Object model, Object ReturnValue)
             {
-                SearchableListModel searchableListModel = (SearchableListModel) model;
-                ArrayList<Permissions> list =
-                        (ArrayList<Permissions>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                ArrayList<Permissions> list = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 Map<Guid, Permissions> map = new HashMap<Guid, Permissions>();
                 for (Permissions permission : list) {
                     //filter out sys-admin and dc admin from consumers sub-tab
@@ -104,7 +102,7 @@ public class QuotaUserListModel extends SearchableListModel {
                 for (Permissions permission : map.values()) {
                     list.add(permission);
                 }
-                searchableListModel.setItems(list);
+                setItems(list);
             }
         };
 
@@ -139,7 +137,7 @@ public class QuotaUserListModel extends SearchableListModel {
 
     private void updateActionAvailability() {
         ArrayList<Permissions> items =
-                (((ArrayList<Permissions>) getSelectedItems()) != null) ? (ArrayList<Permissions>) getSelectedItems()
+                (getSelectedItems() != null) ? (ArrayList<Permissions>) getSelectedItems()
                         : new ArrayList<Permissions>();
 
         boolean removeExe = false;
@@ -248,7 +246,7 @@ public class QuotaUserListModel extends SearchableListModel {
             tempVar2.setad_element_id(user.getId());
             tempVar2.setrole_id(ApplicationGuids.quotaConsumer.asGuid());
             Permissions perm = tempVar2;
-            perm.setObjectId(((Quota) getEntity()).getId());
+            perm.setObjectId(getEntity().getId());
             perm.setObjectType(VdcObjectType.Quota);
 
             permissionParams = new PermissionsOperationsParameters();

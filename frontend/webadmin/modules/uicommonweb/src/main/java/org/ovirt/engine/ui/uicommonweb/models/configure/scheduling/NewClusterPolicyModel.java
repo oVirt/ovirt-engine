@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.IModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui.RoleListModel.CommandType;
@@ -44,7 +45,7 @@ public class NewClusterPolicyModel extends Model {
 
     public static NewClusterPolicyModel createModel(CommandType commandType,
             ClusterPolicy clusterPolicy,
-            EntityModel sourceModel, ArrayList<PolicyUnit> policyUnits) {
+            IModel sourceModel, ArrayList<PolicyUnit> policyUnits) {
         NewClusterPolicyModel clusterPolicyModel =
                 new NewClusterPolicyModel(commandType, clusterPolicy, sourceModel, policyUnits);
         clusterPolicyModel.init();
@@ -256,7 +257,7 @@ public class NewClusterPolicyModel extends Model {
     private boolean customPropertiesInitialized = false;
     private Event<EventArgs> filtersChangedEvent;
     private Event<EventArgs> functionsChangedEvent;
-    private final EntityModel sourceModel;
+    private final IModel sourceModel;
     private final ClusterPolicy clusterPolicy;
     private final CommandType commandType;
     private final Map<Guid, PolicyUnit> policyUnitsMap;
@@ -277,7 +278,7 @@ public class NewClusterPolicyModel extends Model {
 
     public NewClusterPolicyModel(CommandType commandType,
             ClusterPolicy clusterPolicy,
-            EntityModel sourceModel,
+            IModel sourceModel,
             ArrayList<PolicyUnit> policyUnits) {
         this.commandType = commandType;
         this.clusterPolicy = clusterPolicy;

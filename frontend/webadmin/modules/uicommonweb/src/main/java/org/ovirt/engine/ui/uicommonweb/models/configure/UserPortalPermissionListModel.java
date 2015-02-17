@@ -5,7 +5,7 @@ import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class UserPortalPermissionListModel<T> extends PermissionListModel<T> {
+public class UserPortalPermissionListModel<E> extends PermissionListModel<E> {
 
     @Inject
     public UserPortalPermissionListModel(Provider<AdElementListModel> adElementListModelProvider) {

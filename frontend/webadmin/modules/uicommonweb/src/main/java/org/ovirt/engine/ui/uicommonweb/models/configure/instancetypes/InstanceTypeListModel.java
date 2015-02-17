@@ -37,8 +37,8 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.UsbPolicyUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.BaseInterfaceCreatingManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallback;
@@ -53,7 +53,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 import com.google.inject.Inject;
 
-public class InstanceTypeListModel extends ListWithDetailsModel {
+public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, InstanceType> {
 
     private final UICommand newInstanceTypeCommand;
 
@@ -92,7 +92,7 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
     }
 
     private void setDetailList(final InstanceTypeGeneralModel instanceTypeGeneralModel) {
-        List<EntityModel> list = new ArrayList<EntityModel>();
+        List<HasEntity<InstanceType>> list = new ArrayList<>();
         list.add(instanceTypeGeneralModel);
         setDetailModels(list);
     }
@@ -117,7 +117,7 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
 
     private void editInstanceType() {
         createWindow(
-                new ExistingInstanceTypeModelBehavior((InstanceType) getSelectedItem()),
+                new ExistingInstanceTypeModelBehavior(getSelectedItem()),
                 "edit_instance_type", //$NON-NLS-1$
                 "OnEditInstanceType", //$NON-NLS-1$
                 false,
@@ -138,7 +138,7 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
         window.setHelpTag(HelpTag.remove_instance_type);
         window.setHashName("remove_instance_type"); //$NON-NLS-1$
 
-        final Guid instanceTypeId = ((InstanceType) getSelectedItem()).getId();
+        final Guid instanceTypeId = getSelectedItem().getId();
         Frontend.getInstance().runQuery(VdcQueryType.GetVmsByInstanceTypeId,
                 new IdQueryParameters(instanceTypeId), new AsyncQuery(this, new INewAsyncCallback() {
             @Override
@@ -146,7 +146,7 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
                 List<VM> vmsAttachedToInstanceType = ((VdcQueryReturnValue) returnValue).getReturnValue();
                 if (vmsAttachedToInstanceType == null || vmsAttachedToInstanceType.size() == 0) {
                     window.setTitle(ConstantsManager.getInstance().getConstants().removeInstanceTypeTitle());
-                    window.setItems(Arrays.asList(((InstanceType) getSelectedItem()).getName()));
+                    window.setItems(Arrays.asList(getSelectedItem().getName()));
                 } else {
                     List<String> attachedVmsNames = new ArrayList<String>();
                     for (VM vm : vmsAttachedToInstanceType) {
@@ -293,7 +293,7 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
 
         model.startProgress(null);
 
-        Guid instanceTypeId = ((InstanceType) getSelectedItem()).getId();
+        Guid instanceTypeId = getSelectedItem().getId();
 
         Frontend.getInstance().runAction(VdcActionType.RemoveVmTemplate, new VmTemplateParametersBase(instanceTypeId),
                 new IFrontendActionAsyncCallback() {

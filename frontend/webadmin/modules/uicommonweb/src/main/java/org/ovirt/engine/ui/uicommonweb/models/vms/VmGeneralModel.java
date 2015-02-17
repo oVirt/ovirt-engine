@@ -26,7 +26,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 
 @SuppressWarnings("unused")
-public class VmGeneralModel extends AbstractGeneralModel {
+public class VmGeneralModel extends AbstractGeneralModel<VM> {
 
     private static final VmTemplateNameRenderer vmTemplateNameRenderer = new VmTemplateNameRenderer();
 
@@ -522,11 +522,6 @@ public class VmGeneralModel extends AbstractGeneralModel {
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
         setHelpTag(HelpTag.general);
         setHashName("general"); //$NON-NLS-1$
-    }
-
-    @Override
-    public VM getEntity() {
-        return (VM) super.getEntity();
     }
 
     @Override

@@ -40,7 +40,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class StorageDataCenterListModel extends SearchableListModel<StorageDomain>
+public class StorageDataCenterListModel extends SearchableListModel<StorageDomain, StorageDomain>
 {
 
     private UICommand privateAttachCommand;
@@ -89,17 +89,6 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
     private void setMaintenanceCommand(UICommand value)
     {
         privateMaintenanceCommand = value;
-    }
-
-    @Override
-    public StorageDomain getEntity()
-    {
-        return super.getEntity();
-    }
-
-    public void setEntity(StorageDomain value)
-    {
-        super.setEntity(value);
     }
 
     /**
@@ -630,8 +619,8 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         setWindow(model);
 
         ArrayList<String> items = new ArrayList<String>();
-        for (Object selected : getSelectedItems()) {
-            items.add(((StorageDomain) selected).getName());
+        for (StorageDomain selected : getSelectedItems()) {
+            items.add(selected.getName());
         }
         model.setItems(items);
 
@@ -645,15 +634,13 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
     private void onMaintenance()
     {
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (Object item : getSelectedItems())
+        for (StorageDomain item : getSelectedItems())
         {
-            StorageDomain a = (StorageDomain) item;
-
             StorageDomainPoolParametersBase parameters = new StorageDomainPoolParametersBase();
             parameters.setStorageDomainId(getEntity().getId());
-            if (a.getStoragePoolId() != null)
+            if (item.getStoragePoolId() != null)
             {
-                parameters.setStoragePoolId(a.getStoragePoolId());
+                parameters.setStoragePoolId(item.getStoragePoolId());
             }
 
             list.add(parameters);

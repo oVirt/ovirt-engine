@@ -28,7 +28,7 @@ import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostListModel, HostInterfaceListModel>
+public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostListModel<Void>, HostInterfaceListModel>
         implements SubTabHostInterfacePresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabHostInterfaceView> {
@@ -51,7 +51,7 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
     HostInterfaceForm hostInterfaceForm = null;
 
     @Inject
-    public SubTabHostInterfaceView(SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel> modelProvider,
+    public SubTabHostInterfaceView(SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel<Void>, HostInterfaceListModel> modelProvider,
             EventBus eventBus,
             ClientStorage clientStorage,
             ApplicationConstants constants,

@@ -51,9 +51,17 @@ import com.google.gwt.event.shared.HandlerRegistration;
 
 /**
  * Represents a list model with ability to fetch items both sync and async.
+ *
+ * This list model has also an entity.
+ * This entity is useful to represent hierarchical parent of the list items.
+ * For example {@link org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterVmListModel} has an entity of type
+ * Cluster and a list of items of type VM.
+ *
+ * @param <E> The type of the entity.
+ * @param <T> The type of list items.
  */
 // TODO once all the children of this class will be refactored to use generics, change from <T> to <T extends IVdcQueryable>
-public abstract class SearchableListModel<T> extends SortedListModel<T> implements GridController
+public abstract class SearchableListModel<E, T> extends SortedListModel<T> implements HasEntity<E>, GridController
 {
     private static final int UnknownInteger = -1;
     private static final Logger logger = Logger.getLogger(SearchableListModel.class.getName());
@@ -253,7 +261,9 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
         return getSearchPageNumber() == 1 ? 1 : getSearchPageNumber() - 1;
     }
 
-    private final PrivateAsyncCallback<T> asyncCallback;
+    private final PrivateAsyncCallback<E, T> asyncCallback;
+
+    private final EntityModel<E> entityModel;
 
     protected SearchableListModel()
     {
@@ -262,7 +272,7 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
         setSearchPreviousPageCommand(new UICommand("SearchPreviousPage", this)); //$NON-NLS-1$
         setForceRefreshCommand(new UICommand("ForceRefresh", this)); //$NON-NLS-1$
         setSearchPageSize(UnknownInteger);
-        asyncCallback = new PrivateAsyncCallback<T>(this);
+        asyncCallback = new PrivateAsyncCallback<E, T>(this);
 
         updateActionAvailability();
 
@@ -275,6 +285,71 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
             syntaxChecker = SyntaxCheckerFactory.createUISyntaxChecker(
                     (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.AuthenticationMethod));
         }
+
+        entityModel = new EntityModel<E>() {
+            @Override
+            protected void onEntityChanged() {
+                super.onEntityChanged();
+                SearchableListModel.this.onEntityChanged();
+            }
+
+            @Override
+            protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
+                super.entityPropertyChanged(sender, e);
+                SearchableListModel.this.entityPropertyChanged(sender, e);
+            }
+
+            @Override
+            protected void entityChanging(E newValue, E oldValue) {
+                super.entityChanging(newValue, oldValue);
+                SearchableListModel.this.entityChanging(newValue, oldValue);
+            }
+        };
+    }
+
+    @Override
+    public Event<EventArgs> getEntityChangedEvent() {
+        return entityModel.getEntityChangedEvent();
+    }
+
+    @Override
+    public E getEntity() {
+        return entityModel.getEntity();
+    }
+
+    @Override
+    public void setEntity(E value) {
+        if (getEntity() == null) {
+            entityModel.setEntity(value);
+            return;
+        }
+        // Equals doesn't always has the same outcome as checking the ids of the elements.
+        if (value != null) {
+            if (!((IVdcQueryable) value).getQueryableId().equals(((IVdcQueryable) getEntity()).getQueryableId())) {
+                entityModel.setEntity(value);
+                return;
+            }
+        }
+
+        if (!getEntity().equals(value)) {
+            entityModel.setEntity(value);
+            return;
+        }
+
+        setEntity(value, false);
+    }
+
+    protected void setEntity(E value, boolean fireEvents) {
+        entityModel.setEntity(value, fireEvents);
+    }
+
+    protected void onEntityChanged() {
+    }
+
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
+    }
+
+    protected void entityChanging(E oldValue, E newValue) {
     }
 
     protected ISyntaxChecker getSyntaxChecker() {
@@ -379,28 +454,6 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
         setIsQueryFirstTime(true);
         super.setSelectedItem(value);
         setIsQueryFirstTime(false);
-    }
-
-    @Override
-    public void setEntity(T value) {
-        if (getEntity() == null) {
-            super.setEntity(value);
-            return;
-        }
-        // Equals doesn't always has the same outcome as checking the ids of the elements.
-        if (value != null) {
-            if (!((IVdcQueryable) value).getQueryableId().equals(((IVdcQueryable) getEntity()).getQueryableId())) {
-                super.setEntity(value);
-                return;
-            }
-        }
-
-        if (!getEntity().equals(value)) {
-            super.setEntity(value);
-            return;
-        }
-
-        setEntity(value, false);
     }
 
     protected abstract String getListName();
@@ -904,8 +957,7 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
             @Override
             public void onSuccess(Object model, Object ReturnValue)
             {
-                SearchableListModel searchableListModel = (SearchableListModel) model;
-                searchableListModel.setItems((Collection) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
+                setItems((Collection) ((VdcQueryReturnValue) ReturnValue).getReturnValue());
             }
         };
 
@@ -960,12 +1012,12 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
         }
     }
 
-    public final static class PrivateAsyncCallback<T>
+    public final static class PrivateAsyncCallback<E, T>
     {
-        private final SearchableListModel<T> model;
+        private final SearchableListModel<E, T> model;
         private boolean searchRequested;
 
-        public PrivateAsyncCallback(SearchableListModel<T> model)
+        public PrivateAsyncCallback(SearchableListModel<E, T> model)
         {
             this.model = model;
             AsyncQuery _asyncQuery1 = new AsyncQuery();
@@ -974,8 +1026,7 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
                 @Override
                 public void onSuccess(Object model1, Object result1)
                 {
-                    PrivateAsyncCallback<T> privateAsyncCallback1 = (PrivateAsyncCallback<T>) model1;
-                    privateAsyncCallback1.ApplySearchPageSize((Integer) result1);
+                    ApplySearchPageSize((Integer) result1);
                 }
             };
             AsyncDataProvider.getInstance().getSearchResultsLimit(_asyncQuery1);

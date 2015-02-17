@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.events;
 
-public class SubTabEventListModel extends EventListModel {
+public class SubTabEventListModel<E> extends EventListModel<E> {
 
     @Override
     protected void forceRefreshWithoutTimers() {

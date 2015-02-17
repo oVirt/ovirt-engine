@@ -46,8 +46,9 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
-import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -70,7 +71,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.inject.Inject;
 
-public class VolumeListModel extends ListWithDetailsModel implements ISupportSystemTreeContext {
+public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVolumeEntity> implements ISupportSystemTreeContext {
 
     public static final Integer REPLICATE_COUNT_DEFAULT = 2;
     public static final Integer STRIPE_COUNT_DEFAULT = 4;
@@ -202,7 +203,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     @Inject
     public VolumeListModel(final VolumeBrickListModel volumeBrickListModel, final VolumeGeneralModel volumeGeneralModel,
             final VolumeParameterListModel volumeParameterListModel,
-            final PermissionListModel<VolumeListModel> permissionListModel,
+            final PermissionListModel<GlusterVolumeEntity> permissionListModel,
             final VolumeEventListModel volumeEventListModel,
             final VolumeGeoRepListModel geoRepListModel,
             final GlusterVolumeSnapshotListModel snapshotListModel) {
@@ -245,10 +246,10 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
     private void setDetailList(final VolumeGeneralModel volumeGeneralModel,
             final VolumeParameterListModel volumeParameterListModel,
-            final PermissionListModel<VolumeListModel> permissionListModel,
+            final PermissionListModel<GlusterVolumeEntity> permissionListModel,
             final VolumeEventListModel volumeEventListModel) {
 
-        List<EntityModel> list = new ArrayList<EntityModel>();
+        List<HasEntity<GlusterVolumeEntity>> list = new ArrayList<>();
         list.add(volumeGeneralModel);
         list.add(volumeParameterListModel);
         list.add(getBrickListModel());

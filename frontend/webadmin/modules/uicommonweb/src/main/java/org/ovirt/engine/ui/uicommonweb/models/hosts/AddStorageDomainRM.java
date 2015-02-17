@@ -47,9 +47,9 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
     public void prepare1() {
 
         EnlistmentContext enlistmentContext = (EnlistmentContext) context.enlistment.getContext();
-        HostListModel model = enlistmentContext.getModel();
+        HostListModel<?> model = enlistmentContext.getModel();
 
-        final VDS host = (VDS) model.getSelectedItem();
+        final VDS host = model.getSelectedItem();
         VdsActionParameters parameters = new VdsActionParameters(host.getId());
         parameters.setCorrelationId(getCorrelationId());
         Frontend.getInstance().runAction(VdcActionType.ActivateVds, parameters,
@@ -81,9 +81,9 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
 
         PreparingEnlistment enlistment = (PreparingEnlistment) context.enlistment;
         EnlistmentContext enlistmentContext = (EnlistmentContext) enlistment.getContext();
-        HostListModel model = enlistmentContext.getModel();
+        HostListModel<?> model = enlistmentContext.getModel();
 
-        VDS host = (VDS) model.getSelectedItem();
+        VDS host = model.getSelectedItem();
 
         if (context.waitTries < MaxWaitTries) {
 
@@ -122,7 +122,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
 
         PreparingEnlistment enlistment = (PreparingEnlistment) context.enlistment;
         EnlistmentContext enlistmentContext = (EnlistmentContext) enlistment.getContext();
-        HostListModel model = enlistmentContext.getModel();
+        HostListModel<?> model = enlistmentContext.getModel();
         ConfigureLocalStorageModel configureModel = (ConfigureLocalStorageModel) model.getWindow();
 
         if (context.host.getStatus() != VDSStatus.Up) {
@@ -131,7 +131,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
 
             // Add storage domain.
             StorageServerConnections connection = new StorageServerConnections();
-            connection.setconnection((String) configureModel.getStorage().getPath().getEntity());
+            connection.setconnection(configureModel.getStorage().getPath().getEntity());
             connection.setstorage_type(StorageType.LOCALFS);
             context.connection = connection;
             StorageServerConnectionParametersBase parameters =
@@ -156,7 +156,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
 
         PreparingEnlistment enlistment = (PreparingEnlistment) context.enlistment;
         EnlistmentContext enlistmentContext = (EnlistmentContext) enlistment.getContext();
-        HostListModel model = enlistmentContext.getModel();
+        HostListModel<?> model = enlistmentContext.getModel();
         ConfigureLocalStorageModel configureModel = (ConfigureLocalStorageModel) model.getWindow();
         VdcReturnValueBase returnValue = context.addStorageServerConnectionReturnValue;
 
@@ -170,7 +170,7 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
             StorageDomainStatic storage = new StorageDomainStatic();
             storage.setStorageType(StorageType.LOCALFS);
             storage.setStorageDomainType(StorageDomainType.Data);
-            storage.setStorageName((String) configureModel.getFormattedStorageName().getEntity());
+            storage.setStorageName(configureModel.getFormattedStorageName().getEntity());
             storage.setStorage((String) returnValue.getActionReturnValue());
 
             StorageDomainManagementParameter parameters = new StorageDomainManagementParameter(storage);

@@ -15,12 +15,12 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.Impor
 
 import com.google.gwt.user.client.ui.ScrollPanel;
 
-public class RegisterVmInfoPanel extends RegisterEntityInfoPanel {
+public class RegisterVmInfoPanel extends RegisterEntityInfoPanel<VM> {
 
     private ImportVmGeneralSubTabView generalView;
     private VmGeneralModel vmGeneralModel;
 
-    public RegisterVmInfoPanel(RegisterEntityModel model) {
+    public RegisterVmInfoPanel(RegisterEntityModel<VM> model) {
         super(model);
     }
 
@@ -40,7 +40,7 @@ public class RegisterVmInfoPanel extends RegisterEntityInfoPanel {
     }
 
     @Override
-    public void updateTabsData(ImportEntityData importEntityData) {
+    public void updateTabsData(ImportEntityData<VM> importEntityData) {
         VM vm = ((ImportVmData) importEntityData).getVm();
 
         vmGeneralModel.setEntity(vm);
@@ -53,8 +53,8 @@ public class RegisterVmInfoPanel extends RegisterEntityInfoPanel {
     }
 
     private void initGeneralForm() {
-        DetailModelProvider<VmListModel, VmGeneralModel> modelProvider =
-            new DetailModelProvider<VmListModel, VmGeneralModel>() {
+        DetailModelProvider<VmListModel<Void>, VmGeneralModel> modelProvider =
+            new DetailModelProvider<VmListModel<Void>, VmGeneralModel>() {
                 @Override
                 public VmGeneralModel getModel() {
                     return getVmGeneralModel();

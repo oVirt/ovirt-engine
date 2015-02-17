@@ -29,10 +29,10 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
-public abstract class RegisterEntityModel extends Model {
+public abstract class RegisterEntityModel<T> extends Model {
 
     private UICommand cancelCommand;
-    private ListModel<ImportEntityData> entities;
+    private ListModel<ImportEntityData<T>> entities;
     private ListModel<VDSGroup> cluster;
     private EntityModel<Map<Guid, List<Quota>>> clusterQuotasMap;
     private EntityModel<Map<Guid, Quota>> diskQuotaMap;
@@ -41,14 +41,14 @@ public abstract class RegisterEntityModel extends Model {
     private StoragePool storagePool;
 
     public RegisterEntityModel() {
-        setEntities(new ListModel());
-        setCluster(new ListModel());
+        setEntities(new ListModel<ImportEntityData<T>>());
+        setCluster(new ListModel<VDSGroup>());
 
         setClusterQuotasMap(new EntityModel<Map<Guid, List<Quota>>>());
         getClusterQuotasMap().setEntity(new HashMap<Guid, List<Quota>>());
         setDiskQuotaMap(new EntityModel<Map<Guid, Quota>>());
         getDiskQuotaMap().setEntity(new HashMap<Guid, Quota>());
-        setStorageQuota(new ListModel());
+        setStorageQuota(new ListModel<Quota>());
     }
 
     protected abstract void onSave();
@@ -80,7 +80,7 @@ public abstract class RegisterEntityModel extends Model {
                     public void onSuccess(Object model, Object returnValue) {
                         ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
 
-                        for (ImportEntityData entityData : entities.getItems()) {
+                        for (ImportEntityData<T> entityData : entities.getItems()) {
                             List<VDSGroup> filteredClusters = AsyncDataProvider.getInstance().filterByArchitecture(clusters, entityData.getArchType());
                             entityData.getCluster().setItems(filteredClusters);
                             entityData.getCluster().setSelectedItem(Linq.firstOrDefault(filteredClusters));
@@ -107,8 +107,7 @@ public abstract class RegisterEntityModel extends Model {
                 new IdQueryParameters(storageDomainId), new AsyncQuery(this, new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object innerModel, Object innerReturnValue) {
-                        ArrayList<Quota> quotas =
-                                (ArrayList<Quota>) ((VdcQueryReturnValue) innerReturnValue).getReturnValue();
+                        ArrayList<Quota> quotas = ((VdcQueryReturnValue) innerReturnValue).getReturnValue();
                         getStorageQuota().setItems(quotas);
                         getStorageQuota().setSelectedItem(Linq.firstOrDefault(quotas));
                     }
@@ -204,11 +203,11 @@ public abstract class RegisterEntityModel extends Model {
         this.cancelCommand = cancelCommand;
     }
 
-    public ListModel<ImportEntityData> getEntities() {
+    public ListModel<ImportEntityData<T>> getEntities() {
         return entities;
     }
 
-    public void setEntities(ListModel<ImportEntityData> entities) {
+    public void setEntities(ListModel<ImportEntityData<T>> entities) {
         this.entities = entities;
     }
 

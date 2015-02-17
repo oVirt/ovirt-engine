@@ -18,9 +18,9 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 public class RemoveExternalSubnetModel extends ConfirmationModel {
 
     private final List<ExternalSubnet> subnets;
-    private final SearchableListModel<?> sourceListModel;
+    private final SearchableListModel<?, ?> sourceListModel;
 
-    public RemoveExternalSubnetModel(SearchableListModel<?> sourceListModel, List<ExternalSubnet> subnets) {
+    public RemoveExternalSubnetModel(SearchableListModel<?, ?> sourceListModel, List<ExternalSubnet> subnets) {
         setHelpTag(HelpTag.remove_external_subnet);
         setHashName("remove_external_subnet"); //$NON-NLS-1$
 

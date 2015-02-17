@@ -19,7 +19,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class DataCenterNetworkQoSListModel extends SearchableListModel {
+public class DataCenterNetworkQoSListModel extends SearchableListModel<StoragePool, NetworkQoS> {
 
     private UICommand newCommand;
     private UICommand editCommand;
@@ -33,15 +33,6 @@ public class DataCenterNetworkQoSListModel extends SearchableListModel {
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
-    }
-
-    @Override
-    public StoragePool getEntity() {
-        return (StoragePool) super.getEntity();
-    }
-
-    public void setEntity(StoragePool value) {
-        super.setEntity(value);
     }
 
     @Override
@@ -61,8 +52,7 @@ public class DataCenterNetworkQoSListModel extends SearchableListModel {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                DataCenterNetworkQoSListModel networkQoSListModel = (DataCenterNetworkQoSListModel) model;
-                networkQoSListModel.setItems((ArrayList<NetworkQoS>) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                setItems((ArrayList<NetworkQoS>) ((VdcQueryReturnValue) returnValue).getReturnValue());
 
             }
         };
@@ -134,7 +124,7 @@ public class DataCenterNetworkQoSListModel extends SearchableListModel {
     }
 
     public void edit() {
-        final NetworkQoS networkQoS = (NetworkQoS) getSelectedItem();
+        final NetworkQoS networkQoS = getSelectedItem();
 
         if (getWindow() != null) {
             return;

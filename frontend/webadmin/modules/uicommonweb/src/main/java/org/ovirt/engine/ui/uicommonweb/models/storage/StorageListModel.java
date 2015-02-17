@@ -42,6 +42,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsAndReportsModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -71,7 +72,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.inject.Inject;
 
-public class StorageListModel extends ListWithDetailsAndReportsModel implements ITaskTarget, ISupportSystemTreeContext {
+public class StorageListModel extends ListWithDetailsAndReportsModel<Void, StorageDomain> implements ITaskTarget, ISupportSystemTreeContext {
 
     private UICommand privateNewDomainCommand;
 
@@ -162,7 +163,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
             final StorageIsoListModel storageIsoListModel, final StorageDiskListModel storageDiskListModel,
             final StorageSnapshotListModel storageSnapshotListModel, final DiskProfileListModel diskProfileListModel,
             final StorageEventListModel storageEventListModel,
-            final PermissionListModel<StorageListModel> permissionListModel) {
+            final PermissionListModel<StorageDomain> permissionListModel) {
         generalModel = storageGeneralModel;
         dcListModel = storageDataCenterListModel;
         vmBackupModel = storageVmBackupModel;
@@ -198,7 +199,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
     }
 
     private void setDetailList(final StorageEventListModel storageEventListModel,
-            final PermissionListModel<StorageListModel> permissionListModel) {
+            final PermissionListModel<StorageDomain> permissionListModel) {
         generalModel.setIsAvailable(false);
         dcListModel.setIsAvailable(false);
         this.vmBackupModel.setIsAvailable(false);
@@ -212,7 +213,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         snapshotListModel.setIsAvailable(false);
         this.diskProfileListModel.setIsAvailable(false);
 
-        List<EntityModel> list = new ArrayList<EntityModel>();
+        List<HasEntity<StorageDomain>> list = new ArrayList<>();
         list.add(generalModel);
         list.add(dcListModel);
         list.add(vmBackupModel);
@@ -292,7 +293,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         // putting all Data domains at the beginning on purpose (so when choosing the
         // first selectable storage type/function, it will be a Data one, if relevant).
 
-        items = AsyncDataProvider.getInstance().getDataStorageModels();
+        List<IStorageModel> items = AsyncDataProvider.getInstance().getDataStorageModels();
         items.addAll(AsyncDataProvider.getInstance().getIsoStorageModels());
 
         items.addAll(AsyncDataProvider.getInstance().getExportStorageModels());
@@ -310,7 +311,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
 
     private void edit()
     {
-        StorageDomain storage = (StorageDomain) getSelectedItem();
+        StorageDomain storage = getSelectedItem();
 
         if (getWindow() != null)
         {
@@ -562,7 +563,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
     private void postPrepareSanStorageForEdit(final SanStorageModel model, boolean isStorageActive)
     {
         StorageModel storageModel = (StorageModel) getWindow();
-        StorageDomain storage = (StorageDomain) getSelectedItem();
+        StorageDomain storage = getSelectedItem();
         model.setStorageDomain(storage);
 
         VDS host = storageModel.getHost().getSelectedItem();
@@ -729,7 +730,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         model.setHelpTag(HelpTag.remove_storage);
         model.setHashName("remove_storage"); //$NON-NLS-1$
 
-        StorageDomain storage = (StorageDomain) getSelectedItem();
+        StorageDomain storage = getSelectedItem();
         boolean localFsOnly = storage.getStorageType() == StorageType.LOCALFS;
 
         AsyncDataProvider.getInstance().getHostsForStorageOperation(new AsyncQuery(new Object[]{this, model}, new INewAsyncCallback() {
@@ -739,7 +740,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
                 Object[] array = (Object[]) target;
                 StorageListModel storageListModel = (StorageListModel) array[0];
                 RemoveStorageModel removeStorageModel = (RemoveStorageModel) array[1];
-                StorageDomain storage = (StorageDomain) storageListModel.getSelectedItem();
+                StorageDomain storage = storageListModel.getSelectedItem();
                 List<VDS> hosts = (List<VDS>) returnValue;
                 removeStorageModel.getHostList().setItems(hosts);
                 removeStorageModel.getHostList().setSelectedItem(Linq.firstOrDefault(hosts));
@@ -767,7 +768,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
     {
         if (getSelectedItem() != null)
         {
-            StorageDomain storage = (StorageDomain) getSelectedItem();
+            StorageDomain storage = getSelectedItem();
             RemoveStorageModel model = (RemoveStorageModel) getWindow();
 
             if (!model.validate())
@@ -795,7 +796,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         model.setHelpTag(HelpTag.destroy_storage_domain);
         model.setHashName("destroy_storage_domain"); //$NON-NLS-1$
         ArrayList<String> items = new ArrayList<String>();
-        items.add(((StorageDomain) getSelectedItem()).getStorageName());
+        items.add(getSelectedItem().getStorageName());
         model.setItems(items);
 
         model.getLatch().setIsAvailable(true);
@@ -824,7 +825,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
             return;
         }
 
-        StorageDomain storageDomain = (StorageDomain) getSelectedItem();
+        StorageDomain storageDomain = getSelectedItem();
 
         model.startProgress(null);
 
@@ -1016,7 +1017,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
     {
         if (getSelectedItem() != null)
         {
-            StorageDomain storage = (StorageDomain) getSelectedItem();
+            StorageDomain storage = getSelectedItem();
             boolean isBackupStorage = storage.getStorageDomainType() == StorageDomainType.ImportExport;
             boolean isDataStorage =
                     storage.getStorageDomainType().isDataDomain();
@@ -1073,7 +1074,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
                 getSelectedItems() != null ? Linq.<StorageDomain> cast(getSelectedItems())
                         : new ArrayList<StorageDomain>();
 
-        StorageDomain item = (StorageDomain) getSelectedItem();
+        StorageDomain item = getSelectedItem();
 
         getNewDomainCommand().setIsAvailable(true);
 
@@ -1192,7 +1193,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
 
         this.context = context;
 
-        StorageDomain selectedItem = (StorageDomain) getSelectedItem();
+        StorageDomain selectedItem = getSelectedItem();
         StorageModel model = (StorageModel) getWindow();
         boolean isNew = model.getStorage() == null;
         storageModel = model.getSelectedItem();
@@ -1224,7 +1225,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
                 }
             }), null, path);
         } else {
-            StorageDomain storageDomain = (StorageDomain) getSelectedItem();
+            StorageDomain storageDomain = getSelectedItem();
             if (isPathEditable(storageDomain)) {
                 updatePath();
             }
@@ -1286,7 +1287,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
 
                 StorageListModel storageListModel = (StorageListModel) result.getState();
                 VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-                storageListModel.storageId = (Guid) vdcReturnValueBase.getActionReturnValue();
+                storageListModel.storageId = vdcReturnValueBase.getActionReturnValue();
 
                 // Attach storage to data center as necessary.
                 StorageModel storageModel = (StorageModel) storageListModel.getWindow();
@@ -1317,11 +1318,125 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
             this);
     }
 
+    private void saveGlusterStorage(TaskContext context) {
+
+        this.context = context;
+
+        StorageDomain selectedItem = getSelectedItem();
+        StorageModel model = (StorageModel) getWindow();
+        boolean isNew = model.getStorage() == null;
+        storageModel = model.getSelectedItem();
+        GlusterStorageModel glusterModel = (GlusterStorageModel) storageModel;
+        path = glusterModel.getPath().getEntity();
+
+        storageDomain = isNew ? new StorageDomainStatic() : (StorageDomainStatic) Cloner.clone(selectedItem.getStorageStaticData());
+        storageDomain.setStorageType(isNew ? storageModel.getType() : storageDomain.getStorageType());
+        storageDomain.setStorageDomainType(isNew ? storageModel.getRole() : storageDomain.getStorageDomainType());
+        storageDomain.setStorageName(model.getName().getEntity());
+        storageDomain.setStorageFormat(model.getFormat().getSelectedItem());
+        storageDomain.setWipeAfterDelete(model.getWipeAfterDelete().getEntity());
+
+        if (isNew) {
+            AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
+                @Override
+                public void onSuccess(Object target, Object returnValue) {
+
+                    StorageListModel storageListModel = (StorageListModel) target;
+                    ArrayList<StorageDomain> storages = (ArrayList<StorageDomain>) returnValue;
+
+                    if (storages != null && storages.size() > 0) {
+                        handleDomainAlreadyExists(storageListModel, storages);
+                    } else {
+                        storageListModel.saveNewGlusterStorage();
+                    }
+                }
+            }), null, path);
+        } else {
+
+            updateStorageDomain();
+        }
+    }
+
+    public void saveNewGlusterStorage() {
+
+        StorageModel model = (StorageModel) getWindow();
+        GlusterStorageModel glusterModel = (GlusterStorageModel) model.getSelectedItem();
+        VDS host = model.getHost().getSelectedItem();
+        hostId = host.getId();
+
+        // Create storage connection.
+        StorageServerConnections connection = new StorageServerConnections();
+        connection.setconnection(path);
+        connection.setstorage_type(glusterModel.getType());
+        connection.setVfsType(glusterModel.getVfsType().getEntity());
+        connection.setMountOptions(glusterModel.getMountOptions().getEntity());
+        this.connection = connection;
+
+        ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+
+        actionTypes.add(VdcActionType.AddStorageServerConnection);
+        actionTypes.add(VdcActionType.AddGlusterFsStorageDomain);
+
+        parameters.add(new StorageServerConnectionParametersBase(this.connection, host.getId()));
+        StorageDomainManagementParameter parameter = new StorageDomainManagementParameter(storageDomain);
+        parameter.setVdsId(host.getId());
+        parameters.add(parameter);
+
+        IFrontendActionAsyncCallback callback1 = new IFrontendActionAsyncCallback() {
+            @Override
+            public void executed(FrontendActionAsyncResult result) {
+
+                StorageListModel storageListModel = (StorageListModel) result.getState();
+                VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
+                storageListModel.storageDomain.setStorage((String) vdcReturnValueBase.getActionReturnValue());
+                storageListModel.connection.setid((String) vdcReturnValueBase.getActionReturnValue());
+            }
+        };
+
+        IFrontendActionAsyncCallback callback2 = new IFrontendActionAsyncCallback() {
+            @Override
+            public void executed(FrontendActionAsyncResult result) {
+
+                StorageListModel storageListModel = (StorageListModel) result.getState();
+                VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
+                storageListModel.storageId = vdcReturnValueBase.getActionReturnValue();
+
+                // Attach storage to data center as necessary.
+                StorageModel storageModel = (StorageModel) storageListModel.getWindow();
+                StoragePool dataCenter = storageModel.getDataCenter().getSelectedItem();
+                if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
+                    storageListModel.attachStorageToDataCenter(storageListModel.storageId, dataCenter.getId(), storageModel.getActivateDomain().getEntity());
+                }
+
+                storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
+            }
+        };
+
+        IFrontendActionAsyncCallback failureCallback = new IFrontendActionAsyncCallback() {
+            @Override
+            public void executed(FrontendActionAsyncResult result) {
+
+                StorageListModel storageListModel = (StorageListModel) result.getState();
+                storageListModel.cleanConnection(storageListModel.connection, storageListModel.hostId);
+                storageListModel.onFinish(storageListModel.context, false, storageListModel.storageModel);
+            }
+        };
+
+        Frontend.getInstance().runMultipleActions(actionTypes,
+            parameters,
+            new ArrayList<IFrontendActionAsyncCallback>(Arrays.asList(new IFrontendActionAsyncCallback[] {
+                        callback1, callback2 })),
+            failureCallback,
+            this);
+    }
+
+
     private void saveNfsStorage(TaskContext context)
     {
         this.context = context;
 
-        StorageDomain selectedItem = (StorageDomain) getSelectedItem();
+        StorageDomain selectedItem = getSelectedItem();
         StorageModel model = (StorageModel) getWindow();
         boolean isNew = model.getStorage() == null;
         storageModel = model.getSelectedItem();
@@ -1360,7 +1475,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         }
         else
         {
-            StorageDomain storageDomain = (StorageDomain) getSelectedItem();
+            StorageDomain storageDomain = getSelectedItem();
             if (isPathEditable(storageDomain)) {
                 updatePath();
             }
@@ -1472,7 +1587,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
 
                 StorageListModel storageListModel = (StorageListModel) result.getState();
                 VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-                storageListModel.storageId = (Guid) vdcReturnValueBase.getActionReturnValue();
+                storageListModel.storageId = vdcReturnValueBase.getActionReturnValue();
 
             }
         };
@@ -1544,7 +1659,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
                         StoragePool dataCenter = storageModel.getDataCenter().getSelectedItem();
                         if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
                             VdcReturnValueBase returnValue = result.getReturnValue();
-                            Guid storageId = (Guid) returnValue.getActionReturnValue();
+                            Guid storageId = returnValue.getActionReturnValue();
                             storageListModel.attachStorageToDataCenter(storageId, dataCenter.getId(), storageModel.getActivateDomain().getEntity());
                         }
 
@@ -1557,7 +1672,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
     {
         this.context = context;
 
-        StorageDomain selectedItem = (StorageDomain) getSelectedItem();
+        StorageDomain selectedItem = getSelectedItem();
         StorageModel model = (StorageModel) getWindow();
         VDS host = model.getHost().getSelectedItem();
         boolean isNew = model.getStorage() == null;
@@ -1597,7 +1712,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         }
         else
         {
-            StorageDomain storageDomain = (StorageDomain) getSelectedItem();
+            StorageDomain storageDomain = getSelectedItem();
             if (isPathEditable(storageDomain)) {
                 updatePath();
             }
@@ -1704,7 +1819,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
 
         StorageModel model = (StorageModel) getWindow();
         SanStorageModel sanModel = (SanStorageModel) model.getSelectedItem();
-        StorageDomain storage = (StorageDomain) getSelectedItem();
+        StorageDomain storage = getSelectedItem();
 
         boolean isNew = model.getStorage() == null;
 
@@ -1739,7 +1854,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
                     StorageModel storageModel = (StorageModel) getWindow();
                     SanStorageModel sanStorageModel = (SanStorageModel) storageModel.getSelectedItem();
                     boolean force = sanStorageModel.isForce();
-                    StorageDomain storageDomain1 = (StorageDomain) storageListModel.getSelectedItem();
+                    StorageDomain storageDomain1 = storageListModel.getSelectedItem();
                     ArrayList<String> lunIds = new ArrayList<String>();
 
                     for (LunModel lun : sanStorageModel.getAddedLuns()) {

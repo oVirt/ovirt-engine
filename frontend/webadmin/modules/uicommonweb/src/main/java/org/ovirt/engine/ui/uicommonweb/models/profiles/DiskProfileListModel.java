@@ -15,7 +15,7 @@ import com.google.inject.Inject;
 public class DiskProfileListModel extends ProfileListModel<DiskProfile, StorageQos, StorageDomain> {
 
     @Inject
-    public DiskProfileListModel(final PermissionListModel<DiskProfileListModel> permissionListModel) {
+    public DiskProfileListModel(final PermissionListModel<DiskProfile> permissionListModel) {
         super(permissionListModel);
         setTitle(ConstantsManager.getInstance().getConstants().diskProfilesTitle());
         setHelpTag(HelpTag.disk_profiles);
@@ -29,7 +29,7 @@ public class DiskProfileListModel extends ProfileListModel<DiskProfile, StorageQ
 
     @Override
     protected ProfileBaseModel<DiskProfile, StorageQos, StorageDomain> getEditProfileModel() {
-        return new EditDiskProfileModel(this, (DiskProfile) getSelectedItem(), getStoragePoolId());
+        return new EditDiskProfileModel(this, getSelectedItem(), getStoragePoolId());
     }
 
     @Override
@@ -43,13 +43,8 @@ public class DiskProfileListModel extends ProfileListModel<DiskProfile, StorageQ
     }
 
     @Override
-    protected StorageDomain getParentEntity() {
-        return (StorageDomain) ((super.getEntity() instanceof StorageDomain) ? super.getEntity() : null);
-    }
-
-    @Override
     protected Guid getStoragePoolId() {
-        return getParentEntity() != null ? getParentEntity().getStoragePoolId() : null;
+        return getEntity() != null ? getEntity().getStoragePoolId() : null;
     }
 
     @Override

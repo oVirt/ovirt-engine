@@ -44,7 +44,7 @@ public class NetworkOperationFactory {
         // no valid operation for external networks or networks attached via label
         if (op1 instanceof LogicalNetworkModel) {
             LogicalNetworkModel network = (LogicalNetworkModel) op1;
-            if (network.getEntity().isExternal() || network.isAttachedViaLabel()) {
+            if (network.getNetwork().isExternal() || network.isAttachedViaLabel()) {
                 return NetworkOperation.NULL_OPERATION;
             }
         }
@@ -128,7 +128,7 @@ public class NetworkOperationFactory {
                 }
                 if (network.hasVlan()) {
                     vlanFound = true;
-                } else if (network.getEntity().isVmNetwork()) {
+                } else if (network.getNetwork().isVmNetwork()) {
                     nonVlanVmNetwork = network.getName();
                     ++nonVlanCounter;
                 } else {

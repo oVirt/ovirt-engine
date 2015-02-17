@@ -26,8 +26,8 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithSimpleDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -38,8 +38,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import com.google.inject.Inject;
 
 @SuppressWarnings("unused")
-public class RoleListModel extends ListWithDetailsModel
-{
+public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
     public static final String COPY_OF = "Copy_of_"; //$NON-NLS-1$
 
     public enum CommandType
@@ -57,12 +56,6 @@ public class RoleListModel extends ListWithDetailsModel
         {
             return values()[value];
         }
-    }
-
-    @Override
-    public void setSelectedItem(Object value) {
-        // TODO Auto-generated method stub
-        super.setSelectedItem(value);
     }
 
     private UICommand privateNewCommand;
@@ -186,7 +179,7 @@ public class RoleListModel extends ListWithDetailsModel
     }
 
     private void setDetailList(final RolePermissionListModel rolePermissionListModel) {
-        List<EntityModel> list = new ArrayList<EntityModel>();
+        List<HasEntity<Role>> list = new ArrayList<>();
         list.add(rolePermissionListModel);
 
         setDetailModels(list);
@@ -288,7 +281,7 @@ public class RoleListModel extends ListWithDetailsModel
     public void edit()
     {
         commandType = CommandType.Edit;
-        Role role = (Role) getSelectedItem();
+        Role role = getSelectedItem();
         initRoleDialog(role);
     }
 
@@ -302,7 +295,7 @@ public class RoleListModel extends ListWithDetailsModel
     public void cloneRole()
     {
         commandType = CommandType.Clone;
-        Role role = (Role) getSelectedItem();
+        Role role = getSelectedItem();
         initRoleDialog(role);
     }
 
@@ -326,11 +319,11 @@ public class RoleListModel extends ListWithDetailsModel
                     public void onSuccess(Object model, Object ReturnValue) {
                         RoleListModel roleListModel = (RoleListModel) model;
                         roleListModel.publicAttachedActions =
-                                (ArrayList<ActionGroup>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                                ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                         roleListModel.setAttachedActionGroups(publicAttachedActions);
                     }
                 };
-                Role role = (Role) getSelectedItem();
+                Role role = getSelectedItem();
                 Frontend.getInstance().runQuery(
                         VdcQueryType.GetRoleActionGroupsByRoleId,
                         new IdQueryParameters(role.getId()),
@@ -341,7 +334,7 @@ public class RoleListModel extends ListWithDetailsModel
     }
 
     void setAttachedActionGroups(List<ActionGroup> attachedActions) {
-        Role role = (Role) getSelectedItem();
+        Role role = getSelectedItem();
         RoleModel model = (RoleModel) getWindow();
         ArrayList<SelectionTreeNodeModel> selectionTree =
                 RoleTreeView.getRoleTreeView((model.getIsNew() ? false : role.getis_readonly()),
@@ -467,7 +460,7 @@ public class RoleListModel extends ListWithDetailsModel
             return;
         }
 
-        role = commandType != CommandType.Edit ? new Role() : (Role) getSelectedItem();
+        role = commandType != CommandType.Edit ? new Role() : getSelectedItem();
         role.setType((model.getIsAdminRole().getEntity() ? RoleType.ADMIN : RoleType.USER));
 
         if (!model.validate())

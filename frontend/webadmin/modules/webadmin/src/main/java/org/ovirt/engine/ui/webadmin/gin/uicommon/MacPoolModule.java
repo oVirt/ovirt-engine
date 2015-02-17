@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
+import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.SharedMacPoolListModel;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
@@ -17,9 +18,9 @@ public class MacPoolModule extends AbstractGinModule {
         // SharedMacPoolListModel
         bind(SharedMacPoolModelProvider.class).in(Singleton.class);
 
-        bind(new TypeLiteral<PermissionListModel<SharedMacPoolListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<MacPool>>(){}).in(Singleton.class);
 
         // Permission Model
-        bind(new TypeLiteral<PermissionModelProvider<SharedMacPoolListModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<PermissionModelProvider<MacPool, SharedMacPoolListModel>>(){}).in(Singleton.class);
     }
 }
