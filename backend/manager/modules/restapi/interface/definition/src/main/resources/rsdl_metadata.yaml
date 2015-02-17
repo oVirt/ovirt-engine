@@ -2253,6 +2253,12 @@ actions:
           network_attachment.properties.property--COLLECTION:
             property.name: xs:string
             property.value: xs:string
+- name: /hosts/{host:id}/unmanagednetworks|rel=get
+  description: get a list of unmanaged networks
+- name: /hosts/{host:id}/unmanagednetworks/{unmanagednetwork:id}|rel=get
+  description: get the details of the specified unmanaged network
+- name: /hosts/{host:id}/unmanagednetworks/{unmanagednetwork:id}|rel=delete
+  description: delete the specified unmanaged network
 - name: /hosts/{host:id}/permissions|rel=get
   description: get the list of permissions for the host
 - name: /hosts/{host:id}/permissions/{permission:id}|rel=get

@@ -4100,6 +4100,37 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="unmanaged_networks" type="UnmanagedNetworks"/>
+
+  <xs:complexType name="UnmanagedNetworks">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="unmanaged_network" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="UnmanagedNetworks"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="unmanaged_network" type="UnmanagedNetwork"/>
+
+  <xs:complexType name="UnmanagedNetwork">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="host_nic" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="host" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:complexType name="HostNics">
     <xs:complexContent>
       <xs:extension base="BaseResources">

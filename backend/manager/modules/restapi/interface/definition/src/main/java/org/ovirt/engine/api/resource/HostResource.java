@@ -132,6 +132,9 @@ public interface HostResource extends UpdatableResource<Host>, MeasurableResourc
     @Path("devices")
     HostDevicesResource getHostDevicesResource();
 
+    @Path("unmanagednetworks")
+    public UnmanagedNetworksResource getUnmanagedNetworksResource();
+
     @POST
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
     @Actionable

@@ -82,6 +82,8 @@ transfers:
   instance_types: org.ovirt.engine.api.model.InstanceTypes
   ticket: org.ovirt.engine.api.model.Ticket
   transparent_hugepages: org.ovirt.engine.api.model.TransparentHugePages
+  unmanaged_network: org.ovirt.engine.api.model.UnmanagedNetwork
+  unmanaged_networks: org.ovirt.engine.api.model.UnmanagedNetworks
   user: org.ovirt.engine.api.model.User
   users: org.ovirt.engine.api.model.Users
   value: org.ovirt.engine.api.model.Value
@@ -197,6 +199,8 @@ handlers:
   org.ovirt.engine.api.model.TransparentHugePages: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.User: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.Users: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
+  org.ovirt.engine.api.model.UnmanagedNetwork: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
+  org.ovirt.engine.api.model.UnmanagedNetworks: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.Value: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.Values: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.VersionCaps: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper

@@ -111,6 +111,7 @@ import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.Template;
+import org.ovirt.engine.api.model.UnmanagedNetwork;
 import org.ovirt.engine.api.model.Url;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.VM;
@@ -228,6 +229,8 @@ import org.ovirt.engine.api.resource.TemplateDiskResource;
 import org.ovirt.engine.api.resource.TemplateDisksResource;
 import org.ovirt.engine.api.resource.TemplateResource;
 import org.ovirt.engine.api.resource.TemplatesResource;
+import org.ovirt.engine.api.resource.UnmanagedNetworkResource;
+import org.ovirt.engine.api.resource.UnmanagedNetworksResource;
 import org.ovirt.engine.api.resource.UpdatableRoleResource;
 import org.ovirt.engine.api.resource.VmApplicationResource;
 import org.ovirt.engine.api.resource.VmApplicationsResource;
@@ -542,6 +545,9 @@ public class LinkHelper {
         map = new ParentToCollectionMap(NetworkAttachmentResource.class, NetworkAttachmentsResource.class, Host.class);
         map.add(NetworkAttachmentResource.class, NetworkAttachmentsResource.class, HostNIC.class);
         TYPES.put(NetworkAttachment.class, map);
+
+        map = new ParentToCollectionMap(UnmanagedNetworkResource.class, UnmanagedNetworksResource.class, Host.class);
+        TYPES.put(UnmanagedNetwork.class, map);
 
         map = new ParentToCollectionMap(AffinityGroupResource.class, AffinityGroupsResource.class, Cluster.class);
         TYPES.put(AffinityGroup.class, map);

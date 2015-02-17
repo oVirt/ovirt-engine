@@ -33,6 +33,7 @@ import org.ovirt.engine.api.resource.HostResource;
 import org.ovirt.engine.api.resource.HostStorageResource;
 import org.ovirt.engine.api.resource.NetworkAttachmentsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
+import org.ovirt.engine.api.resource.UnmanagedNetworksResource;
 import org.ovirt.engine.api.resource.externalhostproviders.KatelloErrataResource;
 import org.ovirt.engine.api.restapi.model.AuthenticationMethod;
 import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendHostKatelloErrataResource;
@@ -573,6 +574,11 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     @Override
     public HostNicsResource getHostNicsResource() {
         return inject(new BackendHostNicsResource(id));
+    }
+
+    @Override
+    public UnmanagedNetworksResource getUnmanagedNetworksResource() {
+        return inject(new BackendUnmanagedNetworksResource(guid));
     }
 
     @Override
