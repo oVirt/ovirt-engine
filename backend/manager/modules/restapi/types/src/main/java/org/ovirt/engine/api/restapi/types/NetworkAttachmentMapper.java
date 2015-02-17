@@ -121,6 +121,10 @@ public class NetworkAttachmentMapper {
             }
         }
 
+        if (entity.getReportedConfigurations() != null) {
+            model.setReportedConfigurations(ReportedConfigurationsMapper.map(entity.getReportedConfigurations(), null));
+        }
+
         return model;
     }
 

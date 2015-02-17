@@ -4245,6 +4245,7 @@
           <xs:element ref="host_nic" minOccurs="0" maxOccurs="1"/>
           <xs:element name="ip_address_assignments" type="IpAddressAssignments" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="properties" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="reported_configurations" type="ReportedConfigurations" minOccurs="0"/>
           <xs:element ref="host" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
@@ -4267,6 +4268,27 @@
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ReportedConfigurations">
+    <xs:sequence>
+      <xs:element name="in_sync" type="xs:boolean"/>
+      <xs:element name="reported_configuration" type="ReportedConfiguration" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="ReportedConfigurations"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ReportedConfiguration">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="in_sync" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+    </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="IpAddressAssignments">
