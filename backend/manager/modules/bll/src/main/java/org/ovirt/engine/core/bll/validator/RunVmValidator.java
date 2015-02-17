@@ -136,10 +136,14 @@ public class RunVmValidator {
     }
 
     protected ValidationResult validateMemorySize(VM vm) {
-        final ConfigValues configKey = getOsRepository().get64bitOss().contains(vm.getOs())
-                ? ConfigValues.VM64BitMaxMemorySizeInMB
-                : ConfigValues.VM32BitMaxMemorySizeInMB;
-        final int maxSize = Config.getValue(configKey, vm.getVdsGroupCompatibilityVersion().getValue());
+        int maxSize;
+        if (getOsRepository().get64bitOss().contains(vm.getOs())) {
+            maxSize = Config.getValue(ConfigValues.VM64BitMaxMemorySizeInMB,
+                    vm.getVdsGroupCompatibilityVersion().getValue());
+        } else {
+            maxSize = Config.getValue(ConfigValues.VM32BitMaxMemorySizeInMB);
+        }
+
         if (vm.getMemSizeMb() > maxSize) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_MEMORY_EXCEEDS_SUPPORTED_LIMIT);
         }

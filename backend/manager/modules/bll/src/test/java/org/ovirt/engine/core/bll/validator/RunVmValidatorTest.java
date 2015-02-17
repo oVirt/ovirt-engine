@@ -52,7 +52,7 @@ public class RunVmValidatorTest {
             mockConfig(ConfigValues.VdsSelectionAlgorithm, "General", "0"),
             mockConfig(ConfigValues.PredefinedVMProperties, "3.0", "0"),
             mockConfig(ConfigValues.UserDefinedVMProperties, "3.0", "0"),
-            mockConfig(ConfigValues.VM32BitMaxMemorySizeInMB, "3.3", MEMORY_LIMIT_32_BIT),
+            mockConfig(ConfigValues.VM32BitMaxMemorySizeInMB, "general", MEMORY_LIMIT_32_BIT),
             mockConfig(ConfigValues.VM64BitMaxMemorySizeInMB, "3.3", MEMORY_LIMIT_64_BIT)
             );
 
