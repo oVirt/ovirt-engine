@@ -7,7 +7,8 @@ import org.ovirt.engine.core.compat.StringHelper;
 public class FenceStatusReturnValue implements Serializable {
     private static final long serialVersionUID = 8070963676213797507L;
     // indicates that operation was skipped because Host is already in requested state.
-    public static final String SKIPPED = "skipped";
+    public static final String SKIPPED_DUE_TO_STATUS = "skipped_due_to_status";
+    public static final String SKIPPED_DUE_TO_POLICY = "skipped";
     public static final String INITIATED = "initiated";
     public FenceStatusReturnValue(String status, String message) {
         _status = status;
@@ -30,8 +31,12 @@ public class FenceStatusReturnValue implements Serializable {
         return (StringHelper.isNullOrEmpty(getMessage()));
     }
 
-    public boolean getIsSkipped() {
-        return SKIPPED.equalsIgnoreCase(_status);
+    public boolean getIsSkippedDueToStatus() {
+        return SKIPPED_DUE_TO_STATUS.equalsIgnoreCase(_status);
+    }
+
+    public boolean getIsSkippedDueToPolicy() {
+        return SKIPPED_DUE_TO_POLICY.equalsIgnoreCase(_status);
     }
 
     public boolean getIsInitiated() {

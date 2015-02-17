@@ -153,7 +153,7 @@ public class FenceExecutor {
         }
         VDSFenceReturnValue returnVal = new VDSFenceReturnValue(result);
         returnVal.setFenceAgentUsed(agent);
-        returnVal.setSucceeded(result.getSucceeded() || returnVal.isSkipped()); // skipping due to policy
+        returnVal.setSucceeded(result.getSucceeded() || returnVal.isSkippedDueToPolicy()); // skipping due to policy
         return returnVal;
     }
 

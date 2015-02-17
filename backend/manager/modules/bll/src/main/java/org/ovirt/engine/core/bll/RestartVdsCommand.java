@@ -209,7 +209,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
         if (result.getActionReturnValue() instanceof VDSFenceReturnValue) {
             VDSFenceReturnValue fenceReturnValue = result.getActionReturnValue();
             if (fenceReturnValue.getReturnValue() instanceof FenceStatusReturnValue) {
-                skipped = ((FenceStatusReturnValue) fenceReturnValue.getReturnValue()).getIsSkipped();
+                skipped = ((FenceStatusReturnValue) fenceReturnValue.getReturnValue()).getIsSkippedDueToPolicy();
             }
         }
         return skipped;

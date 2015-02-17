@@ -372,7 +372,9 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
      * 'skipped' as having occurred to due a fencing policy violation.
      */
     private boolean wasSkippedDueToPolicy(VDSFenceReturnValue result) {
-        return result != null && result.isSkipped() && getParameters().getParentCommand() == VdcActionType.RestartVds;
+        return result != null
+                && result.isSkippedDueToPolicy()
+                && getParameters().getParentCommand() == VdcActionType.RestartVds;
     }
 
     /**
@@ -380,7 +382,9 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
      * we interpret the skip as having occurred because the host is already at the required state.
      */
     private boolean wasSkippedDueToStatus(VDSFenceReturnValue result) {
-        return result != null && result.isSkipped() && getParameters().getParentCommand() != VdcActionType.RestartVds;
+        return result != null
+                && result.isSkippedDueToStatus()
+                && getParameters().getParentCommand() != VdcActionType.RestartVds;
     }
 
     public FenceValidator getFenceValidator() {

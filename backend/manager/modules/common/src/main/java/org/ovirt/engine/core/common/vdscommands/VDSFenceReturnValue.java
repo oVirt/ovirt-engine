@@ -44,13 +44,28 @@ public class VDSFenceReturnValue extends VDSReturnValue {
     }
 
     /**
-     * Determines according to the return status from fence invocation whether the fence-operation has been skipped.
+     * Determines according to the return status from fence invocation whether the fence-operation has been skipped
+     * due to status already reached
      */
-    public boolean isSkipped() {
+    public boolean isSkippedDueToStatus() {
         if (getReturnValue() != null && getReturnValue() instanceof FenceStatusReturnValue) {
             FenceStatusReturnValue fenceStatus =
                     (FenceStatusReturnValue) getReturnValue();
-            return fenceStatus.getIsSkipped();
+            return fenceStatus.getIsSkippedDueToStatus();
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Determines according to the return status from fence invocation whether the fence-operation has been skipped
+     * due to fencing policy
+     */
+    public boolean isSkippedDueToPolicy() {
+        if (getReturnValue() != null && getReturnValue() instanceof FenceStatusReturnValue) {
+            FenceStatusReturnValue fenceStatus =
+                    (FenceStatusReturnValue) getReturnValue();
+            return fenceStatus.getIsSkippedDueToPolicy();
         } else {
             return false;
         }
