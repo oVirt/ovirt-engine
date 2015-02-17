@@ -134,18 +134,6 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         privateDestroyCommand = value;
     }
 
-    private ArrayList<String> usedLunsMessages;
-
-    public ArrayList<String> getUsedLunsMessages() {
-        return usedLunsMessages;
-    }
-
-    public void setUsedLunsMessages(ArrayList<String> usedLunsMessages) {
-        this.usedLunsMessages = usedLunsMessages;
-    }
-
-    // get { return SelectedItems == null ? new object[0] : SelectedItems.Cast<storage_domains>().Select(a =>
-    // a.id).Cast<object>().ToArray(); }
     protected Object[] getSelectedKeys()
     {
         if (getSelectedItems() == null)
