@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntityMap;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
@@ -71,6 +72,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
     private List<VdsNetworkInterface> existingNics;
     private List<NetworkAttachment> existingAttachments;
     private List<HostNetwork> networksToConfigure;
+    private final QosDaoCache qosDaoCache = new QosDaoCache(getDbFacade().getHostNetworkQosDao());
 
     @Inject
     private HostNetworkTopologyPersister hostNetworkTopologyPersister;
@@ -259,9 +261,10 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
 
             for (VdsNetworkInterface iface : existingNics) {
                 Network network = getNetworkBusinessEntityMap().get(iface.getNetworkName());
-                iface.setNetworkImplementationDetails(NetworkUtils.calculateNetworkImplementationDetails(network,
-                    network == null ? null : qosDao.get(network.getQosId()),
-                    iface));
+                HostNetworkQos hostNetworkQos = network == null ? null : qosDaoCache.get(network.getQosId());
+                VdsNetworkInterface.NetworkImplementationDetails networkImplementationDetails =
+                    NetworkUtils.calculateNetworkImplementationDetails(network, hostNetworkQos, iface);
+                iface.setNetworkImplementationDetails(networkImplementationDetails);
             }
         }
 
@@ -312,7 +315,7 @@ public class HostSetupNetworksCommand<T extends HostSetupNetworksParameters> ext
                 networkToConfigure.setQosConfiguredOnInterface(qosConfiguredOnInterface);
                 if (qosConfiguredOnInterface) {
                     networkToConfigure.setQos(
-                        iface.isQosOverridden() ? iface.getQos() : qosDao.get(network.getQosId()));
+                        iface.isQosOverridden() ? iface.getQos() : qosDaoCache.get(network.getQosId()));
                 }
 
                 networksToConfigure.add(networkToConfigure);
