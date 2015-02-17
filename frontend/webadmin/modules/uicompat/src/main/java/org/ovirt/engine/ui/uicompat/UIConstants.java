@@ -2477,7 +2477,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Insufficient parameters to test connectivity")
     String testFailedInsufficientParams();
 
-    @DefaultStringValue("To enable NUMA set migration mode to non-migratable, and pin VM to host that supports NUMA topologhy")
+    @DefaultStringValue("To enable NUMA set migration mode to non-migratable, and pin VM to host that supports NUMA topology")
     String numaDisabledInfoMessage();
 
     @DefaultStringValue("Click on Numa Pinning to configure VM's virtual node span on top of physical host NUMA nodes")
