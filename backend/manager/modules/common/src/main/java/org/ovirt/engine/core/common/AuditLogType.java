@@ -130,6 +130,9 @@ public enum AuditLogType {
     HOST_BOND_SLAVE_STATE_UP(611, AuditLogSeverity.NORMAL),
     HOST_BOND_SLAVE_STATE_DOWN(612, AuditLogSeverity.WARNING),
 
+    // Host Registration
+    HOST_REGISTRATION_FAILED_INVALID_CLUSTER(618),
+
     // Disk alignment audit logs
     DISK_ALIGNMENT_SCAN_START(700),
     DISK_ALIGNMENT_SCAN_FAILURE(701, AuditLogSeverity.WARNING),

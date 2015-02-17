@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -28,6 +29,7 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -179,15 +181,10 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
             logable.addCustomValue("VdsName1", getParameters().getVdsName());
 
-            Guid vdsGroupId;
-            if (Guid.Empty.equals(getParameters().getVdsGroupId())) {
-                vdsGroupId = Guid.createGuidFromStringDefaultEmpty(
-                        Config.<String> getValue(ConfigValues.AutoRegistrationDefaultVdsGroupID));
-                log.debug(
-                        "RegisterVdsQuery::ExecuteCommand - VdsGroupId received as -1, using AutoRegistrationDefaultVdsGroupID: '{}'",
-                        vdsGroupId);
-            } else {
-                vdsGroupId = getParameters().getVdsGroupId();
+            Guid vdsGroupId = getClusterId();
+            if (Guid.isNullOrEmpty(vdsGroupId)) {
+                reportClusterError();
+                return;
             }
             if (provisionedVds != null) {
                 // In provision don't set host on pending - isPending = false
@@ -204,6 +201,40 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
             log.debug("RegisterVdsQuery::ExecuteCommand - Leaving Succeded value is '{}'",
                     getQueryReturnValue().getSucceeded());
         }
+    }
+
+    private void reportClusterError() {
+        log.error("No default or valid cluster was found, host registration failed.");
+        AuditLogableBase logableBase = new AuditLogableBase();
+        logableBase.setVdsId(getParameters().getVdsId());
+        auditLogDirector.log(logableBase, AuditLogType.HOST_REGISTRATION_FAILED_INVALID_CLUSTER);
+    }
+
+    private Guid getClusterId() {
+        Guid clusterId = getParameters().getVdsGroupId();
+        if (Guid.Empty.equals(getParameters().getVdsGroupId())) {
+            clusterId = Guid.createGuidFromStringDefaultEmpty(
+                    Config.<String> getValue(ConfigValues.AutoRegistrationDefaultVdsGroupID));
+            log.debug(
+                    "Cluster id was not provided for registering the host {}, the cluster id {} is taken from the config value {}",
+                    getParameters().getVdsName(), clusterId, ConfigValues.AutoRegistrationDefaultVdsGroupID.name());
+        }
+
+        if (Guid.isNullOrEmpty(clusterId)) {
+            // try to get the default cluster id
+            VdsGroupDAO clusterDao = getDbFacade().getVdsGroupDao();
+            VDSGroup cluster = clusterDao.getByName("Default");
+            if (cluster != null) {
+                clusterId = cluster.getId();
+            } else {
+                // this may occur when the default cluster is removed
+                List<VDSGroup> clusters = clusterDao.getAll();
+                if (!clusters.isEmpty()) {
+                    clusterId = clusters.get(0).getId();
+                }
+            }
+        }
+        return clusterId;
     }
 
     private boolean dispatchOvirtApprovalCommand(Guid oVirtId) {
