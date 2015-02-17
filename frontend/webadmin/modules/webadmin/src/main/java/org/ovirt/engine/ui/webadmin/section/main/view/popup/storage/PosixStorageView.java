@@ -6,6 +6,9 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.PosixStorageModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
@@ -15,6 +18,7 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ValueBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -71,6 +75,9 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
     @UiField
     Label message;
 
+    @UiField
+    Image nfsPosixAlertIcon;
+
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
@@ -92,7 +99,18 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
         pathHintLabel.setText(constants.storagePopupPosixPathHintLabel());
         vfsTypeLabel.setText(constants.storagePopupVfsTypeLabel());
         mountOptionsLabel.setText(constants.storagePopupMountOptionsLabel());
+        nfsPosixAlertIcon.setTitle(constants.storagePopupPosixNfsWarningLabel());
     }
+
+    private IEventListener vfsTypeListener = new IEventListener<EventArgs>() {
+        @Override
+        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+            EntityModel<String> posixStorageModel = (EntityModel<String>) sender;
+            boolean isNfs =
+                    posixStorageModel.getEntity() != null ? posixStorageModel.getEntity().toLowerCase().equals("nfs") : false; //$NON-NLS-1$
+            nfsPosixAlertIcon.setVisible(isNfs);
+        }
+    };
 
     @Override
     public void edit(PosixStorageModel object) {
@@ -103,6 +121,10 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
         StyleTextBoxEditor(pathEditor, object.getPath());
         StyleTextBoxEditor(vfsTypeEditor, object.getVfsType());
         StyleTextBoxEditor(mountOptionsEditor, object.getMountOptions());
+
+        if (!object.getVfsType().getEntityChangedEvent().getListeners().contains(vfsTypeListener)) {
+            object.getVfsType().getEntityChangedEvent().addListener(vfsTypeListener);
+        }
     }
 
     /*

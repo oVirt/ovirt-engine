@@ -428,6 +428,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Path to device to mount / remote export")
     String storagePopupPosixPathHintLabel();
 
+    @DefaultStringValue("Adding an NFS domain as POSIX is highly discouraged, please create an NFS domain for best optimizations")
+    String storagePopupPosixNfsWarningLabel();
+
     @DefaultStringValue("Select Host to be used")
     String storageRemovePopupHostLabel();
 
