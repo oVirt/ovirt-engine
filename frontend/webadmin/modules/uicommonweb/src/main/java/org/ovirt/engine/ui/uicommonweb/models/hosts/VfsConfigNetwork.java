@@ -5,11 +5,11 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 public class VfsConfigNetwork extends EntityModel<Network> {
     boolean isAttached;
-    String labelViaAttached;
+    VfsNicLabelModel labelModel;
 
-    public VfsConfigNetwork(boolean isAttached, String labelViaAttached, Network network) {
+    public VfsConfigNetwork(boolean isAttached, VfsNicLabelModel labelModel, Network network) {
         this.isAttached = isAttached;
-        this.labelViaAttached = labelViaAttached;
+        this.labelModel = labelModel;
         setEntity(network);
     }
 
@@ -22,10 +22,11 @@ public class VfsConfigNetwork extends EntityModel<Network> {
     }
 
     public String getLabelViaAttached() {
-        return labelViaAttached;
+        return labelModel.computeSelecetedLabels().contains(getEntity().getLabel()) ? getEntity().getLabel()
+                : null;
     }
 
-    public void setLabelViaAttached(String labelViaAttached) {
-        this.labelViaAttached = labelViaAttached;
+    public boolean isAttachedViaLabel() {
+        return getLabelViaAttached() != null;
     }
 }

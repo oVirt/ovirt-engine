@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
@@ -27,6 +28,8 @@ import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.text.shared.AbstractRenderer;
@@ -104,7 +107,7 @@ public class VfsConfigWidget extends AbstractModelBoundPopupWidget<VfsConfigMode
 
     @UiField(provided = true)
     @Ignore
-    NicLabelWidget labelsWidget;
+    VfsNicLabelWidget labelsWidget;
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
     private final static ApplicationMessages messages = AssetProvider.getMessages();
@@ -122,18 +125,13 @@ public class VfsConfigWidget extends AbstractModelBoundPopupWidget<VfsConfigMode
 
         networks = new EntityModelCellTable<ListModel<VfsConfigNetwork>>(SelectionMode.NONE, true);
 
-        labelsWidget = new NicLabelWidget() {
-            @Override
-            protected NicLabelEditor createWidget(ListModel<String> value) {
-                NicLabelEditor editor = super.createWidget(value);
-                editor.suggestBoxEditor.addContentWidgetStyleName(VfsConfigWidget.this.style.labelEditorContent());
-                editor.suggestBoxEditor.addWrapperStyleName(VfsConfigWidget.this.style.labelEditorWrapper());
-                return editor;
-            }
-        };
+        labelsWidget = new VfsNicLabelWidget();
 
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         WidgetIdHandler.idHandler.generateAndSetIds(this);
+
+        labelsWidget.setLabelEditorStyle(style.labelEditorContent());
+        labelsWidget.setEditorWrapperStyle(style.labelEditorWrapper());
 
         initExpander(constants);
         localize(constants);
@@ -166,9 +164,18 @@ public class VfsConfigWidget extends AbstractModelBoundPopupWidget<VfsConfigMode
     @Override
     public void edit(final VfsConfigModel model) {
         driver.edit(model);
+
         labelsWidget.edit(model.getLabelsModel());
         networks.asEditor().edit(model.getNetworks());
         initNetworksTable();
+
+        labelsWidget.addValueChangeHandler(new ValueChangeHandler<Set<String>>() {
+
+            @Override
+            public void onValueChange(ValueChangeEvent<Set<String>> event) {
+                refreshNetworksTable();
+            }
+        });
 
         updateAllowedNetworksPanelVisibility(model);
         model.getAllNetworksAllowed().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
@@ -222,7 +229,7 @@ public class VfsConfigWidget extends AbstractModelBoundPopupWidget<VfsConfigMode
 
         @Override
         public Boolean getValue(VfsConfigNetwork vfsConfigNetwork) {
-            return vfsConfigNetwork.isAttached();
+            return shouldNetworkBeDisplayedAsAttached(vfsConfigNetwork);
         }
 
         @Override
@@ -244,7 +251,7 @@ public class VfsConfigWidget extends AbstractModelBoundPopupWidget<VfsConfigMode
         @Override
         protected void selectionChanged(Boolean value) {
             for (VfsConfigNetwork vfsConfigNetwork : getNetworksTableItems()) {
-                if (canEditAssign(vfsConfigNetwork)) {
+                if (!vfsConfigNetwork.isAttachedViaLabel()) {
                     vfsConfigNetwork.setAttached(value);
                 }
             }
@@ -253,9 +260,8 @@ public class VfsConfigWidget extends AbstractModelBoundPopupWidget<VfsConfigMode
 
         @Override
         public Boolean getValue() {
-            boolean allEntriesDisabled = !isEnabled();
             for (VfsConfigNetwork vfsConfigNetwork : getNetworksTableItems()) {
-                if ((allEntriesDisabled || canEditAssign(vfsConfigNetwork)) && !vfsConfigNetwork.isAttached()) {
+                if (!shouldNetworkBeDisplayedAsAttached(vfsConfigNetwork)) {
                     return false;
                 }
             }
@@ -279,7 +285,11 @@ public class VfsConfigWidget extends AbstractModelBoundPopupWidget<VfsConfigMode
     }
 
     private boolean canEditAssign(VfsConfigNetwork vfsConfigNetwork) {
-        return vfsConfigNetwork.getLabelViaAttached() == null;
+        return !vfsConfigNetwork.isAttachedViaLabel();
+    }
+
+    private boolean shouldNetworkBeDisplayedAsAttached(VfsConfigNetwork vfsConfigNetwork) {
+        return vfsConfigNetwork.isAttached() || vfsConfigNetwork.isAttachedViaLabel();
     }
 
     private void refreshNetworksTable() {

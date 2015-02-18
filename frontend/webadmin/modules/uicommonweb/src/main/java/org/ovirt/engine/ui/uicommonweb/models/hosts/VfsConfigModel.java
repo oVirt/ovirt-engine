@@ -33,10 +33,10 @@ public class VfsConfigModel extends EntityModel<HostNicVfsConfig> {
         allNetworksAllowed.setItems(Arrays.asList(AllNetworksSelector.values()));
         allNetworksAllowed.setSelectedItem(vfsConfig.isAllNetworksAllowed() ? AllNetworksSelector.allNetworkAllowed
                 : AllNetworksSelector.specificNetworks);
-        initNetworks(allClusterNetworks);
 
         dcLabels.removeAll(vfsConfig.getNetworkLabels());
         labelsModel = new VfsNicLabelModel(new ArrayList<>(vfsConfig.getNetworkLabels()), dcLabels);
+        initNetworks(allClusterNetworks);
     }
 
     public EntityModel<Integer> getNumOfVfs() {
@@ -82,16 +82,11 @@ public class VfsConfigModel extends EntityModel<HostNicVfsConfig> {
         for (Network network : allClusterNetworks) {
             boolean isAttached = attachedNetworks.contains(network.getId());
             VfsConfigNetwork vfsConfigNetwork =
-                    new VfsConfigNetwork(isAttached, isAttached ? getAttachedViaLabel(network) : null, network);
+                    new VfsConfigNetwork(isAttached, labelsModel, network);
             vfsConfigNetworks.add(vfsConfigNetwork);
         }
 
         networks.setItems(vfsConfigNetworks);
-    }
-
-    private String getAttachedViaLabel(Network network) {
-        // TODO return the label just if the network is really attached via the label
-        return network.getLabel();
     }
 
     public static enum AllNetworksSelector {

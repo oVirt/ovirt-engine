@@ -84,6 +84,7 @@
         .splitter {
             background-color: grey;
             width: 1px;
+            margin-top: 32px;
         }
 
         .labelEditorsPanel {
@@ -109,7 +110,7 @@
 				</g:ScrollPanel>
 			</g:FlowPanel>
 			<g:SimplePanel addStyleNames="{style.splitter}" />
-			<h:NicLabelWidget ui:field="labelsWidget" addStyleNames="{style.labelWidget}" />
+			<h:VfsNicLabelWidget ui:field="labelsWidget" addStyleNames="{style.labelWidget}" />
 		</g:FlowPanel>
 	</g:FlowPanel>
 
