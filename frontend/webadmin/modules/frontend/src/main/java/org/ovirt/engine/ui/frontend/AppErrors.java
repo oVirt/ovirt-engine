@@ -70,9 +70,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The specified disk snapshots don't belong to the same Disk.")
     String ACTION_TYPE_FAILED_DISKS_SNAPSHOTS_DONT_BELONG_TO_SAME_DISK();
 
-    @DefaultStringValue("Cannot delete Template. The Template does not exist on the following Storage Domains: ${domainsList}.\nEither verify that Template exists on all Storage Domains listed on the domains list,\nor do not send domains list in order to delete all instances of the Template from the system.")
-    String VMT_CANNOT_REMOVE_DOMAINS_LIST_MISMATCH();
-
     @DefaultStringValue("Cannot ${action} ${type}. VM's Image does not exist.")
     String ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST();
 

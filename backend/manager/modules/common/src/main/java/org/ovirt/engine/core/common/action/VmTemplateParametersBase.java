@@ -13,7 +13,6 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class VmTemplateParametersBase extends VdcActionParametersBase implements Serializable, HasGraphicsDevices {
     private static final long serialVersionUID = -8930994274659598061L;
-    private boolean removeTemplateFromDb;
     private Guid vmTemplateId;
     private Guid quotaId;
     private boolean privateCheckDisksExists;
@@ -72,14 +71,6 @@ public class VmTemplateParametersBase extends VdcActionParametersBase implements
 
     public VmTemplateParametersBase() {
         this(Guid.Empty);
-    }
-
-    public void setRemoveTemplateFromDb(boolean removeTemplateFromDb) {
-        this.removeTemplateFromDb = removeTemplateFromDb;
-    }
-
-    public boolean isRemoveTemplateFromDb() {
-        return removeTemplateFromDb;
     }
 
     public Guid getQuotaId() {

@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -107,29 +106,9 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             fetchImageTemplates();
         }
 
-        List<Guid> storageDomainsList = getParameters().getStorageDomainsList();
+        // populate all the domains of the template
         Set<Guid> allDomainsList = getStorageDomainsByDisks(imageTemplates, true);
-
-        // if null or empty list sent, get all template domains for deletion
-        if (storageDomainsList == null || storageDomainsList.isEmpty()) {
-            // populate all the domains of the template
-            getParameters().setStorageDomainsList(new ArrayList<Guid>(allDomainsList));
-            getParameters().setRemoveTemplateFromDb(true);
-        } else {
-            // if some domains sent, check that the sent domains are part of all domains
-            List<String> problematicDomains = new ArrayList<String>();
-            for (Guid domainId : storageDomainsList) {
-                if (!allDomainsList.contains(domainId)) {
-                    StorageDomainStatic domain = getDbFacade().getStorageDomainStaticDao().get(domainId);
-                    problematicDomains.add(domain == null ? domainId.toString() : domain.getStorageName());
-                }
-            }
-            if (!problematicDomains.isEmpty()) {
-                return failCanDoAction(VdcBllMessages.VMT_CANNOT_REMOVE_DOMAINS_LIST_MISMATCH,
-                        String.format("$domainsList %1$s", StringUtils.join(problematicDomains, ",")));
-            }
-            getParameters().setRemoveTemplateFromDb(allDomainsList.size() == storageDomainsList.size());
-        }
+        getParameters().setStorageDomainsList(new ArrayList<>(allDomainsList));
 
         // check template images for selected domains
         ArrayList<String> canDoActionMessages = getReturnValue().getCanDoActionMessages();
@@ -150,21 +129,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         List<VM> vms = getVmDAO().getAllWithTemplate(vmTemplateId);
         List<String> problematicVmNames = new ArrayList<String>();
         for (VM vm : vms) {
-            if (getParameters().isRemoveTemplateFromDb()) {
-                problematicVmNames.add(vm.getName());
-            } else {
-                List<DiskImage> vmDIsks =
-                        ImagesHandler.filterImageDisks(getDbFacade().getDiskDao().getAllForVm(vm.getId()),
-                                false,
-                                false,
-                                true);
-                Set<Guid> domainsIds = getStorageDomainsByDisks(vmDIsks, false);
-                for (Guid domainId : domainsIds) {
-                    if (!getParameters().getStorageDomainsList().contains(domainId)) {
-                        problematicVmNames.add(vm.getName());
-                    }
-                }
-            }
+            problematicVmNames.add(vm.getName());
         }
 
         if (!problematicVmNames.isEmpty()) {
@@ -173,7 +138,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         }
 
         // for base templates, make sure it has no versions that need to be removed first
-        if (getParameters().isRemoveTemplateFromDb() && vmTemplateId.equals(template.getBaseTemplateId())) {
+        if (vmTemplateId.equals(template.getBaseTemplateId())) {
             List<VmTemplate> templateVersions = getVmTemplateDAO().getTemplateVersionsForBaseTemplate(vmTemplateId);
             if (!templateVersions.isEmpty()) {
                 List<String> templateVersionsNames = new ArrayList<>();
@@ -310,12 +275,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
     private void HandleEndAction() {
         try {
-            if (getParameters().isRemoveTemplateFromDb()) {
-                removeTemplateFromDb();
-            } else {
-                // unlock template
-                VmTemplateHandler.unlockVmTemplate(getVmTemplateId());
-            }
+            removeTemplateFromDb();
             setSucceeded(true);
         } catch (RuntimeException e) {
             // Set the try again of task to false, to prevent log spam and audit log spam.
