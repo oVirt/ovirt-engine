@@ -84,7 +84,8 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
         String options = vdsFenceOptions.ToInternalString();
 
         // ignore starting already started host or stopping already stopped host.
-        if (!isAlreadyInRequestedStatus(options)) {
+        if (getParameters().getAction() == FenceActionType.Status
+                || !isAlreadyInRequestedStatus(options)) {
             _result =
                     getBroker().fenceNode(getParameters().getIp(),
                             getParameters().getPort() == null ? "" : getParameters().getPort(),
