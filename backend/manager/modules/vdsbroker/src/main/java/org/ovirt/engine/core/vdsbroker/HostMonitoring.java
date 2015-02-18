@@ -268,15 +268,7 @@ public class HostMonitoring {
             }
         }
         if (!vdsNumaNodesToSave.isEmpty()) {
-            TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                    new TransactionMethod<Void>() {
-                        @Override
-                        public Void runInTransaction() {
-                            getDbFacade().getVdsNumaNodeDAO().massUpdateNumaNodeStatistics(vdsNumaNodesToSave);
-                            return null;
-                        }
-                    }
-            );
+            getDbFacade().getVdsNumaNodeDAO().massUpdateNumaNodeStatistics(vdsNumaNodesToSave);
         }
     }
 
