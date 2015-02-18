@@ -105,8 +105,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
 
         StorageDomain dom = getStorageDomain();
         if (dom == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         }
 
         VDS vds = getVds();
@@ -132,14 +131,12 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
                     return false;
                 }
             } else {
-                addCanDoActionMessage(VdcBllMessages.CANNOT_REMOVE_STORAGE_DOMAIN_INVALID_HOST_ID);
-                return false;
+                return failCanDoAction(VdcBllMessages.CANNOT_REMOVE_STORAGE_DOMAIN_INVALID_HOST_ID);
             }
         }
 
         if (dom.getStorageType() == StorageType.GLANCE) {
-            addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_MANAGE_STORAGE_DOMAIN);
-            return false;
+            return failCanDoAction(VdcBllMessages.ERROR_CANNOT_MANAGE_STORAGE_DOMAIN);
         }
 
         return true;
