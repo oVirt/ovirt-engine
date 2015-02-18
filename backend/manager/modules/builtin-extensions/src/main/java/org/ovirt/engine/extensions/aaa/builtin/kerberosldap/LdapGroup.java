@@ -1,9 +1,10 @@
-package org.ovirt.engine.core.common.businessentities.aaa;
+package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 
 public class LdapGroup extends IVdcQueryable {

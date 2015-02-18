@@ -15,8 +15,6 @@ import org.ovirt.engine.api.extensions.Extension;
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.api.extensions.aaa.Authz.QueryFilterRecord;
-import org.ovirt.engine.core.common.businessentities.aaa.LdapGroup;
-import org.ovirt.engine.core.common.businessentities.aaa.LdapUser;
 
 /**
  * This directory implementation is a bridge between the new directory interfaces and the existing LDAP infrastructure.

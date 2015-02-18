@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authn;
-import org.ovirt.engine.core.common.businessentities.aaa.LdapUser;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.AuthenticationResult;
 
 public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {

@@ -3,8 +3,6 @@ package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.aaa.LdapGroup;
-
 /**
  * Contains search result information for directory groups.
  */

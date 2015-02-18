@@ -1,7 +1,5 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
-import org.ovirt.engine.core.common.businessentities.aaa.LdapUser;
-
 public class LdapGetAdUserByUserNameCommand extends LdapBrokerCommandBase {
     private String getUserName() {
         return ((LdapSearchByUserNameParameters) getParameters()).getUserName();

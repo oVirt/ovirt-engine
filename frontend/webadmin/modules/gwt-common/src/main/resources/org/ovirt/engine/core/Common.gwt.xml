@@ -17,8 +17,6 @@
 		<include name="common/businessentities/aaa/AuthzGroup.java" />
 		<include name="common/businessentities/aaa/DbGroup.java" />
 		<include name="common/businessentities/aaa/DbUser.java" />
-		<include name="common/businessentities/aaa/LdapGroup.java" />
-		<include name="common/businessentities/aaa/LdapUser.java" />
 		<include name="aaa/AuthType.java" />
 		<include name="aaa/DirectoryEntry.java" />
 		<include name="aaa/ProfileEntry.java" />

@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 
-import org.ovirt.engine.core.common.businessentities.aaa.LdapUser;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ITDSUserContextMapper implements ContextMapper {

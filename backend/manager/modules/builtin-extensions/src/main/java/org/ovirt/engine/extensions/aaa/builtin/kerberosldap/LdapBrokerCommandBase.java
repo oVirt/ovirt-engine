@@ -11,8 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.ovirt.engine.api.extensions.aaa.Authn;
-import org.ovirt.engine.core.common.businessentities.aaa.LdapGroup;
-import org.ovirt.engine.core.common.businessentities.aaa.LdapUser;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.AuthenticationResult;
 
