@@ -92,6 +92,7 @@ public class RemoveStorageDomainCommandTest {
         StorageDomainToPoolRelationValidatorTesting domainToPoolValidator = spy(new StorageDomainToPoolRelationValidatorTesting(storageDomain, null));
         doReturn(storagePoolIsoMapDAOMock).when(domainToPoolValidator).getStoragePoolIsoMapDao();
         doReturn(domainToPoolValidator).when(command).createDomainToPoolValidator(storageDomain);
+        doReturn(Boolean.FALSE).when(command).isStorageDomainAttached(storageDomain);
     }
 
     @Test
@@ -107,6 +108,25 @@ public class RemoveStorageDomainCommandTest {
     public void testCanDoActionSuccess() {
         storageDomain.setStorageType(StorageType.NFS);
         storageDomain.setStorageDomainType(StorageDomainType.Data);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    }
+
+    @Test
+    public void testCanDoActionWithAttachedStorageDomain() {
+        storageDomain.setStorageType(StorageType.NFS);
+        storageDomain.setStorageDomainType(StorageDomainType.Data);
+        doReturn(Boolean.TRUE).when(command).isStorageDomainAttached(storageDomain);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(
+                "canDoAction shouldn't be possible for an attached storage domain",
+                command, VdcBllMessages.ACTION_TYPE_FAILED_FORMAT_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN);
+    }
+
+    @Test
+    public void testCanDoActionWithAttachedStorageDomainAndNoFormat() {
+        storageDomain.setStorageType(StorageType.NFS);
+        storageDomain.setStorageDomainType(StorageDomainType.Data);
+        doReturn(Boolean.TRUE).when(command).isStorageDomainAttached(storageDomain);
+        command.getParameters().setDoFormat(false);
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 

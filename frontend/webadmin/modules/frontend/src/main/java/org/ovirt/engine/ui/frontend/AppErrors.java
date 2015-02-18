@@ -1567,6 +1567,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Storage format ${storageFormat} is not supported on the selected host version.")
     String ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST();
 
+    @DefaultStringValue("Cannot ${action} ${type}.\n The Storage Domain metadata indicates it is already attached to a Data Center hence cannot be formatted.\n To remove the Storage Domain one should either remove it without the format option or attach it to an existing Data Center, detach it, and try again.")
+    String ACTION_TYPE_FAILED_FORMAT_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN();
+
     @DefaultStringValue("Cannot extend Storage Domain. Extend operation is supported only on Data Storage Domain.")
     String ERROR_CANNOT_EXTEND_NON_DATA_DOMAIN();
 

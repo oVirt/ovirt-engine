@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -23,6 +24,8 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.queries.StorageDomainsAndStoragePoolIdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -108,6 +111,10 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         }
 
+        if (getParameters().getDoFormat() && isStorageDomainAttached(dom)) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_FORMAT_STORAGE_DOMAIN_WITH_ATTACHED_DATA_DOMAIN);
+        }
+
         VDS vds = getVds();
         boolean localFs = isLocalFs(dom);
         StorageDomainToPoolRelationValidator domainPoolValidator = createDomainToPoolValidator(dom);
@@ -140,6 +147,14 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
         }
 
         return true;
+    }
+
+    protected boolean isStorageDomainAttached(StorageDomain dom) {
+        List<StorageDomain> storageDomainList =
+                (List<StorageDomain>) getBackend().runInternalQuery(VdcQueryType.GetStorageDomainsWithAttachedStoragePoolGuid,
+                        new StorageDomainsAndStoragePoolIdQueryParameters(dom, getStoragePoolId(), getVds().getId(), false))
+                        .getReturnValue();
+        return !storageDomainList.isEmpty();
     }
 
     protected StorageDomainToPoolRelationValidator createDomainToPoolValidator(StorageDomain dom) {
