@@ -6,17 +6,15 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.common.utils.FencingPolicyHelper;
 import org.ovirt.engine.core.common.vdscommands.FenceVdsVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.pm.VdsFenceOptions;
@@ -41,63 +39,26 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
         super(parameters);
     }
 
-    private VDS getProxyVds() {
+    protected VDS getProxyVds() {
         if (proxyVds == null) {
-            proxyVds = DbFacade.getInstance().getVdsDao().get(getParameters().getVdsId());
+            proxyVds = getDbFacade().getVdsDao().get(getParameters().getVdsId());
         }
         return proxyVds;
     }
 
-    private VDS getTargetVds() {
+    protected VDS getTargetVds() {
         if (targetVds == null) {
-            targetVds = DbFacade.getInstance().getVdsDao().get(getParameters().getTargetVdsID());
+            targetVds = getDbFacade().getVdsDao().get(getParameters().getTargetVdsID());
         }
         return targetVds;
     }
 
-    /**
-     * Alerts the specified log type.
-     *
-     * @param logType
-     *            Type of the log.
-     * @param reason
-     *            The reason.
-     */
-    private void alert(AuditLogType logType, String reason) {
-        AuditLogableBase alert = new AuditLogableBase();
-        alert.setVdsId(getParameters().getTargetVdsID());
-        alert.addCustomValue("Reason", reason);
-        AlertDirector.Alert(alert, logType, auditLogDirector);
-    }
-
-    /**
-     * Alerts if power management status failed.
-     *
-     * @param reason
-     *            The reason.
-     */
-    protected void alertPowerManagementStatusFailed(String reason) {
-        alert(AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, reason);
-    }
-
     @Override
     protected void executeVdsBrokerCommand() {
-        // We have to pass here the proxy host cluster compatibility version
-        VDS vds = getProxyVds();
-        VdsFenceOptions vdsFenceOptions = new VdsFenceOptions(getParameters().getType(),
-                getParameters().getOptions(), vds.getVdsGroupCompatibilityVersion().toString());
-        String options = vdsFenceOptions.ToInternalString();
-
         // ignore starting already started host or stopping already stopped host.
         if (getParameters().getAction() == FenceActionType.STATUS
-                || !isAlreadyInRequestedStatus(options)) {
-            _result =
-                    getBroker().fenceNode(getParameters().getIp(),
-                            getParameters().getPort() == null ? "" : getParameters().getPort(),
-                    getParameters().getType(), getParameters().getUser(),
-                    getParameters().getPassword(), getParameters().getAction().getValue(), "", options,
-                    convertFencingPolicy()
-            );
+                || !isAlreadyInRequestedStatus()) {
+            _result = fenceNode(getParameters().getAction());
 
             getVDSReturnValue().setSucceeded(false);
             if (getParameters().getAction() == FenceActionType.STATUS && _result.power != null) {
@@ -122,43 +83,45 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
                 getVDSReturnValue().setSucceeded(_result.mStatus.mCode == 0);
             }
         } else {
-            handleSkippedOperation();
+            // start/stop action was skipped, host is already turned on/off
+            alertActionSkippedAlreadyInStatus();
+            getVDSReturnValue().setSucceeded(true);
+            setReturnValue(new FenceStatusReturnValue(FenceStatusReturnValue.SKIPPED_DUE_TO_STATUS, ""));
         }
     }
 
     /**
-     * Handles cases where fence operation was skipped (host is already in requested state)
+     * Alerts if power management status failed.
+     *
+     * @param reason
+     *            The reason.
      */
-    private void handleSkippedOperation() {
-        FenceStatusReturnValue fenceStatusReturnValue = new FenceStatusReturnValue(FenceStatusReturnValue.SKIPPED_DUE_TO_STATUS, "");
+    protected void alertPowerManagementStatusFailed(String reason) {
+        AuditLogableBase alert = new AuditLogableBase();
+        alert.setVdsId(getParameters().getTargetVdsID());
+        alert.addCustomValue("Reason", reason);
+        auditLogDirector.log(alert, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
+    }
+
+    /**
+     * Alerts when power management stop was skipped because host is already down.
+     */
+    protected void alertActionSkippedAlreadyInStatus() {
         AuditLogableBase auditLogable = new AuditLogableBase();
-        auditLogable.addCustomValue("HostName",
-                (DbFacade.getInstance().getVdsDao().get(getParameters().getTargetVdsID())).getName());
+        auditLogable.addCustomValue("HostName", getTargetVds().getName());
         auditLogable.addCustomValue("AgentStatus", getParameters().getAction().getValue());
         auditLogable.addCustomValue("Operation", getParameters().getAction().toString());
         auditLogDirector.log(auditLogable, AuditLogType.VDS_ALREADY_IN_REQUESTED_STATUS);
-        getVDSReturnValue().setSucceeded(true);
-        setReturnValue(fenceStatusReturnValue);
     }
 
     /**
      * Checks if Host is already in the requested status. If Host is Down and a Stop command is issued or if Host is Up
      * and a Start command is issued command should do nothing.
-     *
-     * @param options
-     *            Fence options passed to the agent
-     * @return
      */
-    private boolean isAlreadyInRequestedStatus(String options) {
+    private boolean isAlreadyInRequestedStatus() {
         boolean ret = false;
         FenceActionType action = getParameters().getAction();
-        _result =
-                getBroker().fenceNode(getParameters().getIp(),
-                        getParameters().getPort() == null ? "" : getParameters().getPort(),
-                getParameters().getType(), getParameters().getUser(),
-                getParameters().getPassword(), "status", "", options,
-                null
-        );
+        _result = fenceNode(FenceActionType.STATUS);
         if (_result.power != null) {
             String powerStatus = _result.power.toLowerCase();
             if ((action == FenceActionType.START && powerStatus.equals("on")) ||
@@ -168,10 +131,10 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
         return ret;
     }
 
-    private Map<String, Object> convertFencingPolicy() {
+    protected Map<String, Object> convertFencingPolicy() {
         Map<String, Object> map = null;
-        if (getParameters().getFencingPolicy() != null &&
-                FencingPolicyHelper.isFencingPolicySupported(getProxyVds().getSupportedClusterVersionsSet())) {
+        if (getParameters().getFencingPolicy() != null
+                && FencingPolicyHelper.isFencingPolicySupported(getProxyVds().getSupportedClusterVersionsSet())) {
             // fencing policy is entered and proxy supports passing fencing policy parameters
             map = new HashMap<>();
             if (getParameters().getFencingPolicy().isSkipFencingIfSDActive()) {
@@ -182,18 +145,16 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
         return map;
     }
 
-    private Map<Guid, Integer> createStorageDomainHostIdMap() {
+    protected Map<Guid, Integer> createStorageDomainHostIdMap() {
         Map<Guid, Integer> map = null;
         if (getParameters().getFencingPolicy().isSkipFencingIfSDActive()) {
             map = new HashMap<>();
-            DbFacade dbf = DbFacade.getInstance();
 
-            vds_spm_id_map hostIdRecord = dbf.getVdsSpmIdMapDao().get(
-                    getTargetVds().getId()
-            );
+            vds_spm_id_map hostIdRecord = getDbFacade().getVdsSpmIdMapDao().get(
+                    getTargetVds().getId());
 
             // create a map SD_GUID -> HOST_ID
-            for (StorageDomain sd : dbf.getStorageDomainDao().getAllForStoragePool(
+            for (StorageDomain sd : getDbFacade().getStorageDomainDao().getAllForStoragePool(
                     getTargetVds().getStoragePoolId())
             ) {
                 if (sd.getStorageStaticData().getStorageDomainType() == StorageDomainType.Master ||
@@ -206,9 +167,31 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
         return map;
     }
 
+    protected String getVdsFenceOptions(String type, String options, String compatibilityVersion) {
+        return new VdsFenceOptions(type, options, compatibilityVersion).ToInternalString();
+    }
+
+    protected FenceStatusReturnForXmlRpc fenceNode(FenceActionType fenceAction) {
+        return getBroker().fenceNode(
+                getParameters().getIp(),
+                getParameters().getPort() == null ? "" : getParameters().getPort(),
+                getParameters().getType(),
+                getParameters().getUser(),
+                getParameters().getPassword(),
+                fenceAction.getValue(),
+                "",
+                getVdsFenceOptions(
+                        getParameters().getType(),
+                        getParameters().getOptions(),
+                        getProxyVds().getVdsGroupCompatibilityVersion().toString()),
+                getParameters().getAction() != FenceActionType.STATUS
+                        ? convertFencingPolicy()
+                        : null);
+    }
+
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return (_result.mStatus != null) ? _result.mStatus : new StatusForXmlRpc();
+        return _result.mStatus != null ? _result.mStatus : new StatusForXmlRpc();
     }
 
     @Override
