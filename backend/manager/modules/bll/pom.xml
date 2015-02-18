@@ -170,11 +170,6 @@
          <scope>test</scope>
      </dependency>
      <dependency>
-         <groupId>javax.enterprise</groupId>
-         <artifactId>cdi-api</artifactId>
-         <version>1.0-SP4</version>
-     </dependency>
-     <dependency>
          <groupId>org.apache.deltaspike.core</groupId>
          <artifactId>deltaspike-core-api</artifactId>
          <version>${deltaspike.version}</version>
