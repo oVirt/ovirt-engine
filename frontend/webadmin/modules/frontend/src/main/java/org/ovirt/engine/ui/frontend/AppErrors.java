@@ -376,9 +376,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Removing Blank Template is not allowed.")
     String VMT_CANNOT_REMOVE_BLANK_TEMPLATE();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Editing Blank Template is not allowed.")
-    String VMT_CANNOT_EDIT_BLANK_TEMPLATE();
-
     @DefaultStringValue("Cannot export Blank Template.")
     String VMT_CANNOT_EXPORT_BLANK_TEMPLATE();
 

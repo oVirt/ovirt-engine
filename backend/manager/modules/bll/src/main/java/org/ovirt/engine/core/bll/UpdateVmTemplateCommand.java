@@ -66,22 +66,21 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
     @Override
     protected boolean canDoAction() {
-        boolean isInstanceType = getVmTemplate().getTemplateType() == VmEntityType.INSTANCE_TYPE;
-        if (getVdsGroup() == null && !isInstanceType) {
+        boolean isInstanceType = isInstanceType();
+        boolean isBlankTemplate = isBlankTemplate();
+
+        if (getVdsGroup() == null && !(isInstanceType || isBlankTemplate)) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
             return false;
         }
 
-        if (VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getVmTemplate().getId())) {
-            return failCanDoAction(VdcBllMessages.VMT_CANNOT_EDIT_BLANK_TEMPLATE);
-        }
         boolean returnValue = false;
 
         if (mOldTemplate == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
 
-        if (!isInstanceType) {
+        if (!isInstanceType && !isBlankTemplate) {
             VmTemplateHandler.updateDisksFromDb(mOldTemplate);
         }
 
@@ -106,7 +105,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             return false;
         }
 
-        if (!isInstanceType && returnValue) {
+        if (!isInstanceType && !isBlankTemplate && returnValue) {
             return doClusterRelatedChecks();
         } else {
             return returnValue;
@@ -214,7 +213,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
     @Override
     protected void executeCommand() {
-        if (getVmTemplate().getTemplateType() != VmEntityType.INSTANCE_TYPE) {
+        if (!isInstanceType() && !isBlankTemplate()) {
             VmHandler.warnMemorySizeLegal(getParameters().getVmTemplateData(),
                     getVdsGroup().getCompatibilityVersion());
         }
@@ -234,7 +233,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
      * only in case of InstanceType update, update all vms that are bound to it
      */
     private void updateVmsOfInstanceType() {
-        if (getVmTemplate().getTemplateType() != VmEntityType.INSTANCE_TYPE) {
+        if (!isInstanceType()) {
             return;
         }
 
@@ -339,7 +338,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     public List<PermissionSubject> getPermissionCheckSubjects() {
         final List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
 
-        if (getVmTemplate() != null && getVmTemplate().getTemplateType() != VmEntityType.INSTANCE_TYPE) {
+        if (getVmTemplate() != null && !isInstanceType() && !isBlankTemplate()) {
             // host-specific parameters can be changed by administration role only
             if (!(getVmTemplate().getDedicatedVmForVds() == null ?
                     getParameters().getVmTemplateData().getDedicatedVmForVds() == null :
@@ -357,7 +356,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
     @Override
     protected boolean isQuotaDependant() {
-        if (getVmTemplate().getTemplateType() == VmEntityType.INSTANCE_TYPE) {
+        if (isInstanceType() || isBlankTemplate()) {
             return false;
         }
 
@@ -365,12 +364,17 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     }
 
     protected boolean setAndValidateCpuProfile() {
-        // cpu profile isn't supported for instance types.
-        if (getVmTemplate().getTemplateType() == VmEntityType.INSTANCE_TYPE) {
+        // cpu profile isn't supported for instance types nor for blank template.
+        if (isInstanceType() || isBlankTemplate()) {
             return true;
         }
+
         return validate(CpuProfileHelper.setAndValidateCpuProfile(getVmTemplate(),
                 getVdsGroup().getCompatibilityVersion()));
+    }
+
+    private boolean isInstanceType() {
+        return getVmTemplate().getTemplateType() == VmEntityType.INSTANCE_TYPE;
     }
 
     private VmPropertiesUtils getVmPropertiesUtils() {

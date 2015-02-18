@@ -279,4 +279,12 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
         }
     }
 
+    protected boolean isBlankTemplate() {
+        if (getVmTemplate() != null) {
+            return VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getVmTemplate().getId());
+        }
+
+        return false;
+    }
+
 }
