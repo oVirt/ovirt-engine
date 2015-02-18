@@ -68,7 +68,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
     }
 
     @Override
-    protected void init(T parameters) {
+    protected void postConstruct() {
         VM vmFromConfiguration = getParameters().getVm();
         if (vmFromConfiguration != null) {
             vmFromConfiguration.getStaticData().setVdsGroupId(getParameters().getVdsGroupId());
@@ -82,7 +82,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
 
         setVdsGroupId(getParameters().getVdsGroupId());
         getParameters().setStoragePoolId(getVdsGroup().getStoragePoolId());
-        super.init(parameters);
+        super.postConstruct();
     }
 
     private void initUnregisteredVM() {

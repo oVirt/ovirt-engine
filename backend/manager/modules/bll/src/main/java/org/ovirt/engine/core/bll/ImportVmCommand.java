@@ -117,8 +117,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     @Override
-    protected void init(T parameters) {
-        super.init(parameters);
+    protected void postConstruct() {
+        super.postConstruct();
+        T parameters = getParameters();
         setVmId(parameters.getContainerId());
         setVm(parameters.getVm());
         setVdsGroupId(parameters.getVdsGroupId());

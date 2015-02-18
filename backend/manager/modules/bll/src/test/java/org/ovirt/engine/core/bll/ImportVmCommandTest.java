@@ -182,6 +182,7 @@ public class ImportVmCommandTest {
                 return null;
             }
         });
+        cmd.postConstruct();
         parameters.setCopyCollapse(true);
         doReturn(true).when(cmd).validateNoDuplicateVm();
         doReturn(true).when(cmd).validateVdsCluster();
@@ -302,6 +303,7 @@ public class ImportVmCommandTest {
                 return null;
             }
         };
+        command.postConstruct();
         Set<ConstraintViolation<ImportVmParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
@@ -326,6 +328,7 @@ public class ImportVmCommandTest {
                 return null;
             }
         };
+        command.postConstruct();
         Set<ConstraintViolation<ImportVmParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
@@ -338,6 +341,7 @@ public class ImportVmCommandTest {
                 return null;
             }
         };
+        command.postConstruct();
         validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
@@ -356,6 +360,7 @@ public class ImportVmCommandTest {
                 return null;
             }
         };
+        command.postConstruct();
         List<DiskImage> diskList = new ArrayList<>();
         DiskImage diskImage = new DiskImage();
         diskImage.setStorageIds(new ArrayList<Guid>());
@@ -387,6 +392,7 @@ public class ImportVmCommandTest {
                 return null;
             }
         });
+        cmd.postConstruct();
 
         DiskImage collapsedDisk = params.getVm().getImages().get(1);
 
@@ -412,6 +418,7 @@ public class ImportVmCommandTest {
                 return null;
             }
         });
+        cmd.postConstruct();
         doReturn(true).when(cmd).validateNoDuplicateVm();
         doReturn(true).when(cmd).validateVdsCluster();
         doReturn(true).when(cmd).validateUsbPolicy();
@@ -443,6 +450,7 @@ public class ImportVmCommandTest {
                 return null;
             }
         });
+        cmd.postConstruct();
 
         for (DiskImage image : params.getVm().getImages()) {
             doNothing().when(cmd).saveImage(image);

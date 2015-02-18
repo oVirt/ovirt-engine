@@ -54,7 +54,6 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     ImportVmCommandBase(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
-        init(parameters);
     }
 
     ImportVmCommandBase(Guid commandId) {
@@ -76,7 +75,9 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         return null;
     }
 
-    protected void init(T parameters) {
+    @Override
+    protected void postConstruct() {
+        T parameters = getParameters();
         setStoragePoolId(parameters.getStoragePoolId());
         imageToDestinationDomainMap = parameters.getImageToDestinationDomainMap();
     }

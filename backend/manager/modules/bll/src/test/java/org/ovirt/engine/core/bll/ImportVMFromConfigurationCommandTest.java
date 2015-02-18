@@ -207,6 +207,7 @@ public class ImportVMFromConfigurationCommandTest {
                 return Collections.emptyList();
             }
         });
+        cmd.postConstruct();
         validator = spy(new ImportValidator(parameters));
         doReturn(validator).when(cmd).getImportValidator();
         mockStoragePool();
