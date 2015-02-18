@@ -743,7 +743,7 @@
                             <g:Label addStyleNames="{style.sectionLabel}" text="{constants.bootSequenceVmPopup}" />
                             <e:ListModelListBoxEditor ui:field="firstBootDeviceEditor" />
                             <e:ListModelListBoxEditor ui:field="secondBootDeviceEditor" />
-                            <g:HorizontalPanel addStyleNames="{style.attachCdPanel}" verticalAlignment="ALIGN_MIDDLE">
+                            <g:HorizontalPanel ui:field="attachCdPanel" addStyleNames="{style.attachCdPanel}" verticalAlignment="ALIGN_MIDDLE">
                                 <ge:EntityModelCheckBoxEditor label="{constants.attachCdVmPopup}" ui:field="cdAttachedEditor" />
                                 <e:ListModelListBoxEditor ui:field="cdImageEditor" addStyleNames="avmpw_cdImageEditor_pfly_fix" />
                                 <g:PushButton ui:field="refreshButton" addStyleNames="{style.refreshButton} avmpw_refreshButton_pfly_fix">

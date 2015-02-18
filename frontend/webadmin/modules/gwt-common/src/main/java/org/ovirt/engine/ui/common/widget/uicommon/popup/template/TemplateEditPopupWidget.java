@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.Widget;
+import org.ovirt.engine.ui.uicommonweb.models.templates.BlankTemplateModel;
 
 public class TemplateEditPopupWidget extends AbstractVmPopupWidget {
 
@@ -30,12 +31,21 @@ public class TemplateEditPopupWidget extends AbstractVmPopupWidget {
 
     @Override
     protected PopupWidgetConfigMap createWidgetConfiguration() {
-        return super.createWidgetConfiguration().
+        PopupWidgetConfigMap popupWidgetConfigMap = super.createWidgetConfiguration().
                 putOne(logicalNetworksEditorPanel, hiddenField()).
                 putAll(poolSpecificFields(), hiddenField()).
                 putOne(instanceTypesEditor, hiddenField()).
                 putOne(templateWithVersionEditor, hiddenField()).
                 putAll(resourceAllocationTemplateHiddenFields(), hiddenField());
+
+        if (getModel() instanceof BlankTemplateModel) {
+            popupWidgetConfigMap = popupWidgetConfigMap.
+                putOne(dataCenterWithClusterEditor, hiddenField()).
+                putOne(startRunningOnPanel, hiddenField()).
+                putOne(attachCdPanel, hiddenField());
+        }
+
+        return popupWidgetConfigMap;
     }
 
     protected List<Widget> resourceAllocationTemplateHiddenFields() {

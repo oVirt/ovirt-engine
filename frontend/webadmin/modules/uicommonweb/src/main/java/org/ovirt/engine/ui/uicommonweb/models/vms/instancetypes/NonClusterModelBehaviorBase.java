@@ -17,7 +17,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import java.util.Arrays;
 import java.util.HashSet;
 
-public class InstanceTypeModelBehaviorBase extends VmModelBehaviorBase<UnitVmModel> {
+public class NonClusterModelBehaviorBase extends VmModelBehaviorBase<UnitVmModel> {
 
     @Override
     public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
@@ -73,12 +73,6 @@ public class InstanceTypeModelBehaviorBase extends VmModelBehaviorBase<UnitVmMod
     @Override
     protected Version getClusterCompatibilityVersion() {
         return latestCluster();
-    }
-
-    protected Version latestCluster() {
-        // instance type always exposes all the features of the latest cluster and if some is not applicable
-        // than that particular feature will not be applicable on the instance creation
-        return Version.ALL.get(Version.ALL.size() - 1);
     }
 
     @Override

@@ -1447,7 +1447,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.migrateCompressed = migrateCompressed;
     }
 
-    public UnitVmModel(VmModelBehaviorBase behavior, ListModel parentModel) {
+    public UnitVmModel(VmModelBehaviorBase behavior, ListModel<?> parentModel) {
         this.behavior = behavior;
         this.behavior.setModel(this);
 
@@ -2319,6 +2319,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             return;
         }
 
+        doDisplayTypeChanged();
+    }
+
+    protected void doDisplayTypeChanged() {
         VDSGroup cluster = getSelectedCluster();
         Integer osType = getOSType().getSelectedItem();
 
@@ -2326,8 +2330,13 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             return;
         }
 
+        displayTypeSelectedItemChanged(osType, cluster.getCompatibilityVersion());
+    }
+
+    protected void displayTypeSelectedItemChanged(int osType, Version compatibilityVersion) {
         Set<GraphicsTypes> graphicsTypes = new LinkedHashSet<>();
-        List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays = AsyncDataProvider.getInstance().getGraphicsAndDisplays(osType, cluster.getCompatibilityVersion());
+        List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays = AsyncDataProvider.getInstance().getGraphicsAndDisplays(osType, compatibilityVersion);
+
         for (Pair<GraphicsType, DisplayType> graphicsAndDisplay : graphicsAndDisplays) {
             if (graphicsAndDisplay.getSecond() == getDisplayType().getSelectedItem()) {
                 graphicsTypes.add(GraphicsTypes.fromGraphicsType(graphicsAndDisplay.getFirst()));
@@ -2636,7 +2645,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                     new IValidation[] {
                             new NotEmptyValidation(),
                             new LengthValidation(
-                                    (getBehavior() instanceof TemplateVmModelBehavior || getBehavior() instanceof NewTemplateVmModelBehavior)
+                                    (getBehavior().isExistingTemplateBehavior() || getBehavior().isNewTemplateBehavior())
                                             ? VM_TEMPLATE_NAME_MAX_LIMIT
                                             : AsyncDataProvider.getInstance().isWindowsOsType(osType) ? AsyncDataProvider.getInstance().getMaxVmNameLengthWin()
                                             : AsyncDataProvider.getInstance().getMaxVmNameLengthNonWin()),
@@ -2697,9 +2706,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             }
         }
 
-        setValidTab(TabName.GENERAL_TAB, isValidTab(TabName.GENERAL_TAB)
-                && getDataCenterWithClustersList().getIsValid()
-                && getTemplateWithVersion().getIsValid());
+        if (!(getBehavior().isBlankTemplateBehavior())) {
+            setValidTab(TabName.GENERAL_TAB, isValidTab(TabName.GENERAL_TAB)
+                    && getDataCenterWithClustersList().getIsValid()
+                    && getTemplateWithVersion().getIsValid());
+        }
 
         setValidTab(TabName.INITIAL_RUN_TAB, getTimeZone().getIsValid());
 
@@ -2772,7 +2783,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         // Minimum 'Physical Memory Guaranteed' is 1MB
         validateMemorySize(getMemSize(), Integer.MAX_VALUE, 1);
-        if (!(getBehavior() instanceof TemplateVmModelBehavior) && getMemSize().getIsValid()) {
+        if (!getBehavior().isAnyTemplateBehavior() && getMemSize().getIsValid()) {
             validateMemorySize(getMinAllocatedMemory(), getMemSize().getEntity(), 1);
         }
         setValidTab(TabName.RESOURCE_ALLOCATION_TAB, getMinAllocatedMemory().getIsValid());

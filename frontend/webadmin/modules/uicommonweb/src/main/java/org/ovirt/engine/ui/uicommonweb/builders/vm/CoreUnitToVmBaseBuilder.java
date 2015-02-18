@@ -20,7 +20,7 @@ public class CoreUnitToVmBaseBuilder extends HwOnlyCoreUnitToVmBaseBuilder {
         super.build(model, vm);
         vm.setAllowConsoleReconnect(model.getAllowConsoleReconnect().getEntity());
         vm.setVmType(model.getVmType().getSelectedItem());
-        vm.setVdsGroupId(model.getSelectedCluster().getId());
+        vm.setVdsGroupId(model.getSelectedCluster() != null ? model.getSelectedCluster().getId() : null);
         vm.setTimeZone(model.getTimeZone().getIsAvailable() && model.getTimeZone().getSelectedItem() != null ? model.getTimeZone()
                 .getSelectedItem().getTimeZoneKey() : ""); //$NON-NLS-1$
         vm.setIsoPath(model.getCdImage().getIsChangable() ? model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
@@ -30,8 +30,8 @@ public class CoreUnitToVmBaseBuilder extends HwOnlyCoreUnitToVmBaseBuilder {
         vm.setSerialNumberPolicy(model.getSerialNumberPolicy().getSelectedSerialNumberPolicy());
         vm.setCustomSerialNumber(model.getSerialNumberPolicy().getCustomSerialNumber().getEntity());
         vm.setBootMenuEnabled(model.getBootMenuEnabled().getEntity());
-        vm.setSpiceFileTransferEnabled(model.getSpiceFileTransferEnabled().getEntity());
-        vm.setSpiceCopyPasteEnabled(model.getSpiceCopyPasteEnabled().getEntity());
+        vm.setSpiceFileTransferEnabled(Boolean.TRUE.equals(model.getSpiceFileTransferEnabled().getEntity()));
+        vm.setSpiceCopyPasteEnabled(Boolean.TRUE.equals(model.getSpiceCopyPasteEnabled().getEntity()));
         vm.setAutoConverge(model.getAutoConverge().getSelectedItem());
         vm.setMigrateCompressed(model.getMigrateCompressed().getSelectedItem());
         vm.setCustomProperties(model.getCustomPropertySheet().serialize());

@@ -44,7 +44,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmModelBehaviorBase;
-import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.ExistingInstanceTypeModelBehavior;
+import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.ExistingNonClusterModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeInterfaceCreatingManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.NewInstanceTypeModelBehavior;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -117,7 +117,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
 
     private void editInstanceType() {
         createWindow(
-                new ExistingInstanceTypeModelBehavior(getSelectedItem()),
+                new ExistingNonClusterModelBehavior((VmTemplate) getSelectedItem()),
                 "edit_instance_type", //$NON-NLS-1$
                 "OnEditInstanceType", //$NON-NLS-1$
                 false,

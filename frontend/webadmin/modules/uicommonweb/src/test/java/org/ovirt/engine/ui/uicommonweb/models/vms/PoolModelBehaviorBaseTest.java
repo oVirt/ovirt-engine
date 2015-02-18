@@ -27,7 +27,19 @@ public class PoolModelBehaviorBaseTest extends BaseVmModelBehaviorTest {
 
     @Override
     protected UnitVmModel createModel(VmModelBehaviorBase behavior) {
-        return new PoolModel(behavior);
+        final VDSGroup cluster = new VDSGroup();
+        cluster.setCompatibilityVersion(CLUSTER_VERSION);
+
+        UnitVmModel model = new PoolModel(behavior) {
+            @Override
+            public VDSGroup getSelectedCluster() {
+                return cluster;
+            }
+        };
+
+        mockAsyncDataProvider(model);
+
+        return model;
     }
 
     @Override

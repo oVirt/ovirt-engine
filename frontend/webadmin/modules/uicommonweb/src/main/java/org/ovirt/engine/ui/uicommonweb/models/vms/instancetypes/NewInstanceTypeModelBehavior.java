@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VnicInstanceType;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class NewInstanceTypeModelBehavior extends InstanceTypeModelBehaviorBase {
+public class NewInstanceTypeModelBehavior extends NonClusterModelBehaviorBase {
 
     @Override
     public void initialize(SystemTreeItemModel systemTreeSelectedItem) {

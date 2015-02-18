@@ -176,6 +176,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.IscsiStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LocalStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.NfsStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.PosixStorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WanColorDepth;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -2756,6 +2757,16 @@ public class AsyncDataProvider {
                 new KeyValuePairCompat<ConfigurationValues, String>(configValue, version);
 
         return cachedConfigValuesPreConvert.get(key);
+    }
+
+
+    public boolean supportedForUnitVmModel(ConfigurationValues feature, UnitVmModel model) {
+        if (model.getSelectedCluster() == null || model.getSelectedCluster().getCompatibilityVersion() == null) {
+            return false;
+        }
+
+        String version = model.getSelectedCluster().getCompatibilityVersion().getValue();
+        return (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(feature, version);
     }
 
     /**

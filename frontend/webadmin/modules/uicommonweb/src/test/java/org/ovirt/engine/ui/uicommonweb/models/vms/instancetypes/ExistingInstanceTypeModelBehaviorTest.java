@@ -17,7 +17,7 @@ public class ExistingInstanceTypeModelBehaviorTest extends BaseVmModelBehaviorTe
 
     @Override
     protected VmModelBehaviorBase getBehavior() {
-        return new ExistingInstanceTypeModelBehavior(instance);
+        return new ExistingNonClusterModelBehavior(instance);
     }
 
     @Override

@@ -822,6 +822,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("cdAttached")
     public EntityModelCheckBoxEditor cdAttachedEditor;
 
+    @UiField
+    public HorizontalPanel attachCdPanel;
+
     @UiField(provided = true)
     @Path("bootMenuEnabled.entity")
     @WithElementId("bootMenuEnabled")
@@ -965,8 +968,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         applyStyles();
 
         localize();
-
-        super.initializeModeSwitching(generalTab);
 
         generateIds();
 
@@ -1509,6 +1510,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public void edit(UnitVmModel model) {
         super.edit(model);
         unitVmModel = model;
+
+        super.initializeModeSwitching(generalTab);
 
         priorityEditor.setRowData(new ArrayList<EntityModel>());
         priorityEditor.asEditor().edit(model.getPriority());
@@ -2222,5 +2225,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     public UiCommandButton getNumaSupportButton() {
         return numaSupportButton;
+    }
+
+    public UnitVmModel getModel() {
+        return unitVmModel;
     }
 }

@@ -45,6 +45,7 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
+import org.ovirt.engine.ui.uicommonweb.models.templates.ExistingBlankTemplateModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -1220,6 +1221,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateRngDevice(Guid templateId) {
+        if (!getModel().getIsRngEnabled().getIsChangable()) {
+            return;
+        }
+
         Frontend.getInstance().runQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(templateId), new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
@@ -1264,6 +1269,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
 
         return cluster.getCompatibilityVersion();
+    }
+
+    protected Version latestCluster() {
+        // instance type and blank template always exposes all the features of the latest cluster and if some is not applicable
+        // than that particular feature will not be applicable on the instance creation
+        return Version.getLast();
     }
 
     protected boolean basedOnCustomInstanceType() {
@@ -1360,4 +1371,22 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
         getModel().getNumaEnabled().setEntity(enabled);
     }
+
+    public boolean isBlankTemplateBehavior() {
+        return this instanceof ExistingBlankTemplateModelBehavior;
+    }
+
+    public boolean isExistingTemplateBehavior() {
+        return this instanceof TemplateVmModelBehavior;
+    }
+
+    public boolean isNewTemplateBehavior() {
+        return this instanceof NewTemplateVmModelBehavior;
+    }
+
+    public boolean isAnyTemplateBehavior() {
+        return this instanceof TemplateVmModelBehavior || this instanceof ExistingBlankTemplateModelBehavior;
+    }
+
+
 }

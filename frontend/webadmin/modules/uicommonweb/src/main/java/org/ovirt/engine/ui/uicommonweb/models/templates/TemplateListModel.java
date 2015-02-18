@@ -49,6 +49,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.NewVmFromTemplateModelBehavior
 import org.ovirt.engine.ui.uicommonweb.models.vms.TemplateVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmModelBehaviorBase;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -481,7 +482,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
     }
 
     private void vmInitLoaded(VmTemplate template) {
-        UnitVmModel model = new UnitVmModel(createBehavior(template), this);
+        UnitVmModel model = createModel(createBehavior(template));
         model.setIsAdvancedModeLocalStorageKey(getEditTemplateAdvancedModelKey());
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().editTemplateTitle());
@@ -508,8 +509,20 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         return "wa_template_dialog"; //$NON-NLS-1$
     }
 
-    protected TemplateVmModelBehavior createBehavior(VmTemplate template) {
-        return new TemplateVmModelBehavior(template);
+    private UnitVmModel createModel(VmModelBehaviorBase behavior) {
+        if (behavior.isBlankTemplateBehavior()) {
+            return new BlankTemplateModel(behavior, this);
+        }
+
+        return new UnitVmModel(behavior, this);
+    }
+
+    protected VmModelBehaviorBase createBehavior(VmTemplate template) {
+        if (!template.isBlank()) {
+            return new TemplateVmModelBehavior(template);
+        }
+
+        return new ExistingBlankTemplateModelBehavior(template);
     }
 
     private void remove()
@@ -585,8 +598,15 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
 
         String name = model.getName().getEntity();
 
-        if (((TemplateVmModelBehavior) model.getBehavior()).getVmTemplate().isBaseTemplate()) {
+        boolean isBaseTemplate = false;
 
+        if (model.getBehavior().isExistingTemplateBehavior()) {
+            isBaseTemplate = ((TemplateVmModelBehavior) model.getBehavior()).getVmTemplate().isBaseTemplate();
+        } else if (model.getBehavior().isBlankTemplateBehavior()) {
+            isBaseTemplate = true;
+        }
+
+        if (isBaseTemplate) {
             AsyncDataProvider.getInstance().isTemplateNameUnique(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
@@ -630,7 +650,14 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
             return;
         }
 
-        VmTemplate selectedItem = ((TemplateVmModelBehavior) model.getBehavior()).getVmTemplate();
+
+        VmTemplate selectedItem;
+        if (model.getBehavior().isExistingTemplateBehavior()) {
+            selectedItem = ((TemplateVmModelBehavior) model.getBehavior()).getVmTemplate();
+        } else {
+            selectedItem = ((ExistingBlankTemplateModelBehavior) model.getBehavior()).getVmTemplate();
+        }
+
         final VmTemplate template = (VmTemplate) Cloner.clone(selectedItem);
 
         String name = model.getName().getEntity();
@@ -774,13 +801,6 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
 
         getEditCommand().setIsExecutionAllowed(items.size() == 1 && item != null
                 && item.getStatus() != VmTemplateStatus.Locked);
-        if (getEditCommand().getIsExecutionAllowed() && blankSelected)
-        {
-            getEditCommand().getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
-                    .getConstants()
-                    .blankTemplateCannotBeEdited());
-            getEditCommand().setIsExecutionAllowed(false);
-        }
 
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.canExecute(items, VmTemplate.class, VdcActionType.RemoveVmTemplate));

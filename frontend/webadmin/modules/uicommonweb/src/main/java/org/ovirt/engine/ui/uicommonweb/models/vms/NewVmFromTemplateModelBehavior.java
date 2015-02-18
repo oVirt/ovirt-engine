@@ -38,7 +38,7 @@ public class NewVmFromTemplateModelBehavior extends NewVmModelBehavior {
         List<VmTemplate> relatedTemplates = new ArrayList<>();
         for (VmTemplate template : templates) {
             if (template.getBaseTemplateId().equals(baseTemplateId)) {
-                if (template.getVdsGroupId().equals(clusterId)) {
+                if (template.getVdsGroupId() == null || template.getVdsGroupId().equals(clusterId)) {
                     relatedTemplates.add(template);
                 }
 
@@ -56,7 +56,7 @@ public class NewVmFromTemplateModelBehavior extends NewVmModelBehavior {
         initTemplateWithVersion(relatedTemplates);
 
         if (selectedDCWithCluster != null && selectedDCWithCluster.getCluster() != null) {
-            if (selectedTemplate.getVdsGroupId().equals(selectedDCWithCluster.getCluster().getId())) {
+            if (selectedTemplate.getVdsGroupId() == null || selectedTemplate.getVdsGroupId().equals(selectedDCWithCluster.getCluster().getId())) {
                 TemplateWithVersion templateCouple = new TemplateWithVersion(baseTemplate, selectedTemplate);
                 getModel().getTemplateWithVersion().setSelectedItem(templateCouple);
             }
@@ -66,23 +66,29 @@ public class NewVmFromTemplateModelBehavior extends NewVmModelBehavior {
     }
 
     protected void loadDataCenters() {
-        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(getModel(),
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
+        if (!selectedTemplate.getId().equals(Guid.Empty)) {
+            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(getModel(),
+                            new INewAsyncCallback() {
+                                @Override
+                                public void onSuccess(Object target, Object returnValue) {
 
-                        if (returnValue != null) {
-                            StoragePool dataCenter = (StoragePool) returnValue;
-                            List<StoragePool> dataCenters =
-                                    new ArrayList<>(Arrays.asList(new StoragePool[] { dataCenter }));
-                            initClusters(dataCenters);
-                        } else {
-                            getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoUpDC());
-                        }
+                                    if (returnValue != null) {
+                                        StoragePool dataCenter = (StoragePool) returnValue;
+                                        List<StoragePool> dataCenters =
+                                                new ArrayList<>(Arrays.asList(new StoragePool[] { dataCenter }));
+                                        initClusters(dataCenters);
+                                    } else {
+                                        getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoUpDC());
+                                    }
 
-                    }
-                }),
-                selectedTemplate.getStoragePoolId());
+                                }
+                            }),
+                    selectedTemplate.getStoragePoolId());
+        } else {
+            // blank template lives on all data centers
+            super.loadDataCenters();
+        }
+
     }
 
     protected void initClusters(final List<StoragePool> dataCenters) {

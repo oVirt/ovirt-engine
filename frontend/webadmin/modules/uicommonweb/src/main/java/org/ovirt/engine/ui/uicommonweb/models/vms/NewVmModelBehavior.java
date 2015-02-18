@@ -104,6 +104,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                 doChangeDefautlHost(template.getDedicatedVmForVds());
 
                 getModel().getIsStateless().setEntity(template.isStateless());
+                getModel().getIsRunAndPause().setEntity(template.isRunAndPause());
 
                 boolean hasCd = !StringHelper.isNullOrEmpty(template.getIsoPath());
 
@@ -120,11 +121,8 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                     getModel().getStorageDomain().setIsChangable(true);
                     getModel().getProvisioning().setIsChangable(true);
 
-                    getModel().getVmType().setSelectedItem(template.getVmType());
                     getModel().getCopyPermissions().setIsAvailable(true);
-                    getModel().getAllowConsoleReconnect().setEntity(template.isAllowConsoleReconnect());
                     initDisks();
-                    updateRngDevice(template.getId());
                 }
                 else
                 {
@@ -135,6 +133,10 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                     getModel().getCopyPermissions().setIsAvailable(false);
                     getModel().setDisks(null);
                 }
+
+                getModel().getAllowConsoleReconnect().setEntity(template.isAllowConsoleReconnect());
+                getModel().getVmType().setSelectedItem(template.getVmType());
+                updateRngDevice(template.getId());
 
                 initStorageDomains();
 

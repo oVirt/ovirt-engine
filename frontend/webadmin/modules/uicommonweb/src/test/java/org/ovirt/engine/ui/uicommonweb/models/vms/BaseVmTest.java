@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.junit.UiCommonSetup;
 
@@ -61,13 +62,16 @@ public class BaseVmTest {
     protected static final Integer MIGRATION_DOWNTIME_2 = 750;
     protected static final SerialNumberPolicy SERIAL_NUMBER_POLICY = SerialNumberPolicy.CUSTOM;
     protected static final String CUSTOM_SERIAL_NUMBER = "my custom number"; //$NON-NLS-1$
+    protected static final Version CLUSTER_VERSION = Version.v3_5;
+    protected static AsyncDataProvider adp;
 
     @ClassRule
     public static UiCommonSetup setup = new UiCommonSetup();
 
     @BeforeClass
     public static void mockAsyncDataProvider() {
-        AsyncDataProvider adp = setup.getMocks().asyncDataProvider();
+        adp = setup.getMocks().asyncDataProvider();
+
         when(adp.getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayoutValidValues)).thenReturn(Collections.emptyList());
         when(adp.osNameExists(OS_TYPE)).thenReturn(true);
         when(adp.getMaxVmNameLengthWin()).thenReturn(15);

@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -9,8 +10,8 @@ import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 import java.util.ArrayList;
@@ -75,7 +76,7 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
 
     protected UnitVmModel createModel(VmModelBehaviorBase behavior) {
         final VDSGroup cluster = new VDSGroup();
-        cluster.setCompatibilityVersion(Version.v3_5);
+        cluster.setCompatibilityVersion(CLUSTER_VERSION);
 
         UnitVmModel model = new UnitVmModel(behavior, null) {
             @Override
@@ -90,7 +91,17 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
         };
         model.initialize(null);
         model.getInstanceImages().setItems(new ArrayList<InstanceImageLineModel>());
+        mockAsyncDataProvider(model);
         return model;
+    }
+
+    protected void mockAsyncDataProvider(UnitVmModel model) {
+        when(adp.supportedForUnitVmModel(ConfigurationValues.BootMenuSupported, model)).thenReturn(true);
+        when(adp.supportedForUnitVmModel(ConfigurationValues.SpiceFileTransferToggleSupported, model)).thenReturn(true);
+        when(adp.supportedForUnitVmModel(ConfigurationValues.SpiceCopyPasteToggleSupported, model)).thenReturn(true);
+        when(adp.supportedForUnitVmModel(ConfigurationValues.AutoConvergenceSupported, model)).thenReturn(true);
+        when(adp.supportedForUnitVmModel(ConfigurationValues.MigrationCompressionSupported, model)).thenReturn(true);
+        when(adp.supportedForUnitVmModel(ConfigurationValues.SerialNumberPolicySupported, model)).thenReturn(true);
     }
 
     /** Verifies {@link org.ovirt.engine.ui.uicommonweb.builders.vm.NameAndDescriptionVmBaseToUnitBuilder} */
