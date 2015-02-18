@@ -16,8 +16,6 @@ CREATE TYPE all_storage_usage_rs AS (
 );
 
 
-ALTER TYPE public.all_storage_usage_rs OWNER TO engine;
-
 --
 -- Name: all_vds_group_usage_rs; Type: TYPE; Schema: public; Owner: engine
 --
@@ -34,8 +32,6 @@ CREATE TYPE all_vds_group_usage_rs AS (
 );
 
 
-ALTER TYPE public.all_vds_group_usage_rs OWNER TO engine;
-
 --
 -- Name: async_tasks_info_rs; Type: TYPE; Schema: public; Owner: engine
 --
@@ -49,8 +45,6 @@ CREATE TYPE async_tasks_info_rs AS (
 );
 
 
-ALTER TYPE public.async_tasks_info_rs OWNER TO engine;
-
 --
 -- Name: authzentryinfotype; Type: TYPE; Schema: public; Owner: engine
 --
@@ -62,8 +56,6 @@ CREATE TYPE authzentryinfotype AS (
 );
 
 
-ALTER TYPE public.authzentryinfotype OWNER TO engine;
-
 --
 -- Name: booleanresulttype; Type: TYPE; Schema: public; Owner: engine
 --
@@ -72,8 +64,6 @@ CREATE TYPE booleanresulttype AS (
 	result boolean
 );
 
-
-ALTER TYPE public.booleanresulttype OWNER TO engine;
 
 --
 -- Name: idtexttype; Type: TYPE; Schema: public; Owner: engine
@@ -84,8 +74,6 @@ CREATE TYPE idtexttype AS (
 );
 
 
-ALTER TYPE public.idtexttype OWNER TO engine;
-
 --
 -- Name: iduuidtype; Type: TYPE; Schema: public; Owner: engine
 --
@@ -94,8 +82,6 @@ CREATE TYPE iduuidtype AS (
 	id uuid
 );
 
-
-ALTER TYPE public.iduuidtype OWNER TO engine;
 
 --
 -- Name: user_permissions; Type: TYPE; Schema: public; Owner: engine
@@ -108,8 +94,6 @@ CREATE TYPE user_permissions AS (
 );
 
 
-ALTER TYPE public.user_permissions OWNER TO engine;
-
 --
 -- Name: vds_group_usage_rs; Type: TYPE; Schema: public; Owner: engine
 --
@@ -119,8 +103,6 @@ CREATE TYPE vds_group_usage_rs AS (
 	mem_size_mb_usage bigint
 );
 
-
-ALTER TYPE public.vds_group_usage_rs OWNER TO engine;
 
 --
 -- Name: action_version_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -132,8 +114,6 @@ CREATE TABLE action_version_map (
     storage_pool_minimal_version character varying(40) NOT NULL
 );
 
-
-ALTER TABLE public.action_version_map OWNER TO engine;
 
 --
 -- Name: ad_groups; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -147,8 +127,6 @@ CREATE TABLE ad_groups (
     distinguishedname character varying(4000) DEFAULT NULL::character varying
 );
 
-
-ALTER TABLE public.ad_groups OWNER TO engine;
 
 --
 -- Name: async_tasks; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -173,8 +151,6 @@ CREATE TABLE async_tasks (
 );
 
 
-ALTER TABLE public.async_tasks OWNER TO engine;
-
 --
 -- Name: async_tasks_entities; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -185,8 +161,6 @@ CREATE TABLE async_tasks_entities (
     entity_type character varying(128)
 );
 
-
-ALTER TABLE public.async_tasks_entities OWNER TO engine;
 
 --
 -- Name: audit_log_seq; Type: SEQUENCE; Schema: public; Owner: engine
@@ -199,8 +173,6 @@ CREATE SEQUENCE audit_log_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE public.audit_log_seq OWNER TO engine;
 
 --
 -- Name: audit_log; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -243,8 +215,6 @@ CREATE TABLE audit_log (
 );
 
 
-ALTER TABLE public.audit_log OWNER TO engine;
-
 --
 -- Name: base_disks; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -264,8 +234,6 @@ CREATE TABLE base_disks (
 );
 
 
-ALTER TABLE public.base_disks OWNER TO engine;
-
 --
 -- Name: bookmarks; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -276,8 +244,6 @@ CREATE TABLE bookmarks (
     bookmark_value character varying(300) NOT NULL
 );
 
-
-ALTER TABLE public.bookmarks OWNER TO engine;
 
 --
 -- Name: business_entity_snapshot; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -297,8 +263,6 @@ CREATE TABLE business_entity_snapshot (
 );
 
 
-ALTER TABLE public.business_entity_snapshot OWNER TO engine;
-
 --
 -- Name: cluster_policies; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -313,8 +277,6 @@ CREATE TABLE cluster_policies (
 );
 
 
-ALTER TABLE public.cluster_policies OWNER TO engine;
-
 --
 -- Name: cluster_policy_units; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -326,8 +288,6 @@ CREATE TABLE cluster_policy_units (
     factor integer DEFAULT 1
 );
 
-
-ALTER TABLE public.cluster_policy_units OWNER TO engine;
 
 --
 -- Name: custom_actions_seq; Type: SEQUENCE; Schema: public; Owner: engine
@@ -341,8 +301,6 @@ CREATE SEQUENCE custom_actions_seq
     CACHE 1;
 
 
-ALTER TABLE public.custom_actions_seq OWNER TO engine;
-
 --
 -- Name: custom_actions; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -355,8 +313,6 @@ CREATE TABLE custom_actions (
     description character varying(4000)
 );
 
-
-ALTER TABLE public.custom_actions OWNER TO engine;
 
 --
 -- Name: disk_image_dynamic; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -374,8 +330,6 @@ CREATE TABLE disk_image_dynamic (
 );
 
 
-ALTER TABLE public.disk_image_dynamic OWNER TO engine;
-
 --
 -- Name: disk_lun_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -385,8 +339,6 @@ CREATE TABLE disk_lun_map (
     lun_id character varying NOT NULL
 );
 
-
-ALTER TABLE public.disk_lun_map OWNER TO engine;
 
 --
 -- Name: dwh_history_timekeeping; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -398,8 +350,6 @@ CREATE TABLE dwh_history_timekeeping (
     var_datetime timestamp with time zone
 );
 
-
-ALTER TABLE public.dwh_history_timekeeping OWNER TO engine;
 
 SET default_with_oids = true;
 
@@ -413,8 +363,6 @@ CREATE TABLE dwh_osinfo (
 );
 
 
-ALTER TABLE public.dwh_osinfo OWNER TO engine;
-
 SET default_with_oids = false;
 
 --
@@ -426,8 +374,6 @@ CREATE TABLE event_map (
     event_down_name character varying(100) NOT NULL
 );
 
-
-ALTER TABLE public.event_map OWNER TO engine;
 
 --
 -- Name: event_notification_hist; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -444,8 +390,6 @@ CREATE TABLE event_notification_hist (
 );
 
 
-ALTER TABLE public.event_notification_hist OWNER TO engine;
-
 --
 -- Name: event_notification_methods; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -455,8 +399,6 @@ CREATE TABLE event_notification_methods (
     method_type character(10) NOT NULL
 );
 
-
-ALTER TABLE public.event_notification_methods OWNER TO engine;
 
 --
 -- Name: event_subscriber; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -470,8 +412,6 @@ CREATE TABLE event_subscriber (
     tag_name character varying(50) DEFAULT ''::character varying NOT NULL
 );
 
-
-ALTER TABLE public.event_subscriber OWNER TO engine;
 
 SET default_with_oids = true;
 
@@ -487,8 +427,6 @@ CREATE TABLE gluster_cluster_services (
     _update_date timestamp with time zone
 );
 
-
-ALTER TABLE public.gluster_cluster_services OWNER TO engine;
 
 SET default_with_oids = false;
 
@@ -512,8 +450,6 @@ CREATE TABLE gluster_hooks (
 );
 
 
-ALTER TABLE public.gluster_hooks OWNER TO engine;
-
 SET default_with_oids = true;
 
 --
@@ -525,8 +461,6 @@ CREATE TABLE gluster_server (
     gluster_server_uuid uuid NOT NULL
 );
 
-
-ALTER TABLE public.gluster_server OWNER TO engine;
 
 SET default_with_oids = false;
 
@@ -544,8 +478,6 @@ CREATE TABLE gluster_server_hooks (
     _update_date timestamp with time zone
 );
 
-
-ALTER TABLE public.gluster_server_hooks OWNER TO engine;
 
 SET default_with_oids = true;
 
@@ -565,8 +497,6 @@ CREATE TABLE gluster_server_services (
 );
 
 
-ALTER TABLE public.gluster_server_services OWNER TO engine;
-
 --
 -- Name: gluster_service_types; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -575,8 +505,6 @@ CREATE TABLE gluster_service_types (
     service_type character varying(100) NOT NULL
 );
 
-
-ALTER TABLE public.gluster_service_types OWNER TO engine;
 
 --
 -- Name: gluster_services; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -589,8 +517,6 @@ CREATE TABLE gluster_services (
 );
 
 
-ALTER TABLE public.gluster_services OWNER TO engine;
-
 SET default_with_oids = false;
 
 --
@@ -602,8 +528,6 @@ CREATE TABLE gluster_volume_access_protocols (
     access_protocol character varying(32) NOT NULL
 );
 
-
-ALTER TABLE public.gluster_volume_access_protocols OWNER TO engine;
 
 --
 -- Name: gluster_volume_bricks; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -622,8 +546,6 @@ CREATE TABLE gluster_volume_bricks (
 );
 
 
-ALTER TABLE public.gluster_volume_bricks OWNER TO engine;
-
 --
 -- Name: gluster_volume_options; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -636,8 +558,6 @@ CREATE TABLE gluster_volume_options (
 );
 
 
-ALTER TABLE public.gluster_volume_options OWNER TO engine;
-
 --
 -- Name: gluster_volume_transport_types; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -647,8 +567,6 @@ CREATE TABLE gluster_volume_transport_types (
     transport_type character varying(32) NOT NULL
 );
 
-
-ALTER TABLE public.gluster_volume_transport_types OWNER TO engine;
 
 --
 -- Name: gluster_volumes; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -668,8 +586,6 @@ CREATE TABLE gluster_volumes (
 );
 
 
-ALTER TABLE public.gluster_volumes OWNER TO engine;
-
 --
 -- Name: image_storage_domain_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -679,8 +595,6 @@ CREATE TABLE image_storage_domain_map (
     storage_domain_id uuid NOT NULL
 );
 
-
-ALTER TABLE public.image_storage_domain_map OWNER TO engine;
 
 --
 -- Name: images; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -705,8 +619,6 @@ CREATE TABLE images (
 );
 
 
-ALTER TABLE public.images OWNER TO engine;
-
 --
 -- Name: job; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -727,8 +639,6 @@ CREATE TABLE job (
 );
 
 
-ALTER TABLE public.job OWNER TO engine;
-
 --
 -- Name: job_subject_entity; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -740,8 +650,6 @@ CREATE TABLE job_subject_entity (
 );
 
 
-ALTER TABLE public.job_subject_entity OWNER TO engine;
-
 --
 -- Name: lun_storage_server_connection_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -751,8 +659,6 @@ CREATE TABLE lun_storage_server_connection_map (
     storage_server_connection character varying(50) NOT NULL
 );
 
-
-ALTER TABLE public.lun_storage_server_connection_map OWNER TO engine;
 
 --
 -- Name: luns; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -770,8 +676,6 @@ CREATE TABLE luns (
 );
 
 
-ALTER TABLE public.luns OWNER TO engine;
-
 --
 -- Name: materialized_views; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -787,8 +691,6 @@ CREATE TABLE materialized_views (
     active boolean DEFAULT true
 );
 
-
-ALTER TABLE public.materialized_views OWNER TO engine;
 
 --
 -- Name: network; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -813,8 +715,6 @@ CREATE TABLE network (
 );
 
 
-ALTER TABLE public.network OWNER TO engine;
-
 --
 -- Name: network_cluster; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -828,8 +728,6 @@ CREATE TABLE network_cluster (
     migration boolean DEFAULT false NOT NULL
 );
 
-
-ALTER TABLE public.network_cluster OWNER TO engine;
 
 SET default_with_oids = true;
 
@@ -852,8 +750,6 @@ CREATE TABLE network_qos (
 );
 
 
-ALTER TABLE public.network_qos OWNER TO engine;
-
 SET default_with_oids = false;
 
 --
@@ -869,8 +765,6 @@ CREATE TABLE permissions (
 );
 
 
-ALTER TABLE public.permissions OWNER TO engine;
-
 --
 -- Name: policy_units; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -885,8 +779,6 @@ CREATE TABLE policy_units (
     description text
 );
 
-
-ALTER TABLE public.policy_units OWNER TO engine;
 
 --
 -- Name: providers; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -910,8 +802,6 @@ CREATE TABLE providers (
 );
 
 
-ALTER TABLE public.providers OWNER TO engine;
-
 --
 -- Name: quota; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -930,8 +820,6 @@ CREATE TABLE quota (
 );
 
 
-ALTER TABLE public.quota OWNER TO engine;
-
 --
 -- Name: quota_limitation; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -946,8 +834,6 @@ CREATE TABLE quota_limitation (
     storage_size_gb bigint
 );
 
-
-ALTER TABLE public.quota_limitation OWNER TO engine;
 
 --
 -- Name: repo_file_meta_data; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -964,8 +850,6 @@ CREATE TABLE repo_file_meta_data (
 );
 
 
-ALTER TABLE public.repo_file_meta_data OWNER TO engine;
-
 --
 -- Name: roles; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -981,8 +865,6 @@ CREATE TABLE roles (
 );
 
 
-ALTER TABLE public.roles OWNER TO engine;
-
 --
 -- Name: roles_groups; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -992,8 +874,6 @@ CREATE TABLE roles_groups (
     action_group_id integer NOT NULL
 );
 
-
-ALTER TABLE public.roles_groups OWNER TO engine;
 
 --
 -- Name: schema_version_seq; Type: SEQUENCE; Schema: public; Owner: engine
@@ -1006,8 +886,6 @@ CREATE SEQUENCE schema_version_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE public.schema_version_seq OWNER TO engine;
 
 --
 -- Name: schema_version; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -1027,8 +905,6 @@ CREATE TABLE schema_version (
 );
 
 
-ALTER TABLE public.schema_version OWNER TO engine;
-
 --
 -- Name: snapshots; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1047,8 +923,6 @@ CREATE TABLE snapshots (
     memory_volume character varying(255)
 );
 
-
-ALTER TABLE public.snapshots OWNER TO engine;
 
 --
 -- Name: step; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -1071,8 +945,6 @@ CREATE TABLE step (
 );
 
 
-ALTER TABLE public.step OWNER TO engine;
-
 --
 -- Name: storage_domain_dynamic; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1084,8 +956,6 @@ CREATE TABLE storage_domain_dynamic (
     _update_date timestamp with time zone
 );
 
-
-ALTER TABLE public.storage_domain_dynamic OWNER TO engine;
 
 --
 -- Name: storage_domain_static; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -1106,8 +976,6 @@ CREATE TABLE storage_domain_static (
     storage_comment text
 );
 
-
-ALTER TABLE public.storage_domain_static OWNER TO engine;
 
 --
 -- Name: storage_pool; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -1130,8 +998,6 @@ CREATE TABLE storage_pool (
 );
 
 
-ALTER TABLE public.storage_pool OWNER TO engine;
-
 --
 -- Name: storage_pool_iso_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1142,8 +1008,6 @@ CREATE TABLE storage_pool_iso_map (
     status integer
 );
 
-
-ALTER TABLE public.storage_pool_iso_map OWNER TO engine;
 
 --
 -- Name: storage_server_connections; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -1166,8 +1030,6 @@ CREATE TABLE storage_server_connections (
 );
 
 
-ALTER TABLE public.storage_server_connections OWNER TO engine;
-
 --
 -- Name: tags; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1184,8 +1046,6 @@ CREATE TABLE tags (
 );
 
 
-ALTER TABLE public.tags OWNER TO engine;
-
 --
 -- Name: tags_user_group_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1196,8 +1056,6 @@ CREATE TABLE tags_user_group_map (
     _create_date timestamp with time zone DEFAULT ('now'::text)::timestamp without time zone
 );
 
-
-ALTER TABLE public.tags_user_group_map OWNER TO engine;
 
 --
 -- Name: tags_user_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -1210,8 +1068,6 @@ CREATE TABLE tags_user_map (
 );
 
 
-ALTER TABLE public.tags_user_map OWNER TO engine;
-
 --
 -- Name: tags_vds_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1222,8 +1078,6 @@ CREATE TABLE tags_vds_map (
     _create_date timestamp with time zone DEFAULT ('now'::text)::timestamp without time zone
 );
 
-
-ALTER TABLE public.tags_vds_map OWNER TO engine;
 
 --
 -- Name: tags_vm_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -1237,8 +1091,6 @@ CREATE TABLE tags_vm_map (
 );
 
 
-ALTER TABLE public.tags_vm_map OWNER TO engine;
-
 --
 -- Name: tags_vm_pool_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1249,8 +1101,6 @@ CREATE TABLE tags_vm_pool_map (
     _create_date timestamp with time zone DEFAULT ('now'::text)::timestamp without time zone
 );
 
-
-ALTER TABLE public.tags_vm_pool_map OWNER TO engine;
 
 --
 -- Name: users; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -1274,8 +1124,6 @@ CREATE TABLE users (
 );
 
 
-ALTER TABLE public.users OWNER TO engine;
-
 --
 -- Name: uuid_sequence; Type: SEQUENCE; Schema: public; Owner: engine
 --
@@ -1288,8 +1136,6 @@ CREATE SEQUENCE uuid_sequence
     CACHE 1;
 
 
-ALTER TABLE public.uuid_sequence OWNER TO engine;
-
 --
 -- Name: vdc_db_log_seq; Type: SEQUENCE; Schema: public; Owner: engine
 --
@@ -1301,8 +1147,6 @@ CREATE SEQUENCE vdc_db_log_seq
     NO MAXVALUE
     CACHE 1;
 
-
-ALTER TABLE public.vdc_db_log_seq OWNER TO engine;
 
 --
 -- Name: vdc_db_log; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -1318,8 +1162,6 @@ CREATE TABLE vdc_db_log (
 );
 
 
-ALTER TABLE public.vdc_db_log OWNER TO engine;
-
 --
 -- Name: vdc_options_seq; Type: SEQUENCE; Schema: public; Owner: engine
 --
@@ -1332,8 +1174,6 @@ CREATE SEQUENCE vdc_options_seq
     CACHE 1;
 
 
-ALTER TABLE public.vdc_options_seq OWNER TO engine;
-
 --
 -- Name: vdc_options; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1345,8 +1185,6 @@ CREATE TABLE vdc_options (
     version character varying(40) DEFAULT 'general'::character varying NOT NULL
 );
 
-
-ALTER TABLE public.vdc_options OWNER TO engine;
 
 --
 -- Name: vds_dynamic; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -1404,8 +1242,6 @@ CREATE TABLE vds_dynamic (
 );
 
 
-ALTER TABLE public.vds_dynamic OWNER TO engine;
-
 --
 -- Name: vds_groups; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1436,8 +1272,6 @@ CREATE TABLE vds_groups (
 );
 
 
-ALTER TABLE public.vds_groups OWNER TO engine;
-
 --
 -- Name: vds_interface; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1466,8 +1300,6 @@ CREATE TABLE vds_interface (
 );
 
 
-ALTER TABLE public.vds_interface OWNER TO engine;
-
 --
 -- Name: vds_interface_statistics; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1484,8 +1316,6 @@ CREATE TABLE vds_interface_statistics (
 );
 
 
-ALTER TABLE public.vds_interface_statistics OWNER TO engine;
-
 --
 -- Name: vds_spm_id_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1496,8 +1326,6 @@ CREATE TABLE vds_spm_id_map (
     vds_id uuid NOT NULL
 );
 
-
-ALTER TABLE public.vds_spm_id_map OWNER TO engine;
 
 --
 -- Name: vds_static; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -1542,8 +1370,6 @@ CREATE TABLE vds_static (
 );
 
 
-ALTER TABLE public.vds_static OWNER TO engine;
-
 --
 -- Name: vds_statistics; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1569,8 +1395,6 @@ CREATE TABLE vds_statistics (
 );
 
 
-ALTER TABLE public.vds_statistics OWNER TO engine;
-
 --
 -- Name: vm_device; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1592,8 +1416,6 @@ CREATE TABLE vm_device (
     custom_properties text
 );
 
-
-ALTER TABLE public.vm_device OWNER TO engine;
 
 --
 -- Name: vm_dynamic; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -1641,8 +1463,6 @@ CREATE TABLE vm_dynamic (
 );
 
 
-ALTER TABLE public.vm_dynamic OWNER TO engine;
-
 --
 -- Name: vm_guest_agent_interfaces; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1655,8 +1475,6 @@ CREATE TABLE vm_guest_agent_interfaces (
     ipv6_addresses text
 );
 
-
-ALTER TABLE public.vm_guest_agent_interfaces OWNER TO engine;
 
 --
 -- Name: vm_interface; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -1677,8 +1495,6 @@ CREATE TABLE vm_interface (
 );
 
 
-ALTER TABLE public.vm_interface OWNER TO engine;
-
 --
 -- Name: vm_interface_statistics; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1695,8 +1511,6 @@ CREATE TABLE vm_interface_statistics (
 );
 
 
-ALTER TABLE public.vm_interface_statistics OWNER TO engine;
-
 --
 -- Name: vm_ovf_generations; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1708,8 +1522,6 @@ CREATE TABLE vm_ovf_generations (
 );
 
 
-ALTER TABLE public.vm_ovf_generations OWNER TO engine;
-
 --
 -- Name: vm_pool_map; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1719,8 +1531,6 @@ CREATE TABLE vm_pool_map (
     vm_guid uuid NOT NULL
 );
 
-
-ALTER TABLE public.vm_pool_map OWNER TO engine;
 
 --
 -- Name: vm_pools; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -1738,8 +1548,6 @@ CREATE TABLE vm_pools (
     vm_pool_comment text
 );
 
-
-ALTER TABLE public.vm_pools OWNER TO engine;
 
 --
 -- Name: vm_static; Type: TABLE; Schema: public; Owner: engine; Tablespace:
@@ -1803,8 +1611,6 @@ CREATE TABLE vm_static (
 );
 
 
-ALTER TABLE public.vm_static OWNER TO engine;
-
 --
 -- Name: vm_statistics; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
@@ -1821,8 +1627,6 @@ CREATE TABLE vm_statistics (
     _update_date timestamp with time zone
 );
 
-
-ALTER TABLE public.vm_statistics OWNER TO engine;
 
 SET default_with_oids = true;
 
@@ -1842,8 +1646,6 @@ CREATE TABLE vnic_profiles (
     network_qos_id uuid
 );
 
-
-ALTER TABLE public.vnic_profiles OWNER TO engine;
 
 --
 -- Name: cluster_policy_pk; Type: CONSTRAINT; Schema: public; Owner: engine; Tablespace:
