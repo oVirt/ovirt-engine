@@ -83,7 +83,7 @@ public class AuthzUtils {
                         Authz.InvokeKeys.NAMESPACE,
                         namespace
                 );
-        return populatePrincipalRecords(
+        return populateRecords(
                 extension,
                 namespace,
                 inputMap);
@@ -110,26 +110,26 @@ public class AuthzUtils {
                         Authz.InvokeKeys.NAMESPACE,
                         namespace
                 );
-        return populateGroups(
+        return populateRecords(
                 extension,
                 namespace,
                 inputMap);
 
     }
 
-    public static Collection<ExtMap> populatePrincipalRecords(
+    public static Collection<ExtMap> populateRecords(
             final ExtensionProxy extension,
             final String namespace,
             final ExtMap input) {
-        final Collection<ExtMap> principalRecords = new ArrayList<>();
+        final Collection<ExtMap> records = new ArrayList<>();
         queryImpl(extension, namespace, input, new QueryResultHandler() {
 
             @Override
             public boolean handle(Collection<ExtMap> queryResults) {
                 boolean result = true;
                 for (ExtMap queryResult : queryResults) {
-                    if (principalRecords.size() < QUERIES_RESULTS_LIMIT) {
-                        principalRecords.add(queryResult);
+                    if (records.size() < QUERIES_RESULTS_LIMIT) {
+                        records.add(queryResult);
                     } else {
                         result = false;
                         break;
@@ -138,29 +138,7 @@ public class AuthzUtils {
                 return result;
             }
         });
-        return principalRecords;
-    }
-
-    public static Collection<ExtMap> populateGroups(final ExtensionProxy extension, final String namespace,
-            final ExtMap input) {
-        final Collection<ExtMap> groups = new ArrayList<>();
-        queryImpl(extension, namespace, input, new QueryResultHandler() {
-            @Override
-            public boolean handle(Collection<ExtMap> queryResults) {
-
-                boolean result = true;
-                for (ExtMap queryResult : queryResults) {
-                    if (groups.size() < QUERIES_RESULTS_LIMIT) {
-                        groups.add(queryResult);
-                    } else {
-                        result = false;
-                    }
-                }
-                return result;
-            }
-
-        });
-        return groups;
+        return records;
     }
 
     private static void queryImpl(
