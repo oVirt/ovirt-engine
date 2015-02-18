@@ -286,5 +286,4 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
 
         return false;
     }
-
 }

@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
@@ -51,13 +52,18 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         setVmTemplateId(getVmTemplate().getId());
         setVdsGroupId(getVmTemplate().getVdsGroupId());
         mOldTemplate = DbFacade.getInstance().getVmTemplateDao().get(getVmTemplate().getId());
+
         if (getVdsGroup() != null) {
             setStoragePoolId(getVdsGroup().getStoragePoolId() != null ? getVdsGroup().getStoragePoolId()
                     : Guid.Empty);
-            getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(getVdsGroup().getCompatibilityVersion(),
+        }
+
+        Version compatibilityVersion = isBlankTemplate() ? Version.getLast() : getVdsGroup().getCompatibilityVersion();
+        if (getVdsGroup() != null || isBlankTemplate()) {
+            getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(compatibilityVersion,
                     parameters.getVmTemplateData());
             if (mOldTemplate != null) {
-                getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(getVdsGroup().getCompatibilityVersion(),
+                getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(compatibilityVersion,
                         mOldTemplate);
             }
         }
