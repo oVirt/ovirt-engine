@@ -32,8 +32,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
-import org.ovirt.engine.core.common.action.LockProperties;
-import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -119,11 +117,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     @Override
-    protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(Scope.Command);
-    }
-
-    @Override
     protected void init(T parameters) {
         super.init(parameters);
         setVmId(parameters.getContainerId());
@@ -167,16 +160,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                 LockMessagesMatchUtil.makeLockingPair(
                         LockingGroup.REMOTE_VM,
                         getVmIsBeingImportedMessage()));
-    }
-
-    @Override
-    protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        if (getParameters().getVm() != null && !StringUtils.isBlank(getParameters().getVm().getName())) {
-            return Collections.singletonMap(getParameters().getVm().getName(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_NAME,
-                            VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
-        }
-        return null;
     }
 
     private String getVmIsBeingImportedMessage() {
