@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -66,18 +65,42 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     }
 
     @Override
+    @SuppressWarnings("serial")
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         if (getParameters().getVm() != null && !StringUtils.isBlank(getParameters().getVm().getName())) {
-            return Collections.singletonMap(getParameters().getVm().getName(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_NAME,
-                            VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
+            return new HashMap<String, Pair<String, String>>() {
+                {
+                    put(getParameters().getVm().getName(),
+                            LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_NAME,
+                                    VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
+
+                    put(getParameters().getVm().getId().toString(),
+                            LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM,
+                                    getVmIsBeingImportedMessage()));
+                }
+            };
         }
         return null;
+    }
+
+    protected String getVmIsBeingImportedMessage() {
+        StringBuilder builder = new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_BEING_IMPORTED.name());
+        if (getVmName() != null) {
+            builder.append(String.format("$VmName %1$s", getVmName()));
+        }
+        return builder.toString();
     }
 
     @Override
     protected void postConstruct() {
         T parameters = getParameters();
+        // before the execute phase, parameters.getVmId().equals(parameters.getVm().getId() == true
+        // afterwards if will be false if parameters.isImportAsNewEntity() == true, and there is no
+        // better way to check it (can't use the action-state since it will always be EXECUTE
+        // in the postConstruct phase.
+        if (parameters.isImportAsNewEntity() && parameters.getVmId().equals(parameters.getVm().getId())) {
+            parameters.getVm().setId(Guid.newGuid());
+        }
         setStoragePoolId(parameters.getStoragePoolId());
         imageToDestinationDomainMap = parameters.getImageToDestinationDomainMap();
     }

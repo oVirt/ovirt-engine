@@ -163,14 +163,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                         getVmIsBeingImportedMessage()));
     }
 
-    private String getVmIsBeingImportedMessage() {
-        StringBuilder builder = new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_BEING_IMPORTED.name());
-        if (getVmName() != null) {
-            builder.append(String.format("$VmName %1$s", getVmName()));
-        }
-        return builder.toString();
-    }
-
     protected ImportVmCommand(Guid commandId) {
         super(commandId);
     }
@@ -261,7 +253,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     private void initImportClonedVm() {
-        Guid guid = Guid.newGuid();
+        Guid guid = getParameters().getVm().getId();
         getVm().setId(guid);
         setVmId(guid);
         getVm().setName(getParameters().getVm().getName());
@@ -318,7 +310,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         VM vm = LinqUtils.firstOrNull(vms, new Predicate<VM>() {
             @Override
             public boolean eval(VM evalVm) {
-                return evalVm.getId().equals(getParameters().getVm().getId());
+                return evalVm.getId().equals(getParameters().getVmId());
             }
         });
 
