@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -174,7 +174,7 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
                         }
                     }
                 } else {
-                    logConcurrentAgentsFailure(FenceActionType.Stop, agents, result);
+                    logConcurrentAgentsFailure(FenceActionType.STOP, agents, result);
                 }
             }
             return result;
@@ -222,7 +222,7 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
 
     @Override
     protected FenceActionType getAction() {
-        return FenceActionType.Stop;
+        return FenceActionType.STOP;
     }
 
     @Override

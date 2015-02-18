@@ -23,7 +23,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -187,7 +187,7 @@ public class FenceExecutorTest extends DbDependentTestBase {
         mockProxyHost();
         mockFenceSuccess();
         FenceAgent agent = createAgent();
-        VDSFenceReturnValue result = executor.fence(FenceActionType.Start, agent);
+        VDSFenceReturnValue result = executor.fence(FenceActionType.START, agent);
         assertTrue(result.getSucceeded());
         assertEquals(result.getFenceAgentUsed(), agent);
     }
@@ -200,7 +200,7 @@ public class FenceExecutorTest extends DbDependentTestBase {
         mockProxyHost();
         mockFenceSuccess();
         FenceAgent agent = createAgent();
-        VDSFenceReturnValue result = executor.fence(FenceActionType.Stop, agent);
+        VDSFenceReturnValue result = executor.fence(FenceActionType.STOP, agent);
         verify(vdsBrokerFrontend).RunVdsCommand(eq(VDSCommandType.SpmStop), any(VDSParametersBase.class));
         assertTrue(result.getSucceeded());
         assertEquals(result.getFenceAgentUsed(), agent);
@@ -215,7 +215,7 @@ public class FenceExecutorTest extends DbDependentTestBase {
         mockProxyHost(true);
         mockFenceFailure(true);
         FenceAgent agent = createAgent();
-        VDSFenceReturnValue result = executor.fence(FenceActionType.Start, agent);
+        VDSFenceReturnValue result = executor.fence(FenceActionType.START, agent);
         assertTrue(result.getSucceeded());
         verify(proxyLocator).findProxyHost(true, PROXY_HOST_ID);
     }
@@ -229,7 +229,7 @@ public class FenceExecutorTest extends DbDependentTestBase {
         mockProxyHost(false);
         mockFenceFailure(true);
         FenceAgent agent = createAgent();
-        VDSFenceReturnValue result = executor.fence(FenceActionType.Start, agent);
+        VDSFenceReturnValue result = executor.fence(FenceActionType.START, agent);
         assertTrue(result.getSucceeded());
         verify(proxyLocator).findProxyHost(true, PROXY_HOST_ID);
     }
@@ -243,7 +243,7 @@ public class FenceExecutorTest extends DbDependentTestBase {
         mockProxyHost(true);
         mockFenceFailure(false);
         FenceAgent agent = createAgent();
-        VDSFenceReturnValue result = executor.fence(FenceActionType.Start, agent);
+        VDSFenceReturnValue result = executor.fence(FenceActionType.START, agent);
         assertFalse(result.getSucceeded());
         verify(proxyLocator).findProxyHost(true, PROXY_HOST_ID);
     }
@@ -257,7 +257,7 @@ public class FenceExecutorTest extends DbDependentTestBase {
         mockProxyHost(false);
         mockFenceFailure(false);
         FenceAgent agent = createAgent();
-        VDSFenceReturnValue result = executor.fence(FenceActionType.Start, agent);
+        VDSFenceReturnValue result = executor.fence(FenceActionType.START, agent);
         assertFalse(result.getSucceeded());
         verify(proxyLocator).findProxyHost(true, PROXY_HOST_ID);
     }

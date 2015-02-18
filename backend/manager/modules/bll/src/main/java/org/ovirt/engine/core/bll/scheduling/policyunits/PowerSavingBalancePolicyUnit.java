@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.VdsPowerDownParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
-import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -115,7 +115,7 @@ public class PowerSavingBalancePolicyUnit extends EvenDistributionBalancePolicyU
             logAction(vds, AuditLogType.PM_POLICY_TO_UP);
 
             /* Down -> Up */
-            FenceVdsActionParameters parameters = new FenceVdsActionParameters(vds.getId(), FenceActionType.Start);
+            FenceVdsActionParameters parameters = new FenceVdsActionParameters(vds.getId(), FenceActionType.START);
             Backend.getInstance().runInternalAction(VdcActionType.StartVds,
                     parameters,
                     ExecutionHandler.createInternalJobContext());

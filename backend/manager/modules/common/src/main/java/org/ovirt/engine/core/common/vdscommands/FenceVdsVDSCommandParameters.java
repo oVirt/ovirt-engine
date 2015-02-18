@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
-import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -64,7 +64,7 @@ public class FenceVdsVDSCommandParameters extends VdsIdVDSCommandParametersBase 
 
     public FenceVdsVDSCommandParameters() {
         _options = "";
-        _action = FenceActionType.Restart;
+        _action = FenceActionType.RESTART;
     }
 
     public FencingPolicy getFencingPolicy() {

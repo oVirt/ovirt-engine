@@ -264,7 +264,7 @@
 
 		<include name="common/businessentities/VdcRole.java" />
 
-		<include name="common/businessentities/FenceActionType.java" />
+		<include name="common/businessentities/pm/FenceActionType.java" />
 		<include name="common/businessentities/CopyVolumeType.java" />
 		<include name="common/businessentities/ConfigurationType.java" />
 		<include name="common/businessentities/ImageOperation.java" />

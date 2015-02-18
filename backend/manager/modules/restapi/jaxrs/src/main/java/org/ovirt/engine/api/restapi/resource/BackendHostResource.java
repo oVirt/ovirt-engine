@@ -50,7 +50,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
-import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -389,11 +389,11 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         case MANUAL:
             return fenceManually(action);
         case RESTART:
-            return fence(action, VdcActionType.RestartVds, FenceActionType.Restart);
+            return fence(action, VdcActionType.RestartVds, FenceActionType.RESTART);
         case START:
-            return fence(action, VdcActionType.StartVds, FenceActionType.Start);
+            return fence(action, VdcActionType.StartVds, FenceActionType.START);
         case STOP:
-            return fence(action, VdcActionType.StopVds, FenceActionType.Stop);
+            return fence(action, VdcActionType.StopVds, FenceActionType.STOP);
         case STATUS:
             return getFenceStatus(action);
         default:

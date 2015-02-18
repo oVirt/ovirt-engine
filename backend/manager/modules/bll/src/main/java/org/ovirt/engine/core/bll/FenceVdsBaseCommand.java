@@ -14,7 +14,7 @@ import org.ovirt.engine.core.bll.validator.FenceValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -318,7 +318,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     protected void auditFailure() {
         // Send an Alert
         String actionName = (getParameters().getParentCommand() == VdcActionType.RestartVds) ?
-                FenceActionType.Restart.name() : getAction().name();
+                FenceActionType.RESTART.name() : getAction().name();
         AuditLogableBase auditLogable = new AuditLogableBase();
         auditLogable.addCustomValue("Host", getVds().getName());
         auditLogable.addCustomValue("Status", actionName);

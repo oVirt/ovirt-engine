@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -21,7 +21,7 @@ public class FenceVdsActionParameters extends VdsActionParameters {
     private FencingPolicy fencingPolicy;
 
     public FenceVdsActionParameters() {
-        this(null, FenceActionType.Restart);
+        this(null, FenceActionType.RESTART);
     }
 
     public FenceVdsActionParameters(Guid vdsId, FenceActionType action) {

@@ -26,7 +26,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -178,7 +178,7 @@ public class StartVdsCommandTest extends DbDependentTestBase {
         VDSFenceReturnValue returnValue = new VDSFenceReturnValue();
         returnValue.setSucceeded(success);
         returnValue.setFenceAgentUsed(agent);
-        when(executor.fence(eq(FenceActionType.Start), eq(agent))).thenReturn(returnValue);
+        when(executor.fence(eq(FenceActionType.START), eq(agent))).thenReturn(returnValue);
     }
 
     /**
@@ -206,7 +206,7 @@ public class StartVdsCommandTest extends DbDependentTestBase {
         mockExecutor(agent1, true);
         mockCheckStatus("on");
         // this won't happen, because second agent isn't reached.
-        when(executor.fence(eq(FenceActionType.Start), eq(agent2))).thenThrow(new IllegalStateException());
+        when(executor.fence(eq(FenceActionType.START), eq(agent2))).thenThrow(new IllegalStateException());
         command.executeCommand();
     }
 

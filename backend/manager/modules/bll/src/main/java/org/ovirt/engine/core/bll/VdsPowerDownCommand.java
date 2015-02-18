@@ -9,7 +9,7 @@ import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdsPowerDownParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -63,7 +63,7 @@ public class VdsPowerDownCommand<T extends VdsPowerDownParameters> extends VdsCo
             }
 
         } else if (getParameters().getFallbackToPowerManagement() && getVds().isPmEnabled()) {
-            FenceVdsActionParameters parameters = new FenceVdsActionParameters(getVds().getId(), FenceActionType.Stop);
+            FenceVdsActionParameters parameters = new FenceVdsActionParameters(getVds().getId(), FenceActionType.STOP);
             parameters.setKeepPolicyPMEnabled(getParameters().getKeepPolicyPMEnabled());
             runInternalAction(VdcActionType.StopVds,
                     parameters,

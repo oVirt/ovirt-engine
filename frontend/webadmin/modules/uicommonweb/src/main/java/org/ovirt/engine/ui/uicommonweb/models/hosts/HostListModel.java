@@ -31,7 +31,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
-import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -1614,7 +1614,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
-            list.add(new FenceVdsActionParameters(vds.getId(), FenceActionType.Restart));
+            list.add(new FenceVdsActionParameters(vds.getId(), FenceActionType.RESTART));
         }
 
         model.startProgress(null);
@@ -1638,7 +1638,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
-            list.add(new FenceVdsActionParameters(vds.getId(), FenceActionType.Start));
+            list.add(new FenceVdsActionParameters(vds.getId(), FenceActionType.START));
         }
 
         Frontend.getInstance().runMultipleAction(VdcActionType.StartVds, list,
@@ -1686,7 +1686,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         for (Object item : getSelectedItems())
         {
             VDS vds = (VDS) item;
-            list.add(new FenceVdsActionParameters(vds.getId(), FenceActionType.Stop));
+            list.add(new FenceVdsActionParameters(vds.getId(), FenceActionType.STOP));
         }
 
         model.startProgress(null);

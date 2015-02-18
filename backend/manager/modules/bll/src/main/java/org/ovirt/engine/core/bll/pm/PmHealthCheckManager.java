@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -212,7 +212,7 @@ public class PmHealthCheckManager {
      * doesn't matter whether that answer is "on" or "off".
      */
     private boolean isHealthy(FenceAgent agent, VDS host) {
-        return new FenceExecutor(host).fence(FenceActionType.Status, agent).getSucceeded();
+        return new FenceExecutor(host).fence(FenceActionType.STATUS, agent).getSucceeded();
     }
 
     private void waitUntilFencingAllowed() {
@@ -262,7 +262,7 @@ public class PmHealthCheckManager {
         for (VDS host : hostWithPMInStatusReboot) {
             RestartVdsCommand<FenceVdsActionParameters> restartVdsCommand =
                     new RestartVdsCommand<FenceVdsActionParameters>(new
-                    FenceVdsActionParameters(host.getId(), FenceActionType.Status));
+                    FenceVdsActionParameters(host.getId(), FenceActionType.STATUS));
             VDSFenceReturnValue returnValue = new FenceExecutor(host).checkHostStatus();
             if (FenceExecutor.isStatusOff(returnValue)) {
                 VdcReturnValueBase retValue = Backend.getInstance().runInternalAction(VdcActionType.RestartVds, restartVdsCommand.getParameters());
@@ -299,7 +299,7 @@ public class PmHealthCheckManager {
         for (VDS host : hosts) {
             final FenceVdsActionParameters params = new FenceVdsActionParameters(
                     host.getId(),
-                    FenceActionType.Restart
+                    FenceActionType.RESTART
             );
             ThreadPoolUtil.execute(new Runnable() {
                 @Override

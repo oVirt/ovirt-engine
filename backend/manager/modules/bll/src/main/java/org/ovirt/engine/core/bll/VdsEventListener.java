@@ -36,7 +36,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
-import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -245,7 +245,7 @@ public class VdsEventListener implements IVdsEventListener {
 
                 FenceVdsActionParameters params = new FenceVdsActionParameters(
                         vds.getId(),
-                        FenceActionType.Restart);
+                        FenceActionType.RESTART);
                 Backend.getInstance().runInternalAction(VdcActionType.VdsNotRespondingTreatment,
                         params,
                         ExecutionHandler.createInternalJobContext());

@@ -41,7 +41,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
-import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -500,21 +500,21 @@ public class BackendHostResourceTest
     public void testRestartFence() throws Exception {
         doTestFence(FenceType.RESTART,
                     VdcActionType.RestartVds,
-                    FenceActionType.Restart);
+                    FenceActionType.RESTART);
     }
 
     @Test
     public void testStartFence() throws Exception {
         doTestFence(FenceType.START,
                     VdcActionType.StartVds,
-                    FenceActionType.Start);
+                    FenceActionType.START);
     }
 
     @Test
     public void testStopFence() throws Exception {
         doTestFence(FenceType.STOP,
                     VdcActionType.StopVds,
-                    FenceActionType.Stop);
+                    FenceActionType.STOP);
     }
 
     public void doTestFence(FenceType fenceType,

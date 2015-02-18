@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -84,18 +84,18 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
         String options = vdsFenceOptions.ToInternalString();
 
         // ignore starting already started host or stopping already stopped host.
-        if (getParameters().getAction() == FenceActionType.Status
+        if (getParameters().getAction() == FenceActionType.STATUS
                 || !isAlreadyInRequestedStatus(options)) {
             _result =
                     getBroker().fenceNode(getParameters().getIp(),
                             getParameters().getPort() == null ? "" : getParameters().getPort(),
                     getParameters().getType(), getParameters().getUser(),
-                    getParameters().getPassword(), getActualActionName(), "", options,
+                    getParameters().getPassword(), getParameters().getAction().getValue(), "", options,
                     convertFencingPolicy()
             );
 
             getVDSReturnValue().setSucceeded(false);
-            if (getParameters().getAction() == FenceActionType.Status && _result.power != null) {
+            if (getParameters().getAction() == FenceActionType.STATUS && _result.power != null) {
                 String stat = _result.power.toLowerCase();
                 String msg = _result.mStatus.mMessage;
                 if ("on".equals(stat) || "off".equals(stat)) {
@@ -129,7 +129,7 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
         AuditLogableBase auditLogable = new AuditLogableBase();
         auditLogable.addCustomValue("HostName",
                 (DbFacade.getInstance().getVdsDao().get(getParameters().getTargetVdsID())).getName());
-        auditLogable.addCustomValue("AgentStatus", getActualActionName());
+        auditLogable.addCustomValue("AgentStatus", getParameters().getAction().getValue());
         auditLogable.addCustomValue("Operation", getParameters().getAction().toString());
         AuditLogDirector.log(auditLogable, AuditLogType.VDS_ALREADY_IN_REQUESTED_STATUS);
         getVDSReturnValue().setSucceeded(true);
@@ -156,8 +156,8 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
         );
         if (_result.power != null) {
             String powerStatus = _result.power.toLowerCase();
-            if ((action == FenceActionType.Start && powerStatus.equals("on")) ||
-                    action == FenceActionType.Stop && powerStatus.equals("off"))
+            if ((action == FenceActionType.START && powerStatus.equals("on")) ||
+                    action == FenceActionType.STOP && powerStatus.equals("off"))
                 ret = true;
         }
         return ret;
@@ -204,25 +204,6 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
         return (_result.mStatus != null) ? _result.mStatus : new StatusForXmlRpc();
-    }
-
-    private String getActualActionName() {
-        String actualActionName;
-        switch (getParameters().getAction()) {
-        case Restart:
-            actualActionName = "reboot";
-            break;
-        case Start:
-            actualActionName = "on";
-            break;
-        case Stop:
-            actualActionName = "off";
-            break;
-        default:
-            actualActionName = "status";
-            break;
-        }
-        return actualActionName;
     }
 
     @Override

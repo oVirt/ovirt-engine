@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
@@ -94,7 +94,7 @@ public class FenceExecutor {
 
     private VDSFenceReturnValue checkAgentStatus(FenceAgent agent, VDS proxyHost) {
         VDSFenceReturnValue returnValue = null;
-        returnValue = fence(FenceActionType.Status, agent, proxyHost);
+        returnValue = fence(FenceActionType.STATUS, agent, proxyHost);
         if (returnValue.getSucceeded()) {
             returnValue.setProxyHostUsed(proxyHost);
             returnValue.setFenceAgentUsed(agent);
@@ -105,7 +105,7 @@ public class FenceExecutor {
 
 
     public VDSFenceReturnValue fence(FenceActionType action, FenceAgent agent) {
-        boolean withRetries = action != FenceActionType.Status; // for status check, no retries on proxy-host selection.
+        boolean withRetries = action != FenceActionType.STATUS; // for status check, no retries on proxy-host selection.
         VDS proxyHost = proxyLocator.findProxyHost(withRetries);
         if (proxyHost == null) {
             return proxyNotFound();
@@ -125,7 +125,7 @@ public class FenceExecutor {
     public VDSFenceReturnValue fence(FenceActionType action, FenceAgent agent, VDS proxyHost) {
         VDSReturnValue result = null;
         try {
-            if (action == FenceActionType.Restart || action == FenceActionType.Stop) {
+            if (action == FenceActionType.RESTART || action == FenceActionType.STOP) {
                 stopSPM(action);
             }
             result = runFenceAction(action, agent, proxyHost);
@@ -133,7 +133,7 @@ public class FenceExecutor {
             if (!result.getSucceeded()) {
                 log.warn("Fence operation failed with proxy host {}, trying another proxy...",
                         proxyHost.getId());
-                boolean withRetries = action != FenceActionType.Status;
+                boolean withRetries = action != FenceActionType.STATUS;
                 VDS alternativeProxy =
                         proxyLocator.findProxyHost(withRetries, proxyHost.getId());
                 if (alternativeProxy != null) {
@@ -217,13 +217,13 @@ public class FenceExecutor {
 
     private String getActionPresentTense(FenceActionType action) {
         switch (action) {
-        case Start:
+        case START:
             return "Starting";
-        case Restart:
+        case RESTART:
             return "Restarting";
-        case Stop:
+        case STOP:
             return "Stopping";
-        case Status:
+        case STATUS:
             return "Checking status of";
         default:
             return "";// should never get here.
