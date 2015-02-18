@@ -14,9 +14,9 @@ public class WatchdogParameters extends VdcActionParametersBase {
     boolean vm;
 
     /**
-     * true if the watchog must be set in the instanceType, false otherwise
+     * true if the watchog must be set in a cluster independent entity (e.g. instance type or blank template), false otherwise
      */
-    boolean instanceType;
+    boolean clusterIndependent;
 
     @NotNull
     Guid id;
@@ -48,12 +48,12 @@ public class WatchdogParameters extends VdcActionParametersBase {
         return vm;
     }
 
-    public boolean isInstanceType() {
-        return instanceType;
+    public boolean isClusterIndependent() {
+        return clusterIndependent;
     }
 
-    public void setInstanceType(boolean instanceType) {
-        this.instanceType = instanceType;
+    public void setClusterIndependent(boolean clusterIndependent) {
+        this.clusterIndependent = clusterIndependent;
     }
 
     public void setVm(boolean vm) {

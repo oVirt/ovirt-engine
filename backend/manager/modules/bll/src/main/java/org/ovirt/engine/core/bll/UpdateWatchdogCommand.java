@@ -38,7 +38,7 @@ public class UpdateWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogPar
             return failCanDoAction(VdcBllMessages.WATCHDOG_NOT_FOUND);
         }
 
-        if (!getParameters().isInstanceType() && !validate(validateModelCompatibleWithOs())) {
+        if (!getParameters().isClusterIndependent() && !validate(validateModelCompatibleWithOs())) {
             return false;
         }
 

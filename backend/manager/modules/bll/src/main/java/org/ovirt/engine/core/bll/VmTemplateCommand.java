@@ -218,7 +218,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
                 if (getParameters().getWatchdog() != null) {
                     WatchdogParameters parameters = new WatchdogParameters();
                     parameters.setVm(false);
-                    parameters.setInstanceType(getVmTemplate().getTemplateType() == VmEntityType.INSTANCE_TYPE);
+                    parameters.setClusterIndependent(getVmTemplate().getTemplateType() == VmEntityType.INSTANCE_TYPE || isBlankTemplate());
 
                     parameters.setId(templateId);
                     parameters.setAction(getParameters().getWatchdog().getAction());
@@ -228,7 +228,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
             } else {
                 WatchdogParameters watchdogParameters = new WatchdogParameters();
                 watchdogParameters.setVm(false);
-                watchdogParameters.setInstanceType(getVmTemplate().getTemplateType() == VmEntityType.INSTANCE_TYPE);
+                watchdogParameters.setClusterIndependent(getVmTemplate().getTemplateType() == VmEntityType.INSTANCE_TYPE || isBlankTemplate());
 
                 watchdogParameters.setId(templateId);
                 if (getParameters().getWatchdog() == null) {
