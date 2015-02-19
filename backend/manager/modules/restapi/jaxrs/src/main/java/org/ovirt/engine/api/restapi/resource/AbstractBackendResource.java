@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.CreationStatus;
@@ -259,9 +260,10 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
 
     protected R linkSubCollections(R model, Class<? extends BaseResource> suggestedParent, String... subCollectionMembersToExclude) {
         if (subCollections != null) {
+            UriBuilder uriBuilder = LinkHelper.getUriBuilder(getUriInfo(), model, suggestedParent);
             for (String relation : subCollections) {
                 if(!shouldExclude(relation, subCollectionMembersToExclude)) {
-                    addOrUpdateLink(model, relation, LinkHelper.getUriBuilder(getUriInfo(), model, suggestedParent).path(relation).build().toString());
+                    addOrUpdateLink(model, relation, uriBuilder.clone().path(relation).build().toString());
                 }
                 else{
                     removeIfExist(model, relation);
