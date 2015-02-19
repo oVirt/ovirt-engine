@@ -395,6 +395,7 @@ public enum VdcQueryType implements Serializable {
     GetGraphicsDevices(VdcQueryAuthType.User),
 
     ConfigureConsoleOptions(VdcQueryAuthType.User),
+    GetConsoleDescriptorFile(VdcQueryAuthType.User),
 
     GetDeviceCustomProperties(VdcQueryAuthType.User),
 

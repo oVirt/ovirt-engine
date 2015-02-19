@@ -1,7 +1,11 @@
 package org.ovirt.engine.ui.common.uicommon;
 
-import org.ovirt.engine.core.common.console.ConsoleOptions;
-import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.common.queries.ConsoleOptionsParams;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IVnc;
 
@@ -9,31 +13,18 @@ public class VncNativeImpl extends AbstractVnc implements IVnc {
 
     @Override
     public void invokeClient() {
-        ConsoleOptions options = getOptions();
-        StringBuilder configBuilder = new StringBuilder("[virt-viewer]"); //$NON-NLS-1$
-        configBuilder.append("\ntype=vnc") //$NON-NLS-1$
-                .append("\nhost=").append(options.getHost()) //$NON-NLS-1$
-                .append("\nport=").append(options.getPort()) //$NON-NLS-1$
-                .append("\npassword=").append(options.getTicket()) //$NON-NLS-1$
-                .append("\n# Password is valid for ") //$NON-NLS-1$
-                .append(ConsoleOptions.TICKET_VALIDITY_SECONDS).append(" seconds.") //$NON-NLS-1$
-                .append("\ndelete-this-file=1") //$NON-NLS-1$
-                .append("\ntitle=").append(options.getTitle()); //$NON-NLS-1$
+        AsyncQuery callback = new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) { // todo avoid code duplication with spice
+                ConsoleModel.makeConsoleConfigRequest("console.vv", //$NON-NLS-1$
+                        "application/x-virt-viewer; charset=UTF-8", //$NON-NLS-1$
+                        (String) ((VdcQueryReturnValue) returnValue).getReturnValue());
+            }
+        });
 
-        if (!StringHelper.isNullOrEmpty(options.getToggleFullscreenHotKey())) {
-            configBuilder.append("\ntoggle-fullscreen=").append(options.getToggleFullscreenHotKey()); //$NON-NLS-1$
-        }
-
-        String releaseCursorHotKey = options.getReleaseCursorHotKey();
-        if (!StringHelper.isNullOrEmpty(releaseCursorHotKey)) {
-            configBuilder.append("\nrelease-cursor=").append(releaseCursorHotKey); //$NON-NLS-1$
-        }
-
-        if (options.isRemapCtrlAltDelete()) {
-            configBuilder.append("\nsecure-attention=").append(ConsoleOptions.SECURE_ATTENTION_MAPPING); //$NON-NLS-1$
-        }
-
-        ConsoleModel.makeConsoleConfigRequest("console.vv", "application/x-virt-viewer; charset=UTF-8", configBuilder.toString()); //$NON-NLS-1$ $NON-NLS-2$
+        Frontend.getInstance().runQuery(
+                VdcQueryType.GetConsoleDescriptorFile,
+                new ConsoleOptionsParams(getOptions()), callback);
     }
 
 }
