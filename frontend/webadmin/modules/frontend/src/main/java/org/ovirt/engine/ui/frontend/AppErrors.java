@@ -862,6 +862,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type CPU Profile")
     String VAR__TYPE__CPU_PROFILE();
 
+    @DefaultStringValue("$type Gluster Volume Snapshot")
+    String VAR__TYPE__GLUSTER_VOLUME_SNAPSHOT();
+
     @DefaultStringValue("$action run")
     String VAR__ACTION__RUN();
 
@@ -3089,6 +3092,12 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Cannot reset the configuration to its default value.")
     String ACTION_TYPE_FAILED_GLUSTER_GEOREP_CONFIG_DEFAULT_SET();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Volume snapshot feature not supported.")
+    String ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Remote cluster is not maintained by engine.")
+    String ACTION_TYPE_FAILED_REMOTE_CLUSTER_NOT_MAINTAINED_BY_ENGINE();
 
     @DefaultStringValue("Cannot ${action} ${type}. All three values are needed in order to define QoS on each network directions.")
     String ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES();
