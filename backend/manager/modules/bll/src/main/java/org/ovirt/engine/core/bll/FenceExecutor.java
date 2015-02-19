@@ -149,7 +149,7 @@ public class FenceExecutor {
                 } else {
                     log.warn("Failed to find other proxy to re-run failed fence operation, retrying with the same proxy...");
                     new AuditLogDirector().log(getAuditParams(action, agent, proxyHost),
-                            AuditLogType.FENCE_OPERATION_FAILED_USING_PROXY);
+                            AuditLogType.FENCE_OPERATION_USING_AGENT_AND_PROXY_FAILED);
                     result = runFenceAction(action, agent, proxyHost);
                 }
             }
@@ -210,7 +210,7 @@ public class FenceExecutor {
                 agent,
                 fencingPolicy);
         AuditLogableBase logable = getAuditParams(action, agent, proxyHost);
-        new AuditLogDirector().log(logable, AuditLogType.FENCE_USING_AGENT_AND_PROXY_HOST);
+        new AuditLogDirector().log(logable, AuditLogType.FENCE_OPERATION_USING_AGENT_AND_PROXY_STARTED);
     }
 
     private AuditLogableBase getAuditParams(FenceActionType action, FenceAgent agent, VDS proxyHost) {
