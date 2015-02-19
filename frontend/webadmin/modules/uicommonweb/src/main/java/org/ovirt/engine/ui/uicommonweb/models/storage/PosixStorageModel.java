@@ -1,18 +1,19 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
-public class PosixStorageModel extends Model implements IStorageModel {
+public class PosixStorageModel extends FileStorageModel {
 
     private UICommand updateCommand;
 
@@ -47,16 +48,6 @@ public class PosixStorageModel extends Model implements IStorageModel {
     @Override
     public void setRole(StorageDomainType value) {
         privateRole = value;
-    }
-
-    private EntityModel<String> path;
-
-    public EntityModel<String> getPath() {
-        return path;
-    }
-
-    private void setPath(EntityModel<String> value) {
-        path = value;
     }
 
     private EntityModel<String> vfsType;
@@ -120,5 +111,17 @@ public class PosixStorageModel extends Model implements IStorageModel {
 
     public void setVfsChangeability(boolean isVfsChangeable) {
         getVfsType().setIsChangable(isVfsChangeable);
+    }
+
+    protected void prepareConnectionForEditing(StorageServerConnections connection) {
+        getMountOptions().setEntity(connection.getMountOptions());
+        getVfsType().setEntity(connection.getVfsType());
+    }
+
+    @Override public void prepareForEdit(StorageDomain storage) {
+        super.prepareForEdit(storage);
+        boolean isEditable = isEditable(storage);
+        setVfsChangeability(isEditable);
+        getMountOptions().setIsChangable(isEditable);
     }
 }

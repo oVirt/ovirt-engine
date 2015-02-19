@@ -1,17 +1,17 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LocalfsLinuxMountPointValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NonUtfValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 
 @SuppressWarnings("unused")
-public class LocalStorageModel extends Model implements IStorageModel {
+public class LocalStorageModel extends FileStorageModel {
 
     private UICommand updateCommand;
 
@@ -48,18 +48,10 @@ public class LocalStorageModel extends Model implements IStorageModel {
         role = value;
     }
 
-    private EntityModel<String> path;
-
-    public EntityModel<String> getPath() {
-        return path;
-    }
-
-    public void setPath(EntityModel<String> value) {
-        path = value;
-    }
+    @Override
+    protected void prepareConnectionForEditing(StorageServerConnections connection) {}
 
     public LocalStorageModel() {
-
         setUpdateCommand(new UICommand("Update", this)); //$NON-NLS-1$
         setPath(new EntityModel<String>());
     }

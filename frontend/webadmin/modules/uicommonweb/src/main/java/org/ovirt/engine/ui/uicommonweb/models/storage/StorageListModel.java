@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
@@ -56,11 +55,8 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ITaskTarget;
@@ -348,39 +344,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         boolean isPathEditable = isPathEditable(storage);
         isStorageNameEditable = isStorageNameEditable || isPathEditable;
 
-        IStorageModel item = null;
-        switch (storage.getStorageType()) {
-            case NFS:
-                item = prepareNfsStorageForEdit(storage);
-                //when storage is active, only SPM can perform actions on it, thus it is set above that host is not changeable.
-                //If storage is editable but not active (maintenance) - any host can perform the edit so the changeable here is set based on that
-                model.getHost().setIsChangable(isPathEditable);
-                break;
-
-            case FCP:
-                item = prepareFcpStorageForEdit(storage);
-                break;
-
-            case ISCSI:
-                item = prepareIscsiStorageForEdit(storage);
-                break;
-
-            case LOCALFS:
-                item = prepareLocalStorageForEdit(storage);
-                model.getHost().setIsChangable(isPathEditable);
-                break;
-
-            case POSIXFS:
-                item = preparePosixStorageForEdit(storage);
-                //when storage is active, only SPM can perform actions on it, thus it is set above that host is not changeable.
-                //If storage is editable but not active (maintenance) - any host can perform the edit so the changeable here is set based on that
-                model.getHost().setIsChangable(isPathEditable);
-                break;
-
-            case GLUSTERFS:
-                item = preparePosixStorageForEdit(storage);
-                break;
-        }
+        IStorageModel item = prepareStorageForEdit(storage, model);
 
         model.setItems(new ArrayList<IStorageModel>(Arrays.asList(new IStorageModel[] {item})));
         model.setSelectedItem(item);
@@ -411,48 +375,31 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
         }
     }
 
-    private IStorageModel prepareNfsStorageForEdit(StorageDomain storage)
-    {
-        final NfsStorageModel model = new NfsStorageModel();
-        model.setRole(storage.getStorageDomainType());
+    private IStorageModel prepareStorageForEdit(StorageDomain storage, StorageModel model) {
+        final IStorageModel storageTypeModel = getStorageModelByStorage(storage);
+        storageTypeModel.setContainer(model);
+        storageTypeModel.setRole(storage.getStorageDomainType());
+        storageTypeModel.prepareForEdit(storage);
 
-        boolean isNfsPathEditable = isPathEditable(storage);
+        return storageTypeModel;
+    }
 
-        model.getPath().setIsChangable(isNfsPathEditable);
-        model.getOverride().setIsChangable(isNfsPathEditable);
-
-        AsyncDataProvider.getInstance().getStorageConnectionById(new AsyncQuery(null, new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object target, Object returnValue) {
-
-                StorageServerConnections connection = (StorageServerConnections) returnValue;
-                model.getPath().setEntity(connection.getconnection());
-                model.getRetransmissions().setEntity(connection.getNfsRetrans());
-                model.getTimeout().setEntity(connection.getNfsTimeo());
-                model.getMountOptions().setEntity(connection.getMountOptions());
-                for (EntityModel<NfsVersion> item : model.getVersion().getItems()) {
-                    EntityModel itemModel = item;
-                    boolean noNfsVersion = itemModel.getEntity() == null && connection.getNfsVersion() == null;
-                    boolean foundNfsVersion = itemModel.getEntity() != null &&
-                            itemModel.getEntity().equals(connection.getNfsVersion());
-
-                    if (noNfsVersion || foundNfsVersion) {
-                        model.getVersion().setSelectedItem(item);
-                        break;
-                    }
-                }
-
-                // If any settings were overridden, reflect this in the override checkbox
-                model.getOverride().setEntity(
-                        connection.getNfsVersion() != null ||
-                        connection.getNfsRetrans() != null ||
-                        connection.getNfsTimeo() != null ||
-                        connection.getMountOptions() != null);
-
-            }
-        }), storage.getStorage(), true);
-
-        return model;
+    private IStorageModel getStorageModelByStorage(StorageDomain storage) {
+        switch (storage.getStorageType()) {
+        case NFS:
+            return new NfsStorageModel();
+        case FCP:
+            return new FcpStorageModel();
+        case ISCSI:
+            return new IscsiStorageModel();
+        case LOCALFS:
+            return new LocalStorageModel();
+        case POSIXFS:
+            return new PosixStorageModel();
+        case GLUSTERFS:
+            return new GlusterStorageModel();
+        }
+        return null;
     }
 
     private boolean isPathEditable(StorageDomain storage) {
@@ -466,116 +413,6 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
     private boolean isStorageStatusValidForPathEditing(StorageDomain storage) {
         return (storage.getStatus() == StorageDomainStatus.Maintenance
                 || storage.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached);
-    }
-
-    private IStorageModel prepareLocalStorageForEdit(StorageDomain storage)
-    {
-        LocalStorageModel model = new LocalStorageModel();
-        model.setRole(storage.getStorageDomainType());
-        boolean isPathEditable = isPathEditable(storage);
-        model.getPath().setIsChangable(isPathEditable);
-
-        AsyncDataProvider.getInstance().getStorageConnectionById(new AsyncQuery(model, new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object target, Object returnValue) {
-                LocalStorageModel localStorageModel = (LocalStorageModel) target;
-                StorageServerConnections connection = (StorageServerConnections) returnValue;
-                localStorageModel.getPath().setEntity(connection.getconnection());
-
-            }
-        }), storage.getStorage(), true);
-
-        return model;
-    }
-
-    private IStorageModel preparePosixStorageForEdit(StorageDomain storage) {
-
-        final PosixStorageModel model = getPosixModelByStorage(storage);
-        model.setRole(storage.getStorageDomainType());
-
-        boolean isPathEditable = isPathEditable(storage);
-        model.getPath().setIsChangable(isPathEditable);
-        model.setVfsChangeability(isPathEditable);
-        model.getMountOptions().setIsChangable(isPathEditable);
-
-        AsyncDataProvider.getInstance().getStorageConnectionById(new AsyncQuery(null, new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object target, Object returnValue) {
-
-                StorageServerConnections connection = (StorageServerConnections) returnValue;
-                model.getPath().setEntity(connection.getconnection());
-                model.getVfsType().setEntity(connection.getVfsType());
-                model.getMountOptions().setEntity(connection.getMountOptions());
-
-            }
-        }), storage.getStorage(), true);
-
-        return model;
-    }
-
-    private PosixStorageModel getPosixModelByStorage(StorageDomain storage) {
-        switch (storage.getStorageType()) {
-        case GLUSTERFS:
-            return new GlusterStorageModel();
-        default:
-            return new PosixStorageModel();
-        }
-    }
-
-    private IStorageModel prepareIscsiStorageForEdit(StorageDomain storage)
-    {
-        IscsiStorageModel model = new IscsiStorageModel();
-        model.setRole(storage.getStorageDomainType());
-
-        prepareSanStorageForEdit(model);
-
-        return model;
-    }
-
-    private IStorageModel prepareFcpStorageForEdit(StorageDomain storage)
-    {
-        FcpStorageModel model = new FcpStorageModel();
-        model.setRole(storage.getStorageDomainType());
-
-        prepareSanStorageForEdit(model);
-
-        return model;
-    }
-
-    private void prepareSanStorageForEdit(final SanStorageModel model)
-    {
-        StorageModel storageModel = (StorageModel) getWindow();
-        boolean isStorageEditable = storageModel.isStorageActive() || storageModel.isNewStorage();
-
-        if (isStorageEditable) {
-            storageModel.getHost().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-                @Override
-                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                    postPrepareSanStorageForEdit(model, true);
-                }
-            });
-        }
-        else {
-            postPrepareSanStorageForEdit(model, false);
-        }
-    }
-
-    private void postPrepareSanStorageForEdit(final SanStorageModel model, boolean isStorageActive)
-    {
-        StorageModel storageModel = (StorageModel) getWindow();
-        StorageDomain storage = getSelectedItem();
-        model.setStorageDomain(storage);
-
-        VDS host = storageModel.getHost().getSelectedItem();
-        Guid hostId = host != null && isStorageActive ? host.getId() : null;
-
-        AsyncDataProvider.getInstance().getLunsByVgId(new AsyncQuery(storageModel, new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object target, Object returnValue) {
-                ArrayList<LUNs> lunList = (ArrayList<LUNs>) returnValue;
-                model.applyData(lunList, true);
-            }
-        }), storage.getStorage(), hostId);
     }
 
     private void importDomain()

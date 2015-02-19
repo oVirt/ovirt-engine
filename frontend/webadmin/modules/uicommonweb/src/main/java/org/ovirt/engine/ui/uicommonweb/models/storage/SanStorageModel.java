@@ -13,14 +13,17 @@ import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.ValueEventArgs;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
@@ -663,5 +666,39 @@ public abstract class SanStorageModel extends SanStorageModelBase
         setIsValid(isValid);
 
         return super.validate() && getIsValid();
+    }
+
+    public boolean isEditable(StorageDomain storage) {
+        return getContainer().isStorageActive() || getContainer().isNewStorage();
+    }
+
+    public void prepareForEdit(final StorageDomain storage) {
+        if (isEditable(storage)) {
+            final SanStorageModel thisModel = this;
+            getContainer().getHost().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+                @Override
+                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                    postPrepareSanStorageForEdit(thisModel, true, storage);
+                }
+            });
+        }
+        else {
+            postPrepareSanStorageForEdit(this, false, storage);
+        }
+    }
+
+    private void postPrepareSanStorageForEdit(final SanStorageModel model, boolean isStorageActive, StorageDomain storage) {
+        model.setStorageDomain(storage);
+
+        VDS host = getContainer().getHost().getSelectedItem();
+        Guid hostId = host != null && isStorageActive ? host.getId() : null;
+
+        AsyncDataProvider.getInstance().getLunsByVgId(new AsyncQuery(getContainer(), new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object target, Object returnValue) {
+                ArrayList<LUNs> lunList = (ArrayList<LUNs>) returnValue;
+                model.applyData(lunList, true);
+            }
+        }), storage.getStorage(), hostId);
     }
 }

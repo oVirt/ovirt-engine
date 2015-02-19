@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -13,7 +15,6 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LinuxMountPointValidation;
@@ -27,7 +28,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
 @SuppressWarnings("unused")
-public class NfsStorageModel extends Model implements IStorageModel {
+public class NfsStorageModel extends FileStorageModel {
 
     //retrans nfs option max value
     private final static short RETRANS_MAX = 32767;
@@ -83,20 +84,34 @@ public class NfsStorageModel extends Model implements IStorageModel {
         role = value;
     }
 
-    private EntityModel<String> path;
-
-    public EntityModel<String> getPath() {
-        return path;
-    }
-
-    private void setPath(EntityModel<String> value) {
-        path = value;
-    }
-
     private EntityModel<Boolean> override;
 
     public EntityModel<Boolean> getOverride() {
         return override;
+    }
+
+    @Override protected void prepareConnectionForEditing(StorageServerConnections connection) {
+        getRetransmissions().setEntity(connection.getNfsRetrans());
+        getTimeout().setEntity(connection.getNfsTimeo());
+        getMountOptions().setEntity(connection.getMountOptions());
+        for (EntityModel<NfsVersion> item : getVersion().getItems()) {
+            EntityModel itemModel = item;
+            boolean noNfsVersion = itemModel.getEntity() == null && connection.getNfsVersion() == null;
+            boolean foundNfsVersion = itemModel.getEntity() != null &&
+                    itemModel.getEntity().equals(connection.getNfsVersion());
+
+            if (noNfsVersion || foundNfsVersion) {
+                getVersion().setSelectedItem(item);
+                break;
+            }
+        }
+
+        // If any settings were overridden, reflect this in the override checkbox
+        getOverride().setEntity(
+                connection.getNfsVersion() != null ||
+                        connection.getNfsRetrans() != null ||
+                        connection.getNfsTimeo() != null ||
+                        connection.getMountOptions() != null);
     }
 
     private void setOverride(EntityModel<Boolean> value) {
@@ -149,7 +164,6 @@ public class NfsStorageModel extends Model implements IStorageModel {
     }
 
     public NfsStorageModel() {
-
         setPathChangedEvent(new Event<EventArgs>(pathChangedEventDefinition));
 
         setUpdateCommand(new UICommand("Update", this)); //$NON-NLS-1$
@@ -266,5 +280,11 @@ public class NfsStorageModel extends Model implements IStorageModel {
         getRetransmissions().setIsAvailable(available);
         getTimeout().setIsAvailable(available);
         getMountOptions().setIsAvailable(available);
+    }
+
+    @Override
+    public void prepareForEdit(StorageDomain storage) {
+        super.prepareForEdit(storage);
+        getOverride().setIsChangable(isEditable(storage));
     }
 }
