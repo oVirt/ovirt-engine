@@ -2810,6 +2810,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers:
       Filter: {value: true|false, required: false}
+      All-Content: {value: true|false, required: false}
 - name: /hosts/{host:id}|rel=get
   description: get the details of the specified host in the system
   request:
@@ -2820,6 +2821,7 @@ actions:
       force: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Filter: {value: true|false, required: false}
+      All-Content: {value: true|false, required: false}
 - name: /hosts/{host:id}|rel=delete
   description: delete the specified host in the system
   request:
