@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
-<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
+xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.tooltip">
 
     <ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
 
@@ -121,11 +122,13 @@
                 </g:SimplePanel>
                 <g:FlowPanel addStyleNames="{style.obrand_dialogHeaderTitleContainer}">
                     <g:FlowPanel ui:field="headerTitlePanel">
-                        <g:PushButton ui:field="helpIconButton" addStyleNames="{style.helpIconButton}" visible="false">
-                            <g:upFace image='{resources.dialogIconHelp}' />
-                            <g:downFace image='{resources.dialogIconHelpDown}' />
-                            <g:upHoveringFace image='{resources.dialogIconHelpRollover}' />
-                        </g:PushButton>
+                        <t:WidgetTooltip ui:field="helpIconButtonTooltip">
+                            <g:PushButton ui:field="helpIconButton" addStyleNames="{style.helpIconButton}" visible="false">
+                                <g:upFace image='{resources.dialogIconHelp}' />
+                                <g:downFace image='{resources.dialogIconHelpDown}' />
+                                <g:upHoveringFace image='{resources.dialogIconHelpRollover}' />
+                            </g:PushButton>
+                        </t:WidgetTooltip>
                     </g:FlowPanel>
                 </g:FlowPanel>
             </g:FlowPanel>

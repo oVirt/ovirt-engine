@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.common.widget.dialog;
 
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
+import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 
 import com.google.gwt.core.client.GWT;
@@ -16,6 +19,8 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SimpleDialogPanel extends AbstractDialogPanel {
+
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     interface WidgetUiBinder extends UiBinder<Widget, SimpleDialogPanel> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -52,6 +57,9 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
     ButtonBase closeIconButton;
 
     @UiField
+    WidgetTooltip helpIconButtonTooltip;
+
+    @UiField
     Style style;
 
     private UICommand helpCommand;
@@ -60,6 +68,8 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
         setWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         getElement().getStyle().setZIndex(1);
         addHelpButtonHandler();
+        helpIconButtonTooltip.setText(constants.clickForHelp());
+        helpIconButtonTooltip.reconfigure();
     }
 
     @Override

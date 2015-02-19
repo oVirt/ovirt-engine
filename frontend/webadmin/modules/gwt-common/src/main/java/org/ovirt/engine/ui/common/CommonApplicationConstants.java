@@ -2075,4 +2075,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Kdumping")
     String kdumping();
 
+    @DefaultStringValue("Click for help")
+    String clickForHelp();
+
 }
