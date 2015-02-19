@@ -3099,6 +3099,21 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Remote cluster is not maintained by engine.")
     String ACTION_TYPE_FAILED_REMOTE_CLUSTER_NOT_MAINTAINED_BY_ENGINE();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Gluster volume snapshot name is empty.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_NAME_IS_EMPTY();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Snapshot ${snapname} does not exist.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_DOES_NOT_EXIST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. No snapshots exist for volume ${volumeName}")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_NO_SNAPSHOTS_EXIST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Snapshot ${snapname} is already activated.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_ALREADY_ACTIVATED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Snapshot ${snapname} is already de-activated.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_ALREADY_DEACTIVATED();
+
     @DefaultStringValue("Cannot ${action} ${type}. All three values are needed in order to define QoS on each network directions.")
     String ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES();
 

@@ -312,6 +312,11 @@ public enum VdcActionType {
     PauseGlusterVolumeGeoRepSession(1431, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     SetGeoRepConfig(1432, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     ResetDefaultGeoRepConfig(1433, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    DeleteGlusterVolumeSnapshot(1432, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    DeleteAllGlusterVolumeSnapshots(1433, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    ActivateGlusterVolumeSnapshot(1434, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    DeactivateGlusterVolumeSnapshot(1435, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    RestoreGlusterVolumeSnapshot(1436, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
 
     // Cluster Policy
     AddClusterPolicy(1450, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),

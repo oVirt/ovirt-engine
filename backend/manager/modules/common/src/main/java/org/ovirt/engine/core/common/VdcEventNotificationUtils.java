@@ -123,6 +123,16 @@ public final class VdcEventNotificationUtils {
         AddEventNotificationEntry(EventNotificationEntity.GlusterService, AuditLogType.GLUSTER_SERVICE_RESTARTED);
         AddEventNotificationEntry(EventNotificationEntity.GlusterService, AuditLogType.GLUSTER_SERVICE_RESTART_FAILED);
         AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_BRICK_STATUS_CHANGED);
+        AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_SNAPSHOT_DELETED);
+        AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_SNAPSHOT_DELETE_FAILED);
+        AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_ALL_SNAPSHOTS_DELETED);
+        AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_ALL_SNAPSHOTS_DELETE_FAILED);
+        AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_SNAPSHOT_ACTIVATED);
+        AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_SNAPSHOT_ACTIVATE_FAILED);
+        AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_SNAPSHOT_DEACTIVATED);
+        AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_SNAPSHOT_DEACTIVATE_FAILED);
+        AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_SNAPSHOT_RESTORED);
+        AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_SNAPSHOT_RESTORE_FAILED);
 
         // DWH
         AddEventNotificationEntry(EventNotificationEntity.DWH, AuditLogType.DWH_STOPPED);
