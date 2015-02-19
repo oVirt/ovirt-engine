@@ -77,6 +77,7 @@ import org.ovirt.engine.ui.common.widget.renderer.MemorySizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
+import org.ovirt.engine.ui.common.widget.tooltip.TooltipConfig.Width;
 import org.ovirt.engine.ui.common.widget.uicommon.instanceimages.InstanceImagesEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
@@ -933,10 +934,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isVirtioScsiEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isSingleQxlEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         cpuPinningInfo =
-                new InfoIcon(SafeHtmlUtils.fromTrustedString(templates.italicFixedWidth("400px", //$NON-NLS-1$
+                new InfoIcon(SafeHtmlUtils.fromTrustedString(templates.italicText(
                         constants.cpuPinningLabelExplanation())
                         .asString()
                         .replaceAll("(\r\n|\n)", "<br />")));//$NON-NLS-1$ //$NON-NLS-2$
+        cpuPinningInfo.setTooltipMaxWidth(Width.W420);
         isVirtioScsiEnabledInfoIcon =
                 new InfoIcon(templates.italicText(constants.isVirtioScsiEnabledInfo()));
         final Integer defaultMaximumMigrationDowntime = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultMaximumMigrationDowntime);

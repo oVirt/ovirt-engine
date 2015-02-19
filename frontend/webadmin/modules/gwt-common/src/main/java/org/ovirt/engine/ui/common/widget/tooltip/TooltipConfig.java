@@ -26,6 +26,7 @@ public class TooltipConfig {
         }
     }
 
+    public final static String TEMPLATE = "<div class=\"tooltip\"><div class=\"tooltip-arrow\"></div><div class=\"tooltip-inner\"></div></div>"; //$NON-NLS-1$
     public final static boolean IS_ANIMATED = true;
     public final static boolean IS_HTML = true;
     public final static Placement PLACEMENT = Placement.TOP;

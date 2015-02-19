@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.tooltip;
 
+import org.ovirt.engine.ui.common.widget.tooltip.TooltipConfig.Width;
+
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -26,6 +28,10 @@ public class WidgetTooltip extends Tooltip {
         this.setShowDelayMs(TooltipConfig.SHOW_DELAY_MS);
         this.setHideDelayMs(TooltipConfig.HIDE_DELAY_MS);
         this.setContainer(TooltipConfig.CONTAINER);
+    }
+
+    public void setMaxWidth(Width width) {
+        addTooltipClassName(width.getWidthClass());
     }
 
 }

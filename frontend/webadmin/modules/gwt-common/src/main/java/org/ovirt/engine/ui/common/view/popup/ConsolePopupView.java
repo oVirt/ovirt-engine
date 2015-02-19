@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.WidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
+import org.ovirt.engine.ui.common.widget.tooltip.TooltipConfig.Width;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.console.EntityModelValueCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.console.EntityModelValueCheckbox.ValueCheckboxRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
@@ -336,6 +337,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         spiceHeadline = new WidgetWithInfo(spiceInvocationLabel);
         spiceHeadline.setExplanation(SafeHtmlUtils.fromTrustedString(createSpiceInvocationInfo()));
         spiceHeadline.addInfoIconStyle("cpv_infoIcon_pfly_fix"); //$NON-NLS-1$
+        spiceHeadline.setInfoIconTooltipMaxWidth(Width.W620);
         vncHeadline= new WidgetWithInfo(vncInvocationLabel);
         vncHeadline.setExplanation(SafeHtmlUtils.fromTrustedString(createVncInvocationInfo()));
         rdpHeadline= new WidgetWithInfo(rdpInvocationLabel);

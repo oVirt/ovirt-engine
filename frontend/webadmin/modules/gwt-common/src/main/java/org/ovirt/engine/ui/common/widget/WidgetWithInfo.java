@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget;
 
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
+import org.ovirt.engine.ui.common.widget.tooltip.TooltipConfig.Width;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -36,6 +37,10 @@ public class WidgetWithInfo extends Composite {
 
     public void addInfoIconStyle(String style) {
         infoIcon.addStyleName(style);
+    }
+
+    public void setInfoIconTooltipMaxWidth(Width width) {
+        infoIcon.setTooltipMaxWidth(width);
     }
 
 }

@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEdito
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.tooltip.TooltipConfig.Width;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.ConfigureLocalStorageModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -22,7 +23,6 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ConfigureLocalStoragePopupPresenterWidget;
@@ -164,7 +164,6 @@ public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBound
     EntityModelCheckBoxEditor countThreadsAsCoresEditor;
 
     private final static ApplicationTemplates templates = AssetProvider.getTemplates();
-    private final static ApplicationResources resources = AssetProvider.getResources();
     private final static ApplicationConstants constants = AssetProvider.getConstants();
     private final static ApplicationMessages messages = AssetProvider.getMessages();
 
@@ -250,8 +249,10 @@ public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBound
 
         countThreadsAsCoresEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
-        memoryOptimizationInfo = new InfoIcon(templates.italicFixedWidth("465px", constants.clusterPopupMemoryOptimizationInfo())); //$NON-NLS-1$
-        cpuThreadsInfo = new InfoIcon(templates.italicFixedWidth("600px", constants.clusterPopupCpuThreadsInfo())); //$NON-NLS-1$
+        memoryOptimizationInfo = new InfoIcon(templates.italicText(constants.clusterPopupMemoryOptimizationInfo()));
+        memoryOptimizationInfo.setTooltipMaxWidth(Width.W520);
+        cpuThreadsInfo = new InfoIcon(templates.italicText(constants.clusterPopupCpuThreadsInfo()));
+        cpuThreadsInfo.setTooltipMaxWidth(Width.W620);
 
     }
 
