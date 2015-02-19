@@ -6,6 +6,7 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
     public static final String LAST_NAME = "LASTNAME";
     public static final String USER_NAME = "USRNAME";
     public static final String GROUP = "GROUP";
+    public static final String DIRECTORY = "DIRECTORY";
 
     public enum UserOrGroup {
         User,
@@ -19,7 +20,7 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         mVerbs.add(LAST_NAME);
         mVerbs.add(USER_NAME);
         mVerbs.add("LOGIN");
-        mVerbs.add("DIRECTORY");
+        mVerbs.add(DIRECTORY);
         mVerbs.add("DEPARTMENT");
         mVerbs.add(GROUP);
         mVerbs.add("TITLE");
@@ -37,7 +38,7 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         getTypeDictionary().put(LAST_NAME, String.class);
         getTypeDictionary().put(USER_NAME, String.class);
         getTypeDictionary().put("LOGIN", String.class);
-        getTypeDictionary().put("DIRECTORY", String.class);
+        getTypeDictionary().put(DIRECTORY, String.class);
         getTypeDictionary().put("DEPARTMENT", String.class);
         getTypeDictionary().put("TITLE", String.class);
         getTypeDictionary().put(GROUP, String.class);

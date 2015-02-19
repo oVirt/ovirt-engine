@@ -69,7 +69,7 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
                 return object.getDomain();
             }
         };
-        authzColumn.makeSortable();
+        authzColumn.makeSortable(VdcUserConditionFieldAutoCompleter.DIRECTORY);
         getTable().addColumn(authzColumn, constants.authz(), "150px"); //$NON-NLS-1$
 
         AbstractTextColumnWithTooltip<DbUser> namespaceColumn = new AbstractTextColumnWithTooltip<DbUser>() {
