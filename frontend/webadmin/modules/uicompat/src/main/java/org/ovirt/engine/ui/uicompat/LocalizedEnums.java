@@ -467,6 +467,26 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___GLUSTER_GEOREP_CONFIG_SET_DEFAULT_FAILED();
 
+    String AuditLogType___GLUSTER_VOLUME_SNAPSHOT_DELETED();
+
+    String AuditLogType___GLUSTER_VOLUME_SNAPSHOT_DELETE_FAILED();
+
+    String AuditLogType___GLUSTER_VOLUME_ALL_SNAPSHOTS_DELETED();
+
+    String AuditLogType___GLUSTER_VOLUME_ALL_SNAPSHOTS_DELETE_FAILED();
+
+    String AuditLogType___GLUSTER_VOLUME_SNAPSHOT_ACTIVATED();
+
+    String AuditLogType___GLUSTER_VOLUME_SNAPSHOT_ACTIVATE_FAILED();
+
+    String AuditLogType___GLUSTER_VOLUME_SNAPSHOT_DEACTIVATED();
+
+    String AuditLogType___GLUSTER_VOLUME_SNAPSHOT_DEACTIVATE_FAILED();
+
+    String AuditLogType___GLUSTER_VOLUME_SNAPSHOT_RESTORED();
+
+    String AuditLogType___GLUSTER_VOLUME_SNAPSHOT_RESTORE_FAILED();
+
     String VdcActionType___ActivateVds();
 
     String VdcActionType___RecoveryStoragePool();
@@ -797,6 +817,16 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String VdcActionType___AddSubnetToProvider();
 
     String VdcActionType___RemoveSubnetFromProvider();
+
+    String VdcActionType___DeleteGlusterVolumeSnapshot();
+
+    String VdcActionType___DeleteAllGlusterVolumeSnapshots();
+
+    String VdcActionType___ActivateGlusterVolumeSnapshot();
+
+    String VdcActionType___DeactivateGlusterVolumeSnapshot();
+
+    String VdcActionType___RestoreGlusterVolumeSnapshot();
 
     String VdcObjectType___AdElements();
 
