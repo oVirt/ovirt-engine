@@ -4975,6 +4975,48 @@
           <value>0</value>
           <value>*</value>
       </row>
+      <row>
+          <value>81940459-2ec4-4afa-bbaa-22549555293b</value>
+          <value>c</value>
+          <value>userportal4</value>
+          <null />
+          <value>testportal.redhat.com</value>
+          <value>userportal4@testportal.redhat.com</value>
+          <null />
+          <null />
+          <null />
+          <value>0</value>
+          <value>*</value>
+      </row>
+      <row>
+          <value>81940459-2ec4-4afa-bbaa-22549555293c</value>
+          <value>d</value>
+          <value>userportal4</value>
+          <null />
+          <value>testportal.redhat.com</value>
+          <value>userportal4@testportal.redhat.com</value>
+          <null />
+          <null />
+          <null />
+          <value>0</value>
+          <value>*</value>
+      </row>
+    </table>
+
+    <table name="user_profiles">
+        <column>profile_id</column>
+        <column>user_id</column>
+        <column>ssh_public_key</column>
+        <row>
+            <value>38cb5663-96bc-485c-834a-cbbc03acc820</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value>key1</value>
+        </row>
+        <row>
+            <value>38cb5663-96bc-485c-834a-cbbc03acc821</value>
+            <value>81940459-2ec4-4afa-bbaa-22549555293b</value>
+            <value>key2</value>
+        </row>
     </table>
 
     <table name="tags_user_map">

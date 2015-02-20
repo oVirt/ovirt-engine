@@ -146,7 +146,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        assertEquals(2, result.size());
+        assertEquals(4, result.size());
     }
 
     @Test

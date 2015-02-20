@@ -48,6 +48,7 @@ import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.UserProfile;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
@@ -108,6 +109,7 @@ import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
 import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDAO;
 import org.ovirt.engine.core.dao.TagDAO;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDAO;
+import org.ovirt.engine.core.dao.UserProfileDAO;
 import org.ovirt.engine.core.dao.VdcOptionDAO;
 import org.ovirt.engine.core.dao.VdsCpuStatisticsDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
@@ -228,6 +230,7 @@ public class DbFacade {
             put(FenceAgent.class, FenceAgentDAO.class);
             put(EngineSession.class, EngineSessionDAO.class);
             put(HostDevice.class, HostDeviceDao.class);
+            put(UserProfile.class, UserProfileDAO.class);
         }
     };
 
@@ -418,6 +421,15 @@ public class DbFacade {
      */
     public DbUserDAO getDbUserDao() {
         return getDao(DbUserDAO.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link UserProfileDAO}.
+     *
+     * @return the dao
+     */
+    public UserProfileDAO getUserProfileDao() {
+        return getDao(UserProfileDAO.class);
     }
 
     /**
