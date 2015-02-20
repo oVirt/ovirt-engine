@@ -178,15 +178,20 @@ public class FenceExecutor {
      */
     private VDSReturnValue runFenceAction(FenceActionType action, FenceAgent agent, VDS proxyHost) {
         auditFenceAction(action, agent, proxyHost);
+
+        FenceAgent realAgent = new FenceAgent(agent);
+        realAgent.setType(VdsFenceOptions.getRealAgent(agent.getType()));
+        realAgent.setOptions(getOptions(agent));
+
         return getBackend().getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.FenceVds,
-                        new FenceVdsVDSCommandParameters(proxyHost.getId(), _vds.getId(), agent.getIp(),
-                                String.valueOf(agent.getPort()),
-                                VdsFenceOptions.getRealAgent(agent.getType()),
-                                agent.getUser(),
-                                agent.getPassword(),
-                                getOptions(agent), action, fencingPolicy));
+                        new FenceVdsVDSCommandParameters(
+                                proxyHost.getId(),
+                                _vds.getId(),
+                                realAgent,
+                                action,
+                                fencingPolicy));
     }
 
     private void auditFenceAction(FenceActionType action, FenceAgent agent, VDS proxyHost) {

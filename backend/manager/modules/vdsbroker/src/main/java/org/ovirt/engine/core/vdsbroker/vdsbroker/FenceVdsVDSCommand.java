@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -172,17 +173,18 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
     }
 
     protected FenceStatusReturnForXmlRpc fenceNode(FenceActionType fenceAction) {
+        FenceAgent agent = getParameters().getFenceAgent();
         return getBroker().fenceNode(
-                getParameters().getIp(),
-                getParameters().getPort() == null ? "" : getParameters().getPort(),
-                getParameters().getType(),
-                getParameters().getUser(),
-                getParameters().getPassword(),
+                agent.getIp(),
+                agent.getPort() == null ? "" : agent.getPort().toString(),
+                agent.getType(),
+                agent.getUser(),
+                agent.getPassword(),
                 fenceAction.getValue(),
                 "",
                 getVdsFenceOptions(
-                        getParameters().getType(),
-                        getParameters().getOptions(),
+                        agent.getType(),
+                        agent.getOptions(),
                         getProxyVds().getVdsGroupCompatibilityVersion().toString()),
                 getParameters().getAction() != FenceActionType.STATUS
                         ? convertFencingPolicy()
