@@ -131,6 +131,15 @@
     <url-pattern>/health/*</url-pattern>
   </servlet-mapping>
 
+  <servlet>
+    <servlet-name>vmconsole-proxy</servlet-name>
+    <servlet-class>org.ovirt.engine.core.services.VMConsoleProxyServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>vmconsole-proxy</servlet-name>
+    <url-pattern>/vmconsole-proxy</url-pattern>
+  </servlet-mapping>
+
   <!-- PageNotFoundForward Servlet -->
   <servlet>
       <servlet-name>PageNotFoundForwardServlet</servlet-name>

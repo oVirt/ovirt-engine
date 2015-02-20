@@ -9,6 +9,7 @@ public enum VdcQueryType implements Serializable {
     GetVmByVmNameForDataCenter(VdcQueryAuthType.User),
     GetAllVms(VdcQueryAuthType.User),
     GetAllVmsForUser(VdcQueryAuthType.User),
+    GetAllVmsForAnotherUser,
     GetUnregisteredVms,
     GetUnregisteredVmTemplates,
     GetVmsRunningOnOrMigratingToVds,
@@ -182,6 +183,7 @@ public enum VdcQueryType implements Serializable {
     GetUserBySessionId(VdcQueryAuthType.User),
     GetEngineSessionIdToken(VdcQueryAuthType.User),
     GetUserProfile(VdcQueryAuthType.User),
+    GetAllUserProfiles,
 
     // Directory queries:
     GetDirectoryUserById(VdcQueryAuthType.User),

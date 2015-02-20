@@ -2167,6 +2167,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     LiveStorageMigrationBetweenDifferentStorageTypes,
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10000")
+    VMConsoleTicketTolerance,
+
     Invalid
 
 }
