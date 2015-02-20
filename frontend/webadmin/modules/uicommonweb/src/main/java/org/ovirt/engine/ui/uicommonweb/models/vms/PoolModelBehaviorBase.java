@@ -104,68 +104,72 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
     protected abstract List<VDSGroup> filterClusters(List<VDSGroup> clusters);
 
-    protected void setupWindowModelFrom(VmBase vmBase) {
+    protected void setupWindowModelFrom(final VmBase vmBase) {
         if (vmBase != null) {
             updateQuotaByCluster(vmBase.getQuotaId(), vmBase.getQuotaName());
 
             // Copy VM parameters from template.
-            buildModel(vmBase);
+            buildModel(vmBase, new BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel>() {
+                @Override
+                public void finished(VmBase source, UnitVmModel destination) {
+                    setSelectedOSType(vmBase, getModel().getSelectedCluster().getArchitecture());
+                    getModel().getVmType().setSelectedItem(vmBase.getVmType());
+                    getModel().getIsRunAndPause().setEntity(false);
 
-            setSelectedOSType(vmBase, getModel().getSelectedCluster().getArchitecture());
-            getModel().getVmType().setSelectedItem(vmBase.getVmType());
-            getModel().getIsRunAndPause().setEntity(false);
+                    boolean hasCd = !StringHelper.isNullOrEmpty(vmBase.getIsoPath());
 
-            boolean hasCd = !StringHelper.isNullOrEmpty(vmBase.getIsoPath());
+                    getModel().getCdImage().setIsChangable(hasCd);
+                    getModel().getCdAttached().setEntity(hasCd);
+                    if (hasCd) {
+                        getModel().getCdImage().setSelectedItem(vmBase.getIsoPath());
+                    }
 
-            getModel().getCdImage().setIsChangable(hasCd);
-            getModel().getCdAttached().setEntity(hasCd);
-            if (hasCd) {
-                getModel().getCdImage().setSelectedItem(vmBase.getIsoPath());
-            }
+                    updateTimeZone(vmBase.getTimeZone());
 
-            updateTimeZone(vmBase.getTimeZone());
+                    if (!vmBase.getId().equals(Guid.Empty))
+                    {
+                        getModel().getStorageDomain().setIsChangable(true);
 
-            if (!vmBase.getId().equals(Guid.Empty))
-            {
-                getModel().getStorageDomain().setIsChangable(true);
+                        initDisks();
+                    }
+                    else
+                    {
+                        getModel().getStorageDomain().setIsChangable(false);
 
-                initDisks();
-            }
-            else
-            {
-                getModel().getStorageDomain().setIsChangable(false);
+                        getModel().setIsDisksAvailable(false);
+                        getModel().setDisks(null);
+                    }
 
-                getModel().setIsDisksAvailable(false);
-                getModel().setDisks(null);
-            }
+                    getModel().getProvisioning().setEntity(false);
 
-            getModel().getProvisioning().setEntity(false);
+                    initStorageDomains();
 
-            initStorageDomains();
+                    InstanceType selectedInstanceType = getModel().getInstanceTypes().getSelectedItem();
+                    int instanceTypeMinAllocatedMemory = selectedInstanceType != null ? selectedInstanceType.getMinAllocatedMem() : 0;
 
-            InstanceType selectedInstanceType = getModel().getInstanceTypes().getSelectedItem();
-            int instanceTypeMinAllocatedMemory = selectedInstanceType != null ? selectedInstanceType.getMinAllocatedMem() : 0;
+                    // do not update if specified on template or instance type
+                    if (vmBase.getMinAllocatedMem() == 0 && instanceTypeMinAllocatedMemory == 0) {
+                        updateMinAllocatedMemory();
+                    }
 
-            // do not update if specified on template or instance type
-            if (vmBase.getMinAllocatedMem() == 0 && instanceTypeMinAllocatedMemory == 0) {
-                updateMinAllocatedMemory();
-            }
+                    getModel().getAllowConsoleReconnect().setEntity(vmBase.isAllowConsoleReconnect());
 
-            getModel().getAllowConsoleReconnect().setEntity(vmBase.isAllowConsoleReconnect());
+                    getModel().getVmInitModel().init(vmBase);
+                    getModel().getVmInitEnabled().setEntity(vmBase.getVmInit() != null);
 
-            getModel().getVmInitModel().init(vmBase);
-            getModel().getVmInitEnabled().setEntity(vmBase.getVmInit() != null);
-
-            if (getModel().getSelectedCluster() != null) {
-                updateCpuProfile(getModel().getSelectedCluster().getId(),
-                        getClusterCompatibilityVersion(), vmBase.getCpuProfileId());
-            }
+                    if (getModel().getSelectedCluster() != null) {
+                        updateCpuProfile(getModel().getSelectedCluster().getId(),
+                                getClusterCompatibilityVersion(), vmBase.getCpuProfileId());
+                    }
+                }
+            });
         }
     }
 
     @Override
-    protected void buildModel(VmBase vmBase) {
-        BuilderExecutor.build(vmBase, getModel(), new CoreVmBaseToUnitBuilder());
+    protected void buildModel(VmBase vmBase, BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel> callback) {
+        new BuilderExecutor<>(callback, new CoreVmBaseToUnitBuilder())
+                .build(vmBase, getModel());
     }
 
     @Override

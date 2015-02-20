@@ -91,71 +91,76 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         }
     }
 
-    private void selectedTemplateChanged(VmTemplate template) {
+    private void selectedTemplateChanged(final VmTemplate template) {
         // Copy VM parameters from template.
-        buildModel(template);
+        buildModel(template, new BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel>() {
+            @Override
+            public void finished(VmBase source, UnitVmModel destination) {
+                setSelectedOSType(template, getModel().getSelectedCluster().getArchitecture());
+                doChangeDefautlHost(template.getDedicatedVmForVds());
 
-        setSelectedOSType(template, getModel().getSelectedCluster().getArchitecture());
-        doChangeDefautlHost(template.getDedicatedVmForVds());
+                getModel().getIsStateless().setEntity(template.isStateless());
 
-        getModel().getIsStateless().setEntity(template.isStateless());
+                boolean hasCd = !StringHelper.isNullOrEmpty(template.getIsoPath());
 
-        boolean hasCd = !StringHelper.isNullOrEmpty(template.getIsoPath());
+                getModel().getCdImage().setIsChangable(hasCd);
+                getModel().getCdAttached().setEntity(hasCd);
+                if (hasCd) {
+                    getModel().getCdImage().setSelectedItem(template.getIsoPath());
+                }
 
-        getModel().getCdImage().setIsChangable(hasCd);
-        getModel().getCdAttached().setEntity(hasCd);
-        if (hasCd) {
-            getModel().getCdImage().setSelectedItem(template.getIsoPath());
-        }
+                updateTimeZone(template.getTimeZone());
 
-        updateTimeZone(template.getTimeZone());
+                if (!template.getId().equals(Guid.Empty))
+                {
+                    getModel().getStorageDomain().setIsChangable(true);
+                    getModel().getProvisioning().setIsChangable(true);
 
-        if (!template.getId().equals(Guid.Empty))
-        {
-            getModel().getStorageDomain().setIsChangable(true);
-            getModel().getProvisioning().setIsChangable(true);
+                    getModel().getVmType().setSelectedItem(template.getVmType());
+                    getModel().getCopyPermissions().setIsAvailable(true);
+                    getModel().getAllowConsoleReconnect().setEntity(template.isAllowConsoleReconnect());
+                    initDisks();
+                    updateRngDevice(template.getId());
+                }
+                else
+                {
+                    getModel().getStorageDomain().setIsChangable(false);
+                    getModel().getProvisioning().setIsChangable(false);
 
-            getModel().getVmType().setSelectedItem(template.getVmType());
-            getModel().getCopyPermissions().setIsAvailable(true);
-            getModel().getAllowConsoleReconnect().setEntity(template.isAllowConsoleReconnect());
-            initDisks();
-            updateRngDevice(template.getId());
-        }
-        else
-        {
-            getModel().getStorageDomain().setIsChangable(false);
-            getModel().getProvisioning().setIsChangable(false);
+                    getModel().setIsDisksAvailable(false);
+                    getModel().getCopyPermissions().setIsAvailable(false);
+                    getModel().setDisks(null);
+                }
 
-            getModel().setIsDisksAvailable(false);
-            getModel().getCopyPermissions().setIsAvailable(false);
-            getModel().setDisks(null);
-        }
+                initStorageDomains();
 
-        initStorageDomains();
+                InstanceType selectedInstanceType = getModel().getInstanceTypes().getSelectedItem();
+                int instanceTypeMinAllocatedMemory = selectedInstanceType != null ? selectedInstanceType.getMinAllocatedMem() : 0;
 
-        InstanceType selectedInstanceType = getModel().getInstanceTypes().getSelectedItem();
-        int instanceTypeMinAllocatedMemory = selectedInstanceType != null ? selectedInstanceType.getMinAllocatedMem() : 0;
+                // do not update if specified on template or instance type
+                if (template.getMinAllocatedMem() == 0 && instanceTypeMinAllocatedMemory == 0) {
+                    updateMinAllocatedMemory();
+                }
 
-        // do not update if specified on template or instance type
-        if (template.getMinAllocatedMem() == 0 && instanceTypeMinAllocatedMemory == 0) {
-            updateMinAllocatedMemory();
-        }
+                updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
+                getModel().getCustomPropertySheet().deserialize(template.getCustomProperties());
 
-        updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
-        getModel().getCustomPropertySheet().deserialize(template.getCustomProperties());
+                getModel().getVmInitModel().init(template);
+                getModel().getVmInitEnabled().setEntity(template.getVmInit() != null);
 
-        getModel().getVmInitModel().init(template);
-        getModel().getVmInitEnabled().setEntity(template.getVmInit() != null);
-
-        if (getModel().getSelectedCluster() != null) {
-            updateCpuProfile(getModel().getSelectedCluster().getId(),
-                    getClusterCompatibilityVersion(), template.getCpuProfileId());
-        }
+                if (getModel().getSelectedCluster() != null) {
+                    updateCpuProfile(getModel().getSelectedCluster().getId(),
+                            getClusterCompatibilityVersion(), template.getCpuProfileId());
+                }
+            }
+        });
     }
 
     @Override
-    protected void buildModel(VmBase template) {
-        BuilderExecutor.build(template, getModel(), new CoreVmBaseToUnitBuilder());
+    protected void buildModel(VmBase template, BuilderExecutor.BuilderExecutionFinished callback) {
+        new BuilderExecutor<>(callback,
+                new CoreVmBaseToUnitBuilder())
+                .build(template, getModel());
     }
 
     @Override

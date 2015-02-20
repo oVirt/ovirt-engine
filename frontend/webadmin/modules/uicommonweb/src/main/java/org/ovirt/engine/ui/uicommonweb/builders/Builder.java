@@ -14,11 +14,4 @@ package org.ovirt.engine.ui.uicommonweb.builders;
 public interface Builder<S, D> {
 
     void build(S source, D destination, BuilderList<S, D> rest);
-
-    /**
-     * Use this as a source when all the data are taken from server
-     */
-    public static class VoidSource {
-
-    }
 }

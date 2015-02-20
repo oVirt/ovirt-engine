@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.builders.vm;
 
 import org.ovirt.engine.core.common.businessentities.VmBase;
-import org.ovirt.engine.ui.uicommonweb.builders.CompositeBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.CompositeSyncBuilder;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
 /**
@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
  * This builder is further subsumed by {@link FullUnitToVmBaseBuilder}
  * that performs full mapping of VmBase fields.
  */
-public class CommonUnitToVmBaseBuilder<T extends VmBase> extends CompositeBuilder<UnitVmModel, T> {
+public class CommonUnitToVmBaseBuilder<T extends VmBase> extends CompositeSyncBuilder<UnitVmModel, T> {
     public CommonUnitToVmBaseBuilder() {
         super(
                 new CoreUnitToVmBaseBuilder(),

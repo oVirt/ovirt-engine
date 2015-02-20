@@ -33,7 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.ExistingVmInstanceTypeManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
 
-public class ExistingVmModelBehavior extends VmModelBehaviorBase
+public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 {
     private InstanceTypeManager instanceTypeManager;
 
@@ -152,56 +152,61 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         // This method will be called even if a VM created from Blank template.
 
         // Update model state according to VM properties.
-        buildModel(vm.getStaticData());
+        buildModel(vm.getStaticData(), new BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel>() {
+            @Override
+            public void finished(VmBase source, UnitVmModel destination) {
+                getModel().getIsStateless().setIsAvailable(vm.getVmPoolId() == null);
 
-        getModel().getIsStateless().setIsAvailable(vm.getVmPoolId() == null);
+                getModel().getIsRunAndPause().setIsAvailable(vm.getVmPoolId() == null);
 
-        getModel().getIsRunAndPause().setIsAvailable(vm.getVmPoolId() == null);
+                getModel().getCpuSharesAmount().setEntity(vm.getCpuShares());
+                updateCpuSharesSelection();
 
-        getModel().getCpuSharesAmount().setEntity(vm.getCpuShares());
-        updateCpuSharesSelection();
+                updateRngDevice(getVm().getId());
+                updateTimeZone(vm.getTimeZone());
 
-        updateRngDevice(getVm().getId());
-        updateTimeZone(vm.getTimeZone());
+                updateGraphics();
+                getModel().getHostCpu().setEntity(vm.isUseHostCpuFlags());
 
-        updateGraphics();
-        getModel().getHostCpu().setEntity(vm.isUseHostCpuFlags());
+                // Storage domain and provisioning are not available for an existing VM.
+                getModel().getStorageDomain().setIsChangable(false);
+                getModel().getProvisioning().setIsAvailable(false);
+                getModel().getProvisioning().setEntity(Guid.Empty.equals(vm.getVmtGuid()));
 
-        // Storage domain and provisioning are not available for an existing VM.
-        getModel().getStorageDomain().setIsChangable(false);
-        getModel().getProvisioning().setIsAvailable(false);
-        getModel().getProvisioning().setEntity(Guid.Empty.equals(vm.getVmtGuid()));
+                getModel().getCpuPinning().setEntity(vm.getCpuPinning());
 
-        getModel().getCpuPinning().setEntity(vm.getCpuPinning());
+                getModel().getCustomPropertySheet().deserialize(vm.getCustomProperties());
 
-        getModel().getCustomPropertySheet().deserialize(vm.getCustomProperties());
+                if (isHotSetCpuSupported()) {
+                    // cancel related events while fetching data
+                    getModel().getTotalCPUCores().getEntityChangedEvent().removeListener(getModel());
+                    getModel().getCoresPerSocket().getSelectedItemChangedEvent().removeListener(getModel());
+                    getModel().getNumOfSockets().getSelectedItemChangedEvent().removeListener(getModel());
 
-        if (isHotSetCpuSupported()) {
-            // cancel related events while fetching data
-            getModel().getTotalCPUCores().getEntityChangedEvent().removeListener(getModel());
-            getModel().getCoresPerSocket().getSelectedItemChangedEvent().removeListener(getModel());
-            getModel().getNumOfSockets().getSelectedItemChangedEvent().removeListener(getModel());
-
-            AsyncDataProvider.getInstance().getHostById(new AsyncQuery(this, new INewAsyncCallback() {
-                @Override
-                public void onSuccess(Object model, Object returnValue) {
-                    ExistingVmModelBehavior existingVmModelBehavior = (ExistingVmModelBehavior) model;
-                    runningOnHost = (VDS) returnValue;
-                    hostCpu = calculateHostCpus();
-                    existingVmModelBehavior.updateNumOfSockets();
+                    AsyncDataProvider.getInstance().getHostById(new AsyncQuery(this, new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object model, Object returnValue) {
+                            ExistingVmModelBehavior existingVmModelBehavior = (ExistingVmModelBehavior) model;
+                            runningOnHost = (VDS) returnValue;
+                            hostCpu = calculateHostCpus();
+                            existingVmModelBehavior.updateNumOfSockets();
+                        }
+                    }), vm.getRunOnVds());
                 }
-            }), vm.getRunOnVds());
-        }
 
-        updateCpuProfile(vm.getVdsGroupId(), vm.getVdsGroupCompatibilityVersion(), vm.getCpuProfileId());
+                updateCpuProfile(vm.getVdsGroupId(), vm.getVdsGroupCompatibilityVersion(), vm.getCpuProfileId());
+            }
+        });
     }
 
     @Override
-    protected void buildModel(VmBase vm) {
-        BuilderExecutor.build(vm, getModel(),
+    protected void buildModel(VmBase vm,
+                              BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel> callback) {
+        new BuilderExecutor<>(callback,
                               new NameAndDescriptionVmBaseToUnitBuilder(),
                               new CommentVmBaseToUnitBuilder(),
-                              new CommonVmBaseToUnitBuilder());
+                              new CommonVmBaseToUnitBuilder())
+                .build(vm, getModel());
     }
 
     private void updateGraphics() {

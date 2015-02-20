@@ -25,7 +25,7 @@ public class BuilderExecutor<S, D> {
      * Helper method that constructs the @{link BuilderExecutor} from given builders and immediately utilizes him
      * to perform build from <code>source</code> to <code>destination</code>.
      */
-    public static <S, D> void build(S source, D destination, Builder<S, D>... builders) {
+    public static <S, D> void build(S source, D destination, SyncBuilder<S, D>... builders) {
         new BuilderExecutor<S, D>(builders).build(source, destination);
     }
 

@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.builders.vm;
 
 import org.ovirt.engine.core.common.businessentities.VmBase;
-import org.ovirt.engine.ui.uicommonweb.builders.CompositeBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.CompositeSyncBuilder;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
 /**
@@ -13,7 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
  * or further yet in {@link CoreUnitToVmBaseBuilder} if this mapping should also apply to pool Vms.
  * (most fields fall into the "Core" category)
  */
-public class FullUnitToVmBaseBuilder<T extends VmBase> extends CompositeBuilder<UnitVmModel, T> {
+public class FullUnitToVmBaseBuilder<T extends VmBase> extends CompositeSyncBuilder<UnitVmModel, T> {
     public FullUnitToVmBaseBuilder() {
         super(
                 new CommonUnitToVmBaseBuilder(),

@@ -44,6 +44,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -173,7 +174,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         getModel().getDefaultHost().setIsChangable(!isLocalSD);
     }
 
-    protected void buildModel(VmBase vmBase) {
+    protected void buildModel(VmBase vmBase,
+                              BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel> callback) {
     }
 
     public void templateWithVersion_SelectedItemChanged() {}

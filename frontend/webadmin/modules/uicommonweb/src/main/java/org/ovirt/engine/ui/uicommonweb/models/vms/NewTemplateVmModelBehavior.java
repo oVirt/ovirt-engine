@@ -297,30 +297,35 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     {
     }
 
-    private void initTemplate()
-    {
+    private void initTemplate() {
         // Update model state according to VM properties.
-        buildModel(this.vm.getStaticData());
+        buildModel(this.vm.getStaticData(), new BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel>() {
+            @Override
+            public void finished(VmBase source, UnitVmModel destination) {
+                updateSelectedCdImage(vm.getStaticData());
+                updateTimeZone(vm.getTimeZone());
+                updateConsoleDevice(vm.getId());
 
-        updateSelectedCdImage(this.vm.getStaticData());
-        updateTimeZone(this.vm.getTimeZone());
-        updateConsoleDevice(this.vm.getId());
+                getModel().getStorageDomain().setIsChangable(true);
+                getModel().getProvisioning().setIsAvailable(false);
 
-        getModel().getStorageDomain().setIsChangable(true);
-        getModel().getProvisioning().setIsAvailable(false);
+                // Select display protocol.
+                DisplayType displayType = vm.getDefaultDisplayType();
+                if (getModel().getDisplayType().getItems().contains(displayType)) {
+                    getModel().getDisplayType().setSelectedItem(displayType);
+                }
 
-        // Select display protocol.
-        DisplayType displayType = this.vm.getDefaultDisplayType();
-        if (getModel().getDisplayType().getItems().contains(displayType)) {
-            getModel().getDisplayType().setSelectedItem(displayType);
-        }
-
-        initPriority(this.vm.getPriority());
+                initPriority(vm.getPriority());
+            }
+        });
     }
 
     @Override
-    protected void buildModel(VmBase vm) {
-        BuilderExecutor.build(vm, getModel(), new CommonVmBaseToUnitBuilder());
+    protected void buildModel(VmBase vmBase,
+                              BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel> callback) {
+        new BuilderExecutor<>(callback,
+                              new CommonVmBaseToUnitBuilder())
+                .build(vmBase, getModel());
     }
 
     @Override

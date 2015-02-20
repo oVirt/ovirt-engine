@@ -7,7 +7,7 @@ package org.ovirt.engine.ui.uicommonweb.builders;
  * <p>
  * Use this only when the the descendant class does not do any async call. Otherwise implement the {@link Builder} directly
  */
-public abstract class BaseSyncBuilder<S, D> implements Builder<S, D> {
+public abstract class BaseSyncBuilder<S, D> implements SyncBuilder<S, D> {
 
     @Override
     public void build(S source, D destination, BuilderList<S, D> rest) {

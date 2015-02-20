@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class TemplateVmModelBehavior extends VmModelBehaviorBase
+public class TemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 {
     private VmTemplate template;
 
@@ -181,43 +181,46 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         doChangeDefautlHost(template.getDedicatedVmForVds());
     }
 
-    public void buildModel(VmBase vm) {
-        BuilderExecutor.build(vm, getModel(),
-                              new NameAndDescriptionVmBaseToUnitBuilder(),
-                              new CommentVmBaseToUnitBuilder(),
-                              new CommonVmBaseToUnitBuilder());
+    public void buildModel(VmBase vmBase, BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel> callback) {
+        new BuilderExecutor<>(callback,
+                new NameAndDescriptionVmBaseToUnitBuilder(),
+                new CommentVmBaseToUnitBuilder(),
+                new CommonVmBaseToUnitBuilder())
+                .build(vmBase, getModel());
     }
 
-    private void initTemplate()
-    {
+    private void initTemplate() {
         // Update model state according to VM properties.
-        buildModel(template);
+        buildModel(template, new BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel>() {
+            @Override
+            public void finished(VmBase source, UnitVmModel destination) {
+                getModel().getMinAllocatedMemory().setIsChangable(false);
 
-        getModel().getMinAllocatedMemory().setIsChangable(false);
+                updateTimeZone(template.getTimeZone());
 
-        updateTimeZone(template.getTimeZone());
+                // Storage domain and provisioning are not available for an existing VM.
+                getModel().getStorageDomain().setIsChangable(false);
+                getModel().getProvisioning().setIsAvailable(false);
 
-        // Storage domain and provisioning are not available for an existing VM.
-        getModel().getStorageDomain().setIsChangable(false);
-        getModel().getProvisioning().setIsAvailable(false);
+                // Select display protocol.
+                DisplayType displayType = template.getDefaultDisplayType();
+                if (getModel().getDisplayType().getItems().contains(displayType)) {
+                    getModel().getDisplayType().setSelectedItem(displayType);
+                }
 
-        // Select display protocol.
-        DisplayType displayType = template.getDefaultDisplayType();
-        if (getModel().getDisplayType().getItems().contains(displayType)) {
-            getModel().getDisplayType().setSelectedItem(displayType);
-        }
+                updateConsoleDevice(template.getId());
+                getModel().getVmInitEnabled().setEntity(template.getVmInit() != null);
+                getModel().getVmInitModel().init(template);
+                getModel().getTemplateVersionName().setEntity(template.getTemplateVersionName());
 
-        updateConsoleDevice(template.getId());
-        getModel().getVmInitEnabled().setEntity(template.getVmInit() != null);
-        getModel().getVmInitModel().init(template);
-        getModel().getTemplateVersionName().setEntity(template.getTemplateVersionName());
+                getModel().getBootMenuEnabled().setEntity(template.isBootMenuEnabled());
 
-        getModel().getBootMenuEnabled().setEntity(template.isBootMenuEnabled());
+                getModel().getSpiceFileTransferEnabled().setEntity(template.isSpiceFileTransferEnabled());
+                getModel().getSpiceCopyPasteEnabled().setEntity(template.isSpiceCopyPasteEnabled());
 
-        getModel().getSpiceFileTransferEnabled().setEntity(template.isSpiceFileTransferEnabled());
-        getModel().getSpiceCopyPasteEnabled().setEntity(template.isSpiceCopyPasteEnabled());
-
-        initPriority(template.getPriority());
+                initPriority(template.getPriority());
+            }
+        });
     }
 
     private void initCdImage()
