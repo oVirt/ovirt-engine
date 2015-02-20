@@ -113,7 +113,10 @@ public class BackendVmsResource extends
                 Guid templateId = getTemplateId(vm.getTemplate());
 
                 VmTemplate templateEntity = lookupTemplate(templateId);
-                VmStatic builtFromTemplate = getMapper(VmTemplate.class, VmStatic.class).map(templateEntity, null);
+
+                VDSGroup cluster = getCluster(vm);
+
+                VmStatic builtFromTemplate = VmMapper.map(templateEntity, null, cluster.getCompatibilityVersion());
                 // if VM is based on a template, and going to be on another cluster then template, clear the cpu_profile
                 // since the template cpu_profile doesn't match cluster.
                 if (!vm.isSetCpuProfile() && vm.isSetCluster()
@@ -132,10 +135,8 @@ public class BackendVmsResource extends
 
                 VmStatic staticVm = getMapper(VM.class, VmStatic.class).map(vm, builtFromInstanceType != null ? builtFromInstanceType : builtFromTemplate);
                 if (namedCluster(vm)) {
-                    staticVm.setVdsGroupId(getClusterId(vm));
+                    staticVm.setVdsGroupId(cluster.getId());
                 }
-
-                VDSGroup cluster = lookupCluster(staticVm.getVdsGroupId());
 
                 if (Guid.Empty.equals(templateId) && !vm.isSetOs()) {
                     staticVm.setOsId(OsRepository.AUTO_SELECT_OS);
@@ -245,7 +246,7 @@ public class BackendVmsResource extends
 
         VmMapper.map(vm, vmConfiguration.getStaticData());
 
-        Guid clusterId = namedCluster(vm) ? getClusterId(vm) : asGuid(vm.getCluster().getId());
+        Guid clusterId = namedCluster(vm) ? getCluster(vm).getId() : asGuid(vm.getCluster().getId());
         ImportVmParameters parameters = new ImportVmParameters();
         parameters.setVm(vmConfiguration);
         parameters.setVdsGroupId(clusterId);
@@ -396,7 +397,8 @@ public class BackendVmsResource extends
     /**
      * Returns true if the device should be copied from the template or instance type
      * If the instance type is selected, than the device will be copied from the instance type only if the device is compatible with the cluster and os
-     * If the instance type is not set and the template is set, than it is copied from the template (e.g. the cluster compatibility is not checked since the template lives in a cluster)
+     * If the instance type is not set and the template is set the
+     * compatibility has to be checked as well because the blank template can be set which does not live on a cluster
      */
     private boolean shouldCopyDevice(boolean isCompatibleWithCluster, Guid templateId, Guid instanceTypeId) {
         if (instanceTypeId == null && templateId == null) {
@@ -404,18 +406,8 @@ public class BackendVmsResource extends
             return false;
         }
 
-        if (instanceTypeId == null && templateId != null) {
-            // template is set and is not overridden by instance type, copy device config
-            return true;
-        }
-
-        if (instanceTypeId != null && isCompatibleWithCluster) {
-            // copy from instance type and the device is compatible with cluster, copy
-            return true;
-        }
-
-        // not compatible with the cluster, do not copy from instance type
-        return false;
+        // copy only if compatible with cluster (instance type or blank template can contain unsupported devices)
+        return isCompatibleWithCluster;
     }
 
     private HashMap<Guid, DiskImage> getDisksToClone(Disks disks, Guid templateId) {
@@ -662,11 +654,15 @@ public class BackendVmsResource extends
         return vm.isSetCluster() && vm.getCluster().isSetName() && !vm.getCluster().isSetId();
     }
 
-    protected Guid getClusterId(VM vm) {
-        return isFiltered() ? lookupClusterByName(vm.getCluster().getName()).getId() : getEntity(VDSGroup.class,
-                VdcQueryType.GetVdsGroupByName,
-                new NameQueryParameters(vm.getCluster().getName()),
-                "Cluster: name=" + vm.getCluster().getName()).getId();
+    protected VDSGroup getCluster(VM vm) {
+        if (namedCluster(vm)) {
+            return isFiltered() ? lookupClusterByName(vm.getCluster().getName()) : getEntity(VDSGroup.class,
+                    VdcQueryType.GetVdsGroupByName,
+                    new NameQueryParameters(vm.getCluster().getName()),
+                    "Cluster: name=" + vm.getCluster().getName());
+        }
+
+        return lookupCluster(asGuid(vm.getCluster().getId()));
     }
 
     public VDSGroup lookupClusterByName(String name) {

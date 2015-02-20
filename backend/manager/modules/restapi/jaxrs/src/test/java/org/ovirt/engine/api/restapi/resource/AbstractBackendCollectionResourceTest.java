@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 
 public abstract class AbstractBackendCollectionResourceTest<R extends BaseResource, Q /* extends IVdcQueryable */, C extends AbstractBackendCollectionResource<R, Q>>
         extends AbstractBackendResourceTest<R, Q> {
@@ -280,6 +281,7 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
     protected VDSGroup setUpVDSGroup(Guid id) {
         VDSGroup cluster = control.createMock(VDSGroup.class);
         expect(cluster.getId()).andReturn(id).anyTimes();
+        expect(cluster.getCompatibilityVersion()).andReturn(Version.getLast()).anyTimes();
         return cluster;
     }
 

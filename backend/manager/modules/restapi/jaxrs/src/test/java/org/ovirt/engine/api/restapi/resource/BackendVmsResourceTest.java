@@ -55,6 +55,7 @@ import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetVmFromConfigurationQueryParameters;
@@ -88,6 +89,8 @@ public class BackendVmsResourceTest
         OsTypeMockUtils.mockOsTypes();
         osRepository = control.createMock(OsRepository.class);
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+
+        Config.setConfigUtils(new VmMapperMockConfigUtils());
     }
 
     @Test
@@ -398,11 +401,6 @@ public class BackendVmsResourceTest
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[0] },
                                      getEntity(0));
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[1] },
-                getVdsGroupEntity());
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
@@ -994,11 +992,6 @@ public class BackendVmsResourceTest
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[1] },
                                      getTemplateEntity(0));
-        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
-                IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[2] },
-                getVdsGroupEntity());
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByName,
                 NameQueryParameters.class,
                 new String[] { "Name" },
@@ -1469,6 +1462,7 @@ public class BackendVmsResourceTest
     protected org.ovirt.engine.core.common.businessentities.VDSGroup getVdsGroupEntity() {
         VDSGroup cluster = new VDSGroup();
         cluster.setArchitecture(ArchitectureType.x86_64);
+        cluster.setCompatibilityVersion(Version.getLast());
         return cluster;
     }
 

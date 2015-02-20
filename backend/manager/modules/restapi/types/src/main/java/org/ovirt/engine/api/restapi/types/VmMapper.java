@@ -55,6 +55,7 @@ import org.ovirt.engine.api.model.VmStatus;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
@@ -86,7 +87,12 @@ public class VmMapper extends VmBaseMapper {
     // REVISIT once #712661 implemented by BE
     @Mapping(from = VmTemplate.class, to = VmStatic.class)
     public static VmStatic map(VmTemplate entity, VmStatic template) {
+        return map(entity, template, null);
+    }
+
+    public static VmStatic map(VmTemplate entity, VmStatic template, Version version) {
         VmStatic staticVm = template != null ? template : new VmStatic();
+        Version clusterVersion = version == null ? Version.getLast() : version;
 
         staticVm.setId(Guid.Empty);
         staticVm.setVmtGuid(entity.getId());
@@ -107,14 +113,30 @@ public class VmMapper extends VmBaseMapper {
         staticVm.setAllowConsoleReconnect(entity.isAllowConsoleReconnect());
         staticVm.setVncKeyboardLayout(entity.getVncKeyboardLayout());
         staticVm.setVmInit(entity.getVmInit());
-        staticVm.setSerialNumberPolicy(entity.getSerialNumberPolicy());
-        staticVm.setCustomSerialNumber(entity.getCustomSerialNumber());
-        staticVm.setSpiceFileTransferEnabled(entity.isSpiceFileTransferEnabled());
-        staticVm.setSpiceCopyPasteEnabled(entity.isSpiceCopyPasteEnabled());
+
+        if (FeatureSupported.serialNumberPolicy(clusterVersion)) {
+            staticVm.setSerialNumberPolicy(entity.getSerialNumberPolicy());
+            staticVm.setCustomSerialNumber(entity.getCustomSerialNumber());
+        }
+
+        if (FeatureSupported.isSpiceFileTransferToggleSupported(clusterVersion)) {
+            staticVm.setSpiceFileTransferEnabled(entity.isSpiceFileTransferEnabled());
+        }
+
+        if (FeatureSupported.isSpiceCopyPasteToggleSupported(clusterVersion)) {
+            staticVm.setSpiceCopyPasteEnabled(entity.isSpiceCopyPasteEnabled());
+        }
+
         staticVm.setRunAndPause(entity.isRunAndPause());
         staticVm.setCpuProfileId(entity.getCpuProfileId());
-        staticVm.setAutoConverge(entity.getAutoConverge());
-        staticVm.setMigrateCompressed(entity.getMigrateCompressed());
+        if (FeatureSupported.autoConvergence(clusterVersion)) {
+            staticVm.setAutoConverge(entity.getAutoConverge());
+        }
+
+        if (FeatureSupported.migrationCompression(clusterVersion)) {
+            staticVm.setMigrateCompressed(entity.getMigrateCompressed());
+        }
+
         staticVm.setCustomProperties(entity.getCustomProperties());
         staticVm.setCustomEmulatedMachine(entity.getCustomEmulatedMachine());
         staticVm.setCustomCpuName(entity.getCustomCpuName());

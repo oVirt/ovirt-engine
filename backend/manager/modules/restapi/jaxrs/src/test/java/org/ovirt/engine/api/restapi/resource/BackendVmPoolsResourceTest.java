@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -27,6 +28,12 @@ public class BackendVmPoolsResourceTest extends
 
     public BackendVmPoolsResourceTest() {
         super(new BackendVmPoolsResource(), SearchType.VmPools, "Pools : ");
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        Config.setConfigUtils(new VmMapperMockConfigUtils());
     }
 
     @Override
