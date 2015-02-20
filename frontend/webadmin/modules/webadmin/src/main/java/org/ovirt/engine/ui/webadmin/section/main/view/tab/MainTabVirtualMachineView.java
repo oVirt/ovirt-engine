@@ -168,7 +168,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         networkColumn.makeSortable(VmConditionFieldAutoCompleter.NETWORK_USAGE);
         getTable().addColumn(networkColumn, constants.networkVm(), "70px"); //$NON-NLS-1$
 
-        AbstractTextColumn<VM> displayColumn = new AbstractEnumColumn<VM, UnitVmModel.GraphicsTypes>() {
+        AbstractTextColumn<VM> graphicsColumn = new AbstractEnumColumn<VM, UnitVmModel.GraphicsTypes>() {
             @Override
             protected UnitVmModel.GraphicsTypes getRawValue(VM vm) {
                 if ((vm.getStatus() == VMStatus.Down) || (vm.getStatus() == VMStatus.ImageLocked)) {
@@ -179,7 +179,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return UnitVmModel.GraphicsTypes.fromGraphicsTypes(graphicsInfos.keySet());
             }
         };
-        getTable().addColumn(displayColumn, constants.displayVm(), "70px"); //$NON-NLS-1$
+        getTable().addColumn(graphicsColumn, constants.graphicsVm(), "70px"); //$NON-NLS-1$
 
         AbstractTextColumn<VM> statusColumn = new AbstractEnumColumn<VM, VMStatus>() {
             @Override

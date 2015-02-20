@@ -1852,8 +1852,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Migration")
     String migrationProgress();
 
-    @DefaultStringValue("Display")
-    String displayVm();
+    @DefaultStringValue("Graphics")
+    String graphicsVm();
 
     @DefaultStringValue("Status")
     String statusVm();
