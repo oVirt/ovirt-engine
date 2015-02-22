@@ -488,4 +488,13 @@ public class FeatureSupported {
     public static boolean hostDevicePassthrough(Version version) {
         return supportedInConfig(ConfigValues.HostDevicePassthroughSupported, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if report whether domain monitoring result is supported for the given version.
+     */
+    public static boolean reportWhetherDomainMonitoringResultIsActual(Version version) {
+        return supportedInConfig(ConfigValues.ReportWhetherDomainMonitoringResultIsActual, version);
+    }
 }

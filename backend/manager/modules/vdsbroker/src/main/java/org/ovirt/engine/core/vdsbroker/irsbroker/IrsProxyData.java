@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
@@ -1111,14 +1112,14 @@ public class IrsProxyData {
                 // Unknown domains in pool
                 for (VDSDomainsData tempData : data) {
                     if (domainsInPool.contains(tempData.getDomainId())) {
-                        DomainMonitoringResult domainMonitoringResult = analyzeDomainReport(tempData, false);
-                        if (domainMonitoringResult.invalid()) {
+                        DomainMonitoringResult domainMonitoringResult = analyzeDomainReport(tempData, storagePool, false);
+                        if (domainMonitoringResult.invalidAndActual()) {
                             domainsProblematicReportInfo.put(tempData.getDomainId(), domainMonitoringResult);
-                        } else if (tempData.getDelay() > Config.<Double> getValue(ConfigValues.MaxStorageVdsDelayCheckSec)) {
+                        } else if (domainMonitoringResult.actual() && tempData.getDelay() > Config.<Double> getValue(ConfigValues.MaxStorageVdsDelayCheckSec)) {
                             logDelayedDomain(vdsId, tempData);
                         }
                     } else if (inActiveDomainsInPool.contains(tempData.getDomainId())
-                            && analyzeDomainReport(tempData, false).valid()) {
+                            && analyzeDomainReport(tempData, storagePool, false).validAndActual()) {
                         log.warn("Storage Domain '{}' was reported by Host '{}' as Active in Pool '{}', moving to active status",
                                 getDomainIdTuple(tempData.getDomainId()),
                                 vdsName,
@@ -1185,7 +1186,7 @@ public class IrsProxyData {
                 AuditLogType.VDS_DOMAIN_DELAY_INTERVAL);
     }
 
-    protected List<Guid> obtainDomainsReportedAsProblematic(List<VDSDomainsData> vdsDomainsData) {
+    protected List<Guid> obtainDomainsReportedAsProblematic(List<VDSDomainsData> vdsDomainsData, StoragePool storagePool) {
         List<Guid> domainsInProblem = new LinkedList<>();
         Set<Guid> domainsInPool = new HashSet<Guid>(
                 DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
@@ -1195,7 +1196,7 @@ public class IrsProxyData {
         List<Guid> domainWhichWereSeen = new ArrayList<Guid>();
         for (VDSDomainsData vdsDomainData : vdsDomainsData) {
             if (domainsInPool.contains(vdsDomainData.getDomainId())) {
-                if (analyzeDomainReport(vdsDomainData, true).invalid()) {
+                if (analyzeDomainReport(vdsDomainData, storagePool, true).invalidAndActual()) {
                     domainsInProblem.add(vdsDomainData.getDomainId());
                 }
                 domainWhichWereSeen.add(vdsDomainData.getDomainId());
@@ -1212,24 +1213,35 @@ public class IrsProxyData {
     }
 
     private enum DomainMonitoringResult {
-        PROBLEMATIC(false), STORAGE_ACCCESS_ERROR(false), OK(true), NOT_REPORTED(false);
+        PROBLEMATIC(Boolean.FALSE), STORAGE_ACCCESS_ERROR(Boolean.FALSE), OK(Boolean.TRUE), NOT_REPORTED(Boolean.FALSE), NOT_ACTUAL(null);
 
-        private boolean valid;
+        private Boolean valid;
 
-        private DomainMonitoringResult(boolean valid) {
+        private DomainMonitoringResult(Boolean valid) {
             this.valid = valid;
         }
 
-        public boolean valid() {
-            return valid;
+        public boolean validAndActual() {
+            return actual() && valid;
         }
 
-        public boolean invalid() {
-            return !valid;
+        public boolean invalidAndActual() {
+            return actual() && !valid;
+        }
+
+        public boolean actual() {
+            return this != NOT_ACTUAL;
         }
     }
 
-    private DomainMonitoringResult analyzeDomainReport(VDSDomainsData tempData, boolean isLog) {
+    private DomainMonitoringResult analyzeDomainReport(VDSDomainsData tempData, StoragePool storagePool, boolean isLog) {
+        if (!tempData.isActual() &&
+                FeatureSupported.reportWhetherDomainMonitoringResultIsActual(storagePool.getCompatibilityVersion())) {
+            log.warn("Domain '{}' report isn't an actual report",
+                    getDomainIdTuple(tempData.getDomainId()));
+            return DomainMonitoringResult.NOT_ACTUAL;
+        }
+
         if (tempData.getCode() != 0) {
             if (isLog) {
                 log.error("Domain '{}' was reported with error code '{}'",

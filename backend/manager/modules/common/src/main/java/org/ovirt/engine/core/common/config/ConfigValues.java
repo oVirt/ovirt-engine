@@ -2061,6 +2061,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     HostDevicePassthroughSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    ReportWhetherDomainMonitoringResultIsActual,
+
     Invalid
 
 }

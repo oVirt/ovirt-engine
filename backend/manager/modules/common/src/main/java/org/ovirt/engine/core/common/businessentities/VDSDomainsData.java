@@ -9,6 +9,7 @@ public class VDSDomainsData implements Serializable {
     private Guid privateDomainId;
     private double lastCheck;
     private double delay;
+    private boolean actual;
 
     public Guid getDomainId() {
         return privateDomainId;
@@ -42,6 +43,14 @@ public class VDSDomainsData implements Serializable {
 
     public double getDelay() {
         return delay;
+    }
+
+    public boolean isActual() {
+        return actual;
+    }
+
+    public void setActual(boolean actual) {
+        this.actual = actual;
     }
 
     public VDSDomainsData() {

@@ -219,6 +219,7 @@ select fn_db_add_config_value_for_versions_up_to('HotPlugDiskSnapshotSupported',
 select fn_db_add_config_value_for_versions_up_to('GetFileStats', 'false', '3.3');
 select fn_db_add_config_value_for_versions_up_to('DefaultRouteSupported', 'false', '3.3');
 select fn_db_add_config_value_for_versions_up_to('SerialNumberPolicySupported', 'false', '3.4');
+select fn_db_add_config_value_for_versions_up_to('ReportWhetherDomainMonitoringResultIsActual', 'false', '3.4');
 
 select fn_db_add_config_value_for_versions_up_to('OvfStoreOnAnyDomain', 'false', '3.4');
 select fn_db_add_config_value_for_versions_up_to('BootMenuSupported', 'false', '3.4');
