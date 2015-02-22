@@ -351,16 +351,21 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
     }
 
     private void addVmDynamic() {
-        VmDynamic tempVar = new VmDynamic();
-        tempVar.setId(getVmId());
-        tempVar.setStatus(VMStatus.ImageLocked);
-        tempVar.setVmHost("");
-        tempVar.setVmIp("");
-        tempVar.setVmFQDN("");
-        tempVar.setLastStopTime(new Date());
-        tempVar.setAppList(getParameters().getVm().getDynamicData().getAppList());
+        VmDynamic tempVar = createVmDynamic();
         getVmDynamicDAO().save(tempVar);
         getCompensationContext().snapshotNewEntity(tempVar);
+    }
+
+    protected VmDynamic createVmDynamic() {
+        VmDynamic vmDynamic = new VmDynamic();
+        vmDynamic.setId(getVmId());
+        vmDynamic.setStatus(VMStatus.ImageLocked);
+        vmDynamic.setVmHost("");
+        vmDynamic.setVmIp("");
+        vmDynamic.setVmFQDN("");
+        vmDynamic.setLastStopTime(new Date());
+        vmDynamic.setAppList(getParameters().getVm().getAppList());
+        return vmDynamic;
     }
 
     private void addVmStatistics() {
