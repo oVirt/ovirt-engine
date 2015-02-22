@@ -95,6 +95,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("VM(s): {0} already exist on the target Export Domain. If you want to override them, please check the ''Force Override'' check-box.")
     String vmsAlreadyExistOnTargetExportDomain(String existingVMs);
 
+    @DefaultMessage("Template {0} (dependent VM(s): {1})")
+    String templatesWithDependentVMs(String template, String vms);
+
     @DefaultMessage("Shared disk(s) will not be a part of the VM export: {0}.")
     String sharedDisksWillNotBePartOfTheExport(String diskList);
 

@@ -415,6 +415,16 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Remove Backed up Template(s)")
     String removeBackedUpTemplatesTitle();
 
+    @DefaultStringValue("Template(s) has dependent VM(s) on Export Domain")
+    String removeBackedUpTemplatesWithDependentsVMTitle();
+
+    @DefaultStringValue("The following templates have dependent VM(s) on the export domain and are required for importing these VM(s).\n"
+            +
+            "If you proceed you will not be able to import these virtual machines unless you already have the relevant templates on the target domains.\n"
+            +
+            "Do you wish to continue anyway?")
+    String theFollowingTemplatesHaveDependentVmsBackupOnExportDomainMsg();
+
     @DefaultStringValue("Templates")
     String templatesTitle();
 

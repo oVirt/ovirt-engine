@@ -247,7 +247,7 @@
         <include name="common/utils/VersionStorageFormatUtil.java"/>
         <include name="common/utils/SizeConverter.java"/>
         <include name="common/utils/CommonConstants.java"/>
-
+		<include name="common/businessentities/Entities.java"/>
 
         <!-- Required by frontend -->
 		<include name="common/interfaces/SearchType.java" />

@@ -13,9 +13,11 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
@@ -41,6 +43,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -48,6 +51,7 @@ import com.google.inject.Provider;
 public class TemplateBackupModel extends VmBackupModel
 {
     private ArrayList<Map.Entry<VmTemplate, List<DiskImage>>> extendedItems;
+    private StoragePool pool;
 
     @Inject
     public TemplateBackupModel(Provider<ImportTemplateModel> importModelProvider) {
@@ -70,7 +74,7 @@ public class TemplateBackupModel extends VmBackupModel
         }
 
         ConfirmationModel model = new ConfirmationModel();
-        setWindow(model);
+        setConfirmWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeBackedUpTemplatesTitle());
         model.setHelpTag(HelpTag.remove_backed_up_template);
         model.setHashName("remove_backed_up_template"); //$NON-NLS-1$
@@ -90,31 +94,115 @@ public class TemplateBackupModel extends VmBackupModel
         model.getCommands().add(tempVar2);
     }
 
-    private void onRemove()
-    {
+    private void onRemove() {
         AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                TemplateBackupModel templateBackupModel = (TemplateBackupModel) model;
                 ArrayList<StoragePool> pools = (ArrayList<StoragePool>) returnValue;
-                if (pools != null && pools.size() > 0) {
-                    StoragePool pool = pools.get(0);
-                    ArrayList<VdcActionParametersBase> prms =
-                            new ArrayList<VdcActionParametersBase>();
-                    for (Object a : templateBackupModel.getSelectedItems())
-                    {
-                        VmTemplate template = (VmTemplate) a;
-                        prms.add(new VmTemplateImportExportParameters(template.getId(),
-                                getEntity().getId(),
-                                pool.getId()));
-                    }
-
-                    Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVmTemplateFromImportExport, prms);
+                if (pools != null && !pools.isEmpty()) {
+                    pool = pools.get(0);
+                    checkVmsDependentOnTemplate(pool.getId(), getEntity().getId());
                 }
             }
         }),
                 getEntity().getId());
+    }
+
+    private void checkVmsDependentOnTemplate(Guid dataCenterId, Guid storageDomainId) {
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmsFromExportDomain,
+                new GetAllFromExportDomainQueryParameters(dataCenterId, storageDomainId),
+                new AsyncQuery(this, createGetVmsFromExportDomainCallback()));
+    }
+
+    private INewAsyncCallback createGetVmsFromExportDomainCallback() {
+        return new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                VdcQueryReturnValue retVal = (VdcQueryReturnValue) returnValue;
+                if (retVal == null || retVal.getReturnValue() == null || !retVal.getSucceeded()) {
+                    return;
+                }
+                List<VM> vmsInExportDomain = retVal.getReturnValue();
+                List<VmTemplate> templates = Linq.<VmTemplate> cast(getSelectedItems());
+                HashMap<String, List<String>> problematicVmNames =
+                        getDependentVMsForTemplates(vmsInExportDomain, templates);
+                if (!problematicVmNames.isEmpty()) {
+                    showRemoveTemplateWithDependentVMConfirmationWindow(problematicVmNames);
+                } else {
+                    removeTemplateBackup();
+                }
+            }
+        };
+    }
+
+    private void showRemoveTemplateWithDependentVMConfirmationWindow(HashMap<String, List<String>> problematicVmNames) {
+        ArrayList<String> missingTemplatesFromVms = new ArrayList<>();
+
+        for (Map.Entry<String, List<String>> templateName : problematicVmNames.entrySet()) {
+            List<String> vms = problematicVmNames.get(templateName.getKey());
+            String vmsListString = StringUtils.join(vms, ", "); //$NON-NLS-1$
+            missingTemplatesFromVms.add(ConstantsManager.getInstance()
+                    .getMessages()
+                    .templatesWithDependentVMs(templateName.getKey(), vmsListString));
+        }
+
+        setConfirmWindow(null);
+        ConfirmationModel confirmModel = new ConfirmationModel();
+        setConfirmWindow(confirmModel);
+        confirmModel.setTitle(ConstantsManager.getInstance()
+                .getConstants()
+                .removeBackedUpTemplatesWithDependentsVMTitle());
+        confirmModel.setHelpTag(HelpTag.remove_backed_up_template);
+        confirmModel.setHashName("remove_backed_up_template"); //$NON-NLS-1$
+
+        confirmModel.setMessage(ConstantsManager.getInstance()
+                .getConstants()
+                .theFollowingTemplatesHaveDependentVmsBackupOnExportDomainMsg());
+        confirmModel.setItems(missingTemplatesFromVms);
+
+        UICommand removeTemplateUiCommand =
+                UICommand.createDefaultOkUiCommand("RemoveVmTemplates", this); //$NON-NLS-1$
+        confirmModel.getCommands().add(removeTemplateUiCommand);
+        UICommand cancelConfirmationUiCommand =
+                UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
+        confirmModel.getCommands().add(cancelConfirmationUiCommand);
+    }
+
+    private HashMap<String, List<String>> getDependentVMsForTemplates(List<VM> vmsInExportDomain,
+            List<VmTemplate> templates) {
+        // Build a map between the template ID and the template instance
+        Map<Guid, VmTemplate> templateMap = Entities.businessEntitiesById(templates);
+        // Build a map between the template ID and a list of dependent VMs names
+        HashMap<String, List<String>> problematicVmNames = new HashMap<>();
+
+        for (VM vm : vmsInExportDomain) {
+            VmTemplate template = templateMap.get(vm.getVmtGuid());
+            if (template != null) {
+                List<String> vms = problematicVmNames.get(template.getName());
+                if (vms == null) {
+                    vms = new ArrayList<String>();
+                    problematicVmNames.put(template.getName(), vms);
+                }
+                vms.add(vm.getName());
+            }
+        }
+        return problematicVmNames;
+    }
+
+    private void cancelConfirmation() {
+        setConfirmWindow(null);
+    }
+
+    private void removeTemplateBackup() {
+        ArrayList<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
+        for (Object selectedItem : getSelectedItems()) {
+            VmTemplate template = (VmTemplate) selectedItem;
+            prms.add(new VmTemplateImportExportParameters(template.getId(),
+                    getEntity().getId(),
+                    pool.getId()));
+        }
+        Frontend.getInstance().runMultipleAction(VdcActionType.RemoveVmTemplateFromImportExport, prms);
         cancel();
     }
 
@@ -355,7 +443,14 @@ public class TemplateBackupModel extends VmBackupModel
         else if ("OnRestore".equals(command.getName())) //$NON-NLS-1$
         {
             onRestore();
-        } else {
+        }
+        else if ("CancelConfirmation".equals(command.getName())) { //$NON-NLS-1$
+            cancelConfirmation();
+        }
+        else if ("RemoveVmTemplates".equals(command.getName())) { //$NON-NLS-1$
+            removeTemplateBackup();
+        }
+        else {
             super.executeCommand(command);
         }
     }
