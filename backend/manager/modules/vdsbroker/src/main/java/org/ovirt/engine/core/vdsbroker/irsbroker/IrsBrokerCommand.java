@@ -65,10 +65,10 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
     }
 
-    public static List<Guid> fetchDomainsReportedAsProblematic(Guid storagePoolId, List<VDSDomainsData> vdsDomainsData) {
-        IrsProxyData proxy = _irsProxyData.get(storagePoolId);
+    public static List<Guid> fetchDomainsReportedAsProblematic(List<VDSDomainsData> vdsDomainsData, StoragePool storagePool) {
+        IrsProxyData proxy = _irsProxyData.get(storagePool.getId());
         if (proxy != null) {
-            return proxy.obtainDomainsReportedAsProblematic(vdsDomainsData);
+            return proxy.obtainDomainsReportedAsProblematic(vdsDomainsData, storagePool);
         }
         return Collections.emptyList();
     }

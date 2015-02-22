@@ -273,7 +273,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         }
 
         if (result.isSuccess()) {
-            Pair<Boolean, List<StorageDomainStatic>> vdsStatsResults = proceedVdsStats(!masterDomainInactiveOrUnknown);
+            Pair<Boolean, List<StorageDomainStatic>> vdsStatsResults = proceedVdsStats(!masterDomainInactiveOrUnknown, storagePool);
             result.setSuccess(vdsStatsResults.getFirst());
             if (!result.isSuccess()) {
                 result.setResultData(vdsStatsResults.getSecond());
@@ -300,14 +300,13 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         return returnValue;
     }
 
-    private Pair<Boolean, List<StorageDomainStatic>> proceedVdsStats(boolean shouldCheckReportedDomains) {
+    private Pair<Boolean, List<StorageDomainStatic>> proceedVdsStats(boolean shouldCheckReportedDomains, StoragePool storagePool) {
         Pair<Boolean, List<StorageDomainStatic>> returnValue = new Pair<>(true, null);
         try {
             runVdsCommand(VDSCommandType.GetStats, new VdsIdAndVdsVDSCommandParametersBase(getVds()));
             if (shouldCheckReportedDomains) {
                 List<Guid> problematicDomainsIds =
-                        IrsBrokerCommand.fetchDomainsReportedAsProblematic(getVds().getStoragePoolId(),
-                                getVds().getDomains());
+                        IrsBrokerCommand.fetchDomainsReportedAsProblematic(getVds().getDomains(), storagePool);
                 for (Guid domainId : problematicDomainsIds) {
                     StorageDomainStatic domainInfo = getStorageDomainStaticDAO().get(domainId);
                     log.errorFormat("Storage Domain {0} of pool {1} is in problem in host {2}",

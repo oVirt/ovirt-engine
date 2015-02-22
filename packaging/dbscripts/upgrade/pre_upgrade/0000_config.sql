@@ -306,6 +306,12 @@ select fn_db_add_config_value('ImportDataStorageDomain','false','3.2');
 select fn_db_add_config_value('ImportDataStorageDomain','false','3.3');
 select fn_db_add_config_value('ImportDataStorageDomain','false','3.4');
 
+select fn_db_add_config_value('ReportWhetherDomainMonitoringResultIsActual','false','3.0');
+select fn_db_add_config_value('ReportWhetherDomainMonitoringResultIsActual','false','3.1');
+select fn_db_add_config_value('ReportWhetherDomainMonitoringResultIsActual','false','3.2');
+select fn_db_add_config_value('ReportWhetherDomainMonitoringResultIsActual','false','3.3');
+select fn_db_add_config_value('ReportWhetherDomainMonitoringResultIsActual','false','3.4');
+
 -- Mixed domain types in a data center support
 select fn_db_add_config_value('MixedDomainTypesInDataCenter','false','3.0');
 select fn_db_add_config_value('MixedDomainTypesInDataCenter','false','3.1');

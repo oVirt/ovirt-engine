@@ -2010,5 +2010,9 @@ public enum ConfigValues {
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     UnsupportedLocalesFilter,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    ReportWhetherDomainMonitoringResultIsActual,
+
     Invalid;
 }

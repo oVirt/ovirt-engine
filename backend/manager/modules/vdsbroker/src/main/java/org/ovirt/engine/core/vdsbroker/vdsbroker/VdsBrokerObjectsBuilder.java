@@ -933,6 +933,11 @@ public class VdsBrokerObjectsBuilder {
                         delay = Double.parseDouble((String) internalValue.get(VdsProperties.delay));
                     }
                     data.setDelay(delay);
+                    Boolean actual = Boolean.TRUE;
+                    if (internalValue.containsKey(VdsProperties.actual)) {
+                        actual = (Boolean)internalValue.get(VdsProperties.actual);
+                    }
+                    data.setActual(actual);
                     domainsData.add(data);
                 } catch (Exception e) {
                     log.error("failed building domains", e);
