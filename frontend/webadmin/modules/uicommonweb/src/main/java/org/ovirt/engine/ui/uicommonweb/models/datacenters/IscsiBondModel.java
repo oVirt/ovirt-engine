@@ -70,10 +70,10 @@ public class IscsiBondModel extends Model {
         AsyncDataProvider.getInstance().getAllDataCenterNetworks(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
-                ArrayList<Network> selected = new ArrayList<Network>();
-                ArrayList<Network> networks = (ArrayList<Network>) returnValue;
+                List<Network> selected = new ArrayList<>();
+                List<Network> networks = (List<Network>) returnValue;
                 Set<Guid> iscsiBonded = isBondExist() ?
-                        new HashSet<Guid>(getIscsiBond().getNetworkIds()) : Collections.<Guid>emptySet();
+                        new HashSet<>(getIscsiBond().getNetworkIds()) : Collections.<Guid>emptySet();
 
                 for (Network network : networks) {
                     if (iscsiBonded.contains(network.getId())) {

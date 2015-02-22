@@ -1435,7 +1435,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                 }
             }
         });
-        AsyncDataProvider.getInstance().getAllDataCenterNetworks(getAllDataCenterNetworksQuery, dataCenterId);
+        AsyncDataProvider.getInstance().getManagementNetworkCandidates(getAllDataCenterNetworksQuery, dataCenterId);
     }
 
     @Override

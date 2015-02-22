@@ -2656,15 +2656,15 @@ public class AsyncDataProvider {
     }
 
     public void getAllDataCenterNetworks(AsyncQuery aQuery, Guid storagePoolId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                return source != null ? (ArrayList<Network>) source : new ArrayList<Network>();
-            }
-        };
+        aQuery.converterCallback = new ListAsyncConverter();
         IdQueryParameters params = new IdQueryParameters(storagePoolId);
         Frontend.getInstance().runQuery(VdcQueryType.GetNetworksByDataCenterId, params, aQuery);
+    }
+
+    public void getManagementNetworkCandidates(AsyncQuery aQuery, Guid storagePoolId) {
+        aQuery.converterCallback = new ListAsyncConverter();
+        IdQueryParameters params = new IdQueryParameters(storagePoolId);
+        Frontend.getInstance().runQuery(VdcQueryType.GetManagementNetworkCandidates, params, aQuery);
     }
 
     public void getStorageConnectionsByDataCenterIdAndStorageType(AsyncQuery aQuery,
@@ -4033,6 +4033,13 @@ public class AsyncDataProvider {
         @Override
         public Object Convert(Object source, AsyncQuery _asyncQuery) {
             return source;
+        }
+    }
+
+    private static class ListAsyncConverter implements IAsyncConverter {
+        @Override
+        public Object Convert(Object source, AsyncQuery _asyncQuery) {
+            return source != null ? source : new ArrayList();
         }
     }
 
