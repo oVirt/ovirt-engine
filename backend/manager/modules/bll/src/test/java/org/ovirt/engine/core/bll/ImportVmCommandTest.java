@@ -191,7 +191,7 @@ public class ImportVmCommandTest {
         doReturn(true).when(cmd).validateNoDuplicateVm();
         doReturn(true).when(cmd).validateVdsCluster();
         doReturn(true).when(cmd).validateUsbPolicy();
-        doReturn(true).when(cmd).canAddVm();
+        doReturn(true).when(cmd).validateUniqueVmName();
         doReturn(true).when(cmd).checkTemplateInStorageDomain();
         doReturn(true).when(cmd).checkImagesGUIDsLegal();
         doReturn(true).when(cmd).setAndValidateDiskProfiles();
@@ -426,7 +426,7 @@ public class ImportVmCommandTest {
         doReturn(true).when(cmd).validateNoDuplicateVm();
         doReturn(true).when(cmd).validateVdsCluster();
         doReturn(true).when(cmd).validateUsbPolicy();
-        doReturn(true).when(cmd).canAddVm();
+        doReturn(true).when(cmd).validateUniqueVmName();
         doReturn(true).when(cmd).checkTemplateInStorageDomain();
         doReturn(true).when(cmd).checkImagesGUIDsLegal();
         doReturn(true).when(cmd).setAndValidateDiskProfiles();

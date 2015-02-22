@@ -1423,6 +1423,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Storage Domain doesn't exist.")
     String ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Storage Domain and Cluster must be in the same Storage Pool.")
+    String ACTION_TYPE_FAILED_STORAGE_DOMAIN_AND_CLUSTER_IN_DIFFERENT_POOL();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The selected proxy Host must be in the destination Storage Pool.")
+    String ACTION_TYPE_FAILED_VDS_NOT_IN_DEST_STORAGE_POOL();
+
     @DefaultStringValue("Cannot ${action} ${type}. The relevant Storage Domain is inaccessible.\n-Please handle Storage Domain issues and retry the operation.")
     String ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL();
 

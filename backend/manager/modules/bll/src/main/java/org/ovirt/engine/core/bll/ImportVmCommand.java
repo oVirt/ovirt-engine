@@ -359,7 +359,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
 
         setVmTemplateId(getVm().getVmtGuid());
-        if (!templateExists() || !checkTemplateInStorageDomain() || !checkImagesGUIDsLegal() || !canAddVm()) {
+        if (!templateExists() || !checkTemplateInStorageDomain() || !checkImagesGUIDsLegal() || !validateUniqueVmName()) {
             return false;
         }
 

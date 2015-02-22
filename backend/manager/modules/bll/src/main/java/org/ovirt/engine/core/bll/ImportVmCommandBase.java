@@ -87,12 +87,10 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         return importValidator;
     }
 
-    protected boolean canAddVm() {
-        // Checking if a desktop with same name already exists
-        if (VmHandler.isVmWithSameNameExistStatic(getVm().getName())) {
-            return failCanDoAction(VdcBllMessages.VM_CANNOT_IMPORT_VM_NAME_EXISTS);
-        }
-        return true;
+    protected boolean validateUniqueVmName() {
+        return VmHandler.isVmWithSameNameExistStatic(getVm().getName()) ?
+                failCanDoAction(VdcBllMessages.VM_CANNOT_IMPORT_VM_NAME_EXISTS)
+                : true;
     }
 
     /**
