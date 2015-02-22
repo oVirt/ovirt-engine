@@ -94,8 +94,6 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
                 curList.add(validDateTime);
             } else if (curType == TimeSpan.class) {
                 curList.add(validTimeSpan);
-            } else {
-                curList.add(validCharacters);
             }
             final IConditionValueAutoCompleter tmp = getFieldValueAutoCompleter(key);
             if (tmp != null) {
