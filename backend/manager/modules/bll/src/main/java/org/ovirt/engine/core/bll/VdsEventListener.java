@@ -318,17 +318,18 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void processOnClientIpChange(final Guid vmId) {
-        final VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(vmId);
+    public void processOnClientIpChange(final Guid vmId, String newClientIp, String newClientUserName) {
         final AuditLogableBase event = new AuditLogableBase();
         event.setVmId(vmId);
-        event.setUserName(vmDynamic.getConsoleCurrentUserName());
+        event.setUserName(newClientUserName);
 
         // in case of empty clientIp we clear the logged in user.
         // (this happened when user close the console to spice/vnc)
-        if (StringUtils.isEmpty(vmDynamic.getClientIp())) {
+        if (StringUtils.isEmpty(newClientIp)) {
+            final VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(vmId);
             vmDynamic.setConsoleCurrentUserName(null);
             DbFacade.getInstance().getVmDynamicDao().update(vmDynamic);
+
             AuditLogDirector.log(event, AuditLogType.VM_CONSOLE_DISCONNECTED);
         } else {
             AuditLogDirector.log(event, AuditLogType.VM_CONSOLE_CONNECTED);

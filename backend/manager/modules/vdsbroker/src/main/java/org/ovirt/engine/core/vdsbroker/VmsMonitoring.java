@@ -210,7 +210,10 @@ public class VmsMonitoring {
 
             // process all vms that their ip changed.
             if (vmUpdater.isClientIpChanged()) {
-                getVdsEventListener().processOnClientIpChange(vmUpdater.getVdsmVm().getVmDynamic().getId());
+                final VmDynamic vmDynamic = vmUpdater.getVdsmVm().getVmDynamic();
+                getVdsEventListener().processOnClientIpChange(vmDynamic.getId(),
+                        vmDynamic.getClientIp(),
+                        vmDynamic.getConsoleCurrentUserName());
             }
 
             // process all vms that powering up.
