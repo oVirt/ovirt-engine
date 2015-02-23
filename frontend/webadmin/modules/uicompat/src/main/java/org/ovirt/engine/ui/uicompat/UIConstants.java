@@ -1035,7 +1035,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Note: to fully configure the Data-Center, at least one local Storage Domain should be attached and activated.")
     String attachLocalStorageDomainToFullyConfigure();
 
-    @DefaultStringValue("Name must be unique.")
+    @DefaultStringValue("Name is already used in the environment, create new unique name.")
     String nameMustBeUniqueInvalidReason();
 
     @DefaultStringValue("You must approve the action by clicking on this checkbox.")
