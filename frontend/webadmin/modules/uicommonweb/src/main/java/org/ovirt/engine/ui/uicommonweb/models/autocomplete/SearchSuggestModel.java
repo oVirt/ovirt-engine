@@ -19,6 +19,9 @@ public class SearchSuggestModel extends SearchableListModel {
     private final String[] itemsToIgnore = { "monitor-desktop", //$NON-NLS-1$
             SyntaxChecker.PAGE, SyntaxChecker.SORTBY, SyntaxChecker.SORTDIR_ASC, SyntaxChecker.SORTDIR_DESC};
 
+    //Exceptions that are potentially matched by items to ignore but are valid.
+    private final List<String> exceptions = Arrays.asList("DESCRIPTION"); //$NON-NLS-1$
+
     @Override
     public List getItems()
     {
@@ -179,6 +182,11 @@ public class SearchSuggestModel extends SearchableListModel {
     private boolean containsWithItemsToIgnore(String pf) {
         for (String item: itemsToIgnore) {
             if (pf.toUpperCase().contains(StringConstants.SPACE + item.trim().toUpperCase())) {
+                for (String exception: exceptions) {
+                    if (pf.toUpperCase().contains(exception)) {
+                        return false;
+                    }
+                }
                 return true;
             }
         }
