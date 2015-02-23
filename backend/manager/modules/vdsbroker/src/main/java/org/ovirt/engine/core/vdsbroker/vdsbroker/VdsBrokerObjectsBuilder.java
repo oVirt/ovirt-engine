@@ -61,13 +61,14 @@ import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
-import org.ovirt.engine.core.common.businessentities.network.Nic;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.network.Nic;
 import org.ovirt.engine.core.common.businessentities.network.VdsInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.Vlan;
+import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -139,9 +140,12 @@ public class VdsBrokerObjectsBuilder {
         vmStatic.setNumOfSockets((int) xmlRpcStruct.get(VdsProperties.num_of_cpus));
 
         if (xmlRpcStruct.containsKey(VdsProperties.vm_disks)) {
-            for (Object diskMap : (Object[]) xmlRpcStruct.get(VdsProperties.vm_disks)) {
-                DiskImage image = buildDiskImageFromExternalProvider((Map<String, Object>)diskMap);
-                vmStatic.getImages().add(image);
+            for (Object disk : (Object[]) xmlRpcStruct.get(VdsProperties.vm_disks)) {
+                Map<String, Object> diskMap = (Map<String, Object>) disk;
+                if (VdsProperties.Disk.equals(diskMap.get(VdsProperties.type))) {
+                    DiskImage image = buildDiskImageFromExternalProvider(diskMap);
+                    vmStatic.getImages().add(image);
+                }
             }
         }
 
@@ -168,6 +172,17 @@ public class VdsBrokerObjectsBuilder {
         VmNetworkInterface nic = new VmNetworkInterface();
         nic.setMacAddress((String) map.get(VdsProperties.MAC_ADDR));
         nic.setName((String) map.get(VdsProperties.BRIDGE));
+
+        nic.setType(VmInterfaceType.pv.getValue());
+        if (map.containsKey(VdsProperties.Model)) {
+            String model = (String) map.get(VdsProperties.Model);
+            for (VmInterfaceType type : VmInterfaceType.values()) {
+                if (model.equals(type.getInternalName())) {
+                    nic.setType(type.getValue());
+                    break;
+                }
+            }
+        }
 
         return nic;
     }
