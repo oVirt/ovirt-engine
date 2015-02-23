@@ -841,33 +841,28 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         return graphicsType;
     }
 
+    /**
+     * Enum for representing (possibly multiple) graphics device of a VM.
+     */
     public enum GraphicsTypes {
-        SPICE,
-        VNC,
-        SPICE_AND_VNC;
+        NONE(),
+        SPICE(GraphicsType.SPICE),
+        VNC(GraphicsType.VNC),
+        SPICE_AND_VNC(GraphicsType.SPICE, GraphicsType.VNC);
 
-        Set<GraphicsType> spice = new HashSet<GraphicsType>();
-        Set<GraphicsType> vnc = new HashSet<GraphicsType>();
-        Set<GraphicsType> spiceAndVnc = new HashSet<GraphicsType>();
+        private Set<GraphicsType> backingTypes;
 
-        {
-            spice.add(GraphicsType.SPICE);
-            vnc.add(GraphicsType.VNC);
-            spiceAndVnc.add(GraphicsType.SPICE);
-            spiceAndVnc.add(GraphicsType.VNC);
+        private GraphicsTypes(GraphicsType ... backingTypes) {
+            this.backingTypes = new HashSet<>();
+            if (backingTypes != null) {
+                for (GraphicsType backingType : backingTypes) {
+                    this.backingTypes.add(backingType);
+                }
+            }
         }
 
-        public Collection<GraphicsType> getBackingGraphicsType() {
-            switch (this) {
-                case SPICE:
-                    return spice;
-                case VNC:
-                    return vnc;
-                case SPICE_AND_VNC:
-                    return spiceAndVnc;
-                default:
-                    return null;
-            }
+        public Collection<GraphicsType> getBackingGraphicsTypes() {
+            return backingTypes;
         }
 
         public static GraphicsTypes fromGraphicsType(GraphicsType type) {
@@ -880,18 +875,15 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             return null;
         }
 
-        public static GraphicsTypes fromGraphicsTypes(Collection<GraphicsType> types) {
-            if (types.containsAll(Arrays.asList(GraphicsType.SPICE, GraphicsType.VNC))) {
-                return UnitVmModel.GraphicsTypes.SPICE_AND_VNC;
-            } else if (types.contains(GraphicsType.SPICE)) {
-                return UnitVmModel.GraphicsTypes.SPICE;
-            } else if (types.contains(GraphicsType.VNC)) {
-                return UnitVmModel.GraphicsTypes.VNC;
+        public static GraphicsTypes fromGraphicsTypes(Set<GraphicsType> types) {
+            for (GraphicsTypes myTypes : values()) {
+                if (myTypes.getBackingGraphicsTypes().equals(types)) {
+                    return myTypes;
+                }
             }
 
-            return null;
+            return NONE;
         }
-
     }
 
     private void setGraphicsType(NotChangableForVmInPoolListModel<GraphicsTypes> graphicsType) {
@@ -1983,7 +1975,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             }
         }
 
-        if (!graphicsTypes.getBackingGraphicsType().contains(GraphicsType.SPICE)) {
+        if (!graphicsTypes.getBackingGraphicsTypes().contains(GraphicsType.SPICE)) {
             getUsbPolicy().setIsChangable(false);
         }
 
@@ -2109,7 +2101,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         GraphicsTypes graphicsTypes = getGraphicsType().getSelectedItem();
         if (graphicsTypes != null) {
-            getVncKeyboardLayout().setIsAvailable(graphicsTypes.getBackingGraphicsType().contains(GraphicsType.VNC));
+            getVncKeyboardLayout().setIsAvailable(graphicsTypes.getBackingGraphicsTypes().contains(GraphicsType.VNC));
         }
     }
 
@@ -2167,7 +2159,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
             GraphicsTypes selectedGraphics = getGraphicsType().getSelectedItem();
             boolean spiceCopyPasteToggle = selectedGraphics != null
-                    && selectedGraphics.getBackingGraphicsType().contains(GraphicsType.SPICE)
+                    && selectedGraphics.getBackingGraphicsTypes().contains(GraphicsType.SPICE)
                     && AsyncDataProvider.getInstance().isSpiceCopyPasteToggleSupported(getSelectedCluster().getCompatibilityVersion().toString());
             if (!spiceCopyPasteToggle) {
                 handleQxlChangeProhibitionReason(getSpiceCopyPasteEnabled(), getSelectedCluster().getCompatibilityVersion().toString(), isQxl);
@@ -2344,15 +2336,15 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             return;
         }
 
-        if (display != DisplayType.qxl || !graphics.getBackingGraphicsType().contains(GraphicsType.SPICE)) {
+        if (display != DisplayType.qxl || !graphics.getBackingGraphicsTypes().contains(GraphicsType.SPICE)) {
             getUsbPolicy().setSelectedItem(org.ovirt.engine.core.common.businessentities.UsbPolicy.DISABLED);
             getIsSmartcardEnabled().setEntity(false);
         }
 
         handleQxlClusterLevel();
-        getUsbPolicy().setIsChangable(graphics.getBackingGraphicsType().contains(GraphicsType.SPICE));
-        getIsSmartcardEnabled().setIsChangable(graphics.getBackingGraphicsType().contains(GraphicsType.SPICE));
-        getVncKeyboardLayout().setIsAvailable(graphics.getBackingGraphicsType().contains(GraphicsType.VNC));
+        getUsbPolicy().setIsChangable(graphics.getBackingGraphicsTypes().contains(GraphicsType.SPICE));
+        getIsSmartcardEnabled().setIsChangable(graphics.getBackingGraphicsTypes().contains(GraphicsType.SPICE));
+        getVncKeyboardLayout().setIsAvailable(graphics.getBackingGraphicsTypes().contains(GraphicsType.VNC));
         updateNumOfMonitors();
     }
 

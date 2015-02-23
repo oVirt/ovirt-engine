@@ -153,6 +153,8 @@ public interface Enums extends LocalizedEnums {
 
     String GraphicsType___VNC();
 
+    String UnitVmModel$GraphicsTypes___NONE();
+
     String UnitVmModel$GraphicsTypes___SPICE();
 
     String UnitVmModel$GraphicsTypes___VNC();

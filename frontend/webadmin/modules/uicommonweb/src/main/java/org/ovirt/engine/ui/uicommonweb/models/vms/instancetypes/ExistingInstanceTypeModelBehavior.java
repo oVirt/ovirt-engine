@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 
 import java.util.HashSet;
+import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -49,12 +50,12 @@ public class ExistingInstanceTypeModelBehavior extends InstanceTypeModelBehavior
         getModel().getIsSoundcardEnabled().setIsChangable(true);
 
         Frontend.getInstance().runQuery(VdcQueryType.GetGraphicsDevices, new IdQueryParameters(instanceType.getId()), new AsyncQuery(
-                this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        List<GraphicsDevice> graphicsDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                        Collection<GraphicsType> graphicsTypesCollection = new HashSet<GraphicsType>();
+            this,
+            new INewAsyncCallback() {
+                @Override
+                public void onSuccess(Object model, Object returnValue) {
+                    List<GraphicsDevice> graphicsDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                    Set<GraphicsType> graphicsTypesCollection = new HashSet<>();
 
                         for (GraphicsDevice graphicsDevice : graphicsDevices) {
                             graphicsTypesCollection.add(graphicsDevice.getGraphicsType());

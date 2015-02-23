@@ -184,7 +184,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             @Override
             protected UnitVmModel.GraphicsTypes getRawValue(VM vm) {
                 if ((vm.getStatus() == VMStatus.Down) || (vm.getStatus() == VMStatus.ImageLocked)) {
-                    return null;
+                    return UnitVmModel.GraphicsTypes.NONE;
                 }
 
                 Map<GraphicsType, GraphicsInfo> graphicsInfos = vm.getGraphicsInfos();

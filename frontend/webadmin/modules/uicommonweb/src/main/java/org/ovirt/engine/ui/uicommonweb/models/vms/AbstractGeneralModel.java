@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -44,7 +44,7 @@ public class AbstractGeneralModel extends EntityModel {
                 @Override
                 public void onSuccess(Object model, Object returnValue) {
                     List<GraphicsDevice> graphicsDevices = ((VdcQueryReturnValue) returnValue).getReturnValue();
-                    Collection<GraphicsType> graphicsTypesCollection = new HashSet<GraphicsType>();
+                    Set<GraphicsType> graphicsTypesCollection = new HashSet<GraphicsType>();
 
                     for (GraphicsDevice graphicsDevice : graphicsDevices) {
                         graphicsTypesCollection.add(graphicsDevice.getGraphicsType());
