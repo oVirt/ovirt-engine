@@ -213,6 +213,7 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
                                 .addValue("status", entity.getStatus().name())
                                 .addValue("id", entity.getId().toString())
                                 .addValue("brick_order", entity.getBrickOrder())
+                                .addValue("network_id", entity.getNetworkId())
                                 .addValue("task_id",
                                         entity.getAsyncTask().getTaskId() != null ? entity.getAsyncTask()
                                                 .getTaskId()
@@ -264,6 +265,14 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
                         addValue("brick_dir", brickDir).
                         addValue("task_id", taskId));
 
+    }
+
+    @Override
+    public void updateBrickNetworkId(Guid brickId, Guid networkId) {
+        getCallsHandler().executeModification("UpdateGlusterVolumeBrickNetworkId",
+                getCustomMapSqlParameterSource().
+                        addValue("id", brickId).
+                        addValue("network_id", networkId));
     }
 
     @Override

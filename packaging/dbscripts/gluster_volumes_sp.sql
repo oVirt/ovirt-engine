@@ -524,6 +524,16 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION UpdateGlusterVolumeBrickNetworkId(v_id UUID, v_network_id UUID)
+    RETURNS VOID
+    AS $procedure$
+BEGIN
+    UPDATE  gluster_volume_bricks
+    SET     network_id = v_network_id,
+            _update_date = LOCALTIMESTAMP
+    WHERE   id = v_id;
+END; $procedure$
+LANGUAGE plpgsql;
 
 Create or replace FUNCTION UpdateGlusterVolumeStatus(v_volume_id UUID,
                                                     v_status VARCHAR(32))

@@ -394,4 +394,17 @@ public class GlusterBrickDaoTest extends BaseDAOTestCase {
         assertEquals(FixturesTool.GLUSTER_ASYNC_TASK_ID1, newEntity1.getAsyncTask().getTaskId());
         assertEquals(FixturesTool.GLUSTER_ASYNC_TASK_ID1, newEntity2.getAsyncTask().getTaskId());
     }
+
+    @Test
+    public void testUpdateBrickNetworkId() {
+        GlusterBrickEntity existingBrick = dao.getById(FixturesTool.GLUSTER_BRICK_UUID1);
+        assertNotNull(existingBrick);
+        assertNull(existingBrick.getNetworkId());
+
+        dao.updateBrickNetworkId(FixturesTool.GLUSTER_BRICK_UUID1, FixturesTool.NETWORK_ENGINE);
+
+        existingBrick = dao.getById(FixturesTool.GLUSTER_BRICK_UUID1);
+        assertNotNull(existingBrick);
+        assertEquals(FixturesTool.NETWORK_ENGINE, existingBrick.getNetworkId());
+    }
 }

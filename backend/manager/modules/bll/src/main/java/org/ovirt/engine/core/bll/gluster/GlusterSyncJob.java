@@ -595,6 +595,13 @@ public class GlusterSyncJob extends GlusterJob {
                             fetchedBrick.getBrickOrder());
                     getBrickDao().updateBrickOrder(existingBrick.getId(), fetchedBrick.getBrickOrder());
                 }
+                // update network id, if different
+                if (!Objects.equals(existingBrick.getNetworkId(), fetchedBrick.getNetworkId())) {
+                    log.info("Network address for brick '{}' detected as  '{}'. Updating engine DB accordingly.",
+                            existingBrick.getQualifiedName(),
+                            fetchedBrick.getNetworkAddress());
+                    getBrickDao().updateBrickNetworkId(existingBrick.getId(), fetchedBrick.getNetworkId());
+                }
             }
         }
     }
