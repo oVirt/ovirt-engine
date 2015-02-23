@@ -12,6 +12,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
@@ -182,7 +184,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
             return null;
         }
 
-        return getBrickEntity(clusterId, volumeId, brickOrder, server, brickDir);
+        return getBrickEntity(clusterId, volumeId, brickOrder, server, brickDir, null, null);
     }
 
     private GlusterBrickEntity getBrick(Guid clusterId, Guid volumeId, Map<String, Object> brickInfoMap, int brickOrder) {
@@ -195,6 +197,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
 
         String hostUuid = (String) brickInfoMap.get(HOST_UUID);
         String brickDir = brickParts[1];
+        String hostAddress = brickParts[0];
 
         GlusterServer glusterServer = dbUtils.getServerByUuid(Guid.createGuidFromString(hostUuid));
         if (glusterServer == null) {
@@ -202,14 +205,30 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
             return null;
         }
         VdsStatic server = DbFacade.getInstance().getVdsStaticDao().get(glusterServer.getId());
-        return getBrickEntity(clusterId, volumeId, brickOrder, server, brickDir);
+        String networkAddress = null;
+        Guid networkId = null;
+        if (!server.getHostName().equals(hostAddress)) {
+            networkAddress = hostAddress;
+            Network network = getGlusterNetworkId(server, networkAddress);
+            if (network != null) {
+                networkId = network.getId();
+            } else {
+                log.warn("Could not associate brick '{}' of volume '{}' with correct network as no gluster network found in cluster '{}'",
+                        brickName,
+                        volumeId,
+                        clusterId);
+            }
+        }
+        return getBrickEntity(clusterId, volumeId, brickOrder, server, brickDir, networkAddress, networkId);
     }
 
     private GlusterBrickEntity getBrickEntity(Guid clusterId,
             Guid volumeId,
             int brickOrder,
             VdsStatic server,
-            String brickDir) {
+            String brickDir,
+            String networkAddress,
+            Guid networkId) {
         GlusterBrickEntity brick = new GlusterBrickEntity();
         brick.setVolumeId(volumeId);
         brick.setBrickOrder(brickOrder);
@@ -218,7 +237,34 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
         brick.setServerId(server.getId());
         brick.setServerName(server.getHostName());
 
+        brick.setNetworkAddress(networkAddress);
+        brick.setNetworkId(networkId);
+
         return brick;
+    }
+
+    private Network getGlusterNetworkId(VdsStatic server, String networkAddress) {
+        List<Network> allNetworksInCluster =
+                DbFacade.getInstance().getNetworkDao().getAllForCluster(server.getVdsGroupId());
+
+        for (Network network : allNetworksInCluster) {
+            if (network.getCluster().isGluster()
+                    && isSameNetworkAddress(server.getId(), network.getName(), networkAddress)) {
+                return network;
+            }
+        }
+        return null;
+    }
+
+    private Boolean isSameNetworkAddress(Guid hostId, String glusterNetworkName, String networkAddress) {
+        final List<VdsNetworkInterface> nics = DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(hostId);
+
+        for (VdsNetworkInterface nic : nics) {
+            if (glusterNetworkName.equals(nic.getNetworkName())) {
+                return networkAddress.equals(nic.getAddress());
+            }
+        }
+        return false;
     }
 
     public Map<Guid, GlusterVolumeEntity> getVolumes() {

@@ -62,4 +62,6 @@ public interface GlusterBrickDao extends DAO, MassOperationsDao<GlusterBrickEnti
     public void updateBrickProperties(BrickProperties brickProperties);
 
     public void updateBrickProperties(List<GlusterBrickEntity> bricks);
+
+    public void updateBrickNetworkId(Guid brickId, Guid networkId);
 }
