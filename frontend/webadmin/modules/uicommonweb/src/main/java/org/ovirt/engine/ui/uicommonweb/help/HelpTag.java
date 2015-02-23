@@ -494,6 +494,21 @@ public enum HelpTag {
 
     volume_geo_rep_config_multiple_action_error_display("volume_geo_rep_config_multiple_action_error_display", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Geo-Replication sub-tab -> Options -> 'Set/Reset' error dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    volume_restore_snapshot_confirmation(
+            "volume_restore_snapshot_confirmation", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Snapshots sub-tab -> 'Restore Snapshot' dialog"), //$NON-NLS-1$//$NON-NLS-2$
+
+    volume_delete_snapshot_confirmation(
+            "volume_delete_snapshot_confirmation", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Snapshots sub-tab -> 'Remove Snapshot' dialog"), //$NON-NLS-1$//$NON-NLS-2$
+
+    volume_delete_all_snapshot_confirmation(
+            "volume_delete_all_snapshot_confirmation", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Snapshots sub-tab -> 'Remove All Snapshots' dialog"), //$NON-NLS-1$//$NON-NLS-2$
+
+    volume_activate_snapshot_confirmation(
+            "volume_activate_snapshot_confirmation", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Snapshots sub-tab -> 'Activate Snapshot' dialog"), //$NON-NLS-1$//$NON-NLS-2$
+
+    volume_deactivate_snapshot_confirmation(
+            "volume_deactivate_snapshot_confirmation", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Snapshots sub-tab -> 'Deactivate Snapshot' dialog"), //$NON-NLS-1$//$NON-NLS-2$
+
     new_role("new_role", HelpTagType.WEBADMIN), //$NON-NLS-1$
 
     edit_role("edit_role", HelpTagType.WEBADMIN), //$NON-NLS-1$
