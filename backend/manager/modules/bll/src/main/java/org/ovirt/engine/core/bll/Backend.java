@@ -136,7 +136,13 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     @PostConstruct
     public void create() {
         checkDBConnectivity();
-        initialize();
+        try {
+            initialize();
+        } catch(Exception ex) {
+            log.error("Error during initialization", ex.getMessage());
+            log.debug("", ex);
+            throw ex;
+        }
     }
 
     @PreDestroy
