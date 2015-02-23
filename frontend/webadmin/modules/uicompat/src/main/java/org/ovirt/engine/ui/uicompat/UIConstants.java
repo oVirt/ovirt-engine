@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicompat;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 
 import com.google.gwt.i18n.client.Constants;
-import com.google.gwt.i18n.client.Messages.DefaultMessage;
 
 public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
@@ -2551,6 +2550,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
             + "This command can also be used to re-perform the operation on the nodes where the session has died, or the operation has not be executed.")
     String geoRepForceHelp();
 
+    // Gluster Volume Snapshots
     @DefaultStringValue("Volume Snapshot - Cluster Options")
     String configureClusterSnapshotOptionsTitle();
 
@@ -2588,4 +2588,19 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("User Name")
     String userName();
+
+    @DefaultStringValue("Volume will be restored to the state of selected snapshot.\nDo you want to continue?")
+    String confirmVolumeSnapshotRestoreMesage();
+
+    @DefaultStringValue("The volume will be brought down and restored to the state of the selected snapshot.\nDo you want to continue?")
+    String confirmVolumeSnapshotRestoreWithStopMessage();
+
+    @DefaultStringValue("All snapshots will be removed. Do you want to continue?")
+    String confirmVolumeSnapshotDeleteAllMessage();
+
+    @DefaultStringValue("The selected snapshot will be activated. Do you want to continue?")
+    String confirmVolumeSnapshotActivateMessage();
+
+    @DefaultStringValue("The selected snapshot will be deactivated.\n Do you want to continue?")
+    String confirmVolumeSnapshotDeactivateMessage();
 }

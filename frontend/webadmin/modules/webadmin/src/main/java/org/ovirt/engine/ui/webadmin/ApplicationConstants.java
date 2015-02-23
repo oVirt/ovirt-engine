@@ -4095,4 +4095,19 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Terminate Session")
     String terminateSession();
+
+    @DefaultStringValue("Restore")
+    String restoreVolumeSnapshot();
+
+    @DefaultStringValue("Delete")
+    String deleteVolumeSnapshot();
+
+    @DefaultStringValue("Delete All")
+    String deleteAllVolumeSnapshots();
+
+    @DefaultStringValue("Activate")
+    String activateVolumeSnapshot();
+
+    @DefaultStringValue("Deactivate")
+    String deactivateVolumeSnapshot();
 }

@@ -418,6 +418,7 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Force {0} session")
     String geoRepForceTitle(String action);
 
+    // Gluster Volume Snapshots
     @DefaultMessage("Value of cluster configuration parameter {0} is empty")
     String clusterSnapshotOptionValueEmpty(String option);
 
@@ -427,4 +428,21 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("{0}: ({1} GB) {2} {3}")
     String vmDialogDisk(String name, String sizeInGb, String type, String boot);
 
+    @DefaultMessage("Restore Snapshot on volume - {0}")
+    String confirmRestoreSnapshot(String volumeName);
+
+    @DefaultMessage("Remove Snapshot on volume - {0}")
+    String confirmRemoveSnapshot(String volumeName);
+
+    @DefaultMessage("Remove All Snapshots on volume - {0}")
+    String confirmRemoveAllSnapshots(String volumeName);
+
+    @DefaultMessage("Activate Snapshot on volume - {0}")
+    String confirmActivateSnapshot(String volumeName);
+
+    @DefaultMessage("Deactivate Snapshot on volume - {0}")
+    String confirmDeactivateSnapshot(String volumeName);
+
+    @DefaultMessage("Below snapshots would be removed. Do you want to continue?\n\n {0}")
+    String confirmVolumeSnapshotDeleteMessage(String snapshotNames);
 }
