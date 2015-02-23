@@ -59,8 +59,14 @@ public class EngineExtensionsManager extends ExtensionsManager {
     }
 
     public void engineInitialize() {
-        createInternalAAAConfigurations();
-        createKerberosLdapAAAConfigurations();
+        try {
+            createInternalAAAConfigurations();
+            createKerberosLdapAAAConfigurations();
+        } catch (Exception ex) {
+            log.error("Could not load built in configuration. Exception message is: {}",
+                    ex.getMessage());
+            log.debug("", ex);
+        }
 
         for (File directory : EngineLocalConfig.getInstance().getExtensionsDirectories()) {
             if (!directory.exists()) {
@@ -109,7 +115,14 @@ public class EngineExtensionsManager extends ExtensionsManager {
                     )
                 )
             ) {
-                initialize(extension.getContext().<String> get(Base.ContextKeys.INSTANCE_NAME));
+                try {
+                    initialize(extension.getContext().<String>get(Base.ContextKeys.INSTANCE_NAME));
+                } catch (Exception ex) {
+                    log.error("Could not initialize extension '{}'. Exception message is: {}",
+                            extension.getContext().<String>get(Base.ContextKeys.INSTANCE_NAME),
+                            ex.getMessage());
+                    log.debug("", ex);
+                }
             }
         }
 
@@ -141,7 +154,13 @@ public class EngineExtensionsManager extends ExtensionsManager {
         authConfig.put("config.authn.user.name", Config.<String> getValue(ConfigValues.AdminUser));
         authConfig.put("config.authn.user.password", Config.<String> getValue(ConfigValues.AdminPassword));
         authConfig.put(Base.ConfigKeys.SENSITIVE_KEYS, "config.authn.user.password)");
-        load(authConfig);
+        try {
+            load(authConfig);
+        } catch (Exception ex) {
+            log.error("Could not load auth config internal aaa extension based on configuration. Exception message is: {}",
+                    ex.getMessage());
+            log.debug("", ex);
+        }
 
         Properties dirConfig = new Properties();
         dirConfig.put(Base.ConfigKeys.NAME, "internal");
@@ -154,7 +173,13 @@ public class EngineExtensionsManager extends ExtensionsManager {
         dirConfig.put("config.authz.user.id", "fdfc627c-d875-11e0-90f0-83df133b58cc");
         dirConfig.put("config.query.filter.size",
                 Config.getValue(ConfigValues.MaxLDAPQueryPartsNumber).toString());
-        load(dirConfig);
+        try {
+            load(dirConfig);
+        } catch (Exception ex) {
+            log.error("Could not load directory config internal aaa extension based on configuration. Exception message is: {}",
+                    ex.getMessage());
+            log.debug("", ex);
+        }
     }
 
     private void createKerberosLdapAAAConfigurations() {
@@ -194,7 +219,14 @@ public class EngineExtensionsManager extends ExtensionsManager {
                 authConfig.put("config.change.password.url", blankIfNull(passwordChangeUrlPerDomain.get(domain)));
                 authConfig.put("config.change.password.msg", blankIfNull(passwordChangeMsgPerDomain.get(domain)));
                 attachConfigValuesFromDb(authConfig, domain);
-                load(authConfig);
+                try {
+                    load(authConfig);
+                } catch (Exception ex) {
+                    log.error("Could not load auth config for extension {} based on configuration. Exception message is: {}",
+                            domain,
+                            ex.getMessage());
+                    log.debug("", ex);
+                }
 
                 Properties dirConfig = new Properties();
                 dirConfig.put(Base.ConfigKeys.NAME, domain);
@@ -206,7 +238,14 @@ public class EngineExtensionsManager extends ExtensionsManager {
                 dirConfig.put("config.query.filter.size",
                         Config.getValue(ConfigValues.MaxLDAPQueryPartsNumber).toString());
                 attachConfigValuesFromDb(dirConfig, domain);
-                load(dirConfig);
+                try {
+                    load(dirConfig);
+                } catch (Exception ex) {
+                    log.error("Could not load directory config for extension {} based on configuration. Exception message is: {}",
+                            domain,
+                            ex.getMessage());
+                    log.debug("", ex);
+                }
             }
         }
     }
