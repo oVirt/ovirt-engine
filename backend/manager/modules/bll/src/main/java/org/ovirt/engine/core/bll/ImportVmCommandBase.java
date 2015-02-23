@@ -230,8 +230,8 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
             public Void runInTransaction() {
                 addVmStatic();
                 addVmDynamic();
-                addVmInterfaces();
                 addVmStatistics();
+                addVmInterfaces();
                 getCompensationContext().stateChanged();
                 return null;
             }
