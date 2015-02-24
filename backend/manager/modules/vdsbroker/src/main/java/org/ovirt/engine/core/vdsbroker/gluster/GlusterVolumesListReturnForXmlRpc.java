@@ -210,7 +210,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
             if (network != null) {
                 networkId = network.getId();
             } else {
-                log.warn("Could not associate brick '{}' of volume '{}' with correct network as no gluster network found in cluster '{}'",
+                log.warnFormat("Could not associate brick '{0}' of volume '{1}' with correct network as no gluster network found in cluster '{2}'",
                         brickName,
                         volumeId,
                         clusterId);

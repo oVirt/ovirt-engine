@@ -247,14 +247,19 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
                         if (glusterServers != null) {
                             if (!GlusterUtil.getInstance().isHostExists(glusterServers, getVds())) {
                                 setSucceeded(true);
-                                return;
                             }
                         }
                     }
-                    getReturnValue().getFault().setError(returnValue.getVdsError().getCode());
-                    getReturnValue().getFault().setMessage(returnValue.getVdsError().getMessage());
-                    errorType = AuditLogType.GLUSTER_SERVER_REMOVE_FAILED;
-                    return;
+                    if (!getSucceeded()) {
+                        getReturnValue().getFault().setError(returnValue.getVdsError().getCode());
+                        getReturnValue().getFault().setMessage(returnValue.getVdsError().getMessage());
+                        errorType = AuditLogType.GLUSTER_SERVER_REMOVE_FAILED;
+                        return;
+                    }
+                }
+                // if last but one host in cluster, update the last host's known addresses
+                if (getClusterUtils().getServerCount(getVdsGroupId()) == 2) {
+                    removeOtherKnowAddressesForGlusterServer(upServer.getId());
                 }
             }
         }
@@ -273,6 +278,10 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
     private boolean clusterHasMultipleHosts() {
         return getClusterUtils().hasMultipleServers(getVdsGroupId());
+    }
+
+    private void removeOtherKnowAddressesForGlusterServer(Guid lastServerId) {
+        getDbFacade().getGlusterServerDao().updateKnownAddresses(lastServerId, null);
     }
 
     @Override

@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.util.ArrayList;
+
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.compat.Guid;
@@ -72,5 +74,39 @@ public class GlusterServerDaoTest extends BaseDAOTestCase {
         GlusterServer entity = dao.getByServerId(SERVER_ID1);
         assertNotNull(entity);
         assertEquals(FixturesTool.GLUSTER_SERVER_UUID_NEW, entity.getGlusterServerUuid());
+    }
+
+    @Test
+    public void testAddKnownAddresses() {
+        GlusterServer entityToUpdate = new GlusterServer(SERVER_ID1, FixturesTool.GLUSTER_SERVER_UUID_NEW);
+        dao.update(entityToUpdate);
+        dao.addKnownAddress(SERVER_ID1, "a.1");
+        GlusterServer entity = dao.getByServerId(SERVER_ID1);
+        assertNotNull(entity);
+        assertEquals(1, entity.getKnownAddresses().size());
+        assertEquals("a.1", entity.getKnownAddresses().get(0));
+        dao.addKnownAddress(SERVER_ID1, "a.2");
+        entity = dao.getByServerId(SERVER_ID1);
+        assertNotNull(entity);
+        assertEquals(2, entity.getKnownAddresses().size());
+        assertEquals("a.2", entity.getKnownAddresses().get(1));
+    }
+
+    @Test
+    public void testUpdateKnownAddresses() {
+        GlusterServer entityToUpdate = new GlusterServer(SERVER_ID1, FixturesTool.GLUSTER_SERVER_UUID_NEW);
+        dao.update(entityToUpdate);
+        dao.addKnownAddress(SERVER_ID1, "a.1");
+        GlusterServer entity = dao.getByServerId(SERVER_ID1);
+        assertNotNull(entity);
+        assertEquals(1, entity.getKnownAddresses().size());
+        assertEquals("a.1", entity.getKnownAddresses().get(0));
+        ArrayList<String> knownAddresses = new ArrayList<>();
+        knownAddresses.add("a.2");
+        dao.updateKnownAddresses(SERVER_ID1, knownAddresses);
+        entity = dao.getByServerId(SERVER_ID1);
+        assertNotNull(entity);
+        assertEquals(1, entity.getKnownAddresses().size());
+        assertEquals("a.2", entity.getKnownAddresses().get(0));
     }
 }

@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -30,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
@@ -39,10 +41,13 @@ import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
+import org.ovirt.engine.core.common.vdscommands.gluster.AddGlusterServerVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeAdvancedDetailsVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumesListVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.log.Log;
@@ -59,6 +64,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class GlusterSyncJob extends GlusterJob {
     private final Log log = LogFactory.getLog(GlusterSyncJob.class);
     private static final GlusterSyncJob instance = new GlusterSyncJob();
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
     private GlusterSyncJob() {
     }
@@ -136,7 +142,7 @@ public class GlusterSyncJob extends GlusterJob {
         try {
             List<GlusterServerInfo> fetchedServers = fetchServers(cluster, upServer, existingServers);
             if (fetchedServers != null) {
-                syncServers(existingServers, fetchedServers);
+                syncServers(cluster.getId(), existingServers, fetchedServers);
             }
         } catch(Exception e) {
             log.errorFormat("Error while refreshing server data for cluster {0} from database!", cluster.getName(), e);
@@ -145,10 +151,11 @@ public class GlusterSyncJob extends GlusterJob {
         }
     }
 
-    private void syncServers(List<VDS> existingServers, List<GlusterServerInfo> fetchedServers) {
+    private void syncServers(Guid clusterId, List<VDS> existingServers, List<GlusterServerInfo> fetchedServers) {
         log.debugFormat("Existing servers list returned {0} comparing with fetched servers {1)", existingServers, fetchedServers);
 
         boolean serverRemoved = false;
+        Network glusterNetwork = findGlusterNetwork(clusterId);
         for (VDS server : existingServers) {
 
             if (isRemovableStatus(server.getStatus())) {
@@ -159,6 +166,8 @@ public class GlusterSyncJob extends GlusterJob {
                     logUtil.logServerMessage(server, AuditLogType.GLUSTER_SERVER_REMOVED_FROM_CLI);
                     try (EngineLock lock = getGlusterUtil().acquireGlusterLockWait(server.getId())) {
                         removeServerFromDb(server);
+                        // if last but one server, reset alternate probed address for last server
+                        checkAndResetKnownAddress(existingServers, server);
                         // remove the server from resource manager
                         runVdsCommand(VDSCommandType.RemoveVds, new RemoveVdsVDSCommandParameters(server.getId()));
                         serverRemoved = true;
@@ -174,6 +183,9 @@ public class GlusterSyncJob extends GlusterJob {
                     if (!returnValue.getSucceeded()) {
                         setNonOperational(server);
                     }
+                } else {
+                    // check if all interfaces with gluster network have been peer probed.
+                    peerProbeAlternateInterfaces(glusterNetwork, server);
                 }
             }
         }
@@ -181,6 +193,88 @@ public class GlusterSyncJob extends GlusterJob {
             log.infoFormat("Servers detached using gluster CLI  is removed from engine after inspecting the Gluster servers list returned {0} "
                     + "- comparing with db servers {1}",
                     fetchedServers, existingServers);
+        }
+    }
+
+    // Check if only 1 host remaining in cluster, if so reset it's known address so that new host will
+    // be peer probed with this alternate address
+    private void checkAndResetKnownAddress(List<VDS> servers, VDS removedServer) {
+        if (servers.size() == 2) {
+            for (VDS server : servers) {
+                // set the known address on the remaining server.
+                if (!Objects.equals(server.getId(), removedServer.getId())) {
+                    getGlusterServerDao().updateKnownAddresses(server.getId(), null);
+                }
+            }
+        }
+    }
+
+    private void peerProbeAlternateInterfaces(Network glusterNetwork, VDS host) {
+        if (glusterNetwork == null || host.getStatus() != VDSStatus.Up) {
+            return;
+        }
+        GlusterServer glusterServer = getGlusterServerDao().get(host.getId());
+        if (glusterServer == null) {
+            return;
+        }
+        List<VdsNetworkInterface> interfaces = getInterfaceDao().getAllInterfacesForVds(host.getId());
+        for (VdsNetworkInterface iface : interfaces) {
+            if (glusterNetwork.getName().equals(iface.getNetworkName()) &&
+                    StringUtils.isNotBlank(iface.getAddress())
+                    && !glusterServer.getKnownAddresses().contains(iface.getAddress())) {
+                // get another server in the cluster
+                VDS upServer = getAlternateUpServerInCluster(host.getVdsGroupId(), host.getId());
+                if (upServer != null) {
+                    boolean peerProbed = glusterPeerProbeAdditionalInterface(upServer.getId(), iface.getAddress());
+                    if (peerProbed) {
+                        getGlusterServerDao().addKnownAddress(host.getId(), iface.getAddress());
+                    }
+                }
+            }
+        }
+
+    }
+
+    private Network findGlusterNetwork(Guid clusterId) {
+        List<Network> allNetworksInCluster = getNetworkDao().getAllForCluster(clusterId);
+
+        for (Network network : allNetworksInCluster) {
+            if (network.getCluster().isGluster()) {
+                return network;
+            }
+        }
+        return null;
+    }
+
+    private VDS getAlternateUpServerInCluster(Guid clusterId, Guid vdsId) {
+        List<VDS> vdsList = getVdsDao().getAllForVdsGroupWithStatus(clusterId, VDSStatus.Up);
+        // If the cluster already having Gluster servers, get an up server
+        if (vdsList.isEmpty()) {
+            return null;
+        }
+        for (VDS vds : vdsList) {
+            if (!vdsId.equals(vds.getId())) {
+                return vds;
+            }
+        }
+        return null;
+    }
+
+    private boolean glusterPeerProbeAdditionalInterface(Guid upServerId, String newServerName) {
+        try {
+            VDSReturnValue returnValue =
+                    runVdsCommand(VDSCommandType.AddGlusterServer,
+                            new AddGlusterServerVDSParameters(upServerId, newServerName));
+            if (!returnValue.getSucceeded()) {
+                AuditLogableBase logable = new AuditLogableBase(upServerId);
+                logable.updateCallStackFromThrowable(returnValue.getExceptionObject());
+                auditLogDirector.log(logable, AuditLogType.GLUSTER_SERVER_ADD_FAILED);
+            }
+            return returnValue.getSucceeded();
+        } catch (Exception e) {
+            log.infoFormat("Exception in peer probing alernate name '{0}' on host with id '{1}'", newServerName, upServerId);
+            log.debug("Exception", e);
+            return false;
         }
     }
 
@@ -597,7 +691,7 @@ public class GlusterSyncJob extends GlusterJob {
                 }
                 // update network id, if different
                 if (!Objects.equals(existingBrick.getNetworkId(), fetchedBrick.getNetworkId())) {
-                    log.info("Network address for brick '{}' detected as  '{}'. Updating engine DB accordingly.",
+                    log.infoFormat("Network address for brick '{0}' detected as  '{1}'. Updating engine DB accordingly.",
                             existingBrick.getQualifiedName(),
                             fetchedBrick.getNetworkAddress());
                     getBrickDao().updateBrickNetworkId(existingBrick.getId(), fetchedBrick.getNetworkId());

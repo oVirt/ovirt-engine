@@ -2,7 +2,10 @@ package org.ovirt.engine.core.dao.gluster;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DefaultGenericDaoDbFacade;
@@ -45,6 +48,15 @@ public class GlusterServerDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Glus
             GlusterServer glusterServer = new GlusterServer();
             glusterServer.setId(getGuidDefaultEmpty(rs, "server_id"));
             glusterServer.setGlusterServerUuid(getGuidDefaultEmpty(rs, "gluster_server_uuid"));
+            String knownAddresses = rs.getString("known_addresses");
+            if (StringUtils.isNotBlank(knownAddresses)) {
+                String[] knownAddressArray = knownAddresses.split(",");
+                ArrayList<String> knownAddressList = new ArrayList<>();
+                for (String addr : knownAddressArray) {
+                    knownAddressList.add(addr);
+                }
+                glusterServer.setKnownAddresses(knownAddressList);
+            }
             return glusterServer;
         }
     }
@@ -63,5 +75,19 @@ public class GlusterServerDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Glus
     @Override
     protected RowMapper<GlusterServer> createEntityRowMapper() {
         return glusterServerRowMapper;
+    }
+
+    @Override
+    public void addKnownAddress(Guid serverId, String address) {
+        getCallsHandler().executeModification("AddGlusterServerKnownAddress",
+                getCustomMapSqlParameterSource().addValue("server_id", serverId)
+                        .addValue("known_address", address));
+    }
+
+    @Override
+    public void updateKnownAddresses(Guid serverId, List<String> addresses) {
+        getCallsHandler().executeModification("UpdateGlusterServerKnownAddresses",
+                getCustomMapSqlParameterSource().addValue("server_id", serverId)
+                        .addValue("known_addresses", StringUtils.join(addresses, ",")));
     }
 }

@@ -18,7 +18,7 @@ Create or replace FUNCTION GetGlusterServerByServerId(v_server_id UUID)
 RETURNS SETOF gluster_server STABLE
 AS $procedure$
 BEGIN
-    RETURN QUERY SELECT server_id, gluster_server_uuid
+    RETURN QUERY SELECT *
     FROM gluster_server
     WHERE server_id = v_server_id;
 END; $procedure$
@@ -30,7 +30,7 @@ Create or replace FUNCTION GetGlusterServerByGlusterServerUUID(v_gluster_server_
 RETURNS SETOF gluster_server STABLE
 AS $procedure$
 BEGIN
-    RETURN QUERY SELECT server_id, gluster_server_uuid
+    RETURN QUERY SELECT *
     FROM gluster_server
     WHERE gluster_server_uuid = v_gluster_server_uuid;
 END; $procedure$
@@ -70,4 +70,27 @@ BEGIN
     WHERE server_id = v_server_id;
 END; $procedure$
 LANGUAGE plpgsql;
+
+Create or replace FUNCTION UpdateGlusterServerKnownAddresses(v_server_id UUID,
+                                            v_known_addresses VARCHAR(250))
+RETURNS VOID
+AS $procedure$
+BEGIN
+    UPDATE gluster_server
+    SET known_addresses = v_known_addresses
+    WHERE server_id = v_server_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION AddGlusterServerKnownAddress(v_server_id UUID,
+                                            v_known_address VARCHAR(250))
+RETURNS VOID
+AS $procedure$
+BEGIN
+    UPDATE gluster_server
+    SET known_addresses = coalesce(known_addresses || ',', '') || v_known_address
+    WHERE server_id = v_server_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
 
