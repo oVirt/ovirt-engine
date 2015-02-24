@@ -36,6 +36,7 @@ from ovirt_engine_setup.engine import vdcoption
 
 SAN_WIPE_AFTER_DELETE = osetupcons.ConfigEnv.SAN_WIPE_AFTER_DELETE
 
+
 @util.export
 class Plugin(plugin.PluginBase):
     """storage plugin."""
@@ -49,10 +50,10 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         before=(
-                oengcommcons.Stages.DIALOG_TITLES_E_STORAGE,
+            oengcommcons.Stages.DIALOG_TITLES_E_STORAGE,
         ),
         after=(
-                oengcommcons.Stages.DIALOG_TITLES_S_STORAGE,
+            oengcommcons.Stages.DIALOG_TITLES_S_STORAGE,
         ),
         condition=lambda self: self._newDatabaseCondition(),
     )
@@ -74,7 +75,7 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         after=(
-                oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
+            oengcommcons.Stages.DB_CONNECTION_AVAILABLE,
         ),
         condition=lambda self: self._newDatabaseCondition(),
     )
@@ -82,7 +83,7 @@ class Plugin(plugin.PluginBase):
         option = vdcoption.VdcOption(
             statement=self.environment[oenginecons.EngineDBEnv.STATEMENT]
         )
-        options=(
+        options = (
             {
                 'name': 'SANWipeAfterDelete',
                 'value': self.environment[SAN_WIPE_AFTER_DELETE],

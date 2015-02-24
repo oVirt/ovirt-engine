@@ -191,7 +191,7 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=oengcommcons.Stages.DIALOG_TITLES_S_STORAGE,
         after=(
-                oengcommcons.Stages.DIALOG_TITLES_E_ENGINE,
+            oengcommcons.Stages.DIALOG_TITLES_E_ENGINE,
         ),
     )
     def _title_s_storage(self):
@@ -203,7 +203,7 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=oengcommcons.Stages.DIALOG_TITLES_E_STORAGE,
         after=(
-                oengcommcons.Stages.DIALOG_TITLES_S_STORAGE,
+            oengcommcons.Stages.DIALOG_TITLES_S_STORAGE,
         ),
         )
     def _title_e_storage(self):
