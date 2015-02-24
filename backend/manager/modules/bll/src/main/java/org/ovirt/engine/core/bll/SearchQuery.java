@@ -146,19 +146,16 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
     }
 
     private List<VM> searchVmsFromDb() {
-        List<VM> returnValue = null;
-
         QueryData data = initQueryData(true);
         if (data == null) {
-            returnValue = new ArrayList<VM>();
-            getQueryReturnValue().setExceptionString(getQueryReturnValue().getExceptionString());
-        } else {
-            returnValue = getDbFacade().getVmDao().getAllUsingQuery(data.getQuery());
-            for (VM vm : returnValue) {
-                VmHandler.updateVmGuestAgentVersion(vm);
-            }
+            return Collections.emptyList();
         }
-        return returnValue;
+
+        List<VM> vms = getDbFacade().getVmDao().getAllUsingQuery(data.getQuery());
+        for (VM vm : vms) {
+            VmHandler.updateVmGuestAgentVersion(vm);
+        }
+        return vms;
     }
 
     private List<VDS> searchVDSsByDb() {
