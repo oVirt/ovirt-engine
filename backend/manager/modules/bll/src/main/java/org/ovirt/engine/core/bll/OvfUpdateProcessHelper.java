@@ -1,18 +1,15 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmBase;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVMVDSCommandParameters;
@@ -81,7 +78,7 @@ public class OvfUpdateProcessHelper {
      * Loads additional need vm data for it's ovf
      */
     protected void loadVmData(VM vm) {
-        setGraphicsAndVideoDevices(vm.getStaticData());
+        VmDeviceUtils.setVmDevices(vm.getStaticData());
         if (vm.getInterfaces().isEmpty()) {
             vm.setInterfaces(getVmNetworkInterfaceDao().getAllForVm(vm.getId()));
         }
@@ -92,25 +89,6 @@ public class OvfUpdateProcessHelper {
             } else {
                 vm.setVmtName(VmTemplateHandler.BLANK_VM_TEMPLATE_NAME);
             }
-        }
-    }
-
-    private void setGraphicsAndVideoDevices(VmBase vmBase) {
-        setManagedDevices(vmBase, VmDeviceGeneralType.VIDEO);
-        setManagedDevices(vmBase, VmDeviceGeneralType.GRAPHICS);
-    }
-
-    private void setManagedDevices(VmBase vmBase, VmDeviceGeneralType type) {
-        Map<Guid, VmDevice> managedDeviceMap = vmBase.getManagedDeviceMap();
-        if (managedDeviceMap == null) {
-            managedDeviceMap = new HashMap<>();
-        }
-        List<VmDevice> devices =
-                DbFacade.getInstance()
-                        .getVmDeviceDao()
-                        .getVmDeviceByVmIdAndType(vmBase.getId(), type);
-        for (VmDevice device : devices) {
-            managedDeviceMap.put(device.getDeviceId(), device);
         }
     }
 
@@ -133,7 +111,7 @@ public class OvfUpdateProcessHelper {
      * Loads additional need template data for it's ovf
      */
     protected void loadTemplateData(VmTemplate template) {
-        setGraphicsAndVideoDevices(template);
+        VmDeviceUtils.setVmDevices(template);
         if (template.getInterfaces() == null || template.getInterfaces().isEmpty()) {
             template.setInterfaces(getVmNetworkInterfaceDao()
                     .getAllForTemplate(template.getId()));
