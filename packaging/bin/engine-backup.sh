@@ -1000,7 +1000,7 @@ my_load_config
 parseArgs "$@"
 verifyArgs
 
-TEMP_FOLDER="$(mktemp -d /tmp/engine-backup.XXXXXXXXXX)" || logdie "Can't create temporary directory"
+TEMP_FOLDER="$(mktemp -d -t engine-backup.XXXXXXXXXX)" || logdie "Can't create temporary directory"
 
 log "Start of engine-backup mode ${MODE} scope ${SCOPE} file ${FILE}"
 
