@@ -328,6 +328,15 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("resume")
     String resumeGeoRep();
 
+    @DefaultStringValue("Geo-Replication Options")
+    String geoReplicationOptions();
+
+    @DefaultStringValue("Set")
+    String setGeorepConfig();
+
+    @DefaultStringValue("Reset All")
+    String resetAllConfigsTitle();
+
     @DefaultStringValue("Rebalance Status")
     String volumeRebalanceStatusTitle();
 
@@ -2603,4 +2612,16 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("The selected snapshot will be deactivated.\n Do you want to continue?")
     String confirmVolumeSnapshotDeactivateMessage();
+
+    @DefaultStringValue("Geo-replication set config")
+    String geoReplicationConfigSetTitle();
+
+    @DefaultStringValue("Geo-replication session configuration set failed")
+    String geoRepSessionConfigSetFailed();
+
+    @DefaultStringValue("Geo-replication reset config")
+    String geoReplicationConfigResetTitle();
+
+    @DefaultStringValue("Geo-replication session configuration reset failed")
+    String geoRepSessionConfigResetFailed();
 }

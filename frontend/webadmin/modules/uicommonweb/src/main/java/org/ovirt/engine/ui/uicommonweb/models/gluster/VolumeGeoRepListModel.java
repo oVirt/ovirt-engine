@@ -1,15 +1,23 @@
 package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionConfiguration;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -17,6 +25,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -181,6 +190,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
         boolean allowStopSessionCommand = false;
         boolean allowResumeSessionCommand = false;
         boolean allowPauseSessionCommand = false;
+        boolean allowSessionOptionsCommand = false;
         if(volumeEntity == null) {
             return;
         }
@@ -193,6 +203,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
             allowResumeSessionCommand = sessionStatus == GeoRepSessionStatus.PAUSED;
             allowPauseSessionCommand =
                     sessionStatus == GeoRepSessionStatus.ACTIVE || sessionStatus == GeoRepSessionStatus.INITIALIZING;
+            allowSessionOptionsCommand = true;
         }
         getNewSessionCommand().setIsAvailable(true);
         getRemoveSessionCommand().setIsAvailable(false);
@@ -200,7 +211,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
         getStopSessionCommand().setIsExecutionAllowed(allowStopSessionCommand);
         getPauseSessionCommand().setIsExecutionAllowed(allowPauseSessionCommand);
         getResumeSessionCommand().setIsExecutionAllowed(allowResumeSessionCommand);
-        getSessionOptionsCommand().setIsExecutionAllowed(true);
+        getSessionOptionsCommand().setIsExecutionAllowed(allowSessionOptionsCommand);
         getViewSessionDetailsCommand().setIsAvailable(false);
         getRefreshSessionsCommand().setIsAvailable(true);
     }
@@ -219,7 +230,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
         } else if(command.equals(getResumeSessionCommand())) {
             resumeGeoRepSession();
         } else if(command.equals(getSessionOptionsCommand())) {
-
+            showSessionOptions();
         } else if(command.equals(getViewSessionDetailsCommand())) {
 
         } else if (command.equals(getRefreshSessionsCommand())) {
@@ -232,9 +243,122 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
             onGeoRepSessionAction(VdcActionType.PauseGlusterVolumeGeoRepSession);
         } else if (command.getName().equalsIgnoreCase("onResumeGeoRepSession")) {//$NON-NLS-1$
             onGeoRepSessionAction(VdcActionType.ResumeGeoRepSession);
+        } else if (command.getName().equalsIgnoreCase("ok")) {//$NON-NLS-1$
+            updateConfig();
         } else if (command.getName().equalsIgnoreCase("closeWindow")) {//$NON-NLS-1$
             closeWindow();
+        } else if (command.getName().equalsIgnoreCase("closeConfirmWindow")) {//$NON-NLS-1$
+            closeConfirmWindow();
         }
+    }
+
+    private void closeConfirmWindow() {
+        setConfirmWindow(null);
+    }
+
+    private void showSessionOptions() {
+        if (getWindow() != null) {
+            return;
+        }
+        GlusterGeoRepSession selectedGeoRepSession = getSelectedItem();
+        GlusterVolumeGeoReplicationSessionConfigModel configModel = new GlusterVolumeGeoReplicationSessionConfigModel(selectedGeoRepSession);
+        configModel.setTitle(constants.geoReplicationOptions());
+        configModel.setHashName("volume_geo_rep_configuration_display");//$NON-NLS-1$
+        configModel.setHelpTag(HelpTag.volume_geo_rep_configuration_display);
+        configModel.startProgress(null);
+
+        fetchConfigForSession(selectedGeoRepSession);
+        setWindow(configModel);
+
+        addUICommandsToConfigWindow(configModel);
+    }
+
+    private void fetchConfigForSession(GlusterGeoRepSession selectedSession) {
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeGeoRepConfigList, new IdQueryParameters(selectedSession.getId()), new AsyncQuery(new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                VdcQueryReturnValue vdcQueryReturnValue = (VdcQueryReturnValue) returnValue;
+                GlusterVolumeGeoReplicationSessionConfigModel geoRepConfigModel =
+                        (GlusterVolumeGeoReplicationSessionConfigModel) getWindow();
+                geoRepConfigModel.stopProgress();
+                boolean queryExecutionStatus = vdcQueryReturnValue.getSucceeded();
+                geoRepConfigModel.updateCommandExecutabilities(queryExecutionStatus);
+                if (!queryExecutionStatus) {
+                    geoRepConfigModel.setMessage(ConstantsManager.getInstance().getConstants().errorInFetchingVolumeOptionList());
+                } else {
+                    List<GlusterGeoRepSessionConfiguration> sessionConfigs =
+                            (List<GlusterGeoRepSessionConfiguration>) vdcQueryReturnValue.getReturnValue();
+                    List<EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>>> sessionConfigEntities =
+                            new ArrayList<>();
+                            for (GlusterGeoRepSessionConfiguration currentSession : sessionConfigs) {
+                                sessionConfigEntities.add(new EntityModel<>(new Pair<Boolean, GlusterGeoRepSessionConfiguration>(false,
+                                        currentSession)));
+                            }
+                            geoRepConfigModel.getConfigsModel().setItems(sessionConfigEntities);
+                            geoRepConfigModel.copyConfigsToMap(sessionConfigs);
+                }
+            }
+        }));
+    }
+
+    private void updateConfig() {
+        ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+        IFrontendActionAsyncCallback[] callbacks;
+
+        final GlusterVolumeGeoReplicationSessionConfigModel geoRepConfigModel =
+                (GlusterVolumeGeoReplicationSessionConfigModel) getWindow();
+
+        LinkedHashMap<String, String> oldConfigs = geoRepConfigModel.getConfigs();
+
+        geoRepConfigModel.startProgress(null);
+
+        for (EntityModel<Pair<Boolean, GlusterGeoRepSessionConfiguration>> newConfigEntity : geoRepConfigModel.getConfigsModel()
+                .getItems()) {
+            Pair<Boolean, GlusterGeoRepSessionConfiguration> newConfigPair = newConfigEntity.getEntity();
+            GlusterGeoRepSessionConfiguration newConfig = newConfigPair.getSecond();
+            if (newConfigPair.getFirst()) {
+                actionTypes.add(VdcActionType.ResetDefaultGeoRepConfig);
+                parameters.add(geoRepConfigModel.formGeoRepConfigParameters(newConfig));
+            } else if (!newConfig.getValue().equals(oldConfigs.get(newConfig.getKey()))) {
+                actionTypes.add(VdcActionType.SetGeoRepConfig);
+                parameters.add(geoRepConfigModel.formGeoRepConfigParameters(newConfig));
+            }
+        }
+        int numberOfConfigUpdates = parameters.size();
+        if (numberOfConfigUpdates == 0) {
+            geoRepConfigModel.stopProgress();
+            closeWindow();
+            return;
+        }
+        callbacks = new IFrontendActionAsyncCallback[numberOfConfigUpdates];
+        callbacks[numberOfConfigUpdates - 1] = new IFrontendActionAsyncCallback() {
+            @Override
+            public void executed(FrontendActionAsyncResult result) {
+                geoRepConfigModel.stopProgress();
+                closeWindow();
+            }
+        };
+        Frontend.getInstance().runMultipleActions(actionTypes,
+                parameters,
+                Arrays.asList(callbacks),
+                new IFrontendActionAsyncCallback() {
+            // Failure call back. Update the config list just to reflect any new changes and default error msg
+            // dialog is thrown.
+            @Override
+            public void executed(FrontendActionAsyncResult result) {
+                fetchConfigForSession(geoRepConfigModel.getGeoRepSession());
+            }
+        },
+        this);
+    }
+
+    private void addUICommandsToConfigWindow(GlusterVolumeGeoReplicationSessionConfigModel geoRepConfigModel) {
+        UICommand okCommand = UICommand.createDefaultOkUiCommand("ok", this);//$NON-NLS-1$
+        geoRepConfigModel.addUpdateConfigsCommand(okCommand);
+
+        UICommand cancelCommand = UICommand.createCancelUiCommand("closeWindow", this);//$NON-NLS-1$
+        geoRepConfigModel.addCancelCommand(cancelCommand);
     }
 
     private void closeWindow() {
@@ -303,6 +427,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
                 new GlusterVolumeParameters(getEntity().getId()));
     }
 
+    @Override
     public void setEntity(GlusterVolumeEntity value)
     {
         super.setEntity(value);

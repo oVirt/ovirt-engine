@@ -4110,4 +4110,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Deactivate")
     String deactivateVolumeSnapshot();
+
+    @DefaultStringValue("Reset")
+    String resetGeoRepSessionConfig();
 }
