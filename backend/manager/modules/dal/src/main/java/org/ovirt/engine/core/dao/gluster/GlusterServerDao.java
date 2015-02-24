@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.dao.gluster;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DAO;
@@ -12,4 +14,8 @@ public interface GlusterServerDao extends DAO, GenericDao<GlusterServer, Guid> {
     public GlusterServer getByGlusterServerUuid(Guid glusterServerUuid);
 
     public void removeByGlusterServerUuid(Guid glusterServerUuid);
+
+    public void addKnownAddress(Guid serverId, String address);
+
+    public void updateKnownAddresses(Guid serverId, List<String> addresses);
 }

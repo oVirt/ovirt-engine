@@ -65,6 +65,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
@@ -144,6 +145,8 @@ public class GlusterSyncJobTest {
     private InterfaceDao interfaceDao;
     @Mock
     private GlusterServerDao glusterServerDao;
+    @Mock
+    private NetworkDao networkDao;
 
     private VDSGroup existingCluster;
     private VDS existingServer1;
@@ -378,6 +381,7 @@ public class GlusterSyncJobTest {
         doReturn(clusterDao).when(glusterManager).getClusterDao();
         doReturn(interfaceDao).when(glusterManager).getInterfaceDao();
         doReturn(glusterServerDao).when(glusterManager).getGlusterServerDao();
+        doReturn(networkDao).when(glusterManager).getNetworkDao();
 
         doReturn(Collections.singletonList(existingCluster)).when(clusterDao).getAll();
         doReturn(existingServers).when(vdsDao).getAllForVdsGroup(CLUSTER_ID);
