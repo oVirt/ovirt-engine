@@ -3961,4 +3961,34 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Snapshot Options")
     String snapshotConfigHeaderLabel();
+
+    @DefaultStringValue("Mount Point")
+    String mountPoint();
+
+    @DefaultStringValue("Device is already in use")
+    String deviceIsAlreadyUsed();
+
+    @DefaultStringValue("Sync")
+    String syncStorageDevices();
+
+    @DefaultStringValue("Terminate Session")
+    String terminateSession();
+
+    @DefaultStringValue("Restore")
+    String restoreVolumeSnapshot();
+
+    @DefaultStringValue("Delete")
+    String deleteVolumeSnapshot();
+
+    @DefaultStringValue("Delete All")
+    String deleteAllVolumeSnapshots();
+
+    @DefaultStringValue("Activate")
+    String activateVolumeSnapshot();
+
+    @DefaultStringValue("Deactivate")
+    String deactivateVolumeSnapshot();
+
+    @DefaultStringValue("Reset")
+    String resetGeoRepSessionConfig();
 }

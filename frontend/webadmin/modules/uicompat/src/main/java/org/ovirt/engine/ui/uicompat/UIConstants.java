@@ -318,6 +318,15 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("resume")
     String resumeGeoRep();
 
+    @DefaultStringValue("Geo-Replication Options")
+    String geoReplicationOptions();
+
+    @DefaultStringValue("Set")
+    String setGeorepConfig();
+
+    @DefaultStringValue("Reset All")
+    String resetAllConfigsTitle();
+
     @DefaultStringValue("Rebalance Status")
     String volumeRebalanceStatusTitle();
 
@@ -2492,6 +2501,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
             + "This command can also be used to re-perform the operation on the nodes where the session has died, or the operation has not be executed.")
     String geoRepForceHelp();
 
+    // Gluster Volume Snapshots
     @DefaultStringValue("Volume Snapshot - Cluster Options")
     String configureClusterSnapshotOptionsTitle();
 
@@ -2508,5 +2518,53 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
             + "Changing configuration parameters will lead to deletion of snapshots if they exceed the new limit.\n\n"
             + "Are you sure you want to continue?")
     String youAreAboutChangeSnapshotConfigurationMsg();
+
+    @DefaultStringValue("existing")
+    String existingDisk();
+
+    @DefaultStringValue("creating")
+    String creatingDisk();
+
+    @DefaultStringValue("attaching")
+    String attachingDisk();
+
+    @DefaultStringValue("boot")
+    String bootDisk();
+
+    @DefaultStringValue("Storage Devices")
+    String storageDevices();
+
+    @DefaultStringValue("Session DB Id")
+    String sessionDbId();
+
+    @DefaultStringValue("User Name")
+    String userName();
+
+    @DefaultStringValue("Volume will be restored to the state of selected snapshot.\nDo you want to continue?")
+    String confirmVolumeSnapshotRestoreMesage();
+
+    @DefaultStringValue("The volume will be brought down and restored to the state of the selected snapshot.\nDo you want to continue?")
+    String confirmVolumeSnapshotRestoreWithStopMessage();
+
+    @DefaultStringValue("All snapshots will be removed. Do you want to continue?")
+    String confirmVolumeSnapshotDeleteAllMessage();
+
+    @DefaultStringValue("The selected snapshot will be activated. Do you want to continue?")
+    String confirmVolumeSnapshotActivateMessage();
+
+    @DefaultStringValue("The selected snapshot will be deactivated.\n Do you want to continue?")
+    String confirmVolumeSnapshotDeactivateMessage();
+
+    @DefaultStringValue("Geo-replication set config")
+    String geoReplicationConfigSetTitle();
+
+    @DefaultStringValue("Geo-replication session configuration set failed")
+    String geoRepSessionConfigSetFailed();
+
+    @DefaultStringValue("Geo-replication reset config")
+    String geoReplicationConfigResetTitle();
+
+    @DefaultStringValue("Geo-replication session configuration reset failed")
+    String geoRepSessionConfigResetFailed();
 }
 

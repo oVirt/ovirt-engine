@@ -43,8 +43,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.AddBric
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.BrickAdvancedDetailsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.DetachGlusterHostsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterClusterSnapshotConfigureOptionsPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeSnapshotConfigureOptionsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeGeoReplicationSessionConfigPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickStatusPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.ReplaceBrickPopupPresenterWidget;
@@ -161,13 +160,13 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskPe
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskTemplatePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskVmPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabGlusterVolumeSnapshotPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeBrickPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeGeoRepPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeParameterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumePermissionPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabGlusterVolumeSnapshotPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.VolumeSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostBrickPresenter;
@@ -282,8 +281,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.AddBrickPopu
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.BrickAdvancedDetailsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.DetachGlusterHostsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.GeoRepActionConfirmPopUpView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.GlusterClusterSnapshotConfigureOptionsPopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.GlusterVolumeSnapshotConfigureOptionsPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.GlusterVolumeGeoReplicationSessionConfigPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.RemoveBrickPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.RemoveBrickStatusPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.ReplaceBrickPopupView;
@@ -405,13 +403,13 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.SubTabDiskPermiss
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.SubTabDiskStorageView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.SubTabDiskTemplateView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.SubTabDiskVmView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabGlusterVolumeSnapshotView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeBrickView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeGeneralView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeGeoRepView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeParameterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumePermissionView;
-import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabGlusterVolumeSnapshotView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.VolumeSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.HostSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostBrickView;
@@ -773,12 +771,6 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabClusterCpuProfilePresenter.ViewDef.class,
                 SubTabClusterCpuProfileView.class,
                 SubTabClusterCpuProfilePresenter.ProxyDef.class);
-        bindPresenterWidget(GlusterVolumeSnapshotConfigureOptionsPopupPresenterWidget.class,
-                GlusterVolumeSnapshotConfigureOptionsPopupPresenterWidget.ViewDef.class,
-                GlusterVolumeSnapshotConfigureOptionsPopupView.class);
-        bindPresenterWidget(GlusterClusterSnapshotConfigureOptionsPopupPresenterWidget.class,
-                GlusterClusterSnapshotConfigureOptionsPopupPresenterWidget.ViewDef.class,
-                GlusterClusterSnapshotConfigureOptionsPopupView.class);
 
         // Host
         bindPresenter(HostSubTabPanelPresenter.class,
@@ -1171,6 +1163,10 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget.class,
                 GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget.ViewDef.class,
                 GeoRepActionConfirmPopUpView.class);
+
+        bindPresenterWidget(GlusterVolumeGeoReplicationSessionConfigPopupPresenterWidget.class,
+                GlusterVolumeGeoReplicationSessionConfigPopupPresenterWidget.ViewDef.class,
+                GlusterVolumeGeoReplicationSessionConfigPopupView.class);
 
         bindPresenterWidget(RemoveBrickStatusPopupPresenterWidget.class,
                 RemoveBrickStatusPopupPresenterWidget.ViewDef.class,

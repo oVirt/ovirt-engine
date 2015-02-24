@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb;
 import java.util.List;
 
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.ICommand;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -22,6 +23,31 @@ public class UICommand extends Model implements ICommand
     public boolean getIsExecutionAllowed()
     {
         return isExecutionAllowed;
+    }
+
+    public static UICommand createDefaultOkUiCommand(String name, ICommandTarget target) {
+        UICommand command = createOkUiCommand(name, target);
+        command.setIsDefault(true);
+        return command;
+    }
+
+    public static UICommand createOkUiCommand(String name, ICommandTarget target) {
+        UICommand command = new UICommand(name, target);
+        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        return command;
+    }
+
+    public static UICommand createCancelUiCommand(String name, ICommandTarget target) {
+        UICommand command = new UICommand(name, target);
+        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        command.setIsCancel(true);
+        return command;
+    }
+
+    public static UICommand createDefaultCancelUiCommand(String name, ICommandTarget target) {
+        UICommand result = createCancelUiCommand(name, target);
+        result.setIsDefault(true);
+        return result;
     }
 
     /*
