@@ -5,9 +5,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.gwtbootstrap3.client.ui.constants.Placement;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.ui.common.widget.MenuBar;
 import org.ovirt.engine.ui.common.widget.PopupPanel;
+import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkCommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperation;
@@ -50,6 +52,8 @@ public abstract class NetworkItemPanel extends FocusPanel {
     final protected NetworkPanelsStyle style;
     protected NetworkItemPanel parentPanel;
     private MenuBar menu;
+
+    private WidgetTooltip tooltip;
 
     // statics
     private static final PopupPanel menuPopup = new PopupPanel(true);
@@ -100,7 +104,6 @@ public abstract class NetworkItemPanel extends FocusPanel {
 
     protected void onMouseOut() {
         dragImage.setVisible(false);
-        infoPopup.hide(true);
         // handle nested panels (for example bonded nics) so nic.mouseOut() should cause parent.mouseIn()
         if (parentPanel != null) {
             parentPanel.onMouseOver();
@@ -109,7 +112,6 @@ public abstract class NetworkItemPanel extends FocusPanel {
 
     protected void onMouseOver() {
         dragImage.setVisible(draggable);
-        infoPopup.showItem(item, this);
     }
 
     private void executeCommand(NetworkOperation operation, NetworkCommand command) {
@@ -121,7 +123,8 @@ public abstract class NetworkItemPanel extends FocusPanel {
         menu = menuFor(item);
         getElement().addClassName(style.itemPanel());
 
-        setWidget(getContents());
+        initTooltip();
+        setWidget(tooltip);
 
         addDomHandler(new ContextMenuHandler() {
 
@@ -155,6 +158,13 @@ public abstract class NetworkItemPanel extends FocusPanel {
             }, DragStartEvent.getType());
         }
 
+    }
+
+    protected void initTooltip() {
+        tooltip = new WidgetTooltip(getContents());
+        tooltip.setPlacement(Placement.BOTTOM);
+        String tooltipContent = infoPopup.getTooltipContent(item, this);
+        tooltip.setText(tooltipContent);
     }
 
     /**

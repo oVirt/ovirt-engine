@@ -60,15 +60,17 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         getElement().getStyle().setZIndex(1);
     }
 
-    public void showItem(NetworkItemModel<?> item, NetworkItemPanel panel) {
+    public String getTooltipContent(NetworkItemModel<?> item, NetworkItemPanel panel) {
         if (item instanceof LogicalNetworkModel) {
             showNetwork((LogicalNetworkModel) item);
         } else if (item instanceof NetworkInterfaceModel) {
             showNic((NetworkInterfaceModel) item);
         } else if (item instanceof NetworkLabelModel){
-            return;
+            return null;
         }
-        showRelativeTo(panel);
+
+        return this.getElement().getInnerHTML();
+
     }
 
     private void addRow(String label, String value) {
