@@ -190,16 +190,11 @@ public class FenceExecutor {
     }
 
     private void auditFenceAction(FenceActionType action, FenceAgent agent, VDS proxyHost) {
-        log.info("Executing <{}> Power Management command, Proxy Host:{}, "
-                + "Agent:{}, Agent Type:{}, Target Host:{}, Management IP:{}, User:{}, Options:{}, Fencing policy:{}",
+        log.info("Executing <{}> Power Management command: Proxy Host:{}, Target Host:{}, Agent:{}, Fencing policy:{}",
                 action,
                 getNameOrId(proxyHost),
-                agent.getId(),
-                VdsFenceOptions.getRealAgent(agent.getType()),
                 getNameOrId(_vds),
-                agent.getIp(),
-                agent.getUser(),
-                getOptions(agent),
+                agent,
                 fencingPolicy);
         AuditLogableBase logable = getAuditParams(action, agent, proxyHost);
         new AuditLogDirector().log(logable, AuditLogType.FENCE_USING_AGENT_AND_PROXY_HOST);

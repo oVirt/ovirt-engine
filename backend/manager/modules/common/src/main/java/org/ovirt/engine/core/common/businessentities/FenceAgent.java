@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Range;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.validation.annotation.HostnameOrIp;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.compat.Guid;
@@ -191,6 +192,22 @@ public class FenceAgent implements BusinessEntity<Guid> {
             }
         }
         return map;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.forInstance(this)
+                .append("id", getId())
+                .append("hostId", getHostId())
+                .append("order", getOrder())
+                .append("type", getType())
+                .append("ip", getIp())
+                .append("port", getPort())
+                .append("user", getUser())
+                .appendFiltered("password", getPassword())
+                .append("encryptOptions", getEncryptOptions())
+                .append("options", getOptions())
+                .build();
     }
 
     public static class FenceAgentOrderComparator implements Comparator<FenceAgent> {
