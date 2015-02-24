@@ -62,6 +62,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
@@ -80,6 +81,8 @@ import org.ovirt.engine.core.dao.VmInitDAO;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.utils.lock.LockManager;
+import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
@@ -462,6 +465,14 @@ public class VmHandler {
                 }
             }
         }
+    }
+
+    public static void updateVmLock(final VM vm) {
+        vm.setLockInfo(getLockManager().getLockInfo(String.format("%s%s", vm.getId(), LockingGroup.VM.name())));
+    }
+
+    protected static LockManager getLockManager() {
+        return LockManagerFactory.getLockManager();
     }
 
     /**

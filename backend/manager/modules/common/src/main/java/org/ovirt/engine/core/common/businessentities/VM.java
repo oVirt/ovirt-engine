@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.locks.LockInfo;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
@@ -49,6 +50,8 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
     private boolean nextRunConfigurationExists;
 
     private String hibernationVolHandle;
+
+    private LockInfo lockInfo;
 
     public String getUserDefinedProperties() {
         return vmStatic.getUserDefinedProperties();
@@ -1839,5 +1842,13 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
 
     public void setMigrateCompressed(Boolean migrateCompressed) {
         vmStatic.setMigrateCompressed(migrateCompressed);
+    }
+
+    public LockInfo getLockInfo() {
+        return lockInfo;
+    }
+
+    public void setLockInfo(LockInfo lockInfo) {
+        this.lockInfo = lockInfo;
     }
 }
