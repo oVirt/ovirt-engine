@@ -212,6 +212,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 .getStorageIds()
                 .get(0));
         createParams.setDiskAlias(diskInfoDestinationMap.get(diskImage.getId()).getDiskAlias());
+        createParams.setDescription(diskInfoDestinationMap.get(diskImage.getId()).getDiskDescription());
         createParams.setParentParameters(getParameters());
         createParams.setQuotaId(getQuotaIdForDisk(diskImage));
         createParams.setDiskProfileId(diskInfoDestinationMap.get(diskImage.getId()).getDiskProfileId());
