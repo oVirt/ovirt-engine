@@ -202,6 +202,7 @@
 		<include name="common/businessentities/ImageType.java" />
 		<include name="common/businessentities/SnapshotActionEnum.java"/>
         <include name="common/businessentities/VmRngDevice.java" />
+        <include name="common/locks/LockInfo.java" />
 		<include name="common/job/*.java" />
 
 		<!-- Profiles -->

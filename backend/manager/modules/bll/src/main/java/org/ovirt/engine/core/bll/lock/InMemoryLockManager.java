@@ -25,6 +25,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockInfo;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
@@ -302,6 +304,25 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
         } else {
             log.warn("Trying to release a shared lock for key: '{}' , but lock does not exist", key);
         }
+    }
+
+    @Override
+    public LockInfo getLockInfo(String key) {
+        InternalLockView internalLockView = locks.get(key);
+        if (internalLockView == null) {
+            return null;
+        }
+
+        Set<String> messages = internalLockView.getMessages();
+        messages.remove(VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.name());
+        if (messages.isEmpty()) {
+            // VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED should only be used for
+            // short locks (locks for the execute phase) so we filter it and if no
+            // other lock exists, the entity should be displayed as unlocked
+            return null;
+        }
+
+        return new LockInfo(internalLockView.getExclusive(), messages);
     }
 
     /**

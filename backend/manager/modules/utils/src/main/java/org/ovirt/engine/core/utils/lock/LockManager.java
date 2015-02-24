@@ -2,6 +2,7 @@ package org.ovirt.engine.core.utils.lock;
 
 import java.util.Set;
 
+import org.ovirt.engine.core.common.locks.LockInfo;
 import org.ovirt.engine.core.common.utils.Pair;
 
 
@@ -36,4 +37,10 @@ public interface LockManager {
      */
     void clear();
 
+    /**
+     * Query for lock for a given key
+     * @param key - key that the lock is mapped to
+     * @return lock for the given key, null if does not exist
+     */
+    LockInfo getLockInfo(String key);
 }
