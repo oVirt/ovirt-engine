@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -21,6 +22,10 @@ public class StartGlusterVolumeCommand extends GlusterVolumeCommandBase<GlusterV
 
     public StartGlusterVolumeCommand(GlusterVolumeActionParameters params) {
         super(params);
+    }
+
+    public StartGlusterVolumeCommand(GlusterVolumeActionParameters params, CommandContext context) {
+        super(params, context);
     }
 
     @Override

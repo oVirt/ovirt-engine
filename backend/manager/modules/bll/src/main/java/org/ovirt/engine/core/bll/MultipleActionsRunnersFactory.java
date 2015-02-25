@@ -51,7 +51,8 @@ public final class MultipleActionsRunnersFactory {
         case AddVds: // AddVds is called with multiple actions *only* in case of gluster clusters
         case RemoveGlusterServer:
         case EnableGlusterHook:
-        case DisableGlusterHook: {
+        case DisableGlusterHook:
+        case DeleteGlusterVolumeSnapshot: {
             runner = new GlusterMultipleActionsRunner(actionType, parameters, commandContext, isInternal);
             break;
         }

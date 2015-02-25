@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
@@ -13,6 +14,10 @@ public class StartGlusterVolumeGeoRepCommand extends GeoRepSessionCommandBase<Gl
 
     public StartGlusterVolumeGeoRepCommand(GlusterVolumeGeoRepSessionParameters params) {
         super(params);
+    }
+
+    public StartGlusterVolumeGeoRepCommand(GlusterVolumeGeoRepSessionParameters params, CommandContext context) {
+        super(params, context);
     }
 
     @Override

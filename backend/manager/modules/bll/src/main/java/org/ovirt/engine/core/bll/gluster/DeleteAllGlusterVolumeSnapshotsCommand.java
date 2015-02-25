@@ -3,21 +3,32 @@ package org.ovirt.engine.core.bll.gluster;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.lock.EngineLock;
 
+@NonTransactiveCommandAttribute
 public class DeleteAllGlusterVolumeSnapshotsCommand extends GlusterSnapshotCommandBase<GlusterVolumeParameters> {
-    List<GlusterVolumeSnapshotEntity> snapshots;
+    private List<GlusterVolumeSnapshotEntity> snapshots;
+    private List<GlusterGeoRepSession> georepSessions;
 
     public DeleteAllGlusterVolumeSnapshotsCommand(GlusterVolumeParameters params) {
         super(params);
         snapshots = getGlusterVolumeSnapshotDao().getAllByVolumeId(getGlusterVolumeId());
+        georepSessions = getDbFacade().getGlusterGeoRepDao().getGeoRepSessions(getGlusterVolumeId());
     }
 
     @Override
@@ -25,22 +36,61 @@ public class DeleteAllGlusterVolumeSnapshotsCommand extends GlusterSnapshotComma
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
     }
 
-    @Override
-    public void executeCommand() {
+    private boolean deleteAllGlusterVolumeSnapshots(Guid serverId,
+            String volumeName,
+            List<GlusterVolumeSnapshotEntity> snapshotsList) {
         VDSReturnValue retVal =
                 runVdsCommand(VDSCommandType.DeleteAllGlusterVolumeSnapshots,
-                        new GlusterVolumeVDSParameters(getUpServer().getId(), getGlusterVolumeName()));
+                        new GlusterVolumeVDSParameters(serverId, volumeName));
         setSucceeded(retVal.getSucceeded());
 
         if (!getSucceeded()) {
-            handleVdsError(AuditLogType.GLUSTER_VOLUME_ALL_SNAPSHOTS_DELETE_FAILED, retVal.getVdsError().getMessage());
+            handleVdsError(AuditLogType.GLUSTER_VOLUME_ALL_SNAPSHOTS_DELETE_FAILED, retVal.getVdsError()
+                    .getMessage());
         } else {
             List<Guid> guids = new ArrayList<>();
-            for (GlusterVolumeSnapshotEntity snapshot : snapshots) {
+            for (GlusterVolumeSnapshotEntity snapshot : snapshotsList) {
                 guids.add(snapshot.getId());
             }
             getGlusterVolumeSnapshotDao().removeAll(guids);
         }
+
+        return true;
+    }
+
+    @Override
+    public void executeCommand() {
+        if (georepSessions != null) {
+            for (GlusterGeoRepSession session : georepSessions) {
+                GlusterVolumeEntity slaveVolume =
+                        getDbFacade().getGlusterVolumeDao().getById(session.getSlaveVolumeId());
+                if (slaveVolume == null) {
+                    // continue with other sessions and try to pause
+                    continue;
+                }
+
+                VDS slaveUpServer = ClusterUtils.getInstance().getRandomUpServer(slaveVolume.getClusterId());
+                if (slaveUpServer == null) {
+                    handleVdsError(AuditLogType.GLUSTER_VOLUME_ALL_SNAPSHOTS_DELETE_FAILED,
+                            VdcBllErrors.NoUpServerFoundInRemoteCluster.name());
+                    setSucceeded(false);
+                    return;
+                }
+
+                List<GlusterVolumeSnapshotEntity> slaveVolumeSnapshots =
+                        getGlusterVolumeSnapshotDao().getAllByVolumeId(slaveVolume.getId());
+
+                try (EngineLock lock = acquireEngineLock(session.getSlaveVolumeId(), LockingGroup.GLUSTER_SNAPSHOT)) {
+                    if (!deleteAllGlusterVolumeSnapshots(slaveUpServer.getId(),
+                            slaveVolume.getName(),
+                            slaveVolumeSnapshots)) {
+                        return;
+                    }
+                }
+            }
+        }
+
+        deleteAllGlusterVolumeSnapshots(getUpServer().getId(), getGlusterVolumeName(), snapshots);
     }
 
     @Override
@@ -49,8 +99,15 @@ public class DeleteAllGlusterVolumeSnapshotsCommand extends GlusterSnapshotComma
             return false;
         }
 
+        for (GlusterGeoRepSession session : georepSessions) {
+            if (session.getSlaveVolumeId() == null || session.getSlaveNodeUuid() == null) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_REMOTE_CLUSTER_NOT_MAINTAINED_BY_ENGINE);
+            }
+        }
+
         if (snapshots == null || snapshots.isEmpty()) {
-            failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_NO_SNAPSHOTS_EXIST, getGlusterVolumeName());
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_NO_SNAPSHOTS_EXIST,
+                    getGlusterVolumeName());
         }
 
         return true;

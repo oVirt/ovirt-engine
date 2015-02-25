@@ -1649,7 +1649,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     @Override
     public StatusOnlyReturnForXmlRpc glusterVolumeSnapshotDelete(String volumeName) {
         JsonRpcRequest request =
-                new RequestBuilder("GlusterVolume.snapshotDelete").withParameter("volumeName", volumeName)
+                new RequestBuilder("GlusterVolume.snapshotDeleteAll").withParameter("volumeName", volumeName)
                     .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
