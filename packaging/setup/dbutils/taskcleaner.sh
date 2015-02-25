@@ -121,10 +121,9 @@ __EOF__
 dbfunc_psql_die --command="select exists (select * from information_schema.tables where table_schema = 'public' and table_name = 'command_entities');" | grep "t"
 VERSION=$?
 if [[ $VERSION = 0 ]]; then
-	VERSION="3.5"
+	VERSION="post3.5"
 else
-	VERSION="3.4"
-        dbfunc_psql_die --command="create table command_entities ();"
+	VERSION="pre3.5"
 fi
 
 if [ "${TASK_ID}" != "" -o "${COMMAND_ID}" != "" -o -n "${CLEAR_ALL}" -o -n "${CLEAR_COMPENSATION}" -o -n "${CLEAR_JOB_STEPS}" ]; then #delete operations block
@@ -258,19 +257,19 @@ if [ "${TASK_ID}" != "" -o "${COMMAND_ID}" != "" -o -n "${CLEAR_ALL}" -o -n "${C
 elif [ -n "${ZOMBIES_ONLY}" ]; then #only display operations block
 	CMD1="SELECT ${TASKS_FIELDS} FROM GetAsyncTasksZombies();"
 elif [ -n "${ALL_COMMANDS}" ]; then #only display commands
-	if [[ $VERSION = "3.5" ]]; then
+	if [[ $VERSION = "post3.5" ]]; then
 		CMD1="SELECT ${COMMANDS_FIELDS} FROM GetAllCommands();"
 	else
 		die "This option is available only from version 3.5"
 	fi
 elif [ -n "${COMMANDS_WITH_RUNNING_TASKS_ONLY}" ]; then
-	if [[ $VERSION = "3.5" ]]; then
+	if [[ $VERSION = "post3.5" ]]; then
 		CMD1="SELECT ${COMMANDS_FIELDS} FROM GetAllCommandsWithRunningTasks();"
 	else
 		die "This option is available only from version 3.5"
 	fi
 elif [ -n "${CLEAR_COMMANDS}" ]; then
-	if [[ $VERSION = "3.5" ]]; then
+	if [[ $VERSION = "post3.5" ]]; then
 		if [ -n "${COMMANDS_WITH_RUNNING_TASKS_ONLY}" ]; then
 			CMD1="SELECT DeleteAllCommandsWithRunningTasks();"
 		elif [ -n "${ZOMBIE_COMMANDS_ONLY}" ]; then
@@ -282,7 +281,7 @@ elif [ -n "${CLEAR_COMMANDS}" ]; then
 		die "This option is available only from version 3.5"
 	fi
 elif [ -n "${ZOMBIE_COMMANDS_ONLY}" ]; then
-	if [[ $VERSION = "3.5" ]]; then
+	if [[ $VERSION = "post3.5" ]]; then
 		CMD1="SELECT ${COMMANDS_FIELDS} FROM GetAllCommandsWithZombieTasks();"
 	else
 		die "This option is available only from version 3.5"
@@ -293,11 +292,10 @@ fi
 
 # Install taskcleaner procedures
 dbfunc_psql_die --file="$(dirname "$0")/taskcleaner_sp.sql" > /dev/null
+if [[ $VERSION = "post3.5" ]]; then
+    dbfunc_psql_die --file="$(dirname "$0")/taskcleaner_sp_3_5.sql" > /dev/null
+fi
 # Execute
 
 dbfunc_psql_die --command="${CMD1}${CMD2}"
-
-if [[ $VERSION = "3.4" ]]; then
-    dbfunc_psql_die --command="drop table command_entities cascade;"
-fi
 
