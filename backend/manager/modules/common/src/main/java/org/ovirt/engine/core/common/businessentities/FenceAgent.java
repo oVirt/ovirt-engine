@@ -53,6 +53,32 @@ public class FenceAgent implements BusinessEntity<Guid> {
     @EditableField
     private boolean encryptOptions;
 
+    public FenceAgent() {
+        this(null);
+    }
+
+    public FenceAgent(FenceAgent other) {
+        if (other != null) {
+            this.id = other.id;
+            this.hostId = other.hostId;
+            this.order = other.order;
+            this.type = other.type;
+            this.ip = other.ip;
+            this.port = other.port;
+            this.user = other.user;
+            this.password = other.password;
+            this.encryptOptions = other.encryptOptions;
+            this.options = other.options;
+            if (other.optionsMap != null) {
+                this.optionsMap = new HashMap<>();
+                for (Map.Entry<String, String> entry : other.optionsMap.entrySet()) {
+                    this.optionsMap.put(entry.getKey(), entry.getValue());
+                }
+            }
+
+        }
+    }
+
     public Guid getId() {
         return id;
     }
