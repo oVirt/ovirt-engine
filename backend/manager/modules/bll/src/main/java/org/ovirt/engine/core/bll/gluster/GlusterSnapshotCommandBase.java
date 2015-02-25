@@ -11,7 +11,10 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotDao;
+import org.ovirt.engine.core.utils.lock.EngineLock;
+import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 
 public abstract class GlusterSnapshotCommandBase<T extends GlusterVolumeParameters> extends GlusterVolumeCommandBase<T> {
     public GlusterSnapshotCommandBase(T params) {
@@ -21,7 +24,7 @@ public abstract class GlusterSnapshotCommandBase<T extends GlusterVolumeParamete
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(Scope.Execution).withWait(false);
+        return lockProperties.withScope(Scope.Execution).withWait(true);
     }
 
     @Override
@@ -38,7 +41,7 @@ public abstract class GlusterSnapshotCommandBase<T extends GlusterVolumeParamete
         }
 
         if (!GlusterFeatureSupported.glusterSnapshot(getVdsGroup().getCompatibilityVersion())) {
-            failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_NOT_SUPPORTED);
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VOLUME_SNAPSHOT_NOT_SUPPORTED);
         }
 
         return true;
@@ -56,5 +59,13 @@ public abstract class GlusterSnapshotCommandBase<T extends GlusterVolumeParamete
 
     protected GlusterVolumeSnapshotDao getGlusterVolumeSnapshotDao() {
         return getDbFacade().getGlusterVolumeSnapshotDao();
+    }
+
+    protected EngineLock acquireEngineLock(Guid id, LockingGroup group) {
+        EngineLock lock = new EngineLock(Collections.singletonMap(id.toString(),
+                LockMessagesMatchUtil.makeLockingPair(group,
+                        VdcBllMessages.ACTION_TYPE_FAILED_VOLUME_OPERATION_IN_PROGRESS)), null);
+        LockManagerFactory.getLockManager().acquireLockWait(lock);
+        return lock;
     }
 }

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeSnapshotActionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterSnapshotStatus;
@@ -8,6 +9,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeSnapshotActionVDSParameters;
 
+@NonTransactiveCommandAttribute
 public class DeactivateGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotCommandBase<GlusterVolumeSnapshotActionParameters> {
     public DeactivateGlusterVolumeSnapshotCommand(GlusterVolumeSnapshotActionParameters params) {
         super(params);
@@ -41,7 +43,7 @@ public class DeactivateGlusterVolumeSnapshotCommand extends GlusterVolumeSnapsho
         }
 
         if (getSnapshot().getStatus() == GlusterSnapshotStatus.DEACTIVATED) {
-            failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_ALREADY_DEACTIVATED,
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_ALREADY_DEACTIVATED,
                     getSnapshot().getSnapshotName());
         }
 

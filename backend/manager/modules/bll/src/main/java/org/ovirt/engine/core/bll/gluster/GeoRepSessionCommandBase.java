@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -17,6 +18,10 @@ public abstract class GeoRepSessionCommandBase<T extends GlusterVolumeGeoRepSess
 
     public GeoRepSessionCommandBase(T params) {
         super(params);
+    }
+
+    public GeoRepSessionCommandBase(T params, CommandContext context) {
+        super(params, context);
     }
 
     @Override
