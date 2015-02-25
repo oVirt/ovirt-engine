@@ -970,7 +970,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         generateIds();
 
-        priorityEditor.addEntityModelColumn(new AbstractTextColumn<EntityModel>() {
+        priorityEditor.addColumn(new AbstractTextColumn<EntityModel>() {
             @Override
             public String getValue(EntityModel model) {
                 return model.getTitle();

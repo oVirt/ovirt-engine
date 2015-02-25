@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.IsEditorDriver;
 import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
 import org.ovirt.engine.ui.common.widget.table.cell.RadioboxCell;
+import org.ovirt.engine.ui.common.widget.table.header.SafeHtmlHeader;
 import org.ovirt.engine.ui.common.widget.table.header.SelectAllCheckBoxHeader;
 import org.ovirt.engine.ui.common.widget.table.resize.ColumnResizeCellTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -168,7 +169,11 @@ public class ListModelObjectCellTable<T, M extends ListModel> extends ColumnResi
     }
 
     public void addColumn(Column column, SafeHtml headerHtml, String width) {
-        addColumnAndSetWidth(column, headerHtml, width);
+        addColumnWithHtmlHeader(column, headerHtml, width);
+    }
+
+    public void addColumn(Column column, SafeHtmlHeader header, String width) {
+        super.addColumnAndSetWidth(column, header, width);
     }
 
     public void addColumnAt(Column<T, ?> column, String headerText, String width, int position) {

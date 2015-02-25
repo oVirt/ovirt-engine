@@ -1,15 +1,19 @@
 package org.ovirt.engine.ui.common.widget.table.header;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
+import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
 
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.cellview.client.Header;
 
-public abstract class CheckboxHeader extends Header<Boolean> {
+public abstract class AbstractCheckboxHeader extends AbstractHeader<Boolean> {
 
     private static final SafeHtml INPUT_CHECKED_DISABLED = SafeHtmlUtils.fromSafeConstant(
             "<input type=\"checkbox\" disabled=\"\" tabindex=\"-1\" tabindex=\"-1\" checked/>"); //$NON-NLS-1$
@@ -17,18 +21,22 @@ public abstract class CheckboxHeader extends Header<Boolean> {
     private static final SafeHtml INPUT_UNCHECKED_DISABLED = SafeHtmlUtils.fromSafeConstant(
             "<input type=\"checkbox\" disabled=\"\" tabindex=\"-1\"/>"); //$NON-NLS-1$
 
-    private final SafeHtml title;
-
-    public SafeHtml getTitle() {
-        return title;
-    }
-
-    public CheckboxHeader(final SafeHtml title) {
+    public AbstractCheckboxHeader() {
         super(new CheckboxCell(true, false) {
+
+            @Override
+            public Set<String> getConsumedEvents() {  // override this to add MOUSEMOVE for mouse cursor changes
+                Set<String> set = new HashSet<String>();
+                TooltipMixin.addTooltipsEvents(set);
+                set.add(BrowserEvents.CHANGE);
+                set.add(BrowserEvents.KEYDOWN);
+                set.add(BrowserEvents.MOUSEMOVE);
+                return set;
+            }
+
             @Override
             public void render(Context context, Boolean value, SafeHtmlBuilder sb, String id) {
                 super.render(context, value, sb, id);
-                sb.append(title);
             }
         });
 
@@ -38,8 +46,6 @@ public abstract class CheckboxHeader extends Header<Boolean> {
                 selectionChanged(value);
             }
         });
-
-        this.title = title;
     }
 
     @Override
@@ -47,10 +53,8 @@ public abstract class CheckboxHeader extends Header<Boolean> {
         if (!isEnabled()) {
             if (getValue()) {
                 sb.append(INPUT_CHECKED_DISABLED);
-                sb.append(title);
             } else {
                 sb.append(INPUT_UNCHECKED_DISABLED);
-                sb.append(title);
             }
         } else {
             super.render(context, sb);
@@ -60,5 +64,8 @@ public abstract class CheckboxHeader extends Header<Boolean> {
     abstract protected void selectionChanged(Boolean value);
 
     abstract public boolean isEnabled();
+
+    @Override
+    public abstract SafeHtml getTooltip();
 
 }

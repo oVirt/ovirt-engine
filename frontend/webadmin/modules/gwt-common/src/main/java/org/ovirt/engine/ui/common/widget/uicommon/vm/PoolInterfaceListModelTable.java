@@ -54,7 +54,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
             }
         };
 
-        getTable().addColumnWithHtmlHeader(pluggedColumn, constants.plugged(), "60px"); //$NON-NLS-1$
+        getTable().addColumn(pluggedColumn, constants.plugged(), "60px"); //$NON-NLS-1$
 
         AbstractTextColumn<VmNetworkInterface> networkNameColumn = new AbstractTextColumn<VmNetworkInterface>() {
             @Override
@@ -82,7 +82,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
                     }
                 };
 
-        getTable().addColumnWithHtmlHeader(linkStateColumn, constants.linkStateNetworkInterface(), "65px"); //$NON-NLS-1$
+        getTable().addColumn(linkStateColumn, constants.linkStateNetworkInterface(), "65px"); //$NON-NLS-1$
 
         AbstractTextColumn<VmNetworkInterface> typeColumn = new AbstractEnumColumn<VmNetworkInterface, VmInterfaceType>() {
             @Override
@@ -110,8 +110,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
                 }
             }
         };
-        getTable().addColumnWithHtmlHeader(speedColumn,
-                templates.sub(constants.speedInterface(), constants.mbps()).asString());
+        getTable().addColumnWithHtmlHeader(speedColumn, templates.sub(constants.speedInterface(), constants.mbps()));
 
         AbstractTextColumn<VmNetworkInterface> rxColumn = new AbstractRxTxRateColumn<VmNetworkInterface>() {
             @Override
@@ -128,8 +127,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
                 }
             }
         };
-        getTable().addColumnWithHtmlHeader(rxColumn,
-                templates.sub(constants.rxRate(), constants.mbps()).asString());
+        getTable().addColumnWithHtmlHeader(rxColumn, templates.sub(constants.rxRate(), constants.mbps()));
 
         AbstractTextColumn<VmNetworkInterface> txColumn = new AbstractRxTxRateColumn<VmNetworkInterface>() {
             @Override
@@ -146,8 +144,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
                 }
             }
         };
-        getTable().addColumnWithHtmlHeader(txColumn,
-                templates.sub(constants.txRate(), constants.mbps()).asString());
+        getTable().addColumnWithHtmlHeader(txColumn, templates.sub(constants.txRate(), constants.mbps()));
 
         AbstractTextColumn<VmNetworkInterface> dropsColumn = new AbstractSumUpColumn<VmNetworkInterface>() {
             @Override
@@ -157,8 +154,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
                 return new Double[] { receiveDropRate, transmitDropRate };
             }
         };
-        getTable().addColumnWithHtmlHeader(dropsColumn,
-                templates.sub(constants.dropsInterface(), constants.pkts()).asString());
+        getTable().addColumnWithHtmlHeader(dropsColumn, templates.sub(constants.dropsInterface(), constants.pkts()));
     }
 
 }

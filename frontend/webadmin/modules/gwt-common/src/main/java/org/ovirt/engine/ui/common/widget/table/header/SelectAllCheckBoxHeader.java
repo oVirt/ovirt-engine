@@ -9,6 +9,13 @@ import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.user.cellview.client.Header;
 import com.google.gwt.view.client.SelectionModel;
 
+/**
+ * SelectAllCheckboxHeader. Does not support tooltips.
+ *
+ * TODO rename to AbstractSelectAllCheckBoxHeader
+ *
+ * @param <T>
+ */
 public abstract class SelectAllCheckBoxHeader<T> extends Header<Boolean> {
 
     public SelectAllCheckBoxHeader() {

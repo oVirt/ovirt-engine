@@ -68,7 +68,9 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         getTable().addColumn(nameColumn, constants.nameNetwork(), "200px"); //$NON-NLS-1$
 
         CommentColumn<NetworkView> commentColumn = new CommentColumn<>();
-        getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
+        getTable().addColumnWithHtmlHeader(commentColumn,
+                SafeHtmlUtils.fromSafeConstant(constants.commentLabel()),
+                "75px"); //$NON-NLS-1$
 
         AbstractTextColumn<NetworkView> dcColumn = new AbstractTextColumn<NetworkView>() {
             @Override

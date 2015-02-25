@@ -32,6 +32,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainSharedStatusColumn;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
 
 public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<StorageDomain, StorageListModel> implements MainTabStoragePresenter.ViewDef {
@@ -65,7 +66,9 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         getTable().addColumn(nameColumn, constants.domainNameStorage(), "150px"); //$NON-NLS-1$
 
         CommentColumn<StorageDomain> commentColumn = new CommentColumn<StorageDomain>();
-        getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
+        getTable().addColumnWithHtmlHeader(commentColumn,
+                SafeHtmlUtils.fromSafeConstant(constants.commentLabel()),
+                "75px"); //$NON-NLS-1$
 
         AbstractTextColumn<StorageDomain> domainTypeColumn = new AbstractEnumColumn<StorageDomain, StorageDomainType>() {
             @Override

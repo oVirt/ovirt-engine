@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.AbstractActionPanel;
 import org.ovirt.engine.ui.common.widget.label.NoItemsLabel;
 import org.ovirt.engine.ui.common.widget.table.column.SortableColumn;
+import org.ovirt.engine.ui.common.widget.table.header.SafeHtmlHeader;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -37,6 +38,7 @@ import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
@@ -594,42 +596,34 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         tableHeader.setColumnWidth(column, width);
     }
 
-    /**
-     * Adds a new column, without specifying column width.
-     */
     public void addColumn(Column<T, ?> column, String headerText) {
         table.addColumn(column, headerText);
         tableHeader.addColumn(column, headerText);
     }
 
-    /**
-     * Adds a new column, setting the column width.
-     */
     public void addColumn(Column<T, ?> column, String headerText, String width) {
         addColumn(column, headerText);
         setColumnWidth(column, width);
     }
 
-    /**
-     * Adds a new column with HTML header text, without specifying column width.
-     * <p>
-     * {@code headerHtml} must honor the SafeHtml contract as specified in
-     * {@link com.google.gwt.safehtml.shared.SafeHtmlUtils#fromSafeConstant(String) SafeHtmlUtils.fromSafeConstant}.
-     */
-    public void addColumnWithHtmlHeader(Column<T, ?> column, String headerHtml) {
+    public void addColumnWithHtmlHeader(Column<T, ?> column, SafeHtml headerHtml) {
         table.addColumnWithHtmlHeader(column, headerHtml);
         tableHeader.addColumnWithHtmlHeader(column, headerHtml);
     }
 
-    /**
-     * Adds a new column with HTML header text, setting the column width.
-     * <p>
-     * {@code headerHtml} must honor the SafeHtml contract as specified in
-     * {@link com.google.gwt.safehtml.shared.SafeHtmlUtils#fromSafeConstant(String) SafeHtmlUtils.fromSafeConstant}.
-     */
-    public void addColumnWithHtmlHeader(Column<T, ?> column, String headerHtml, String width) {
+    public void addColumnWithHtmlHeader(Column<T, ?> column, SafeHtml headerHtml, String width) {
         table.addColumnWithHtmlHeader(column, headerHtml, width);
         tableHeader.addColumnWithHtmlHeader(column, headerHtml, width);
+    }
+
+    public void addColumn(Column<T, ?> column, SafeHtmlHeader header) {
+        table.addColumn(column, header);
+        tableHeader.addColumn(column, header);
+    }
+
+    public void addColumn(Column<T, ?> column, SafeHtmlHeader header, String width) {
+        addColumn(column, header);
+        setColumnWidth(column, width);
     }
 
     /**
@@ -656,6 +650,26 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     public void ensureColumnPresent(Column<T, ?> column, String headerText, boolean present, String width) {
         table.ensureColumnPresent(column, headerText, present, width);
         tableHeader.ensureColumnPresent(column, headerText, present, width);
+    }
+
+    /**
+     * Ensures that the given column is added (or removed), unless it's already present (or absent).
+     * <p>
+     * This method also sets the column width in case the column needs to be added.
+     */
+    public void ensureColumnPresent(Column<T, ?> column, SafeHtml headerHtml, boolean present, String width) {
+        table.ensureColumnPresent(column, headerHtml, present, width);
+        tableHeader.ensureColumnPresent(column, headerHtml, present, width);
+    }
+
+    /**
+     * Ensures that the given column is added (or removed), unless it's already present (or absent).
+     * <p>
+     * This method also sets the column width in case the column needs to be added.
+     */
+    public void ensureColumnPresent(Column<T, ?> column, SafeHtmlHeader header, boolean present, String width) {
+        table.ensureColumnPresent(column, header, present, width);
+        tableHeader.ensureColumnPresent(column, header, present, width);
     }
 
     /**

@@ -30,6 +30,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinitio
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
 
 public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSGroup, ClusterListModel<Void>> implements
@@ -66,7 +67,9 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
         getTable().addColumn(nameColumn, constants.nameCluster(), "150px"); //$NON-NLS-1$
 
         CommentColumn<VDSGroup> commentColumn = new CommentColumn<VDSGroup>();
-        getTable().addColumn(commentColumn, constants.commentLabel(), "50px"); //$NON-NLS-1$ //$NON-NLS-2$
+        getTable().addColumnWithHtmlHeader(commentColumn,
+                SafeHtmlUtils.fromSafeConstant(constants.commentLabel()),
+                "75px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
             AbstractTextColumn<VDSGroup> dataCenterColumn = new AbstractTextColumn<VDSGroup>() {
@@ -109,9 +112,9 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
             @Override
             public String getValue(VDSGroup object) {
                 if (object.getGroupHostsAndVms() == null) {
-                    return "";
+                    return ""; //$NON-NLS-1$
                 }
-                return object.getGroupHostsAndVms().getHosts() + "";
+                return object.getGroupHostsAndVms().getHosts() + ""; //$NON-NLS-1$
             }
         };
 
@@ -121,9 +124,9 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
             @Override
             public String getValue(VDSGroup object) {
                 if (object.getGroupHostsAndVms() == null) {
-                    return "";
+                    return ""; //$NON-NLS-1$
                 }
-                return object.getGroupHostsAndVms().getVms() + "";
+                return object.getGroupHostsAndVms().getVms() + ""; //$NON-NLS-1$
             }
         };
 

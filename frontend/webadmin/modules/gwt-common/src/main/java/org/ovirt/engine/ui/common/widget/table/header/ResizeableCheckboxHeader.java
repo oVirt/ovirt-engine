@@ -11,26 +11,31 @@ import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.Column;
 
 public class ResizeableCheckboxHeader<T> extends ResizableHeader<T> {
 
-    private final CheckboxHeader checkboxHeaderDelegate;
+    private final AbstractCheckboxHeader checkboxHeaderDelegate;
 
-    public ResizeableCheckboxHeader(CheckboxHeader checkboxHeader,
+    public ResizeableCheckboxHeader(AbstractCheckboxHeader checkboxHeader,
             Column<T, ?> column, HasResizableColumns<T> table) {
-        super(checkboxHeader.getTitle(), column, table,
-                new SafeHtmlCell() {
-                    @Override
-                    public Set<String> getConsumedEvents() {
-                        Set<String> set = new HashSet<>(super.getConsumedEvents());
-                        set.add(BrowserEvents.CLICK);
-                        set.add(BrowserEvents.CHANGE);
-                        set.add(BrowserEvents.KEYDOWN);
-                        return set;
-                    }
-                });
+        super(new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant(""), checkboxHeader.getTooltip(), //$NON-NLS-1$
+                createSafeHtmlCell()), column, table, true);
         this.checkboxHeaderDelegate = checkboxHeader;
+    }
+
+    public static SafeHtmlCell createSafeHtmlCell() {
+        return new SafeHtmlCell() {
+            @Override
+            public Set<String> getConsumedEvents() {
+                Set<String> set = new HashSet<String>(super.getConsumedEvents());
+                set.add(BrowserEvents.CLICK); // for sorting
+                set.add(BrowserEvents.MOUSEMOVE); // for changing mouse cursor
+                set.add(BrowserEvents.CHANGE); // for checkbox toggle
+                return set;
+            }
+        };
     }
 
     @Override

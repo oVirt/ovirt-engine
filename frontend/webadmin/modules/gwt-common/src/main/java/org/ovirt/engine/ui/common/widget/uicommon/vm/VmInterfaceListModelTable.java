@@ -96,7 +96,7 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
             }
         };
         pluggedColumn.makeSortable();
-        getTable().addColumnWithHtmlHeader(pluggedColumn, constants.plugged(), "60px"); //$NON-NLS-1$
+        getTable().addColumn(pluggedColumn, constants.plugged(), "60px"); //$NON-NLS-1$
 
         AbstractTextColumn<VmNetworkInterface> networkNameColumn = new AbstractTextColumn<VmNetworkInterface>() {
             @Override
@@ -134,7 +134,7 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
                     }
                 };
         linkStateColumn.makeSortable();
-        getTable().addColumnWithHtmlHeader(linkStateColumn, constants.linkStateNetworkInterface(), "65px"); //$NON-NLS-1$
+        getTable().addColumn(linkStateColumn, constants.linkStateNetworkInterface(), "65px"); //$NON-NLS-1$
 
         AbstractTextColumn<VmNetworkInterface> typeColumn = new AbstractEnumColumn<VmNetworkInterface, VmInterfaceType>() {
             @Override
@@ -165,7 +165,7 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
             }
         };
         speedColumn.makeSortable();
-        getTable().addColumnWithHtmlHeader(speedColumn,
+        getTable().addColumn(speedColumn,
                 templates.sub(constants.speedInterface(), constants.mbps()).asString(), "150px"); //$NON-NLS-1$
 
         getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(),

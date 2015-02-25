@@ -29,6 +29,8 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
+import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
+import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportDiskData;
@@ -456,7 +458,10 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
                 return null;
             }
         };
-        diskTable.addColumnWithHtmlHeader(bootableDiskColumn, bootableDiskColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
+        diskTable.addColumn(bootableDiskColumn,
+                new ImageResourceHeader(DisksViewColumns.bootableDiskColumn.getDefaultImage(),
+                        SafeHtmlUtils.fromSafeConstant(constants.bootableDisk())),
+                        "30px"); //$NON-NLS-1$
 
         AbstractDiskSizeColumn<DiskImage> sizeColumn = new AbstractDiskSizeColumn<DiskImage>() {
             @Override

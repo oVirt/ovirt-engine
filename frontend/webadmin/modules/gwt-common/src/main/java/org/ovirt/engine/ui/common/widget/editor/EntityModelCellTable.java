@@ -351,6 +351,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
         return editorAdapter;
     }
 
+    // TODO this is a duplicate -- remove
     public void addEntityModelColumn(Column<EntityModel, ?> column, String headerString) {
         super.addColumn(column, headerString);
     }
@@ -378,11 +379,11 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
      */
     @Override
     public void addColumn(Column column, String headerString, String width) {
-        addColumnAndSetWidth(column, headerString, width);
+        super.addColumnAndSetWidth(column, headerString, width);
     }
 
     public void addColumn(Column column, SafeHtml headerHtml, String width) {
-        addColumnAndSetWidth(column, headerHtml, width);
+        super.addColumnWithHtmlHeader(column, headerHtml, width);
     }
 
     public void addColumn(Column column, Header<?> header, String width) {

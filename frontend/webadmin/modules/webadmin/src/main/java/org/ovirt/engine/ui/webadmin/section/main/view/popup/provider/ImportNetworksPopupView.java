@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEditTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractListModelListBoxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.common.widget.table.header.CheckboxHeader;
+import org.ovirt.engine.ui.common.widget.table.header.AbstractCheckboxHeader;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.ImportNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ExternalNetwork;
@@ -32,6 +32,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -145,8 +146,8 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
         };
         importedNetworks.addColumn(dcColumn, constants.dcNetworkHeader());
 
-        CheckboxHeader publicAllHeader =
-                new CheckboxHeader(templates.textForCheckBoxHeader(constants.publicNetwork())) {
+        AbstractCheckboxHeader publicAllHeader =
+                new AbstractCheckboxHeader() {
                     @Override
                     protected void selectionChanged(Boolean value) {
                         for (ExternalNetwork model : getAllImportedNetworks()) {
@@ -176,6 +177,11 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
                         sb.append(templates.inlineImageWithTitle(SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.dialogIconHelp())
                                 .getHTML()),
                                 constants.networkPublicUseLabel()));
+                    }
+
+                    @Override
+                    public SafeHtml getTooltip() {
+                        return templates.textForCheckBoxHeader(constants.publicNetwork());
                     }
                 };
 

@@ -97,7 +97,7 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
                     }
                 };
         portMirroringColumn.makeSortable();
-        getTable().addColumnWithHtmlHeader(portMirroringColumn, constants.portMirroringVnicProfile(), "85px"); //$NON-NLS-1$
+        getTable().addColumn(portMirroringColumn, constants.portMirroringVnicProfile(), "85px"); //$NON-NLS-1$
 
         AbstractTextColumn<VnicProfileView> descriptionColumn =
                 new AbstractTextColumn<VnicProfileView>() {

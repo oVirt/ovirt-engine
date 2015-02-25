@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.common.widget.table.cell.SafeHtmlCell;
 import org.ovirt.engine.ui.common.widget.table.resize.ColumnResizeHandler;
 import org.ovirt.engine.ui.common.widget.table.resize.HasResizableColumns;
 
-import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
@@ -20,17 +19,15 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.Header;
 
 /**
- * A {@link Header} that allows the user to resize the associated column by dragging its right-hand border using mouse.
- * <p>
- * This header has its value rendered through safe HTML markup.
+ * A Header that allows the user to resize the associated column by dragging its right-hand
+ * border using mouse. Renders SafeHtml. Supports tooltips.
  *
  * @param <T>
  *            Table row data type.
  */
-public class ResizableHeader<T> extends Header<SafeHtml> {
+public class ResizableHeader<T> extends SafeHtmlHeader {
 
     /**
      * The template interface that defines the wrapper around the content. This is so we can
@@ -87,10 +84,6 @@ public class ResizableHeader<T> extends Header<SafeHtml> {
     public static final int RESIZE_BAR_WIDTH = 7;
 
     /**
-     * The content text.
-     */
-    private final SafeHtml text;
-    /**
      * The resize-able column.
      */
     private final Column<T, ?> column;
@@ -107,57 +100,38 @@ public class ResizableHeader<T> extends Header<SafeHtml> {
 
     /**
      * Constructor.
-     * @param text The contents of the header.
+     * @param safeHtmlHeader The header.
      * @param column The column associated with the header.
      * @param table The table containing the header/column.
-     */
-    public ResizableHeader(SafeHtml text, Column<T, ?> column, HasResizableColumns<T> table, boolean applyStyle) {
-        this(text, column, table,
-                new SafeHtmlCell() {
-                    @Override
-                    public Set<String> getConsumedEvents() {
-                        Set<String> set = new HashSet<String>();
-                        set.add(BrowserEvents.CLICK);
-                        set.addAll(super.getConsumedEvents());
-                        return set;
-                    }
-            }, applyStyle);
-    }
-
-    /**
-     * Constructor.
-     * @param text The contents of the header.
-     * @param column The column associated with the header.
-     * @param table The table containing the header/column.
-     * @param cell The cell that defines the header cell.
-     */
-    public ResizableHeader(SafeHtml text, Column<T, ?> column, HasResizableColumns<T> table,
-            Cell<SafeHtml> cell) {
-        this(text, column, table, cell, true);
-    }
-
-    /**
-     * Constructor.
-     * @param text The contents of the header.
-     * @param column The column associated with the header.
-     * @param table The table containing the header/column.
-     * @param cell The cell that defines the header cell.
      * @param applyStyle Whether to apply default styling.
      */
-    public ResizableHeader(SafeHtml text, Column<T, ?> column, HasResizableColumns<T> table,
-            Cell<SafeHtml> cell, boolean applyStyle) {
-        super(cell);
+    public ResizableHeader(SafeHtmlHeader safeHtmlHeader, Column<T, ?> column, HasResizableColumns<T> table,
+            boolean applyStyle) {
+        super(createSafeHtmlCell()); // ignore the header's cell -- we need to specify our own set of events
         style = RESOURCES.resizableHeaderCss();
         style.ensureInjected();
-        this.text = text;
+        setValue(safeHtmlHeader.getValue());
+        setTooltip(safeHtmlHeader.getTooltip());
         this.column = column;
         this.table = table;
         this.applyStyle = applyStyle;
     }
 
+    public static SafeHtmlCell createSafeHtmlCell() {
+        return new SafeHtmlCell() {
+            @Override
+            public Set<String> getConsumedEvents() {
+                Set<String> set = new HashSet<>(super.getConsumedEvents());
+                set.add(BrowserEvents.CLICK); // for sorting
+                set.add(BrowserEvents.MOUSEMOVE); // for changing mouse cursor
+                return set;
+            }
+        };
+    }
+
     @Override
     public SafeHtml getValue() {
-        return applyStyle ? TEMPLATE.templatedContent(style.cellTableHeaderContent(), text) : text;
+        return applyStyle ? TEMPLATE.templatedContent(style.cellTableHeaderContent(), super.getValue()) : super.getValue();
     }
 
     @Override

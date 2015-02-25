@@ -9,11 +9,11 @@ import java.util.Map;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
-import org.ovirt.engine.ui.common.widget.table.cell.SafeHtmlCell;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
-import org.ovirt.engine.ui.common.widget.table.header.CheckboxHeader;
+import org.ovirt.engine.ui.common.widget.table.header.AbstractCheckboxHeader;
 import org.ovirt.engine.ui.common.widget.table.header.ResizableHeader;
 import org.ovirt.engine.ui.common.widget.table.header.ResizeableCheckboxHeader;
+import org.ovirt.engine.ui.common.widget.table.header.SafeHtmlHeader;
 import org.ovirt.engine.ui.uicommonweb.models.GridController;
 
 import com.google.gwt.dom.client.Element;
@@ -56,7 +56,7 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
 
     private boolean columnResizingEnabled = false;
     private boolean columnResizePersistenceEnabled = false;
-    private boolean applyResizableHeaderStyle = true;
+    private boolean applyHeaderStyle = true;
 
     // used to store column width preferences
     private ClientStorage clientStorage;
@@ -98,16 +98,29 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
         super(keyProvider);
     }
 
-    /**
-     * {@inheritDoc}
-     * <p>
-     * When calling this method, consider using a header that supports displaying tooltip in case the header content
-     * doesn't fit the header element.
-     */
     @Override
     public void addColumn(Column<T, ?> column, Header<?> header) {
-        super.addColumn(column, wrapHeader(header, column));
 
+        // build resizable headers, if necessary
+        if (columnResizingEnabled && header instanceof AbstractCheckboxHeader) {
+            header = createResizableCheckboxHeader(header, column);
+        }
+        else if (columnResizingEnabled) {
+            header = createResizableHeader(column, header);
+        }
+        else if (applyHeaderStyle && header instanceof SafeHtmlHeader) {
+            SafeHtmlHeader safeHtmlHeader = (SafeHtmlHeader) header;
+            // not using Resizeable header, but still want it to look that way.
+            // nonResizeableColumnHeader does that.
+            // TODO nonResizeableColumnHeader copy-pastes CSS. fix.
+            SafeHtml newValue = templates.nonResizeableColumnHeader(safeHtmlHeader.getValue());
+            header = new SafeHtmlHeader(newValue, safeHtmlHeader.getTooltip());
+        }
+
+        // actually add the column
+        super.addColumn(column, header);
+
+        // add emptyNoWidthColumn if necessary
         if (columnResizingEnabled) {
             if (emptyNoWidthColumn != null) {
                 removeColumn(emptyNoWidthColumn);
@@ -115,84 +128,42 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
 
             // Add empty, no-width column as the last column
             emptyNoWidthColumn = new EmptyColumn<T>();
-            addColumn(emptyNoWidthColumn);
+            super.addColumn(emptyNoWidthColumn);
         }
     }
 
-    /**
-     * Adds a new column, without specifying column width.
-     */
-    @Override
+    public void addColumnAndSetWidth(Column<T, ?> column, Header<?> header, String width) {
+        addColumn(column, header);
+        setColumnWidth(column, width);
+    }
+
     public void addColumn(Column<T, ?> column, String headerText) {
-        addColumn(column, createHeader(column, headerText, false));
+        Header<?> header = new SafeHtmlHeader(SafeHtmlUtils.fromString(headerText));
+        addColumn(column, header);
     }
 
-    /**
-     * Adds a new column with SafeHtml header text, without specifying column width.
-     */
-    @Override
-    public void addColumn(Column<T, ?> column, SafeHtml headerHtml) {
-        addColumn(column, createHeader(column, headerHtml));
-    }
-
-    /**
-     * Adds a new column, setting the column width.
-     */
     public void addColumnAndSetWidth(Column<T, ?> column, String headerText, String width) {
         addColumn(column, headerText);
         setColumnWidth(column, width);
     }
 
-    /**
-     * Adds a new column with SafeHtml header text, setting the column width.
-     */
-    public void addColumnAndSetWidth(Column<T, ?> column, SafeHtml headerHtml, String width) {
-        addColumn(column, headerHtml);
+    public void addColumnWithHtmlHeader(Column<T, ?> column, SafeHtml headerHtml) {
+        Header<?> header = new SafeHtmlHeader(headerHtml);
+        addColumn(column, header);
+    }
+
+    public void addColumnWithHtmlHeader(Column<T, ?> column, SafeHtml headerHtml, String width) {
+        Header<?> header = new SafeHtmlHeader(headerHtml);
+        addColumn(column, header);
         setColumnWidth(column, width);
     }
 
-    /**
-     * Adds a new column with HTML header text, without specifying column width.
-     * <p>
-     * {@code headerHtml} must honor the SafeHtml contract as specified in
-     * {@link com.google.gwt.safehtml.shared.SafeHtmlUtils#fromSafeConstant(String) SafeHtmlUtils.fromSafeConstant}.
-     */
-    public void addColumnWithHtmlHeader(Column<T, ?> column, String headerHtml) {
-        addColumn(column, createHeader(column, headerHtml, true));
-    }
-
-    /**
-     * Adds a new column with HTML header text, setting the column width.
-     * <p>
-     * {@code headerHtml} must honor the SafeHtml contract as specified in
-     * {@link com.google.gwt.safehtml.shared.SafeHtmlUtils#fromSafeConstant(String) SafeHtmlUtils.fromSafeConstant}.
-     */
-    public void addColumnWithHtmlHeader(Column<T, ?> column, String headerHtml, String width) {
-        addColumnWithHtmlHeader(column, headerHtml);
-        setColumnWidth(column, width);
-    }
-
-    Header<?> createHeader(Column<T, ?> column, String headerTextOrHtml, boolean allowHtml) {
-        SafeHtml headerHtml = allowHtml ? SafeHtmlUtils.fromSafeConstant(headerTextOrHtml)
-                : SafeHtmlUtils.fromString(headerTextOrHtml);
-        return createHeader(column, headerHtml);
-    }
-
-    Header<?> createHeader(Column<T, ?> column, SafeHtml headerHtml) {
-        return columnResizingEnabled ? new ResizableHeader<T>(headerHtml, column, this, applyResizableHeaderStyle)
-                : createSafeHtmlHeader(headerHtml);
-    }
-
-    Header<?> createSafeHtmlHeader(final SafeHtml text) {
-        return new Header<SafeHtml>(new SafeHtmlCell()) {
-            @Override
-            public SafeHtml getValue() {
-                if (text != null && applyResizableHeaderStyle) {
-                    return templates.nonResizeableColumnHeader(text);
-                }
-                return text;
-            }
-        };
+    protected Header<?> createResizableHeader(Column<T, ?> column, Header<?> header) {
+        if (header instanceof SafeHtmlHeader) {
+            SafeHtmlHeader safeHtmlHeader = (SafeHtmlHeader) header;
+            return new ResizableHeader<T>(safeHtmlHeader, column, this, applyHeaderStyle);
+        }
+        return header;
     }
 
     /**
@@ -200,36 +171,60 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
      * <p>
      * This method is called whenever a column is added to the table.
      */
-    Header<?> wrapHeader(Header<?> header, Column<T, ?> column) {
-        return (columnResizingEnabled && header instanceof CheckboxHeader)
-                ? new ResizeableCheckboxHeader<T>((CheckboxHeader) header, column, this) : header;
+    protected Header<?> createResizableCheckboxHeader(Header<?> header, Column<T, ?> column) {
+        if (header instanceof AbstractCheckboxHeader) {
+            return new ResizeableCheckboxHeader<T>((AbstractCheckboxHeader) header, column, this);
+        }
+        return header;
     }
 
     /**
      * Ensures that the given column is added (or removed), unless it's already present (or absent).
      */
     public void ensureColumnPresent(Column<T, ?> column, String headerText, boolean present) {
-        ensureColumnPresent(column, headerText, present, null);
+        ensureColumnPresent(column, SafeHtmlUtils.fromString(headerText), present);
     }
+
+    /**
+     * Ensures that the given column is added (or removed), unless it's already present (or absent).
+     */
+    public void ensureColumnPresent(Column<T, ?> column, SafeHtml headerHtml, boolean present) {
+        ensureColumnPresent(column, new SafeHtmlHeader(headerHtml), present, null);
+    }
+
+    /**
+     * Ensures that the given column is added (or removed), unless it's already present (or absent).
+     */
+    public void ensureColumnPresent(Column<T, ?> column, String headerText, boolean present, String width) {
+        ensureColumnPresent(column, SafeHtmlUtils.fromString(headerText), present, width);
+    }
+
+    /**
+     * Ensures that the given column is added (or removed), unless it's already present (or absent).
+     */
+    public void ensureColumnPresent(Column<T, ?> column, SafeHtml headerHtml, boolean present, String width) {
+        ensureColumnPresent(column, new SafeHtmlHeader(headerHtml), present, width);
+    }
+
 
     /**
      * Ensures that the given column is added (or removed), unless it's already present (or absent).
      * <p>
      * This method also sets the column width in case the column needs to be added.
      * @param column The column to ensure is there.
-     * @param headerText The header text associated with the column.
+     * @param header The header
      * @param present If true make sure the column is there, if false make sure it is not.
      * @param width The width of the column.
      */
-    public void ensureColumnPresent(Column<T, ?> column, String headerText, boolean present, String width) {
+    public void ensureColumnPresent(Column<T, ?> column, SafeHtmlHeader header, boolean present, String width) {
         Integer index = getColumnIndex(column);
         boolean columnPresent = index != -1;
         if (!columnPresent) {
             // Add the column
             if (width == null) {
-                addColumnWithHtmlHeader(column, headerText);
+                addColumn(column, header);
             } else {
-                addColumnWithHtmlHeader(column, headerText, width);
+                addColumnAndSetWidth(column, header, width);
             }
             index = getColumnIndex(column);
         }
@@ -365,7 +360,7 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
     }
 
     protected void dontApplyResizableHeaderStyle() {
-        applyResizableHeaderStyle = false;
+        applyHeaderStyle = false;
     }
 
 }

@@ -23,7 +23,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.common.widget.table.header.CheckboxHeader;
+import org.ovirt.engine.ui.common.widget.table.header.AbstractCheckboxHeader;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkClusterModel;
@@ -43,6 +43,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -281,7 +282,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     }
 
     void initEntityModelCellTable() {
-        CheckboxHeader assignAllHeader = new CheckboxHeader(templates.textForCheckBoxHeader(constants.attachAll())) {
+        AbstractCheckboxHeader assignAllHeader = new AbstractCheckboxHeader() {
             @Override
             protected void selectionChanged(Boolean value) {
                 for (NetworkClusterModel networkClusterModel : getClustersTableItems()) {
@@ -311,8 +312,13 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
                 }
                 return false;
             }
+
+            @Override
+            public SafeHtml getTooltip() {
+                return templates.textForCheckBoxHeader(constants.attachAll());
+            }
         };
-        CheckboxHeader requiredAllHeader = new CheckboxHeader(templates.textForCheckBoxHeader(constants.requiredAll())) {
+        AbstractCheckboxHeader requiredAllHeader = new AbstractCheckboxHeader() {
             @Override
             protected void selectionChanged(Boolean value) {
                 for (NetworkClusterModel networkClusterModel : getClustersTableItems()) {
@@ -334,6 +340,11 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
             @Override
             public boolean isEnabled() {
                 return isRequiredChangeable();
+            }
+
+            @Override
+            public SafeHtml getTooltip() {
+                return templates.textForCheckBoxHeader(constants.requiredAll());
             }
         };
 

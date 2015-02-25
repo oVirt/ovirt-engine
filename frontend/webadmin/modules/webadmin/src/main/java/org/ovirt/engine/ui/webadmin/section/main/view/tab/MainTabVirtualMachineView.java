@@ -44,6 +44,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
 
 public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableView<VM, VmListModel<Void>> implements MainTabVirtualMachinePresenter.ViewDef {
@@ -85,7 +86,9 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         getTable().addColumn(nameColumn, constants.nameVm(), "120px"); //$NON-NLS-1$
 
         CommentColumn<VM> commentColumn = new CommentColumn<VM>();
-        getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
+        getTable().addColumnWithHtmlHeader(commentColumn,
+                SafeHtmlUtils.fromSafeConstant(constants.commentLabel()),
+                "75px"); //$NON-NLS-1$
 
         AbstractTextColumn<VM> hostColumn = new AbstractTextColumn<VM>() {
             @Override

@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
 
 public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<VmPool, PoolListModel> implements MainTabPoolPresenter.ViewDef {
@@ -48,7 +49,9 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<VmPool,
         getTable().addColumn(nameColumn, constants.namePool(), "150px"); //$NON-NLS-1$
 
         CommentColumn<VmPool> commentColumn = new CommentColumn<VmPool>();
-        getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
+        getTable().addColumnWithHtmlHeader(commentColumn,
+                SafeHtmlUtils.fromSafeConstant(constants.commentLabel()),
+                "75px"); //$NON-NLS-1$
 
         AbstractTextColumn<VmPool> assignedColumn = new AbstractTextColumn<VmPool>() {
             @Override

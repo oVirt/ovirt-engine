@@ -115,7 +115,9 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         getTable().addColumn(nameColumn, constants.nameHost(), "150px"); //$NON-NLS-1$
 
         CommentColumn<VDS> commentColumn = new CommentColumn<VDS>();
-        getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
+        getTable().addColumnWithHtmlHeader(commentColumn,
+                SafeHtmlUtils.fromSafeConstant(constants.commentLabel()),
+                "75px"); //$NON-NLS-1$
 
         AbstractTextColumn<VDS> hostColumn = new AbstractTextColumn<VDS>() {
             @Override

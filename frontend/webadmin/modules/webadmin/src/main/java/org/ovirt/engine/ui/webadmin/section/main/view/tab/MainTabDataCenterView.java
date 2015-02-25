@@ -31,6 +31,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.DcStatusColumn;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
 
 public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<StoragePool, DataCenterListModel> implements MainTabDataCenterPresenter.ViewDef {
@@ -65,7 +66,9 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         getTable().addColumn(nameColumn, constants.nameDc(), "150px"); //$NON-NLS-1$
 
         CommentColumn<StoragePool> commentColumn = new CommentColumn<StoragePool>();
-        getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
+        getTable().addColumnWithHtmlHeader(commentColumn,
+                SafeHtmlUtils.fromSafeConstant(constants.commentLabel()),
+                "75px"); //$NON-NLS-1$
 
         AbstractTextColumn<StoragePool> storageTypeColumn = new AbstractBooleanColumn<StoragePool>(
                 constants.storageTypeLocal(), constants.storageTypeShared()) {

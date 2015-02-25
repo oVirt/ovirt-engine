@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
+import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewRadioGroup;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -31,6 +32,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -135,15 +137,21 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.bootableDiskColumn,
-                DisksViewColumns.bootableDiskColumn.getHeaderHtml(), all || images || luns, "30px"); //$NON-NLS-1$
+                new ImageResourceHeader(DisksViewColumns.bootableDiskColumn.getDefaultImage(),
+                        SafeHtmlUtils.fromSafeConstant(constants.bootableDisk())),
+                all || images || luns, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.shareableDiskColumn,
-                DisksViewColumns.shareableDiskColumn.getHeaderHtml(), all || images || luns, "30px"); //$NON-NLS-1$
+                new ImageResourceHeader(DisksViewColumns.shareableDiskColumn.getDefaultImage(),
+                        SafeHtmlUtils.fromSafeConstant(constants.shareable())),
+                all || images || luns, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.lunDiskColumn,
-                DisksViewColumns.lunDiskColumn.getHeaderHtml(), all, "30px"); //$NON-NLS-1$
+                new ImageResourceHeader(DisksViewColumns.lunDiskColumn.getDefaultImage(),
+                        SafeHtmlUtils.fromSafeConstant(constants.lunDisksLabel())),
+                all, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.diskContainersIconColumn, "", all || images || luns, //$NON-NLS-1$

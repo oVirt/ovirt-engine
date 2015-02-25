@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMo
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.common.widget.table.header.CheckboxHeader;
+import org.ovirt.engine.ui.common.widget.table.header.AbstractCheckboxHeader;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkManageModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkModel;
@@ -78,11 +78,11 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
         networks.addColumn(
                 new AttachedIndicatorCheckboxColumn(new AttachedIndicatorFieldUpdater()),
-                new AttachedIndicatorCheckboxHeader(templates.textForCheckBoxHeader(constants.assignAll())), "90px"); //$NON-NLS-1$
+                new AttachedIndicatorCheckboxHeader(), "90px"); //$NON-NLS-1$
 
         networks.addColumn(
                 new RequiredIndicatorCheckboxColumn(new RequiredIndicatorFieldUpdater()),
-                new RequiredAllCheckboxHeader(templates.textForCheckBoxHeader(constants.requiredAll())), "110px"); //$NON-NLS-1$
+                new RequiredAllCheckboxHeader(), "110px"); //$NON-NLS-1$
 
         networks.addColumn(
                 new VmNetworkImageSafeHtmlWithSafeHtmlTooltipColumn(),
@@ -208,10 +208,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         }
     }
 
-    private final class RequiredAllCheckboxHeader extends CheckboxHeader {
-        private RequiredAllCheckboxHeader(SafeHtml title) {
-            super(title);
-        }
+    private final class RequiredAllCheckboxHeader extends AbstractCheckboxHeader {
 
         @Override
         protected void selectionChanged(Boolean value) {
@@ -245,6 +242,11 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
             }
             return false;
         }
+
+        @Override
+        public SafeHtml getTooltip() {
+              return templates.textForCheckBoxHeader(constants.requiredAll());
+        }
     }
 
     private final class AttachedIndicatorCheckboxColumn extends AbstractCheckboxColumn<ClusterNetworkModel> {
@@ -277,10 +279,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         }
     }
 
-    private final class AttachedIndicatorCheckboxHeader extends CheckboxHeader {
-        private AttachedIndicatorCheckboxHeader(SafeHtml title) {
-            super(title);
-        }
+    private final class AttachedIndicatorCheckboxHeader extends AbstractCheckboxHeader {
 
         @Override
         protected void selectionChanged(Boolean value) {
@@ -313,6 +312,11 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
                 }
             }
             return false;
+        }
+
+        @Override
+        public SafeHtml getTooltip() {
+            return templates.textForCheckBoxHeader(constants.assignAll());
         }
     }
 

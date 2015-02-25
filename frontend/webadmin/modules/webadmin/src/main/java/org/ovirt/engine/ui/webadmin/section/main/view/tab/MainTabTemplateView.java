@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractGeneralDateTimeC
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
 
 public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmTemplate, TemplateListModel> implements MainTabTemplatePresenter.ViewDef {
@@ -67,7 +68,9 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         getTable().addColumn(versionNameColumn, constants.versionTemplate(), "150px"); //$NON-NLS-1$
 
         CommentColumn<VmTemplate> commentColumn = new CommentColumn<VmTemplate>();
-        getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
+        getTable().addColumnWithHtmlHeader(commentColumn,
+                SafeHtmlUtils.fromSafeConstant(constants.commentLabel()),
+                "75px"); //$NON-NLS-1$
 
         AbstractTextColumn<VmTemplate> creationDateColumn = new AbstractGeneralDateTimeColumn<VmTemplate>() {
             @Override

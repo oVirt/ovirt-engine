@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDiskListModel;
@@ -15,6 +16,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
 
 public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain, Disk, StorageListModel, StorageDiskListModel>
@@ -46,11 +48,15 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.bootableDiskColumn,
-                DisksViewColumns.bootableDiskColumn.getHeaderHtml(), true, "30px"); //$NON-NLS-1$
+                new ImageResourceHeader(DisksViewColumns.bootableDiskColumn.getDefaultImage(),
+                        SafeHtmlUtils.fromSafeConstant(constants.bootableDisk())),
+                true, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.shareableDiskColumn,
-                DisksViewColumns.shareableDiskColumn.getHeaderHtml(), true, "30px"); //$NON-NLS-1$
+                new ImageResourceHeader(DisksViewColumns.shareableDiskColumn.getDefaultImage(),
+                        SafeHtmlUtils.fromSafeConstant(constants.shareable())),
+                true, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.getSizeColumn(null), constants.provisionedSizeDisk(), true, "100px"); //$NON-NLS-1$

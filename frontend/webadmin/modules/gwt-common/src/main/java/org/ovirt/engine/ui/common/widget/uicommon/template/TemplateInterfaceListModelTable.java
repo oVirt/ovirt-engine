@@ -52,7 +52,7 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
             }
         };
 
-        getTable().addColumnWithHtmlHeader(pluggedColumn, constants.plugged(), "90px"); //$NON-NLS-1$
+        getTable().addColumn(pluggedColumn, constants.plugged(), "90px"); //$NON-NLS-1$
 
         AbstractTextColumn<VmNetworkInterface> networkNameColumn = new AbstractTextColumn<VmNetworkInterface>() {
             @Override
@@ -79,7 +79,7 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
                     }
                 };
 
-        getTable().addColumnWithHtmlHeader(linkStateColumn, constants.linkStateNetworkInterface(), "90px"); //$NON-NLS-1$
+        getTable().addColumn(linkStateColumn, constants.linkStateNetworkInterface(), "90px"); //$NON-NLS-1$
 
         AbstractTextColumn<VmNetworkInterface> typeColumn = new AbstractEnumColumn<VmNetworkInterface, VmInterfaceType>() {
             @Override
