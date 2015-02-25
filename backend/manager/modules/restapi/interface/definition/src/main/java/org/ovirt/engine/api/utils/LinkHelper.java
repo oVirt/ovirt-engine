@@ -21,17 +21,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.ovirt.engine.api.model.ActionableResource;
 import org.ovirt.engine.api.model.ActionsBuilder;
 import org.ovirt.engine.api.model.AffinityGroup;
@@ -303,11 +299,6 @@ public class LinkHelper {
      * A constant representing the pseudo-parent of a top-level collection
      */
     private static final Class<? extends BaseResource> NO_PARENT = BaseResource.class;
-
-    /**
-     * Cache the {@code UriBuilder}s by the associated model so we don't have to create the builders each time.
-     */
-    private static Map<Collection, UriBuilder> builderMap = new ConcurrentHashMap<Collection, UriBuilder>();
 
     /**
      * A map describing every possible collection
@@ -772,8 +763,12 @@ public class LinkHelper {
             return null;
         }
 
-        if (suggestedParentType != null && collections.get(suggestedParentType) != null) {
-            return collections.get(suggestedParentType);
+        if (suggestedParentType != null) {
+            for (Entry<Class<? extends BaseResource>, Collection> entry : collections.entrySet()) {
+                if (entry.getKey().equals(suggestedParentType)) {
+                    return entry.getValue();
+                }
+            }
         }
 
         for (Entry<Class<? extends BaseResource>, Collection> parentTypeEntry : collections.entrySet()) {
@@ -818,6 +813,7 @@ public class LinkHelper {
         }
 
         UriBuilder uriBuilder;
+
         if (collection.getParentType() != NO_PARENT) {
             BaseResource parent = getParentModel(model, collection.getParentType());
 
@@ -829,19 +825,12 @@ public class LinkHelper {
 
             uriBuilder = getUriBuilder(uriInfo, parent).path(path);
         } else {
-            uriBuilder = builderMap.get(collection);
-            if (uriBuilder == null) {
-                String path = getPath(collection.getCollectionType());
-                uriBuilder = uriInfo != null
-                             ? UriBuilder.fromPath(uriInfo.getBaseUri().getPath()).path(path)
-                             : UriBuilder.fromPath(path);
-                builderMap.put(collection, uriBuilder.clone());
-            } else {
-                //We need to clone so we have our own copy to work with. Cloning is much faster than building a new one
-                //from scratch each time.
-                uriBuilder = uriBuilder.clone();
-            }
+            String path = getPath(collection.getCollectionType());
+            uriBuilder = uriInfo != null
+                         ? UriBuilder.fromPath(uriInfo.getBaseUri().getPath()).path(path)
+                         : UriBuilder.fromPath(path);
         }
+
         return uriBuilder.path(model.getId());
     }
 
@@ -1201,34 +1190,6 @@ public class LinkHelper {
         public Class<?> getResourceType()      { return resourceType; }
         public Class<?> getCollectionType()    { return collectionType; }
         public Class<?> getParentType()        { return parentType; }
-
-        @Override
-        public int hashCode() {
-            HashCodeBuilder hashCodeBuilder = new HashCodeBuilder();
-            hashCodeBuilder.append(resourceType);
-            hashCodeBuilder.append(collectionType);
-            hashCodeBuilder.append(parentType);
-            return hashCodeBuilder.toHashCode();
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (!(obj instanceof Collection)) {
-                return false;
-            }
-            Collection other = (Collection)obj;
-            EqualsBuilder equalsBuilder = new EqualsBuilder();
-            equalsBuilder.append(resourceType, other.resourceType);
-            equalsBuilder.append(collectionType, other.collectionType);
-            equalsBuilder.append(parentType, other.parentType);
-            return equalsBuilder.isEquals();
-        }
     }
 
     /**
