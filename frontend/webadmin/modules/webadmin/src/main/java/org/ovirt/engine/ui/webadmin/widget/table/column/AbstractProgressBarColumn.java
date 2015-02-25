@@ -32,7 +32,7 @@ public abstract class AbstractProgressBarColumn<T> extends AbstractSafeHtmlColum
     }
 
     @Override
-    public final SafeHtml getValue(T object) {
+    public SafeHtml getValue(T object) {
         Integer progressValue = getProgressValue(object);
 
         int progress = progressValue != null ? progressValue : 0;
@@ -41,7 +41,11 @@ public abstract class AbstractProgressBarColumn<T> extends AbstractSafeHtmlColum
         // Choose color by progress
         String color = getColorByProgress(progress);
 
-        return ClientGinjectorProvider.getApplicationTemplates().progressBar(progress, text, color);
+        return ClientGinjectorProvider.getApplicationTemplates().progressBar(progress, text, color, getStyle());
+    }
+
+    protected String getStyle() {
+        return "engine-progress-box"; //$NON-NLS-1$
     }
 
     /**

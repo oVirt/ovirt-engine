@@ -55,11 +55,14 @@ a.gwt-InlineHyperlink,a.gwt-Anchor {
     color: white;
 }
 
-.engine-progress-box {
+.engine-progress-box, .engine-progress-box-migration {
     border: 1px solid #AAAAAA;
-    width: 60%;
     height: 1em;
     margin: auto;
+}
+
+.engine-progress-box {
+    width: 60%;
 }
 
 .engine-progress-text {

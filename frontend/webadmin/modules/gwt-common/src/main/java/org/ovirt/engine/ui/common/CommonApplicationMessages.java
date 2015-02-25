@@ -182,4 +182,6 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("NUMA {0}")
     String numaNode(int index);
 
+    @DefaultMessage("{0}: {1}")
+    String migratingProgress(String status, String progress);
 }

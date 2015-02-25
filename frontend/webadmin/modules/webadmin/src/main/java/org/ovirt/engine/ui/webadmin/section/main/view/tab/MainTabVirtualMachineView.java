@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.ui.webadmin.widget.table.column.MigrationProgressColumn;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -37,9 +38,6 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractLineChartProgressBarColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractOneColorPercentColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractPercentColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractProgressBarColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ReasonColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractUptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
@@ -170,16 +168,6 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         networkColumn.makeSortable(VmConditionFieldAutoCompleter.NETWORK_USAGE);
         getTable().addColumn(networkColumn, constants.networkVm(), "70px"); //$NON-NLS-1$
 
-        AbstractPercentColumn<VM> migrationProgressColumn = new AbstractOneColorPercentColumn<VM>(AbstractProgressBarColumn.ProgressBarColors.GREEN) {
-
-            @Override
-            public Integer getProgressValue(VM object) {
-                return object.getMigrationProgressPercent();
-            }
-        };
-        migrationProgressColumn.makeSortable(VmConditionFieldAutoCompleter.MIGRATION_PROGRESS_PERCENT);
-        getTable().addColumn(migrationProgressColumn, constants.migrationProgress(), "70px"); //$NON-NLS-1$
-
         AbstractTextColumn<VM> displayColumn = new AbstractEnumColumn<VM, UnitVmModel.GraphicsTypes>() {
             @Override
             protected UnitVmModel.GraphicsTypes getRawValue(VM vm) {
@@ -198,8 +186,19 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             public VMStatus getRawValue(VM object) {
                 return object.getStatus();
             }
+
+            @Override
+            public String getValue(VM vm) {
+                if (vm.getStatus() == VMStatus.MigratingFrom) {
+                    // will be rendered by progress column
+                    return null;
+                }
+
+                return super.getValue(vm);
+            }
         };
 
+        MigrationProgressColumn migrationProgressColumn = new MigrationProgressColumn();
         ReasonColumn<VM> reasonColumn = new ReasonColumn<VM>() {
 
             @Override
@@ -212,7 +211,8 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         CellWithElementId<VM> compositeCell = new StatusCompositeCellWithElementId(
                 new ArrayList<HasCell<VM, ?>>(Arrays.asList(
                         statusColumn,
-                        reasonColumn)));
+                        reasonColumn,
+                        migrationProgressColumn)));
 
         AbstractSortableColumnWithElementId<VM, VM> statusTextColumn = new AbstractSortableColumnWithElementId<VM, VM>(compositeCell) {
             @Override
@@ -221,7 +221,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
         };
         statusTextColumn.makeSortable(VmConditionFieldAutoCompleter.STATUS);
-        getTable().addColumn(statusTextColumn, constants.statusVm(), "80px"); //$NON-NLS-1$
+        getTable().addColumn(statusTextColumn, constants.statusVm(), "120px"); //$NON-NLS-1$
 
         AbstractTextColumn<VM> uptimeColumn = new AbstractUptimeColumn<VM>() {
             @Override

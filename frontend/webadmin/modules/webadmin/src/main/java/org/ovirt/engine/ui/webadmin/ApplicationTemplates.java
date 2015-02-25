@@ -15,10 +15,10 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
      * @param text
      *            Text to show within the progress bar.
      */
-    @Template("<div class='engine-progress-box'>" +
+    @Template("<div class='{3}'>" +
             "<div style='background: {2}; width: {0}%; height: 100%'></div>" +
             "<div class='engine-progress-text'>{1}</div></div>")
-    SafeHtml progressBar(int progress, String text, String color);
+    SafeHtml progressBar(int progress, String text, String color, String style);
 
     @Template("<div>" +
             "<div style='float:right; width: {2}px; color: {3}; font-weight: {4}'>{5}%</div>" +
