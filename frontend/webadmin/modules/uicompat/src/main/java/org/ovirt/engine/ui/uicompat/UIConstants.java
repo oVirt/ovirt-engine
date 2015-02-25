@@ -102,8 +102,14 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Change Cluster CPU level")
     String changeCpuLevel();
 
-    @DefaultStringValue("There are running VMs. Lowering the Cluster CPU level might prevent migration of these VMs to some of the Hosts in the Cluster. Are you sure you want to continue?")
-    String changeCpuLevelConfirmation();
+    @DefaultStringValue("\n - The cluster contains VMs which are currently running. \n")
+    String changeCpuLevelWhileRunningMessage();
+
+    @DefaultStringValue(" - The following VMs have a custom CPU level which is not supported by the new cluster CPU level:\n")
+    String changeCpuLevelCustomVmCpusMessage();
+
+    @DefaultStringValue("\nLowering the Cluster CPU level might prevent migration of these VMs to some of the hosts in the Cluster. Are you sure you want to continue?")
+    String changeCpuLevelWarningMessage();
 
     @DefaultStringValue("The following user session(s) will be terminated.\nAre you sure you want to continue?")
     String terminateSessionConfirmation();
@@ -174,6 +180,12 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Next Restart Configuration")
     String editNextRunConfigurationTitle();
+
+    @DefaultStringValue("Unsupported CPU type for current cluster")
+    String vmUnsupportedCpuTitle();
+
+    @DefaultStringValue("The selected CPU type is not supported by the VM cluster, this may cause scheduling limitations and prevent this vm from running on certain hosts. Are you sure you want to proceed?")
+    String vmUnsupportedCpuMessage();
 
     @DefaultStringValue("Data Centers")
     String dataCentersTitle();

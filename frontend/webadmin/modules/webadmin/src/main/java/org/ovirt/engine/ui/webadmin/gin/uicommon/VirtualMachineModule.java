@@ -42,6 +42,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.VmHostDeviceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmNextRunConfigurationModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncInfoModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestInfoModel;
@@ -93,7 +94,7 @@ public class VirtualMachineModule extends AbstractGinModule {
     @Provides
     @Singleton
     public MainModelProvider<VM, VmListModel<Void>> getVmListProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<AssignTagsPopupPresenterWidget> assignTagsPopupProvider,
             final Provider<VmMakeTemplatePopupPresenterWidget> makeTemplatePopupProvider,
             final Provider<VmRunOncePopupPresenterWidget> runOncePopupProvider,
@@ -176,8 +177,10 @@ public class VirtualMachineModule extends AbstractGinModule {
                         } else if (lastExecutedCommand == getModel().getStopCommand() ||
                                 lastExecutedCommand == getModel().getShutdownCommand()) {
                             return removeConfirmPopupProvider.get();
-                        } else if ("OnSave".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
+                        } else if (source.getConfirmWindow() instanceof VmNextRunConfigurationModel) {
                             return nextRunProvider.get();
+                        } else if ("OnSave".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
+                            return defaultConfirmPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getEditCommand()) {
                             return removeDiskConfirmPopupProvider.get();
                         } else {

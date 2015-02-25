@@ -18,7 +18,7 @@ public class ListModelTypeAheadChangeableListBox extends ListModelTypeAheadListB
     public ListModelTypeAheadChangeableListBox(SuggestBoxRenderer<String> renderer, boolean autoAddToValidValues, String nullReplacementText) {
         super(renderer, autoAddToValidValues, new SuggestionMatcher.StartWithSuggestionMatcher());
         if (nullReplacementText == null) {
-            nullReplacementText = ""; //$NON-NLS-1$
+            this.nullReplacementText = ""; //$NON-NLS-1$
         } else {
             this.nullReplacementText = nullReplacementText;
         }
@@ -50,5 +50,13 @@ public class ListModelTypeAheadChangeableListBox extends ListModelTypeAheadListB
         String lastText = suggestBox.getText();
         super.showAllSuggestions();
         suggestBox.setText(lastText);
+    }
+
+    protected void setNullReplacementString(String nullReplacementText) {
+        this.nullReplacementText = nullReplacementText;
+    }
+
+    private String getNullReplacementString() {
+        return nullReplacementText;
     }
 }

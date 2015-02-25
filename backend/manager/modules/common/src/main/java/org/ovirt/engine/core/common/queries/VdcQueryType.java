@@ -269,6 +269,7 @@ public enum VdcQueryType implements Serializable {
     // License queries
     GetAllServerCpuList,
     GetSupportedCpuList(VdcQueryAuthType.User),
+    GetClusterUnsupportedVmsCpus,
 
     // Multi Level Administration queries
     GetAllRoles(VdcQueryAuthType.User),

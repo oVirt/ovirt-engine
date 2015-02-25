@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.AttachDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.EditDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceToGuestWithNonRespAgentModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmNextRunConfigurationModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncInfoModel;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.CloneVmPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.SingleSelectionVmDiskAttachPopupPresenterWidget;
@@ -45,6 +46,7 @@ public class UserPortalListProvider extends AbstractUserPortalListProvider<UserP
     private final Provider<VmDiskPopupPresenterWidget> newDiskPopupProvider;
     private final Provider<SingleSelectionVmDiskAttachPopupPresenterWidget> attachDiskPopupProvider;
     private final Provider<PublicKeyPopupPresenterWidget> publicKeyPopupProvider;
+    private final Provider<DefaultConfirmationPopupPresenterWidget> defaultPopupProvider;
 
     @Inject
     public UserPortalListProvider(EventBus eventBus,
@@ -77,6 +79,7 @@ public class UserPortalListProvider extends AbstractUserPortalListProvider<UserP
         this.newDiskPopupProvider = newDiskPopupProvider;
         this.attachDiskPopupProvider = attachDiskPopupProvider;
         this.publicKeyPopupProvider = publicKeyPopupProvider;
+        this.defaultPopupProvider = defaultConfirmPopupProvider;
     }
 
     @Override
@@ -118,8 +121,10 @@ public class UserPortalListProvider extends AbstractUserPortalListProvider<UserP
         if (lastExecutedCommand == getModel().getRemoveCommand()) {
             return removeConfirmPopupProvider.get();
         }
-        else if ("OnSave".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
+        else if (source.getConfirmWindow() instanceof VmNextRunConfigurationModel) {
             return nextRunProvider.get();
+        } else if ("OnSave".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
+            return defaultPopupProvider.get();
         } else {
             return super.getConfirmModelPopup(source, lastExecutedCommand);
         }

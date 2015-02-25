@@ -56,7 +56,7 @@ public class TemplateModule extends AbstractGinModule {
     @Provides
     @Singleton
     public MainModelProvider<VmTemplate, TemplateListModel> getTemplateListProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<TemplateEditPresenterWidget> popupProvider,
             final Provider<VmExportPopupPresenterWidget> exportPopupProvider,
             final Provider<VmPopupPresenterWidget> createVmPopupProvider,
@@ -96,6 +96,8 @@ public class TemplateModule extends AbstractGinModule {
                             UICommand lastExecutedCommand) {
                         if (lastExecutedCommand == getModel().getRemoveCommand()) {
                             return removeConfirmPopupProvider.get();
+                        } else if ("OnSave".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
+                            return defaultConfirmPopupProvider.get();
                         } else {
                             return super.getConfirmModelPopup(source, lastExecutedCommand);
                         }

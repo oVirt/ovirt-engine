@@ -667,28 +667,67 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
 
         // cancel confirm window if there is one
         cancelConfirmation();
+        ServerCpu vdsCpu = getVdsGroupServerCpu(model, getSelectedItem());
+        if (vdsCpu != null && model.getCPU().getSelectedItem().getLevel() < vdsCpu.getLevel()) {
+            getWindow().startProgress(null);
+            AsyncQuery _asyncQuery = new AsyncQuery();
+            _asyncQuery.setModel(model);
+            _asyncQuery.asyncCallback = new INewAsyncCallback() {
+                @Override
+                public void onSuccess(Object model, Object result)
+                {
+                    ClusterModel clusterModel = (ClusterModel) model;
+                    final Map<String, String> highCpuVms = (Map<String, String>)result;
+                    AsyncQuery _asyncQuery = new AsyncQuery();
+                    _asyncQuery.setModel(clusterModel);
+                    _asyncQuery.asyncCallback = new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object model, Object result) {
+                            Integer activeVms = (Integer) result;
 
-        AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(model);
-        _asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object result)
-            {
-                ClusterModel clusterModel = (ClusterModel) model;
-                Integer activeVms = (Integer) result;
+                            StringBuilder message = new StringBuilder();
+                            if (!highCpuVms.isEmpty()) {
+                                message.append(ConstantsManager.getInstance()
+                                        .getConstants()
+                                        .changeCpuLevelCustomVmCpusMessage());
+                                for (Map.Entry<String, String> highCpu : highCpuVms.entrySet()) {
+                                    message.append("* \""); //$NON-NLS-1$ // no format strings in GWT
+                                    message.append(highCpu.getKey()); //$NON-NLS-1$
+                                    message.append("\" - "); //$NON-NLS-1$
+                                    message.append(highCpu.getValue());
+                                    message.append(" CPU\n"); //$NON-NLS-1$
+                                }
 
-                ServerCpu vdsCpu = getVdsGroupServerCpu(clusterModel, getSelectedItem());
-                if (activeVms > 0 && vdsCpu != null && clusterModel.getCPU().getSelectedItem().getLevel() < vdsCpu.getLevel()) {
-                    cpuLevelConfirmationWindow();
-                } else {
-                    onSaveInternal();
+                            }
+                            if (activeVms > 0) {
+                                message.append(ConstantsManager.getInstance()
+                                        .getConstants()
+                                        .changeCpuLevelWhileRunningMessage());
+                            }
+                            getWindow().stopProgress();
+                            if (message.length() == 0) {
+                                onSaveInternal();
+                            } else {
+                                message.append(ConstantsManager.getInstance()
+                                        .getConstants()
+                                        .changeCpuLevelWarningMessage());
+                                cpuLevelConfirmationWindow(message.toString());
+                            }
+                        }
+                    };
+                    AsyncDataProvider.getInstance()
+                            .getNumberOfActiveVmsInCluster(_asyncQuery, getSelectedItem().getId());
                 }
-            }
-        };
-        AsyncDataProvider.getInstance().getNumberOfActiveVmsInCluster(_asyncQuery, getSelectedItem().getId());
+            };
+            AsyncDataProvider.getInstance().getClusterUnsupportedVmsCpus(_asyncQuery,
+                    getSelectedItem().getId(),
+                    model.getCPU().getSelectedItem().getCpuName());
+        } else {
+            onSaveInternal();
+        }
     }
 
-    private void cpuLevelConfirmationWindow() {
+    private void cpuLevelConfirmationWindow(String message) {
         ConfirmationModel confirmModel = new ConfirmationModel();
         setConfirmWindow(confirmModel);
         confirmModel.setTitle(ConstantsManager.getInstance()
@@ -696,9 +735,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
                 .changeCpuLevel());
         confirmModel.setHelpTag(HelpTag.change_cpu_level);
         confirmModel.setHashName("change_cpu_level"); //$NON-NLS-1$
-        confirmModel.setMessage(ConstantsManager.getInstance()
-                .getConstants()
-                .changeCpuLevelConfirmation());
+        confirmModel.setMessage(message);
 
         UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSaveInternal", this); //$NON-NLS-1$
         getConfirmWindow().getCommands().add(tempVar);

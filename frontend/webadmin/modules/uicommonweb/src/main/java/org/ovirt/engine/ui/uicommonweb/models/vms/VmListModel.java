@@ -1843,7 +1843,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     private void preSave()
     {
         final UnitVmModel model = (UnitVmModel) getWindow();
-        final String name = model.getName().getEntity();
 
         if (model.getIsNew() == false && selectedItem == null)
         {
@@ -1853,6 +1852,34 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
         setcurrentVm(model.getIsNew() ? new VM() : (VM) Cloner.clone(selectedItem));
 
+        String selectedCpu = model.getCustomCpu().getSelectedItem();
+        if (selectedCpu != null && !selectedCpu.isEmpty()  && !model.getCustomCpu().getItems().contains(selectedCpu)) {
+            confirmCustomCpu("PreSavePhase2"); //$NON-NLS-1$
+        } else {
+            preSavePhase2();
+        }
+    }
+
+    private void confirmCustomCpu(String phase2UiCommand) {
+        ConfirmationModel confirmModel = new ConfirmationModel();
+        confirmModel.setTitle(ConstantsManager.getInstance().getConstants().vmUnsupportedCpuTitle());
+        confirmModel.setMessage(ConstantsManager.getInstance().getConstants().vmUnsupportedCpuMessage());
+        confirmModel.setHelpTag(HelpTag.edit_unsupported_cpu);
+        confirmModel.setHashName("edit_unsupported_cpu"); //$NON-NLS-1$
+
+        confirmModel.getCommands().add(new UICommand(phase2UiCommand, VmListModel.this)
+                .setTitle(ConstantsManager.getInstance().getConstants().ok())
+                .setIsDefault(true));
+
+        confirmModel.getCommands().add(UICommand.createCancelUiCommand("CancelConfirmation", VmListModel.this)); //$NON-NLS-1$
+
+        setConfirmWindow(confirmModel);
+    }
+
+    private void preSavePhase2()
+    {
+        final UnitVmModel model = (UnitVmModel) getWindow();
+        final String name = model.getName().getEntity();
         validateVm(model, name);
     }
 
@@ -2277,6 +2304,11 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         {
             preSave();
         }
+        else if ("PreSavePhase2".equals(command.getName())) //$NON-NLS-1$
+        {
+            preSavePhase2();
+            cancelConfirmation();
+        }
         else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
         {
             onRemove();
@@ -2303,6 +2335,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         }
         else if ("OnNewTemplate".equals(command.getName())) //$NON-NLS-1$
         {
+
             onNewTemplate();
         }
         else if ("OnMigrate".equals(command.getName())) //$NON-NLS-1$

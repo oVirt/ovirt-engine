@@ -69,6 +69,8 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
 
     private UICommand privateNewCommand;
 
+    private VmPool privateCurrentPool;
+
     public UICommand getNewCommand()
     {
         return privateNewCommand;
@@ -398,106 +400,143 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
             return;
         }
 
-        final VmPool pool = model.getIsNew() ? new VmPool() : (VmPool) Cloner.clone(getSelectedItem());
-
+        setCurrentPool(model.getIsNew() ? new VmPool() : (VmPool) Cloner.clone(getSelectedItem()));
         final String name = model.getName().getEntity();
 
         // Check name unicitate.
         AsyncDataProvider.getInstance().isPoolNameUnique(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        Boolean isUnique = (Boolean) returnValue;
+                        new INewAsyncCallback() {
+                            @Override
+                            public void onSuccess(Object target, Object returnValue) {
+                                Boolean isUnique = (Boolean) returnValue;
 
-                        if ((model.getIsNew() && !isUnique)
-                                || (!model.getIsNew() && !isUnique && name.compareToIgnoreCase(pool.getName()) != 0)) {
-                            model.getName()
-                                    .getInvalidityReasons()
-                                    .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
-                            model.getName().setIsValid(false);
-                            model.setValidTab(TabName.GENERAL_TAB, false);
-                            return;
-                        }
+                                if ((model.getIsNew() && !isUnique)
+                                        || (!model.getIsNew() && !isUnique
+                                        && name.compareToIgnoreCase(getCurrentPool().getName()) != 0)) {
+                                    model.getName()
+                                            .getInvalidityReasons()
+                                            .add(ConstantsManager.getInstance()
+                                                    .getConstants()
+                                                    .nameMustBeUniqueInvalidReason());
+                                    model.getName().setIsValid(false);
+                                    model.setValidTab(TabName.GENERAL_TAB, false);
+                                    return;
+                                }
+                                String selectedCpu = model.getCustomCpu().getSelectedItem();
+                                if (selectedCpu != null && !selectedCpu.isEmpty() && !model.getCustomCpu()
+                                        .getItems()
+                                        .contains(selectedCpu)) {
+                                    ConfirmationModel confirmModel = new ConfirmationModel();
+                                    confirmModel.setTitle(ConstantsManager.getInstance()
+                                            .getConstants()
+                                            .vmUnsupportedCpuTitle());
+                                    confirmModel.setMessage(ConstantsManager.getInstance()
+                                            .getConstants()
+                                            .vmUnsupportedCpuMessage());
+                                    confirmModel.setHelpTag(HelpTag.edit_unsupported_cpu);
+                                    confirmModel.setHashName("edit_unsupported_cpu"); //$NON-NLS-1$
 
-                        // Save changes.
-                        pool.setName(model.getName().getEntity());
-                        pool.setVmPoolDescription(model.getDescription().getEntity());
-                        pool.setVdsGroupId(model.getSelectedCluster().getId());
-                        pool.setComment(model.getComment().getEntity());
-                        pool.setPrestartedVms(model.getPrestartedVms().getEntity());
-                        pool.setMaxAssignedVmsPerUser(model.getMaxAssignedVmsPerUser().getEntity());
+                                    confirmModel.getCommands()
+                                            .add(new UICommand("OnSave_Phase2", PoolListModel.this) //$NON-NLS-1$
+                                                    .setTitle(ConstantsManager.getInstance().getConstants().ok())
+                                                    .setIsDefault(true));
 
-                        EntityModel<VmPoolType> poolTypeSelectedItem = model.getPoolType().getSelectedItem();
-                        pool.setVmPoolType(poolTypeSelectedItem.getEntity());
+                                    confirmModel.getCommands()
+                                            .add(UICommand.createCancelUiCommand("CancelConfirmation", //$NON-NLS-1$
+                                                    PoolListModel.this));
 
-                        if (model.getSpiceProxyEnabled().getEntity()) {
-                            pool.setSpiceProxy(model.getSpiceProxy().getEntity());
-                        }
+                                    setConfirmWindow(confirmModel);
+                                } else {
+                                    savePoolPostValidation();
+                                }
 
-                        VM vm = buildVmOnSave(model);
-                        vm.setVmInit(model.getVmInitModel().buildCloudInitParameters(model));
-                        vm.setBalloonEnabled(model.getMemoryBalloonDeviceEnabled().getEntity());
-
-                        vm.setUseLatestVersion(model.getTemplateWithVersion().getSelectedItem().isLatest());
-                        vm.setStateless(false);
-                        vm.setInstanceTypeId(model.getInstanceTypes().getSelectedItem().getId());
-
-                        AddVmPoolWithVmsParameters param =
-                                new AddVmPoolWithVmsParameters(pool, vm, model.getNumOfDesktops().getEntity(), 0);
-
-                        param.setStorageDomainId(Guid.Empty);
-                        param.setDiskInfoDestinationMap(model.getDisksAllocationModel()
-                                                                .getImageToDestinationDomainMap());
-                        param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-                        param.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
-
-                        param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
-                        param.setRngDevice(model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
-
-                        param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
-                        param.setBalloonEnabled(model.getMemoryBalloonDeviceEnabled().getEntity());
-
-                        BuilderExecutor.build(model, param, new UnitToGraphicsDeviceParamsBuilder());
-
-                        if (model.getQuota().getSelectedItem() != null) {
-                            vm.setQuotaId(model.getQuota().getSelectedItem().getId());
-                        }
-
-                        model.startProgress(null);
-
-                        if (model.getIsNew())
-                        {
-                            if (model.getIcon().getEntity().isCustom()) {
-                                param.setVmLargeIcon(model.getIcon().getEntity().getIcon());
                             }
-                            Frontend.getInstance().runMultipleAction(VdcActionType.AddVmPoolWithVms,
-                                    new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { param })),
-                                    new IFrontendMultipleActionAsyncCallback() {
-                                        @Override
-                                        public void executed(FrontendMultipleActionAsyncResult result) {
-                                            cancel();
-                                            stopProgress();
-                                        }
-                                    },
-                                    this);
-                        }
-                        else
-                        {
-                            Frontend.getInstance().runMultipleAction(VdcActionType.UpdateVmPoolWithVms,
-                                    new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { param })),
-                                    new IFrontendMultipleActionAsyncCallback() {
-                                        @Override
-                                        public void executed(FrontendMultipleActionAsyncResult result) {
-                                            cancel();
-                                            stopProgress();
-                                        }
-                                    },
-                                    this);
-                        }
-
-                    }
-                }),
+                        }),
                 name);
+    }
+
+    public void savePoolPostValidation() {
+
+        final PoolModel model = (PoolModel) getWindow();
+
+        VmPool pool = getCurrentPool();
+
+
+        // Save changes.
+        pool.setName(model.getName().getEntity());
+        pool.setVmPoolDescription(model.getDescription().getEntity());
+        pool.setVdsGroupId(model.getSelectedCluster().getId());
+        pool.setComment(model.getComment().getEntity());
+        pool.setPrestartedVms(model.getPrestartedVms().getEntity());
+        pool.setMaxAssignedVmsPerUser(model.getMaxAssignedVmsPerUser().getEntity());
+
+        EntityModel<VmPoolType> poolTypeSelectedItem = model.getPoolType().getSelectedItem();
+        pool.setVmPoolType(poolTypeSelectedItem.getEntity());
+
+        if (model.getSpiceProxyEnabled().getEntity()) {
+            pool.setSpiceProxy(model.getSpiceProxy().getEntity());
+        }
+
+        VM vm = buildVmOnSave(model);
+        vm.setVmInit(model.getVmInitModel().buildCloudInitParameters(model));
+        vm.setBalloonEnabled(model.getMemoryBalloonDeviceEnabled().getEntity());
+
+        vm.setUseLatestVersion(model.getTemplateWithVersion().getSelectedItem().isLatest());
+        vm.setStateless(false);
+        vm.setInstanceTypeId(model.getInstanceTypes().getSelectedItem().getId());
+
+        AddVmPoolWithVmsParameters param =
+                new AddVmPoolWithVmsParameters(pool, vm, model.getNumOfDesktops().getEntity(), 0);
+
+        param.setStorageDomainId(Guid.Empty);
+        param.setDiskInfoDestinationMap(model.getDisksAllocationModel()
+                .getImageToDestinationDomainMap());
+        param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
+        param.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
+
+        param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+        param.setRngDevice(model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
+
+        param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+        param.setBalloonEnabled(model.getMemoryBalloonDeviceEnabled().getEntity());
+
+        BuilderExecutor.build(model, param, new UnitToGraphicsDeviceParamsBuilder());
+
+        if (model.getQuota().getSelectedItem() != null) {
+            vm.setQuotaId(model.getQuota().getSelectedItem().getId());
+        }
+
+        model.startProgress(null);
+
+        if (model.getIsNew())
+        {
+            if (model.getIcon().getEntity().isCustom()) {
+                param.setVmLargeIcon(model.getIcon().getEntity().getIcon());
+            }
+            Frontend.getInstance().runMultipleAction(VdcActionType.AddVmPoolWithVms,
+                    new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { param })),
+                    new IFrontendMultipleActionAsyncCallback() {
+                        @Override
+                        public void executed(FrontendMultipleActionAsyncResult result) {
+                            cancel();
+                            stopProgress();
+                        }
+                    },
+                    this);
+        }
+        else
+        {
+            Frontend.getInstance().runMultipleAction(VdcActionType.UpdateVmPoolWithVms,
+                    new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { param })),
+                    new IFrontendMultipleActionAsyncCallback() {
+                        @Override
+                        public void executed(FrontendMultipleActionAsyncResult result) {
+                            cancel();
+                            stopProgress();
+                        }
+                    },
+                    this);
+        }
     }
 
     protected static VM buildVmOnSave(PoolModel model) {
@@ -580,9 +619,18 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
         {
             onSave();
         }
+        if ("OnSave_Phase2".equals(command.getName())) //$NON-NLS-1$
+        {
+            savePoolPostValidation();
+            setConfirmWindow(null);
+        }
         if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
         {
             onRemove();
+        }
+        if ("CancelConfirmation".equals(command.getName())) //$NON-NLS-1$
+        {
+            cancelConfirmation();
         }
     }
 
@@ -591,4 +639,16 @@ public class PoolListModel extends ListWithSimpleDetailsModel<Void, VmPool> impl
         return "PoolListModel"; //$NON-NLS-1$
     }
 
+    public VmPool getCurrentPool() {
+        return privateCurrentPool;
+    }
+
+    public void setCurrentPool(VmPool privateCurrentPool) {
+        this.privateCurrentPool = privateCurrentPool;
+    }
+
+    private void cancelConfirmation()
+    {
+        setConfirmWindow(null);
+    }
 }

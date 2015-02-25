@@ -1327,7 +1327,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                     @Override
                     public String getDisplayStringNullSafe(String data) {
                         if (data == null || data.trim().isEmpty()) {
-                            data = constants.clusterDefaultOption();
+                            data = getDefaultEmulatedMachineLabel();
                         }
                         return typeAheadNameTemplateNullSafe(data);
                     }
@@ -1342,7 +1342,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                     @Override
                     public String getDisplayStringNullSafe(String data) {
                         if (data == null || data.trim().isEmpty()) {
-                            data = constants.clusterDefaultOption();
+                            data = getDefaultCpuTypeLabel();
                         }
                         return typeAheadNameTemplateNullSafe(data);
                     }
@@ -1787,6 +1787,34 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 rngPanel.setVisible(object.getIsRngEnabled().getEntity());
             }
         });
+
+        object.getDataCenterWithClustersList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                emulatedMachine.setNullReplacementString(getDefaultEmulatedMachineLabel());
+                customCpu.setNullReplacementString(getDefaultCpuTypeLabel());
+            }
+        });
+    }
+
+    private String getDefaultEmulatedMachineLabel() {
+        VDSGroup vdsGroup = getModel().getSelectedCluster();
+        String newClusterEmulatedMachine = constants.clusterDefaultOption();
+        if (vdsGroup != null) {
+            String emulatedMachine = (vdsGroup.getEmulatedMachine() == null) ? "" : vdsGroup.getEmulatedMachine(); //$NON-NLS-1$
+            newClusterEmulatedMachine +=  "(" + emulatedMachine + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        return newClusterEmulatedMachine;
+    }
+
+    private String getDefaultCpuTypeLabel() {
+        VDSGroup vdsGroup = getModel().getSelectedCluster();
+        String newClusterCpuModel = constants.clusterDefaultOption();
+        if (vdsGroup != null) {
+            String cpuName = (vdsGroup.getCpuName() == null) ? "" : vdsGroup.getCpuName(); //$NON-NLS-1$
+            newClusterCpuModel += "(" + cpuName + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        return newClusterCpuModel;
     }
 
     /**

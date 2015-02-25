@@ -107,6 +107,7 @@ import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameter
 import org.ovirt.engine.core.common.queries.GetAllProvidersParameters;
 import org.ovirt.engine.core.common.queries.GetAllServerCpuListParameters;
 import org.ovirt.engine.core.common.queries.GetClusterFeaturesByVersionAndCategoryParameters;
+import org.ovirt.engine.core.common.queries.GetClusterUnsupportedVmsCpusParameters;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.GetConnectionsByDataCenterAndStorageTypeParameters;
 import org.ovirt.engine.core.common.queries.GetDataCentersWithPermittedActionOnClustersParameters;
@@ -4214,6 +4215,21 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterStorageDevices,
                 new IdQueryParameters(hostId),
                 aQuery);
+    }
+
+    public void getClusterUnsupportedVmsCpus(AsyncQuery aQuery, Guid vdsGroupId, String newCpuName) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+                if (source != null) {
+                    return source;
+                }
+                return new HashMap();
+            }
+        };
+        Frontend.getInstance()
+                .runQuery(VdcQueryType.GetClusterUnsupportedVmsCpus,
+                        new GetClusterUnsupportedVmsCpusParameters(vdsGroupId, newCpuName), aQuery);
     }
 
     private static class AsIsAsyncConverter implements IAsyncConverter {

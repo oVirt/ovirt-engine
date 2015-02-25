@@ -536,6 +536,10 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             updateExistingVm(UserPortalListModel.this, model.getApplyCpuLater().getEntity());
             setConfirmWindow(null);
         }
+        else if ("postVmNameUniqueCheck".equals(command.getName())) { // $NON-NLS-1$
+            postVmNameUniqueCheck();
+            setConfirmWindow(null);
+        }
     }
 
     private void editConsoleKey() {
@@ -1049,7 +1053,24 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                             unitModel.setValidTab(TabName.GENERAL_TAB, false);
                             stopProgress(target);
                         } else {
-                            userPortalListModel.postVmNameUniqueCheck(userPortalListModel);
+                            String selectedCpu = model.getCustomCpu().getSelectedItem();
+                            if (selectedCpu != null && !selectedCpu.isEmpty()  && !model.getCustomCpu().getItems().contains(selectedCpu)) {
+                                ConfirmationModel confirmModel = new ConfirmationModel();
+                                confirmModel.setTitle(ConstantsManager.getInstance().getConstants().vmUnsupportedCpuTitle());
+                                confirmModel.setMessage(ConstantsManager.getInstance().getConstants().vmUnsupportedCpuMessage());
+                                confirmModel.setHelpTag(HelpTag.edit_unsupported_cpu);
+                                confirmModel.setHashName("edit_unsupported_cpu"); //$NON-NLS-1$
+
+                                confirmModel.getCommands().add(new UICommand("postVmNameUniqueCheck", UserPortalListModel.this) //$NON-NLS-1$
+                                        .setTitle(ConstantsManager.getInstance().getConstants().ok())
+                                        .setIsDefault(true));
+
+                                confirmModel.getCommands().add(UICommand.createCancelUiCommand("CancelConfirmation", UserPortalListModel.this)); //$NON-NLS-1$
+
+                                setConfirmWindow(confirmModel);
+                            } else {
+                                userPortalListModel.postVmNameUniqueCheck();
+                            }
                         }
 
                     }
@@ -1067,7 +1088,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         }
     }
 
-    public void postVmNameUniqueCheck(final UserPortalListModel userPortalListModel)
+    public void postVmNameUniqueCheck()
     {
         final UnitVmModel model = (UnitVmModel) getWindow();
 
@@ -1084,7 +1105,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         }
         else
         {
-            final VM selectedItem = (VM) ((UserPortalItemModel) userPortalListModel.getSelectedItem()).getEntity();
+            final VM selectedItem = (VM) (getSelectedItem()).getEntity();
             gettempVm().setUseLatestVersion(model.getTemplateWithVersion().getSelectedItem().isLatest());
 
             if (selectedItem.isRunningOrPaused()) {
@@ -1112,13 +1133,13 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                             setConfirmWindow(confirmModel);
                         }
                         else {
-                            updateExistingVm(userPortalListModel, false);
+                            updateExistingVm((UserPortalListModel)thisModel, false);
                         }
                     }
                 }));
             }
             else {
-                updateExistingVm(userPortalListModel, false);
+                updateExistingVm(this, false);
             }
         }
     }

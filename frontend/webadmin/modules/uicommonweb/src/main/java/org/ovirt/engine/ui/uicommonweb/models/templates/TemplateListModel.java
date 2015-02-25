@@ -591,14 +591,14 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
 
     private void onSave()
     {
-        UnitVmModel model = (UnitVmModel) getWindow();
+        final UnitVmModel model = (UnitVmModel) getWindow();
 
         if (!model.validate())
         {
             return;
         }
 
-        String name = model.getName().getEntity();
+        final String name = model.getName().getEntity();
 
         boolean isBaseTemplate = false;
 
@@ -614,14 +614,47 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
 
-                            TemplateListModel templateListModel = (TemplateListModel) target;
                             boolean isNameUnique = (Boolean) returnValue;
-                            templateListModel.postNameUniqueCheck(isNameUnique);
+
+                            if (model.getBehavior().isExistingTemplateBehavior()) {
+                                selectedItem = ((TemplateVmModelBehavior) model.getBehavior()).getVmTemplate();
+                            } else {
+                                selectedItem = ((ExistingBlankTemplateModelBehavior) model.getBehavior()).getVmTemplate();
+                            }
+
+                            if (!isNameUnique && name.compareToIgnoreCase(selectedItem.getName()) != 0) {
+                                model.getName()
+                                        .getInvalidityReasons()
+                                        .add(ConstantsManager.getInstance()
+                                                .getConstants()
+                                                .nameMustBeUniqueInvalidReason());
+                                model.getName().setIsValid(false);
+                                model.setValidTab(TabName.GENERAL_TAB, false);
+                                return;
+                            }
+
+                            String selectedCpu = model.getCustomCpu().getSelectedItem();
+                            if (selectedCpu != null && !selectedCpu.isEmpty()  && !model.getCustomCpu().getItems().contains(selectedCpu)) {
+                                ConfirmationModel confirmModel = new ConfirmationModel();
+                                confirmModel.setTitle(ConstantsManager.getInstance().getConstants().vmUnsupportedCpuTitle());
+                                confirmModel.setMessage(ConstantsManager.getInstance().getConstants().vmUnsupportedCpuMessage());
+                                confirmModel.setHelpTag(HelpTag.edit_unsupported_cpu);
+                                confirmModel.setHashName("edit_unsupported_cpu"); //$NON-NLS-1$
+
+                                confirmModel.getCommands().add(new UICommand("postNameUniqueCheck", TemplateListModel.this) //$NON-NLS-1$
+                                        .setTitle(ConstantsManager.getInstance().getConstants().ok())
+                                        .setIsDefault(true));
+
+                                confirmModel.getCommands()
+                                        .add(UICommand.createCancelUiCommand("CancelConfirmation", TemplateListModel.this)); //$NON-NLS-1$
+
+                                setConfirmWindow(confirmModel);
+                            }
 
                         }
                     }), name, model.getSelectedDataCenter() == null ? null : model.getSelectedDataCenter().getId());
         } else {
-            postNameUniqueCheck(true);
+            postNameUniqueCheck();
         }
     }
 
@@ -643,7 +676,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         validateVm(model, name);
     }
 
-    public void postNameUniqueCheck(boolean isNameUnique)
+    public void postNameUniqueCheck()
     {
         final UnitVmModel model = (UnitVmModel) getWindow();
 
@@ -667,18 +700,6 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
                 ? null
                 : IconUtils.filterPredefinedIcons(model.getIcon().getEntity().getIcon());
 
-        String name = model.getName().getEntity();
-
-        // Check name unicitate.
-        if (!isNameUnique && name.compareToIgnoreCase(template.getName()) != 0)
-        {
-            model.getName()
-                    .getInvalidityReasons()
-                    .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
-            model.getName().setIsValid(false);
-            model.setValidTab(TabName.GENERAL_TAB, false);
-            return;
-        }
 
         // Save changes.
         buildTemplateOnSave(model, template);
@@ -901,6 +922,10 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         else if ("OnSaveVm".equals(command.getName())) //$NON-NLS-1$
         {
             onSaveVm();
+        }
+        else if ("postNameUniqueCheck".equals(command.getName())) { //$NON-NLS-1$
+            postNameUniqueCheck();
+            setConfirmWindow(null);
         }
         else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
         {

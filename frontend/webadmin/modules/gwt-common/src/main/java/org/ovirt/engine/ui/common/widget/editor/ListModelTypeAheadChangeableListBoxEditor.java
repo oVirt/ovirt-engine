@@ -49,4 +49,8 @@ public class ListModelTypeAheadChangeableListBoxEditor extends AbstractValidated
             return data; // for string objects the replacement value is the object itself (null safe)
         }
     }
+
+    public void setNullReplacementString(String nullReplacementString) {
+        super.getContentWidget().setNullReplacementString(nullReplacementString);
+    }
 }

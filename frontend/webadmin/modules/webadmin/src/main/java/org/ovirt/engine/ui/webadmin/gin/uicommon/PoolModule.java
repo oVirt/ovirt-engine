@@ -38,7 +38,7 @@ public class PoolModule extends AbstractGinModule {
     @Provides
     @Singleton
     public MainModelProvider<VmPool, PoolListModel> getPoolListProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<PoolNewPopupPresenterWidget> poolPopupProvider,
             final Provider<PoolEditPopupPresenterWidget> poolEditPopupProvider,
@@ -64,7 +64,11 @@ public class PoolModule extends AbstractGinModule {
                             UICommand lastExecutedCommand) {
                         if (lastExecutedCommand == getModel().getRemoveCommand()) {
                             return removeConfirmPopupProvider.get();
-                        } else {
+                        } else if ("OnSave".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
+                            return defaultConfirmPopupProvider.get();
+                        }
+
+                        else {
                             return super.getConfirmModelPopup(source, lastExecutedCommand);
                         }
                     }
