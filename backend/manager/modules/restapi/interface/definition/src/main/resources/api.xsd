@@ -1759,8 +1759,8 @@
   <xs:element name="agents" type="Agents"/>
 
   <xs:complexType name="Agents">
-      <xs:complexContent>
-      <xs:extension base="BaseResource">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
         <xs:sequence>
           <xs:element name="agent" type="Agent" minOccurs="0" maxOccurs="unbounded">
             <xs:annotation>
@@ -1785,7 +1785,7 @@
       <xs:element name="options" type="Options" minOccurs="0"/>
       <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
       <xs:element ref="pm_proxies" minOccurs="0" maxOccurs="1"/>
-      <xs:element ref="agents" minOccurs="0"/>
+      <xs:element ref="agents" minOccurs="0" maxOccurs="1"/>
       <xs:element name="automatic_pm_enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
       <xs:element name="kdump_detection" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
