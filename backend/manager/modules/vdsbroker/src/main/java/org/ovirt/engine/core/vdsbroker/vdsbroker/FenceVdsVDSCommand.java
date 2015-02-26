@@ -1,24 +1,16 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
-import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
-import org.ovirt.engine.core.common.utils.FencingPolicyHelper;
 import org.ovirt.engine.core.common.vdscommands.FenceVdsVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.pm.VdsFenceOptions;
 
 public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends VdsBrokerCommand<P> {
     private FenceStatusReturnForXmlRpc _result;
@@ -132,46 +124,6 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
         return ret;
     }
 
-    protected Map<String, Object> convertFencingPolicy() {
-        Map<String, Object> map = null;
-        if (getParameters().getFencingPolicy() != null
-                && FencingPolicyHelper.isFencingPolicySupported(getProxyVds().getSupportedClusterVersionsSet())) {
-            // fencing policy is entered and proxy supports passing fencing policy parameters
-            map = new HashMap<>();
-            if (getParameters().getFencingPolicy().isSkipFencingIfSDActive()) {
-                // create map STORAGE_DOMAIN_GUID -> HOST_SPM_ID to pass to fence proxy
-                map.put(VdsProperties.STORAGE_DOMAIN_HOST_ID_MAP, createStorageDomainHostIdMap());
-            }
-        }
-        return map;
-    }
-
-    protected Map<Guid, Integer> createStorageDomainHostIdMap() {
-        Map<Guid, Integer> map = null;
-        if (getParameters().getFencingPolicy().isSkipFencingIfSDActive()) {
-            map = new HashMap<>();
-
-            vds_spm_id_map hostIdRecord = getDbFacade().getVdsSpmIdMapDao().get(
-                    getTargetVds().getId());
-
-            // create a map SD_GUID -> HOST_ID
-            for (StorageDomain sd : getDbFacade().getStorageDomainDao().getAllForStoragePool(
-                    getTargetVds().getStoragePoolId())
-            ) {
-                if (sd.getStorageStaticData().getStorageDomainType() == StorageDomainType.Master ||
-                        sd.getStorageStaticData().getStorageDomainType() == StorageDomainType.Data) {
-                    // VDS_SPM_ID identifies the host in sanlock
-                    map.put(sd.getId(), hostIdRecord.getvds_spm_id());
-                }
-            }
-        }
-        return map;
-    }
-
-    protected String getVdsFenceOptions(String type, String options, String compatibilityVersion) {
-        return new VdsFenceOptions(type, options, compatibilityVersion).ToInternalString();
-    }
-
     protected FenceStatusReturnForXmlRpc fenceNode(FenceActionType fenceAction) {
         FenceAgent agent = getParameters().getFenceAgent();
         return getBroker().fenceNode(
@@ -182,12 +134,9 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
                 agent.getPassword(),
                 fenceAction.getValue(),
                 "",
-                getVdsFenceOptions(
-                        agent.getType(),
-                        agent.getOptions(),
-                        getProxyVds().getVdsGroupCompatibilityVersion().toString()),
+                agent.getOptions(),
                 getParameters().getAction() != FenceActionType.STATUS
-                        ? convertFencingPolicy()
+                        ? getParameters().getFencingPolicyParams()
                         : null);
     }
 

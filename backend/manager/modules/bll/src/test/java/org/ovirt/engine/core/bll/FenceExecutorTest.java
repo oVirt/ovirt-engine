@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.stub;
 import static org.mockito.Mockito.verify;
@@ -103,6 +104,7 @@ public class FenceExecutorTest extends DbDependentTestBase {
         when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
         when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.FenceVds), any(VDSParametersBase.class))).thenReturn(retValue);
         when(architectureHelper.getArchitecture(vdsStatic)).thenReturn(CLUSTER_ARCHITECTURE_TYPE);
+        doReturn("").when(executor).getOptions(any(FenceAgent.class), any(VDS.class));
     }
 
     private void mockDbFacades() {

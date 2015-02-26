@@ -1,15 +1,16 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
-import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.compat.Guid;
 
 public class FenceVdsVDSCommandParameters extends VdsIdVDSCommandParametersBase {
     private Guid targetVdsId;
     private FenceAgent fenceAgent;
     private FenceActionType action;
-    private FencingPolicy fencingPolicy;
+    private Map<String, Object> fencingPolicyParams;
 
     private FenceVdsVDSCommandParameters() {
         action = FenceActionType.RESTART;
@@ -21,12 +22,12 @@ public class FenceVdsVDSCommandParameters extends VdsIdVDSCommandParametersBase 
             Guid targetVdsId,
             FenceAgent fenceAgent,
             FenceActionType action,
-            FencingPolicy fencingPolicy) {
+            Map<String, Object> fencingPolicyParams) {
         super(proxyVdsId);
         this.targetVdsId = targetVdsId;
         this.fenceAgent = fenceAgent;
         this.action = action;
-        this.fencingPolicy = fencingPolicy;
+        this.fencingPolicyParams = fencingPolicyParams;
     }
 
     public Guid getTargetVdsID() {
@@ -41,8 +42,8 @@ public class FenceVdsVDSCommandParameters extends VdsIdVDSCommandParametersBase 
         return action;
     }
 
-    public FencingPolicy getFencingPolicy() {
-        return fencingPolicy;
+    public Map<String, Object> getFencingPolicyParams() {
+        return fencingPolicyParams;
     }
 
     @Override
@@ -53,6 +54,6 @@ public class FenceVdsVDSCommandParameters extends VdsIdVDSCommandParametersBase 
                 getTargetVdsID(),
                 getAction(),
                 getFenceAgent(),
-                getFencingPolicy());
+                getFencingPolicyParams());
     }
 }

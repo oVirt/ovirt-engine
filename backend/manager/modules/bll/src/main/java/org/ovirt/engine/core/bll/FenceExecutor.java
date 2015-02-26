@@ -1,15 +1,22 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
+import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.utils.FencingPolicyHelper;
 import org.ovirt.engine.core.common.vdscommands.FenceVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SpmStopVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -20,6 +27,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.pm.VdsFenceOptions;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -181,7 +189,7 @@ public class FenceExecutor {
 
         FenceAgent realAgent = new FenceAgent(agent);
         realAgent.setType(VdsFenceOptions.getRealAgent(agent.getType()));
-        realAgent.setOptions(getOptions(agent));
+        realAgent.setOptions(getOptions(agent, proxyHost));
 
         return getBackend().getResourceManager()
                     .RunVdsCommand(
@@ -191,7 +199,7 @@ public class FenceExecutor {
                                 _vds.getId(),
                                 realAgent,
                                 action,
-                                fencingPolicy));
+                                convertFencingPolicy(proxyHost)));
     }
 
     private void auditFenceAction(FenceActionType action, FenceAgent agent, VDS proxyHost) {
@@ -230,12 +238,17 @@ public class FenceExecutor {
         }
     }
 
-    private String getOptions(FenceAgent agent) {
+    protected String getOptions(FenceAgent agent, VDS proxyHost) {
         ArchitectureType architectureType = architectureHelper.getArchitecture(_vds.getStaticData());
         String managementOptions =
-                VdsFenceOptions.getDefaultAgentOptions(agent.getType(),
-                        agent.getOptions() == null ? "" : agent.getOptions(),
-                        architectureType);
+                new VdsFenceOptions(
+                        agent.getType(),
+                        VdsFenceOptions.getDefaultAgentOptions(
+                                agent.getType(),
+                                agent.getOptions() == null ? "" : agent.getOptions(),
+                                architectureType),
+                        proxyHost.getVdsGroupCompatibilityVersion().toString()
+                ).ToInternalString();
         return managementOptions;
     }
 
@@ -286,5 +299,42 @@ public class FenceExecutor {
 
     public void setProxyLocator(FenceProxyLocator proxyLocator) {
         this.proxyLocator = proxyLocator;
+    }
+
+    DbFacade getDbFacade() {
+        return DbFacade.getInstance();
+    }
+
+    protected Map<String, Object> convertFencingPolicy(VDS proxyHost) {
+        Map<String, Object> map = null;
+        if (fencingPolicy != null
+                && FencingPolicyHelper.isFencingPolicySupported(proxyHost.getSupportedClusterVersionsSet())) {
+            // fencing policy is entered and proxy supports passing fencing policy parameters
+            map = new HashMap<>();
+            if (fencingPolicy.isSkipFencingIfSDActive()) {
+                // create map STORAGE_DOMAIN_GUID -> HOST_SPM_ID to pass to fence proxy
+                map.put(VdsProperties.STORAGE_DOMAIN_HOST_ID_MAP, createStorageDomainHostIdMap());
+            }
+        }
+        return map;
+    }
+
+    protected Map<Guid, Integer> createStorageDomainHostIdMap() {
+        Map<Guid, Integer> map = null;
+        if (fencingPolicy.isSkipFencingIfSDActive()) {
+            map = new HashMap<>();
+
+            vds_spm_id_map hostIdRecord = getDbFacade().getVdsSpmIdMapDao().get(_vds.getId());
+
+            // create a map SD_GUID -> HOST_ID
+            for (StorageDomain sd : getDbFacade().getStorageDomainDao().getAllForStoragePool(_vds.getStoragePoolId())) {
+                if (sd.getStorageStaticData().getStorageDomainType() == StorageDomainType.Master ||
+                        sd.getStorageStaticData().getStorageDomainType() == StorageDomainType.Data) {
+                    // VDS_SPM_ID identifies the host in sanlock
+                    map.put(sd.getId(), hostIdRecord.getvds_spm_id());
+                }
+            }
+        }
+        return map;
     }
 }
