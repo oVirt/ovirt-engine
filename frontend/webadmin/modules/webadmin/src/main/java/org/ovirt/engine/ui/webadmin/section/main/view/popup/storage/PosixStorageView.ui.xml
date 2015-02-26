@@ -43,7 +43,7 @@
                         <g:Label ui:field="pathLabel" addStyleNames="{style.label}"/>
                     </td>
                     <td>
-                        <ge:StringEntityModelTextBoxOnlyEditor ui:field="pathEditor"/>
+                        <ge:StringEntityModelTextBoxOnlyEditor ui:field="pathEditor" addStyleNames="table_contentWidget_pfly_fix"/>
                     </td>
                 </tr>
                 <tr>
@@ -58,7 +58,7 @@
                     </td>
                     <td>
                         <g:HorizontalPanel>
-                            <ge:StringEntityModelTextBoxOnlyEditor ui:field="vfsTypeEditor"/>
+                            <ge:StringEntityModelTextBoxOnlyEditor ui:field="vfsTypeEditor" addStyleNames="table_contentWidget_pfly_fix"/>
                             <g:Image ui:field="nfsPosixAlertIcon" resource='{resources.alertImage}' visible="false" addStyleNames="{style.nfsPosixAlertIcon}"/>
                         </g:HorizontalPanel>
                     </td>
@@ -68,7 +68,7 @@
                         <g:Label ui:field="mountOptionsLabel" addStyleNames="{style.label}"/>
                     </td>
                     <td>
-                        <ge:StringEntityModelTextBoxOnlyEditor ui:field="mountOptionsEditor"/>
+                        <ge:StringEntityModelTextBoxOnlyEditor ui:field="mountOptionsEditor" addStyleNames="table_contentWidget_pfly_fix"/>
                     </td>
                 </tr>
             </table>
