@@ -50,6 +50,10 @@ public class EvenDistributionWeightPolicyUnit extends PolicyUnitImpl {
             score = Math.min((int) Math.round(
                     calcDistributeMetric(vds, vm, effectiveCpuCores)) + 1, MaxSchedulerWeight);
         }
+
+        // TODO Each 100 MB of free memory is equal to 1% of free CPU
+        score -= vds.getMaxSchedulingMemory() / 100;
+
         return score;
     }
 

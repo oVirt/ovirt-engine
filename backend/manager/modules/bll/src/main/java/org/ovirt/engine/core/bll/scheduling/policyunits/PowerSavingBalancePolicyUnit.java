@@ -2,14 +2,12 @@ package org.ovirt.engine.core.bll.scheduling.policyunits;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.scheduling.utils.FindVmAndDestinations;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
@@ -33,7 +31,7 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PowerSavingBalancePolicyUnit extends EvenDistributionBalancePolicyUnit {
+public class PowerSavingBalancePolicyUnit extends CpuAndMemoryBalancingPolicyUnit {
     private static final Logger log = LoggerFactory.getLogger(PowerSavingBalancePolicyUnit.class);
 
     public PowerSavingBalancePolicyUnit(PolicyUnit policyUnit) {
@@ -260,66 +258,81 @@ public class PowerSavingBalancePolicyUnit extends EvenDistributionBalancePolicyU
     }
 
     @Override
-    protected List<VDS> getOverUtilizedHosts(List<VDS> relevantHosts,
-            Map<String, String> parameters) {
+    protected FindVmAndDestinations getFindVmAndDestinations(VDSGroup cluster, Map<String, String> parameters) {
+        final int highUtilization = tryParseWithDefault(parameters.get("HighUtilization"), Config
+                .<Integer>getValue(ConfigValues.HighUtilizationForPowerSave));
+        final long overUtilizedMemory =
+                parameters.containsKey(EvenDistributionBalancePolicyUnit.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED) ?
+                        Long.valueOf(parameters.get(EvenDistributionBalancePolicyUnit.LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED)) :
+                        0L;
+
+        return new FindVmAndDestinations(cluster, highUtilization, overUtilizedMemory);
+    }
+
+    @Override
+    protected List<VDS> getPrimarySources(VDSGroup cluster, List<VDS> candidateHosts, Map<String, String> parameters) {
+        int highUtilization = tryParseWithDefault(parameters.get("HighUtilization"), Config
+                .<Integer>getValue(ConfigValues.HighUtilizationForPowerSave));
         final int lowUtilization = tryParseWithDefault(parameters.get("LowUtilization"), Config
-                .<Integer> getValue(ConfigValues.LowUtilizationForPowerSave));
+                .<Integer>getValue(ConfigValues.LowUtilizationForPowerSave));
         final int cpuOverCommitDurationMinutes =
                 tryParseWithDefault(parameters.get("CpuOverCommitDurationMinutes"), Config
-                        .<Integer> getValue(ConfigValues.CpuOverCommitDurationMinutes));
-        List<VDS> overUtilized = LinqUtils.filter(relevantHosts, new Predicate<VDS>() {
-            @Override
-            public boolean eval(VDS p) {
-                return p.getUsageCpuPercent() <= lowUtilization
-                        && p.getCpuOverCommitTimestamp() != null
-                        && (new Date().getTime() - p.getCpuOverCommitTimestamp().getTime()) >=
-                        cpuOverCommitDurationMinutes * 60L * 1000L
-                        && p.getVmCount() > 0;
-            }
-        });
-        // The order of sorting will be from smallest to biggest. The vm will be
-        // moved from less underutilized host to more underutilized host
-        Collections.sort(overUtilized, new Comparator<VDS>() {
-            @Override
-            public int compare(VDS o1, VDS o2) {
-                int primary = o1.getVmCount() - o2.getVmCount();
-                if (primary != 0)
-                    return primary;
-                else {
-                    return new VdsCpuUsageComparator().compare(o1, o2);
-                }
-            }
-        });
-        overUtilized.addAll(super.getOverUtilizedHosts(relevantHosts, parameters));
-        return overUtilized;
+                        .<Integer>getValue(ConfigValues.CpuOverCommitDurationMinutes));
+        final int highVdsCount = Math
+                .min(Config.<Integer>getValue(ConfigValues.UtilizationThresholdInPercent)
+                                * highUtilization / 100,
+                        highUtilization
+                                - Config.<Integer>getValue(ConfigValues.VcpuConsumptionPercentage));
+
+        List<VDS> result = new ArrayList<>();
+        result.addAll(getUnderUtilizedCPUHosts(candidateHosts, lowUtilization, 1, cpuOverCommitDurationMinutes));
+        result.addAll(getOverUtilizedCPUHosts(candidateHosts, highVdsCount, cpuOverCommitDurationMinutes));
+
+        return result;
     }
 
     @Override
-    protected int getHighUtilizationDefaultValue() {
-        return Config.<Integer> getValue(ConfigValues.HighUtilizationForPowerSave);
-    }
-
-    @Override
-    protected List<VDS> getUnderUtilizedHosts(VDSGroup cluster,
-            List<VDS> relevantHosts,
+    protected List<VDS> getPrimaryDestinations(VDSGroup cluster,
+            List<VDS> candidateHosts,
             Map<String, String> parameters) {
         int highUtilization = tryParseWithDefault(parameters.get("HighUtilization"), Config
-                .<Integer> getValue(ConfigValues.HighUtilizationForPowerSave));
-        final int lowUtilization = tryParseWithDefault(parameters.get("LowUtilization"), Config
-                .<Integer> getValue(ConfigValues.LowUtilizationForPowerSave));
-        final int highVdsCount = Math
-                .min(Config.<Integer> getValue(ConfigValues.UtilizationThresholdInPercent)
-                        * highUtilization / 100,
-                        highUtilization
-                                - Config.<Integer> getValue(ConfigValues.VcpuConsumptionPercentage));
-        List<VDS> underUtilizedHosts = LinqUtils.filter(relevantHosts, new Predicate<VDS>() {
-            @Override
-            public boolean eval(VDS p) {
-                return (p.getUsageCpuPercent() + calcSpmCpuConsumption(p)) < highVdsCount
-                        && (p.getUsageCpuPercent() > lowUtilization);
-            }
-        });
-        Collections.sort(underUtilizedHosts, new VdsCpuUsageComparator());
-        return underUtilizedHosts;
+                .<Integer>getValue(ConfigValues.HighUtilizationForPowerSave));
+        int lowUtilization = tryParseWithDefault(parameters.get("LowUtilization"), Config
+                .<Integer>getValue(ConfigValues.LowUtilizationForPowerSave));
+        final int cpuOverCommitDurationMinutes =
+                tryParseWithDefault(parameters.get("CpuOverCommitDurationMinutes"), Config
+                        .<Integer>getValue(ConfigValues.CpuOverCommitDurationMinutes));
+
+        final List<VDS> result = getNormallyUtilizedCPUHosts(cluster,
+                candidateHosts,
+                highUtilization,
+                cpuOverCommitDurationMinutes,
+                lowUtilization);
+        return result;
+    }
+
+    @Override
+    protected List<VDS> getSecondarySources(VDSGroup cluster,
+            List<VDS> candidateHosts,
+            Map<String, String> parameters) {
+        long lowMemoryLimit = parameters.containsKey(LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED) ?
+                Long.valueOf(parameters.get(LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED)) : 0L;
+        long highMemoryLimit = parameters.containsKey(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED) ?
+                Long.valueOf(parameters.get(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED)) : 0L;
+
+        List<VDS> result = new ArrayList<>();
+        result.addAll(getUnderUtilizedMemoryHosts(candidateHosts, highMemoryLimit, 1));
+        result.addAll(getOverUtilizedMemoryHosts(candidateHosts, lowMemoryLimit));
+        return result;
+    }
+
+    @Override
+    protected List<VDS> getSecondaryDestinations(VDSGroup cluster, List<VDS> candidateHosts, Map<String, String> parameters) {
+        long notEnoughMemory = parameters.containsKey(LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED) ?
+                Long.valueOf(parameters.get(LOW_MEMORY_LIMIT_FOR_OVER_UTILIZED)) : 0L;
+        long tooMuchMemory = parameters.containsKey(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED) ?
+                Long.valueOf(parameters.get(HIGH_MEMORY_LIMIT_FOR_UNDER_UTILIZED)) : 0L;
+
+        return getNormallyUtilizedMemoryHosts(candidateHosts, notEnoughMemory, tooMuchMemory);
     }
 }

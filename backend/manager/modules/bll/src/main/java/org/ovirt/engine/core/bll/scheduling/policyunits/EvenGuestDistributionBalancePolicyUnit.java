@@ -56,13 +56,11 @@ public class EvenGuestDistributionBalancePolicyUnit extends EvenDistributionBala
     }
 
     @Override
-    protected List<VDS> getOverUtilizedHosts(List<VDS> relevantHosts,
-            final Map<String, String> parameters) {
-
+    protected List<VDS> getPrimarySources(VDSGroup cluster, List<VDS> candidateHosts, final Map<String, String> parameters) {
         final int highVmCountUtilization = NumberUtils.toInt(parameters.get("HighVmCount"),
                 highVmCountDefault);
 
-        final VDS worstVDS = getWorstVDS(relevantHosts, parameters);
+        final VDS worstVDS = getWorstVDS(candidateHosts, parameters);
         final int worstVdsOccupiedVmSlots = getOccupiedVmSlots(worstVDS, parameters);
         if (worstVdsOccupiedVmSlots < highVmCountUtilization) {
             log.info("There is no host with more than {} running guests, no balancing is needed",
@@ -70,27 +68,23 @@ public class EvenGuestDistributionBalancePolicyUnit extends EvenDistributionBala
             return null;
         }
 
-        return LinqUtils.filter(relevantHosts, new Predicate<VDS>() {
+        return LinqUtils.filter(candidateHosts, new Predicate<VDS>() {
             @Override
             public boolean eval(VDS p) {
                 return getOccupiedVmSlots(p, parameters) >= worstVdsOccupiedVmSlots;
             }
         });
-
     }
 
     @Override
-    protected List<VDS> getUnderUtilizedHosts(VDSGroup cluster,
-            List<VDS> relevantHosts,
-            final Map<String, String> parameters) {
-
+    protected List<VDS> getPrimaryDestinations(VDSGroup cluster, List<VDS> candidateHosts, final Map<String, String> parameters) {
         final int migrationThreshold = NumberUtils.toInt(parameters.get("MigrationThreshold"),
                 migrationThresholdDefault);
 
-        final VDS worstVDS = getWorstVDS(relevantHosts, parameters);
+        final VDS worstVDS = getWorstVDS(candidateHosts, parameters);
         final int worstVdsOccupiedVmSlots = getOccupiedVmSlots(worstVDS, parameters);
 
-        List<VDS> underUtilizedHosts = LinqUtils.filter(relevantHosts, new Predicate<VDS>() {
+        List<VDS> underUtilizedHosts = LinqUtils.filter(candidateHosts, new Predicate<VDS>() {
             @Override
             public boolean eval(VDS p) {
                 int distance = worstVdsOccupiedVmSlots - getOccupiedVmSlots(p, parameters);
@@ -106,4 +100,13 @@ public class EvenGuestDistributionBalancePolicyUnit extends EvenDistributionBala
         return underUtilizedHosts;
     }
 
+    @Override
+    protected List<VDS> getSecondarySources(VDSGroup cluster, List<VDS> candidateHosts, Map<String, String> parameters) {
+        return null;
+    }
+
+    @Override
+    protected List<VDS> getSecondaryDestinations(VDSGroup cluster, List<VDS> candidateHosts, Map<String, String> parameters) {
+        return null;
+    }
 }
