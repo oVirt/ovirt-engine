@@ -205,7 +205,7 @@ class Plugin(plugin.PluginBase):
         after=(
             oengcommcons.Stages.DIALOG_TITLES_S_STORAGE,
         ),
-        )
+    )
     def _title_e_storage(self):
         pass
 
