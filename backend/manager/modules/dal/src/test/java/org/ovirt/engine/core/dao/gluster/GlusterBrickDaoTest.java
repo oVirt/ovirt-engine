@@ -406,5 +406,19 @@ public class GlusterBrickDaoTest extends BaseDAOTestCase {
         existingBrick = dao.getById(FixturesTool.GLUSTER_BRICK_UUID1);
         assertNotNull(existingBrick);
         assertEquals(FixturesTool.NETWORK_ENGINE, existingBrick.getNetworkId());
+
+        List<GlusterBrickEntity> bricks =
+                dao.getAllByClusterAndNetworkId(FixturesTool.GLUSTER_CLUSTER_ID, FixturesTool.NETWORK_ENGINE);
+        assertNotNull(bricks);
+    }
+
+    @Test
+    public void testGetAllByClusterAndNetworkId() {
+        dao.updateBrickNetworkId(FixturesTool.GLUSTER_BRICK_UUID1, FixturesTool.NETWORK_ENGINE);
+        List<GlusterBrickEntity> bricks =
+                dao.getAllByClusterAndNetworkId(FixturesTool.GLUSTER_CLUSTER_ID, FixturesTool.NETWORK_ENGINE);
+        assertNotNull(bricks);
+        assertEquals(1, bricks.size());
+        assertEquals(FixturesTool.GLUSTER_BRICK_UUID1, bricks.get(0).getId());
     }
 }

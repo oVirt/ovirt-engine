@@ -3036,7 +3036,8 @@ AS
 SELECT gluster_volume_bricks.*,
        vds_static.host_name AS vds_name,
        gluster_volumes.vol_name AS volume_name,
-       vds_interface.addr as interface_address
+       vds_interface.addr as interface_address,
+       gluster_volumes.cluster_id as cluster_id
 FROM gluster_volume_bricks
 INNER JOIN vds_static ON vds_static.vds_id = gluster_volume_bricks.server_id
 INNER JOIN gluster_volumes ON gluster_volumes.id = gluster_volume_bricks.volume_id

@@ -624,3 +624,16 @@ _update_date = LOCALTIMESTAMP
 WHERE id = v_volume_id;
 END; $procedure$
 LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetBricksByClusterIdAndNetworkId(v_cluster_id UUID,
+                                                            v_network_id UUID)
+RETURNS SETOF gluster_volume_bricks_view STABLE
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM  gluster_volume_bricks_view
+   WHERE network_id = v_network_id
+   AND cluster_id = v_cluster_id;
+END; $procedure$
+LANGUAGE plpgsql;

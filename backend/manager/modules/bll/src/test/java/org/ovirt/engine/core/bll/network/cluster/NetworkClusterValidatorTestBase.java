@@ -1,5 +1,15 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
+import static org.hamcrest.CoreMatchers.both;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.replacements;
+
 import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Rule;
@@ -17,16 +27,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
-
-import static org.hamcrest.CoreMatchers.both;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
-import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
-import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.replacements;
 
 public abstract class NetworkClusterValidatorTestBase<T extends NetworkClusterValidatorBase> {
 
@@ -56,7 +56,7 @@ public abstract class NetworkClusterValidatorTestBase<T extends NetworkClusterVa
     @Mock
     protected Network currentManagementNetwork;
     @Mock
-    private VDSGroup cluster;
+    protected VDSGroup cluster;
 
     @Mock
     protected Version version;

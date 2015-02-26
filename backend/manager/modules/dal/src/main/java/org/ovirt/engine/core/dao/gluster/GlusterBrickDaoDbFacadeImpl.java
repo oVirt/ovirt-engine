@@ -186,6 +186,15 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
     }
 
     @Override
+    public List<GlusterBrickEntity> getAllByClusterAndNetworkId(Guid clusterId, Guid networkId) {
+        return getCallsHandler().executeReadList("GetBricksByClusterIdAndNetworkId",
+                brickRowMapper,
+                getCustomMapSqlParameterSource()
+                        .addValue("cluster_id", clusterId)
+                        .addValue("network_id", networkId));
+    }
+
+    @Override
     protected MapSqlParameterSource createFullParametersMapper(GlusterBrickEntity brick) {
         return createBrickParams(brick);
     }

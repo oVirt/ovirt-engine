@@ -39,7 +39,8 @@ public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToVd
                 new DetachNetworkValidator(getNetwork(), getParameters().getNetworkCluster());
         return validate(validator.notManagementNetwork())
                 && validate(validator.clusterNetworkNotUsedByVms())
-                && validate(validator.clusterNetworkNotUsedByTemplates());
+                && validate(validator.clusterNetworkNotUsedByTemplates())
+                && validate(validator.clusterNetworkNotUsedByBricks());
     }
 
     @Override
@@ -54,7 +55,7 @@ public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToVd
 
     private class DetachNetworkValidator extends NetworkValidator {
 
-        private NetworkCluster networkCluster;
+        private final NetworkCluster networkCluster;
 
         public DetachNetworkValidator(Network network, NetworkCluster networkCluster) {
             super(network);
@@ -80,6 +81,13 @@ public class DetachNetworkFromClusterInternalCommand<T extends AttachNetworkToVd
             return networkNotUsed(templatesUsingNetwork,
                     VdcBllMessages.VAR__ENTITIES__VM_TEMPLATES,
                     VdcBllMessages.VAR__ENTITIES__VM_TEMPLATE);
+        }
+
+        public ValidationResult clusterNetworkNotUsedByBricks() {
+            return networkNotUsed(getGlusterBrickDao().getAllByClusterAndNetworkId(networkCluster.getClusterId(),
+                    network.getId()),
+                    VdcBllMessages.VAR__ENTITIES__GLUSTER_BRICKS,
+                    VdcBllMessages.VAR__ENTITIES__GLUSTER_BRICK);
         }
     }
 }

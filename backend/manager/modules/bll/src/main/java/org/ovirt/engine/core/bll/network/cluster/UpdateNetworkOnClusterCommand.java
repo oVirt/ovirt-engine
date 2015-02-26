@@ -105,6 +105,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
     private boolean validateAttachment() {
         final UpdateNetworkClusterValidator networkClusterValidator = createNetworkClusterValidator();
         return validate(networkClusterValidator.managementNetworkUnset()) &&
+                validate(networkClusterValidator.glusterNetworkInUseAndUnset(getVdsGroup())) &&
                validateAttachment(networkClusterValidator);
     }
 
