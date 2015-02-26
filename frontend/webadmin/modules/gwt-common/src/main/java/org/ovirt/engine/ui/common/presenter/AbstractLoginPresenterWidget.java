@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.presenter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -42,9 +44,9 @@ public abstract class AbstractLoginPresenterWidget<T extends LoginModel, V exten
 
         void resetAndFocus();
 
-        void setErrorMessageHtml(SafeHtml text);
+        void setErrorMessages(List<SafeHtml> text);
 
-        void clearErrorMessage();
+        void clearErrorMessages();
 
         HasUiCommandClickHandlers getLoginButton();
 
@@ -100,7 +102,7 @@ public abstract class AbstractLoginPresenterWidget<T extends LoginModel, V exten
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 lockInteractionManager.hideLoadingIndicator();
-                formatAndSetErrorMessage(loginModel.getMessage());
+                formatAndSetErrorMessage(loginModel.getMessages());
                 logger.warning("Login failed for user [" + loginModel.getUserName().getEntity() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
             }
 
@@ -167,7 +169,7 @@ public abstract class AbstractLoginPresenterWidget<T extends LoginModel, V exten
     protected abstract String getSelectedDomainKey();
 
     protected void onLoggedInEvent(T loginModel) {
-        getView().clearErrorMessage();
+        getView().clearErrorMessages();
         saveSelectedDomain(loginModel);
     }
 
@@ -180,29 +182,31 @@ public abstract class AbstractLoginPresenterWidget<T extends LoginModel, V exten
         clientStorage.setLocalItem(getSelectedDomainKey(), selectedItem);
     }
 
-    private void formatAndSetErrorMessage(String message) {
-        SafeHtml safeMessage = null;
-        if (message != null) {
-            SafeHtmlBuilder builder = new SafeHtmlBuilder();
-            int urlIndex = message.indexOf("http"); //$NON-NLS-1$
-            if (urlIndex != -1) {
-                String beforeURL = message.substring(0, urlIndex);
-                int afterUrlMessageIndex = message.indexOf(" ", urlIndex); //$NON-NLS-1$
-                int endIndex = afterUrlMessageIndex > -1 ? afterUrlMessageIndex : message.length();
-                //Sanitize the URL, returns # if it is not safe.
-                String url = UriUtils.sanitizeUri(message.substring(urlIndex, endIndex));
-                String motdAnchor = getView().getMotdAnchorHtml(url);
-                builder.appendEscaped(beforeURL).append(SafeHtmlUtils.fromTrustedString(motdAnchor));
-                if (endIndex < message.length()) {
-                    //There was a string after the URL append it as well.
-                    builder.appendEscaped(message.substring(endIndex));
+    private void formatAndSetErrorMessage(List<String> messages) {
+        List<SafeHtml> safeMessages = new ArrayList<SafeHtml>();
+        if (messages != null) {
+            for (String message: messages) {
+                SafeHtmlBuilder builder = new SafeHtmlBuilder();
+                int urlIndex = message.indexOf("http"); //$NON-NLS-1$
+                if (urlIndex != -1) {
+                    String beforeURL = message.substring(0, urlIndex);
+                    int afterUrlMessageIndex = message.indexOf(" ", urlIndex); //$NON-NLS-1$
+                    int endIndex = afterUrlMessageIndex > -1 ? afterUrlMessageIndex : message.length();
+                    //Sanitize the URL, returns # if it is not safe.
+                    String url = UriUtils.sanitizeUri(message.substring(urlIndex, endIndex));
+                    String motdAnchor = getView().getMotdAnchorHtml(url);
+                    builder.appendEscaped(beforeURL).append(SafeHtmlUtils.fromTrustedString(motdAnchor));
+                    if (endIndex < message.length()) {
+                        //There was a string after the URL append it as well.
+                        builder.appendEscaped(message.substring(endIndex));
+                    }
+                } else {
+                    builder.appendEscaped(message);
                 }
-            } else {
-                builder.appendEscaped(message);
+                safeMessages.add(builder.toSafeHtml());
             }
-            safeMessage = builder.toSafeHtml();
         }
-        getView().setErrorMessageHtml(safeMessage);
+        getView().setErrorMessages(safeMessages);
     }
 
     @Override

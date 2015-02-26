@@ -1,14 +1,15 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -146,6 +147,21 @@ public class LoginModel extends Model
         loginFailedEventDefinition = new EventDefinition("LoginFailed", LoginModel.class); //$NON-NLS-1$
     }
 
+    private List<String> messages;
+
+    public List<String> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<String> value)
+    {
+        if (!ObjectUtils.objectsEqual(messages, value))
+        {
+            messages = value;
+            onPropertyChanged(new PropertyChangedEventArgs("Message")); //$NON-NLS-1$
+        }
+    }
+
     public LoginModel()
     {
         setLoggedInEvent(new Event<EventArgs>(loggedInEventDefinition));
@@ -182,9 +198,9 @@ public class LoginModel extends Model
                 LoginModel loginModel = (LoginModel) model;
                 if (ReturnValue == null)
                 {
-                    loginModel.setMessage(ConstantsManager.getInstance()
+                    loginModel.setMessages(Arrays.asList(ConstantsManager.getInstance()
                             .getConstants()
-                            .couldNotConnectToOvirtEngineServiceMsg());
+                            .couldNotConnectToOvirtEngineServiceMsg()));
                     return;
                 }
 
@@ -237,7 +253,7 @@ public class LoginModel extends Model
                     if (user == null)
                     {
                         loginModel.getPassword().setEntity(""); //$NON-NLS-1$
-                        loginModel.setMessage(Linq.firstOrDefault(returnValue.getCanDoActionMessages()));
+                        loginModel.setMessages(returnValue.getCanDoActionMessages());
                         loginModel.getUserName().setIsChangable(true);
                         loginModel.getPassword().setIsChangable(true);
                         loginModel.getProfile().setIsChangable(true);

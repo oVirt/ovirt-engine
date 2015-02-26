@@ -7,7 +7,7 @@
 
     <ui:with field='resources' type='org.ovirt.engine.ui.userportal.ApplicationResources' />
 
-    <ui:style>
+    <ui:style type="org.ovirt.engine.ui.common.view.AbstractLoginFormView.Style">
         .loginForm:focus {
             outline: 0;
         }
@@ -29,20 +29,19 @@
             color: #0099d3;
         }
 
-        .login-error {
-            color: #b94a48;
-            background-color: inherit;
-            border-color: #b94a48;
+        .loginMessageError a {
+            color: #0099d3;
         }
 
-        .login-message-error {
-            color: #b94a48;
-            background-color: inherit;
+        .loginMessageError {
+            background-color: transparent;
             word-break: break-word;
             white-space: normal;
+            display: block;
+            text-align: left;
         }
 
-        .information-triangle {
+        .information-icon {
             font-size: 20px;
         }
 
@@ -76,9 +75,12 @@
                     <g:Image styleName="obrand_loginFormLogoImage" url="clear.cache.gif" />
                 </b:Column>
 
-                <b:Well size="SMALL" addStyleNames="col-sm-11 {style.login-error}" ui:field="errorMessagePanel">
-                    <b:Label ui:field="errorMessage" addStyleNames="{style.login-message-error} temp-link-color"/>
-                </b:Well>
+                <b:Alert type="DANGER" addStyleNames="col-sm-11" ui:field="errorMessagePanel">
+                    <g:HTMLPanel tag="span" addStyleNames="pficon-layered {style.information-icon}">
+                        <g:HTMLPanel tag="span" addStyleNames="pficon pficon-error-octagon"></g:HTMLPanel>
+                        <g:HTMLPanel tag="span" addStyleNames="pficon pficon-error-exclamation"></g:HTMLPanel>
+                    </g:HTMLPanel>
+                </b:Alert>
 
                 <b:Column size="SM_7 MD_6 LG_5" addStyleNames="login">
                     <g:FormPanel addStyleNames="form-horizontal">
@@ -112,7 +114,7 @@
 
                 <b:Column size="SM_5 MD_6 LG_7" addStyleNames="details">
                     <g:HTMLPanel ui:field="informationMessagePanel">
-                        <g:HTMLPanel tag="span" addStyleNames="pficon-layered {style.information-triangle}">
+                        <g:HTMLPanel tag="span" addStyleNames="pficon-layered {style.information-icon}">
                             <g:HTMLPanel tag="span" addStyleNames="pficon pficon-warning-triangle"></g:HTMLPanel>
                             <g:HTMLPanel tag="span" addStyleNames="pficon pficon-warning-exclamation"></g:HTMLPanel>
                         </g:HTMLPanel>

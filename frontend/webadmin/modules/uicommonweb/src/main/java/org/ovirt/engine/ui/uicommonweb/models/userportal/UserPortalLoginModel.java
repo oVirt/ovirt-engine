@@ -14,7 +14,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -144,7 +143,7 @@ public class UserPortalLoginModel extends LoginModel
                 } else {
                     loginModel.getPassword().setEntity(""); //$NON-NLS-1$
                     if (returnValue != null) {
-                        loginModel.setMessage(Linq.firstOrDefault(returnValue.getCanDoActionMessages()));
+                        loginModel.setMessages(returnValue.getCanDoActionMessages());
                     }
                     loginModel.getUserName().setIsChangable(true);
                     loginModel.getPassword().setIsChangable(true);

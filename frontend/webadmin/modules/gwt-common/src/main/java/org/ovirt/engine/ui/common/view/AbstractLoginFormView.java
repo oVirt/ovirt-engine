@@ -1,10 +1,11 @@
 package org.ovirt.engine.ui.common.view;
 
 import java.util.Arrays;
+import java.util.List;
 
+import org.gwtbootstrap3.client.ui.Alert;
 import org.gwtbootstrap3.client.ui.Label;
 import org.gwtbootstrap3.client.ui.ListBox;
-import org.gwtbootstrap3.client.ui.Well;
 import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -24,11 +25,13 @@ import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.HasKeyPressHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.i18n.client.LocaleInfo;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FocusPanel;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Panel;
 
 /**
@@ -41,9 +44,16 @@ public abstract class AbstractLoginFormView extends AbstractView {
         SafeHtml anchor(String url, String text);
     }
 
+    public interface Style extends CssResource {
+        String loginMessageError();
+    }
+
     private static final String DEFAULT_LOCALE = "default"; //$NON-NLS-1$
 
     private static MotdAnchorTemplate template;
+
+    @UiField
+    public Style style;
 
     @UiField(provided = true)
     @Ignore
@@ -74,15 +84,11 @@ public abstract class AbstractLoginFormView extends AbstractView {
 
     @UiField
     @Ignore
-    public Label errorMessage;
-
-    @UiField
-    @Ignore
     public Label informationMessage;
 
     @UiField
     @Ignore
-    public Well errorMessagePanel;
+    public Alert errorMessagePanel;
 
     @UiField
     @Ignore
@@ -173,27 +179,24 @@ public abstract class AbstractLoginFormView extends AbstractView {
         return template;
     }
 
-    protected void setErrorMessageLabel(Label errorMessage, SafeHtml text) {
-        if (text != null) {
-            errorMessage.getElement().setInnerSafeHtml(text);
-        } else {
-            errorMessage.getElement().setInnerHTML(null);
-        }
-    }
-
     public String getMotdAnchorHtml(String url) {
         return getTemplate().anchor(url, url).asString();
     }
 
-    public void clearErrorMessage() {
-        setErrorMessageHtml(null);
+    public void clearErrorMessages() {
+        IsWidget errorIconWidget = errorMessagePanel.getWidget(0);
+        errorMessagePanel.clear();
+        errorMessagePanel.add(errorIconWidget);
         errorMessagePanel.setVisible(false);
     }
 
-    public void setErrorMessageHtml(SafeHtml text) {
-        setErrorMessageLabel(errorMessage, text);
-        errorMessage.setVisible(text != null);
-        if (errorMessage.isVisible()) {
+    public void setErrorMessages(List<SafeHtml> messages) {
+        clearErrorMessages();
+        for (SafeHtml message: messages) {
+            Label messageLabel = new Label();
+            messageLabel.setHTML(message.asString());
+            messageLabel.addStyleName(style.loginMessageError());
+            errorMessagePanel.add(messageLabel);
             errorMessagePanel.setVisible(true);
         }
     }
@@ -201,7 +204,7 @@ public abstract class AbstractLoginFormView extends AbstractView {
     public void resetAndFocus() {
         userNameEditor.asValueBox().selectAll();
         userNameEditor.asValueBox().setFocus(true);
-        clearErrorMessage();
+        clearErrorMessages();
     }
 
     public HasUiCommandClickHandlers getLoginButton() {
