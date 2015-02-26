@@ -118,7 +118,7 @@ public class VmNetworkStatisticsDaoTest extends NetworkStatisticsDaoTest<VmNetwo
     @Test
     public void testUpdateAll() throws Exception {
         VmNetworkStatistics existingStats = dao.get(INTERFACE_ID);
-        VmNetworkStatistics existingStats2 = dao.get(new Guid("e2817b12-f873-4046-b0da-0098293c14fe"));
+        VmNetworkStatistics existingStats2 = dao.get(new Guid("e2817b12-f873-4046-b0da-0098293c0000"));
         existingStats.setReceiveDropRate(10.0);
         existingStats2.setStatus(InterfaceStatus.DOWN);
 
