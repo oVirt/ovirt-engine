@@ -171,8 +171,21 @@ public class NewNetworkModel extends NetworkModel {
             return;
         }
 
-        Guid networkId = getNetwork().getId() == null ? networkGuid : getNetwork().getId();
-        List<NetworkCluster> networkAttachments = new ArrayList<>();
+        attachNetworkToClusters(networkGuid);
+
+        ProviderNetwork providedBy = getNetwork().getProvidedBy();
+        if (getExport().getEntity() && getCreateSubnet().getEntity() && providedBy != null) {
+            getSubnetModel().setExternalNetwork(providedBy);
+            getSubnetModel().flush();
+
+            Frontend.getInstance().runAction(VdcActionType.AddSubnetToProvider,
+                    new AddExternalSubnetParameters(getSubnetModel().getSubnet(), providedBy.getProviderId(), providedBy.getExternalId()));
+        }
+    }
+
+    private void attachNetworkToClusters(Guid networkGuid) {
+        final Guid networkId = getNetwork().getId() == null ? networkGuid : getNetwork().getId();
+        final List<NetworkCluster> networkAttachments = new ArrayList<>();
 
         for (NetworkClusterModel networkClusterModel : getClustersToAttach()) {
             // Init default NetworkCluster values (required, display, status)
@@ -183,17 +196,10 @@ public class NewNetworkModel extends NetworkModel {
             networkAttachments.add(networkCluster);
         }
 
-        Frontend.getInstance().runAction(
-                VdcActionType.ManageNetworkClusters,
-                new ManageNetworkClustersParameters(networkAttachments));
-
-        ProviderNetwork providedBy = getNetwork().getProvidedBy();
-        if (getExport().getEntity() && getCreateSubnet().getEntity() && providedBy != null) {
-            getSubnetModel().setExternalNetwork(providedBy);
-            getSubnetModel().flush();
-
-            Frontend.getInstance().runAction(VdcActionType.AddSubnetToProvider,
-                    new AddExternalSubnetParameters(getSubnetModel().getSubnet(), providedBy.getProviderId(), providedBy.getExternalId()));
+        if (!networkAttachments.isEmpty()) {
+            Frontend.getInstance().runAction(
+                    VdcActionType.ManageNetworkClusters,
+                    new ManageNetworkClustersParameters(networkAttachments));
         }
     }
 
