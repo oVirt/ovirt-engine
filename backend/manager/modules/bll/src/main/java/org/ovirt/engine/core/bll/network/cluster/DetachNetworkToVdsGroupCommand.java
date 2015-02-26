@@ -56,7 +56,8 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
                 new DetachNetworkValidator(getNetwork(), getParameters().getNetworkCluster());
         return validate(validator.notManagementNetwork())
                 && validate(validator.clusterNetworkNotUsedByVms())
-                && validate(validator.clusterNetworkNotUsedByTemplates());
+                && validate(validator.clusterNetworkNotUsedByTemplates())
+                && validate(validator.clusterNetworkNotUsedByBricks());
     }
 
     @Override
@@ -127,6 +128,12 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
                 }
             }
             return networkNotUsed(templatesUsingNetwork, VdcBllMessages.VAR__ENTITIES__VM_TEMPLATES);
+        }
+
+        public ValidationResult clusterNetworkNotUsedByBricks() {
+            return networkNotUsed(getGlusterBrickDao().getAllByClusterAndNetworkId(networkCluster.getClusterId(),
+                    network.getId()),
+                    VdcBllMessages.VAR__ENTITIES__GLUSTER_BRICKS);
         }
     }
 }

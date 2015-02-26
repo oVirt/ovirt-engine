@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
-import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
@@ -228,10 +227,6 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
 
     public VdsStaticDAO getVdsStaticDao() {
         return getDbFacade().getVdsStaticDao();
-    }
-
-    protected GlusterBrickDao getGlusterBrickDao() {
-        return getDbFacade().getGlusterBrickDao();
     }
 
     protected InterfaceDao getInterfaceDAO() {

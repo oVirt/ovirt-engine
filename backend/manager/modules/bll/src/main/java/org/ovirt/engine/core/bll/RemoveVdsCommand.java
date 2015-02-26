@@ -29,7 +29,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.VdsStatisticsDAO;
-import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -198,10 +197,6 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
     private boolean isGlusterEnabled() {
         return (getVdsGroup().supportsGlusterService());
-    }
-
-    protected GlusterBrickDao getGlusterBrickDao() {
-        return getDbFacade().getGlusterBrickDao();
     }
 
     private boolean hasVolumeBricksOnServer() {

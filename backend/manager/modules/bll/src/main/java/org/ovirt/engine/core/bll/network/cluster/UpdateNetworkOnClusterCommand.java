@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -115,6 +116,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
         return (!NetworkUtils.isManagementNetwork(getNetwork())
                 || validate(validator.managementNetworkAttachment(getNetworkName())))
                 && validate(validator.migrationPropertySupported(getNetworkName()))
+                && validate(glusterNetworkInUseAndUnset(getVdsGroup()))
                 && (!getNetwork().isExternal() || validateExternalNetwork(validator));
     }
 
@@ -126,6 +128,17 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
     private ValidationResult networkClusterAttachmentExists() {
         return getOldNetworkCluster() == null ?
                 new ValidationResult(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER) : ValidationResult.VALID;
+    }
+
+    public ValidationResult glusterNetworkInUseAndUnset(VDSGroup cluster) {
+        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_NETWORK_INUSE).
+                when(cluster.supportsGlusterService() && oldNetworkCluster.isGluster() && !getNetworkCluster().isGluster()
+                        && isGlusterNetworkInUse());
+    }
+
+    private boolean isGlusterNetworkInUse() {
+        return !getGlusterBrickDao().getAllByClusterAndNetworkId(getOldNetworkCluster().getClusterId(),
+                getOldNetworkCluster().getNetworkId()).isEmpty();
     }
 
     @Override

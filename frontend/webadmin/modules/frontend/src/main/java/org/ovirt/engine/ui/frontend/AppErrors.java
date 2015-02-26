@@ -769,6 +769,15 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$entities virtual machines")
     String VAR__ENTITIES__VMS();
 
+    @DefaultStringValue("$entities virtual machine")
+    String VAR__ENTITIES__VM();
+
+    @DefaultStringValue("$entities gluster bricks")
+    String VAR__ENTITIES__GLUSTER_BRICKS();
+
+    @DefaultStringValue("$entities gluster brick")
+    String VAR__ENTITIES__GLUSTER_BRICK();
+
     @DefaultStringValue("$type Quota")
     String VAR__TYPE__QUOTA();
 
@@ -1734,6 +1743,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("The Management Network ('${NetworkName}') is mandatory and cannot be removed.")
     String NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Unsetting gluster network property is not allowed when it is used by gluster bricks on volumes. The gluster volumes will need to be removed to change this.")
+    String ACTION_TYPE_FAILED_GLUSTER_NETWORK_INUSE();
 
     @DefaultStringValue("The Network ('${NetworkName}') could not be removed since several iSCSI bonds (${IscsiBonds_COUNTER}) are using this network:\n ${IscsiBonds}.\nPlease remove the network first from those iSCSI bonds, and try again.")
     String NETWORK_CANNOT_REMOVE_ISCSI_BOND_NETWORK();
