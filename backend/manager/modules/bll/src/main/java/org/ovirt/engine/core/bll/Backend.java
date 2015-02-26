@@ -139,8 +139,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         try {
             initialize();
         } catch(Exception ex) {
-            log.error("Error during initialization", ex.getMessage());
-            log.debug("", ex);
+            log.error("Error during initialization", ex);
             throw ex;
         }
     }
