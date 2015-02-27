@@ -41,7 +41,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
  * @param <P>
  *            Proxy type.
  */
-public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel, D extends HasEntity<?>, V extends AbstractSubTabPresenter.ViewDef<T>, P extends TabContentProxyPlace<?>>
+public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel, D extends HasEntity, V extends AbstractSubTabPresenter.ViewDef<T>, P extends TabContentProxyPlace<?>>
         extends AbstractTabPresenter<V, P> {
 
     // TODO(vszocs) use HasActionTable<I> instead of raw type HasActionTable, this will

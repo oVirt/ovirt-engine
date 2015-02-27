@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
  * @param <D>
  *            Detail model type.
  */
-public abstract class AbstractSubTabFormView<T, M extends ListWithDetailsModel, D extends HasEntity<?>> extends AbstractView implements AbstractSubTabPresenter.ViewDef<T> {
+public abstract class AbstractSubTabFormView<T, M extends ListWithDetailsModel, D extends HasEntity> extends AbstractView implements AbstractSubTabPresenter.ViewDef<T> {
 
     private final DetailModelProvider<M, D> modelProvider;
 
