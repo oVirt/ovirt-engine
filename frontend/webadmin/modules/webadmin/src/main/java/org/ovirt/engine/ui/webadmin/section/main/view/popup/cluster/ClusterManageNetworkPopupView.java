@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.header.AbstractCheckboxHeader;
+import org.ovirt.engine.ui.common.widget.table.header.SafeHtmlHeader;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkManageModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkModel;
@@ -92,13 +93,12 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
                 new ManagementNetworkIndicatorCheckboxColumn(multiCluster, new ManagementNetworkIndicatorFieldUpdater()),
                 constants.managementItemInfo(), "80px"); //$NON-NLS-1$
 
-        final SafeHtml displayNetworkColumnHeader = templates.textWithTooltip(
-                constants.displayNetwork(),
-                constants.changeDisplayNetworkWarning());
         networks.addColumn(
                 new DisplayNetworkIndicatorCheckboxColumn(multiCluster,
                         new DisplayNetworkIndicatorFieldUpdater()),
-                displayNetworkColumnHeader, "100px"); //$NON-NLS-1$
+                new SafeHtmlHeader(SafeHtmlUtils.fromSafeConstant(constants.displayNetwork()),
+                        SafeHtmlUtils.fromSafeConstant(constants.changeDisplayNetworkWarning())),
+                "100px"); //$NON-NLS-1$
 
         networks.addColumn(
                 new MigrationNetworkIndicatorCheckboxColumn(multiCluster,

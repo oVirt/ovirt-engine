@@ -28,14 +28,11 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
             "<span style='position: relative; padding-left: 3px; vertical-align: middle; display: table-cell;'>{2}</span></span>")
     SafeHtml tripleImage(SafeHtml image1, SafeHtml image2, SafeHtml image3);
 
-    @Template("<span style='width: 18px; vertical-align: middle; text-align: center; display: table-cell;' title='{1}'>{0}</span>")
-    SafeHtml imageWithTitle(SafeHtml image, String title);
-
     @Template("<span style='width: 18px; vertical-align: middle; text-align: center; display: table-cell;'>{0}</span>")
-    SafeHtml headerImage(SafeHtml image);
+    SafeHtml tableHeaderImage(SafeHtml image);
 
-    @Template("<span style='height:22px; width: 22px; vertical-align: middle; text-align: center;' title='{1}'>{0}</span>")
-    SafeHtml inlineImageWithTitle(SafeHtml image, String title);
+    @Template("<span style='height:22px; width: 22px; vertical-align: middle; text-align: center;'>{0}</span>")
+    SafeHtml tableHeaderInlineImage(SafeHtml image);
 
     @Template("<span style='height:22px; width: 22px; vertical-align: middle; text-align: center;'>{0}</span>")
     SafeHtml inlineImage(SafeHtml image);
@@ -98,12 +95,6 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
 
     @Template("<span>{0} {1}</span>")
     SafeHtml iconWithText(SafeHtml icon, String text);
-
-    @Template("<span title='{2}'>{0} {1}</span>")
-    SafeHtml iconWithTextAndTitle(SafeHtml icon, String text, String title);
-
-    @Template("<span title='{1}'>{0}</span>")
-    SafeHtml textAndTitle(String text, String title);
 
     @Template("<span>{0}</span>")
     SafeHtml text(String text);

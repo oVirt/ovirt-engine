@@ -19,6 +19,8 @@ import org.ovirt.engine.ui.common.widget.table.cell.RadioboxCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
+import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
+import org.ovirt.engine.ui.common.widget.table.header.SafeHtmlHeader;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.VmSnapshotInfoPanel;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -164,21 +166,23 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
             }
         });
 
-        previewTable.addColumn(vmConfColumn, templates.imageWithTitle(imageResourceToSafeHtml(resources.vmConfIcon()),
-                constants.vmConfiguration()), "30px"); //$NON-NLS-1$
+        previewTable.addColumn(vmConfColumn,
+                new ImageResourceHeader(resources.vmConfIcon(), SafeHtmlUtils.fromTrustedString(constants.vmConfiguration())),
+                "30px"); //$NON-NLS-1$
 
-        previewTable.addColumn(new AbstractCheckboxColumn<SnapshotModel>(new FieldUpdater<SnapshotModel, Boolean>() {
-            @Override
-            public void update(int index, SnapshotModel snapshotModel, Boolean value) {
-                previewSnapshotModel.getSnapshotModel().getMemory().setEntity(value);
-                refreshTable(previewTable);
-                updateWarnings();
-            }
-        }) {
+        AbstractCheckboxColumn<SnapshotModel> memoryColumn = new AbstractCheckboxColumn<SnapshotModel>(
+                new FieldUpdater<SnapshotModel, Boolean>() {
+                    @Override
+                    public void update(int index, SnapshotModel snapshotModel, Boolean value) {
+                        previewSnapshotModel.getSnapshotModel().getMemory().setEntity(value);
+                        refreshTable(previewTable);
+                        updateWarnings();
+                    }
+                }) {
+
             @Override
             public Boolean getValue(SnapshotModel snapshotModel) {
                 return snapshotModel.getMemory().getEntity();
-
             }
 
             @Override
@@ -197,7 +201,12 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
                     sb.appendEscaped(constants.notAvailableLabel());
                 }
             }
-        }, templates.iconWithText(imageResourceToSafeHtml(resources.memorySmallIcon()), constants.memorySnapshot()), "100px"); //$NON-NLS-1$
+        };
+
+        previewTable.addColumn(
+                memoryColumn,
+                templates.iconWithText(imageResourceToSafeHtml(resources.memorySmallIcon()), constants.memorySnapshot()),
+                "100px"); //$NON-NLS-1$
 
         List<DiskImage> disks = previewSnapshotModel.getAllDisks();
         Collections.sort(disks, new Linq.DiskByAliasComparer());
@@ -252,8 +261,9 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
                 }
             },
 
-            templates.iconWithTextAndTitle(imageResourceToSafeHtml(resources.diskIcon()),
-                    disk.getDiskAlias(), disk.getId().toString()), "120px"); //$NON-NLS-1$ //$NON-NLS-2$
+            new SafeHtmlHeader(templates.iconWithText(imageResourceToSafeHtml(resources.diskIcon()), disk.getDiskAlias()),
+                    SafeHtmlUtils.fromString(disk.getId().toString())),
+                    "120px"); //$NON-NLS-1$
 
             // Edit preview table
             previewTable.asEditor().edit(previewSnapshotModel.getSnapshots());

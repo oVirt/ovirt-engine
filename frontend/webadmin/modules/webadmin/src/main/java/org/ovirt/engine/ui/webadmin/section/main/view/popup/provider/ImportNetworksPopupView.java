@@ -174,9 +174,9 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
                     @Override
                     public void render(Context context, SafeHtmlBuilder sb) {
                         super.render(context, sb);
-                        sb.append(templates.inlineImageWithTitle(SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.dialogIconHelp())
-                                .getHTML()),
-                                constants.networkPublicUseLabel()));
+                        sb.append(templates.tableHeaderInlineImage(
+                                SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.dialogIconHelp())
+                                .getHTML())));
                     }
 
                     @Override

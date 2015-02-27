@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
+import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -40,7 +41,6 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -191,14 +191,10 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         imageDiskTable.addColumn(interfaceColumn, constants.interfaceVmDiskPopup(), "95px"); //$NON-NLS-1$
 
-        SafeHtml readOnlyColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
-                AbstractImagePrototype.create(resources.readOnlyDiskIcon()).getHTML()), constants.readOnly()
-        );
-        imageDiskTable.addColumn(DisksViewColumns.readOnlyCheckboxColumn, readOnlyColumnHeader, "30px"); //$NON-NLS-1$
+        imageDiskTable.addColumn(DisksViewColumns.readOnlyCheckboxColumn,
+                new ImageResourceHeader(resources.readOnlyDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.readOnly())),
+                "30px"); //$NON-NLS-1$
 
-        SafeHtml bootableColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
-                AbstractImagePrototype.create(resources.bootableDiskIcon()).getHTML()), constants.bootable()
-        );
         imageDiskTable.addColumn(new AbstractImageResourceColumn<EntityModel>() {
             @Override
             public ImageResource getValue(EntityModel object) {
@@ -214,11 +210,8 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                 }
                 return null;
             }
-        }, bootableColumnHeader, "30px"); //$NON-NLS-1$
-
-        SafeHtml shareableColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
-                AbstractImagePrototype.create(resources.shareableDiskIcon()).getHTML()), constants.shareable()
-        );
+        }, new ImageResourceHeader(resources.bootableDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.bootable())),
+        "30px"); //$NON-NLS-1$
 
         imageDiskTable.addColumn(new AbstractImageResourceColumn<EntityModel>() {
             @Override
@@ -235,7 +228,8 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                 }
                 return null;
             }
-        }, shareableColumnHeader, "30px"); //$NON-NLS-1$
+        }, new ImageResourceHeader(resources.shareableDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.shareable())),
+                "30px"); //$NON-NLS-1$
 
         imageDiskTable.setWidth("100%", true); //$NON-NLS-1$
         imageDiskTable.setHeight("100%"); //$NON-NLS-1$
@@ -334,14 +328,10 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         };
         lunDiskTable.addColumn(interfaceColumn, constants.interfaceVmDiskPopup(), "90px"); //$NON-NLS-1$
 
-        SafeHtml readOnlyColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
-                AbstractImagePrototype.create(resources.readOnlyDiskIcon()).getHTML()), constants.readOnly()
-        );
-        lunDiskTable.addColumn(DisksViewColumns.readOnlyCheckboxColumn, readOnlyColumnHeader, "30px"); //$NON-NLS-1$
+        lunDiskTable.addColumn(DisksViewColumns.readOnlyCheckboxColumn,
+                new ImageResourceHeader(resources.readOnlyDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.readOnly())),
+                "30px"); //$NON-NLS-1$
 
-        SafeHtml bootableColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
-                AbstractImagePrototype.create(resources.bootableDiskIcon()).getHTML()), constants.bootable()
-        );
         lunDiskTable.addColumn(new AbstractImageResourceColumn<EntityModel>() {
             @Override
             public ImageResource getValue(EntityModel object) {
@@ -357,11 +347,9 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                 }
                 return null;
             }
-        }, bootableColumnHeader, "30px"); //$NON-NLS-1$
+        }, new ImageResourceHeader(resources.bootableDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.bootable())),
+                "30px"); //$NON-NLS-1$
 
-        SafeHtml shareableColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
-                AbstractImagePrototype.create(resources.shareableDiskIcon()).getHTML()), constants.shareable()
-        );
         lunDiskTable.addColumn(new AbstractImageResourceColumn<EntityModel>() {
             @Override
             public ImageResource getValue(EntityModel object) {
@@ -377,7 +365,8 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
                 }
                 return null;
             }
-        }, shareableColumnHeader, "30px"); //$NON-NLS-1$
+        }, new ImageResourceHeader(resources.shareableDiskIcon(), SafeHtmlUtils.fromTrustedString(constants.shareable())),
+                "30px"); //$NON-NLS-1$
 
         lunDiskTable.setWidth("100%", true); //$NON-NLS-1$
         lunDiskTable.setHeight("100%"); //$NON-NLS-1$

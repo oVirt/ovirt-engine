@@ -39,7 +39,7 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
      * @param imageHtml
      *            the image HTML
      * @param text
-     *            the node title
+     *            the node text
      * @return
      */
     @Template("<span style='position: relative; bottom: 1px;'>{0}</span>" +
@@ -50,7 +50,7 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
      * Creates a bookmark-item HTML
      *
      * @param text
-     *            the bookmark title
+     *            the bookmark text
      */
     @Template("<span id='{0}' style='display: inline-block; padding: 2px;'>{1}</span>")
     SafeHtml bookmarkItem(String id, String text);
@@ -61,7 +61,7 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
      * @param imageHtml
      *            the image HTML
      * @param text
-     *            the node title
+     *            the node text
      * @return
      */
     @Template("<span style='position: relative; border: 1px solid {3}; " +
@@ -104,7 +104,7 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<button type='button' tabindex='-1' style='float: right; height: 20px;'>"
             +
             "<span style='position: relative; left: 0px; top: -5px; width: 100%; font-family: arial; font-size: 10px;'>{0}</span></button>")
-    SafeHtml actionButtonText(String title);
+    SafeHtml actionButtonText(String text);
 
     @Template("<button type='button' tabindex='-1' style='background: url({0}) no-repeat; white-space: nowrap; height: 20px; width: 20px; line-height: 20px; float: right;'></button>")
     SafeHtml actionButtonImage(String image);
@@ -162,10 +162,7 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<div id=\"{1}\" style='line-height: 100%; text-align: center; vertical-align: middle; border: solid 1px transparent; '>{0}</div>")
     SafeHtml volumeActivityMenu(SafeHtml statusImage, String id);
 
-    @Template("<div title=\'{1}'style='line-height: 100%; text-align: center; vertical-align: middle;'>{0}</div>")
-    SafeHtml image(SafeHtml statusImage, String title);
-
-    @Template("<div title=\"{0}\"><table cellspacing='0' cellpadding='0' style='line-height: 5px; width: 100%;'>" +
+    @Template("<div><table cellspacing='0' cellpadding='0' style='line-height: 5px; width: 100%;'>" +
             "<tr>" +
             "{1}" +
             "<td style='width: 30%; text-align: center;'>&#160;{2}&#160;</td>" +

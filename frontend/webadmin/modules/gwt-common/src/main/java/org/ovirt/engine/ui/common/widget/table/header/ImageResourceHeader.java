@@ -19,6 +19,7 @@ public class ImageResourceHeader extends SafeHtmlHeader {
     private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private ImageResource headerImage;
+    private boolean inline = false;
 
     public ImageResourceHeader(ImageResource image, SafeHtml tooltipText) {
         super(SafeHtmlUtils.fromSafeConstant(""), tooltipText); //$NON-NLS-1$
@@ -26,6 +27,11 @@ public class ImageResourceHeader extends SafeHtmlHeader {
             this.headerImage = image;
             setValue(getHeaderHtml());
         }
+    }
+
+    public ImageResourceHeader(ImageResource image, SafeHtml tooltipText, boolean inline) {
+        this(image, tooltipText);
+        setInline(inline);
     }
 
     public ImageResourceHeader(ImageResource image) {
@@ -42,8 +48,15 @@ public class ImageResourceHeader extends SafeHtmlHeader {
             return SafeHtmlUtils.fromSafeConstant(constants.empty());
         }
 
-        return templates.headerImage(SafeHtmlUtils.fromTrustedString(
-                AbstractImagePrototype.create(headerImage).getHTML()));
+        if (isInline()) {
+            return templates.tableHeaderInlineImage(SafeHtmlUtils.fromTrustedString(
+                    AbstractImagePrototype.create(headerImage).getHTML()));
+        }
+        else {
+            return templates.tableHeaderImage(SafeHtmlUtils.fromTrustedString(
+                    AbstractImagePrototype.create(headerImage).getHTML()));
+        }
+
     }
 
     protected ImageResource getHeaderImage() {
@@ -52,6 +65,14 @@ public class ImageResourceHeader extends SafeHtmlHeader {
 
     protected void setHeaderImage(ImageResource headerImage) {
         this.headerImage = headerImage;
+    }
+
+    public boolean isInline() {
+        return inline;
+    }
+
+    public void setInline(boolean inline) {
+        this.inline = inline;
     }
 
 }

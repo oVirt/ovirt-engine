@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.action.SubTabTreeActionPanel;
 import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
+import org.ovirt.engine.ui.common.widget.table.header.ImageResourceHeader;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
@@ -19,9 +20,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTreeView;
 import org.ovirt.engine.ui.webadmin.widget.template.DisksTree;
 
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.inject.Inject;
 
 public class SubTabTemplateDiskView extends AbstractSubTabTreeView<DisksTree, VmTemplate, DiskModel, TemplateListModel, TemplateDiskListModel> implements SubTabTemplateDiskPresenter.ViewDef {
@@ -55,8 +54,8 @@ public class SubTabTemplateDiskView extends AbstractSubTabTreeView<DisksTree, Vm
     @Override
     protected void initHeader() {
         table.addColumn(new EmptyColumn(), constants.aliasDisk(), ""); //$NON-NLS-1$
-        SafeHtml readOnlyColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
-                AbstractImagePrototype.create(resources.readOnlyDiskIcon()).getHTML()), constants.readOnly());
+        ImageResourceHeader readOnlyColumnHeader = new ImageResourceHeader(
+                resources.readOnlyDiskIcon(), SafeHtmlUtils.fromSafeConstant(constants.readOnly()));
         table.addColumn(new EmptyColumn(), readOnlyColumnHeader, "60px"); //$NON-NLS-1$);
         table.addColumn(new EmptyColumn(), constants.provisionedSizeDisk(), "120px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.sizeDisk(), "120px"); //$NON-NLS-1$
