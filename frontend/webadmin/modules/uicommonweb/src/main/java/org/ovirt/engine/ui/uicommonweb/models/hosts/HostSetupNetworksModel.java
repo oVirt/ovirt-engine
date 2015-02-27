@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -121,7 +122,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     private Map<String, String> labelToIface = new HashMap<>();
 
-    private final List<String> networksToSync = new ArrayList<String>();
+    private final List<String> networksToSync = new ArrayList<>();
 
     // The purpose of this map is to keep the network parameters while moving the network from one nic to another
     private final Map<String, NetworkParameters> networkToLastDetachParams;
@@ -154,10 +155,10 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         setHelpTag(HelpTag.host_setup_networks);
         setHashName("host_setup_networks"); //$NON-NLS-1$
 
-        networkToLastDetachParams = new HashMap<String, NetworkParameters>();
-        netTodcParams = new HashMap<String, DcNetworkParams>();
-        netToBeforeSyncParams = new HashMap<String, NetworkParameters>();
-        setNicsChangedEvent(new Event<EventArgs>(NICS_CHANGED_EVENT_DEFINITION));
+        networkToLastDetachParams = new HashMap<>();
+        netTodcParams = new HashMap<>();
+        netToBeforeSyncParams = new HashMap<>();
+        setNicsChangedEvent(new Event<>(NICS_CHANGED_EVENT_DEFINITION));
         setOperationCandidateEvent(new Event<OperationCandidateEventArgs>(OPERATION_CANDIDATE_EVENT_DEFINITION));
         setCheckConnectivity(new EntityModel<Boolean>());
         getCheckConnectivity().setEntity(true);
@@ -503,7 +504,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                             setBondOptions(bond, bondPopup);
                             NetworkInterfaceModel nic1 = (NetworkInterfaceModel) networkCommand.getOp1();
                             NetworkInterfaceModel nic2 = (NetworkInterfaceModel) networkCommand.getOp2();
-                            List<LogicalNetworkModel> networks = new ArrayList<LogicalNetworkModel>();
+                            List<LogicalNetworkModel> networks = new ArrayList<>();
                             networks.addAll(nic1.getItems());
                             networks.addAll(nic2.getItems());
 
@@ -563,8 +564,8 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     private void commitNetworkChanges(VdsNetworkInterface iface, List<LogicalNetworkModel> networks) {
         NetworkInterfaceModel bondModel = nicMap.get(iface.getName());
         NetworkOperation.attachNetworks(bondModel,
-                new ArrayList<LogicalNetworkModel>(networks),
-                allNics);
+            new ArrayList<LogicalNetworkModel>(networks),
+            allNics);
     }
 
     public void redraw() {
@@ -594,15 +595,11 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     }
 
     private boolean equals(NetworkItemModel<?> item1, NetworkItemModel<?> item2) {
-        if (item1 == null && item2 == null) {
-            return true;
-        }
-        return (item1 != null) ? item1.equals(item2) : item2.equals(item1);
-
+        return Objects.equals(item1, item2);
     }
 
     private List<String> getFreeBonds() {
-        List<String> freeBonds = new ArrayList<String>();
+        List<String> freeBonds = new ArrayList<>();
         for (VdsNetworkInterface bond : allBonds) {
             if (!nicMap.containsKey(bond.getName())) {
                 freeBonds.add(bond.getName());
@@ -653,12 +650,12 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     }
 
     private void initNicModels() {
-        Map<String, NetworkInterfaceModel> nicModels = new HashMap<String, NetworkInterfaceModel>();
-        Map<String, VdsNetworkInterface> nicMap = new HashMap<String, VdsNetworkInterface>();
-        List<VdsNetworkInterface> physicalNics = new ArrayList<VdsNetworkInterface>();
-        Map<String, List<VdsNetworkInterface>> bondToNic = new HashMap<String, List<VdsNetworkInterface>>();
-        Map<String, Set<LogicalNetworkModel>> nicToNetwork = new HashMap<String, Set<LogicalNetworkModel>>();
-        List<LogicalNetworkModel> errorLabelNetworks = new ArrayList<LogicalNetworkModel>();
+        Map<String, NetworkInterfaceModel> nicModels = new HashMap<>();
+        Map<String, VdsNetworkInterface> nicMap = new HashMap<>();
+        List<VdsNetworkInterface> physicalNics = new ArrayList<>();
+        Map<String, List<VdsNetworkInterface>> bondToNic = new HashMap<>();
+        Map<String, Set<LogicalNetworkModel>> nicToNetwork = new HashMap<>();
+        List<LogicalNetworkModel> errorLabelNetworks = new ArrayList<>();
         labelToIface.clear();
 
         // map all nics
@@ -682,7 +679,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 if (bondToNic.containsKey(bondName)) {
                     bondToNic.get(bondName).add(nicMap.get(nicName));
                 } else {
-                    List<VdsNetworkInterface> bondedNics = new ArrayList<VdsNetworkInterface>();
+                    List<VdsNetworkInterface> bondedNics = new ArrayList<>();
                     bondedNics.add(nicMap.get(nicName));
                     bondToNic.put(bondName, bondedNics);
                 }
@@ -716,7 +713,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                     networkModel.getNetwork().setVmNetwork(nic.isBridged());
                 }
 
-                Collection<LogicalNetworkModel> nicNetworks = new ArrayList<LogicalNetworkModel>();
+                Collection<LogicalNetworkModel> nicNetworks = new ArrayList<>();
                 nicNetworks.add(networkModel);
                 // set vlan device on the network
                 if (networkModel.hasVlan()) {
@@ -733,7 +730,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         }
 
         // calculate the next available bond name
-        List<String> bondNames = new ArrayList<String>(bondToNic.keySet());
+        List<String> bondNames = new ArrayList<>(bondToNic.keySet());
         Collections.sort(bondNames, new LexoNumericComparator());
         nextBondName = BusinessEntitiesDefinitions.BOND_NAME_PREFIX + 0;
         for (int i=0; i<bondNames.size(); ++i) {
@@ -753,7 +750,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
 
             String nicName = nic.getName();
             Collection<LogicalNetworkModel> nicNetworks = nicToNetwork.get(nicName);
-            List<NetworkLabelModel> nicLabels = new ArrayList<NetworkLabelModel>();
+            List<NetworkLabelModel> nicLabels = new ArrayList<>();
 
             // does this nic have any labels?
             Set<String> labels = nic.getLabels();
@@ -785,7 +782,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             NetworkInterfaceModel nicModel;
 
             if (bondedNics != null) {
-                List<NetworkInterfaceModel> bondedModels = new ArrayList<NetworkInterfaceModel>();
+                List<NetworkInterfaceModel> bondedModels = new ArrayList<>();
                 for (VdsNetworkInterface bonded : bondedNics) {
                     NetworkInterfaceModel bondedModel = new NetworkInterfaceModel(bonded, nicToVfsConfig.containsKey(bonded.getId()), this);
                     bondedModel.setBonded(true);
@@ -820,16 +817,17 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
     }
 
     private void queryLabels() {
-        AsyncDataProvider.getInstance().getNetworkLabelsByDataCenterId(getEntity().getStoragePoolId(), new AsyncQuery(new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                dcLabels = (SortedSet<String>) returnValue;
-                initLabelModels();
+        AsyncDataProvider.getInstance().getNetworkLabelsByDataCenterId(getEntity().getStoragePoolId(),
+            new AsyncQuery(new INewAsyncCallback() {
+                @Override
+                public void onSuccess(Object model, Object returnValue) {
+                    dcLabels = (SortedSet<String>) returnValue;
+                    initLabelModels();
 
-                // chain the networks query
-                queryNetworks();
-            }
-        }));
+                    // chain the networks query
+                    queryNetworks();
+                }
+            }));
     }
 
     private void queryFreeBonds() {
@@ -849,7 +847,9 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         };
 
         VDS vds = getEntity();
-        Frontend.getInstance().runQuery(VdcQueryType.GetVdsFreeBondsByVdsId, new IdQueryParameters(vds.getId()), asyncQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetVdsFreeBondsByVdsId,
+            new IdQueryParameters(vds.getId()),
+            asyncQuery);
     }
 
     private void queryInterfaces() {

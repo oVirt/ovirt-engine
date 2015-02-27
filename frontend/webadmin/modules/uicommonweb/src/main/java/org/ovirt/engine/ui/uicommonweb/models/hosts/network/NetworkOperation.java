@@ -42,20 +42,20 @@ public enum NetworkOperation {
                         List<VdsNetworkInterface> allNics, Object... params) {
                     assert op1 instanceof BondNetworkInterfaceModel;
                     assert op2 == null;
-                    List<VdsNetworkInterface> bridgesToRemove = new ArrayList<VdsNetworkInterface>();
-                    BondNetworkInterfaceModel bond = (BondNetworkInterfaceModel) op1;
+                    List<VdsNetworkInterface> bridgesToRemove = new ArrayList<>();
+                    BondNetworkInterfaceModel bondModel = (BondNetworkInterfaceModel) op1;
                     // break
-                    bond.breakBond();
+                    bondModel.breakBond();
                     // detach networks
-                    List<LogicalNetworkModel> networksToDetach = new ArrayList<LogicalNetworkModel>();
-                    for (LogicalNetworkModel bondNetwork : bond.getItems()) {
+                    List<LogicalNetworkModel> networksToDetach = new ArrayList<>();
+                    for (LogicalNetworkModel bondNetwork : bondModel.getItems()) {
                         networksToDetach.add(bondNetwork);
                     }
                     for (LogicalNetworkModel networkToDetach : networksToDetach) {
                         DETACH_NETWORK.getCommand(networkToDetach, null, allNics).execute();
                     }
 
-                    String bondName = bond.getName();
+                    String bondName = bondModel.getName();
                     // delete bonds
                     for (VdsNetworkInterface iface : allNics) {
                         if (iface.getName().startsWith(bondName)) {
@@ -70,7 +70,7 @@ public enum NetworkOperation {
         @Override
         public boolean isDisplayNetworkAffected(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
 
-            return isDisplayNetworkAttached((BondNetworkInterfaceModel) op1);
+            return isDisplayNetworkAttached((NetworkInterfaceModel) op1);
         }
 
     },
@@ -126,14 +126,14 @@ public enum NetworkOperation {
                         List<VdsNetworkInterface> allNics, Object... params) {
                     assert op1 instanceof LogicalNetworkModel;
                     assert op2 instanceof NetworkInterfaceModel;
-                    LogicalNetworkModel networkToAttach = (LogicalNetworkModel) op1;
-                    NetworkInterfaceModel targetNic = (NetworkInterfaceModel) op2;
+                    LogicalNetworkModel networkModelToAttach = (LogicalNetworkModel) op1;
+                    NetworkInterfaceModel targetNicModel = (NetworkInterfaceModel) op2;
                     // is network already attached?
-                    if (networkToAttach.isAttached()) {
+                    if (networkModelToAttach.isAttached()) {
                         // detach first
                         DETACH_NETWORK.getCommand(op1, null, allNics).execute();
                     }
-                    VdsNetworkInterface vlanBridge = networkToAttach.attach(targetNic, true);
+                    VdsNetworkInterface vlanBridge = networkModelToAttach.attach(targetNicModel, true);
                     if (vlanBridge != null) {
                         Iterator<VdsNetworkInterface> i = allNics.iterator();
                         // If a vlan device with the same vlan id as the new one already exists- remove it
@@ -178,12 +178,12 @@ public enum NetworkOperation {
                     assert op1 instanceof NetworkInterfaceModel && !(op1 instanceof BondNetworkInterfaceModel);
                     assert op2 instanceof NetworkInterfaceModel && !(op2 instanceof BondNetworkInterfaceModel);
                     assert params.length == 1 : "incorrect params length"; //$NON-NLS-1$
-                    NetworkInterfaceModel nic1 = (NetworkInterfaceModel) op1;
-                    NetworkInterfaceModel nic2 = (NetworkInterfaceModel) op2;
+                    NetworkInterfaceModel nic1Model = (NetworkInterfaceModel) op1;
+                    NetworkInterfaceModel nic2Model = (NetworkInterfaceModel) op2;
 
                     // detach possible networks from both nics
-                    clearNetworks(nic1, allNics);
-                    clearNetworks(nic2, allNics);
+                    clearNetworks(nic1Model, allNics);
+                    clearNetworks(nic2Model, allNics);
 
                     // param
                     VdsNetworkInterface bond = (VdsNetworkInterface) params[0];
@@ -192,8 +192,8 @@ public enum NetworkOperation {
                     // add to nic list
                     allNics.add(bond);
 
-                    nic1.getIface().setBondName(bondName);
-                    nic2.getIface().setBondName(bondName);
+                    nic1Model.getIface().setBondName(bondName);
+                    nic2Model.getIface().setBondName(bondName);
                 }
             };
         }
@@ -220,9 +220,9 @@ public enum NetworkOperation {
                     assert op1 instanceof BondNetworkInterfaceModel;
                     assert op2 instanceof BondNetworkInterfaceModel;
                     assert params.length == 1 : "incorrect params length"; //$NON-NLS-1$
-                    Set<NetworkInterfaceModel> nics = new HashSet<NetworkInterfaceModel>();
-                    nics.addAll(((BondNetworkInterfaceModel) op1).getBonded());
-                    nics.addAll(((BondNetworkInterfaceModel) op2).getBonded());
+                    Set<NetworkInterfaceModel> slaveModels = new HashSet<>();
+                    slaveModels.addAll(((BondNetworkInterfaceModel) op1).getBonded());
+                    slaveModels.addAll(((BondNetworkInterfaceModel) op2).getBonded());
 
                     // break both bonds
                     BREAK_BOND.getCommand(op1, null, allNics).execute();
@@ -235,8 +235,8 @@ public enum NetworkOperation {
                     // add to nic list
                     allNics.add(bond);
 
-                    for (NetworkInterfaceModel nic : nics) {
-                        nic.getIface().setBondName(bondName);
+                    for (NetworkInterfaceModel slaveModel : slaveModels) {
+                        slaveModel.getIface().setBondName(bondName);
                     }
                 }
             };
@@ -270,7 +270,7 @@ public enum NetworkOperation {
 
                     // Save the networks on the nic before they are detached
                     List<LogicalNetworkModel> networksToReatach =
-                            nicModel.getItems() != null ? new ArrayList<LogicalNetworkModel>(nicModel.getItems())
+                            nicModel.getItems() != null ? new ArrayList<>(nicModel.getItems())
                                     : new ArrayList<LogicalNetworkModel>();
 
                     // Detach possible networks from the nic
@@ -336,13 +336,13 @@ public enum NetworkOperation {
                         NetworkItemModel<?> op2,
                         List<VdsNetworkInterface> allNics, Object... params) {
                     assert op1 instanceof NetworkInterfaceModel;
-                    NetworkInterfaceModel nic = (NetworkInterfaceModel) op1;
-                    VdsNetworkInterface entity = nic.getIface();
-                    entity.setBondName(null);
+                    NetworkInterfaceModel nicModel = (NetworkInterfaceModel) op1;
+                    VdsNetworkInterface slaveNic = nicModel.getIface();
+                    slaveNic.setBondName(null);
                     // is there are only two nics, break the bond
-                    BondNetworkInterfaceModel bond = nic.getBond();
-                    if (bond.getBonded().size() == 2) {
-                        BREAK_BOND.getCommand(bond, null, allNics).execute();
+                    BondNetworkInterfaceModel bondModel = nicModel.getBond();
+                    if (bondModel.getBonded().size() == 2) {
+                        BREAK_BOND.getCommand(bondModel, null, allNics).execute();
                     }
                 }
             };
@@ -636,7 +636,7 @@ public enum NetworkOperation {
     private static void clearNetworks(NetworkInterfaceModel nic, List<VdsNetworkInterface> allNics) {
         List<LogicalNetworkModel> attachedNetworks = nic.getItems();
         if (attachedNetworks.size() > 0) {
-            for (LogicalNetworkModel networkModel : new ArrayList<LogicalNetworkModel>(attachedNetworks)) {
+            for (LogicalNetworkModel networkModel : new ArrayList<>(attachedNetworks)) {
                 DETACH_NETWORK.getCommand(networkModel, null, allNics).execute();
             }
         }
