@@ -1555,7 +1555,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     @Override
     public GlusterVolumeGeoRepStatusForXmlRpc glusterVolumeGeoRepSessionList(String volumeName) {
         JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepSessionList")
-                    .withParameter("volName", volumeName)
+                .withParameter("volumeName", volumeName)
                     .build();
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
         return new GlusterVolumeGeoRepStatusForXmlRpc(response);
@@ -1566,9 +1566,9 @@ public class JsonRpcVdsServer implements IVdsServer {
             String slaveHost,
             String slaveVolumeName) {
         JsonRpcRequest request =
-                new RequestBuilder("GlusterVolume.geoRepSessionList").withParameter("volName", volumeName)
+                new RequestBuilder("GlusterVolume.geoRepSessionList").withParameter("volumeName", volumeName)
                 .withParameter("remoteHost", slaveHost)
-                .withParameter("remoteVolName", slaveVolumeName).build();
+                        .withParameter("remoteVolumeName", slaveVolumeName).build();
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
         return new GlusterVolumeGeoRepStatusForXmlRpc(response);
     }
@@ -1578,9 +1578,9 @@ public class JsonRpcVdsServer implements IVdsServer {
             String slaveHost,
             String slaveVolumeName) {
         JsonRpcRequest request =
-                new RequestBuilder("GlusterVolume.geoRepSessionStatus").withParameter("volName", volumeName)
+                new RequestBuilder("GlusterVolume.geoRepSessionStatus").withParameter("volumeName", volumeName)
                 .withParameter("remoteHost", slaveHost)
-                .withParameter("remoteVolName", slaveVolumeName).build();
+                        .withParameter("remoteVolumeName", slaveVolumeName).build();
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
         return new GlusterVolumeGeoRepStatusDetailForXmlRpc(response);
     }

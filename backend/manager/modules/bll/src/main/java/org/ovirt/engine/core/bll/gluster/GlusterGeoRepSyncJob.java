@@ -177,8 +177,14 @@ public class GlusterGeoRepSyncJob extends GlusterJob {
                 getGeoRepDao().save(session);
                 logGeoRepMessage(AuditLogType.GLUSTER_GEOREP_SESSION_DETECTED_FROM_CLI, cluster.getId(), session);
             } else {
-                if (sessionInDb.getSlaveNodeUuid() == null && sessionInDb.getSlaveVolumeId() == null
-                        && session.getSlaveNodeUuid() == null && session.getSlaveVolumeId() == null) {
+                // if retrieved session does not have the slave uuid's set
+                if (session.getSlaveNodeUuid() == null && session.getSlaveVolumeId() == null) {
+                    // set it from the one in db
+                    session.setSlaveNodeUuid(sessionInDb.getSlaveNodeUuid());
+                    session.setSlaveVolumeId(sessionInDb.getSlaveVolumeId());
+                }
+                // if even the updated session has no slave ids, try setting it by querying db
+                if (session.getSlaveNodeUuid() == null && session.getSlaveVolumeId() == null) {
                     updateSlaveNodeAndVolumeId(session);
                 }
                 session.setId(sessionInDb.getId());

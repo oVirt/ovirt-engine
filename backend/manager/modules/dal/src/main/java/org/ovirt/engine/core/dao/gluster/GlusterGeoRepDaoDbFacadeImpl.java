@@ -46,7 +46,7 @@ public class GlusterGeoRepDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
             entity.setSlaveNodeUuid(getGuid(rs, "slave_host_uuid"));
             entity.setSlaveVolumeId(getGuid(rs, "slave_volume_id"));
             entity.setSlaveVolumeName(rs.getString("slave_volume_name"));
-            entity.setStatus(GeoRepSessionStatus.from(rs.getString("status")));
+            entity.setStatus(GeoRepSessionStatus.valueOf(rs.getString("status")));
             return entity;
         }
     }
@@ -258,6 +258,7 @@ public class GlusterGeoRepDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
         };
     }
 
+    @Override
     public List<GlusterGeoRepSession> getAllSessions() {
         return getCallsHandler().executeReadList("GetAllGlusterGeoRepSessions", georepSessionRowMapper, getCustomMapSqlParameterSource());
     }
