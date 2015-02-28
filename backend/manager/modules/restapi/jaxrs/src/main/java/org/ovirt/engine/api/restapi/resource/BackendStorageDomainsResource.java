@@ -101,6 +101,7 @@ public class BackendStorageDomainsResource
                             entity.getStorageDomainType(),
                             connection);
             if (existing != null) {
+                StorageDomainMapper.map(model, existing.getStorageStaticData());
                 entity = existing.getStorageStaticData();
                 action = VdcActionType.AddExistingFileStorageDomain;
             }
@@ -153,6 +154,7 @@ public class BackendStorageDomainsResource
             throw new WebFaultException(new WebApplicationException(), "Storage Domain id " + model.getId()
                     + " Does not exists", Status.NOT_FOUND);
         }
+        StorageDomainMapper.map(model, storageDomainToImport);
         StorageDomainManagementParameter parameters =
                 new StorageDomainManagementParameter(storageDomainToImport);
         parameters.setVdsId(hostId);
