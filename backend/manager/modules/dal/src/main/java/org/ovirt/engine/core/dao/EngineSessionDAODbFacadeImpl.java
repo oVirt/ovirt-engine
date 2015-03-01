@@ -1,5 +1,10 @@
 package org.ovirt.engine.core.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.compat.Guid;
@@ -9,10 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.LinkedList;
 
 /**
  * <code>EngineSessionDAODbFacadeImpl</code> provides an implementation of {@link org.ovirt.engine.core.dao.EngineSessionDAO} using code refactored from
@@ -101,4 +102,8 @@ public class EngineSessionDAODbFacadeImpl extends BaseDAODbFacade implements Eng
         return getCallsHandler().executeModificationReturnResult("DeleteAllFromEngineSessions", parameterSource);
     }
 
+    @Override
+    public List<EngineSession> getAllWithQuery(String query) {
+        return jdbcTemplate.query(query, EngineSessionRowMapper.instance);
+    }
 }

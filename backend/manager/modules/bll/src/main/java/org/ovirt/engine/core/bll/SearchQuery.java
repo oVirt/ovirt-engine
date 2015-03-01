@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.aaa.DirectoryUtils;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -137,6 +138,9 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             returnValue = searchVMTemplates();
             break;
         }
+        case Session:
+            returnValue = searchSessions();
+            break;
         default: {
             log.error("Search object type not handled: {}", getParameters().getSearchTypeValue());
             break;
@@ -307,6 +311,10 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
     private List<Provider<?>> searchProviders() {
         return genericSearch(getDbFacade().getProviderDao(), true);
+    }
+
+    private List<EngineSession> searchSessions() {
+        return genericSearch(getDbFacade().getEngineSessionDao(), false);
     }
 
     private QueryData initQueryData(boolean useCache) {

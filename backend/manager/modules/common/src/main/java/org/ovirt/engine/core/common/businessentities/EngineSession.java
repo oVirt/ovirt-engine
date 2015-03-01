@@ -1,21 +1,22 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
-import org.ovirt.engine.core.compat.Guid;
-
-import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 
-public class EngineSession implements Serializable {
+import javax.validation.constraints.Size;
+
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.compat.Guid;
+
+public class EngineSession extends IVdcQueryable implements Serializable {
     private static final long serialVersionUID = 6964615561527013329L;
 
     private long id;
 
-    private String engineSessionId;
+    private transient String engineSessionId;
 
     private Guid userId;
 
@@ -33,6 +34,11 @@ public class EngineSession implements Serializable {
         setUserName(dbUser.getLoginName());
         setGroupIds(dbUser.getGroupIds());
         setEngineSessionId(engineSessionId);
+    }
+
+    @Override
+    public Object getQueryableId() {
+        return getId();
     }
 
     /**

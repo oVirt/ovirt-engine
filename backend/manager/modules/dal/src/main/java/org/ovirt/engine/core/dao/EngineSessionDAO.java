@@ -4,10 +4,8 @@ import org.ovirt.engine.core.common.businessentities.EngineSession;
 
 /**
  * <code>EngineSessionDAO</code> defines a type which performs CRUD operations on instances of {@link org.ovirt.engine.core.common.businessentities.EngineSession}.
- *
- *
  */
-public interface EngineSessionDAO extends DAO {
+public interface EngineSessionDAO extends DAO, SearchDAO<EngineSession> {
     /**
      * Retrieves the session with the specified id.
      *

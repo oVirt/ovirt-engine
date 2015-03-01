@@ -22,7 +22,8 @@ public enum SearchType implements Serializable {
     IscsiBond,
     Provider,
     InstanceType,
-    ImageType;
+    ImageType,
+    Session;
 
     public int getValue() {
         return this.ordinal();
