@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.resource;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Image;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.ImageResource;
@@ -10,6 +11,7 @@ import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImageByIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -62,7 +64,13 @@ public class BackendStorageDomainImageResource
             }
         }
 
-        return doAction(VdcActionType.ImportRepoImage, importParameters, action);
+        EntityResolver resolver = new SimpleIdResolver(
+                Disk.class,
+                org.ovirt.engine.core.common.businessentities.Disk.class,
+                VdcQueryType.GetDiskByDiskId,
+                IdQueryParameters.class
+        );
+        return doAction(VdcActionType.ImportRepoImage, importParameters, action, resolver);
     }
 
     @Override

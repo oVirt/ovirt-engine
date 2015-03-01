@@ -61,6 +61,7 @@ public class ImportRepoImageCreateTaskHandler implements SPMAsyncTaskHandler {
             }
 
             ExecutionHandler.setAsyncJob(enclosingCommand.getExecutionContext(), true);
+            enclosingCommand.getReturnValue().setActionReturnValue(enclosingCommand.getParameters().getDiskImage().getId());
             enclosingCommand.getReturnValue().setSucceeded(true);
         }
     }

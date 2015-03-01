@@ -19,6 +19,7 @@ package org.ovirt.engine.api.restapi.resource.openstack;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.OpenStackImage;
 import org.ovirt.engine.api.model.OpenStackImageProvider;
 import org.ovirt.engine.api.resource.openstack.OpenStackImageResource;
@@ -27,6 +28,7 @@ import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImageByIdParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -75,6 +77,12 @@ public class BackendOpenStackImageResource
             }
             parameters.setImportAsTemplate(action.isImportAsTemplate());
         }
-        return doAction(VdcActionType.ImportRepoImage, parameters, action);
+        EntityResolver resolver = new SimpleIdResolver(
+                Disk.class,
+                org.ovirt.engine.core.common.businessentities.Disk.class,
+                VdcQueryType.GetDiskByDiskId,
+                IdQueryParameters.class
+        );
+        return doAction(VdcActionType.ImportRepoImage, parameters, action, resolver);
     }
 }

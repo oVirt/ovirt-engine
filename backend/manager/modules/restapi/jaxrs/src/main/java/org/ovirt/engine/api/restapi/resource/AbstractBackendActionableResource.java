@@ -19,6 +19,7 @@ import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -26,9 +27,12 @@ import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractBackendActionableResource <R extends BaseResource, Q /* extends IVdcQueryable */ >
     extends AbstractBackendSubResource<R, Q> {
+    private static final Logger log = LoggerFactory.getLogger(AbstractBackendActionableResource.class);
 
     public AbstractBackendActionableResource(String id, Class<R> modelType, Class<Q> entityType, String... subCollections) {
         super(id, modelType, entityType, subCollections);
@@ -252,5 +256,52 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
     public Guid getDataCenterId(Guid storageDomainId) {
         List<StoragePool> storagepools = getStoragePools(storageDomainId, this);
         return storagepools.size() > 0 ? storagepools.get(0).getId() : null;
+    }
+
+    /**
+     * This class can be used as a resolver that binds business logic objects to API models by ID.
+     * The from and to classes are determined by parameters passed to the constructor.
+     * The returned model object will contain only the ID field of the object.
+     * */
+    protected class SimpleIdResolver extends EntityResolver {
+        private Class<? extends BaseResource> apiClass;
+        private Class<? extends BusinessEntity<?>> blClass;
+        private VdcQueryType query;
+        private Class<? extends VdcQueryParametersBase> queryParamsClass;
+
+        /**
+         * Create a resolver.
+         *
+         * @param apiClass          Model class whose instance will be returned from lookupEntity.
+         * @param blClass           Business logic class whose ID will be passed to lookupEntity.
+         * @param query             Same as in EntityResolver's constructor.
+         * @param queryParamsClass  Same as in EntityResolver's constructor.
+         * */
+        public SimpleIdResolver(
+                Class<? extends BaseResource> apiClass,
+                Class<? extends BusinessEntity<?>> blClass,
+                VdcQueryType query,
+                Class<? extends VdcQueryParametersBase> queryParamsClass
+        ) {
+            this.apiClass = apiClass;
+            this.blClass = blClass;
+            this.query = query;
+            this.queryParamsClass = queryParamsClass;
+        }
+
+        @Override
+        public Object lookupEntity(Object id) throws BackendFailureException {
+            BusinessEntity<?> blEntity = doGetEntity(blClass,
+                    query, getQueryParams(queryParamsClass, id), id.toString());
+            try {
+                BaseResource apiObject = apiClass.getConstructor().newInstance();
+                apiObject.setId(blEntity.getId().toString());
+                return LinkHelper.addLinks(getUriInfo(), apiObject);
+            } catch (ReflectiveOperationException e) {
+                // Shouldn't happen, all models have public no-args constructor.
+                log.error("Failed to instantiate BackendResource", e);
+                return null;
+            }
+        }
     }
 }
