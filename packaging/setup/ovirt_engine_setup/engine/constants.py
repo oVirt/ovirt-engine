@@ -67,7 +67,7 @@ class FileLocations(object):
         OVIRT_ENGINE_DB_DIR,
         'schema.sh',
     )
-    OVIRT_ENGINE_DB_BACKUP_DIR = os.path.join(
+    OVIRT_ENGINE_DEFAULT_DB_BACKUP_DIR = os.path.join(
         OVIRT_ENGINE_LOCALSTATEDIR,
         'backups',
     )
@@ -612,6 +612,12 @@ class ConfigEnv(object):
     )
     def ENGINE_HEAP_MAX(self):
         return 'OVESETUP_CONFIG/engineHeapMax'
+
+    @osetupattrs(
+        answerfile=True,
+    )
+    def OVIRT_ENGINE_DB_BACKUP_DIR(self):
+        return 'OVESETUP_CONFIG/engineDbBackupDir'
 
 
 @util.export

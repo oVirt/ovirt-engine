@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013-2014 Red Hat, Inc.
+# Copyright (C) 2013-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -72,7 +72,9 @@ class Plugin(plugin.PluginBase):
                 datetime.datetime.now().strftime('%Y%m%d%H%M%S')
             ),
             suffix='.tar.gz',
-            dir=oenginecons.FileLocations.OVIRT_ENGINE_DB_BACKUP_DIR,
+            dir=self.environment[
+                oenginecons.ConfigEnv.OVIRT_ENGINE_DB_BACKUP_DIR
+            ],
         )
         os.fchown(
             fd,
