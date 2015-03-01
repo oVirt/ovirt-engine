@@ -156,6 +156,14 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         };
         disksTable.addColumn(dateCreatedColumn, constants.creationDateDisk(), "80px"); //$NON-NLS-1$
 
+        AbstractTextColumnWithTooltip<DiskImage> diskSnapshotIDColumn = new AbstractTextColumnWithTooltip<DiskImage>() {
+            @Override
+            public String getValue(DiskImage diskImage) {
+                return diskImage.getImageId().toString();
+            }
+        };
+        disksTable.addColumn(diskSnapshotIDColumn, constants.diskSnapshotIDDisk(), "260px"); //$NON-NLS-1$
+
         AbstractTextColumnWithTooltip<DiskImage> descriptionColumn = new AbstractTextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {

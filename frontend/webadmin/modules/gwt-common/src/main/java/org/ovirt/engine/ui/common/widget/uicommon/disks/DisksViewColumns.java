@@ -375,6 +375,18 @@ public class DisksViewColumns {
         return makeSortable(column, sortBy);
     }
 
+    public static final AbstractTextColumnWithTooltip<Disk> getDiskSnapshotIDColumn(String sortBy) {
+        AbstractTextColumnWithTooltip<Disk> column = new AbstractTextColumnWithTooltip<Disk>() {
+            @Override
+            public String getValue(Disk disk) {
+                return disk.getDiskStorageType() == DiskStorageType.IMAGE ?
+                        ((DiskImage) disk).getImageId().toString() : null;
+            }
+        };
+
+        return makeSortable(column, sortBy);
+    }
+
     public static <C extends AbstractTextColumnWithTooltip<T>, T> C makeSortable(C column, String sortBy) {
         if (sortBy == null ) {
             // Client sorting

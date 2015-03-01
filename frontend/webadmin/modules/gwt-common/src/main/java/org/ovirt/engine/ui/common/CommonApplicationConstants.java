@@ -987,6 +987,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Creation Date")
     String creationDateDisk();
 
+    @DefaultStringValue("Disk Snapshot ID")
+    String diskSnapshotIDDisk();
+
     @DefaultStringValue("Description")
     String descriptionDisk();
 

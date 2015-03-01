@@ -57,6 +57,10 @@ public class SubTabStorageSnapshotView extends AbstractSubTabTableView<StorageDo
         getTable().ensureColumnPresent(
                 DisksViewColumns.getStatusColumn(null), constants.statusDisk(), true, "80px"); //$NON-NLS-1$
 
+        getTable().ensureColumnPresent(
+                DisksViewColumns.getDiskSnapshotIDColumn(null), constants.diskSnapshotIDDisk(),
+                true, "260px"); //$NON-NLS-1$
+
         getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.removeDisk()) {
             @Override
             protected UICommand resolveCommand() {
