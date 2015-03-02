@@ -5,8 +5,6 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Named;
-
 import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
@@ -17,7 +15,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-@Named
 public class StepDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Step, Guid> implements StepDao {
 
     private static StepRowMapper stepRowMapper = new StepRowMapper();

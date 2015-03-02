@@ -4,8 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import javax.inject.Named;
-
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -14,7 +12,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * <code>LunDAODbFacadeImpl</code> provides a concrete implementation of {@link LunDAO}. The original code was
  * refactored from the {@link org.ovirt.engine.core.dal.dbbroker.DbFacade} class.
  */
-@Named
 public class LunDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<LUNs, String> implements LunDAO {
 
     public LunDAODbFacadeImpl() {

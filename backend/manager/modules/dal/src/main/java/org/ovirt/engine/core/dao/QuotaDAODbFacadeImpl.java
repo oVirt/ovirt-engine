@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Named;
-
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
@@ -21,7 +19,6 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 /**
  * <code>QuotaDAODbFacadeImpl</code> implements the calling to quota stored procedures (@see QuotaDAO).
  */
-@Named
 public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
 
     /**

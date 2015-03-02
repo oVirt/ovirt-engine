@@ -6,8 +6,6 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
-import javax.inject.Named;
-
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
@@ -31,7 +29,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * <code>AsyncTaskDAODbFacadeImpl</code> provides an implementation of {@link AsyncTaskDAO} using code refactored from
  * {@code DbFacade}.
  */
-@Named
 public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTaskDAO {
     private static final Logger log = LoggerFactory.getLogger(AsyncTaskDAODbFacadeImpl.class);
 

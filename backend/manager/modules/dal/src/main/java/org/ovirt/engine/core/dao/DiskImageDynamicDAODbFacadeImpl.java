@@ -4,8 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 
-import javax.inject.Named;
-
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -17,7 +15,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * JDBC template based implementation of DiskImageDynamicDAO
  *
  */
-@Named
 public class DiskImageDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<DiskImageDynamic, Guid>
         implements DiskImageDynamicDAO {
 

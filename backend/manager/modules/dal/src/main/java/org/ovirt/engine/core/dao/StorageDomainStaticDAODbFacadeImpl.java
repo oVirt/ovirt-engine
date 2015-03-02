@@ -4,8 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import javax.inject.Named;
-
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -15,7 +13,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-@Named
 public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacade<StorageDomainStatic, Guid> implements StorageDomainStaticDAO {
 
     public StorageDomainStaticDAODbFacadeImpl() {

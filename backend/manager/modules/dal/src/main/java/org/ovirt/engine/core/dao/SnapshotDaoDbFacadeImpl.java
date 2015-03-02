@@ -5,8 +5,6 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Named;
-
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -15,7 +13,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-@Named
 public class SnapshotDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Snapshot, Guid> implements SnapshotDao {
 
     private static final RowMapper<Snapshot> ROW_MAPPER = new SnapshotRowMapper();

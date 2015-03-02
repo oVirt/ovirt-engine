@@ -4,8 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import javax.inject.Named;
-
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.config.Config;
@@ -21,7 +19,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  *
  *
  */
-@Named
 public class RoleDAODbFacadeImpl extends BaseDAODbFacade implements RoleDAO {
 
     private static class RolesRowMapper implements RowMapper<Role> {

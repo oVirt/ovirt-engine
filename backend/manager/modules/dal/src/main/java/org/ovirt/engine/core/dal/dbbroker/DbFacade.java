@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -73,6 +72,7 @@ import org.ovirt.engine.core.dao.BookmarkDAO;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
 import org.ovirt.engine.core.dao.CommandEntityDao;
 import org.ovirt.engine.core.dao.DAO;
+import org.ovirt.engine.core.dao.DaoFactory;
 import org.ovirt.engine.core.dao.DbGroupDAO;
 import org.ovirt.engine.core.dao.DbUserDAO;
 import org.ovirt.engine.core.dao.DiskDao;
@@ -141,9 +141,9 @@ import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotScheduleDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotConfigDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotDao;
-import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotScheduleDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
@@ -242,9 +242,6 @@ public class DbFacade {
 
     private int connectionCheckInterval;
 
-    @Inject
-    private Instance<DAO> daos;
-
     public void setDbEngineDialect(DbEngineDialect dbEngineDialect) {
         this.dbEngineDialect = dbEngineDialect;
         callsHandler.setDbEngineDialect(dbEngineDialect);
@@ -273,19 +270,15 @@ public class DbFacade {
         return getDao(daoType);
     }
 
-    @SuppressWarnings("unchecked")
     protected <T extends DAO> T getDao(Class<T> daoType) {
-        for (DAO dao : daos) {
-            if (daoType.isAssignableFrom(dao.getClass())) {
-                BaseDAODbFacade dbFacadeDAO = (BaseDAODbFacade) dao;
-                dbFacadeDAO.setTemplate(jdbcTemplate);
-                dbFacadeDAO.setDialect(dbEngineDialect);
-                dbFacadeDAO.setDbFacade(this);
-                return (T) dao;
-            }
+        T dao = DaoFactory.get(daoType);
+        if (dao instanceof BaseDAODbFacade) {
+            BaseDAODbFacade dbFacadeDAO = (BaseDAODbFacade) dao;
+            dbFacadeDAO.setTemplate(jdbcTemplate);
+            dbFacadeDAO.setDialect(dbEngineDialect);
+            dbFacadeDAO.setDbFacade(this);
         }
-        log.error("Can't find dao for " + daoType);
-        return null;
+        return dao;
     }
 
     private DbFacade() {

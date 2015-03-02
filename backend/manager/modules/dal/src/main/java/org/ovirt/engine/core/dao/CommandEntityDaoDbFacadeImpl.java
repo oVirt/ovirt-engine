@@ -6,8 +6,6 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-import javax.inject.Named;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -21,7 +19,6 @@ import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-@Named
 public class CommandEntityDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<CommandEntity, Guid> implements CommandEntityDao {
 
     private static RowMapper<CommandEntity> mapper = new RowMapper<CommandEntity>() {

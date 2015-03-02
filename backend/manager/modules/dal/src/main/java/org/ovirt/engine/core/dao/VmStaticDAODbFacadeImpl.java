@@ -4,8 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import javax.inject.Named;
-
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -13,7 +11,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-@Named
 public class VmStaticDAODbFacadeImpl extends VmBaseDaoDbFacade<VmStatic> implements VmStaticDAO {
     public static final Integer USE_LATEST_VERSION_NUMBER_INDICATOR = null;
     public static final Integer DONT_USE_LATEST_VERSION_NUMBER_INDICATOR = 1;

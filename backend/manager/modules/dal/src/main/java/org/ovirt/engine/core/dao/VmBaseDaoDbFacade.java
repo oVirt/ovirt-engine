@@ -3,8 +3,6 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javax.inject.Named;
-
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -21,7 +19,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-@Named
 public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGenericDaoDbFacade<T, Guid> {
     public VmBaseDaoDbFacade(String entityStoredProcedureName) {
         super(entityStoredProcedureName);

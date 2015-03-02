@@ -4,8 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import javax.inject.Named;
-
 import org.ovirt.engine.core.common.businessentities.VdcOption;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -16,7 +14,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  *
  *
  */
-@Named
 public class VdcOptionDAODbFacadeImpl extends BaseDAODbFacade implements VdcOptionDAO {
 
     private static final class VdcOptionRowMapper implements RowMapper<VdcOption> {

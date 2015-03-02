@@ -3,15 +3,12 @@ package org.ovirt.engine.core.dao.qos;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javax.inject.Named;
-
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-@Named
 public class CpuQosDaoDbFacadeImpl extends QosBaseDaoFacadeImpl<CpuQos> implements CpuQosDao {
     public CpuQosDaoDbFacadeImpl() {
         super(QosType.CPU);

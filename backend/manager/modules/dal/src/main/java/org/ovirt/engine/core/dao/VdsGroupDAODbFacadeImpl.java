@@ -9,8 +9,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Named;
-
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
@@ -33,7 +31,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * found in {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
  *
  */
-@Named
 public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroupDAO {
     private static final Logger log = LoggerFactory.getLogger(VdsGroupDAODbFacadeImpl.class);
 

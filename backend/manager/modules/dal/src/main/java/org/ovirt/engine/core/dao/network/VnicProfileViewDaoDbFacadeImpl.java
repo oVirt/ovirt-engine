@@ -4,8 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import javax.inject.Named;
-
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -13,7 +11,6 @@ import org.ovirt.engine.core.dao.DefaultReadDaoDbFacade;
 import org.ovirt.engine.core.dao.network.VnicProfileDaoDbFacadeImpl.VnicProfileRowMapperBase;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-@Named
 public class VnicProfileViewDaoDbFacadeImpl extends DefaultReadDaoDbFacade<VnicProfileView, Guid> implements VnicProfileViewDao {
 
     public VnicProfileViewDaoDbFacadeImpl() {

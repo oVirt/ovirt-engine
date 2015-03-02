@@ -31,7 +31,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,7 +44,6 @@ import org.springframework.transaction.annotation.Transactional;
 @TestExecutionListeners({ TransactionalTestExecutionListener.class, DependencyInjectionTestExecutionListener.class })
 @ContextConfiguration(locations = { "classpath:/test-beans.xml" })
 @Transactional
-@TransactionConfiguration(transactionManager = "transactionManager", defaultRollback = true)
 public abstract class BaseDAOTestCase {
     protected static final Guid PRIVILEGED_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
     protected static final String PRIVILEGED_USER_ENGINE_SESSION_ID = "c6f975b2-6f67-11e4-8455-3c970e14c386";
@@ -72,6 +70,7 @@ public abstract class BaseDAOTestCase {
             dataset = initDataSet();
             // load data from fixtures to DB
             DatabaseOperation.CLEAN_INSERT.execute(getConnection(), dataset);
+
             SimpleNamingContextBuilder builder = new SimpleNamingContextBuilder();
             builder.bind("java:/ENGINEDataSource", dataSource);
             builder.activate();
@@ -116,7 +115,7 @@ public abstract class BaseDAOTestCase {
                 number = "";
             String schemaNamePostfix = job + number;
             is = BaseDAOTestCase.class.getResourceAsStream(
-                    "/test-database.properties");
+            "/test-database.properties");
             properties.load(is);
 
             ClassLoader.getSystemClassLoader().loadClass(
@@ -137,7 +136,8 @@ public abstract class BaseDAOTestCase {
         } catch (Exception error) {
             error.printStackTrace();
             throw new RuntimeException("Cannot create data source", error);
-        } finally {
+        }
+        finally {
             if (is != null) {
                 try {
                     is.close();

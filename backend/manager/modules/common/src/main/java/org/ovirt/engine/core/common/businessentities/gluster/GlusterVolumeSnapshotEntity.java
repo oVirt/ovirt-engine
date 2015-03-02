@@ -2,14 +2,11 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 
 import java.util.Date;
 
-import javax.inject.Named;
-
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
-@Named
 public class GlusterVolumeSnapshotEntity extends IVdcQueryable implements BusinessEntityWithStatus<Guid, GlusterSnapshotStatus> {
     private static final long serialVersionUID = 2355384696827317288L;
     private Guid snapshotId;

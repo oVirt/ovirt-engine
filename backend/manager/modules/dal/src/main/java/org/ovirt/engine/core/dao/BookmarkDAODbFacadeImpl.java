@@ -4,8 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import javax.inject.Named;
-
 import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
@@ -18,7 +16,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  *
  *
  */
-@Named
 public class BookmarkDAODbFacadeImpl extends BaseDAODbFacade implements BookmarkDAO {
     private static class BookmarkRowMapper implements RowMapper<Bookmark> {
         public static final BookmarkRowMapper instance = new BookmarkRowMapper();
@@ -71,6 +68,7 @@ public class BookmarkDAODbFacadeImpl extends BaseDAODbFacade implements Bookmark
         return getCallsHandler().executeRead("GetBookmarkBybookmark_name", BookmarkRowMapper.instance, parameterSource);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Bookmark> getAll() {
         MapSqlParameterSource parameterSource = new BookmarkSqlParameterSource();

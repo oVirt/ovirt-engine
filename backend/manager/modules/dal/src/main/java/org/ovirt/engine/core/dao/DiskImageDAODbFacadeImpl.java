@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.inject.Named;
-
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -25,7 +23,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * <code>DiskImageDAODbFacadeImpl</code> provides an implementation of {@link DiskImageDAO} that uses previously
  * developed code from {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
  */
-@Named
 public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskImageDAO {
 
     @Override

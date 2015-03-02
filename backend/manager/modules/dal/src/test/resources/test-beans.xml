@@ -15,31 +15,8 @@
 	<bean class="org.ovirt.engine.core.dal.dbbroker.DbFacade"/>
 	<bean class="org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator"/>
 	
-    <bean id="transactionManagerJPA" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="entityManagerFactory" />
+    <bean name="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <constructor-arg ref="DataSource"/>
     </bean>
-
-    <bean name="transactionManager"
-        class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <constructor-arg ref="DataSource" />
-    </bean>
- 
-    <bean id="DataSource" class="org.ovirt.engine.core.dao.BaseDAOTestCase"
-        factory-method="getDataSource" />
-
-    <bean id="entityManagerFactory"
-        class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="dataSource" ref="DataSource" />
-        <property name="packagesToScan"
-            value="org.ovirt.engine.core.common.businessentities" />
-        <property name="jpaVendorAdapter">
-            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
-        </property>
-        <property name="jpaProperties">
-            <props>
-                <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
-            </props>
-        </property>
-    </bean>
-
+    <bean id="DataSource" class="org.ovirt.engine.core.dao.BaseDAOTestCase" factory-method="getDataSource" name="java:/ENGINEDataSource"/>
 </beans>
