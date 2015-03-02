@@ -2,24 +2,25 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.validation.Valid;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters implements HasGraphicsDevices {
     private static final long serialVersionUID = 4826143612049185740L;
 
     @Valid
-    private VM _vm;
-    private int _vmsCount;
-    private int _diskSize;
+    private VM vm;
+    private int vmsCount;
+    private int diskSize;
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
     private Boolean soundDeviceEnabled;
     private Boolean consoleEnabled;
@@ -29,32 +30,27 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters implem
     private Map<GraphicsType, GraphicsDevice> graphicsDevices;
 
     public AddVmPoolWithVmsParameters() {
-        init();
     }
 
-    public AddVmPoolWithVmsParameters(VmPool vmPool, VM vm, int count, int diskSize) {
+    public AddVmPoolWithVmsParameters(VmPool vmPool, VM vm, int vmsCount, int diskSize) {
         super(vmPool);
-        init();
-        _vm = vm;
-        _vmsCount = count;
-        _diskSize = diskSize;
-    }
-
-    private void init() {
         graphicsDevices = new HashMap<GraphicsType, GraphicsDevice>();
+        this.vm = vm;
+        this.vmsCount = vmsCount;
+        this.diskSize = diskSize;
     }
 
     @Valid
     public VmStatic getVmStaticData() {
-        return _vm.getStaticData();
+        return vm.getStaticData();
     }
 
     public int getVmsCount() {
-        return _vmsCount;
+        return vmsCount;
     }
 
     public int getDiskSize() {
-        return _diskSize;
+        return diskSize;
     }
 
     public HashMap<Guid, DiskImage> getDiskInfoDestinationMap() {
