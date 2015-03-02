@@ -75,10 +75,19 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     public CommonVmPoolWithVmsCommand(T parameters) {
         super(parameters);
+        setVdsGroupId(parameters.getVmPool().getVdsGroupId());
+    }
+
+    @Override
+    protected void postConstruct() {
+        // skipped if participating in compensation flow
+        if (getParameters() == null) {
+            return;
+        }
 
         Guid templateIdToUse = getParameters().getVmStaticData().getVmtGuid();
         // if set to use latest version, get it from db and use it as template
-        if (parameters.getVmStaticData().isUseLatestVersion()) {
+        if (getParameters().getVmStaticData().isUseLatestVersion()) {
             VmTemplate latest = getVmTemplateDAO().getTemplateWithLatestVersionInChain(templateIdToUse);
 
             if (latest != null) {
@@ -100,7 +109,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         if (diskInfoDestinationMap == null) {
             diskInfoDestinationMap = new HashMap<>();
         }
-        setVdsGroupId(parameters.getVmPool().getVdsGroupId());
+
 
         nameForVmInPoolGenerator = new NameForVmInPoolGenerator(getParameters().getVmPool().getName());
     }

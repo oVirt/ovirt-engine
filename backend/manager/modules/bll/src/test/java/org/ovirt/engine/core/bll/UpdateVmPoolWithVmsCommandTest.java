@@ -14,12 +14,15 @@ public class UpdateVmPoolWithVmsCommandTest extends CommonVmPoolWithVmsCommandTe
         AddVmPoolWithVmsParameters param = new AddVmPoolWithVmsParameters(vmPools, testVm,
                 VM_COUNT, DISK_SIZE);
         param.setStorageDomainId(firstStorageDomainId);
-        return spy(new UpdateVmPoolWithVmsCommand<AddVmPoolWithVmsParameters>(param) {
+        UpdateVmPoolWithVmsCommand<AddVmPoolWithVmsParameters> command =
+                spy(new UpdateVmPoolWithVmsCommand<AddVmPoolWithVmsParameters>(param) {
             @Override
             protected void initTemplate() {
                 // do nothing - is done here and not with mockito since it's called in the ctor
             }
         });
+        command.postConstruct();
+        return command;
     }
 
     @Test
