@@ -43,7 +43,7 @@ BEGIN
           'server_ssl_enabled', 'vds_type', 'pm_enabled', 'pm_proxy_preferences', 'vds_spm_priority', 'hooks', 'status', 'cpu_cores',
           'cpu_model', 'cpu_speed_mh', 'if_total_speed', 'kvm_enabled', 'physical_mem_mb',
           'pending_vcpus_count', 'pending_vmem_size', 'mem_commited', 'vm_active', 'vm_count',
-          'vm_migrating', 'vms_cores_count', 'cpu_over_commit_time_stamp', 'hypervisor_type',
+          'vm_migrating', 'incoming_migrations', 'outgoing_migrations', 'vms_cores_count', 'cpu_over_commit_time_stamp', 'hypervisor_type',
           'net_config_dirty', 'max_vds_memory_over_commit', 'storage_pool_id', 'storage_pool_name', 'reserved_mem',
           'guest_overhead', 'software_version', 'version_name', 'build_name', 'previous_status',
           'cpu_idle', 'cpu_load', 'cpu_sys', 'cpu_user', 'usage_mem_percent', 'usage_cpu_percent',

@@ -171,6 +171,8 @@ Create or replace FUNCTION InsertVdsDynamic(v_cpu_cores INTEGER ,
  v_vm_count INTEGER ,
  v_vms_cores_count INTEGER ,
  v_vm_migrating INTEGER ,
+ v_incoming_migrations INTEGER ,
+ v_outgoing_migrations INTEGER ,
  v_reserved_mem INTEGER ,
  v_guest_overhead INTEGER ,
  v_rpm_version VARCHAR(255),
@@ -216,8 +218,8 @@ RETURNS VOID
 BEGIN
 
    BEGIN
-INSERT INTO vds_dynamic(cpu_cores, cpu_threads, cpu_model, cpu_speed_mh, if_total_speed, kvm_enabled, mem_commited, physical_mem_mb,	status, vds_id, vm_active, vm_count, vm_migrating, reserved_mem, guest_overhead, rpm_version, software_version, version_name, build_name, previous_status, cpu_flags, vms_cores_count, pending_vcpus_count, pending_vmem_size, cpu_sockets,net_config_dirty, supported_cluster_levels, supported_engines, host_os, kvm_version, libvirt_version, spice_version, gluster_version, kernel_version, iscsi_initiator_name, transparent_hugepages_state, hooks, hw_manufacturer, hw_product_name, hw_version, hw_serial_number, hw_uuid, hw_family, hbas, supported_emulated_machines, controlled_by_pm_policy, kdump_status, selinux_enforce_mode, auto_numa_balancing, is_numa_supported, supported_rng_sources, is_live_snapshot_supported, is_live_merge_supported, online_cpus)
-	VALUES(v_cpu_cores,	v_cpu_threads, v_cpu_model,	v_cpu_speed_mh,	v_if_total_speed, v_kvm_enabled, v_mem_commited, v_physical_mem_mb,	v_status, v_vds_id, v_vm_active, v_vm_count, v_vm_migrating,	v_reserved_mem, v_guest_overhead, v_rpm_version, v_software_version, v_version_name, v_build_name, v_previous_status, v_cpu_flags, v_vms_cores_count,v_pending_vcpus_count, v_pending_vmem_size, v_cpu_sockets, v_net_config_dirty, v_supported_cluster_levels, v_supported_engines, v_host_os, v_kvm_version, v_libvirt_version, v_spice_version, v_gluster_version, v_kernel_version, v_iscsi_initiator_name, v_transparent_hugepages_state, v_hooks, v_hw_manufacturer, v_hw_product_name, v_hw_version, v_hw_serial_number, v_hw_uuid, v_hw_family, v_hbas, v_supported_emulated_machines, v_controlled_by_pm_policy, v_kdump_status, v_selinux_enforce_mode, v_auto_numa_balancing, v_is_numa_supported, v_supported_rng_sources, v_is_live_snapshot_supported, v_is_live_merge_supported, v_online_cpus);
+INSERT INTO vds_dynamic(cpu_cores, cpu_threads, cpu_model, cpu_speed_mh, if_total_speed, kvm_enabled, mem_commited, physical_mem_mb,	status, vds_id, vm_active, vm_count, vm_migrating, incoming_migrations, outgoing_migrations, reserved_mem, guest_overhead, rpm_version, software_version, version_name, build_name, previous_status, cpu_flags, vms_cores_count, pending_vcpus_count, pending_vmem_size, cpu_sockets,net_config_dirty, supported_cluster_levels, supported_engines, host_os, kvm_version, libvirt_version, spice_version, gluster_version, kernel_version, iscsi_initiator_name, transparent_hugepages_state, hooks, hw_manufacturer, hw_product_name, hw_version, hw_serial_number, hw_uuid, hw_family, hbas, supported_emulated_machines, controlled_by_pm_policy, kdump_status, selinux_enforce_mode, auto_numa_balancing, is_numa_supported, supported_rng_sources, is_live_snapshot_supported, is_live_merge_supported, online_cpus)
+	VALUES(v_cpu_cores,	v_cpu_threads, v_cpu_model,	v_cpu_speed_mh,	v_if_total_speed, v_kvm_enabled, v_mem_commited, v_physical_mem_mb,	v_status, v_vds_id, v_vm_active, v_vm_count, v_vm_migrating, v_incoming_migrations, v_outgoing_migrations, v_reserved_mem, v_guest_overhead, v_rpm_version, v_software_version, v_version_name, v_build_name, v_previous_status, v_cpu_flags, v_vms_cores_count,v_pending_vcpus_count, v_pending_vmem_size, v_cpu_sockets, v_net_config_dirty, v_supported_cluster_levels, v_supported_engines, v_host_os, v_kvm_version, v_libvirt_version, v_spice_version, v_gluster_version, v_kernel_version, v_iscsi_initiator_name, v_transparent_hugepages_state, v_hooks, v_hw_manufacturer, v_hw_product_name, v_hw_version, v_hw_serial_number, v_hw_uuid, v_hw_family, v_hbas, v_supported_emulated_machines, v_controlled_by_pm_policy, v_kdump_status, v_selinux_enforce_mode, v_auto_numa_balancing, v_is_numa_supported, v_supported_rng_sources, v_is_live_snapshot_supported, v_is_live_merge_supported, v_online_cpus);
    END;
 
    RETURN;
@@ -254,6 +256,8 @@ Create or replace FUNCTION UpdateVdsDynamic(v_cpu_cores INTEGER ,
  v_vm_count INTEGER ,
  v_vms_cores_count INTEGER ,
  v_vm_migrating INTEGER ,
+ v_incoming_migrations INTEGER ,
+ v_outgoing_migrations INTEGER ,
  v_reserved_mem INTEGER ,
  v_guest_overhead INTEGER ,
  v_rpm_version VARCHAR(255),
@@ -308,7 +312,8 @@ BEGIN
       if_total_speed = v_if_total_speed,kvm_enabled = v_kvm_enabled,
       mem_commited = v_mem_commited,physical_mem_mb = v_physical_mem_mb,
       status = v_status,vm_active = v_vm_active,vm_count = v_vm_count,
-      vm_migrating = v_vm_migrating,reserved_mem = v_reserved_mem,
+      vm_migrating = v_vm_migrating, incoming_migrations = v_incoming_migrations,
+      outgoing_migrations = v_outgoing_migrations, reserved_mem = v_reserved_mem,
       guest_overhead = v_guest_overhead,rpm_version = v_rpm_version, software_version = v_software_version,
       version_name = v_version_name,build_name = v_build_name,previous_status = v_previous_status,
       cpu_flags = v_cpu_flags,
@@ -427,10 +432,10 @@ BEGIN
    IF v_vds_unique_id IS NULL OR NOT EXISTS(SELECT vds_name FROM vds_static WHERE vds_unique_id = v_vds_unique_id) then
       BEGIN
          INSERT INTO vds_static(vds_id,host_name, free_text_comment, vds_unique_id, port, protocol, vds_group_id, vds_name, server_SSL_enabled,
-                               vds_type,vds_strength,pm_enabled, pm_proxy_preferences, pm_detect_kdump, vds_spm_priority, sshKeyFingerprint, console_address, 
+                               vds_type,vds_strength,pm_enabled, pm_proxy_preferences, pm_detect_kdump, vds_spm_priority, sshKeyFingerprint, console_address,
                                ssh_port, ssh_username, disable_auto_pm, host_provider_id)
 			VALUES(v_vds_id,v_host_name, v_free_text_comment, v_vds_unique_id, v_port, v_protocol, v_vds_group_id, v_vds_name, v_server_SSL_enabled,
-                               v_vds_type,v_vds_strength,v_pm_enabled, v_pm_proxy_preferences, v_pm_detect_kdump, v_vds_spm_priority, v_sshKeyFingerprint, 
+                               v_vds_type,v_vds_strength,v_pm_enabled, v_pm_proxy_preferences, v_pm_detect_kdump, v_vds_spm_priority, v_sshKeyFingerprint,
                                v_console_address, v_ssh_port, v_ssh_username, v_disable_auto_pm, v_host_provider_id);
       END;
    end if;

@@ -279,6 +279,8 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setVmsCoresCount((Integer) rs
                     .getObject("vms_cores_count"));
             entity.setVmMigrating((Integer) rs.getObject("vm_migrating"));
+            entity.setIncomingMigrations(rs.getInt("incoming_migrations"));
+            entity.setOutgoingMigrations(rs.getInt("outgoing_migrations"));
             entity.setUsageCpuPercent((Integer) rs
                     .getObject("usage_cpu_percent"));
             entity.setUsageMemPercent((Integer) rs

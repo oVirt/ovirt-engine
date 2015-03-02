@@ -58,6 +58,8 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
             entity.setVmCount(rs.getInt("vm_count"));
             entity.setVmsCoresCount(rs.getInt("vms_cores_count"));
             entity.setVmMigrating((Integer) rs.getObject("vm_migrating"));
+            entity.setIncomingMigrations(rs.getInt("incoming_migrations"));
+            entity.setOutgoingMigrations(rs.getInt("outgoing_migrations"));
             entity.setReservedMem((Integer) rs.getObject("reserved_mem"));
             entity.setGuestOverhead(rs.getInt("guest_overhead"));
             entity.setSoftwareVersion(rs.getString("software_version"));
@@ -213,6 +215,8 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
                 .addValue("vm_count", vds.getVmCount())
                 .addValue("vms_cores_count", vds.getVmsCoresCount())
                 .addValue("vm_migrating", vds.getVmMigrating())
+                .addValue("incoming_migrations", vds.getIncomingMigrations())
+                .addValue("outgoing_migrations", vds.getOutgoingMigrations())
                 .addValue("reserved_mem", vds.getReservedMem())
                 .addValue("guest_overhead", vds.getGuestOverhead())
                 .addValue("rpm_version", vds.getVersion().getRpmName())

@@ -630,6 +630,22 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         vdsDynamic.setVmMigrating(value);
     }
 
+    public int getIncomingMigrations() {
+        return vdsDynamic.getIncomingMigrations();
+    }
+
+    public void setIncomingMigrations(int value) {
+        vdsDynamic.setIncomingMigrations(value);
+    }
+
+    public int getOutgoingMigrations() {
+        return vdsDynamic.getOutgoingMigrations();
+    }
+
+    public void setOutgoingMigrations(int value) {
+        vdsDynamic.setOutgoingMigrations(value);
+    }
+
     public Integer getUsageMemPercent() {
         return vdsStatistics.getUsageMemPercent();
     }

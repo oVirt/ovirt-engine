@@ -47,6 +47,10 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private Integer vmMigrating;
 
+    private int incomingMigrations;
+
+    private int outgoingMigrations;
+
     private Integer reservedMem;
 
     private Integer guestOverhead;
@@ -313,6 +317,22 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     public void setVmMigrating(Integer value) {
         vmMigrating = value;
+    }
+
+    public int getIncomingMigrations() {
+        return incomingMigrations;
+    }
+
+    public void setIncomingMigrations(int incomingMigrations) {
+        this.incomingMigrations = incomingMigrations;
+    }
+
+    public int getOutgoingMigrations() {
+        return outgoingMigrations;
+    }
+
+    public void setOutgoingMigrations(int outgoingMigrations) {
+        this.outgoingMigrations = outgoingMigrations;
     }
 
     public Integer getReservedMem() {
@@ -723,6 +743,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         result = prime * result + vmCount;
         result = prime * result + (supportedRngSources == null ? 0 : supportedRngSources.hashCode());
         result = prime * result + (vmMigrating == null ? 0 : vmMigrating.hashCode());
+        result = prime * result + incomingMigrations;
+        result = prime * result + outgoingMigrations;
         result = prime * result + (vmsCoresCount == null ? 0 : vmsCoresCount.hashCode());
         result = prime * result + (hwManufacturer == null ? 0 : hwManufacturer.hashCode());
         result = prime * result + (hwProductName == null ? 0 : hwProductName.hashCode());
@@ -793,6 +815,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && ObjectUtils.objectsEqual(vmActive, other.vmActive)
                 && vmCount == other.vmCount
                 && ObjectUtils.objectsEqual(vmMigrating, other.vmMigrating)
+                && incomingMigrations == other.incomingMigrations
+                && outgoingMigrations == other.outgoingMigrations
                 && ObjectUtils.objectsEqual(vmsCoresCount, other.vmsCoresCount)
                 && ObjectUtils.objectsEqual(hwManufacturer, other.hwManufacturer)
                 && ObjectUtils.objectsEqual(hwProductName, other.hwProductName)
