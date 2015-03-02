@@ -1,36 +1,36 @@
 package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
+
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmPoolParametersBase extends VdcActionParametersBase implements Serializable {
     private static final long serialVersionUID = -4244908570752388901L;
-    private Guid _vmPoolId;
+    private Guid vmPoolId;
+    private Guid storageDomainId;
+
+    public VmPoolParametersBase() {
+        storageDomainId = Guid.Empty;
+    }
 
     public VmPoolParametersBase(Guid vmPoolId) {
-        _vmPoolId = vmPoolId;
-        privateStorageDomainId = Guid.Empty;
+        this();
+        setVmPoolId(vmPoolId);
     }
 
     public Guid getVmPoolId() {
-        return _vmPoolId;
+        return vmPoolId;
     }
 
-    public void setVmPoolId(Guid value) {
-        _vmPoolId = value;
+    public void setVmPoolId(Guid vmPoolId) {
+        this.vmPoolId = vmPoolId;
     }
-
-    private Guid privateStorageDomainId;
 
     public Guid getStorageDomainId() {
-        return privateStorageDomainId;
+        return storageDomainId;
     }
 
-    public void setStorageDomainId(Guid value) {
-        privateStorageDomainId = value;
-    }
-
-    public VmPoolParametersBase() {
-        privateStorageDomainId = Guid.Empty;
+    public void setStorageDomainId(Guid storageDomainId) {
+        this.storageDomainId = storageDomainId;
     }
 }
