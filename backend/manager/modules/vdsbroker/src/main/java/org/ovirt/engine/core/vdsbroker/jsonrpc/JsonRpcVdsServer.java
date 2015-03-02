@@ -171,9 +171,7 @@ public class JsonRpcVdsServer implements IVdsServer {
                         new ArrayList<String>(Arrays.asList(new String[] {}))).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("vmList")
-                        .withResponseType(Object[].class)
-                        .withSubTypeClazz(new HashMap<String, Object>().getClass())
-                        .withSubtypeKey("vmId");
+                        .withResponseType(Object[].class);
         return new VMListReturnForXmlRpc(response);
     }
 

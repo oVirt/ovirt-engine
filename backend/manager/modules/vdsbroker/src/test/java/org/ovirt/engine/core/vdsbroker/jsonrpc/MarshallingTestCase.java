@@ -294,6 +294,34 @@ public class MarshallingTestCase {
 
     @SuppressWarnings("unchecked")
     @Test
+    public void testGetVMListIdsOnly() throws JsonProcessingException, IOException, InterruptedException,
+            ExecutionException,
+            TimeoutException, ClientConnectionException {
+        // Given
+        String json =
+                "{\"jsonrpc\": \"2.0\", \"id\": \"e9968b53-7450-4059-83e6-d3569f7024ec\", \"result\": [\"1397d80b-1c48-4d4a-acf9-ebd669bf3b25\"]}";
+        ObjectMapper mapper = new ObjectMapper();
+        JsonRpcResponse response = JsonRpcResponse.fromJsonNode(mapper.readTree(json));
+        Future<JsonRpcResponse> future = mock(Future.class);
+        when(future.get()).thenReturn(response);
+        JsonRpcClient client = mock(JsonRpcClient.class);
+        JsonRpcRequest request = mock(JsonRpcRequest.class);
+        when(client.call(request)).thenReturn(future);
+
+        // When
+        Map<String, Object> map = new FutureMap(client, request).withResponseKey("vmList")
+                .withResponseType(Object[].class);
+
+        // Then
+        VMListReturnForXmlRpc vmList = new VMListReturnForXmlRpc(map);
+        assertEquals("Done", vmList.mStatus.mMessage);
+        assertEquals(0, vmList.mStatus.mCode);
+        assertEquals(1, vmList.mVmList.length);
+        assertEquals("1397d80b-1c48-4d4a-acf9-ebd669bf3b25", (String) vmList.mVmList[0].get("vmId"));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
     public void testStoragePoolInfo() throws JsonProcessingException, IOException, InterruptedException,
             ExecutionException, TimeoutException, ClientConnectionException {
         // Given
