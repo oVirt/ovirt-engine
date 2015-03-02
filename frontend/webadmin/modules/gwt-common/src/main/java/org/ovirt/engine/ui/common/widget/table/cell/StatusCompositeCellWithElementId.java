@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.widget.table.cell;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.table.HasStyleClass;
 
@@ -16,7 +15,7 @@ import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
-public class StatusCompositeCellWithElementId extends CompositeCellWithElementId<VM> implements CellWithElementId<VM> {
+public class StatusCompositeCellWithElementId<C> extends CompositeCellWithElementId<C> implements CellWithElementId<C> {
     public interface StatusCompositeCellResources extends ClientBundle {
         @ClientBundle.Source("org/ovirt/engine/ui/common/css/StatusCompositeCell.css")
         StatusCompositeCellCss statusCompositeCellCss();
@@ -33,11 +32,11 @@ public class StatusCompositeCellWithElementId extends CompositeCellWithElementId
 
     private static final StatusCompositeCellResources RESOURCES = GWT.create(StatusCompositeCellResources.class);
     private final StatusCompositeCellCss style;
-    private final List<HasCell<VM, ?>> hasCells;
+    private final List<HasCell<C, ?>> hasCells;
 
     private ContentTemplate template;
 
-    public StatusCompositeCellWithElementId(List<HasCell<VM, ?>> hasCells) {
+    public StatusCompositeCellWithElementId(List<HasCell<C, ?>> hasCells) {
         super(hasCells);
         this.hasCells = hasCells;
         style = RESOURCES.statusCompositeCellCss();
@@ -52,11 +51,11 @@ public class StatusCompositeCellWithElementId extends CompositeCellWithElementId
     }
 
     @Override
-    public void render(Cell.Context context, VM value, SafeHtmlBuilder sb) {
+    public void render(Cell.Context context, C value, SafeHtmlBuilder sb) {
         sb.append(getTemplate().id(ElementIdUtils.createTableCellElementId(
                 getElementIdPrefix(), getColumnId(), context)));
 
-        for (HasCell<VM, ?> hasCell : hasCells) {
+        for (HasCell<C, ?> hasCell : hasCells) {
             render(context, value, sb, hasCell);
         }
 
@@ -64,8 +63,8 @@ public class StatusCompositeCellWithElementId extends CompositeCellWithElementId
     }
 
     @Override
-    protected <T> void render(Cell.Context context, VM value,
-            SafeHtmlBuilder sb, HasCell<VM, T> hasCell) {
+    protected <T> void render(Cell.Context context, C value,
+            SafeHtmlBuilder sb, HasCell<C, T> hasCell) {
         Cell<T> cell = hasCell.getCell();
         if (cell instanceof HasStyleClass) {
             ((HasStyleClass) cell).setStyleClass(style.divInlineBlock());
@@ -74,12 +73,12 @@ public class StatusCompositeCellWithElementId extends CompositeCellWithElementId
     }
 
     @Override
-    public boolean isEditing(Context context, Element parent, VM value) {
+    public boolean isEditing(Context context, Element parent, C value) {
         return false;
     }
 
     @Override
-    public boolean resetFocus(Context context, Element parent, VM value) {
+    public boolean resetFocus(Context context, Element parent, C value) {
         return false;
     }
 }
