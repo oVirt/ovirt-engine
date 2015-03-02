@@ -937,6 +937,23 @@ public class VdsBrokerObjectsBuilder {
         vds.setVmCount(vm_count == null ? 0 : vm_count);
         vds.setVmActive(AssignIntValue(xmlRpcStruct, VdsProperties.vm_active));
         vds.setVmMigrating(AssignIntValue(xmlRpcStruct, VdsProperties.vm_migrating));
+
+        Integer inOutMigrations;
+        inOutMigrations = AssignIntValue(xmlRpcStruct, VdsProperties.INCOMING_VM_MIGRATIONS);
+        if (inOutMigrations != null) {
+            vds.setIncomingMigrations(inOutMigrations);
+        } else {
+            // TODO remove in 4.x when all hosts will send in/out migrations separately
+            vds.setIncomingMigrations(-1);
+        }
+        inOutMigrations = AssignIntValue(xmlRpcStruct, VdsProperties.OUTGOING_VM_MIGRATIONS);
+        if (inOutMigrations != null) {
+            vds.setOutgoingMigrations(inOutMigrations);
+        } else {
+            // TODO remove in 4.x when all hosts will send in/out migrations separately
+            vds.setOutgoingMigrations(-1);
+        }
+
         updateVDSDomainData(vds, xmlRpcStruct);
         updateLocalDisksUsage(vds, xmlRpcStruct);
 
