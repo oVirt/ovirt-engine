@@ -262,6 +262,17 @@ class Const(object):
     REMOTE_ENGINE_SETUP_STYLE_MANUAL_INLINE = 'manual_inline'
     EXIT_CODE_REMOVE_WITHOUT_SETUP = 11
 
+    DWH_DOC_URI = (
+        '/docs/manual/en_US/html/Installation_Guide/'
+        'chap-History_and_Reports.html'
+    )
+    DWH_DOC_URL = 'http://www.ovirt.org/Ovirt_DWH'
+    REPORTS_DOC_URI = (
+        '/docs/manual/en_US/html/Installation_Guide/'
+        'chap-History_and_Reports.html'
+    )
+    REPORTS_DOC_URL = 'http://www.ovirt.org/Ovirt_Reports'
+
 
 @util.export
 @util.codegen
@@ -298,6 +309,15 @@ class CoreEnv(object):
 
     RECONFIGURE_OPTIONAL_COMPONENTS = \
         'OVESETUP_CORE/reconfigureOptionalComponents'
+
+
+@util.export
+@util.codegen
+@osetupattrsclass
+class DocsEnv(object):
+    DOCS_LOCAL = 'OVESETUP_DOCS/docsAreLocal'
+    DWH_DOC_URL = 'OVESETUP_DOCS/dwhDocUrl'
+    REPORTS_DOC_URL = 'OVESETUP_DOCS/reportsDocUrl'
 
 
 @util.export

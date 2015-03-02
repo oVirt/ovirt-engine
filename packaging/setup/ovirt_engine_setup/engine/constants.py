@@ -39,6 +39,27 @@ def _(m):
     return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
+# Sync with dwh/reports
+
+
+@util.export
+@util.codegen
+@osetupattrsclass
+class DWHCoreEnv(object):
+    """Sync with ovirt-dwh"""
+
+    ENABLE = 'OVESETUP_DWH_CORE/enable'
+
+
+@util.export
+@util.codegen
+@osetupattrsclass
+class ReportsCoreEnv(object):
+    """Sync with ovirt-reports"""
+
+    ENABLE = 'OVESETUP_REPORTS_CORE/enable'
+
+
 @util.export
 class FileLocations(object):
     SYSCONFDIR = '/etc'
