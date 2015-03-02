@@ -2819,7 +2819,12 @@ actions:
       parameterType: null
       signatures: []
     urlparams:
-      force: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      force: # This is deprecated, use the "refreshcapabilities" action instead
+        context: matrix
+        type: 'xs:boolean'
+        value: true|false
+        required: false
+        deprecated: true
     headers:
       Filter: {value: true|false, required: false}
       All-Content: {value: true|false, required: false}
@@ -3055,6 +3060,19 @@ actions:
       signatures:
       - mandatoryArguments: {action.iscsi.address: 'xs:string', action.target: 'xs:string'}
         description: Discover the Storage Domains which are candidiates to be imported to the setup
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /hosts/{host:id}/refreshcapabilities|rel=refreshcapabilities
+  description: refresh the capabilities of the host
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        description: refresh the capabilities of the host
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}

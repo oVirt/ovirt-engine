@@ -85,6 +85,8 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     public Host get() {
+        // This logic shouldn't be part of the "get" method as it is an action. It will be replaced by
+        // the "refreshcapabilities" action and removed in the future.
         if (isForce()) {
             performAction(VdcActionType.RefreshHostCapabilities,
                     new VdsActionParameters(guid));
@@ -433,6 +435,11 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         params.setVdsId(guid);
         params.setStoragePoolId(getEntity().getStoragePoolId());
         return doAction(VdcActionType.FenceVdsManualy, params, action);
+    }
+
+    @Override
+    public Response refreshCapabilities(Action action) {
+        return doAction(VdcActionType.RefreshHostCapabilities, new VdsActionParameters(guid), action);
     }
 
     @Override

@@ -80,6 +80,11 @@ public interface HostResource extends UpdatableResource<Host>, MeasurableResourc
 
     @POST
     @Actionable
+    @Path("refreshcapabilities")
+    public Response refreshCapabilities(Action action);
+
+    @POST
+    @Actionable
     @Path("forceselectspm")
     public Response forceSelectSPM(Action action);
 
