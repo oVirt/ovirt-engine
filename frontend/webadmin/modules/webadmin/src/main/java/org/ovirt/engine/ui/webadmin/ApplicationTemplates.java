@@ -162,15 +162,27 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<div title=\'{1}'style='line-height: 100%; text-align: center; vertical-align: middle;'>{0}</div>")
     SafeHtml image(SafeHtml statusImage, String title);
 
-    @Template("<div title=\"{2}\"><table cellspacing='0' cellpadding='0' style='line-height: 5px;'>" +
+    @Template("<div title=\"{0}\"><table cellspacing='0' cellpadding='0' style='line-height: 5px; width: 100%;'>" +
             "<tr>" +
-            "<td>{0} (</td>" +
-            "<td><div style='font-size: 10px; text-align: center;'>{1}</div><div>{3}</div></td>" +
-            "<td>)</td>" +
+            "{1}" +
+            "<td style='width: 30%; text-align: center;'>&#160;{2}&#160;</td>" +
+            "{3}" +
             "</tr>" +
             "</table>" +
             "</div>")
-    SafeHtml vmCountWithMigrating(String vmCountStr, String vmMigratingStr, String title, SafeHtml image);
+    SafeHtml vmCountWithMigrations(
+            String title,
+            SafeHtml incomingMigrations,
+            String vmCountStr,
+            SafeHtml outgoingMigrations);
+
+    @Template("<td style='text-align: right;'>{0}</td>" +
+            "<td style='text-align: center; white-space: nowrap; width: 10%;'>" +
+            "<div style='font-size: 10px; text-align: center;'>{1}</div>" +
+            "<div style='width: 25px;'>{2}</div>" +
+            "</td>" +
+            "<td style='text-align: left;'>{3}</td>")
+    SafeHtml vmCountInOutMigrations(String prefix, String vmCountStr, SafeHtml image, String postfix);
 
     @Template("<div style='max-width: 500px; word-wrap:break-word; font-style: italic;'>{0}</div>")
     SafeHtml italicWordWrapMaxWidth(String text);

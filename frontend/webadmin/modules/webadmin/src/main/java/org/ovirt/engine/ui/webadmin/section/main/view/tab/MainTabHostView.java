@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -177,6 +178,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
             VmCountColumn vmCountColumn = new VmCountColumn();
+            vmCountColumn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
             vmCountColumn.makeSortable(VdsConditionFieldAutoCompleter.ACTIVE_VMS);
             getTable().addColumn(vmCountColumn, constants.vmsCount(), "110px"); //$NON-NLS-1$
         }

@@ -402,6 +402,9 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/double_arrow.png")
     ImageResource doubleArrowImage();
 
+    @Source("images/right_arrow.png")
+    ImageResource rightArrowImage();
+
     @Source("images/host_prepare_to_migrate.png")
     ImageResource prepareImage();
 

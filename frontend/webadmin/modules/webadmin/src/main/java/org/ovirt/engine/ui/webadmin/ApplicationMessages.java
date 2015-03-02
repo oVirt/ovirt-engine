@@ -87,7 +87,10 @@ public interface ApplicationMessages extends CommonApplicationMessages {
     String clusterHasNewGlusterHosts();
 
     @DefaultMessage("{0} VMs running, out of which {1} migrating")
-    String migratingVmsOutOfTotal(String vmCount, String vmMigrating);
+    String vmsWithTotalMigrations(String vmCount, String vmMigrating);
+
+    @DefaultMessage("{0} VMs running, {1} are migrating to host and {2} are migrating from host")
+    String vmsWithInOutMigrations(String vmCount, String incomingMigrations, String outgoingMigrations);
 
     @DefaultMessage("Rebalance {0}")
     String rebalanceStatusMessage(JobExecutionStatus jobStatus);
