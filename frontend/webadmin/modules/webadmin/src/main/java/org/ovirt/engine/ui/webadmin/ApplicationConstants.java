@@ -1920,6 +1920,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Copy")
     String copyTemplate();
 
+    @DefaultStringValue("New VM")
+    String createVmFromTemplate();
+
     @DefaultStringValue("Disks")
     String disksTemplate();
 

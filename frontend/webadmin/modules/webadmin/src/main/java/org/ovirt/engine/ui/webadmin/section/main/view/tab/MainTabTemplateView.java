@@ -130,6 +130,12 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
                 return getMainModel().getExportCommand();
             }
         });
+        getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.createVmFromTemplate()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getCreateVmFromTemplateCommand();
+            }
+        });
     }
 
 }

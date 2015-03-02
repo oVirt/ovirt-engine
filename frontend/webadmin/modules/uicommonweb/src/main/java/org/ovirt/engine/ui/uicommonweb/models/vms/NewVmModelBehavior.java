@@ -39,6 +39,15 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         getModel().getVmType().setIsChangable(true);
         getModel().getVmId().setIsAvailable(true);
 
+        loadDataCenters();
+
+        initPriority(0);
+        getModel().getVmInitModel().init(null);
+
+        instanceTypeManager = new NewVmInstanceTypeManager(getModel());
+    }
+
+    protected void loadDataCenters() {
         AsyncDataProvider.getInstance().getDataCenterByClusterServiceList(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
@@ -75,11 +84,6 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
                 }),
                 true,
                 false);
-
-        initPriority(0);
-        getModel().getVmInitModel().init(null);
-
-        instanceTypeManager = new NewVmInstanceTypeManager(getModel());
     }
 
     @Override
@@ -305,7 +309,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         }
     }
 
-    private void postInitTemplate(List<VmTemplate> templates) {
+    protected void postInitTemplate(List<VmTemplate> templates) {
         initTemplateWithVersion(templates);
         updateIsDisksAvailable();
     }

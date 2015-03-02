@@ -1,0 +1,112 @@
+package org.ovirt.engine.ui.uicommonweb.models.vms;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateWithVersion;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
+
+public class NewVmFromTemplateModelBehavior extends NewVmModelBehavior {
+
+    private VmTemplate selectedTemplate;
+
+    public NewVmFromTemplateModelBehavior(VmTemplate template) {
+        this.selectedTemplate = template;
+    }
+
+    @Override
+    protected void postInitTemplate(List<VmTemplate> templates) {
+        DataCenterWithCluster selectedDCWithCluster = getModel().getDataCenterWithClustersList().getSelectedItem();
+        Guid clusterId =
+                selectedDCWithCluster != null ? selectedDCWithCluster.getCluster().getId()
+                        : selectedTemplate.getVdsGroupId();
+
+        VmTemplate baseTemplate = null;
+        if (selectedTemplate.isBaseTemplate()) {
+            baseTemplate = selectedTemplate;
+        }
+        Guid baseTemplateId = selectedTemplate.getBaseTemplateId();
+
+        List<VmTemplate> relatedTemplates = new ArrayList<>();
+        for (VmTemplate template : templates) {
+            if (template.getBaseTemplateId().equals(baseTemplateId)) {
+                if (template.getVdsGroupId().equals(clusterId)) {
+                    relatedTemplates.add(template);
+                }
+
+                if (baseTemplate == null) {
+                    if (template.getId().equals(baseTemplateId)) {
+                        baseTemplate = template;
+                    }
+                }
+            }
+        }
+        if (!relatedTemplates.contains(baseTemplate)) {
+            relatedTemplates.add(baseTemplate);
+        }
+
+        initTemplateWithVersion(relatedTemplates);
+
+        if (selectedDCWithCluster != null && selectedDCWithCluster.getCluster() != null) {
+            if (selectedTemplate.getVdsGroupId().equals(selectedDCWithCluster.getCluster().getId())) {
+                TemplateWithVersion templateCouple = new TemplateWithVersion(baseTemplate, selectedTemplate);
+                getModel().getTemplateWithVersion().setSelectedItem(templateCouple);
+            }
+        }
+
+        updateIsDisksAvailable();
+    }
+
+    protected void loadDataCenters() {
+        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(getModel(),
+                new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
+
+                        if (returnValue != null) {
+                            StoragePool dataCenter = (StoragePool) returnValue;
+                            List<StoragePool> dataCenters =
+                                    new ArrayList<>(Arrays.asList(new StoragePool[] { dataCenter }));
+                            initClusters(dataCenters);
+                        } else {
+                            getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoUpDC());
+                        }
+
+                    }
+                }),
+                selectedTemplate.getStoragePoolId());
+    }
+
+    protected void initClusters(final List<StoragePool> dataCenters) {
+        AsyncDataProvider.getInstance().getClusterListByService(
+                new AsyncQuery(getModel(), new INewAsyncCallback() {
+
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
+                        UnitVmModel model = (UnitVmModel) target;
+
+                        List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
+
+                        List<VDSGroup> filteredClusters =
+                                AsyncDataProvider.getInstance().filterByArchitecture(clusters,
+                                        selectedTemplate.getClusterArch());
+
+                        model.setDataCentersAndClusters(model,
+                                dataCenters,
+                                filteredClusters, selectedTemplate.getVdsGroupId());
+                        initCdImage();
+                    }
+                }),
+                true,
+                false);
+    }
+
+}

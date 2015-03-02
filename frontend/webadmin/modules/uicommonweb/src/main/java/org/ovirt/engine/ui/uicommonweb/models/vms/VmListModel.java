@@ -11,7 +11,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
-import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
@@ -43,8 +42,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.VmWatchdog;
-import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -71,12 +68,10 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommonUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.DedicatedVmForVdsVmBaseToVmBaseBuilder;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.FullUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.KernelParamsVmBaseToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.MigrationOptionsVmBaseToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.UnitToGraphicsDeviceParamsBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.UsbPolicyVmBaseToVmBaseBuilder;
-import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -86,7 +81,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -127,7 +121,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     private static final String CMD_IMPORT_CLONED_VM = "ImportVmAsClone"; //$NON-NLS-1$
 
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
-    public static final Version BALLOON_DEVICE_MIN_VERSION = Version.v3_2;
 
     final Provider<ImportVmsModel> importVmsModelProvider;
 
@@ -438,19 +431,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         privateGuideContext = value;
     }
 
-    private VM privatecurrentVm;
-
-    public VM getcurrentVm()
-
-    {
-        return privatecurrentVm;
-    }
-
-    public void setcurrentVm(VM value)
-    {
-        privatecurrentVm = value;
-    }
-
     private final ConsoleModelsCache consoleModelsCache;
 
     private ErrorPopupManager errorPopupManager;
@@ -458,35 +438,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     /** The edited VM could be different than the selected VM in the grid
      *  when the VM has next-run configuration */
     private VM editedVm;
-
-    VmInterfaceCreatingManager defaultNetworkCreatingManager =
-            new VmInterfaceCreatingManager(new VmInterfaceCreatingManager.PostVnicCreatedCallback() {
-                @Override
-                public void vnicCreated(Guid vmId) {
-                    getWindow().stopProgress();
-                    cancel();
-                    updateActionAvailability();
-                }
-
-                @Override
-                public void queryFailed() {
-                    getWindow().stopProgress();
-                    cancel();
-                }
-            });
-
-    VmInterfaceCreatingManager addVmFromBlankTemplateNetworkManager =
-            new VmInterfaceCreatingManager(new VmInterfaceCreatingManager.PostVnicCreatedCallback() {
-                @Override
-                public void vnicCreated(Guid vmId) {
-                    // do nothing
-                }
-
-                @Override
-                public void queryFailed() {
-                    // do nothing
-                }
-            });
 
     @Inject
     public VmListModel(final VmGeneralModel vmGeneralModel, final VmInterfaceListModel vmInterfaceListModel,
@@ -540,7 +491,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().retrievingCDsTitle());
         getIsoImages().add(tempVar);
 
-        updateActionAvailability();
+        updateActionsAvailability();
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
@@ -765,29 +716,11 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             return;
         }
 
+        List<UICommand> commands = new ArrayList<>();
+        commands.add(UICommand.createDefaultOkUiCommand("OnSave", this)); //$NON-NLS-1$
+        commands.add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
         UnitVmModel model = new UnitVmModel(new NewVmModelBehavior());
-        model.setTitle(ConstantsManager.getInstance().getConstants().newVmTitle());
-        model.setHelpTag(HelpTag.new_vm);
-        model.setHashName("new_vm"); //$NON-NLS-1$
-        model.setIsNew(true);
-        model.getVmType().setSelectedItem(VmType.Server);
-        model.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
-        model.setIsAdvancedModeLocalStorageKey("wa_vm_dialog");  //$NON-NLS-1$
-
-        setWindow(model);
-
-        model.initialize(getSystemTreeSelectedItem());
-
-        VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
-        switchModeCommand.init(model);
-        model.getCommands().add(switchModeCommand);
-
-        model.getProvisioning().setEntity(true);
-
-        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
-        model.getCommands().add(tempVar);
-        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
-        model.getCommands().add(tempVar2);
+        setupNewVmModel(model, VmType.Server, getSystemTreeSelectedItem(), commands);
     }
 
     private void editConsole() {
@@ -1922,61 +1855,15 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
         setcurrentVm(model.getIsNew() ? new VM() : (VM) Cloner.clone(selectedItem));
 
-        if (!model.validate())
-        {
-            return;
-        }
-
-        AsyncDataProvider.getInstance().isVmNameUnique(new AsyncQuery(this, new INewAsyncCallback() {
-
-            @Override
-            public void onSuccess(Object target, Object returnValue) {
-                if (!(Boolean) returnValue && name.compareToIgnoreCase(getcurrentVm().getName()) != 0) {
-                    model.getName()
-                            .getInvalidityReasons()
-                            .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
-                    model.getName().setIsValid(false);
-                    model.setValidTab(TabName.GENERAL_TAB, false);
-                } else {
-                    model.getName()
-                            .getInvalidityReasons().clear();
-                    model.getName().setIsValid(true);
-                    model.setValidTab(TabName.GENERAL_TAB, true);
-                    onSave();
-                }
-            }
-        }), name);
-
+        validateVm(model, name);
     }
 
-    private void onSave() {
-        final UnitVmModel model = (UnitVmModel) getWindow();
-
-        // Save changes.
-        buildVmOnSave(model, getcurrentVm());
-
-        getcurrentVm().setBalloonEnabled(balloonEnabled(model));
-
-        getcurrentVm().setCpuPinning(model.getCpuPinning().getEntity());
-
-        if (model.getCpuSharesAmount().getIsAvailable() && model.getCpuSharesAmount().getEntity() != null) {  // $NON-NLS-1$
-            getcurrentVm().setCpuShares(model.getCpuSharesAmount().getEntity());
-        }
-
-        getcurrentVm().setUseHostCpuFlags(model.getHostCpu().getEntity());
-
-        getcurrentVm().setVmInit(model.getVmInitModel().buildCloudInitParameters(model));
-
-        if (model.getIsNew())
-        {
-            saveNewVm(model);
-        }
-        else // Update existing VM -> consists of editing VM cluster, and if succeeds - editing VM:
-        {
-            final VM selectedItem = getSelectedItem();
-            // explicitly pass non-editable field from the original VM
-            getcurrentVm().setCreatedByUserId(selectedItem.getCreatedByUserId());
-            getcurrentVm().setUseLatestVersion(model.getTemplateWithVersion().getSelectedItem().isLatest());
+    @Override
+    protected void updateVM (final UnitVmModel model){
+        final VM selectedItem = getSelectedItem();
+        // explicitly pass non-editable field from the original VM
+        getcurrentVm().setCreatedByUserId(selectedItem.getCreatedByUserId());
+        getcurrentVm().setUseLatestVersion(model.getTemplateWithVersion().getSelectedItem().isLatest());
 
             if (selectedItem.isRunningOrPaused()) {
                 AsyncDataProvider.getInstance().getVmChangedFieldsForNextRun(editedVm, getcurrentVm(), getUpdateVmParameters(false), new AsyncQuery(this,
@@ -2010,7 +1897,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             else {
                 updateExistingVm(false);
             }
-        }
     }
 
     private void updateExistingVm(final boolean applyCpuChangesLater) {
@@ -2064,6 +1950,13 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         }
     }
 
+    @Override
+    protected void createUnitVmModelNetworkSucceeded(VdcReturnValueBase returnValue) {
+        setGuideContext(returnValue.getActionReturnValue());
+        updateActionsAvailability();
+        getGuideCommand().execute();
+    }
+
     public VmManagementParametersBase getUpdateVmParameters(boolean applyCpuChangesLater) {
         UnitVmModel model = (UnitVmModel) getWindow();
         VmManagementParametersBase updateVmParams = new VmManagementParametersBase(getcurrentVm());
@@ -2079,88 +1972,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         BuilderExecutor.build(model, updateVmParams, new UnitToGraphicsDeviceParamsBuilder());
 
         return updateVmParams;
-    }
-
-    private void saveNewVm(final UnitVmModel model) {
-        if (model.getProgress() != null) {
-            return;
-        }
-
-        model.startProgress(null);
-
-        VM vm = getcurrentVm();
-        if (!StringHelper.isNullOrEmpty(model.getVmId().getEntity())) {
-            vm.setId(new Guid(model.getVmId().getEntity()));
-        }
-        vm.setUseLatestVersion(model.getTemplateWithVersion().getSelectedItem().isLatest());
-        AddVmParameters parameters = new AddVmParameters(vm);
-        parameters.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
-        parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-        parameters.setBalloonEnabled(balloonEnabled(model));
-        parameters.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
-        parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
-        parameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
-        setVmWatchdogToParams(model, parameters);
-        setRngDeviceToParams(model, parameters);
-        BuilderExecutor.build(model, parameters, new UnitToGraphicsDeviceParamsBuilder());
-        if (!StringHelper.isNullOrEmpty(model.getVmId().getEntity())) {
-            parameters.setVmId(new Guid(model.getVmId().getEntity()));
-        }
-
-        Frontend.getInstance().runAction(
-                model.getProvisioning().getEntity() ? VdcActionType.AddVmFromTemplate : VdcActionType.AddVm,
-                parameters,
-                createUnitVmModelNetworkAsyncCallback(vm, model),
-                this);
-    }
-
-    private UnitVmModelNetworkAsyncCallback createUnitVmModelNetworkAsyncCallback(VM vm, UnitVmModel model) {
-        if (vm.getVmtGuid().equals(Guid.Empty)) {
-            return new UnitVmModelNetworkAsyncCallback(model, addVmFromBlankTemplateNetworkManager) {
-                @Override
-                public void executed(FrontendActionAsyncResult result) {
-                    getWindow().stopProgress();
-                    VdcReturnValueBase returnValue = result.getReturnValue();
-                    if (returnValue != null && returnValue.getSucceeded()) {
-                        setWindow(null);
-                        setGuideContext(returnValue.getActionReturnValue());
-                        updateActionAvailability();
-                        getGuideCommand().execute();
-                    } else {
-                        cancel();
-                    }
-                    super.executed(result);
-                }
-            };
-        }
-
-        return new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager);
-    }
-
-    protected static void buildVmOnSave(UnitVmModel model, VM vm) {
-        BuilderExecutor.build(model, vm.getStaticData(), new FullUnitToVmBaseBuilder());
-        BuilderExecutor.build(model, vm, new VmSpecificUnitToVmBuilder());
-    }
-
-    private boolean balloonEnabled(UnitVmModel model) {
-        return model.getMemoryBalloonDeviceEnabled().getEntity()
-                && model.getSelectedCluster().getCompatibilityVersion().compareTo(BALLOON_DEVICE_MIN_VERSION) >= 0;
-    }
-
-    private void setVmWatchdogToParams(final UnitVmModel model, VmManagementParametersBase updateVmParams) {
-        VmWatchdogType wdModel = model.getWatchdogModel().getSelectedItem();
-        updateVmParams.setUpdateWatchdog(true);
-        if (wdModel != null) {
-            VmWatchdog vmWatchdog = new VmWatchdog();
-            vmWatchdog.setAction(model.getWatchdogAction().getSelectedItem());
-            vmWatchdog.setModel(wdModel);
-            updateVmParams.setWatchdog(vmWatchdog);
-        }
-    }
-
-    private void setRngDeviceToParams(UnitVmModel model, VmManagementParametersBase parameters) {
-        parameters.setUpdateRngDevice(true);
-        parameters.setRngDevice(model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
     }
 
     private void retrieveIsoImages()
@@ -2217,6 +2028,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                 null);
     }
 
+    @Override
     public void cancel()
     {
         cancelConfirmation();
@@ -2224,7 +2036,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         setGuideContext(null);
         setWindow(null);
 
-        updateActionAvailability();
+        updateActionsAvailability();
     }
 
     private void cancelConfirmation()
@@ -2237,14 +2049,14 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     {
         super.onSelectedItemChanged();
 
-        updateActionAvailability();
+        updateActionsAvailability();
     }
 
     @Override
     protected void selectedItemsChanged() {
         super.selectedItemsChanged();
 
-        updateActionAvailability();
+        updateActionsAvailability();
     }
 
     @Override
@@ -2252,11 +2064,12 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         super.selectedItemPropertyChanged(sender, e);
 
         if (e.propertyName.equals("status")) { //$NON-NLS-1$
-            updateActionAvailability();
+            updateActionsAvailability();
         }
     }
 
-    private void updateActionAvailability() {
+    @Override
+    protected void updateActionsAvailability() {
         List items =
                 getSelectedItems() != null && getSelectedItem() != null ? getSelectedItems()
                         : new ArrayList();

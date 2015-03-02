@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
@@ -44,6 +45,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExportVmModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.NewVmFromTemplateModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TemplateVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand;
@@ -97,6 +99,18 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         privateExportCommand = value;
     }
 
+    private UICommand privateCreateVmfromTemplateCommand;
+
+    public UICommand getCreateVmFromTemplateCommand()
+    {
+        return privateCreateVmfromTemplateCommand;
+    }
+
+    private void setCreateVmFromTemplateCommand(UICommand value)
+    {
+        privateCreateVmfromTemplateCommand = value;
+    }
+
     private SystemTreeItemModel systemTreeSelectedItem;
 
     @Override
@@ -145,8 +159,9 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setExportCommand(new UICommand("Export", this)); //$NON-NLS-1$
+        setCreateVmFromTemplateCommand(new UICommand("CreateVM", this)); //$NON-NLS-1$
 
-        updateActionAvailability();
+        updateActionsAvailability();
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
@@ -588,6 +603,24 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         }
     }
 
+    private void createVMFromTemplate() {
+        VmTemplate template = getSelectedItem();
+
+        List<UICommand> commands = new ArrayList<>();
+        commands.add(UICommand.createDefaultOkUiCommand("OnSaveVm", this)); //$NON-NLS-1$
+        commands.add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
+
+        setupNewVmModel(new UnitVmModel(new NewVmFromTemplateModelBehavior(template)),
+                template.getVmType(), getSystemTreeSelectedItem(), commands);
+    }
+
+    private void onSaveVm() {
+        UnitVmModel model = (UnitVmModel) getWindow();
+        String name = model.getName().getEntity();
+        setcurrentVm(new VM());
+        validateVm(model, name);
+    }
+
     public void postNameUniqueCheck(boolean isNameUnique)
     {
         final UnitVmModel model = (UnitVmModel) getWindow();
@@ -672,13 +705,14 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         }
     }
 
-    private void cancel()
+    @Override
+    protected void cancel()
     {
         cancelConfirmation();
 
         setWindow(null);
 
-        updateActionAvailability();
+        updateActionsAvailability();
     }
 
     private void cancelConfirmation()
@@ -690,14 +724,14 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
     protected void onSelectedItemChanged()
     {
         super.onSelectedItemChanged();
-        updateActionAvailability();
+        updateActionsAvailability();
     }
 
     @Override
     protected void selectedItemsChanged()
     {
         super.selectedItemsChanged();
-        updateActionAvailability();
+        updateActionsAvailability();
     }
 
     @Override
@@ -707,7 +741,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
 
         if (e.propertyName.equals("status")) //$NON-NLS-1$
         {
-            updateActionAvailability();
+            updateActionsAvailability();
         }
     }
 
@@ -728,7 +762,8 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         return false;
     }
 
-    protected void updateActionAvailability()
+    @Override
+    protected void updateActionsAvailability()
     {
         VmTemplate item = getSelectedItem();
         ArrayList items =
@@ -767,6 +802,9 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
                     .blankTemplateCannotBeExported());
             getExportCommand().setIsExecutionAllowed(false);
         }
+
+        getCreateVmFromTemplateCommand().setIsExecutionAllowed(items.size() == 1 && item != null
+                && item.getStatus() != VmTemplateStatus.Locked);
     }
 
     /**
@@ -813,6 +851,10 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         {
             export();
         }
+        else if (command == getCreateVmFromTemplateCommand())
+        {
+            createVMFromTemplate();
+        }
         else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
@@ -824,6 +866,10 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         else if ("OnSave".equals(command.getName())) //$NON-NLS-1$
         {
             onSave();
+        }
+        else if ("OnSaveVm".equals(command.getName())) //$NON-NLS-1$
+        {
+            onSaveVm();
         }
         else if ("OnRemove".equals(command.getName())) //$NON-NLS-1$
         {

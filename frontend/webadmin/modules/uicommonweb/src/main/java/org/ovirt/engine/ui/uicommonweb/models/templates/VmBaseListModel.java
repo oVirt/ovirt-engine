@@ -3,26 +3,92 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.AddVmParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.businessentities.VmWatchdog;
+import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.FullUnitToVmBaseBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.UnitToGraphicsDeviceParamsBuilder;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsAndReportsModel;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExportVmModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceCreatingManager;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsModel<E, T> {
+
+
+    public static final Version BALLOON_DEVICE_MIN_VERSION = Version.v3_2;
+
+    private VM privatecurrentVm;
+
+    public VM getcurrentVm()
+
+    {
+        return privatecurrentVm;
+    }
+
+    public void setcurrentVm(VM value) {
+        privatecurrentVm = value;
+    }
+
+    VmInterfaceCreatingManager addVmFromBlankTemplateNetworkManager =
+            new VmInterfaceCreatingManager(new VmInterfaceCreatingManager.PostVnicCreatedCallback() {
+                @Override
+                public void vnicCreated(Guid vmId) {
+                    // do nothing
+                }
+
+                @Override
+                public void queryFailed() {
+                    // do nothing
+                }
+            });
+
+    protected VmInterfaceCreatingManager defaultNetworkCreatingManager =
+            new VmInterfaceCreatingManager(new VmInterfaceCreatingManager.PostVnicCreatedCallback() {
+                @Override
+                public void vnicCreated(Guid vmId) {
+                    getWindow().stopProgress();
+                    cancel();
+                    updateActionsAvailability();
+                }
+
+                @Override
+                public void queryFailed() {
+                    getWindow().stopProgress();
+                    cancel();
+                }
+            });
 
     protected void export()
     {
@@ -204,6 +270,187 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
 
     protected void setupExportModel(ExportVmModel model) {
         // no-op by default. Override if needed.
+    }
+
+    protected void setupNewVmModel(UnitVmModel model,
+            VmType vmtype,
+            SystemTreeItemModel systemTreeItemModel,
+            List<UICommand> uiCommands) {
+        setWindow(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().newVmTitle());
+        model.setHelpTag(HelpTag.new_vm);
+        model.setHashName("new_vm"); //$NON-NLS-1$
+        model.setIsNew(true);
+        model.getVmType().setSelectedItem(vmtype);
+        model.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
+        model.setIsAdvancedModeLocalStorageKey("wa_vm_dialog"); //$NON-NLS-1$
+
+        setWindow(model);
+        model.initialize(systemTreeItemModel);
+
+        VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
+        switchModeCommand.init(model);
+        model.getCommands().add(switchModeCommand);
+
+        model.getProvisioning().setEntity(true);
+
+        for (UICommand uicommand : uiCommands) {
+            model.getCommands().add(uicommand);
+        }
+    }
+
+    protected void validateVm(final UnitVmModel model, final String vmName) {
+
+        if (!model.validate())
+
+        {
+            return;
+        }
+
+        AsyncDataProvider.getInstance().
+                isVmNameUnique(new AsyncQuery(this, new INewAsyncCallback() {
+
+                            @Override
+                            public void onSuccess(Object target, Object returnValue) {
+                                if (!(Boolean) returnValue && vmName.compareToIgnoreCase(getcurrentVm().getName()) != 0) {
+                                    model.getName()
+                                            .getInvalidityReasons()
+                                            .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
+                                    model.getName().setIsValid(false);
+                                    model.setValidTab(TabName.GENERAL_TAB, false);
+                                } else {
+                                    model.getName()
+                                            .getInvalidityReasons().clear();
+                                    model.getName().setIsValid(true);
+                                    model.setValidTab(TabName.GENERAL_TAB, true);
+                                    onSaveVM(model);
+                                }
+                            }
+                        }
+
+                        ),
+                        vmName);
+    }
+
+    protected void onSaveVM(UnitVmModel model) {
+        // Save changes.
+        buildVmOnSave(model, getcurrentVm());
+
+        getcurrentVm().setBalloonEnabled(balloonEnabled(model));
+
+        getcurrentVm().setCpuPinning(model.getCpuPinning().getEntity());
+
+        if (model.getCpuSharesAmount().getIsAvailable() && model.getCpuSharesAmount().getEntity() != null) { // $NON-NLS-1$
+            getcurrentVm().setCpuShares(model.getCpuSharesAmount().getEntity());
+        }
+
+        getcurrentVm().setUseHostCpuFlags(model.getHostCpu().getEntity());
+
+        getcurrentVm().setVmInit(model.getVmInitModel().buildCloudInitParameters(model));
+        if (model.getIsNew()) {
+            saveNewVm(model);
+        } else {
+            updateVM(model);
+        }
+
+    }
+
+    private void saveNewVm(final UnitVmModel model) {
+        if (model.getProgress() != null) {
+            return;
+        }
+
+        model.startProgress(null);
+
+        VM vm = getcurrentVm();
+        if (!StringHelper.isNullOrEmpty(model.getVmId().getEntity())) {
+            vm.setId(new Guid(model.getVmId().getEntity()));
+        }
+        vm.setUseLatestVersion(model.getTemplateWithVersion().getSelectedItem().isLatest());
+        AddVmParameters parameters = new AddVmParameters(vm);
+        parameters.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
+        parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
+        parameters.setBalloonEnabled(balloonEnabled(model));
+        parameters.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
+        parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+        parameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
+        setVmWatchdogToParams(model, parameters);
+        setRngDeviceToParams(model, parameters);
+        BuilderExecutor.build(model, parameters, new UnitToGraphicsDeviceParamsBuilder());
+        if (!StringHelper.isNullOrEmpty(model.getVmId().getEntity())) {
+            parameters.setVmId(new Guid(model.getVmId().getEntity()));
+        }
+
+        Frontend.getInstance().runAction(
+                model.getProvisioning().getEntity() ? VdcActionType.AddVmFromTemplate : VdcActionType.AddVm,
+                parameters,
+                createUnitVmModelNetworkAsyncCallback(vm, model),
+                this);
+    }
+
+    protected void updateVM(UnitVmModel model){
+        // no-op by default. Override if needed.
+    }
+
+    protected void cancel() {
+        // no-op by default. Override if needed.
+    }
+
+    protected void updateActionsAvailability() {
+        // no-op by default. Override if needed.
+    }
+
+    protected UnitVmModelNetworkAsyncCallback createUnitVmModelNetworkAsyncCallback(VM vm, UnitVmModel model) {
+        if (vm.getVmtGuid().equals(Guid.Empty)) {
+            return new UnitVmModelNetworkAsyncCallback(model, addVmFromBlankTemplateNetworkManager) {
+                @Override
+                public void executed(FrontendActionAsyncResult result) {
+                    getWindow().stopProgress();
+                    VdcReturnValueBase returnValue = result.getReturnValue();
+                    if (returnValue != null && returnValue.getSucceeded()) {
+                        setWindow(null);
+                        updateActionsAvailability();
+                        createUnitVmModelNetworkSucceeded(returnValue);
+                    } else {
+                        cancel();
+                    }
+                    super.executed(result);
+                }
+            };
+        }
+
+        return new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager);
+    }
+
+    protected void createUnitVmModelNetworkSucceeded(VdcReturnValueBase returnValue) {
+        // no-op by default. Override if needed.
+    }
+
+    public static void buildVmOnSave(UnitVmModel model, VM vm) {
+        BuilderExecutor.build(model, vm.getStaticData(), new FullUnitToVmBaseBuilder());
+        BuilderExecutor.build(model, vm, new VmSpecificUnitToVmBuilder());
+    }
+
+
+    protected boolean balloonEnabled(UnitVmModel model) {
+        return model.getMemoryBalloonDeviceEnabled().getEntity()
+                && model.getSelectedCluster().getCompatibilityVersion().compareTo(BALLOON_DEVICE_MIN_VERSION) >= 0;
+    }
+
+    protected void setVmWatchdogToParams(final UnitVmModel model, VmManagementParametersBase updateVmParams) {
+        VmWatchdogType wdModel = model.getWatchdogModel().getSelectedItem();
+        updateVmParams.setUpdateWatchdog(true);
+        if (wdModel != null) {
+            VmWatchdog vmWatchdog = new VmWatchdog();
+            vmWatchdog.setAction(model.getWatchdogAction().getSelectedItem());
+            vmWatchdog.setModel(wdModel);
+            updateVmParams.setWatchdog(vmWatchdog);
+        }
+    }
+
+    protected void setRngDeviceToParams(UnitVmModel model, VmManagementParametersBase parameters) {
+        parameters.setUpdateRngDevice(true);
+        parameters.setRngDevice(model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
     }
 
     protected abstract String composeEntityOnStorage(String entities);
