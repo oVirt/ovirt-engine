@@ -59,9 +59,9 @@ import org.ovirt.engine.core.utils.NameForVmInPoolGenerator;
 public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> extends AddVmPoolCommand<T>
         implements QuotaStorageDependent {
 
-    protected HashMap<Guid, DiskImage> diskInfoDestinationMap;
-    protected Map<Guid, List<DiskImage>> storageToDisksMap;
-    protected Map<Guid, StorageDomain> destStorages = new HashMap<>();
+    private HashMap<Guid, DiskImage> diskInfoDestinationMap;
+    private Map<Guid, List<DiskImage>> storageToDisksMap;
+    private Map<Guid, StorageDomain> destStorages = new HashMap<>();
     private boolean addVmsSucceeded = true;
     private NameForVmInPoolGenerator nameForVmInPoolGenerator;
 
