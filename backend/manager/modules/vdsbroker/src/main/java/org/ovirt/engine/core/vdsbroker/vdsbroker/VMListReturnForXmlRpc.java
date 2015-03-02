@@ -26,7 +26,16 @@ public final class VMListReturnForXmlRpc {
         if (temp != null) {
             mVmList = new HashMap[temp.length];
             for (int i = 0; i < temp.length; i++) {
-                mVmList[i] = (Map<String, Object>) temp[i];
+                // 1196327: we need to process both types of list message
+                // when temp[i] is a String we process array of vmids
+                // when temp[i] is a Map we process a map with status to vmid mapping
+                if (String.class.isInstance(temp[i])) {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("vmId", temp[i]);
+                    mVmList[i] = map;
+                } else {
+                    mVmList[i] = (Map<String, Object>) temp[i];
+                }
             }
         }
     }
