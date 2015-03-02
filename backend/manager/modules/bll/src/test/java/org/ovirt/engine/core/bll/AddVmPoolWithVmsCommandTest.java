@@ -16,7 +16,6 @@ public class AddVmPoolWithVmsCommandTest extends CommonVmPoolWithVmsCommandTestA
     @Mock
     private MultipleStorageDomainsValidator multipleSdValidator;
 
-    @SuppressWarnings("serial")
     @Override
     protected AddVmPoolWithVmsCommand<AddVmPoolWithVmsParameters> createCommand() {
         AddVmPoolWithVmsParameters param =

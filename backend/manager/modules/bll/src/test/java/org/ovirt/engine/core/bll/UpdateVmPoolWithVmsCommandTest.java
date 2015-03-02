@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 
 public class UpdateVmPoolWithVmsCommandTest extends CommonVmPoolWithVmsCommandTestAbstract {
-    @SuppressWarnings("serial")
+
     @Override
     protected UpdateVmPoolWithVmsCommand<AddVmPoolWithVmsParameters> createCommand() {
         AddVmPoolWithVmsParameters param = new AddVmPoolWithVmsParameters(vmPools, testVm,
