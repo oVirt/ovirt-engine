@@ -1,11 +1,14 @@
 package org.ovirt.engine.ui.common.widget;
 
+import java.util.List;
+
 import org.gwtbootstrap3.client.ui.FormLabel;
 import org.gwtbootstrap3.client.ui.constants.Styles;
 import org.ovirt.engine.ui.common.css.OvirtCss;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
+import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -78,7 +81,17 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     SimplePanel contentWidgetContainer;
 
     @UiField
+    WidgetTooltip labelTooltip;
+
+    @UiField
+    WidgetTooltip contentWidgetContainerTooltip;
+
+    @UiField
     Style style;
+
+    protected String labelConfiguredTooltip = null;
+
+    protected String contentWidgetContainerConfiguredTooltip = null;
 
     // width in PX -- only used in legacy mode
     public static final int CONTENT_WIDTH_LEGACY = 230;
@@ -273,14 +286,44 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     @Override
     public void disable(String disabilityHint) {
         setEnabled(false);
-        // TODO save the normal tooltip (done in follow-up patch)
-        updateWidgetTitle(disabilityHint);
+        setWidgetTooltip(disabilityHint);
     }
 
-    private void updateWidgetTitle(String title) {
-        contentWidget.asWidget().setTitle(title);
+    @Override
+    public void markAsValid() {
+        super.markAsValid();
+        labelTooltip.setText(labelConfiguredTooltip);
+        labelTooltip.reconfigure();
+        contentWidgetContainerTooltip.setText(contentWidgetContainerConfiguredTooltip);
+        contentWidgetContainerTooltip.reconfigure();
     }
 
+    @Override
+    public void markAsInvalid(List<String> validationHints) {
+        super.markAsInvalid(validationHints);
+        String tooltipText = getValidationTooltipText(validationHints);
+        labelTooltip.setText(tooltipText);
+        labelTooltip.reconfigure();
+        contentWidgetContainerTooltip.setText(tooltipText);
+        contentWidgetContainerTooltip.reconfigure();
+    }
+
+    public void setWidgetTooltip(String text) {
+        setContentWidgetContainerTooltip(text);
+        setLabelTooltip(text);
+    }
+
+    public void setContentWidgetContainerTooltip(String tooltipText) {
+        contentWidgetContainerConfiguredTooltip = tooltipText;
+        contentWidgetContainerTooltip.setText(tooltipText);
+        contentWidgetContainerTooltip.reconfigure();
+    }
+
+    public void setLabelTooltip(String tooltipText) {
+        labelConfiguredTooltip = tooltipText;
+        labelTooltip.setText(tooltipText);
+        labelTooltip.reconfigure();
+    }
 
     // set styleNames on my components
 

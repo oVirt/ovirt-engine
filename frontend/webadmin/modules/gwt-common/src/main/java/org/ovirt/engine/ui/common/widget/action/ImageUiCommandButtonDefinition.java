@@ -81,15 +81,15 @@ public abstract class ImageUiCommandButtonDefinition<T> extends UiCommandButtonD
     @Override
     public SafeHtml getEnabledHtml() {
         return !showTitle ? enabledImage
-                : (!imageAfterTitle ? templates.imageTextButton(enabledImage, getTitle())
-                        : templates.textImageButton(getTitle(), enabledImage));
+                : (!imageAfterTitle ? templates.imageTextButton(enabledImage, getText())
+                        : templates.textImageButton(getText(), enabledImage));
     }
 
     @Override
     public SafeHtml getDisabledHtml() {
         return !showTitle ? disabledImage
-                : (!imageAfterTitle ? templates.imageTextButton(disabledImage, getTitle())
-                        : templates.textImageButton(getTitle(), disabledImage));
+                : (!imageAfterTitle ? templates.imageTextButton(disabledImage, getText())
+                        : templates.textImageButton(getText(), disabledImage));
     }
 
 }

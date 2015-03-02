@@ -24,7 +24,7 @@ public class QuotaCPUProgressBar extends QuotaProgressBar {
     @Override
     protected SafeHtml getTooltip() {
         if (quotaUsagePerUser.getVcpuLimit() == UNLIMITED) {
-            return EMPTY_HTML;
+            return null;
         }
         return templateWithLabels(String.valueOf(quotaUsagePerUser.getVcpuLimit()),
                 (int) (quotaUsagePerUser.getOthersVcpuUsagePercentage() + quotaUsagePerUser.getUserVcpuUsagePercentage()),

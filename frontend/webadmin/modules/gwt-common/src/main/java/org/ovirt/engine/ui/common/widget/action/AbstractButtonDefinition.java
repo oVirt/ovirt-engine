@@ -116,7 +116,7 @@ public abstract class AbstractButtonDefinition<T> implements ActionButtonDefinit
     }
 
     @Override
-    public String getTitle() {
+    public String getText() {
         return title.asString();
     }
 

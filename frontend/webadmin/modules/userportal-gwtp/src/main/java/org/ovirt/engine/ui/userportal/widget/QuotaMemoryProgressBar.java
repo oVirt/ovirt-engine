@@ -31,7 +31,7 @@ public class QuotaMemoryProgressBar extends QuotaProgressBar {
     @Override
     protected SafeHtml getTooltip() {
         if (quotaUsagePerUser.getMemoryLimit() == UNLIMITED) {
-            return EMPTY_HTML;
+            return null;
         }
         return templateWithLabels(renderMemory(quotaUsagePerUser.getMemoryLimit()),
                 (int) (quotaUsagePerUser.getOthersMemoryUsagePercentage() + quotaUsagePerUser.getUserMemoryUsagePercentage()),

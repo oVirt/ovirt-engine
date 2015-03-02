@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget;
 
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
+import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
@@ -18,6 +19,9 @@ public class UiCommandButton extends AbstractUiCommandButton implements Focusabl
 
     @UiField
     SimpleDialogButton button;
+
+    @UiField
+    WidgetTooltip tooltip;
 
     public UiCommandButton() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
@@ -78,5 +82,28 @@ public class UiCommandButton extends AbstractUiCommandButton implements Focusabl
 
     public void setEnabled(boolean enabled) {
         getButtonWidget().setEnabled(enabled);
+    }
+
+    @Override
+    protected void updateButton() {
+        super.updateButton();
+        tooltip.setText(buildTooltipText());
+        tooltip.reconfigure();
+    }
+
+    /**
+     * Use prohibition reasons for tooltip
+     */
+    protected String buildTooltipText() {
+        StringBuilder tooltipText = new StringBuilder();
+        if (!getCommand().getExecuteProhibitionReasons().isEmpty()) {
+            for (String reason: getCommand().getExecuteProhibitionReasons()) {
+                if (tooltipText.length() == 0) {
+                    tooltipText.append(", "); //$NON-NLS-1$
+                }
+                tooltipText.append(reason);
+            }
+        }
+        return tooltipText.toString();
     }
 }

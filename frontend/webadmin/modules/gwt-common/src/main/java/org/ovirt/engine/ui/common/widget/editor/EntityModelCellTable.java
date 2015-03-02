@@ -337,6 +337,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
 
             String error = errors.get(i);
             boolean valid = StringUtils.isEmpty(error);
+            // TODO tt Element is not a Widget, so have to use ElementTooltip on it
             element.setTitle(valid ? null : error);
             if (!valid) {
                 element.addClassName(style.invalidRow());

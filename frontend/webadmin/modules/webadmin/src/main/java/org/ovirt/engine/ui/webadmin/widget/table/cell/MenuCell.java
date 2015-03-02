@@ -89,7 +89,7 @@ public class MenuCell<T> extends AbstractCell<T> {
     }
 
     public void addMenuItem(final ActionButtonDefinition<T> buttonDef) {
-        final MenuItem menuItem = new MenuItem(buttonDef.getTitle(), new Command() {
+        final MenuItem menuItem = new MenuItem(buttonDef.getText(), new Command() {
             @Override
             public void execute() {
                 menuPanelPopup.asPopupPanel().hide();

@@ -99,6 +99,9 @@ public class UserPortalTemplateListModel extends TemplateListModel {
      * {@link org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel.TemplateComparator}
      */
     private List<VmTemplate> sortTemplates(Collection<VmTemplate> value) {
+        if (value == null) {
+            return null;
+        }
         final List<VmTemplate> sortedValues = new ArrayList<>(value);
         Collections.sort(sortedValues, new TemplateComparator());
         return sortedValues;

@@ -56,9 +56,9 @@ public interface ActionButtonDefinition<T> extends HasInitializeHandlers {
     SafeHtml getDisabledHtml();
 
     /**
-     * Returns the title of this button, used in context menus and as the button tooltip.
+     * Returns the text of this button, used in context menus.
      */
-    String getTitle();
+    String getText();
 
     /**
      * Returns the ID that uniquely identifies this button or {@code null} if not available.
@@ -81,7 +81,7 @@ public interface ActionButtonDefinition<T> extends HasInitializeHandlers {
     boolean isSubTitledAction();
 
     /**
-     * Returns the tool-tip for this action button or {@code null} to use button title value.
+     * Returns the tooltip for this action button or {@code null} to use button tooltip text.
      */
     String getButtonToolTip();
 

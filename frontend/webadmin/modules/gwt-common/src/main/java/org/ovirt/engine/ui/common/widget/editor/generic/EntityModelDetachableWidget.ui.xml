@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-             xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+             xmlns:w="urn:import:org.ovirt.engine.ui.common.widget" xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.tooltip">
 
     <ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
 
@@ -47,7 +47,9 @@
     <g:HTMLPanel ui:field="wrapperPanel" addStyleNames="{style.wrapper}">
         <g:FlowPanel ui:field="contentWrapper" addStyleNames="{style.contentWrapper}">
             <g:FlowPanel addStyleNames="{style.image}">
-                <g:Image ui:field="attachedSeparatedImage" />
+                <t:WidgetTooltip ui:field="tooltip">
+                    <g:Image ui:field="attachedSeparatedImage" />
+                </t:WidgetTooltip>
             </g:FlowPanel>
 
             <g:SimplePanel ui:field="contentWidgetContainer" addStyleNames="{style.contentWidgetContainer}" />

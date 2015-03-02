@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -25,6 +26,7 @@ public class InterfaceLabel extends Composite {
             SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.tagImage()).getHTML());
 
     private final HTML label;
+    private WidgetTooltip tooltip;
 
     public InterfaceLabel(VdsNetworkInterface iface) {
         label = createInterfaceLabel(iface);
@@ -32,18 +34,21 @@ public class InterfaceLabel extends Composite {
     }
 
     private HTML createInterfaceLabel(VdsNetworkInterface iface) {
-        boolean hasLabels = iface.getLabels() != null
-                && !iface.getLabels().isEmpty();
-        HTML interfaceNameWithLabel =
-                new HTML(hasLabels ? templates.textImageLabels(iface.getName(), labelImage)
-                        : SafeHtmlUtils.fromString(iface.getName()));
+        HTML label = null;
+        if (iface.getLabels() != null && !iface.getLabels().isEmpty()) {
+            label = new HTML(templates.textImageLabels(iface.getName(), labelImage));
+        }
+        else {
+            label = new HTML(iface.getName());
+        }
 
-        // TODO tt set tooltip of createLabelToolTip(iface.getLabels())
+        tooltip = new WidgetTooltip(label);
+        tooltip.setHtml(getTooltip(iface.getLabels()));
 
-        return interfaceNameWithLabel;
+        return label;
     }
 
-    private SafeHtml createLabelToolTip(Set<String> labels) {
+    private SafeHtml getTooltip(Set<String> labels) {
         SafeHtmlBuilder tooltip = new SafeHtmlBuilder();
         boolean isFirst = true;
 

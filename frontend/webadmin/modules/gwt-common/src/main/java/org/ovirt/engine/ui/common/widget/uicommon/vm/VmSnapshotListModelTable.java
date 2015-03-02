@@ -207,7 +207,7 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
                             commandVersionsInfo.getClusterVersion().toString(2) : ""; //$NON-NLS-1$
                     return messages.cloneVmNotSupported(minimalClusterVersion);
                 } else {
-                    return this.getTitle();
+                    return this.getText();
                 }
             }
         });

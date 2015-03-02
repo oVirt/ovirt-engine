@@ -420,9 +420,9 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         sysprepDomainEditor.setLabel(constants.domainVmPopup());
         inputLocaleEditor.setLabel(constants.inputLocaleLabel());
         uiLanguageEditor.setLabel(constants.uiLanguageLabel());
-        sysprepScriptEditor.setTitle(constants.sysprepLabel());
+        sysprepScriptEditor.setWidgetTooltip(constants.sysprepLabel());
         activeDirectoryOUEditor.setLabel(constants.activeDirectoryOU());
-        activeDirectoryOUEditor.setTitle(constants.activeDirectoryOUToolTip());
+        activeDirectoryOUEditor.setWidgetTooltip(constants.activeDirectoryOUToolTip());
         systemLocaleEditor.setLabel(constants.systemLocaleLabel());
         userLocaleEditor.setLabel(constants.userLocaleLabel());
         userNameEditor.setLabel(constants.cloudInitUserNameLabel());
@@ -457,28 +457,28 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         dnsServers.setLabel(constants.cloudInitDnsServersLabel());
         dnsSearchDomains.setLabel(constants.cloudInitDnsSearchDomainsLabel());
 
-        hostnameEditor.setTitle(constants.cloudInitHostnameToolTip());
-        windowsHostnameEditor.setTitle(constants.cloudInitHostnameToolTip());
-        authorizedKeysEditor.setTitle(constants.cloudInitAuthorizedKeysToolTip());
-        cloudInitPasswordSetEditor.setTitle(constants.vmInitPasswordSetToolTip());
-        sysprepPasswordSetEditor.setTitle(constants.vmInitPasswordSetToolTip());
-        customScriptEditor.setTitle(constants.customScriptToolTip());
-        regenerateKeysEnabledEditor.setTitle(constants.cloudInitRegenerateKeysToolTip());
-        timeZoneEditor.setTitle(constants.cloudInitTimeZoneToolTip());
-        cloudInitRootPasswordEditor.setTitle(constants.cloudInitRootPasswordToolTip());
-        cloudInitRootPasswordVerificationEditor.setTitle(constants.cloudInitRootPasswordVerificationToolTip());
-        sysprepAdminPasswordEditor.setTitle(constants.sysprepAdminPasswordToolTip());
-        sysprepAdminPasswordVerificationEditor.setTitle(constants.sysprepAdminPasswordVerificationToolTip());
+        hostnameEditor.setWidgetTooltip(constants.cloudInitHostnameToolTip());
+        windowsHostnameEditor.setWidgetTooltip(constants.cloudInitHostnameToolTip());
+        authorizedKeysEditor.setWidgetTooltip(constants.cloudInitAuthorizedKeysToolTip());
+        cloudInitPasswordSetEditor.setWidgetTooltip(constants.vmInitPasswordSetToolTip());
+        sysprepPasswordSetEditor.setWidgetTooltip(constants.vmInitPasswordSetToolTip());
+        customScriptEditor.setWidgetTooltip(constants.customScriptToolTip());
+        regenerateKeysEnabledEditor.setWidgetTooltip(constants.cloudInitRegenerateKeysToolTip());
+        timeZoneEditor.setWidgetTooltip(constants.cloudInitTimeZoneToolTip());
+        cloudInitRootPasswordEditor.setWidgetTooltip(constants.cloudInitRootPasswordToolTip());
+        cloudInitRootPasswordVerificationEditor.setWidgetTooltip(constants.cloudInitRootPasswordVerificationToolTip());
+        sysprepAdminPasswordEditor.setWidgetTooltip(constants.sysprepAdminPasswordToolTip());
+        sysprepAdminPasswordVerificationEditor.setWidgetTooltip(constants.sysprepAdminPasswordVerificationToolTip());
 
-        networkListEditor.setTitle(constants.cloudInitNetworkToolTip());
-        networkNameEditor.setTitle(constants.cloudInitNetworkToolTip());
-        networkBootProtocolEditor.setTitle(constants.cloudInitNetworkBootProtocolToolTip());
-        networkIpAddressEditor.setTitle(constants.cloudInitNetworkIpAddressToolTip());
-        networkNetmaskEditor.setTitle(constants.cloudInitNetworkNetmaskToolTip());
-        networkGatewayEditor.setTitle(constants.cloudInitNetworkGatewayToolTip());
-        networkStartOnBootEditor.setTitle(constants.cloudInitNetworkStartOnBootToolTip());
-        dnsServers.setTitle(constants.cloudInitDnsServersToolTip());
-        dnsSearchDomains.setTitle(constants.cloudInitDnsSearchDomainsToolTip());
+        networkListEditor.setWidgetTooltip(constants.cloudInitNetworkToolTip());
+        networkNameEditor.setWidgetTooltip(constants.cloudInitNetworkToolTip());
+        networkBootProtocolEditor.setWidgetTooltip(constants.cloudInitNetworkBootProtocolToolTip());
+        networkIpAddressEditor.setWidgetTooltip(constants.cloudInitNetworkIpAddressToolTip());
+        networkNetmaskEditor.setWidgetTooltip(constants.cloudInitNetworkNetmaskToolTip());
+        networkGatewayEditor.setWidgetTooltip(constants.cloudInitNetworkGatewayToolTip());
+        networkStartOnBootEditor.setWidgetTooltip(constants.cloudInitNetworkStartOnBootToolTip());
+        dnsServers.setWidgetTooltip(constants.cloudInitDnsServersToolTip());
+        dnsSearchDomains.setWidgetTooltip(constants.cloudInitDnsSearchDomainsToolTip());
 
         networkExpander.setTitleWhenExpended(constants.cloudInitNetworskLabel());
         networkExpander.setTitleWhenCollapsed(constants.cloudInitNetworskLabel());
@@ -611,7 +611,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 String propName = args.propertyName;
                 if ("IsChangable".equals(propName)) { //$NON-NLS-1$
-                    cloudInitPasswordSetEditor.setTitle(
+                    cloudInitPasswordSetEditor.setWidgetTooltip(
                             model.getCloudInitPasswordSet().getIsChangable() ?
                             constants.vmInitPasswordSetToolTip() : constants.vmInitPasswordNotSetToolTip()
                     );
@@ -624,7 +624,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 String propName = args.propertyName;
                 if ("IsChangable".equals(propName)) { //$NON-NLS-1$
-                    sysprepPasswordSetEditor.setTitle(
+                    sysprepPasswordSetEditor.setWidgetTooltip(
                             model.getSysprepPasswordSet().getIsChangable() ?
                             constants.vmInitPasswordSetToolTip() : constants.vmInitPasswordNotSetToolTip()
                     );

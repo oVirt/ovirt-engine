@@ -82,7 +82,7 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
                         && !getModel().getIsDiskHotPlugSupported()) {
                     return constants.diskHotPlugNotSupported();
                 } else {
-                    return this.getTitle();
+                    return this.getText();
                 }
             }
         };
@@ -102,7 +102,7 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
                     return constants.diskHotPlugNotSupported();
                 }
                 else {
-                    return this.getTitle();
+                    return this.getText();
                 }
             }
         };

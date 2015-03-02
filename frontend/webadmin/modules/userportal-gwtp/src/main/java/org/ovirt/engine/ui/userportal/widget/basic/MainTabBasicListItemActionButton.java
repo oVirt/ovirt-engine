@@ -29,10 +29,10 @@ public class MainTabBasicListItemActionButton extends AbstractActionButton imple
     @UiField
     Panel stylableButtonHolder;
 
-    public MainTabBasicListItemActionButton(String title, ImageResource enabledImage, ImageResource disabledImage,
+    public MainTabBasicListItemActionButton(String tooltipText, ImageResource enabledImage, ImageResource disabledImage,
             String additionalStyle) {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        setTitle(title);
+        setTooltipText(tooltipText);
         setEnabledHtml(SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(enabledImage).getHTML()));
         setDisabledHtml(SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(disabledImage).getHTML()));
         stylableButtonHolder.addStyleName(additionalStyle);

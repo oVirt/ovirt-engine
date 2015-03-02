@@ -27,7 +27,6 @@ public abstract class AbstractValidatedWidget extends Composite implements HasVa
         valid = true;
         applyCommonValidationStyles();
         getValidatedWidgetStyle().setBorderColor("gray"); //$NON-NLS-1$
-        getValidatedWidget().setTitle(null);
     }
 
     @Override
@@ -35,7 +34,6 @@ public abstract class AbstractValidatedWidget extends Composite implements HasVa
         valid = false;
         applyCommonValidationStyles();
         getValidatedWidgetStyle().setBorderColor("red"); //$NON-NLS-1$
-        getValidatedWidget().setTitle(getValidationTitle(validationHints));
     }
 
     protected void applyCommonValidationStyles() {
@@ -43,7 +41,7 @@ public abstract class AbstractValidatedWidget extends Composite implements HasVa
         getValidatedWidgetStyle().setBorderStyle(BorderStyle.SOLID);
     }
 
-    String getValidationTitle(List<String> validationHints) {
+    protected String getValidationTooltipText(List<String> validationHints) {
         return validationHints != null && validationHints.size() > 0 ? validationHints.get(0) : null;
     }
 

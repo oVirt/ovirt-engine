@@ -14,7 +14,7 @@ public interface ActionButton extends IsWidget, HasClickHandlers, HasEnabled {
     /**
      * Sets the tooltip of this button.
      */
-    void setTitle(String title);
+    void setTooltipText(String title);
 
     /**
      * Sets the HTML content presented when this button is enabled.

@@ -104,6 +104,7 @@ public class KeyValueLineWidget extends Composite implements HasValueChangeHandl
         if (selectedKey == null) {
             selectedKey = "";
         }
+        // TODO tt Element is not a Widget, so have to use ElementTooltip on it
         keyField.getElement().setTitle(selectedKey);
     }
 

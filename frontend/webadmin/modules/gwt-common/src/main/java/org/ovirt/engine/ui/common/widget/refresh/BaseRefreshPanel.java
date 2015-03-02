@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.renderer.MillisecondRenderer;
+import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;
@@ -185,6 +186,8 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
 
     private final BaseRefreshPanelCss style;
 
+    private WidgetTooltip tooltip;
+
 
     /**
      * Create a Panel managed by the specified {@link RefreshManager}<BR>
@@ -260,7 +263,7 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
         ImageResource separatorImg = RESOURCES.separator();
         separator = new Image(separatorImg);
 
-        // Add refresh button and refresh options menu button
+        // Add refresh button, refresh options menu button, and tooltip
         HorizontalPanel panel = new HorizontalPanel();
         statusLabel = new Label();
         panel.add(statusLabel);
@@ -268,6 +271,8 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
         panel.add(separator);
         panel.add(refreshMenuButton);
         setWidget(panel);
+        tooltip = new WidgetTooltip(this);
+        setTooltipText(refreshManager.getRefreshStatus());
     }
 
     public void hideRefreshMenuButton() {
@@ -289,8 +294,9 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
         return addHandler(handler, ClickEvent.getType());
     }
 
-    public void showStatus(String status) {
-        setTitle(status);
+    public void setTooltipText(String status) {
+        tooltip.setText(status);
+        tooltip.reconfigure();
     }
 
     private void createRefreshButton() {

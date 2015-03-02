@@ -556,12 +556,12 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
             if (buttonDef instanceof UiMenuBarButtonDefinition) {
                 UiMenuBarButtonDefinition<T> menuBarDef = ((UiMenuBarButtonDefinition<T>) buttonDef);
                 if (menuBarDef.isAsTitle()) {
-                    MenuItemSeparator titleItem = new TitleMenuItemSeparator(buttonDef.getTitle());
+                    MenuItemSeparator titleItem = new TitleMenuItemSeparator(buttonDef.getText());
                     menuBar.addSeparator(titleItem);
                     titleItem.setVisible(buttonDef.isVisible(getSelectedItems()));
                     updateContextMenu(menuBar, menuBarDef.getSubActions(), popupPanel, false);
                 } else {
-                    MenuItem newMenu = new MenuItem(buttonDef.getTitle(),
+                    MenuItem newMenu = new MenuItem(buttonDef.getText(),
                             updateContextMenu(new MenuBar(true),
                                     menuBarDef.getSubActions(),
                                     popupPanel));
@@ -570,7 +570,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
                     menuBar.addItem(newMenu);
                 }
             } else {
-                MenuItem item = new MenuItem(buttonDef.getTitle(), new Command() {
+                MenuItem item = new MenuItem(buttonDef.getText(), new Command() {
                     @Override
                     public void execute() {
                         popupPanel.hide();
@@ -595,7 +595,9 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
         button.asWidget().setVisible(buttonDef.isAccessible(getSelectedItems())
                 && buttonDef.isVisible(getSelectedItems()) && !buttonDef.isCascaded());
         button.setEnabled(buttonDef.isEnabled(getSelectedItems()));
-        button.setTitle(buttonDef.getButtonToolTip() != null ? buttonDef.getButtonToolTip() : buttonDef.getTitle());
+        if (buttonDef.getButtonToolTip() != null) {
+            button.setTooltipText(buttonDef.getButtonToolTip());
+        }
         originallyVisible.put(button.asWidget(), buttonDef.isAccessible(getSelectedItems())
                 && buttonDef.isVisible(getSelectedItems()));
     }
@@ -610,6 +612,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
         item.setEnabled(buttonDef.isEnabled(getSelectedItems()));
 
         if (buttonDef.getMenuItemToolTip() != null) {
+            // TODO tt MenuItem is not a Widget, so have to use ElementTooltip on it
             item.setTitle(buttonDef.getMenuItemToolTip());
         }
     }

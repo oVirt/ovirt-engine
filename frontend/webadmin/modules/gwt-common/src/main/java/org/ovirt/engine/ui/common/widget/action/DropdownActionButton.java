@@ -68,7 +68,7 @@ public class DropdownActionButton<T> extends AbstractActionButton {
         menuPopup = new MenuPanelPopup(true);
 
         for (final ActionButtonDefinition<T> buttonDef : actions) {
-            MenuItem menuItem = new MenuItem(buttonDef.getTitle(), new Command() {
+            MenuItem menuItem = new MenuItem(buttonDef.getText(), new Command() {
                 @Override
                 public void execute() {
                     menuPopup.asPopupPanel().hide();
@@ -96,6 +96,7 @@ public class DropdownActionButton<T> extends AbstractActionButton {
     void updateMenuItem(MenuItem item, ActionButtonDefinition<T> buttonDef, List selectedItems) {
         item.setVisible(buttonDef.isAccessible(selectedItems) && buttonDef.isVisible(selectedItems));
         item.setEnabled(buttonDef.isEnabled(selectedItems));
+        // TODO tt MenuItem is not a Widget, so have to use ElementTooltip on it
         item.setTitle(buttonDef.getButtonToolTip() != null ? buttonDef.getButtonToolTip() : null);
     }
 

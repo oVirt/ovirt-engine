@@ -1,11 +1,13 @@
 package org.ovirt.engine.ui.userportal.widget;
 
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
+import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.editor.client.adapters.TakesValueEditor;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.TakesValue;
@@ -17,9 +19,10 @@ import com.google.gwt.user.client.ui.Widget;
 public class DoublePercentageProgressBar extends Composite implements IsEditor<TakesValueEditor<Object>>, TakesValue<Object>, HasElementId {
 
     private static final String ZERO = "0%"; //$NON-NLS-1$
-    private String title;
     private static final int FULL_WIDTH = 99;
     private static final int MINIMUM_SIZE_TO_SHOW_TEXT = 10;
+
+    protected WidgetTooltip tooltip;
 
     interface WidgetUiBinder extends UiBinder<Widget, DoublePercentageProgressBar> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -27,6 +30,7 @@ public class DoublePercentageProgressBar extends Composite implements IsEditor<T
 
     public DoublePercentageProgressBar() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
+        this.tooltip = new WidgetTooltip(this);
     }
 
     private Integer valueA;
@@ -46,6 +50,8 @@ public class DoublePercentageProgressBar extends Composite implements IsEditor<T
 
     @UiField
     FlowPanel percentageBarB;
+
+    private SafeHtml tooltipText;
 
     @Override
     public void setValue(Object value) {
@@ -69,7 +75,8 @@ public class DoublePercentageProgressBar extends Composite implements IsEditor<T
         percentageBarB.setVisible(false);
         percentageBarB.setWidth("0px"); //$NON-NLS-1$
         percentageBarA.setVisible(true);
-        percentageBarA.setTitle(title);
+        tooltip.setHtml(tooltipText);
+        tooltip.reconfigure();
         percentageBarA.setStyleName(style.empty());
         percentageBarA.setWidth(FULL_WIDTH + "%"); //$NON-NLS-1$
         percentageLabelA.setText(ZERO);
@@ -139,9 +146,7 @@ public class DoublePercentageProgressBar extends Composite implements IsEditor<T
         String percentageLabel();
     }
 
-    @Override
-    public void setTitle(String title) {
-        this.title = title;
-        super.setTitle(title);
+    public void setTooltipText(SafeHtml tooltipText) {
+        this.tooltipText = tooltipText;
     }
 }

@@ -111,7 +111,7 @@ public abstract class UiMenuBarButtonDefinition<T> extends ImageUiCommandButtonD
 
     @Override
     public String getUniqueId() {
-        return getTitle();
+        return getText();
     }
 
     @Override

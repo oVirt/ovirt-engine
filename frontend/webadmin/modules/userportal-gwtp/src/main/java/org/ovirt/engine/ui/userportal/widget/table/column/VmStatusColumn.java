@@ -48,42 +48,39 @@ public class VmStatusColumn extends AbstractDecoratedImageColumn<UserPortalItemM
 
     private String getTooltipText(VMStatus status) {
 
-        // TODO: (Einav?) is it ok to show all these tooltips in userportal?
-        // TODO tt used to be  statusTranslator.translate(value.getStatus().name());
-
         switch (status) {
             case Up:
-                return constants.up();
+                return constants.Up();
             case Down:
-                return constants.down();
+                return constants.Down();
             case SavingState:
                 return constants.SavingState();
             case RestoringState:
                 return constants.RestoringState();
             case PoweringUp:
-                return constants.poweringUp();
+                return constants.PoweringUp();
             case PoweringDown:
-                return constants.poweringDown();
+                return constants.PoweringDown();
             case RebootInProgress:
                 return constants.RebootInProgress();
             case WaitForLaunch:
                 return constants.WaitForLaunch();
             case ImageLocked:
-                return constants.imageLocked();
+                return constants.ImageLocked();
             case MigratingFrom:
                 return constants.MigratingFrom();
             case MigratingTo:
                 return constants.MigratingTo();
             case Suspended:
-                return constants.suspended();
+                return constants.Suspended();
             case Paused:
-                return constants.paused();
+                return constants.Paused();
             case Unknown:
-                return constants.unknown();
+                return constants.Unknown();
             case Unassigned:
-                return constants.unassigned();
+                return constants.Unassigned();
             case NotResponding:
-                return constants.notResponding();
+                return constants.NotResponding();
             default:
                 break;
         }

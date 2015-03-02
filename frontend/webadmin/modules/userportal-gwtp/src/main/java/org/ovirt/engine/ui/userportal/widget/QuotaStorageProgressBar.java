@@ -29,7 +29,7 @@ public class QuotaStorageProgressBar extends QuotaProgressBar {
     @Override
     protected SafeHtml getTooltip() {
         if (quotaUsagePerUser.getStorageLimit() == UNLIMITED) {
-            return EMPTY_HTML;
+            return null;
         }
         return templateWithLabels(renderStorage(quotaUsagePerUser.getStorageLimit()),
                 (int) (quotaUsagePerUser.getOthersStorageUsagePercentage() + quotaUsagePerUser.getUserStorageUsagePercentage()),

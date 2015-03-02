@@ -8,6 +8,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -33,6 +34,8 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.ValueLabel;
@@ -296,9 +299,30 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         addItemToPanel(panel, item, width);
     }
 
+    protected void addTextBoxToPanel(HorizontalPanel panel, WidgetTooltip item, String text, String width) {
+        Widget w = item.getWidget();
+        if (w instanceof Label) {
+            Label label = (Label) item.getWidget();
+            label.setText(text);
+            addItemToPanel(panel, item, width);
+        }
+        else if (w instanceof TextBoxLabel) {
+            TextBoxLabel label = (TextBoxLabel) item.getWidget();
+            label.setText(text);
+            addItemToPanel(panel, item, width);
+        }
+        else {
+            throw new ClassCastException("tooltipped label contains unknown Widget: " + w.getClass()); //$NON-NLS-1$
+        }
+    }
+
     protected <T> void addValueLabelToPanel(HorizontalPanel panel, ValueLabel<T> item, T value, String width) {
         item.setValue(value);
         addItemToPanel(panel, item, width);
+    }
+
+    protected void addItemToPanel(HorizontalPanel panel, IsWidget item, String width) {
+        addItemToPanel(panel, item.asWidget(), width);
     }
 
     protected void addItemToPanel(HorizontalPanel panel, Widget item, String width) {
@@ -314,6 +338,7 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         element.getStyle().setColor("#999999"); //$NON-NLS-1$
 
         if (getNodeDisabledTooltip() != null) {
+            // TODO tt Element is not a Widget, so have to use ElementTooltip on it
             element.setTitle(getNodeDisabledTooltip());
         }
     }

@@ -87,6 +87,7 @@ public class AdvancedParametersExpander extends Composite implements FocusableCo
         return nextTabIndex;
     }
 
+    // TODO rename "setTitleWhenExpanded"
     public void setTitleWhenExpended(String title) {
         titleExpended = title;
         initStyle();

@@ -6,7 +6,8 @@ xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
 xmlns:v="urn:import:org.ovirt.engine.ui.common.widget"
 xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
 xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console">
+xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console"
+xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.tooltip">
 
     <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
 
@@ -53,24 +54,40 @@ xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console">
                 <g:FlowPanel addStyleNames="{style.protocolPanel}">
                     <g:Label ui:field="consoleTitle" addStyleNames="{style.labelStyle}" />
                     <g:FlowPanel>
-                        <ge:EntityModelRadioButtonEditor ui:field="spiceRadioButton" addStyleNames="{style.protocolRadioButton}"/>
-                        <ge:EntityModelRadioButtonEditor ui:field="vncRadioButton" addStyleNames="{style.protocolRadioButton}"/>
-                        <ge:EntityModelRadioButtonEditor ui:field="remoteDesktopRadioButton" addStyleNames="{style.protocolRadioButton}" />
+                        <t:WidgetTooltip ui:field="spiceRadioButtonTooltip">
+                            <ge:EntityModelRadioButtonEditor ui:field="spiceRadioButton" addStyleNames="{style.protocolRadioButton}"/>
+                        </t:WidgetTooltip>
+                        <t:WidgetTooltip ui:field="vncRadioButtonTooltip">
+                            <ge:EntityModelRadioButtonEditor ui:field="vncRadioButton" addStyleNames="{style.protocolRadioButton}"/>
+                        </t:WidgetTooltip>
+                        <t:WidgetTooltip ui:field="remoteDesktopRadioButtonTooltip">
+                            <ge:EntityModelRadioButtonEditor ui:field="remoteDesktopRadioButton" addStyleNames="{style.protocolRadioButton}" />
+                        </t:WidgetTooltip>
                     </g:FlowPanel>
                 </g:FlowPanel>
 
                 <g:FlowPanel ui:field="spicePanel" addStyleNames="{style.protocolPanel} cpv_spicePanel_pfly_fix">
                     <v:WidgetWithInfo ui:field="spiceHeadline" />
-                    <ge:EntityModelRadioButtonEditor ui:field="spiceAutoImplRadioButton"/>
-                    <ge:EntityModelRadioButtonEditor ui:field="spiceNativeImplRadioButton"/>
-                    <ge:EntityModelRadioButtonEditor ui:field="spicePluginImplRadioButton"/>
-                    <ge:EntityModelRadioButtonEditor ui:field="spiceHtml5ImplRadioButton"/>
+                    <t:WidgetTooltip ui:field="spiceAutoImplRadioButtonTooltip">
+                        <ge:EntityModelRadioButtonEditor ui:field="spiceAutoImplRadioButton"/>
+                    </t:WidgetTooltip>
+                    <t:WidgetTooltip ui:field="spiceNativeImplRadioButtonTooltip">
+                        <ge:EntityModelRadioButtonEditor ui:field="spiceNativeImplRadioButton"/>
+                    </t:WidgetTooltip>
+                    <t:WidgetTooltip ui:field="spicePluginImplRadioButtonTooltip">
+                        <ge:EntityModelRadioButtonEditor ui:field="spicePluginImplRadioButton"/>
+                    </t:WidgetTooltip>
+                    <t:WidgetTooltip ui:field="spiceHtml5ImplRadioButtonTooltip">
+                        <ge:EntityModelRadioButtonEditor ui:field="spiceHtml5ImplRadioButton"/>
+                    </t:WidgetTooltip>
 
                     <g:Label ui:field="spiceTitle" text="{constants.spiceOptions}" addStyleNames="{style.labelStyle} cpv_spiceTitle_pfly_fix" />
                     <w:EntityModelValueCheckBoxEditor ui:field="remapCtrlAltDeleteSpice" />
                     <w:EntityModelValueCheckBoxEditor ui:field="enableUsbAutoshare" />
                     <w:EntityModelValueCheckBoxEditor ui:field="openInFullScreen" />
-                    <w:EntityModelValueCheckBoxEditor ui:field="enableSpiceProxy" />
+                    <t:WidgetTooltip ui:field="enableSpiceProxyTooltip">
+                        <w:EntityModelValueCheckBoxEditor ui:field="enableSpiceProxy" />
+                    </t:WidgetTooltip>
 
                     <g:FlowPanel ui:field="wanOptionsPanel" >
                         <w:EntityModelValueCheckBoxEditor ui:field="wanEnabled" />
@@ -84,7 +101,9 @@ xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console">
                 <g:FlowPanel ui:field="vncPanel" addStyleNames="{style.protocolPanel}">
                     <v:WidgetWithInfo ui:field="vncHeadline" />
                     <ge:EntityModelRadioButtonEditor ui:field="vncNativeImplRadioButton" />
-                    <ge:EntityModelRadioButtonEditor ui:field="noVncImplRadioButton"/>
+                    <t:WidgetTooltip ui:field="noVncImplRadioButtonTooltip">
+                        <ge:EntityModelRadioButtonEditor ui:field="noVncImplRadioButton"/>
+                    </t:WidgetTooltip>
                     <g:Label ui:field="vncTitle" text="{constants.vncOptions}" addStyleNames="{style.labelStyle}" />
                     <w:EntityModelValueCheckBoxEditor ui:field="remapCtrlAltDeleteVnc" />
                 </g:FlowPanel>
@@ -93,7 +112,9 @@ xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console">
                     <v:WidgetWithInfo ui:field="rdpHeadline" />
                     <ge:EntityModelRadioButtonEditor ui:field="rdpAutoImplRadioButton" />
                     <ge:EntityModelRadioButtonEditor ui:field="rdpNativeImplRadioButton" />
-                    <ge:EntityModelRadioButtonEditor ui:field="rdpPluginImplRadioButton" />
+                    <t:WidgetTooltip ui:field="rdpPluginImplRadioButtonTooltip">
+                        <ge:EntityModelRadioButtonEditor ui:field="rdpPluginImplRadioButton" />
+                    </t:WidgetTooltip>
                     <g:Label text="{constants.rdpOptions}" addStyleNames="{style.labelStyle}" />
                     <w:EntityModelValueCheckBoxEditor ui:field="useLocalDrives" />
                 </g:FlowPanel>

@@ -69,33 +69,13 @@ public abstract class AbstractUiCommandButton extends Composite
         }
     }
 
-    void updateButton() {
+    protected void updateButton() {
         Widget widget = getButtonWidget();
         widget.setVisible(command.getIsAvailable() && command.getIsVisible());
         if (widget instanceof HasEnabled) {
             ((HasEnabled)widget).setEnabled(command.getIsExecutionAllowed());
         }
         String label = getLabel();
-        // Use prohibition reasons for tooltip if exist.
-        String title = "";  //$NON-NLS-1$
-        StringBuilder sb = new StringBuilder();
-        if (!command.getExecuteProhibitionReasons().isEmpty()) {
-            for (String reason : command.getExecuteProhibitionReasons()) {
-                sb.append(reason).append(",");  //$NON-NLS-1$
-            }
-            title = sb.toString();
-            if (title.length() != 0) {
-                title = title.substring(0, title.length() -1);
-            }
-        } else {
-            if (label != null && !label.isEmpty()) {
-                title = label;
-            }
-            else {
-                title = command.getTitle();
-            }
-        }
-        getButtonWidget().setTitle(title);
 
         if (command.getTitle() == null) {
             setLabel(""); //$NON-NLS-1$

@@ -148,7 +148,7 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> impleme
     protected abstract T createRefreshPanel();
 
     protected void onRefresh(String status) {
-        refreshPanel.showStatus(status);
+        refreshPanel.setTooltipText(status);
     }
 
     public T getRefreshPanel() {
@@ -196,6 +196,10 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> impleme
     @Override
     public void fireEvent(GwtEvent<?> event) {
         eventBus.fireEventFromSource(event, modelProvider.getModel());
+    }
+
+    public String getRefreshStatus() {
+        return getModelTimer().getTimerRefreshStatus();
     }
 
 }

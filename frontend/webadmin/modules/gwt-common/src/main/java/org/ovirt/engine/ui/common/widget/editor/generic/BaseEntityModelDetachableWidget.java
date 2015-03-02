@@ -4,16 +4,24 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.HasDetachable;
+import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.UIObject;
 
 public abstract class BaseEntityModelDetachableWidget extends Composite implements HasDetachable {
 
-    private Image attachedSeparatedImage;
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+
+    @UiField
+    WidgetTooltip tooltip;
+
+    Image attachedSeparatedImage;
 
     interface BaseStyle extends CssResource {
         String contentWidgetWithDetachable();
@@ -25,14 +33,12 @@ public abstract class BaseEntityModelDetachableWidget extends Composite implemen
 
     private UIObject decoratedWidget;
 
-
-    private final static CommonApplicationResources resources = AssetProvider.getResources();
-    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
-
     // can not be as a constructor because needs to be called after the widgets get bind properly in children
     protected void initialize(UIObject decoratedWidget, Image attachedSeparatedImage, BaseStyle style) {
         this.decoratedWidget = decoratedWidget;
         this.attachedSeparatedImage = attachedSeparatedImage;
+        this.tooltip.setWidget(attachedSeparatedImage);
+        this.tooltip.reconfigure();
         this.style = style;
 
         setAttached(true);
@@ -65,6 +71,8 @@ public abstract class BaseEntityModelDetachableWidget extends Composite implemen
     @Override
     public void setAttached(boolean attached) {
         attachedSeparatedImage.setResource(attached ? resources.joinedIcon() : resources.separatedIcon());
-        attachedSeparatedImage.setTitle(attached ? constants.attachedToInstanceType() : constants.detachedFromInstanceType());
+
+        tooltip.setText(attached ? constants.attachedToInstanceType() : constants.detachedFromInstanceType());
+        tooltip.reconfigure();
     }
 }

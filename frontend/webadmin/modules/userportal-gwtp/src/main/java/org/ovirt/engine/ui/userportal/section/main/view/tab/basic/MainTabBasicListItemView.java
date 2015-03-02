@@ -159,7 +159,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
 
     @Override
     public void updateRunButton(UICommand command, boolean isPool) {
-        runButton.setTitle(isPool ? constants.takeVm() : constants.runVm());
+        runButton.setTooltipText(isPool ? constants.takeVm() : constants.runVm());
         updateButton(runButton, command);
     }
 

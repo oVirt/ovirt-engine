@@ -1,52 +1,29 @@
 package org.ovirt.engine.ui.userportal.widget;
 
 import org.ovirt.engine.core.common.businessentities.QuotaUsagePerUser;
-import org.ovirt.engine.ui.common.utils.PopupUtils;
+import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
 import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 
-import com.google.gwt.event.dom.client.HasMouseOutHandlers;
-import com.google.gwt.event.dom.client.HasMouseOverHandlers;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.ui.DecoratedPopupPanel;
-import com.google.gwt.user.client.ui.HTML;
 
-public abstract class QuotaProgressBar extends DoublePercentageProgressBar implements HasMouseOutHandlers, HasMouseOverHandlers, MouseOutHandler, MouseOverHandler {
+public abstract class QuotaProgressBar extends DoublePercentageProgressBar {
 
     public static final int UNLIMITED = -1;
-    protected static final SafeHtml EMPTY_HTML = new SafeHtml() {
-        @Override
-        public String asString() {
-            return ""; //$NON-NLS-1$
-        }
-    };
-    private final HTML tooltip = new HTML();
-    private final DecoratedPopupPanel tooltipPanel = new DecoratedPopupPanel();
-    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
 
     protected QuotaUsagePerUser quotaUsagePerUser;
 
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     public QuotaProgressBar(QuotaUsagePerUser quotaUsagePerUser) {
+        this();
         setQuotaUsagePerUser(quotaUsagePerUser);
-        initToolTip();
     }
 
     public QuotaProgressBar() {
-        initToolTip();
-    }
-
-    private void initToolTip() {
-        tooltipPanel.setWidget(tooltip);
-        addMouseOutHandler(this);
-        addMouseOverHandler(this);
+        tooltip = new WidgetTooltip(this);
     }
 
     public void setQuotaUsagePerUser(QuotaUsagePerUser quotaUsagePerUser) {
@@ -99,30 +76,10 @@ public abstract class QuotaProgressBar extends DoublePercentageProgressBar imple
             setValueB(userConsumptionPercent);
             setBars();
         }
-    }
 
-    @Override
-    public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
-        return addDomHandler(handler, MouseOutEvent.getType());
-    }
-
-    @Override
-    public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
-        return addDomHandler(handler, MouseOverEvent.getType());
-    }
-
-    @Override
-    public void onMouseOut(MouseOutEvent event) {
-        tooltipPanel.hide(true);
-    }
-
-    @Override
-    public void onMouseOver(MouseOverEvent event) {
-        SafeHtml tooltipHtml = getTooltip();
-        if (!"".equals(tooltipHtml.asString())) { //$NON-NLS-1$
-            tooltip.setHTML(tooltipHtml);
-            PopupUtils.adjustPopupLocationToFitScreenAndShow(tooltipPanel, event.getClientX(), event.getClientY() + 20);
-        }
+        // update tooltip
+        tooltip.setText(getTooltip().asString());
+        tooltip.reconfigure();
     }
 
     protected abstract SafeHtml getTooltip();
@@ -139,9 +96,4 @@ public abstract class QuotaProgressBar extends DoublePercentageProgressBar imple
                 constants.freeQuota(), freePercentage, free);
     }
 
-    @Override
-    protected void onDetach() {
-        super.onDetach();
-        tooltipPanel.hide(true);
-    }
 }
