@@ -460,4 +460,10 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         return new MultipleStorageDomainsValidator(spId, sdIds);
     }
 
+    /**
+     * Required for the audit logging
+     */
+    public String getVmsCount() {
+        return String.valueOf(getParameters().getVmsCount());
+    }
 }
