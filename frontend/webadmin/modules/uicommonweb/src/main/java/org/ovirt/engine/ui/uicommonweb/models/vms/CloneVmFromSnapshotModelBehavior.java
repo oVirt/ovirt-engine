@@ -51,8 +51,8 @@ public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior
             disks.add(Linq.diskToModel(diskImage));
         }
         getModel().setDisks(disks);
-        getModel().getDisksAllocationModel().setIsVolumeFormatAvailable(true);
-        getModel().getDisksAllocationModel().setIsVolumeFormatChangable(true);
+        getModel().getDisksAllocationModel().setIsVolumeTypeAvailable(true);
+        getModel().getDisksAllocationModel().setIsVolumeTypeChangable(true);
         updateIsDisksAvailable();
     }
 

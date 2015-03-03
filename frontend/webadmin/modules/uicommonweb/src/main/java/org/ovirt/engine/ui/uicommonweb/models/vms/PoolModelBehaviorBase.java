@@ -45,7 +45,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
         getModel().getIsSoundcardEnabled().setIsChangeable(true);
 
-        getModel().getDisksAllocationModel().setIsVolumeFormatAvailable(false);
+        getModel().getDisksAllocationModel().setIsVolumeTypeAvailable(false);
         getModel().getDisksAllocationModel().setIsAliasChangable(true);
 
         getModel().getProvisioning().setIsAvailable(false);

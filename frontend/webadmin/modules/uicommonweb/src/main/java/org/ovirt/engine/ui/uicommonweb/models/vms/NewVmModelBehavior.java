@@ -210,8 +210,8 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
         boolean provisioning = getModel().getProvisioning().getEntity();
         getModel().getProvisioningThin_IsSelected().setEntity(!provisioning);
         getModel().getProvisioningClone_IsSelected().setEntity(provisioning);
-        getModel().getDisksAllocationModel().setIsVolumeFormatAvailable(true);
-        getModel().getDisksAllocationModel().setIsVolumeFormatChangable(provisioning);
+        getModel().getDisksAllocationModel().setIsVolumeTypeAvailable(true);
+        getModel().getDisksAllocationModel().setIsVolumeTypeChangable(provisioning);
         getModel().getDisksAllocationModel().setIsAliasChangable(true);
 
         initStorageDomains();

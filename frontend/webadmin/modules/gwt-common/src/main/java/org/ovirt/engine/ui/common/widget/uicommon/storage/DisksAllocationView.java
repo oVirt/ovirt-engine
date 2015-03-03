@@ -100,7 +100,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     }
 
     void updateColumnsAvailability(DisksAllocationModel model) {
-        setShowVolumeType(model.getIsVolumeFormatAvailable());
+        setShowVolumeType(model.getIsVolumeTypeAvailable());
         setShowQuota(model.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED);
     }
 

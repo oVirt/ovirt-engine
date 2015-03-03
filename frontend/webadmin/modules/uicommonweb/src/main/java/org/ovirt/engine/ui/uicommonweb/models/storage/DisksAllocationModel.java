@@ -42,6 +42,8 @@ public class DisksAllocationModel extends EntityModel
     protected static final UIConstants constants = ConstantsManager.getInstance().getConstants();
     protected static final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
+    private static final String VOLUME_TYPE = "VOLUME_TYPE";  //$NON-NLS-1$
+
     private final IEventListener<EventArgs> storageDomainEventListener = new IEventListener<EventArgs>() {
         @Override
         public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
@@ -127,8 +129,8 @@ public class DisksAllocationModel extends EntityModel
         return quotaEnforcementType;
     }
 
-    private boolean isVolumeFormatAvailable;
-    private boolean isVolumeFormatChangable;
+    private boolean isVolumeTypeAvailable;
+    private boolean isVolumeTypeChangable;
     private boolean isAliasChangable;
     private boolean isSourceStorageDomainAvailable;
     private boolean isSourceStorageDomainNameAvailable;
@@ -239,7 +241,7 @@ public class DisksAllocationModel extends EntityModel
     protected void onPropertyChanged(PropertyChangedEventArgs e)
     {
         super.onPropertyChanged(e);
-        if (e.propertyName.equals("Disks") || e.propertyName.equals("VolumeFormat")) //$NON-NLS-1$ //$NON-NLS-2$
+        if (e.propertyName.equals("Disks") || e.propertyName.equals(VOLUME_TYPE)) //$NON-NLS-1$
         {
             updateStorageDomainsAvailability();
             updateQuotaAvailability();
@@ -255,8 +257,8 @@ public class DisksAllocationModel extends EntityModel
         for (DiskModel diskModel : disks) {
             diskModel.getSourceStorageDomain().setIsAvailable(isSourceStorageDomainAvailable);
             diskModel.getSourceStorageDomainName().setIsAvailable(isSourceStorageDomainNameAvailable);
-            diskModel.getVolumeType().setIsAvailable(isVolumeFormatAvailable);
-            diskModel.getVolumeType().setIsChangeable(isVolumeFormatChangable);
+            diskModel.getVolumeType().setIsAvailable(isVolumeTypeAvailable);
+            diskModel.getVolumeType().setIsChangeable(isVolumeTypeChangable);
             diskModel.getAlias().setIsChangeable(isAliasChangable);
         }
     }
@@ -334,12 +336,12 @@ public class DisksAllocationModel extends EntityModel
         setIsValid(isModelValid);
     }
 
-    public void setIsVolumeFormatAvailable(boolean isVolumeFormatAvailable) {
-        this.isVolumeFormatAvailable = isVolumeFormatAvailable;
+    public void setIsVolumeTypeAvailable(boolean isVolumeFormatAvailable) {
+        this.isVolumeTypeAvailable = isVolumeFormatAvailable;
     }
 
-    public boolean getIsVolumeFormatAvailable() {
-        return isVolumeFormatAvailable;
+    public boolean getIsVolumeTypeAvailable() {
+        return isVolumeTypeAvailable;
     }
 
     public boolean getIsAliasChangable() {
@@ -350,10 +352,10 @@ public class DisksAllocationModel extends EntityModel
         this.isAliasChangable = isAliasChangable;
     }
 
-    public void setIsVolumeFormatChangable(boolean isVolumeFormatChangable) {
-        if (this.isVolumeFormatChangable != isVolumeFormatChangable) {
-            this.isVolumeFormatChangable = isVolumeFormatChangable;
-            onPropertyChanged(new PropertyChangedEventArgs("VolumeFormat")); //$NON-NLS-1$
+    public void setIsVolumeTypeChangable(boolean isVolumeTypeChangable) {
+        if (this.isVolumeTypeChangable != isVolumeTypeChangable) {
+            this.isVolumeTypeChangable = isVolumeTypeChangable;
+            onPropertyChanged(new PropertyChangedEventArgs(VOLUME_TYPE));
         }
     }
 
