@@ -40,6 +40,8 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
     TextBoxLabel volumeType = new TextBoxLabel();
     TextBoxLabel replicaCount = new TextBoxLabel();
     TextBoxLabel stripeCount = new TextBoxLabel();
+    TextBoxLabel disperseCount = new TextBoxLabel();
+    TextBoxLabel redundancyCount = new TextBoxLabel();
     TextBoxLabel numOfBricks = new TextBoxLabel();
     VolumeTransportTypeLabel transportTypes = new VolumeTransportTypeLabel();
     TextBoxLabel snapMaxLimit = new TextBoxLabel();
@@ -62,7 +64,7 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
         driver.initialize(this);
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 1, 8);
+        formBuilder = new FormBuilder(formPanel, 1, 10);
 
         formBuilder.addFormItem(new FormItem(constants.NameVolume(), name, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.volumeIdVolume(), volumeId, 1, 0));
@@ -77,6 +79,8 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
         formBuilder.addFormItem(new FormItem(constants.numberOfBricksVolume(), numOfBricks, 5, 0));
         formBuilder.addFormItem(new FormItem(constants.transportTypesVolume(), transportTypes, 6, 0));
         formBuilder.addFormItem(new FormItem(constants.maxNumberOfSnapshotsVolume(), snapMaxLimit, 7, 0));
+        formBuilder.addFormItem(new FormItem(constants.disperseCount(), disperseCount, 8, 0));
+        formBuilder.addFormItem(new FormItem(constants.redundancyCount(), redundancyCount, 9, 0));
 
         getDetailModel().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
@@ -95,6 +99,8 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
 
         replicaFormItem.setIsAvailable(selectedItem.getVolumeType().isReplicatedType());
         stripeFormItem.setIsAvailable(selectedItem.getVolumeType().isStripedType());
+        disperseCount.setVisible(selectedItem.getVolumeType().isDispersedType());
+        redundancyCount.setVisible(selectedItem.getVolumeType().isDispersedType());
 
         formBuilder.update(getDetailModel());
     }

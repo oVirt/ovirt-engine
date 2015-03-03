@@ -104,6 +104,16 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
             return false;
         }
 
+        if (volume.getVolumeType().isDispersedType()) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CREATION_OF_DISPERSE_VOLUME_NOT_SUPPORTED);
+            return false;
+        }
+
+        if (volume.getVolumeType().isDistributedDispersedType()) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CREATION_OF_DISTRIBUTED_DISPERSE_VOLUME_NOT_SUPPORTED);
+            return false;
+        }
+
         if (volumeNameExists(volume.getName())) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_NAME_ALREADY_EXISTS);
             addCanDoActionMessageVariable("volumeName", volume.getName());

@@ -36,7 +36,15 @@ public enum GlusterVolumeType {
     /**
      * Distributes striped data across replicated bricks.
      */
-    DISTRIBUTED_STRIPED_REPLICATE;
+    DISTRIBUTED_STRIPED_REPLICATE,
+    /**
+     * Erasure encoded volume
+     */
+    DISPERSE,
+    /**
+     * Distributed Erasure encoded volume
+     */
+    DISTRIBUTED_DISPERSE;
 
     public String value() {
         return name().toUpperCase();
@@ -60,5 +68,13 @@ public enum GlusterVolumeType {
 
     public boolean isDistributedType() {
         return value().contains("DISTRIBUTE");
+    }
+
+    public boolean isDispersedType() {
+        return value().contains("DISPERSE");
+    }
+
+    public boolean isDistributedDispersedType() {
+        return value().contains("DISTRIBUTED_DISPERSE");
     }
 }

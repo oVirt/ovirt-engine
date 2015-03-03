@@ -15,6 +15,8 @@ public class VolumeGeneralModel extends EntityModel {
     private String volumeType;
     private String replicaCount;
     private String stripeCount;
+    private String disperseCount;
+    private String redundancyCount;
     private String numOfBricks;
     private String glusterMountPoint;
     private String nfsMountPoint;
@@ -64,6 +66,22 @@ public class VolumeGeneralModel extends EntityModel {
 
     public void setStripeCount(String stripeCount) {
         this.stripeCount = stripeCount;
+    }
+
+    public String getDisperseCount() {
+        return disperseCount;
+    }
+
+    public void setDisperseCount(String disperseCount) {
+        this.disperseCount = disperseCount;
+    }
+
+    public String getRedundancyCount() {
+        return redundancyCount;
+    }
+
+    public void setRedundancyCount(String redundancyCount) {
+        this.redundancyCount = redundancyCount;
     }
 
     public String getNumOfBricks() {
@@ -120,6 +138,8 @@ public class VolumeGeneralModel extends EntityModel {
         setVolumeType(entity.getVolumeType() != null ? entity.getVolumeType().toString() : null);
         setReplicaCount(entity.getReplicaCount() != null ? Integer.toString(entity.getReplicaCount()) : null);
         setStripeCount(entity.getStripeCount() != null ? Integer.toString(entity.getStripeCount()) : null);
+        setDisperseCount(entity.getDisperseCount() != null ? Integer.toString(entity.getDisperseCount()) : null);
+        setRedundancyCount(entity.getRedundancyCount() != null ? Integer.toString(entity.getRedundancyCount()) : null);
         setNumOfBricks(entity.getBricks() != null ? Integer.toString(entity.getBricks().size()) : null);
         setTransportTypes(entity.getTransportTypes());
         setSnapMaxLimit(entity.getSnapMaxLimit() != null ? entity.getSnapMaxLimit().toString() : null);

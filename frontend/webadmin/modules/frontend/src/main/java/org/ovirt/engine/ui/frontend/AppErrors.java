@@ -2952,6 +2952,24 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Duplicate entries found for brick ${brick}.")
     String ACTION_TYPE_FAILED_DUPLICATE_BRICKS();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Addition of bricks to disperse volume is not supported.")
+    String ACTION_TYPE_FAILED_ADD_BRICK_TO_DISPERSE_VOLUME_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Addition of bricks to distributed disperse volume is not supported.")
+    String ACTION_TYPE_FAILED_ADD_BRICK_TO_DISTRIBUTED_DISPERSE_VOLUME_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Removal of bricks from disperse volume is not supported.")
+    String ACTION_TYPE_FAILED_REMOVE_BRICK_FROM_DISPERSE_VOLUME_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Removal of bricks from distributed disperse volume is not supported.")
+    String ACTION_TYPE_FAILED_REMOVE_BRICK_FROM_DISTRIBUTED_DISPERSE_VOLUME_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Creation of disperse volume is not supported.")
+    String ACTION_TYPE_FAILED_CREATION_OF_DISPERSE_VOLUME_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Creation of distributed disperse volume is not supported.")
+    String ACTION_TYPE_FAILED_CREATION_OF_DISTRIBUTED_DISPERSE_VOLUME_NOT_SUPPORTED();
+
     @DefaultStringValue("Cannot ${action} ${type}. Brick ${brick} is already used by the volume ${volumeName}.")
     String ACTION_TYPE_FAILED_BRICK_ALREADY_EXISTS_IN_VOLUME();
 

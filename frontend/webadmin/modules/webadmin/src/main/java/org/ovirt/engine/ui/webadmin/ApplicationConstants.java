@@ -2790,6 +2790,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Maximum no of snapshots")
     String maxNumberOfSnapshotsVolume();
 
+    @DefaultStringValue("Disperse Count")
+    String disperseCount();
+
+    @DefaultStringValue("Redundancy Count")
+    String redundancyCount();
+
     @DefaultStringValue("Activities")
     String activitiesOnVolume();
 

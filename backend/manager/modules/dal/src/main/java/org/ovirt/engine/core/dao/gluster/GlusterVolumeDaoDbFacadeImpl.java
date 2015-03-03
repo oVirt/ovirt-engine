@@ -376,6 +376,8 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
             entity.setStatus(GlusterStatus.valueOf(rs.getString("status")));
             entity.setReplicaCount(rs.getInt("replica_count"));
             entity.setStripeCount(rs.getInt("stripe_count"));
+            entity.setDisperseCount(rs.getInt("disperse_count"));
+            entity.setRedundancyCount(rs.getInt("redundancy_count"));
             entity.setSnapshotsCount(rs.getInt("snapshot_count"));
             entity.setSnapshotScheduled(rs.getBoolean("snapshot_scheduled"));
             return entity;
@@ -456,7 +458,9 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
                         .addValue("vol_type", EnumUtils.nameOrNull(volume.getVolumeType()))
                         .addValue("status", EnumUtils.nameOrNull(volume.getStatus()))
                         .addValue("replica_count", volume.getReplicaCount())
-                        .addValue("stripe_count", volume.getStripeCount()));
+                        .addValue("stripe_count", volume.getStripeCount())
+                        .addValue("disperse_count", volume.getDisperseCount())
+                        .addValue("redundancy_count", volume.getRedundancyCount()));
     }
 
     @Override
@@ -488,7 +492,9 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
                 .addValue("vol_type", EnumUtils.nameOrNull(volume.getVolumeType()))
                 .addValue("status", EnumUtils.nameOrNull(volume.getStatus()))
                 .addValue("replica_count", volume.getReplicaCount())
-                .addValue("stripe_count", volume.getStripeCount());
+                .addValue("stripe_count", volume.getStripeCount())
+                .addValue("disperse_count", volume.getDisperseCount())
+                .addValue("redundancy_count", volume.getRedundancyCount());
     }
 
     @Override
