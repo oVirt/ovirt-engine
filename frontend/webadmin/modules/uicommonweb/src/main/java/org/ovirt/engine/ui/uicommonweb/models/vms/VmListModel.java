@@ -1809,6 +1809,11 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             return;
         }
 
+        if (ObjectUtils.objectsEqual(model.getIsoImage().getSelectedItem(), vm.getCurrentCd())) {
+            cancel();
+            return;
+        }
+
         String isoName =
                 (ObjectUtils.objectsEqual(model.getIsoImage().getSelectedItem(), ConsoleModel.getEjectLabel())) ? "" //$NON-NLS-1$
                         : model.getIsoImage().getSelectedItem();

@@ -396,7 +396,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return getMainModel().getCreateSnapshotCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.cheangeCdVm()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.changeCdVm()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getChangeCdCommand();

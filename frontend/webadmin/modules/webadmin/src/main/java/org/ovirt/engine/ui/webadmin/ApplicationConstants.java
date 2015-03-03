@@ -1832,7 +1832,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String moveVm();
 
     @DefaultStringValue("Change CD")
-    String cheangeCdVm();
+    String changeCdVm();
 
     @DefaultStringValue("Assign Tags")
     String assignTagsVm();

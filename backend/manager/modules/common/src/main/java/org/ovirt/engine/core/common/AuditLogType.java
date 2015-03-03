@@ -507,6 +507,9 @@ public enum AuditLogType {
     USER_EJECT_VM_DISK(528),
     USER_EJECT_VM_FLOPPY(529),
 
+    VM_DISK_ALREADY_CHANGED(1191),
+    VM_DISK_ALREADY_EJECTED(1192),
+
     // -- VM Log types --
     VM_DOWN(61),
     VM_DOWN_ERROR(119, AuditLogSeverity.ERROR),

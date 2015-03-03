@@ -36,6 +36,10 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
 
     @Override
     protected boolean canDoAction() {
+        if (shouldSkipCommandExecutionCached()) {
+            return true;
+        }
+
         if (getVm() == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
@@ -61,6 +65,15 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
     }
 
     @Override
+    protected boolean shouldSkipCommandExecution() {
+        if (getVm() == null) {
+            return false;
+        }
+
+        return StringUtils.equals(getVm().getCurrentCd(), getParameters().getCdImagePath());
+    }
+
+    @Override
     protected void perform() {
         cdImagePath = ImagesHandler.cdPathWindowsToLinux(getParameters().getCdImagePath(), getVm().getStoragePoolId(), getVm().getRunOnVds());
         setActionReturnValue(runVdsCommand(VDSCommandType.ChangeDisk,
@@ -73,7 +86,16 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? "".equals(cdImagePath) ? AuditLogType.USER_EJECT_VM_DISK
-                : AuditLogType.USER_CHANGE_DISK_VM : AuditLogType.USER_FAILED_CHANGE_DISK_VM;
+        if (shouldSkipCommandExecutionCached()) {
+            return "".equals(cdImagePath) ? AuditLogType.VM_DISK_ALREADY_EJECTED
+                    : AuditLogType.VM_DISK_ALREADY_CHANGED;
+        }
+
+        if (!getSucceeded()) {
+            return AuditLogType.USER_FAILED_CHANGE_DISK_VM;
+        }
+
+        return "".equals(cdImagePath) ? AuditLogType.USER_EJECT_VM_DISK
+                : AuditLogType.USER_CHANGE_DISK_VM;
     }
 }
