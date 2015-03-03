@@ -170,6 +170,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         setUpCommand();
         mockVds();
         mockDbDAO();
+        command.postConstruct();
     }
 
     protected void setUpCommand() {

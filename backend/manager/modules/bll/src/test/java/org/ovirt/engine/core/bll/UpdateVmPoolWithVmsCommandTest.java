@@ -21,7 +21,6 @@ public class UpdateVmPoolWithVmsCommandTest extends CommonVmPoolWithVmsCommandTe
                 // do nothing - is done here and not with mockito since it's called in the ctor
             }
         });
-        command.postConstruct();
         return command;
     }
 
