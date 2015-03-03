@@ -112,4 +112,8 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     @DefaultMessage("Free {0}\nUsed {1} of total available {2}")
     String glusterCapacityInfo(String freeSize, String usedSize, String totalSize);
+
+    @DefaultMessage("Volume data from {0} of cluster {1} is replicated to this volume.")
+    String geoRepSlaveVolumeToolTip(String mastervolName, String clusterName);
+
 }

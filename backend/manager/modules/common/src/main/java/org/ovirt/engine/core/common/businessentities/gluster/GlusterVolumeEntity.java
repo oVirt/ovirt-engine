@@ -89,6 +89,10 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
 
     private GlusterVolumeAdvancedDetails advancedDetails;
 
+    private Boolean isGeoRepMaster;
+
+    private String geoRepMasterVolAndClusterName;
+
     public GlusterVolumeEntity() {
         options = new LinkedHashMap<String, GlusterVolumeOptionEntity>();
         bricks = new ArrayList<GlusterBrickEntity>();
@@ -352,6 +356,26 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
 
     public void setSnapshotScheduled(Boolean snapshotScheduled) {
         this.snapshotScheduled = snapshotScheduled;
+    }
+
+    public Boolean getIsGeoRepMaster() {
+        return isGeoRepMaster;
+    }
+
+    public void setIsGeoRepMaster(Boolean isGeoRepMaster) {
+        this.isGeoRepMaster = isGeoRepMaster;
+    }
+
+    public Boolean getIsGeoRepSlave() {
+        return getGeoRepMasterVolAndClusterName() != null;
+    }
+
+    public String getGeoRepMasterVolAndClusterName() {
+        return geoRepMasterVolAndClusterName;
+    }
+
+    public void setGeoRepMasterVolAndClusterName(String masterVolAndClusterName) {
+        this.geoRepMasterVolAndClusterName = masterVolAndClusterName;
     }
 
     public void removeBrick(GlusterBrickEntity GlusterBrick) {

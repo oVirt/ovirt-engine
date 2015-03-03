@@ -380,6 +380,8 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
             entity.setRedundancyCount(rs.getInt("redundancy_count"));
             entity.setSnapshotsCount(rs.getInt("snapshot_count"));
             entity.setSnapshotScheduled(rs.getBoolean("snapshot_scheduled"));
+            entity.setIsGeoRepMaster(rs.getBoolean("is_master"));
+            entity.setGeoRepMasterVolAndClusterName(rs.getString("master_vol_cluster"));
             return entity;
         }
     }

@@ -173,6 +173,12 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/volume_all_bricks_down_warning.png")
     ImageResource volumeAllBricksDownWarning();
 
+    @Source("images/volume_georep_master.png")
+    ImageResource volumeGeoRepMaster();
+
+    @Source("images/volume_georep_slave.png")
+    ImageResource volumeGeoRepSlave();
+
     // Model-bound widgets
 
     @Source("images/snapshot.png")
