@@ -3012,14 +3012,26 @@ SELECT
 FROM
     user_disk_profile_permissions_view_base NATURAL
     JOIN engine_session_user_flat_groups;
+
 CREATE
 OR REPLACE VIEW gluster_volumes_view AS
 SELECT
     gluster_volumes.*,
-    vds_groups.name AS vds_group_name
+    vds_groups.name AS vds_group_name,
+    CASE WHEN EXISTS (SELECT session_id FROM gluster_georep_session
+                      WHERE master_volume_id = gluster_volumes.id)
+         THEN true
+         ELSE false END
+         as is_master,
+    (SELECT vol.vol_name || '|' || cluster.name
+     FROM gluster_georep_session
+     INNER JOIN gluster_volumes vol ON master_volume_id = vol.id
+     INNER JOIN vds_groups cluster ON cluster.vds_group_id = vol.cluster_id
+     WHERE slave_volume_id = gluster_volumes.id) as master_vol_cluster
 FROM
     gluster_volumes
 INNER JOIN vds_groups ON gluster_volumes.cluster_id = vds_groups.vds_group_id;
+
 CREATE
 OR REPLACE VIEW gluster_volume_snapshots_view AS
 SELECT

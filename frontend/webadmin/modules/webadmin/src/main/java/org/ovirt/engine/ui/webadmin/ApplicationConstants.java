@@ -154,6 +154,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Sync")
     String geoRepSessionSync();
 
+    @DefaultStringValue("Volume data is being geo-replicated.")
+    String geoRepMasterVolumeToolTip();
+
+    @DefaultStringValue("Volume is destination for geo-replication.")
+    String geoRepSlaveVolumeToolTip();
+
     @DefaultStringValue("Permissions")
     String volumePermissionSubTabLabel();
 
@@ -2889,6 +2895,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Bricks")
     String bricksStatusVolume();
+
+    @DefaultStringValue("Info")
+    String volumeInfoVolume();
 
     @DefaultStringValue("Number of Bricks")
     String numberOfBricksVolume();

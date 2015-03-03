@@ -32,6 +32,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.cell.VolumeTaskWaitingCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeBrickStatusColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeInfoColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeStatusColumn;
 
 import com.google.gwt.cell.client.HasCell;
@@ -98,9 +99,11 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         getTable().addColumn(volumeTypeColumn, constants.volumeTypeVolume(), "150px"); //$NON-NLS-1$
 
         getTable().addColumn(new VolumeBrickStatusColumn(), constants.bricksStatusVolume(), "150px"); //$NON-NLS-1$
+        getTable().addColumn(new VolumeInfoColumn(), constants.volumeInfoVolume(), "100px"); //$NON-NLS-1$
 
         MenuCell<GlusterTaskSupport> rebalanceMenuCell = getRebalanceActivityMenu();
         MenuCell<GlusterTaskSupport> removeBricksMenuCell = getRemoveBrickActivityMenu();
+
         List<HasCell<GlusterTaskSupport, ?>> list = new ArrayList<HasCell<GlusterTaskSupport, ?>>();
         list.add(new VolumeActivityStatusColumn<GlusterTaskSupport>());
         list.add(new Column<GlusterTaskSupport, GlusterTaskSupport>(new VolumeActivitySeperatorCell<GlusterTaskSupport>()) {
