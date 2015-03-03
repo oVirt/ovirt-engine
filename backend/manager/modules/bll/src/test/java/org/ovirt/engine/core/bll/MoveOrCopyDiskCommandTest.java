@@ -117,30 +117,6 @@ public class MoveOrCopyDiskCommandTest {
     }
 
     @Test
-    public void canDoActionWrongDiskImageTypeVm() throws Exception {
-        initializeCommand(ImageOperation.Copy);
-        initVmDiskImage(false);
-        doReturn(null).when(command).getTemplateForImage();
-        command.defineVmTemplate();
-        assertFalse(command.canDoAction());
-        assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_NOT_TEMPLATE_DISK.toString()));
-    }
-
-    @Test
-    public void canDoActionCanNotFindTemplate() throws Exception {
-        initializeCommand(ImageOperation.Copy);
-        initTemplateDiskImage();
-        doReturn(null).when(command).getTemplateForImage();
-        command.defineVmTemplate();
-        assertFalse(command.canDoAction());
-        assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST.toString()));
-    }
-
-    @Test
     public void canDoActionSameSourceAndDest() throws Exception {
         destStorageId = srcStorageId;
         initializeCommand(ImageOperation.Move);

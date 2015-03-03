@@ -20,6 +20,7 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
     private Guid destImageGroupId;
     private ImageDbOperationScope revertDbOperationScope;
     private boolean shouldLockImageOnRevert;
+    private String newAlias;
 
     public MoveOrCopyImageGroupParameters() {
         operation = ImageOperation.Unassigned;
@@ -154,5 +155,13 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
 
     public void setShouldLockImageOnRevert(boolean shouldLockImageOnRevert) {
         this.shouldLockImageOnRevert = shouldLockImageOnRevert;
+    }
+
+    public String getNewAlias() {
+        return newAlias;
+    }
+
+    public void setNewAlias(String newAlias) {
+        this.newAlias = newAlias;
     }
 }
