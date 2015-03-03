@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup;
 
+import com.google.gwt.user.client.ui.HasEnabled;
+import com.google.gwt.user.client.ui.IndexedPanel;
+import com.google.gwt.user.client.ui.Widget;
 import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -23,4 +26,13 @@ public abstract class AbstractModelBoundPopupWidget<T extends Model> extends Com
         return nextTabIndex;
     }
 
+    public void disableWidget(Widget widget) {
+        if (widget instanceof IndexedPanel) {
+            for (int i = 0; i < ((IndexedPanel) widget).getWidgetCount(); i++) {
+                disableWidget(((IndexedPanel) widget).getWidget(i));
+            }
+        } else if (widget instanceof HasEnabled) {
+            ((HasEnabled) widget).setEnabled(false);
+        }
+    }
 }

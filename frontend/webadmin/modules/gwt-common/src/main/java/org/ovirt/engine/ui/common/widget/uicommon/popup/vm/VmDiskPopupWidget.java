@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
@@ -50,6 +51,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractDiskModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import java.util.ArrayList;
 
@@ -311,6 +313,19 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
 
                 // Show the info icon if VirtIO-SCSI is supported by the cluster but disabled for the VM
                 interfaceInfoIcon.setVisible(clusterVersion.compareTo(Version.v3_3) >= 0 && !isVirtioScsiEnabled);
+            }
+        });
+
+        disk.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                String propName = args.propertyName;
+                if ("Message".equals(propName)) { //$NON-NLS-1$
+                    if (!StringHelper.isNullOrEmpty(disk.getMessage())) {
+                        disableWidget(getWidget());
+                        disk.getDefaultCommand().setIsExecutionAllowed(false);
+                    }
+                }
             }
         });
 
