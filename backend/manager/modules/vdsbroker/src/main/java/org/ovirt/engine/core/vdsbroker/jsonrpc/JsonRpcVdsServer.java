@@ -18,7 +18,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterServersListReturnForXmlRpc
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterServicesReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterTaskInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterTasksListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeConfigListXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepConfigListXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusDetailForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeOptionsInfoReturnForXmlRpc;
@@ -1357,14 +1357,14 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public GlusterVolumeConfigListXmlRpc glusterVolumeGeoRepConfigList(String volumeName, String slaveHost, String slaveVolumeName) {
+    public GlusterVolumeGeoRepConfigListXmlRpc glusterVolumeGeoRepConfigList(String volumeName, String slaveHost, String slaveVolumeName) {
         JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepConfigList")
         .withParameter("volumeName", volumeName)
         .withParameter("remoteHost", slaveHost)
         .withParameter("remoteVolumeName", slaveVolumeName)
         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
-        return new GlusterVolumeConfigListXmlRpc(response);
+        return new GlusterVolumeGeoRepConfigListXmlRpc(response);
     }
 
     @Override

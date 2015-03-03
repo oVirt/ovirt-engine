@@ -8,7 +8,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
 
 public class GetGlusterVolumeGeoRepConfigListVDSCommand<P extends GlusterVolumeGeoRepSessionVDSParameters> extends AbstractGlusterBrokerCommand<P> {
 
-    private GlusterVolumeConfigListXmlRpc result;
+    private GlusterVolumeGeoRepConfigListXmlRpc result;
 
     public GetGlusterVolumeGeoRepConfigListVDSCommand(P parameters) {
         super(parameters);

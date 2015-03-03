@@ -13,7 +13,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterServersListReturnForXmlRpc
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterServicesReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterTaskInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterTasksListReturnForXmlRpc;
-import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeConfigListXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepConfigListXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusDetailForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeOptionsInfoReturnForXmlRpc;
@@ -339,7 +339,7 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc glusterVolumeGeoRepConfigReset(String volumeName, String slaveHost, String slaveVolumeName, String configKey);
 
-    GlusterVolumeConfigListXmlRpc glusterVolumeGeoRepConfigList(String volumeName, String slaveHost, String slaveVolumeName);
+    GlusterVolumeGeoRepConfigListXmlRpc glusterVolumeGeoRepConfigList(String volumeName, String slaveHost, String slaveVolumeName);
 
     GlusterVolumeTaskReturnForXmlRpc glusterVolumeRemoveBrickStatus(String volumeName, String[] bricksList);
 
