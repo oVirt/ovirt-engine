@@ -32,7 +32,9 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
+import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SelectedQuotaValidation;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
@@ -230,26 +232,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         ArrayList<StorageDomain> destinationDomains = new ArrayList<>();
         for (StorageDomain sd : activeStorageDomains) {
             // Storage domain destination should not be a domain which the disk is attached to.
-            if (sourceActiveStorageDomains.contains(sd)) {
-                continue;
-            }
-
-            // Destination should be in the same pool as the disk.
-            boolean connectedToSamePool = sd.getStoragePoolId().equals(diskImage.getStoragePoolId());
-            if (!connectedToSamePool) {
-                continue;
-            }
-
-            boolean hasSameSubType = sd.getStorageType().getStorageSubtype() == diskImage.getStorageTypes().get(0).getStorageSubtype();
-            if (shouldFilterBySourceType && !hasSameSubType) {
-                continue;
-            }
-
-            if (!isDomainValidForDiskTemplate(templateDisk, sd)) {
-                continue;
-            }
-
-            if (!isDiskValidForStorage(diskImage, sd)) {
+            if (!allowedStorageDomain(sourceActiveStorageDomains, shouldFilterBySourceType, diskImage, templateDisk, sd)) {
                 continue;
             }
 
@@ -258,6 +241,28 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         }
 
         return destinationDomains;
+    }
+
+    protected boolean allowedStorageDomain(ArrayList<StorageDomain> sourceActiveStorageDomains, boolean shouldFilterBySourceType, DiskImage diskImage, DiskModel templateDisk, StorageDomain sd) {
+        // Destination should be in the same pool as the disk.
+        boolean connectedToSamePool = sd.getStoragePoolId().equals(diskImage.getStoragePoolId());
+        if (!connectedToSamePool) {
+            return false;
+        }
+
+        boolean hasSameSubType = sd.getStorageType().getStorageSubtype() == diskImage.getStorageTypes().get(0).getStorageSubtype();
+        if (shouldFilterBySourceType && !hasSameSubType) {
+            return false;
+        }
+
+        if (!isDomainValidForDiskTemplate(templateDisk, sd)) {
+            return false;
+        }
+
+        if (!isDiskValidForStorage(diskImage, sd)) {
+            return false;
+        }
+        return true;
     }
 
     private boolean isDomainValidForDiskTemplate(DiskModel templateDisk, StorageDomain sd) {
@@ -324,7 +329,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         return null;
     }
 
-    protected void onExecute() {
+    protected final void onExecute() {
         if (this.getProgress() != null)
         {
             return;
@@ -334,6 +339,10 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             return;
         }
 
+        doExecute();
+    }
+
+    protected void doExecute() {
         startProgress(null);
     }
 
@@ -349,6 +358,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             DiskImage disk = (DiskImage) diskModel.getDisk();
             DiskProfile diskProfile = diskModel.getDiskProfile().getSelectedItem();
             disk.setDiskProfileId(diskProfile != null ? diskProfile.getId() : null);
+            disk.setDiskAlias(diskModel.getAlias().getEntity());
             if (diskModel.getQuota().getSelectedItem() != null) {
                 disk.setQuotaId(diskModel.getQuota().getSelectedItem().getId());
             }
@@ -375,6 +385,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         MoveOrCopyImageGroupParameters params = createParameters(sourceStorageDomainGuid, destStorageDomainGuid, disk);
         params.setQuotaId(disk.getQuotaId());
         params.setDiskProfileId(disk.getDiskProfileId());
+        params.setNewAlias(disk.getDiskAlias());
 
         parameters.add(params);
     }
@@ -392,15 +403,23 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     }
 
     public boolean validate() {
+        boolean quotaValidated = true;
+
         if (getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED
                 || getQuotaEnforcementType() == QuotaEnforcementTypeEnum.SOFT_ENFORCEMENT) {
-            return true;
+            quotaValidated = false;
         }
 
         boolean isValid = true;
         for (DiskModel diskModel : getDisks()) {
-            diskModel.getQuota().validateSelectedItem(new IValidation[] { new SelectedQuotaValidation() });
-            isValid &= diskModel.getQuota().getIsValid();
+            if (quotaValidated) {
+                diskModel.getQuota().validateSelectedItem(new IValidation[] { new SelectedQuotaValidation() });
+                isValid &= diskModel.getQuota().getIsValid();
+            }
+
+            diskModel.getAlias().validateEntity(new IValidation[] { new NotEmptyValidation(), new I18NNameValidation() });
+            isValid &= diskModel.getAlias().getIsValid();
+
         }
 
         return isValid;

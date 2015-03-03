@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -519,6 +520,11 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
 
         Guid datacenterId = ((DiskImage) disks.get(0)).getStoragePoolId();
 
+
+        boolean foundTemplateDisk = false;
+        boolean foundVmDisk = false;
+        boolean foundUnattachedDisk = false;
+
         for (Disk disk : disks) {
             if ((!isCopyAllowed && !isMoveAllowed) || disk.getDiskStorageType() != DiskStorageType.IMAGE) {
                 disableMoveAndCopyCommands();
@@ -530,12 +536,21 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
                 disableMoveAndCopyCommands();
                 return;
             }
-
-            if (disk.getVmEntityType() != null && disk.getVmEntityType().isTemplateType()) {
-                isMoveAllowed = false;
+            VmEntityType vmEntityType = disk.getVmEntityType();
+            if (vmEntityType == null) {
+                foundUnattachedDisk = true;
+            } else if (vmEntityType.isTemplateType()) {
+                foundTemplateDisk = true;
+            } else if (vmEntityType.isVmType()) {
+                foundVmDisk = true;
             }
-            else {
+
+            if (foundTemplateDisk && (foundUnattachedDisk || foundVmDisk)) {
                 isCopyAllowed = false;
+            }
+
+            if (vmEntityType != null && vmEntityType.isTemplateType()) {
+                isMoveAllowed = false;
             }
         }
 

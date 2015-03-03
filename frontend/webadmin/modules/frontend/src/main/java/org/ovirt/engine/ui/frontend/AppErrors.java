@@ -2908,9 +2908,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. ${diskAlias} is shareable, which Gluster domains do not support.")
     String ACTION_TYPE_FAILED_CANT_MOVE_SHAREABLE_DISK_TO_GLUSTERFS();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The selected disk is not a template disk. Only template disks can be copied.")
-    String ACTION_TYPE_FAILED_DISK_IS_NOT_TEMPLATE_DISK();
-
     @DefaultStringValue("Cannot ${action} ${type}. The source and target storage domains are the same.")
     String ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME();
 

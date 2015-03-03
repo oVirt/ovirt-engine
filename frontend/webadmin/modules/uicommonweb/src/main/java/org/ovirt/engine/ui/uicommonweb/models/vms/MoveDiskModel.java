@@ -165,8 +165,8 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
     }
 
     @Override
-    protected void onExecute() {
-        super.onExecute();
+    protected void doExecute() {
+        super.doExecute();
 
         ArrayList<VdcActionParametersBase> parameters = getParameters();
         if (parameters.isEmpty()) {
@@ -184,4 +184,16 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
                     }
                 }, this);
     }
+
+    @Override
+    protected boolean allowedStorageDomain(ArrayList<StorageDomain> sourceActiveStorageDomains, boolean shouldFilterBySourceType, DiskImage diskImage, DiskModel templateDisk, StorageDomain sd) {
+        // can not move to the same storage domain
+        if (sourceActiveStorageDomains.contains(sd)) {
+            return false;
+        }
+
+        return super.allowedStorageDomain(sourceActiveStorageDomains, shouldFilterBySourceType, diskImage, templateDisk, sd);
+    }
+
+
 }

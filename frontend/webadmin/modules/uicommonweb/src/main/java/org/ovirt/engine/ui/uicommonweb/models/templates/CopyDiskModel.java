@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.storage.MoveOrCopyDiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
@@ -31,6 +32,10 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
 
     @Override
     public void init(ArrayList<DiskImage> disksImages) {
+        if (disksImages.size() > 0) {
+            setIsAliasChangable(!isTemplateDisk(disksImages.get(0)));
+        }
+
         setDiskImages(disksImages);
 
         AsyncDataProvider.getInstance().getDiskList(new AsyncQuery(this, new INewAsyncCallback() {
@@ -87,15 +92,17 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
     protected MoveOrCopyImageGroupParameters createParameters(Guid sourceStorageDomainGuid,
             Guid destStorageDomainGuid,
             DiskImage disk) {
-        return new MoveOrCopyImageGroupParameters(disk.getImageId(),
+        MoveOrCopyImageGroupParameters moveOrCopyImageGroupParameters = new MoveOrCopyImageGroupParameters(disk.getImageId(),
                 sourceStorageDomainGuid,
                 destStorageDomainGuid,
                 ImageOperation.Copy);
+        moveOrCopyImageGroupParameters.setImageGroupID(disk.getId());
+        return moveOrCopyImageGroupParameters;
     }
 
     @Override
-    protected void onExecute() {
-        super.onExecute();
+    protected void doExecute() {
+        super.doExecute();
 
         ArrayList<VdcActionParametersBase> parameters = getParameters();
         if (parameters.isEmpty()) {
@@ -111,6 +118,21 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
                         localModel.cancel();
                     }
                 }, this);
+    }
+
+    @Override
+    protected boolean allowedStorageDomain(ArrayList<StorageDomain> sourceActiveStorageDomains, boolean shouldFilterBySourceType, DiskImage diskImage, DiskModel templateDisk, StorageDomain sd) {
+        // can not move template to the same storage domain
+        boolean isTemplate = isTemplateDisk(diskImage);
+        if (isTemplate && sourceActiveStorageDomains.contains(sd)) {
+            return false;
+        }
+
+        return super.allowedStorageDomain(sourceActiveStorageDomains, shouldFilterBySourceType, diskImage, templateDisk, sd);
+    }
+
+    private boolean isTemplateDisk(DiskImage  diskImage) {
+        return diskImage.getVmEntityType() != null && diskImage.getVmEntityType().isTemplateType();
     }
 
 }
