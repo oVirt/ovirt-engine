@@ -74,7 +74,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             public String getValue(SanTargetModel model) {
                 return ""; //$NON-NLS-1$
             }
-        }, constants.empty(), "20px"); //$NON-NLS-1$
+        }, constants.empty(), "15px"); //$NON-NLS-1$
 
         table.addColumn(new AbstractScrollableTextColumn<SanTargetModel>() {
             @Override

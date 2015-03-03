@@ -71,7 +71,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
             public String getValue(LunModel model) {
                 return ""; //$NON-NLS-1$
             }
-        }, "", "20px"); //$NON-NLS-1$ //$NON-NLS-2$
+        }, "", "15px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Add last blank column
         table.addColumn(new TextColumn<LunModel>() {
@@ -112,7 +112,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
             public String getValue(LunModel model) {
                 return ""; //$NON-NLS-1$
             }
-        }, multiSelection ? selectAllHeader : null, "27px"); //$NON-NLS-1$
+        }, multiSelection ? selectAllHeader : null, "20px"); //$NON-NLS-1$
     }
 
     final IEventListener<PropertyChangedEventArgs> lunModelSelectedItemListener = new IEventListener<PropertyChangedEventArgs>() {
@@ -148,7 +148,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
                 return object;
             }
         };
-        table.setCustomSelectionColumn(lunSelectionColumn, "25px"); //$NON-NLS-1$
+        table.setCustomSelectionColumn(lunSelectionColumn, "20px"); //$NON-NLS-1$
 
         // Add items
         List<LunModel> items = new ArrayList<LunModel>();
