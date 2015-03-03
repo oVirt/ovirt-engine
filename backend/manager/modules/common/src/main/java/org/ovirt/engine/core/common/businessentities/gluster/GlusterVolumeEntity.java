@@ -61,6 +61,10 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.STRIPE_COUNT.NOT_NULL", groups = { CreateStripedVolume.class })
     private Integer stripeCount;
 
+    private Integer disperseCount;
+
+    private Integer redundancyCount;
+
     @Valid
     private Map<String, GlusterVolumeOptionEntity> options;
 
@@ -145,6 +149,10 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         if (!volumeType.isStripedType()) {
             setStripeCount(0);
         }
+        if (!volumeType.isDispersedType()) {
+            setDisperseCount(0);
+            setRedundancyCount(0);
+        }
     }
 
     public void setVolumeType(String volumeType) {
@@ -179,6 +187,22 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
 
     public void setStripeCount(Integer stripeCount) {
         this.stripeCount = stripeCount;
+    }
+
+    public Integer getDisperseCount() {
+        return this.disperseCount;
+    }
+
+    public void setDisperseCount(Integer disperseCount) {
+        this.disperseCount = disperseCount;
+    }
+
+    public Integer getRedundancyCount() {
+        return this.redundancyCount;
+    }
+
+    public void setRedundancyCount(Integer redundancyCount) {
+        this.redundancyCount = redundancyCount;
     }
 
     public Set<AccessProtocol> getAccessProtocols() {
@@ -404,6 +428,8 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         result = prime * result + ((status == null) ? 0 : status.hashCode());
         result = prime * result + ((replicaCount == null) ? 0 : replicaCount.hashCode());
         result = prime * result + ((stripeCount == null) ? 0 : stripeCount.hashCode());
+        result = prime * result + ((disperseCount == null) ? 0 : disperseCount.hashCode());
+        result = prime * result + ((redundancyCount == null) ? 0 : redundancyCount.hashCode());
         result = prime * result + ((options == null) ? 0 : options.hashCode());
         result = prime * result + ((accessProtocols == null) ? 0 : accessProtocols.hashCode());
         result = prime * result + ((bricks == null) ? 0 : bricks.hashCode());
@@ -431,7 +457,9 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
                 && volumeType == volume.getVolumeType()
                 && status == volume.getStatus()
                 && ObjectUtils.objectsEqual(replicaCount, volume.getReplicaCount())
-                && ObjectUtils.objectsEqual(stripeCount, volume.getStripeCount()))) {
+                && ObjectUtils.objectsEqual(stripeCount, volume.getStripeCount())
+                && ObjectUtils.objectsEqual(disperseCount, volume.getDisperseCount())
+                && ObjectUtils.objectsEqual(redundancyCount, volume.getRedundancyCount()))) {
             return false;
         }
 

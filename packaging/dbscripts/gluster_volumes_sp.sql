@@ -13,14 +13,16 @@ Create or replace FUNCTION InsertGlusterVolume(v_id UUID, v_cluster_id UUID,
                                                 v_vol_type VARCHAR(32),
                                                 v_status VARCHAR(32),
                                                 v_replica_count INTEGER,
-                                                v_stripe_count INTEGER)
+                                                v_stripe_count INTEGER,
+                                                v_disperse_count INTEGER,
+                                                v_redundancy_count INTEGER)
     RETURNS VOID
     AS $procedure$
 BEGIN
     INSERT INTO gluster_volumes (id, cluster_id, vol_name, vol_type,
-        status, replica_count, stripe_count)
+        status, replica_count, stripe_count, disperse_count, redundancy_count)
     VALUES (v_id,  v_cluster_id, v_vol_name, v_vol_type,
-        v_status, v_replica_count,  v_stripe_count);
+        v_status, v_replica_count,  v_stripe_count, v_disperse_count, v_redundancy_count);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -423,7 +425,9 @@ Create or replace FUNCTION UpdateGlusterVolume(v_id UUID,
                                                 v_vol_type VARCHAR(32),
                                                 v_status VARCHAR(32),
                                                 v_replica_count INTEGER,
-                                                v_stripe_count INTEGER)
+                                                v_stripe_count INTEGER,
+                                                v_disperse_count INTEGER,
+                                                v_redundancy_count INTEGER)
     RETURNS VOID
     AS $procedure$
 BEGIN
@@ -434,6 +438,8 @@ BEGIN
         status = v_status,
         replica_count = v_replica_count,
         stripe_count = v_stripe_count,
+        disprse_count = v_disperse_count,
+        redundancy_count = v_redundancy_count,
         _update_date = LOCALTIMESTAMP
     WHERE id = v_id;
 END; $procedure$

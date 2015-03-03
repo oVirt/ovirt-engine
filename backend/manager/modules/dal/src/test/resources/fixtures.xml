@@ -6837,6 +6837,8 @@
         <column>status</column>
         <column>replica_count</column>
         <column>stripe_count</column>
+        <column>disperse_count</column>
+        <column>redundancy_count</column>
         <column>snapshot_count</column>
         <column>_create_date</column>
         <column>_update_date</column>
@@ -6846,6 +6848,8 @@
             <value>test-vol-distribute-1</value>
             <value>DISTRIBUTE</value>
             <value>UP</value>
+            <value>0</value>
+            <value>0</value>
             <value>0</value>
             <value>0</value>
             <value>2</value>
@@ -6859,6 +6863,8 @@
             <value>DISTRIBUTED_REPLICATE</value>
             <value>UP</value>
             <value>2</value>
+            <value>0</value>
+            <value>0</value>
             <value>0</value>
             <value>0</value>
             <value>2010-10-21 03:38:22</value>

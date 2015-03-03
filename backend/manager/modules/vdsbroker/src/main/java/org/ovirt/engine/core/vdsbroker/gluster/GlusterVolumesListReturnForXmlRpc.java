@@ -35,6 +35,8 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
     private static final String VOLUME_STATUS_ONLINE = "ONLINE";
     private static final String REPLICA_COUNT = "replicaCount";
     private static final String STRIPE_COUNT = "stripeCount";
+    private static final String DISPERSE_COUNT = "disperseCount";
+    private static final String REDUNDANCY_COUNT = "redundancyCount";
     private static final String BRICKS_INFO = "bricksInfo"; //contains brick name and server uuid
     private static final String NAME = "name";
     private static final String HOST_UUID = "hostUuid";
@@ -79,6 +81,10 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
             }
             if (volume.getVolumeType().isStripedType()) {
                 volume.setStripeCount(Integer.valueOf((String) map.get(STRIPE_COUNT)));
+            }
+            if (volume.getVolumeType().isDispersedType()) {
+                volume.setDisperseCount(Integer.valueOf((String) map.get(DISPERSE_COUNT)));
+                volume.setRedundancyCount(Integer.valueOf((String) map.get(REDUNDANCY_COUNT)));
             }
         }
 
