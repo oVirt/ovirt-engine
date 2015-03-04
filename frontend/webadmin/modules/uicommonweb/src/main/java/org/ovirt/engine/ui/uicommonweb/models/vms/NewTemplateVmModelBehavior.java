@@ -18,8 +18,8 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
@@ -70,6 +70,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         getModel().getCopyPermissions().setIsAvailable(true);
 
         DisksAllocationModel disksAllocationModel = getModel().getDisksAllocationModel();
+        disksAllocationModel.setIsVolumeFormatAvailable(true);
         disksAllocationModel.setIsAliasChangable(true);
 
         AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(getModel(),
@@ -296,6 +297,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
             }
             diskModel.setDisk(disk);
             list.add(diskModel);
+            diskModel.getVolumeFormat().setIsAvailable(true);
         }
         getModel().setDisks(list);
     }

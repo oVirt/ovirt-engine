@@ -75,6 +75,10 @@ public interface Enums extends LocalizedEnums {
 
     String StorageFormatType___V3();
 
+    String VolumeFormat___COW();
+
+    String VolumeFormat___RAW();
+
     String VDSStatus___Down();
 
     String VDSStatus___Error();

@@ -1412,6 +1412,16 @@ public class AsyncDataProvider {
         }
     }
 
+    public VolumeType getTemplateVolumeType(VolumeFormat volumeFormat, StorageType storageType) {
+        switch (volumeFormat) {
+        case COW:
+            return VolumeType.Sparse;
+        case RAW:
+        default:
+            return storageType.isFileDomain() ? VolumeType.Sparse : VolumeType.Preallocated;
+        }
+    }
+
     public void getClusterNetworkList(AsyncQuery aQuery, Guid clusterId) {
         // do not replace a converter = just add if none provided
         if (aQuery.converterCallback == null) {
@@ -3355,6 +3365,13 @@ public class AsyncDataProvider {
                 VolumeType.Preallocated,
                 VolumeType.Sparse
         }));
+    }
+
+    public ArrayList<VolumeFormat> getVolumeFormats() {
+        return new ArrayList<VolumeFormat>(Arrays.asList(
+                VolumeFormat.COW,
+                VolumeFormat.RAW
+                ));
     }
 
     public ArrayList<StorageType> getStorageTypeList()

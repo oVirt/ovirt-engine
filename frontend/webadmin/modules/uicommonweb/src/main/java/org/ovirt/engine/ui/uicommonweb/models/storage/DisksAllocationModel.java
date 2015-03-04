@@ -10,8 +10,9 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -129,6 +130,7 @@ public class DisksAllocationModel extends EntityModel
         return quotaEnforcementType;
     }
 
+    private boolean volumeFormatAvailable;
     private boolean isVolumeTypeAvailable;
     private boolean isVolumeTypeChangable;
     private boolean isAliasChangable;
@@ -280,7 +282,13 @@ public class DisksAllocationModel extends EntityModel
                 diskImage.setQuotaId(diskModel.getQuota().getSelectedItem().getId());
             }
 
-            if (diskModel.getVolumeType().getIsAvailable()) {
+            if (diskModel.getVolumeFormat().getIsAvailable()) {
+                VolumeFormat volumeFormat = diskModel.getVolumeFormat().getSelectedItem();
+                diskImage.setvolumeFormat(volumeFormat);
+                diskImage.setVolumeType(AsyncDataProvider.getInstance().getTemplateVolumeType(
+                        volumeFormat, storageDomain.getStorageType()));
+            }
+            else if (diskModel.getVolumeType().getIsAvailable()) {
                 VolumeType volumeType = diskModel.getVolumeType().getSelectedItem();
                 diskImage.setVolumeType(volumeType);
                 diskImage.setvolumeFormat(AsyncDataProvider.getInstance().getDiskVolumeFormat(
@@ -342,6 +350,14 @@ public class DisksAllocationModel extends EntityModel
 
     public boolean getIsVolumeTypeAvailable() {
         return isVolumeTypeAvailable;
+    }
+
+    public void setIsVolumeFormatAvailable(boolean isVolumeFormatAvailable) {
+        this.volumeFormatAvailable = isVolumeFormatAvailable;
+    }
+
+    public boolean getIsVolumeFormatAvailable() {
+        return volumeFormatAvailable;
     }
 
     public boolean getIsAliasChangable() {

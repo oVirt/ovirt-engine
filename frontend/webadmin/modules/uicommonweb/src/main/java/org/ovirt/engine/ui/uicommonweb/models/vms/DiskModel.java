@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -28,6 +29,7 @@ public class DiskModel extends Model
     private ListModel<StorageDomain> storageDomain;
     private ListModel<DiskProfile> diskProfile;
     private ListModel<Quota> quota;
+    private ListModel<VolumeFormat> volumeFormat;
 
     private boolean pluggedToRunningVm;
 
@@ -85,6 +87,14 @@ public class DiskModel extends Model
 
     public void setVolumeType(ListModel<VolumeType> volumeType) {
         this.volumeType = volumeType;
+    }
+
+    public ListModel<VolumeFormat> getVolumeFormat() {
+        return volumeFormat;
+    }
+
+    public void setVolumeFormat(ListModel<VolumeFormat> volumeFormat) {
+        this.volumeFormat = volumeFormat;
     }
 
     public ListModel<DiskInterface> getDiskInterface() {
@@ -150,5 +160,9 @@ public class DiskModel extends Model
 
         setVolumeType(new ListModel<VolumeType>());
         getVolumeType().setItems(AsyncDataProvider.getInstance().getVolumeTypeList());
+
+        setVolumeFormat(new ListModel<VolumeFormat>());
+        getVolumeFormat().setItems(AsyncDataProvider.getInstance().getVolumeFormats());
+        getVolumeFormat().setIsAvailable(false);
     }
 }

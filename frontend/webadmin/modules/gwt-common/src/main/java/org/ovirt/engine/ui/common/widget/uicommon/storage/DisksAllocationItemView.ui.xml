@@ -9,7 +9,7 @@
 		.editorLabel {
 			display: none;
 		}
-		
+
 		.editorContentNarrow {
 			width: 95px;
 			margin-left: 5px;
@@ -33,6 +33,7 @@
 		<ge:StringEntityModelLabelEditor ui:field="diskSizeLabel" />
 		<ge:StringEntityModelLabelEditor ui:field="sourceStorageLabel" />
 		<e:ListModelListBoxEditor ui:field="volumeTypeListEditor" />
+		<e:ListModelListBoxEditor ui:field="volumeFormatListEditor" />
 		<e:ListModelListBoxEditor ui:field="sourceStorageListEditor" />
 		<e:ListModelListBoxEditor ui:field="storageListEditor" />
 		<e:ListModelListBoxEditor ui:field="diskProfileListEditor" />

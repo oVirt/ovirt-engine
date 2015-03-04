@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
@@ -71,6 +72,10 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
     ListModelListBoxEditor<VolumeType> volumeTypeListEditor;
 
     @UiField(provided = true)
+    @Path(value = "volumeFormat.selectedItem")
+    ListModelListBoxEditor<VolumeFormat> volumeFormatListEditor;
+
+    @UiField(provided = true)
     @Path(value = "sourceStorageDomain.selectedItem")
     ListModelListBoxEditor<StorageDomain> sourceStorageListEditor;
 
@@ -108,6 +113,8 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
         storageListEditor = new ListModelListBoxEditor<>(new StorageDomainFreeSpaceRenderer<>());
 
+        volumeFormatListEditor = new ListModelListBoxEditor<VolumeFormat>(new EnumRenderer<VolumeFormat>());
+
         sourceStorageListEditor = new ListModelListBoxEditor<>(new StorageDomainFreeSpaceRenderer<>());
 
         diskProfileListEditor = new ListModelListBoxEditor<>(new NameRenderer<DiskProfile>());
@@ -123,6 +130,7 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
         updateEditorStyle(diskSizeLabel, editorStyle);
         updateEditorStyle(sourceStorageLabel, editorStyle);
         updateEditorStyle(volumeTypeListEditor, editorStyle);
+        updateEditorStyle(volumeFormatListEditor, editorStyle);
         updateEditorStyle(sourceStorageListEditor, editorStyle);
         updateEditorStyle(storageListEditor, editorStyle);
         updateEditorStyle(diskProfileListEditor, editorStyle);
@@ -150,6 +158,7 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
                 object.getSize().getEntity())));
 
         object.getVolumeType().setSelectedItem(((DiskImage) object.getDisk()).getVolumeType());
+        object.getVolumeFormat().setSelectedItem(((DiskImage) object.getDisk()).getVolumeFormat());
 
         sourceStorageLabel.getElement().getElementsByTagName("input").getItem(0). //$NON-NLS-1$
                 getStyle().setBorderColor("transparent"); //$NON-NLS-1$
@@ -174,6 +183,8 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
                 ElementIdUtils.createElementId(elementId, "sourceStorageDomainName")); //$NON-NLS-1$
         volumeTypeListEditor.setElementId(
                 ElementIdUtils.createElementId(elementId, "volumeType")); //$NON-NLS-1$
+        volumeFormatListEditor.setElementId(
+                ElementIdUtils.createElementId(elementId, "volumeFormat")); //$NON-NLS-1$
         sourceStorageListEditor.setElementId(
                 ElementIdUtils.createElementId(elementId, "sourceStorageDomain")); //$NON-NLS-1$
         storageListEditor.setElementId(

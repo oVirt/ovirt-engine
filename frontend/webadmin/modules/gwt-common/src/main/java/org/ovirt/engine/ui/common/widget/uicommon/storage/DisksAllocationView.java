@@ -51,6 +51,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     boolean showVolumeType;
     boolean showSource;
     boolean showQuota;
+    boolean showVolumeFormat;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -84,6 +85,9 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
         if (showVolumeType)
             listHeader.addColumn(new EmptyColumn(), constants.allocationDisk(), width);
 
+        if (showVolumeFormat)
+            listHeader.addColumn(new EmptyColumn(), constants.formatDisk(), width);
+
         if (showSource)
             listHeader.addColumn(new EmptyColumn(), constants.sourceDisk(), width);
 
@@ -101,6 +105,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
 
     void updateColumnsAvailability(DisksAllocationModel model) {
         setShowVolumeType(model.getIsVolumeTypeAvailable());
+        setShowVolumeFormat(model.getIsVolumeFormatAvailable());
         setShowQuota(model.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED);
     }
 
@@ -157,6 +162,10 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
 
     public void setShowVolumeType(boolean showVolumeType) {
         this.showVolumeType = showVolumeType;
+    }
+
+    public void setShowVolumeFormat(boolean showVolumeFormat) {
+        this.showVolumeFormat = showVolumeFormat;
     }
 
     public void setShowSource(boolean showSource) {
