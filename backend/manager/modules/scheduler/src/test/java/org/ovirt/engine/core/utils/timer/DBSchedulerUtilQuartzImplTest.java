@@ -68,11 +68,12 @@ public class DBSchedulerUtilQuartzImplTest {
                 new Class[] { String.class },
                 new Object[] { "scheduleARecurringJob" }, "0/1 * * * * ?");
 
-        Thread.sleep(100);
+        TimeUnit.SECONDS.sleep(2);
         try {
             JobDetail job = scheduler.getRawScheduler().getJobDetail(JobKey.jobKey(jobName));
             assertNotNull(job);
             List<? extends Trigger> triggers = scheduler.getRawScheduler().getTriggersOfJob(JobKey.jobKey(jobName));
+            // Following assertion fails periodically due to race condition
             assertNotNull(triggers.get(0).getPreviousFireTime());
         } catch (SchedulerException e) {
             fail("Unexpected exception occured -" + e.getMessage());
