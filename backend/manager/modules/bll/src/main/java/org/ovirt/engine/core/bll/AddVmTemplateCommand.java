@@ -212,19 +212,20 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     private CreateImageTemplateParameters buildChildCommandParameters(DiskImage diskImage, Guid vmSnapshotId) {
+        DiskImage imageFromParams = diskInfoDestinationMap.get(diskImage.getId());
         CreateImageTemplateParameters createParams = new CreateImageTemplateParameters(diskImage.getImageId(),
                 getVmTemplateId(), getVmTemplateName(), getVmId());
         createParams.setStorageDomainId(diskImage.getStorageIds().get(0));
         createParams.setVmSnapshotId(vmSnapshotId);
         createParams.setEntityInfo(getParameters().getEntityInfo());
-        createParams.setDestinationStorageDomainId(diskInfoDestinationMap.get(diskImage.getId())
-                .getStorageIds()
-                .get(0));
-        createParams.setDiskAlias(diskInfoDestinationMap.get(diskImage.getId()).getDiskAlias());
-        createParams.setDescription(diskInfoDestinationMap.get(diskImage.getId()).getDiskDescription());
+        createParams.setDestinationStorageDomainId(imageFromParams.getStorageIds().get(0));
+        createParams.setDiskAlias(imageFromParams.getDiskAlias());
+        createParams.setDescription(imageFromParams.getDiskDescription());
         createParams.setParentParameters(getParameters());
         createParams.setQuotaId(getQuotaIdForDisk(diskImage));
-        createParams.setDiskProfileId(diskInfoDestinationMap.get(diskImage.getId()).getDiskProfileId());
+        createParams.setDiskProfileId(imageFromParams.getDiskProfileId());
+        createParams.setVolumeFormat(imageFromParams.getVolumeFormat());
+        createParams.setVolumeType(imageFromParams.getVolumeType());
         return createParams;
     }
 

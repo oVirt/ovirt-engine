@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
+
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class CreateImageTemplateParameters extends ImagesActionsParametersBase implements Serializable {
@@ -8,6 +11,8 @@ public class CreateImageTemplateParameters extends ImagesActionsParametersBase i
 
     private Guid destinationStorageDomainId;
     private Guid privateVmTemplateId;
+    private VolumeType volumeType;
+    private VolumeFormat volumeFormat;
 
     public Guid getVmTemplateId() {
         return privateVmTemplateId;
@@ -55,5 +60,21 @@ public class CreateImageTemplateParameters extends ImagesActionsParametersBase i
 
     public Guid getDestinationStorageDomainId() {
         return destinationStorageDomainId;
+    }
+
+    public VolumeFormat getVolumeFormat() {
+        return volumeFormat;
+    }
+
+    public void setVolumeFormat(VolumeFormat volumeFormat) {
+        this.volumeFormat = volumeFormat;
+    }
+
+    public VolumeType getVolumeType() {
+        return volumeType;
+    }
+
+    public void setVolumeType(VolumeType volumeType) {
+        this.volumeType = volumeType;
     }
 }

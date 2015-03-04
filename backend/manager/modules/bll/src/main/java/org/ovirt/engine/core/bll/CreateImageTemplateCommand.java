@@ -49,6 +49,13 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         DiskImage newImage = cloneDiskImage(getDestinationImageId());
         fillVolumeInformation(newImage);
 
+        if (getParameters().getVolumeFormat() != null) {
+            newImage.setvolumeFormat(getParameters().getVolumeFormat());
+        }
+        if (getParameters().getVolumeType() != null) {
+            newImage.setVolumeType(getParameters().getVolumeType());
+        }
+
         Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.AddVmTemplate);
 
         VolumeFormat targetFormat = getTargetVolumeFormat(newImage.getVolumeFormat(), newImage.getVolumeType(),
