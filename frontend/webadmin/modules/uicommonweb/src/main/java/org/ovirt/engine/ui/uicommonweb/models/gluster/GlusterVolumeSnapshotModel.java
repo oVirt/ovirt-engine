@@ -241,9 +241,9 @@ public class GlusterVolumeSnapshotModel extends Model {
         }
 
         if (getEndByOptions().getSelectedItem() == EndDateOptions.HasEndDate
-                && getEndDate().getEntity().compareTo(getStartAt().getEntity()) < 0) {
-            setMessage(ConstantsManager.getInstance().getConstants().endDateBeforeStartDate());
-            validEndDate = false;
+                && getEndDate().getEntity().compareTo(getStartAt().getEntity()) <= 0) {
+                setMessage(ConstantsManager.getInstance().getConstants().endDateBeforeStartDate());
+                validEndDate = false;
         }
 
         return getSnapshotName().getIsValid() && getDaysOfTheWeek().getIsValid() && getDaysOfMonth().getIsValid()

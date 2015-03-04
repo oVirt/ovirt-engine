@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.action.gluster.ScheduleGlusterVolumeSnapshot
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotSchedule;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotScheduleRecurrence;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotScheduleDao;
@@ -49,6 +50,26 @@ public abstract class ScheduleGlusterVolumeSnapshotCommandBase<T extends Schedul
 
         if (!GlusterUtil.getInstance().isVolumeThinlyProvisioned(volume)) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_IS_NOT_THINLY_PROVISIONED);
+        }
+
+        // Validate the scheduling dates (start and end by dates)
+        Date currentDate = new Date();
+        Date convertedStartDate = convertDate(schedule.getStartDate(), schedule.getTimeZone());
+        Date convertedEndByDate = convertDate(schedule.getEndByDate(), schedule.getTimeZone());
+
+        if (schedule.getRecurrence() != null
+                && schedule.getRecurrence() != GlusterVolumeSnapshotScheduleRecurrence.UNKNOWN) {
+            if (convertedStartDate != null && convertedStartDate.compareTo(currentDate) < 0) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_START_DATE_BEFORE_CURRENT_DATE);
+            }
+            if (schedule.getEndByDate() != null) {
+                if (convertedEndByDate.compareTo(currentDate) < 0) {
+                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_END_BY_DATE_BEFORE_CURRENT_DATE);
+                }
+                if (convertedStartDate != null && convertedEndByDate.compareTo(convertedStartDate) <= 0) {
+                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_END_BY_DATE_BEFORE_START_DATE);
+                }
+            }
         }
 
         return true;
