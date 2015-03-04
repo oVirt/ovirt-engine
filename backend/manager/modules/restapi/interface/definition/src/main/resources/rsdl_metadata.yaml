@@ -834,6 +834,8 @@ actions:
       signatures:
       - mandatoryArguments:
           action.storage_domain.id|name: xs:string
+        optionalArguments:
+          action.disk.name|alias: xs:string
         description: copy a disk to a different storage domain
     headers:
       Filter: {value: true|false, required: false}

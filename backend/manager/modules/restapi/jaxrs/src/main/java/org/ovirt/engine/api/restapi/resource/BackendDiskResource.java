@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.VM;
@@ -103,6 +104,20 @@ public class BackendDiskResource extends AbstractBackendActionableResource<Disk,
                         sourceStorageDomainId,
                         storageDomainId,
                         ImageOperation.Copy);
+
+        params.setImageGroupID(asGuid(disk.getId()));
+
+        Disk actionDisk = action.getDisk();
+        if (actionDisk != null) {
+            String name = actionDisk.getName();
+            String alias = actionDisk.getAlias();
+            if (name != null && !StringUtils.isEmpty(name)) {
+                params.setNewAlias(name);
+            } else if (alias != null && !StringUtils.isEmpty(alias)) {
+                params.setNewAlias(alias);
+            }
+        }
+
         return doAction(VdcActionType.MoveOrCopyDisk, params, action);
     }
 
