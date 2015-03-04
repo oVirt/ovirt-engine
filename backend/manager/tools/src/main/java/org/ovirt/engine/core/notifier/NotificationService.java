@@ -118,6 +118,7 @@ public class NotificationService implements Runnable {
                     for (String subscriber : dbDownSubscribers.split(",")) {
                         new FirstMatchSimpleFilter.FilterEntry(
                                 EventsManager.DATABASE_UNREACHABLE,
+                                null,
                                 false,
                                 EventNotificationMethod.SMTP.getAsString(),
                                 subscriber);

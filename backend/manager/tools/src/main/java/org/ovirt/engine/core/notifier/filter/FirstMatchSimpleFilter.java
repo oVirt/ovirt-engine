@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.notifier.transport.Transport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,10 @@ public class FirstMatchSimpleFilter {
             "((?<include>include)|(?<exclude>exclude))" +
             ":" +
             "((?<anymsg>\\*)|(?<message>\\w+))" +
+            "(" +
+                ":" +
+                "(?<severity>\\*|ALERT|ERROR|WARNING|NORMAL)" +
+            ")?" +
             "(?<recipient>" +
                 "\\(" +
                     "(" +
@@ -75,6 +80,10 @@ public class FirstMatchSimpleFilter {
                         entry.getEventName().equals(event.getName())
                         ) &&
                         (
+                        entry.getSeverity() == null ||
+                        (entry.isExclude() ? -1 : 1) * event.getSeverity().compareTo(entry.getSeverity()) >= 0
+                        ) &&
+                        (
                         entry.getRecipient() == null ||
                         entry.getRecipient().equals(recipient)
                         )) {
@@ -112,6 +121,9 @@ public class FirstMatchSimpleFilter {
                 ret.add(
                         new FilterEntry(
                                 m.group("anymsg") != null ? null : m.group("message"),
+                                m.group("severity") == null || m.group("severity").equals("*")
+                                        ? null
+                                        : AuditLogSeverity.valueOf(m.group("severity")),
                                 m.group("exclude") != null,
                                 m.group("recipient") == null || m.group("anyrecipient") != null ? null : new Recipient(
                                         m.group("transport"),
@@ -177,22 +189,29 @@ public class FirstMatchSimpleFilter {
 
         private final String eventName;
 
+        private final AuditLogSeverity severity;
+
         private final boolean exclude;
 
         private final Recipient recipient;
 
-        public FilterEntry(String eventName, boolean exclude, Recipient recipient) {
+        public FilterEntry(String eventName, AuditLogSeverity severity, boolean exclude, Recipient recipient) {
             this.eventName = eventName;
+            this.severity = severity;
             this.exclude = exclude;
             this.recipient = recipient;
         }
 
-        public FilterEntry(String eventName, boolean exclude, String transport, String name) {
-            this(eventName, exclude, new Recipient(transport, name));
+        public FilterEntry(String eventName, AuditLogSeverity severity, boolean exclude, String transport, String name) {
+            this(eventName, severity, exclude, new Recipient(transport, name));
         }
 
         public String getEventName() {
             return eventName;
+        }
+
+        public AuditLogSeverity getSeverity() {
+            return severity;
         }
 
         public boolean isExclude() {
@@ -207,6 +226,7 @@ public class FirstMatchSimpleFilter {
         public String toString() {
             return "FilterEntry{" +
                     "eventName='" + eventName + '\'' +
+                    ", severity=" + (severity != null ? severity.name() : "any") +
                     ", exclude=" + exclude +
                     ", recipient=" + recipient +
                     '}';

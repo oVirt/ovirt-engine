@@ -119,24 +119,31 @@ DAYS_TO_SEND_ON_STARTUP=0
 # Filter syntax
 #
 # FILTER=[PATTERN ...]
-# PATTERN=include|exclude:event[(subscriber)]
+# PATTERN=include|exclude:event[:severity][(subscriber)]
 #
 # Filter logic
 #
-# Each (event E, subscriber S) pair is checked against each
+# Each (event E, severity, subscriber S) tuple is checked against each
 # include/exclude pattern in turn, and the first pattern match is acted upon:
 # if it is an include pattern then E is sent to S;
 # if it is an exclude pattern then E is skipped for S;
 #
 # The event '*' matches everything.
+# A missing severity and the severity '*' matches everything.
 # A missing '(subscriber)' matches all subscribers and should only be used for excludes.
 #
 # Message constants can be found at:
 # @ENGINE_DOC@/AuditLogMessages.properties
 #
+# Valid severity values in increasing order of severity include:
+#   'NORMAL', 'WARNING', 'ERROR', 'ALERT'
+# An inclusion filter with a given severity will match all events of greater-or-equal severity;
+# an exclusion filter with a given severity will match all events of lesser-or-equal severity.
+#
 # examples:
 # FILTER="include:VDC_START(smtp:mail@example.com) ${FILTER}"
 # FILTER="exclude:VDC_START include:*(smtp:mail1@gmail.com) ${FILTER}"
+# FILTER="include:*:ERROR(smtp:mail2@gmail.com) ${FILTER}"
 #
 # The final filter list contains FILTER  as well as 'event_subscriber' table records.
 # database records are considered first.

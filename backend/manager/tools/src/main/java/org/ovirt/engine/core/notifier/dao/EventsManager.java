@@ -92,6 +92,7 @@ public class EventsManager implements Observer {
                 String eventDownName = eventMap.get(eventUpName);
                 eventSubscribers.add(
                         new FirstMatchSimpleFilter.FilterEntry(eventUpName,
+                                null,
                                 false,
                                 rs.getString("notification_method"),
                                 rs.getString("method_address")));
@@ -99,6 +100,7 @@ public class EventsManager implements Observer {
                 if (eventDownName != null) {
                     eventSubscribers.add(
                             new FirstMatchSimpleFilter.FilterEntry(eventDownName,
+                                    null,
                                     false,
                                     rs.getString("notification_method"),
                                     rs.getString("method_address")));

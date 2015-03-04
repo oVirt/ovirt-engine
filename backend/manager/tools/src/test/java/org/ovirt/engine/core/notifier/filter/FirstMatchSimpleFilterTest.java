@@ -4,6 +4,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.notifier.dao.DispatchResult;
 import org.ovirt.engine.core.notifier.transport.Observer;
 import org.ovirt.engine.core.notifier.transport.Transport;
@@ -21,19 +22,30 @@ public class FirstMatchSimpleFilterTest {
     T smtp;
 
     /*
-     * This replaces the application message representation, the only request we have is to have getName() to return the
-     * name based on which we filter.
+     * This replaces the application message representation; the only requests we have are getName() to return the
+     * name based on which we filter, and getSeverity() used only in filters where the severity is specified.
      */
     private static class E extends AuditLogEvent {
         private String e;
+        private AuditLogSeverity s;
 
         public E(String e) {
+            this(e, null);
+        }
+
+        public E(String e, AuditLogSeverity s) {
             this.e = e;
+            this.s = s;
         }
 
         @Override
         public String getName() {
             return e;
+        }
+
+        @Override
+        public AuditLogSeverity getSeverity() {
+            return s;
         }
     }
 
@@ -116,7 +128,7 @@ public class FirstMatchSimpleFilterTest {
         filter.clearFilterEntries();
         filter.addFilterEntries(
                 Collections.singletonList(
-                        new FirstMatchSimpleFilter.FilterEntry("message0", false, "smtp", "dbtest1@redhat.com"))
+                        new FirstMatchSimpleFilter.FilterEntry("message0", null, false, "smtp", "dbtest1@redhat.com"))
                 );
         filter.processEvent(new E("message0"));
         filter.processEvent(new E("message1"));
@@ -156,13 +168,54 @@ public class FirstMatchSimpleFilterTest {
     }
 
     @Test
+    public void testSeverity() throws Exception {
+        String expected1 = "test1@example.com";
+        String expected2 = "test2@example.com";
+        filter.clearFilterEntries();
+        filter.addFilterEntries(
+                FirstMatchSimpleFilter.parse(
+                        "include:*:WARNING(smtp:" + expected1 + ") " +
+                        "exclude:*(smtp:" + expected1 + ")" +
+                        "exclude:*:WARNING(smtp:" + expected2 + ") " +
+                        "include:*(smtp:" + expected2 + ")"
+                ));
+        filter.processEvent(new E("message1", AuditLogSeverity.NORMAL));
+        filter.processEvent(new E("message2", AuditLogSeverity.WARNING));
+        filter.processEvent(new E("message3", AuditLogSeverity.ERROR));
+        filter.processEvent(new E("message4", AuditLogSeverity.ALERT));
+        Assert.assertTrue(smtp.getEvents().contains("message2-->" + expected1));
+        Assert.assertTrue(smtp.getEvents().contains("message3-->" + expected1));
+        Assert.assertTrue(smtp.getEvents().contains("message3-->" + expected2));
+        Assert.assertTrue(smtp.getEvents().contains("message4-->" + expected1));
+        Assert.assertTrue(smtp.getEvents().contains("message4-->" + expected2));
+        Assert.assertEquals(5, smtp.getEvents().size());
+    }
+
+    @Test
+    public void testSeverityAndEventCombo() throws Exception {
+        // These combinations aren't useful in the real world, but we want them to work anyway
+        String expected = "test@example.com";
+        filter.clearFilterEntries();
+        filter.addFilterEntries(
+                FirstMatchSimpleFilter.parse(
+                        "include:normal_message:ERROR(smtp:" + expected + ") " +
+                        "include:error_message:NORMAL(smtp:" + expected + ") " +
+                        "exclude:*"
+                ));
+        filter.processEvent(new E("normal_message", AuditLogSeverity.NORMAL));
+        filter.processEvent(new E("error_message", AuditLogSeverity.ERROR));
+        Assert.assertTrue(smtp.getEvents().contains("error_message-->" + expected));
+        Assert.assertEquals(1, smtp.getEvents().size());
+    }
+
+    @Test
     public void testAll() throws Exception {
         filter.clearFilterEntries();
         filter.addFilterEntries(Collections.singletonList(
-                new FirstMatchSimpleFilter.FilterEntry("kuku", false, "snmp", "pupu"))
+                new FirstMatchSimpleFilter.FilterEntry("kuku", null, false, "snmp", "pupu"))
                 );
         filter.addFilterEntries(Collections.singletonList(
-                new FirstMatchSimpleFilter.FilterEntry("kuku", false, "smtp", "pupu"))
+                new FirstMatchSimpleFilter.FilterEntry("kuku", null, false, "smtp", "pupu"))
                 );
         filter.addFilterEntries(
                 FirstMatchSimpleFilter.parse(
@@ -235,5 +288,11 @@ public class FirstMatchSimpleFilterTest {
     public void testParseNegative3() throws Exception {
         // Random text
         FirstMatchSimpleFilter.parse("lorem ipsum");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testParseNegative4() throws Exception {
+        // Invalid severity
+        FirstMatchSimpleFilter.parse("include:message:_badSeverityTest_(kuku:pupu)");
     }
 }
