@@ -17,8 +17,9 @@ public class Permission extends IVdcQueryable implements BusinessEntity<Guid> {
     private String ownerName;
     private RoleType roleType;
     private String authz;
-
     private String namespace;
+    /** timestamp taken when that permission was created, in seconds from EPOCH **/
+    private long creationDate;
 
     /**
      * WARNING: When this constructor is invoked inside GWT compiled code, please set {@code id} to
@@ -135,22 +136,39 @@ public class Permission extends IVdcQueryable implements BusinessEntity<Guid> {
         this.namespace = namespace;
     }
 
+    /**
+     *
+     * @return the timestamp taken when that permission was created, in seconds from EPOCH
+     */
+    public long getCreationDate() {
+        return creationDate;
+    }
+
+    /**
+     * set the creation date of this enity
+     * @param creationDate must be the seconds from EPOCH
+     */
+    public void setCreationDate(long creationDate) {
+        this.creationDate = creationDate;
+    }
+
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (id == null ? 0 : id.hashCode());
-        result = prime * result + (adElementId == null ? 0 : adElementId.hashCode());
-        result = prime * result + (objectId == null ? 0 : objectId.hashCode());
-        result = prime * result + (objectName == null ? 0 : objectName.hashCode());
-        result = prime * result + (objectType == null ? 0 : objectType.hashCode());
-        result = prime * result + (ownerName == null ? 0 : ownerName.hashCode());
-        result = prime * result + (roleName == null ? 0 : roleName.hashCode());
-        result = prime * result + (roleType == null ? 0 : roleType.hashCode());
-        result = prime * result + (roleId == null ? 0 : roleId.hashCode());
-        result = prime * result + (authz == null ? 0 : authz.hashCode());
-        result = prime * result + (namespace == null ? 0 : namespace.hashCode());
-
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((adElementId == null) ? 0 : adElementId.hashCode());
+        result = prime * result + ((objectId == null) ? 0 : objectId.hashCode());
+        result = prime * result + ((objectName == null) ? 0 : objectName.hashCode());
+        result = prime * result + ((objectType == null) ? 0 : objectType.hashCode());
+        result = prime * result + ((ownerName == null) ? 0 : ownerName.hashCode());
+        result = prime * result + ((roleName == null) ? 0 : roleName.hashCode());
+        result = prime * result + ((roleType == null) ? 0 : roleType.hashCode());
+        result = prime * result + ((roleId == null) ? 0 : roleId.hashCode());
+        result = prime * result + ((authz == null) ? 0 : authz.hashCode());
+        result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
+        result = prime * result + ((int) creationDate);
         return result;
     }
 
@@ -163,7 +181,8 @@ public class Permission extends IVdcQueryable implements BusinessEntity<Guid> {
             return false;
         }
         Permission other = (Permission) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
+        return (creationDate != ((Permission) obj).creationDate
+                && ObjectUtils.objectsEqual(id, other.id)
                 && ObjectUtils.objectsEqual(adElementId, other.adElementId)
                 && ObjectUtils.objectsEqual(objectId, other.objectId)
                 && objectType == other.objectType

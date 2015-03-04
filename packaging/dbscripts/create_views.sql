@@ -1761,7 +1761,8 @@ SELECT
     ( fn_authz_entry_info ( permissions.ad_element_id ) )
 .namespace AS namespace,
     ( fn_authz_entry_info ( permissions.ad_element_id ) )
-.authz AS authz
+.authz AS authz,
+    permissions.creation_date AS creation_date
 FROM
     permissions
 INNER JOIN roles ON permissions.role_id = roles.id;

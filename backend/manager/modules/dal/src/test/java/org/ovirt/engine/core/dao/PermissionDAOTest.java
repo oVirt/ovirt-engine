@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -626,5 +627,13 @@ public class PermissionDAOTest extends BaseDAOTestCase {
         List<Permission> after = dao.getAllForEntity(VM_ENTITY_ID);
 
         assertTrue(after.isEmpty());
+    }
+
+    @Test
+    public void creationTimestampIsInThePast() {
+        List<Permission> vmPermissions = dao.getAllForEntity(VM_ENTITY_ID);
+        for (Permission perms : vmPermissions) {
+            assertTrue(perms.getCreationDate() < TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()));
+        }
     }
 }
