@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -62,7 +61,7 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
     protected Guid getPoolId() {
         VmPool vmPool = getVmPool();
 
-        DbFacade.getInstance().getVmPoolDao().save(vmPool);
+        getDbFacade().getVmPoolDao().save(vmPool);
 
         return vmPool.getVmPoolId();
     }
