@@ -65,7 +65,7 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
     }
 
     protected void handlePlaceTransition() {
-        if (hasSelection()) {
+        if (hasSelection() && hasSelectionDetails()) {
             // Sub tab panel is shown upon revealing the sub tab, in order to avoid
             // the 'flicker' effect due to the panel still showing previous content
             placeManager.revealPlace(getSubTabRequest());
@@ -74,6 +74,10 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
             setSubTabPanelVisible(false);
             placeManager.revealPlace(getMainTabRequest());
         }
+    }
+
+    protected boolean hasSelectionDetails() {
+        return true;
     }
 
     @Override

@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.webadmin.gin.uicommon.PoolModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.ProviderModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.QuotaModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.ReportsModule;
+import org.ovirt.engine.ui.webadmin.gin.uicommon.SessionModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.StorageModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.TemplateModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.UserModule;
@@ -85,6 +86,7 @@ public class UiCommonModule extends BaseUiCommonModule {
         install(new ProviderModule());
         install(new VnicProfileModule());
         install(new MacPoolModule());
+        install(new SessionModule());
 
         bindCommonModels();
 

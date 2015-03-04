@@ -94,6 +94,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Providers")
     String providerMainTabLabel();
 
+    @DefaultStringValue("Sessions")
+    String sessionMainTabLabel();
+
     @DefaultStringValue("General")
     String volumeGeneralSubTabLabel();
 
@@ -1959,6 +1962,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("User Name")
     String userNameUser();
+
+    @DefaultStringValue("User Id")
+    String userId();
+
+    @DefaultStringValue("Session DB Id")
+    String sessionDbId();
 
     @DefaultStringValue("Group")
     String groupUser();
@@ -4083,4 +4092,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Sync")
     String syncStorageDevices();
+
+    @DefaultStringValue("Terminate Session")
+    String terminateSession();
 }

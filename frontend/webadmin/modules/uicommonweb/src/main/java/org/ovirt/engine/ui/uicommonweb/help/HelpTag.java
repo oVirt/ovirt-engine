@@ -398,6 +398,8 @@ public enum HelpTag {
 
     remove_provider("remove_provider", HelpTagType.WEBADMIN, "[Neutron integration] 'Providers' main tab -> 'Remove Provider(s)' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    terminate_session("terminate_session", HelpTagType.WEBADMIN, "'Sessions' main tab -> 'Terminate Sessions(s)' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+
     remove_quota("remove_quota", HelpTagType.WEBADMIN, "Quota Tab > Remove Quota"), //$NON-NLS-1$ //$NON-NLS-2$
 
     remove_quota_assignment_from_user("remove_quota_assignment_from_user", HelpTagType.WEBADMIN, "Quota Tab > Users Sub-Tab > Detach Users/Groups from Quota"), //$NON-NLS-1$ //$NON-NLS-2$
@@ -445,6 +447,8 @@ public enum HelpTag {
     services("services", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
     sessions("sessions", HelpTagType.UNKNOWN), //$NON-NLS-1$
+
+    engine_sessions("engine_sessions", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
     set_unlimited_specific_quota("set_unlimited_specific_quota", HelpTagType.WEBADMIN, "Quota main tab -> New Quota dialog -> confirmation dialog on setting an 'unlimited' quota on a certain resource."), //$NON-NLS-1$ //$NON-NLS-2$
 

@@ -108,6 +108,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
     private final SystemTreeModel systemTreeModel;
     private final AlertListModel alertListModel;
     private final TaskListModel taskListModel;
+    private final SessionListModel sessionListModel;
     private final SharedMacPoolListModel sharedMacPoolListModel;
 
     @Inject
@@ -138,6 +139,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
             final AlertListModel alertListModel,
             final TaskListModel taskListModel,
             final SharedMacPoolListModel sharedMacPoolListModel,
+            final SessionListModel sessionListModel,
             final EventBus eventBus) {
 
         this.dataCenterListModel = dataCenterListModel;
@@ -167,6 +169,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
         this.alertListModel = alertListModel;
         this.taskListModel = taskListModel;
         this.sharedMacPoolListModel = sharedMacPoolListModel;
+        this.sessionListModel = sessionListModel;
         setModelList();
 
         setSignedOutEvent(new Event<EventArgs>(signedOutEventDefinition));
@@ -207,7 +210,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
     }
 
     private void setModelList() {
-        List<SearchableListModel> modelList = new ArrayList<SearchableListModel>();
+        List<SearchableListModel> modelList = new ArrayList<>();
         modelList.add(this.dataCenterListModel);
         modelList.add(this.clusterListModel);
         modelList.add(this.hostListModel);
@@ -224,6 +227,7 @@ public class CommonModel extends ListModel<SearchableListModel> {
         modelList.add(this.networkListModel);
         modelList.add(this.providerListModel);
         modelList.add(this.vnicProfileListModel);
+        modelList.add(this.sessionListModel);
         modelList.add(this.instanceTypeListModel);
         setItems(modelList);
     }
@@ -466,6 +470,8 @@ public class CommonModel extends ListModel<SearchableListModel> {
 
         getProfileList().setIsAvailable(type == SystemTreeItemType.Network
                 || type == SystemTreeItemType.DataCenter);
+
+        getSessionList().setIsAvailable(type == SystemTreeItemType.Sessions);
     }
 
     private void changeSelectedTabIfNeeded(SystemTreeItemModel model) {
@@ -511,6 +517,9 @@ public class CommonModel extends ListModel<SearchableListModel> {
             case Providers:
             case Provider:
                 setSelectedItem(getProviderList());
+                break;
+            case Sessions:
+                setSelectedItem(getSessionList());
                 break;
             default:
                 // webadmin: redirect to default tab in case no tab is selected.
@@ -909,6 +918,11 @@ public class CommonModel extends ListModel<SearchableListModel> {
                     prefix.argvalue = "Provider: name = " + model.getTitle(); //$NON-NLS-1$
                 }
                 break;
+            case Sessions:
+                if (getSessionList().isSearchStringMatch(source)) {
+                    prefix.argvalue = "Session:"; //$NON-NLS-1$
+                }
+                break;
             }
 
             prefix.argvalue = prefix.argvalue + " "; //$NON-NLS-1$
@@ -1043,6 +1057,10 @@ public class CommonModel extends ListModel<SearchableListModel> {
 
     public ProviderListModel getProviderList() {
         return providerListModel;
+    }
+
+    public SessionListModel getSessionList() {
+        return sessionListModel;
     }
 
     public NetworkListModel getNetworkList() {

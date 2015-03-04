@@ -43,6 +43,8 @@ public class WebAdminApplicationPlaces {
 
     public static final String providerMainTabPlace = "providers"; //$NON-NLS-1$
 
+    public static final String sessionMainTabPlace = "sessions"; //$NON-NLS-1$
+
     // Main section: sub tabs
 
     // Important: the value after SUB_TAB_PREFIX must correspond to given UiCommon model

@@ -21,7 +21,8 @@ public enum SystemTreeItemType
     Networks,
     Network,
     Providers,
-    Provider;
+    Provider,
+    Sessions;
 
     public int getValue()
     {

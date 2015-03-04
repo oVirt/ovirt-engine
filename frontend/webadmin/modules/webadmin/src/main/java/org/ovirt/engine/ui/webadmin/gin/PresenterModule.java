@@ -101,8 +101,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmFromExportDomainPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.tag.TagPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateEditPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.user.ManageEventsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.CloneVmPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.SingleSelectionVmDiskAttachPopupPresenterWidget;
@@ -132,6 +132,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabPoolPresen
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabProviderPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabQuotaPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabReportsPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabSessionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabTemplatePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabUserPresenter;
@@ -167,13 +168,13 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskPe
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskTemplatePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskVmPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabGlusterVolumeSnapshotPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeBrickPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeGeoRepPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeParameterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumePermissionPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabGlusterVolumeSnapshotPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.VolumeSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostBrickPresenter;
@@ -350,8 +351,8 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.Impor
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportTemplatePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportVmFromExportDomainPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.tag.TagPopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.template.TemplateInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.template.TemplateEditPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.template.TemplateInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.user.ManageEventsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.CloneVmPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.SingleSelectionVmDiskAttachPopupView;
@@ -383,6 +384,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabPoolView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabProviderView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabQuotaView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabReportsView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabSessionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabStorageView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabTemplateView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabUserView;
@@ -418,13 +420,13 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.SubTabDiskPermiss
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.SubTabDiskStorageView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.SubTabDiskTemplateView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.SubTabDiskVmView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabGlusterVolumeSnapshotView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeBrickView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeGeneralView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeGeoRepView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeParameterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumePermissionView;
-import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabGlusterVolumeSnapshotView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.VolumeSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.HostSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostBrickView;
@@ -591,6 +593,10 @@ public class PresenterModule extends BasePresenterModule {
                 MainTabProviderPresenter.ViewDef.class,
                 MainTabProviderView.class,
                 MainTabProviderPresenter.ProxyDef.class);
+        bindPresenter(MainTabSessionPresenter.class,
+                MainTabSessionPresenter.ViewDef.class,
+                MainTabSessionView.class,
+                MainTabSessionPresenter.ProxyDef.class);
         bindPresenter(MainTabStoragePresenter.class,
                 MainTabStoragePresenter.ViewDef.class,
                 MainTabStorageView.class,

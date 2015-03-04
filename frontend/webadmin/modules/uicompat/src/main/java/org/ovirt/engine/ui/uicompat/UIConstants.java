@@ -94,6 +94,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("There are running VMs. Lowering the Cluster CPU level might prevent migration of these VMs to some of the Hosts in the Cluster. Are you sure you want to continue?")
     String changeCpuLevelConfirmation();
 
+    @DefaultStringValue("The following user session(s) will be terminated.\nAre you sure you want to continue?")
+    String terminateSessionConfirmation();
+
     @DefaultStringValue("General")
     String generalTitle();
 
@@ -685,6 +688,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Sessions")
     String sessionsTitle();
+
+    @DefaultStringValue("Engine Sessions")
+    String engineSessionsTitle();
 
     @DefaultStringValue("RDP")
     String RDPTitle();
@@ -2141,6 +2147,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Remove Provider(s)")
     String removeProviderTitle();
 
+    @DefaultStringValue("Terminate Session(s)")
+    String terminateSessionTitle();
+
     @DefaultStringValue("Change Provider URL")
     String providerUrlWarningTitle();
 
@@ -2574,4 +2583,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Storage Devices")
     String storageDevices();
 
+    @DefaultStringValue("Session DB Id")
+    String sessionDbId();
+
+    @DefaultStringValue("User Name")
+    String userName();
 }
