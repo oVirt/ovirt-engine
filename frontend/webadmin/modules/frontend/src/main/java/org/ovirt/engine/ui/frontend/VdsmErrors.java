@@ -721,6 +721,30 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Gluster Volume Rebalance Start Failed.")
     String GlusterVolumeRebalanceStartFailed();
 
+    @DefaultStringValue("Failed to create gluster host public key file.")
+    String GlusterGeoRepPublicKeyFileCreateFailed();
+
+    @DefaultStringValue("Error in reading gluster host public key")
+    String GlusterGeoRepPublicKeyFileReadError();
+
+    @DefaultStringValue("Geo-replication user does not exist.")
+    String GlusterGeoRepUserNotFound();
+
+    @DefaultStringValue("Failed to write gluster host public key")
+    String GlusterGeoRepPublicKeyWriteFailed();
+
+    @DefaultStringValue("Failed to create root geo-rep mount broker.")
+    String GlusterMountBrokerRootCreateFailed();
+
+    @DefaultStringValue("Failed to set geo rep mount broker option.")
+    String GlusterGeoRepExecuteMountBrokerOptFailed();
+
+    @DefaultStringValue("Failed to add geo rep mount broker user.")
+    String GlusterGeoRepExecuteMountBrokerUserAddFailed();
+
+    @DefaultStringValue("Failed to create geo-replication session.")
+    String GlusterGeoRepSessionCreateFailed();
+
     @DefaultStringValue("Resume of geo-replication session failed on gluster volume")
     String GlusterVolumeGeoRepSessionResumeFailed();
 
