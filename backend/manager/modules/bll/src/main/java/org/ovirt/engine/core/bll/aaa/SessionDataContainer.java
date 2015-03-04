@@ -36,7 +36,7 @@ public class SessionDataContainer {
     private static final String HARD_LIMIT_PARAMETER_NAME = "hard_limit";
     private static final String SOFT_LIMIT_PARAMETER_NAME = "soft_limit";
     private static final String ENGINE_SESSION_SEQ_ID = "engine_session_seq_id";
-
+    private static final String ENGINE_SESSION_ID = "engine_session_id";
     private static final String AUTH_RECORD_PARAMETER_NAME = "auth_record";
     private static final String PRINCIPAL_RECORD_PARAMETER_NAME = "principal_record";
 
@@ -83,6 +83,7 @@ public class SessionDataContainer {
         SessionInfo sessionInfo = getSessionInfo(sessionId);
         if (sessionInfo == null) {
             sessionInfo = new SessionInfo();
+            sessionInfo.contentOfSession.put(ENGINE_SESSION_ID, sessionId);
             SessionInfo oldSessionInfo = sessionInfoMap.putIfAbsent(sessionId, sessionInfo);
             if (oldSessionInfo != null) {
                sessionInfo = oldSessionInfo;
@@ -108,6 +109,17 @@ public class SessionDataContainer {
             throw new RuntimeException("Session not found for sessionId " + sessionId);
         }
         return (Long) sessionInfoMap.get(sessionId).contentOfSession.get(ENGINE_SESSION_SEQ_ID);
+    }
+
+    public String getSessionIdBySeqId(long sessionSequenceId) {
+        String sessionId = null;
+        for (SessionInfo sessionInfo : sessionInfoMap.values()) {
+            if (sessionInfo.contentOfSession.get(ENGINE_SESSION_SEQ_ID) == sessionSequenceId) {
+                sessionId = (String) sessionInfo.contentOfSession.get(ENGINE_SESSION_ID);
+                break;
+            }
+        }
+        return sessionId;
     }
 
     public void cleanupEngineSessionsOnStartup() {
