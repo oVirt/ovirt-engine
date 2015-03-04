@@ -45,12 +45,6 @@ class Plugin(plugin.PluginBase):
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
 
-    def _remote_dwh_is_up(self):
-        return dwh_history_timekeeping.getValueFromTimekeeping(
-            statement=self._statement,
-            name=dwh_history_timekeeping.DB_KEY_RUNNING
-        ) == '1'
-
     def _update_DisconnectDwh(self, value):
         vdcoption.VdcOption(
             statement=self._statement,
@@ -97,7 +91,7 @@ class Plugin(plugin.PluginBase):
             statement=self._statement,
             name=dwh_history_timekeeping.DB_KEY_HOSTNAME
         )
-        if self._remote_dwh_is_up():
+        if dwh_history_timekeeping.dwhIsUp(self._statement):
             self.logger.info(
                 _(
                     'Stopping DWH service on host {hostname}...'
@@ -108,7 +102,9 @@ class Plugin(plugin.PluginBase):
             try:
                 self._update_DisconnectDwh('1')
                 retries = self.RETRIES
-                while self._remote_dwh_is_up() and retries > 0:
+                while dwh_history_timekeeping.dwhIsUp(
+                    self._statement
+                ) and retries > 0:
                     retries -= 1
                     self.logger.debug(
                         'Waiting for remote dwh to die, %s retries left' %
@@ -117,7 +113,7 @@ class Plugin(plugin.PluginBase):
                     time.sleep(self.DELAY)
             finally:
                 self._update_DisconnectDwh('0')
-            if self._remote_dwh_is_up():
+            if dwh_history_timekeeping.dwhIsUp(self._statement):
                 self.logger.error(
                     _(
                         'dwhd is currently running.\n'

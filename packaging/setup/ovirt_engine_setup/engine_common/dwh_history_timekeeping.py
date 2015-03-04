@@ -73,4 +73,11 @@ def updateValueInTimekeeping(statement, name, value):
     )
 
 
+def dwhIsUp(statement):
+    return getValueFromTimekeeping(
+        statement,
+        name=DB_KEY_RUNNING
+    ) == '1'
+
+
 # vim: expandtab tabstop=4 shiftwidth=4
