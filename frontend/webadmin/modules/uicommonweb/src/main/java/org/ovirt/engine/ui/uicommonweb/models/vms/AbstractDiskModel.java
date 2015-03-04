@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
-import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -81,7 +80,6 @@ public abstract class AbstractDiskModel extends DiskModel
     private ListModel<String> cinderVolumeType;
 
     private SanStorageModel sanStorageModel;
-    private VolumeFormat volumeFormat;
     private boolean previousIsQuotaAvailable;
 
     private SystemTreeItemModel systemTreeSelectedItem;
@@ -191,14 +189,6 @@ public abstract class AbstractDiskModel extends DiskModel
 
     public void setSanStorageModel(SanStorageModel sanStorageModel) {
         this.sanStorageModel = sanStorageModel;
-    }
-
-    public VolumeFormat getVolumeFormat() {
-        return volumeFormat;
-    }
-
-    public void setVolumeFormat(VolumeFormat volumeFormat) {
-        this.volumeFormat = volumeFormat;
     }
 
     public SystemTreeItemModel getSystemTreeSelectedItem() {
@@ -519,10 +509,6 @@ public abstract class AbstractDiskModel extends DiskModel
         }
     }
 
-    private void updateVolumeFormat(VolumeType volumeType, StorageType storageType) {
-        setVolumeFormat(AsyncDataProvider.getInstance().getDiskVolumeFormat(volumeType, storageType));
-    }
-
     public void updateInterface(final Version clusterVersion) {
         if (getVm() != null) {
             AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(new AsyncQuery(this, new INewAsyncCallback() {
@@ -709,7 +695,6 @@ public abstract class AbstractDiskModel extends DiskModel
         VolumeType volumeType = getVolumeType().getSelectedItem();
         StorageType storageType = getStorageDomain().getSelectedItem().getStorageType();
 
-        updateVolumeFormat(volumeType, storageType);
         updateShareable(volumeType, storageType);
     }
 

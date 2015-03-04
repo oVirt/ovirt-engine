@@ -165,7 +165,7 @@ public class NewDiskModel extends AbstractDiskModel
                 DiskImage diskImage = (DiskImage) getDisk();
                 diskImage.setSizeInGigabytes(getSize().getEntity());
                 diskImage.setVolumeType(getVolumeType().getSelectedItem());
-                diskImage.setvolumeFormat(getVolumeFormat());
+                diskImage.setvolumeFormat(AsyncDataProvider.getInstance().getDiskVolumeFormat(diskImage.getVolumeType(), getStorageDomain().getSelectedItem().getStorageType()));
                 break;
         }
     }

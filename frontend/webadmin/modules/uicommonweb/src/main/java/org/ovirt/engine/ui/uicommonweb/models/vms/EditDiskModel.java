@@ -49,7 +49,6 @@ public class EditDiskModel extends AbstractDiskModel
             getDiskStorageType().setEntity(DiskStorageType.IMAGE);
             getSize().setEntity((int) diskImage.getSizeInGigabytes());
             getVolumeType().setSelectedItem(diskImage.getVolumeType());
-            setVolumeFormat(diskImage.getVolumeFormat());
 
             boolean isExtendImageSizeEnabled = getVm() != null && !diskImage.isDiskSnapshot() &&
                     VdcActionUtils.canExecute(Arrays.asList(getVm()), VM.class, VdcActionType.ExtendImageSize);
