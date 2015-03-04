@@ -2591,7 +2591,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Last day of month cannot be selected with other month days")
     String lastDayMonthCanBeSelectedAlone();
 
-    @DefaultStringValue("End by date cannot be before start date")
+    @DefaultStringValue("End by date cannot be equal to or before start date")
     String endDateBeforeStartDate();
 
     @DefaultStringValue("Unable to fetch gluster volume snapshot schedule")
