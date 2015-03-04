@@ -3,6 +3,9 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
@@ -11,8 +14,13 @@ import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.linq.Predicate;
 
 public abstract class PermissionsCommandBase<T extends PermissionsOperationsParameters> extends CommandBase<T> {
+
+    @Named
+    @Inject
+    private Predicate<Guid> isSystemSuperUserPredicate;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -89,13 +97,7 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
     }
 
     protected boolean isSystemSuperUser() {
-        Permissions superUserPermission =
-                getPermissionDAO()
-                        .getForRoleAndAdElementAndObjectWithGroupCheck(
-                                PredefinedRoles.SUPER_USER.getId(),
-                                getCurrentUser().getId(),
-                                MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID);
-        return superUserPermission != null;
+        return isSystemSuperUserPredicate.eval(getCurrentUser().getId());
     }
 
     // TODO - this code is shared with addPermissionCommand - check if

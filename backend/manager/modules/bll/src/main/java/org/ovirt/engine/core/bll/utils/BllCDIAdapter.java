@@ -3,7 +3,10 @@ package org.ovirt.engine.core.bll.utils;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
+import javax.inject.Singleton;
+
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
@@ -75,6 +78,12 @@ public class BllCDIAdapter {
     @Produces
     private HostNetworkQosDao produceHostNetworkQosDao(DbFacade dbFacade) {
         return dbFacade.getHostNetworkQosDao();
+    }
+
+    @Produces
+    @Singleton
+    private PermissionDAO producePermissionDao(DbFacade dbFacade) {
+        return dbFacade.getPermissionDao();
     }
 
     protected BllCDIAdapter() {
