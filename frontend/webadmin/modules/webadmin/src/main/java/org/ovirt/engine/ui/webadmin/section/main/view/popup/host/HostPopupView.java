@@ -258,6 +258,11 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     StringEntityModelTextBoxEditor pmOptionsEditor;
 
     @UiField
+    @Path(value = "pmEncryptOptions.entity")
+    @WithElementId("pmEncryptOptions")
+    EntityModelCheckBoxEditor pmEncryptOptionsEditor;
+
+    @UiField
     @Ignore
     Label pmOptionsExplanationLabel;
 
@@ -308,6 +313,11 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     @Path(value = "pmSecondaryOptions.entity")
     @WithElementId("pmSecondaryOptions")
     StringEntityModelTextBoxEditor pmSecondaryOptionsEditor;
+
+    @UiField
+    @Path(value = "pmSecondaryEncryptOptions.entity")
+    @WithElementId("pmSecondaryEncryptOptions")
+    EntityModelCheckBoxEditor pmSecondaryEncryptOptionsEditor;
 
     @UiField
     @Ignore
@@ -627,6 +637,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         pmOptionsEditor.setLabel(constants.hostPopupPmOptionsLabel());
         pmOptionsExplanationLabel.setText(constants.hostPopupPmOptionsExplanationLabel());
         pmSecureEditor.setLabel(constants.hostPopupPmSecureLabel());
+        pmEncryptOptionsEditor.setLabel(constants.hostPopupPmEncryptOptionsLabel());
 
         // Secondary
         pmSecondaryAddressEditor.setLabel(constants.hostPopupPmAddressLabel());
@@ -638,6 +649,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         pmSecondaryOptionsEditor.setLabel(constants.hostPopupPmOptionsLabel());
         pmSecondaryOptionsExplanationLabel.setText(constants.hostPopupPmOptionsExplanationLabel());
         pmSecondarySecureEditor.setLabel(constants.hostPopupPmSecureLabel());
+        pmSecondaryEncryptOptionsEditor.setLabel(constants.hostPopupPmEncryptOptionsLabel());
         consoleAddress.setLabel(constants.consoleAddress());
         consoleAddressLabel.setText(constants.enableConsoleAddressOverride());
 

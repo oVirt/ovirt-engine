@@ -49,6 +49,9 @@ public class FenceAgent implements BusinessEntity<Guid> {
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String options;
 
+    @EditableField
+    private boolean encryptOptions;
+
     public Guid getId() {
         return id;
     }
@@ -129,6 +132,14 @@ public class FenceAgent implements BusinessEntity<Guid> {
     public void setOptionsMap(HashMap<String, String> value) {
         optionsMap = value;
         options = optionsMapToString(value);
+    }
+
+    public boolean getEncryptOptions() {
+        return encryptOptions;
+    }
+
+    public void setEncryptOptions(boolean value) {
+        encryptOptions = value;
     }
 
     /**

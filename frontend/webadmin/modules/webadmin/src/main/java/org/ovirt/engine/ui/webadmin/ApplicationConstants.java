@@ -656,6 +656,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Secure")
     String hostPopupPmSecureLabel();
 
+    @DefaultStringValue("Encrypt options")
+    String hostPopupPmEncryptOptionsLabel();
+
     @DefaultStringValue("Disable policy control of power management")
     String hostPopupPmDisableAutoPM();
 

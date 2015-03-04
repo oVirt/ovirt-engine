@@ -369,7 +369,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
 
     private final HostVmListModel hostVmListModel;
 
-    public HostVmListModel getHostVmListModel(){
+    public HostVmListModel getHostVmListModel() {
         return this.hostVmListModel;
     }
 
@@ -906,7 +906,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             }
             else
             {
-                if(approveInitiated)
+                if (approveInitiated)
                 {
                     onSaveInternalFromApprove();
                 }
@@ -1084,6 +1084,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             primaryAgent.setPassword(model.getPmPassword().getEntity());
             primaryAgent.setType(model.getPmType().getSelectedItem());
             primaryAgent.setOptionsMap((model.getPmOptionsMap()));
+            primaryAgent.setEncryptOptions(model.getPmEncryptOptions().getEntity());
             if (model.getPmPort() != null && model.getPmPort().getEntity() != null) {
                 primaryAgent.setPort(Integer.valueOf(model.getPmPort().getEntity()));
             }
@@ -1096,6 +1097,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 secondaryAgent.setPassword(model.getPmSecondaryPassword().getEntity());
                 secondaryAgent.setType(model.getPmSecondaryType().getSelectedItem());
                 secondaryAgent.setOptionsMap(model.getPmSecondaryOptionsMap());
+                secondaryAgent.setEncryptOptions(model.getPmSecondaryEncryptOptions().getEntity());
                 secondaryAgent.setPort(Integer.valueOf(model.getPmSecondaryPort().getEntity()));
                 secondaryAgent.setOrder(model.getPmSecondaryConcurrent().getEntity() ? primaryAgent.getOrder()
                         : primaryAgent.getOrder() + 1);
@@ -1120,7 +1122,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                         localModel.postOnSaveInternal(result.getReturnValue(), localApproveInitiated);
 
                     }
-                }, new Object[]{this, approveInitiated});
+                }, new Object[] { this, approveInitiated });
     }
 
     public void postOnSaveInternal(VdcReturnValueBase returnValue, boolean approveInitiated)

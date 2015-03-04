@@ -390,7 +390,12 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
                 agent.setPassword(DbFacadeUtils.decryptPassword(rs.getString("agent_password")));
                 int port = rs.getInt("agent_port");
                 agent.setPort(port == 0 ? null : port);
-                agent.setOptions(rs.getString("agent_options"));
+                agent.setEncryptOptions(rs.getBoolean("agent_encrypt_options"));
+                if (agent.getEncryptOptions()) {
+                    agent.setOptions(DbFacadeUtils.decryptPassword(rs.getString("agent_options")));
+                } else {
+                    agent.setOptions(rs.getString("agent_options"));
+                }
                 agent.setIp(rs.getString("agent_ip"));
                 entity.getFenceAgents().add(agent);
             }

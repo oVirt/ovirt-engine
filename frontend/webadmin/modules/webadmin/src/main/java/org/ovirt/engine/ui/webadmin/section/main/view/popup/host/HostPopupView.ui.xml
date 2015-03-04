@@ -343,6 +343,7 @@
                                         <ge:StringEntityModelTextBoxEditor ui:field="pmSlotEditor"/>
                                         <ge:StringEntityModelTextBoxEditor ui:field="pmOptionsEditor"/>
                                         <g:Label ui:field="pmOptionsExplanationLabel" addStyleNames="{style.explanationLabel}"/>
+                                        <ge:EntityModelCheckBoxEditor ui:field="pmEncryptOptionsEditor"/>
                                         <ge:EntityModelCheckBoxEditor ui:field="pmSecureEditor"/>
                                     </g:FlowPanel>
                                     <g:FlowPanel ui:field="pmSecondaryPanel">
@@ -354,6 +355,7 @@
                                         <ge:StringEntityModelTextBoxEditor ui:field="pmSecondarySlotEditor"/>
                                         <ge:StringEntityModelTextBoxEditor ui:field="pmSecondaryOptionsEditor"/>
                                         <g:Label ui:field="pmSecondaryOptionsExplanationLabel" addStyleNames="{style.explanationLabel}"/>
+                                        <ge:EntityModelCheckBoxEditor ui:field="pmSecondaryEncryptOptionsEditor"/>
                                         <ge:EntityModelCheckBoxEditor ui:field="pmSecondarySecureEditor"/>
                                     </g:FlowPanel>
                                     <g:HTMLPanel addStyleNames="{style.testPanel}">

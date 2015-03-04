@@ -39,7 +39,8 @@ Create or replace FUNCTION UpdateFenceAgent(v_guid UUID ,
       v_type VARCHAR(255) ,
       v_agent_user VARCHAR(255) ,
       v_agent_password text ,
-      v_options VARCHAR(255) ,
+      v_options text ,
+      v_encrypt_options BOOLEAN,
       v_port INTEGER)
 RETURNS VOID
    AS $procedure$
@@ -47,7 +48,7 @@ BEGIN
       UPDATE fence_agents
       SET vds_id = v_vds_id, agent_order = v_agent_order, ip = v_ip,
       type = v_type, agent_user = v_agent_user, agent_password = v_agent_password,
-      port = v_port, options = v_options
+      port = v_port, options = v_options, encrypt_options = v_encrypt_options
       WHERE id = v_guid;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -60,7 +61,8 @@ Create or replace FUNCTION InsertFenceAgent(
     v_type VARCHAR(255) ,
     v_agent_user VARCHAR(255) ,
     v_agent_password text ,
-    v_options VARCHAR(255) ,
+    v_options text ,
+    v_encrypt_options BOOLEAN,
     v_port INTEGER)
 RETURNS VOID
 AS $procedure$
@@ -74,6 +76,7 @@ BEGIN
         agent_user,
         agent_password,
         options,
+        encrypt_options,
         port)
     VALUES (
         v_id,
@@ -84,6 +87,7 @@ BEGIN
         v_agent_user,
         v_agent_password,
         v_options,
+        v_encrypt_options,
         v_port);
 END; $procedure$
 LANGUAGE plpgsql;

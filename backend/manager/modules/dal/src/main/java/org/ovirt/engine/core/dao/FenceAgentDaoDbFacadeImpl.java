@@ -84,8 +84,13 @@ public class FenceAgentDaoDbFacadeImpl extends BaseDAODbFacade implements FenceA
         } else {
             parameterSource.addValue("port", null);
         }
+        parameterSource.addValue("encrypt_options", agent.getEncryptOptions());
         if (agent.getOptions() != null) {
-            parameterSource.addValue("options", agent.getOptions());
+            if (agent.getEncryptOptions()) {
+                parameterSource.addValue("options", DbFacadeUtils.encryptPassword(agent.getOptions()));
+            } else {
+                parameterSource.addValue("options", agent.getOptions());
+            }
         } else {
             parameterSource.addValue("options", "");
         }
@@ -107,7 +112,14 @@ public class FenceAgentDaoDbFacadeImpl extends BaseDAODbFacade implements FenceA
             entity.setPassword(DbFacadeUtils.decryptPassword(rs.getString("agent_password")));
             int port = rs.getInt("port");
             entity.setPort(port == 0 ? null : port);
-            entity.setOptions(rs.getString("options"));
+            final Boolean encryptOptions = rs.getBoolean("encrypt_options");
+            entity.setEncryptOptions(encryptOptions == null ? false : encryptOptions);
+            final String options = rs.getString("options");
+            if (entity.getEncryptOptions() && !options.isEmpty()) {
+                entity.setOptions(DbFacadeUtils.decryptPassword(options));
+            } else {
+                entity.setOptions(options);
+            }
             entity.setIp(rs.getString("ip"));
             return entity;
         }

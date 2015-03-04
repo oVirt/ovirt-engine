@@ -62,6 +62,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs
     public static final String PmSecureKey = "secure"; //$NON-NLS-1$
     public static final String PmPortKey = "port"; //$NON-NLS-1$
     public static final String PmSlotKey = "slot"; //$NON-NLS-1$
+    public static final String PmEncryptOptions = "encrypt_options"; //$NON-NLS-1$
     public static final String BeginTestStage = "BeginTest"; //$NON-NLS-1$
     public static final String EndTestStage = "EndTest"; //$NON-NLS-1$
     public static final String RootUserName = "root"; //$NON-NLS-1$
@@ -444,6 +445,16 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         privatePmSecure = value;
     }
 
+    private EntityModel<Boolean> privatePmEncryptOptions;
+
+    public EntityModel<Boolean> getPmEncryptOptions() {
+        return privatePmEncryptOptions;
+    }
+
+    public void setPmEncryptOptions(EntityModel<Boolean> value) {
+        privatePmEncryptOptions = value;
+    }
+
     private EntityModel<String> privatePmPort;
 
     public EntityModel<String> getPmPort()
@@ -538,6 +549,16 @@ public abstract class HostModel extends Model implements HasValidatedTabs
 
     private void setPmSecondaryOptions(EntityModel<String> value) {
         pmSecondaryOptions = value;
+    }
+
+    private EntityModel<Boolean> pmSecondaryEncryptOptions;
+
+    public EntityModel<Boolean> getPmSecondaryEncryptOptions() {
+        return pmSecondaryEncryptOptions;
+    }
+
+    public void setPmSecondaryEncryptOptions(EntityModel<Boolean> value) {
+        pmSecondaryEncryptOptions = value;
     }
 
     private EntityModel<Boolean> pmSecondarySecure;
@@ -998,6 +1019,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         setPmSecure(new EntityModel<Boolean>());
         getPmSecure().setIsAvailable(false);
         getPmSecure().setEntity(false);
+        setPmEncryptOptions(new EntityModel<Boolean>());
+        getPmEncryptOptions().setEntity(false);
 
         // Initialize secondary PM fields.
         setPmSecondaryIp(new EntityModel<String>());
@@ -1013,6 +1036,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         setPmSecondarySecure(new EntityModel<Boolean>());
         getPmSecondarySecure().setIsAvailable(false);
         getPmSecondarySecure().setEntity(false);
+        setPmSecondaryEncryptOptions(new EntityModel<Boolean>());
+        getPmSecondaryEncryptOptions().setEntity(false);
 
         // Initialize other PM fields.
         setPmSecondaryConcurrent(new EntityModel<Boolean>());
@@ -1483,6 +1508,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs
                         getPmPort().setIsAvailable(pmOptions.contains(PmPortKey));
                         getPmSlot().setIsAvailable(pmOptions.contains(PmSlotKey));
                         getPmSecure().setIsAvailable(pmOptions.contains(PmSecureKey));
+                        getPmEncryptOptions().setIsAvailable(pmOptions.contains(PmEncryptOptions));
                     }
                 }
             }), pmType, version);
@@ -1523,6 +1549,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs
                         getPmSecondaryPort().setIsAvailable(pmOptions.contains(PmPortKey));
                         getPmSecondarySlot().setIsAvailable(pmOptions.contains(PmSlotKey));
                         getPmSecondarySecure().setIsAvailable(pmOptions.contains(PmSecureKey));
+                        getPmSecondaryEncryptOptions().setIsAvailable(pmOptions.contains(PmEncryptOptions));
                     }
                 }
             }), pmSecondaryType, version);
@@ -1795,6 +1822,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs
             if (primaryAgent.getPort() != null) {
                 getPmPort().setEntity(primaryAgent.getPort().toString());
             }
+            getPmEncryptOptions().setEntity(primaryAgent.getEncryptOptions());
             setPmOptionsMap(VdsStatic.pmOptionsStringToMap(primaryAgent.getOptions()));
 
             if (vds.getFenceAgents().size() > 1) {
@@ -1809,6 +1837,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs
                 }
                 setPmSecondaryOptionsMap(secondaryAgent.getOptionsMap());
                 getPmSecondaryConcurrent().setEntity(secondaryAgent.getOrder() == primaryAgent.getOrder());
+                getPmSecondaryEncryptOptions().setEntity(secondaryAgent.getEncryptOptions());
             }
         }
         getDisableAutomaticPowerManagement().setEntity(vds.isDisablePowerManagementPolicy());

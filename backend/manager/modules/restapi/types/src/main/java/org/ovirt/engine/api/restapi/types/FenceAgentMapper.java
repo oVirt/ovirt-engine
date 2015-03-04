@@ -41,6 +41,9 @@ public class FenceAgentMapper {
         if (model.isSetOptions()) {
             entity.setOptions(HostMapper.map(model.getOptions(), null));
         }
+        if (model.isSetEncryptOptions()) {
+            entity.setEncryptOptions(model.isEncryptOptions());
+        }
         return entity;
     }
 
@@ -67,6 +70,7 @@ public class FenceAgentMapper {
         model.setAddress(entity.getIp());
         model.setOptions(entity.getOptions() == null || entity.getOptions().isEmpty() ? null
                 : HostMapper.map(entity.getOptionsMap(), null));
+        model.setEncryptOptions(entity.getEncryptOptions());
         model.setOrder(entity.getOrder());
         model.setPassword(entity.getPassword());
         model.setUsername(entity.getUser());
