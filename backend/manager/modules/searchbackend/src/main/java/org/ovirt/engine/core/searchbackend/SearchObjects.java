@@ -50,6 +50,8 @@ public final class SearchObjects {
     public static final String INSTANCE_TYPE_PLU_OBJ_NAME = "INSTANCETYPES";
     public static final String IMAGE_TYPE_OBJ_NAME = "IMAGETYPE";
     public static final String IMAGE_TYPE_PLU_OBJ_NAME = "IMAGETYPES";
+    public static final String SESSION_OBJ_NAME = "SESSION";
+    public static final String SESSION_PLU_OBJ_NAME = "SESSIONS";
 
     //special searches
     private static final String ALERT = "EVENTS: severity=alert";
@@ -101,6 +103,8 @@ public final class SearchObjects {
             add(getName(INSTANCE_TYPE_PLU_OBJ_NAME));
             add(getName(IMAGE_TYPE_OBJ_NAME));
             add(getName(IMAGE_TYPE_PLU_OBJ_NAME));
+            add(getName(SESSION_OBJ_NAME));
+            add(getName(SESSION_PLU_OBJ_NAME));
         }
     });
 

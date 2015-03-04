@@ -30,6 +30,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         mVerbs.add(SearchObjects.PROVIDER_PLU_OBJ_NAME);
         mVerbs.add(SearchObjects.INSTANCE_TYPE_PLU_OBJ_NAME);
         mVerbs.add(SearchObjects.IMAGE_TYPE_PLU_OBJ_NAME);
+        mVerbs.add(SearchObjects.SESSION_PLU_OBJ_NAME);
 
         buildCompletions();
         mVerbs.add(SearchObjects.VM_OBJ_NAME);
@@ -46,6 +47,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         mVerbs.add(SearchObjects.PROVIDER_OBJ_NAME);
         mVerbs.add(SearchObjects.INSTANCE_TYPE_OBJ_NAME);
         mVerbs.add(SearchObjects.IMAGE_TYPE_OBJ_NAME);
+        mVerbs.add(SearchObjects.SESSION_OBJ_NAME);
 
         // vms - vds
         addJoin(SearchObjects.VM_OBJ_NAME,
@@ -410,6 +412,12 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                             "providers",
                             "id",
                             "name ASC"));
+                    put(SearchObjects.SESSION_OBJ_NAME, new EntitySearchInfo(null,
+                            new SessionConditionFieldAutoCompleter(),
+                            "engine_sessions",
+                            "engine_sessions",
+                            "id",
+                            "user_name ASC, id"));
                 }
             });
 
@@ -436,6 +444,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
             put(SearchObjects.VDC_STORAGE_DOMAIN_PLU_OBJ_NAME, SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME);
             put(SearchObjects.NETWORK_PLU_OBJ_NAME, SearchObjects.NETWORK_OBJ_NAME);
             put(SearchObjects.PROVIDER_PLU_OBJ_NAME, SearchObjects.PROVIDER_OBJ_NAME);
+            put(SearchObjects.SESSION_PLU_OBJ_NAME, SearchObjects.SESSION_OBJ_NAME);
         }
     });
 
