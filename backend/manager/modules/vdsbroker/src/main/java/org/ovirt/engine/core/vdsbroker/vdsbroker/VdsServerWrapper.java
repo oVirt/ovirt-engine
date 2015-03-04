@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.lang.reflect.UndeclaredThrowableException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
@@ -10,6 +11,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHookContentInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHooksListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterHostsPubKeyReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterServersListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterServicesReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterTaskInfoReturnForXmlRpc;
@@ -1119,6 +1121,50 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public GlusterHostsPubKeyReturnForXmlRpc glusterGeoRepKeysGet() {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterGeoRepKeysGet();
+            GlusterHostsPubKeyReturnForXmlRpc wrapper = new GlusterHostsPubKeyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterGeoRepKeysUpdate(List<String> geoRepPubKeys, String remoteUserName) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterGeoRepKeysUpdate(remoteUserName, geoRepPubKeys);
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterGeoRepMountBrokerSetup(String remoteVolumeName, String remoteUserName, String remoteGroupName) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterGeoRepMountBrokerSetup(remoteUserName, remoteGroupName, remoteVolumeName);
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionCreate(String volumeName, String remoteHost, String remoteVolumeName, String remoteUserName, Boolean force) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.glusterVolumeGeoRepSessionCreate(volumeName, remoteHost, remoteVolumeName, remoteUserName, force);
+            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
     public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionResume(String volumeName, String slaveHostName, String slaveVolumeName, boolean force) {
         try{
             Map<String, Object> xmlRpcReturnValue = vdsServer.glusterVolumeGeoRepSessionResume(volumeName, slaveHostName, slaveVolumeName, force);
@@ -1597,6 +1643,7 @@ public class VdsServerWrapper implements IVdsServer {
         }
     }
 
+    @Override
     public GlusterVolumeSnapshotInfoReturnForXmlRpc glusterSnapshotInfo(Guid clusterId,
             String volumeName) {
         try {

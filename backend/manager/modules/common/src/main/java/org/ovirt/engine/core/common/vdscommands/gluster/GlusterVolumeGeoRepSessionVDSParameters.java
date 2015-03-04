@@ -7,6 +7,7 @@ public class GlusterVolumeGeoRepSessionVDSParameters extends GlusterVolumeVDSPar
     private String slaveHost;
     private String slaveVolume;
     private Boolean force = false;
+    private String userName = "root";
 
     public GlusterVolumeGeoRepSessionVDSParameters() {
 
@@ -28,6 +29,30 @@ public class GlusterVolumeGeoRepSessionVDSParameters extends GlusterVolumeVDSPar
         this.slaveHost = slaveHost;
         this.slaveVolume = slaveVolume;
         this.force = force;
+    }
+
+    public GlusterVolumeGeoRepSessionVDSParameters(Guid serverId,
+            String volumeName,
+            String slaveHost,
+            String slaveVolume,
+            String userName,
+            Boolean force) {
+        super(serverId, volumeName);
+        this.slaveHost = slaveHost;
+        this.slaveVolume = slaveVolume;
+        this.force = force;
+        this.userName = userName;
+    }
+
+    public GlusterVolumeGeoRepSessionVDSParameters(Guid serverId,
+            String volumeName,
+            String slaveHost,
+            String slaveVolume,
+            String userName) {
+        super(serverId, volumeName);
+        this.slaveHost = slaveHost;
+        this.slaveVolume = slaveVolume;
+        this.userName = userName;
     }
 
     public String getSlaveHost() {
@@ -54,4 +79,11 @@ public class GlusterVolumeGeoRepSessionVDSParameters extends GlusterVolumeVDSPar
         this.force = force;
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 }

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.jsonrpc;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -14,6 +15,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHookContentInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHooksListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterHostsPubKeyReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterServersListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterServicesReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterTaskInfoReturnForXmlRpc;
@@ -1189,6 +1191,45 @@ public class JsonRpcVdsServer implements IVdsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
         return new GlusterTaskInfoReturnForXmlRpc(response);
+    }
+
+    @Override
+    public GlusterHostsPubKeyReturnForXmlRpc glusterGeoRepKeysGet() {
+        JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepKeysGet").build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new GlusterHostsPubKeyReturnForXmlRpc(response);
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterGeoRepKeysUpdate(List<String> geoRepPubKeys, String remoteUserName) {
+        JsonRpcRequest request =
+                new RequestBuilder("Gluster.writeGeoRepPubKeys")
+                        .withParameter("geoRepPubKeys", geoRepPubKeys)
+                        .withOptionalParameter("userName", remoteUserName).build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterGeoRepMountBrokerSetup(String remoteVolumeName, String remoteUserName, String remoteGroupName) {
+        JsonRpcRequest request =
+                new RequestBuilder("GlusterVolume.geoRepMountBrokerSetup").withParameter("remoteVolumeName", remoteVolumeName)
+                        .withOptionalParameter("remoteUserName", remoteUserName)
+                        .withOptionalParameter("remoteGroupName", remoteGroupName).build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionCreate(String volumeName, String remoteHost, String remotVolumeName, String remoteUserName, Boolean force) {
+        JsonRpcRequest request =
+                new RequestBuilder("GlusterVolume.geoRepSessionCreate").withParameter("volumeName", volumeName)
+                .withParameter("remoteHost", remoteHost)
+                .withParameter("remoteVolumeName", remotVolumeName)
+                .withParameter("force", force)
+                .withOptionalParameter("remoteUserName", remoteUserName).build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
     }
 
     @Override

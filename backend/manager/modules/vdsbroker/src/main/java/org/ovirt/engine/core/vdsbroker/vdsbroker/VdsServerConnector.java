@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.FutureTask;
 
@@ -233,6 +234,14 @@ public interface VdsServerConnector {
             boolean force);
 
     public Map<String, Object> glusterVolumeRebalanceStart(String volumeName, Boolean fixLayoutOnly, Boolean force);
+
+    public Map<String, Object> glusterGeoRepKeysGet();
+
+    public Map<String, Object> glusterGeoRepKeysUpdate(String remoteUserName, List<String> geoRepPubKeys);
+
+    public Map<String, Object> glusterGeoRepMountBrokerSetup(String remoteUserName, String remoteGroupName, String remoteVolumeName);
+
+    public Map<String, Object> glusterVolumeGeoRepSessionCreate(String volumeName, String remoteHost, String remoteVolumeName, String remoteUserName, Boolean force);
 
     public Map<String, Object> glusterVolumeGeoRepSessionResume(String volumeName, String slaveHostName, String slaveVolumeName, boolean force);
 

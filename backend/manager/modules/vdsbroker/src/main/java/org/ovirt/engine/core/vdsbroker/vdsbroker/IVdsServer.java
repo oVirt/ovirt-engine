@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
@@ -9,6 +10,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHookContentInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHooksListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterHostsPubKeyReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterServersListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterServicesReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterTaskInfoReturnForXmlRpc;
@@ -275,6 +277,14 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc glusterHostAdd(String hostName);
 
     GlusterServersListReturnForXmlRpc glusterServersList();
+
+    GlusterHostsPubKeyReturnForXmlRpc glusterGeoRepKeysGet();
+
+    StatusOnlyReturnForXmlRpc glusterGeoRepKeysUpdate(List<String> geoRepPubKeys, String remoteUserName);
+
+    StatusOnlyReturnForXmlRpc glusterGeoRepMountBrokerSetup(String remoteVolumeName, String remoteUserName, String remoteGroupName);
+
+    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionCreate(String volumeName, String remoteHost, String remoteVolumeName, String remoteUserName, Boolean force);
 
     StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionDelete(String volumeName, String remoteHost, String remoteVolumeName);
 
