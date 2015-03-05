@@ -2,13 +2,12 @@ package org.ovirt.engine.ui.frontend.server.gwt;
 
 import java.util.ArrayList;
 import java.util.Random;
-
 import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.google.gwt.user.client.rpc.SerializationException;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
-import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcLoginReturnValueBase;
@@ -20,8 +19,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTService;
-
-import com.google.gwt.user.client.rpc.SerializationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -163,7 +160,7 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
 
     @Override
     public VdcReturnValueBase logOff(DbUser userToLogoff) {
-        LogoutUserParameters params = new LogoutUserParameters(userToLogoff.getId());
+        VdcActionParametersBase params = new VdcActionParametersBase();
         params.setSessionId(getEngineSessionId());
         VdcReturnValueBase returnValue = getBackend().logoff(params);
         return returnValue;

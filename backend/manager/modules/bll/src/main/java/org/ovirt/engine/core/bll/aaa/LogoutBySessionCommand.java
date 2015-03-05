@@ -6,7 +6,6 @@ import java.util.List;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
-import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 
@@ -26,7 +25,7 @@ public class LogoutBySessionCommand<T extends VdcActionParametersBase> extends C
 
     @Override
     protected void executeCommand() {
-        LogoutUserParameters params = new LogoutUserParameters(user.getId());
+        VdcActionParametersBase params = new VdcActionParametersBase();
         params.setSessionId(getParameters().getSessionId());
         setReturnValue(Backend.getInstance().logoff(params));
     }

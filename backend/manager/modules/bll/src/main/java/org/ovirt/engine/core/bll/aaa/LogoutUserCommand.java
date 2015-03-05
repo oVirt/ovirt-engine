@@ -10,17 +10,11 @@ import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.LogoutUserParameters;
-import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 
-public class LogoutUserCommand<T extends LogoutUserParameters> extends CommandBase<T> {
+public class LogoutUserCommand<T extends VdcActionParametersBase> extends CommandBase<T> {
     public LogoutUserCommand(T parameters) {
         super(parameters);
-        if (getCurrentUser() == null) {
-            DbUser dbUser = DbFacade.getInstance().getDbUserDao().get(parameters.getUserId());
-            setCurrentUser(dbUser);
-        }
     }
 
     @Override

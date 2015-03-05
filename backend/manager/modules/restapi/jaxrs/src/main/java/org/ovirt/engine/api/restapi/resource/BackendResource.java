@@ -6,7 +6,6 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.core.Response;
 
@@ -23,7 +22,6 @@ import org.ovirt.engine.api.restapi.util.ErrorMessageHelper;
 import org.ovirt.engine.api.restapi.util.SessionHelper;
 import org.ovirt.engine.api.utils.ExpectationHelper;
 import org.ovirt.engine.api.utils.LinkHelper;
-import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -284,7 +282,7 @@ public class BackendResource extends BaseBackendResource {
                     backend.runAction(task, sp);
                 } finally {
                     if (user != null) {
-                        backend.logoff(sh.sessionize(new LogoutUserParameters(user.getId())));
+                        backend.logoff(sh.sessionize(new VdcActionParametersBase()));
                     }
                     sh.clean();
                 }
