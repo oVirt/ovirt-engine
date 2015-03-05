@@ -2078,4 +2078,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Click for help")
     String clickForHelp();
 
+    @DefaultStringValue("Creation Date")
+    String permissionsCreationDate();
 }
