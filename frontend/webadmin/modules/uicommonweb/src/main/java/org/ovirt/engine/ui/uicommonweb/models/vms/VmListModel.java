@@ -2070,47 +2070,47 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
 
     @Override
     protected void updateActionsAvailability() {
-        List items =
-                getSelectedItems() != null && getSelectedItem() != null ? getSelectedItems()
-                        : new ArrayList();
+        List items = getSelectedItems() != null && getSelectedItem() != null ? getSelectedItems() : new ArrayList();
 
-        getCloneVmCommand().setIsExecutionAllowed(items.size() == 1);
+        boolean singleVmSelected = items.size() == 1;
+        boolean vmsSelected = items.size() > 0;
+
+        getCloneVmCommand().setIsExecutionAllowed(singleVmSelected);
         getEditCommand().setIsExecutionAllowed(isEditCommandExecutionAllowed(items));
-        getRemoveCommand().setIsExecutionAllowed(items.size() > 0
+        getRemoveCommand().setIsExecutionAllowed(vmsSelected
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.RemoveVm));
-        getRunCommand().setIsExecutionAllowed(items.size() > 0
+        getRunCommand().setIsExecutionAllowed(vmsSelected
                 && VdcActionUtils.canExecutePartially(items, VM.class, VdcActionType.RunVm));
-        getCloneVmCommand().setIsExecutionAllowed(items.size() == 1
+        getCloneVmCommand().setIsExecutionAllowed(singleVmSelected
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.CloneVm));
-        getPauseCommand().setIsExecutionAllowed(items.size() > 0
+        getPauseCommand().setIsExecutionAllowed(vmsSelected
                 && VdcActionUtils.canExecutePartially(items, VM.class, VdcActionType.HibernateVm));
-        getShutdownCommand().setIsExecutionAllowed(items.size() > 0
+        getShutdownCommand().setIsExecutionAllowed(vmsSelected
                 && VdcActionUtils.canExecutePartially(items, VM.class, VdcActionType.ShutdownVm));
-        getStopCommand().setIsExecutionAllowed(items.size() > 0
+        getStopCommand().setIsExecutionAllowed(vmsSelected
                 && VdcActionUtils.canExecutePartially(items, VM.class, VdcActionType.StopVm));
         getRebootCommand().setIsExecutionAllowed(AsyncDataProvider.getInstance().isRebootCommandExecutionAllowed(items));
-        getMigrateCommand().setIsExecutionAllowed(items.size() > 0
+        getMigrateCommand().setIsExecutionAllowed(vmsSelected
                 && VdcActionUtils.canExecutePartially(items, VM.class, VdcActionType.MigrateVm));
-        getCancelMigrateCommand().setIsExecutionAllowed(items.size() > 0
+        getCancelMigrateCommand().setIsExecutionAllowed(vmsSelected
                 && VdcActionUtils.canExecutePartially(items, VM.class, VdcActionType.CancelMigrateVm));
-        getNewTemplateCommand().setIsExecutionAllowed(items.size() == 1
+        getNewTemplateCommand().setIsExecutionAllowed(singleVmSelected
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.AddVmTemplate));
-        getRunOnceCommand().setIsExecutionAllowed(items.size() == 1
+        getRunOnceCommand().setIsExecutionAllowed(singleVmSelected
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.RunVmOnce));
-        getExportCommand().setIsExecutionAllowed(items.size() > 0
+        getExportCommand().setIsExecutionAllowed(vmsSelected
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.ExportVm));
-        getCreateSnapshotCommand().setIsExecutionAllowed(items.size() == 1
+        getCreateSnapshotCommand().setIsExecutionAllowed(singleVmSelected
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.CreateAllSnapshotsFromVm));
-        getRetrieveIsoImagesCommand().setIsExecutionAllowed(items.size() == 1
+        getRetrieveIsoImagesCommand().setIsExecutionAllowed(singleVmSelected
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.ChangeDisk));
-        getChangeCdCommand().setIsExecutionAllowed(items.size() == 1
+        getChangeCdCommand().setIsExecutionAllowed(singleVmSelected
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.ChangeDisk));
-        getAssignTagsCommand().setIsExecutionAllowed(items.size() > 0);
+        getAssignTagsCommand().setIsExecutionAllowed(vmsSelected);
 
         updateHaMaintenanceAvailability(items);
 
-        getGuideCommand().setIsExecutionAllowed(getGuideContext() != null
-                || (getSelectedItem() != null && getSelectedItems() != null && getSelectedItems().size() == 1));
+        getGuideCommand().setIsExecutionAllowed(getGuideContext() != null || singleVmSelected);
 
         getConsoleConnectCommand().setIsExecutionAllowed(isConsoleCommandsExecutionAllowed());
         getEditConsoleCommand().setIsExecutionAllowed(isConsoleEditEnabled());
