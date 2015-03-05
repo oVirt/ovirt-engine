@@ -335,4 +335,26 @@ public final class VdcActionUtils {
         }
         return true;
     }
+
+    /**
+     * This method determines per list of entities whether the selected action can run at least on one item from the
+     * entities list
+     */
+    public static boolean canExecutePartially(List<? extends BusinessEntityWithStatus<?, ?>> entities,
+                                     Class type,
+                                     VdcActionType action) {
+        if (_matrix.containsKey(type)) {
+            for (BusinessEntityWithStatus<?, ?> a : entities) {
+                if (a.getClass() == type &&
+                    (!_matrix.get(type).containsKey(a.getStatus())
+                        || !_matrix.get(type).get(a.getStatus()).contains(action))) {
+                    return true;
+                }
+            }
+        }
+        else {
+            return true;
+        }
+        return false;
+    }
 }

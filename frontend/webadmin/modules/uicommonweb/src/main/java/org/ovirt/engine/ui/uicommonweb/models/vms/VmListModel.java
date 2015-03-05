@@ -2079,21 +2079,20 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.RemoveVm));
         getRunCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.RunVm));
+                && VdcActionUtils.canExecutePartially(items, VM.class, VdcActionType.RunVm));
         getCloneVmCommand().setIsExecutionAllowed(items.size() == 1
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.CloneVm));
         getPauseCommand().setIsExecutionAllowed(items.size() > 0
-                                                        && VdcActionUtils.canExecute(items, VM.class, VdcActionType.HibernateVm)
-                                                        && AsyncDataProvider.getInstance().canVmsBePaused(items));
+                && VdcActionUtils.canExecutePartially(items, VM.class, VdcActionType.HibernateVm));
         getShutdownCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.ShutdownVm));
+                && VdcActionUtils.canExecutePartially(items, VM.class, VdcActionType.ShutdownVm));
         getStopCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.StopVm));
+                && VdcActionUtils.canExecutePartially(items, VM.class, VdcActionType.StopVm));
         getRebootCommand().setIsExecutionAllowed(AsyncDataProvider.getInstance().isRebootCommandExecutionAllowed(items));
         getMigrateCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.MigrateVm));
+                && VdcActionUtils.canExecutePartially(items, VM.class, VdcActionType.MigrateVm));
         getCancelMigrateCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.CancelMigrateVm));
+                && VdcActionUtils.canExecutePartially(items, VM.class, VdcActionType.CancelMigrateVm));
         getNewTemplateCommand().setIsExecutionAllowed(items.size() == 1
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.AddVmTemplate));
         getRunOnceCommand().setIsExecutionAllowed(items.size() == 1
