@@ -156,6 +156,13 @@ public class GlusterGeoRepDaoTest extends BaseDAOTestCase {
     }
 
     @Test
+    public void testRemove() {
+        dao.remove(FixturesTool.GLUSTER_GEOREP_SESSION_ID);
+        List<GlusterGeoRepSession> fetchedSessions = dao.getGeoRepSessionsInCluster(FixturesTool.GLUSTER_CLUSTER_ID);
+        assertEquals(0, fetchedSessions.size());
+    }
+
+    @Test
     public void testGetBySlaveHostAndVolume() {
         GlusterGeoRepSession session = dao.getGeoRepSession(FixturesTool.GLUSTER_VOLUME_UUID1,
                 "192.168.122.17", "slave-replica");

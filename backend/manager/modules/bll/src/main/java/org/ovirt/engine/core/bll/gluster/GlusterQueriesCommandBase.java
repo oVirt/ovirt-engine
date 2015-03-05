@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.gluster;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -26,6 +27,10 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotScheduleDao;
 public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
     protected GlusterQueriesCommandBase(P parameters) {
         super(parameters);
+    }
+
+    public GlusterQueriesCommandBase(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     protected GlusterVolumeDao getGlusterVolumeDao() {

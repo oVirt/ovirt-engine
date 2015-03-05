@@ -244,3 +244,12 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION DeleteGlusterGeoRepSession(v_session_id UUID)
+RETURNS VOID
+AS $procedure$
+BEGIN
+   DELETE FROM gluster_georep_session
+   WHERE session_id=v_session_id;
+END; $procedure$
+LANGUAGE plpgsql;
+

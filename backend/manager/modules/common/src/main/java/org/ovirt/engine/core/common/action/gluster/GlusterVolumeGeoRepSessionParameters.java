@@ -9,6 +9,8 @@ public class GlusterVolumeGeoRepSessionParameters extends GlusterVolumeParameter
     private Guid geoRepSessionId;
     private String slaveVolumeName;
     private String slaveHost;
+    private String userName;
+    private String userGroup;
     private boolean force;
 
     public GlusterVolumeGeoRepSessionParameters() {
@@ -21,9 +23,28 @@ public class GlusterVolumeGeoRepSessionParameters extends GlusterVolumeParameter
     }
 
     public GlusterVolumeGeoRepSessionParameters(Guid volumeId, String slaveVolumeName, String slaveHost) {
+        this(volumeId, slaveVolumeName, slaveHost, "root", null, false);
+    }
+
+    public GlusterVolumeGeoRepSessionParameters(Guid volumeId,
+            String slaveVolumeName,
+            String slaveHost,
+            String userName,
+            String userGroup,
+            boolean force) {
         super(volumeId);
         this.slaveVolumeName = slaveVolumeName;
         this.slaveHost = slaveHost;
+        this.userName = userName;
+        this.userGroup = userGroup;
+        this.force = force;
+    }
+
+    public GlusterVolumeGeoRepSessionParameters(Guid volumeId, String slaveVolumeName,
+            String slaveHost,
+            String userName,
+            String userGroup) {
+        this(volumeId, slaveVolumeName, slaveHost, userName, userGroup, false);
     }
 
     public String getSlaveVolumeName() {
@@ -58,4 +79,19 @@ public class GlusterVolumeGeoRepSessionParameters extends GlusterVolumeParameter
         this.geoRepSessionId = geoRepSessionId;
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserGroup() {
+        return userGroup;
+    }
+
+    public void setUserGroup(String userGroup) {
+        this.userGroup = userGroup;
+    }
 }
