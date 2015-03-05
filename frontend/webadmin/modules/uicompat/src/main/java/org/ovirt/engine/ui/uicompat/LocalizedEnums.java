@@ -341,6 +341,22 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___GLUSTER_VOLUME_REBALANCE_START_FAILED();
 
+    String AuditLogType___GLUSTER_GEO_REP_PUB_KEY_FETCH_FAILED();
+
+    String AuditLogType___GLUSTER_GET_PUB_KEY();
+
+    String AuditLogType___GLUSTER_GEOREP_PUBLIC_KEY_WRITE_FAILED();
+
+    String AuditLogType___GLUSTER_WRITE_PUB_KEYS();
+
+    String AuditLogType___GLUSTER_GEOREP_SETUP_MOUNT_BROKER_FAILED();
+
+    String AuditLogType___GLUSTER_SETUP_GEOREP_MOUNT_BROKER();
+
+    String AuditLogType___GLUSTER_GEOREP_SESSION_CREATE_FAILED();
+
+    String AuditLogType___CREATE_GLUSTER_VOLUME_GEOREP_SESSION();
+
     String AuditLogType___GLUSTER_VOLUME_GEO_REP_RESUME_FAILED();
 
     String AuditLogType___GLUSTER_VOLUME_GEO_REP_RESUME();
@@ -805,6 +821,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String VdcActionType___ManageGlusterService();
 
     String VdcActionType___RefreshGeoRepSessions();
+
+    String VdcActionType___CreateGlusterVolumeGeoRepSession();
 
     String VdcActionType___StopGeoRepSession();
 

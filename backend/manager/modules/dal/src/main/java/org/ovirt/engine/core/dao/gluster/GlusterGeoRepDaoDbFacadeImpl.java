@@ -218,6 +218,11 @@ public class GlusterGeoRepDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
                         .addValue("slave_volume_id", geoRepSession.getSlaveVolumeId()));
     }
 
+    @Override
+    public void remove(Guid sessonId) {
+        getCallsHandler().executeModification("DeleteGlusterGeoRepSession", getCustomMapSqlParameterSource().addValue("session_id", sessonId));
+    }
+
     public void updateSessionStatus(GlusterGeoRepSession geoRepSession) {
         getCallsHandler().executeModification("UpdateGlusterGeoRepSessionStatus",
                 createIdParameterMapper(geoRepSession.getId())

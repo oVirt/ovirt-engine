@@ -3120,6 +3120,18 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Geo-replication session not found.")
     String ACTION_TYPE_FAILED_GEOREP_SESSION_INVALID();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Geo-replication is not supported.")
+    String ACTION_TYPE_FAILED_GEO_REP_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. One or more remote hosts are inaccessible.")
+    String ACTION_TYPE_FAILED_ONE_OR_MORE_REMOTE_HOSTS_ARE_NOT_ACCESSIBLE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. No Pub keys to update to slave.")
+    String ACTION_TYPE_FAILED_GLUSTER_NO_PUB_KEYS_PASSED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Geo-replication session between the requested master and slave volumes and for the required user already created.")
+    String ACTION_TYPE_FAILED_GLUSTER_GEOREP_SESSION_ALREADY_CREATED();
+
     @DefaultStringValue("Cannot ${action} ${type}. Geo-replication session is already started.")
     String ACTION_TYPE_FAILED_GEOREP_SESSION_ALREADY_STARTED();
 

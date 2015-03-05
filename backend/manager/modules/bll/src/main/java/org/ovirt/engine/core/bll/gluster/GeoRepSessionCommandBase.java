@@ -54,7 +54,14 @@ public abstract class GeoRepSessionCommandBase<T extends GlusterVolumeGeoRepSess
 
     protected GlusterGeoRepSession getGeoRepSession() {
         if (geoRepSession == null) {
-            geoRepSession = getGlusterGeoRepDao().getById(getParameters().getGeoRepSessionId());
+            if(getParameters().getGeoRepSessionId() != null) {
+                geoRepSession = getGlusterGeoRepDao().getById(getParameters().getGeoRepSessionId());
+            } else {
+                geoRepSession =
+                        getGlusterGeoRepDao().getGeoRepSession(getGlusterVolumeId(),
+                                getParameters().getSlaveHost(),
+                                getParameters().getSlaveVolumeName());
+            }
         }
         return geoRepSession;
     }

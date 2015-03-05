@@ -18,6 +18,7 @@ public class GlusterConstants {
     public static final String BRICK_NAME = "brickName";
     public static final String SERVER_NAME = "servername";
     public static final String VOLUME_NAME = "glustervolumename";
+    public static final String VDS_NAME = "VdsName";
 
     public static final String FS_TYPE_XFS = "xfs";
 
@@ -39,6 +40,9 @@ public class GlusterConstants {
     public static final String MANAGE_GLUSTER_SERVICE_ACTION_TYPE_RESTART = "restart";
     public static final String COMMAND = "command";
     public static final String GEO_REP_SESSION_KEY = "geoRepSessionKey";
+    public static final String GEO_REP_SLAVE_VOLUME_NAME = "geoRepSlaveVolumeName";
+    public static final String GEO_REP_USER = "geoRepUserName";
+    public static final String GEO_REP_USER_GROUP = "geoRepGroupName";
 
     public static final String HOOK_NAME = "glusterhookname";
     public static final String FAILURE_MESSAGE = "failuremessage";
@@ -46,4 +50,5 @@ public class GlusterConstants {
     public static final String JOB_INFO = "info";
     public static final String VOLUME_SNAPSHOT_MAX_HARD_LIMIT = "snap-max-hard-limit";
     public static final String VOLUME_SNAPSHOT_NAME = "snapname";
+    public static final String VDS_GROUP_NAME = "VdsGroupName";
 }

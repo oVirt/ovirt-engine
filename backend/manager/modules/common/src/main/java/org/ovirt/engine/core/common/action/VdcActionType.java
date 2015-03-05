@@ -323,6 +323,9 @@ public enum VdcActionType {
     ScheduleGlusterVolumeSnapshot(1442, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     RescheduleGlusterVolumeSnapshot(1443, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     CreateBrick(1444, ActionGroup.MANIPULATE_HOST, QuotaDependency.NONE),
+    CreateGlusterVolumeGeoRepSession(1445, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    SetupGlusterGeoRepMountBrokerInternal(1446, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    UpdateGlusterHostPubKeyToSlaveInternal(1447, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
 
     // Cluster Policy
     AddClusterPolicy(1450, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),
