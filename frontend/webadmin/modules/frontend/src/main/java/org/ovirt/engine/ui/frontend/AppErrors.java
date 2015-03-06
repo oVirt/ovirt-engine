@@ -2842,7 +2842,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("VFS type cannot be empty")
     String VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Custom mount options contain the following managed options: ${invalidOptions}.")
+    @DefaultStringValue("Cannot ${action} ${type}. Custom mount options contain the following duplicate managed options: ${invalidOptions}.")
     String VALIDATION_STORAGE_CONNECTION_MOUNT_OPTIONS_CONTAINS_MANAGED_PROPERTY();
 
     @DefaultStringValue("Target details cannot be empty.")
