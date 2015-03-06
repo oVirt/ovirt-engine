@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
 import org.ovirt.engine.ui.common.widget.table.cell.EventHandlingCell;
 import org.ovirt.engine.ui.common.widget.table.cell.RadioboxCell;
 import org.ovirt.engine.ui.common.widget.table.header.SelectAllCheckBoxHeader;
+import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
@@ -337,9 +338,9 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
 
             String error = errors.get(i);
             boolean valid = StringUtils.isEmpty(error);
-            // TODO tt Element is not a Widget, so have to use ElementTooltip on it
-            element.setTitle(valid ? null : error);
+
             if (!valid) {
+                TooltipMixin.addTooltipToElement(SafeHtmlUtils.fromString(error), element);
                 element.addClassName(style.invalidRow());
             } else {
                 element.removeClassName(style.invalidRow());

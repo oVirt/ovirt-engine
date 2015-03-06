@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.MenuBar;
 import org.ovirt.engine.ui.common.widget.PopupPanel;
 import org.ovirt.engine.ui.common.widget.TitleMenuItemSeparator;
+import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -37,6 +38,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
@@ -612,8 +614,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
         item.setEnabled(buttonDef.isEnabled(getSelectedItems()));
 
         if (buttonDef.getMenuItemToolTip() != null) {
-            // TODO tt MenuItem is not a Widget, so have to use ElementTooltip on it
-            item.setTitle(buttonDef.getMenuItemToolTip());
+            TooltipMixin.addTooltipToElement(SafeHtmlUtils.fromString(buttonDef.getMenuItemToolTip()), item.getElement());
         }
     }
 

@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
@@ -22,6 +23,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.dom.client.TableRowElement;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable;
@@ -144,8 +146,7 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
         for (String reason : grayOutReasons) {
             title.append(reason).append(constants.space());
         }
-        // TODO tt Element not a Widget, need ElementTooltip here
-        input.setTitle(title.toString());
+        TooltipMixin.addTooltipToElement(SafeHtmlUtils.fromString(title.toString()), input);
     }
 
     protected void updateSelectedLunWarning(LunModel lunModel) {

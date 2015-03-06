@@ -8,6 +8,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
+import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
 import org.ovirt.engine.ui.common.widget.tooltip.WidgetTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -30,6 +31,7 @@ import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
@@ -338,8 +340,7 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         element.getStyle().setColor("#999999"); //$NON-NLS-1$
 
         if (getNodeDisabledTooltip() != null) {
-            // TODO tt Element is not a Widget, so have to use ElementTooltip on it
-            element.setTitle(getNodeDisabledTooltip());
+            TooltipMixin.addTooltipToElement(SafeHtmlUtils.fromString(getNodeDisabledTooltip()), element);
         }
     }
 

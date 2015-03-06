@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
+import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -15,6 +16,7 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Command;
@@ -96,8 +98,9 @@ public class DropdownActionButton<T> extends AbstractActionButton {
     void updateMenuItem(MenuItem item, ActionButtonDefinition<T> buttonDef, List selectedItems) {
         item.setVisible(buttonDef.isAccessible(selectedItems) && buttonDef.isVisible(selectedItems));
         item.setEnabled(buttonDef.isEnabled(selectedItems));
-        // TODO tt MenuItem is not a Widget, so have to use ElementTooltip on it
-        item.setTitle(buttonDef.getButtonToolTip() != null ? buttonDef.getButtonToolTip() : null);
+        if (buttonDef.getButtonToolTip() != null) {
+            TooltipMixin.addTooltipToElement(SafeHtmlUtils.fromString(buttonDef.getButtonToolTip()), item.getElement());
+        }
     }
 
     private void addMouseHandlers() {

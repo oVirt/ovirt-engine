@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.form.key_value;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueLineModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -14,6 +15,7 @@ import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -100,12 +102,9 @@ public class KeyValueLineWidget extends Composite implements HasValueChangeHandl
      */
     private void updateKeyTitle(KeyValueLineModel object) {
         String selectedKey = (String) object.getKeys().getSelectedItem();
-        // Setting the title to null results in the string "null" being displayed on some browsers.
-        if (selectedKey == null) {
-            selectedKey = "";
+        if (selectedKey != null) {
+            TooltipMixin.addTooltipToElement(SafeHtmlUtils.fromString(selectedKey), keyField.getElement());
         }
-        // TODO tt Element is not a Widget, so have to use ElementTooltip on it
-        keyField.getElement().setTitle(selectedKey);
     }
 
     @Override
