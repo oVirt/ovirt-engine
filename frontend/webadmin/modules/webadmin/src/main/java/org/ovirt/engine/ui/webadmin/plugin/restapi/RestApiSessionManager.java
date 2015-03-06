@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.plugin.restapi;
 
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -74,14 +75,22 @@ public class RestApiSessionManager implements EngineSessionRefreshedHandler {
     private static final String ENGINE_AUTH_TOKEN_HEADER = "OVIRT-INTERNAL-ENGINE-AUTH-TOKEN"; //$NON-NLS-1$
 
     private static final int DEFAULT_ENGINE_SESSION_TIMEOUT = 30;
+    private static final int DEFAULT_HARD_LIMIT = 600;
+
+    private static final int MIN_IN_MS = 1000 * 60;
 
     // Heartbeat (delay) between REST API keep-alive requests
-    private static final int SESSION_HEARTBEAT_MS = 1000 * 60; // 1 minute
+    private static final int SESSION_HEARTBEAT_MS = MIN_IN_MS;
 
     private final EventBus eventBus;
     private final String restApiBaseUrl;
 
     private int restApiSessionTimeout;
+
+    private Integer restApiSessionHardlimit;
+    //On logout the page reloads and this will be reset.
+    private Date restApiLoginTimePlusHardLimit;
+
     private String restApiSessionId;
 
     private boolean refreshRestApiSession = false;
@@ -101,7 +110,8 @@ public class RestApiSessionManager implements EngineSessionRefreshedHandler {
 
     @Override
     public void onEngineSessionRefreshed(EngineSessionRefreshedEvent event) {
-        if (restApiSessionId != null) {
+        if (restApiSessionId != null && (restApiLoginTimePlusHardLimit == null
+                || new Date().before(restApiLoginTimePlusHardLimit))) {
             refreshRestApiSession = true;
         }
     }
@@ -120,6 +130,22 @@ public class RestApiSessionManager implements EngineSessionRefreshedHandler {
         // Because of that, Engine sessions can stay active up to 2 * UserSessionTimeOutInterval
         // so we adapt REST API session timeout accordingly.
         restApiSessionTimeout = 2 * engineSessionTimeout;
+    }
+
+    public void setHardLimit(String sessionHardLimit) {
+        try {
+            restApiSessionHardlimit = Integer.valueOf(sessionHardLimit); //Minutes
+        } catch (NumberFormatException ex) {
+            restApiSessionHardlimit = DEFAULT_HARD_LIMIT;
+        }
+    }
+
+    public void recordLoggedInTime() {
+        if (restApiSessionHardlimit > 0) {
+            restApiLoginTimePlusHardLimit = new Date();
+            restApiLoginTimePlusHardLimit.setTime(restApiLoginTimePlusHardLimit.getTime()
+                    + ((restApiSessionHardlimit.longValue() - 1) * MIN_IN_MS)); //Subtract one refresh cycle to be sure we stop.
+        }
     }
 
     /**
