@@ -124,18 +124,6 @@ public class FirstMatchSimpleFilterTest {
     }
 
     @Test
-    public void testDatabaseEntries() throws Exception {
-        filter.clearFilterEntries();
-        filter.addFilterEntries(
-                Collections.singletonList(
-                        new FirstMatchSimpleFilter.FilterEntry("message0", false, "smtp", "dbtest1@redhat.com"))
-                );
-        filter.processEvent(new E("message0"));
-        filter.processEvent(new E("message1"));
-        Assert.assertTrue(smtp.getEvents().contains("message0-->dbtest1@redhat.com"));
-    }
-
-    @Test
     public void testSimpleParse() throws Exception {
         filter.clearFilterEntries();
         filter.addFilterEntries(
