@@ -13,7 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
+import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigCommon;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -56,8 +58,8 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
         request.setAttribute(ATTR_PLUGIN_DEFS, getPluginDefinitionsArray(pluginData));
 
         // Set attribute for engineSessionTimeout object
-        Integer engineSessionTimeout = getEngineSessionTimeout(getEngineSessionId(request));
-        request.setAttribute(ATTR_ENGINE_SESSION_TIMEOUT, getEngineSessionTimeoutObject(engineSessionTimeout));
+        request.setAttribute(ATTR_ENGINE_SESSION_TIMEOUT, getEngineSessionTimeoutObject(getUserSessionTimeout(),
+                getUserSessionHardTimeout()));
 
         super.doGet(request, response);
     }
@@ -110,15 +112,18 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
         return arr;
     }
 
-    protected Integer getEngineSessionTimeout(String sessionId) {
-        return (Integer) runPublicQuery(VdcQueryType.GetConfigurationValue,
-                new GetConfigurationValueParameters(ConfigurationValues.UserSessionTimeOutInterval,
-                        ConfigCommon.defaultConfigurationVersion), sessionId);
+    protected Integer getUserSessionTimeout() {
+        return Config.<Integer> getValue(ConfigValues.UserSessionTimeOutInterval);
     }
 
-    protected ObjectNode getEngineSessionTimeoutObject(Integer engineSessionTimeout) {
+    protected Integer getUserSessionHardTimeout() {
+        return Config.<Integer> getValue(ConfigValues.UserSessionHardLimit);
+    }
+
+    protected ObjectNode getEngineSessionTimeoutObject(Integer engineSessionTimeout, Integer userSessionHardLimit) {
         ObjectNode obj = createObjectNode();
-        obj.put("value", String.valueOf(engineSessionTimeout)); //$NON-NLS-1$
+        obj.put("sessionTimeout", String.valueOf(engineSessionTimeout)); //$NON-NLS-1$
+        obj.put("sessionHardLimit", String.valueOf(userSessionHardLimit)); //$NON-NLS-1$
         return obj;
     }
 

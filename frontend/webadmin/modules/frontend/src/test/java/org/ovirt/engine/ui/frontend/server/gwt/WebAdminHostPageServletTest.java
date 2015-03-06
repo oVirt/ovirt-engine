@@ -93,7 +93,7 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
     public void testDoGet_ExtraAttributes_WithoutUserInfoObject() throws IOException, ServletException {
         doReturn(mockApplicationModeObject).when(testServlet).getApplicationModeObject(any(Integer.class));
         doReturn(mockPluginDefinitionsArray).when(testServlet).getPluginDefinitionsArray(anyListOf(PluginData.class));
-        doReturn(mockEngineSessionTimeoutObject).when(testServlet).getEngineSessionTimeoutObject(any(Integer.class));
+        doReturn(mockEngineSessionTimeoutObject).when(testServlet).getEngineSessionTimeoutObject(any(Integer.class), any(Integer.class));
         testServlet.doGet(mockRequest, mockResponse);
         verify(mockRequest).setAttribute(WebAdminHostPageServlet.ATTR_APPLICATION_MODE, mockApplicationModeObject);
         verify(mockRequest).setAttribute(WebAdminHostPageServlet.ATTR_PLUGIN_DEFS, mockPluginDefinitionsArray);
@@ -141,8 +141,9 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
 
     @Test
     public void testGetEngineSessionTimeoutObject() {
-        ObjectNode result = testServlet.getEngineSessionTimeoutObject(Integer.valueOf(30));
-        assertEquals(result.get("value").asText(), "30"); //$NON-NLS-1$ //$NON-NLS-2$
+        ObjectNode result = testServlet.getEngineSessionTimeoutObject(30, 60);
+        assertEquals(result.get("sessionTimeout").asInt(), 30); //$NON-NLS-1$
+        assertEquals(result.get("sessionHardLimit").asInt(), 60); //$NON-NLS-1$
     }
 
 }
