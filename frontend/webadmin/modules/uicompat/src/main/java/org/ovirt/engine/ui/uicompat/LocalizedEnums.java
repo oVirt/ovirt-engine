@@ -198,6 +198,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String ActionGroup___CONFIGURE_DISK_STORAGE();
 
+    String ActionGroup___DISK_LIVE_STORAGE_MIGRATION();
+
     String ActionGroup___DELETE_DISK();
 
     String ActionGroup___CONFIGURE_NETWORK_VNIC_PROFILE();
