@@ -1939,7 +1939,7 @@ actions:
         cluster.scheduling_policy.id: 'xs:string', cluster.scheduling_policy.properties.property--COLLECTION: {property.name: 'xs:string', property.value: 'xs:string'},
         cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean', cluster.tunnel_migration: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean',
         cluster.cpu.architecture: 'xs:string', cluster.display.proxy: 'xs:string', cluster.ksm.enabled: 'xs:boolean',
-        cluster.fencing_policy.enabled: 'xs:boolean', cluster.fencing_policy.skip_if_sd_active.enabled: 'xs:boolean', cluster.fencing_policy.skip_if_connectivity_broken.enabled: 'xs:boolean', cluster.fencing_policy.skip_if_connectivity_broken.threshold: 'xs:int'}
+        cluster.fencing_policy.enabled: 'xs:boolean', cluster.fencing_policy.skip_if_sd_active.enabled: 'xs:boolean', cluster.fencing_policy.skip_if_connectivity_broken.enabled: 'xs:boolean', cluster.fencing_policy.skip_if_connectivity_broken.threshold: 'xs:int', cluster.maintenance_reason_required: 'xs:boolean'}
         description: update the specified cluster in the system. The capabilities like virt service, cluster service, tarnsparent huge pages etc can be changed.
     urlparams: {}
     headers:
@@ -1958,7 +1958,7 @@ actions:
         cluster.tunnel_migration: 'xs:boolean', cluster.trusted_service: 'xs:boolean',  cluster.ha_reservation: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean', cluster.cpu.architecture: 'xs:string', cluster.display.proxy: 'xs:string',
         cluster.ksm.enabled: 'xs:boolean',
         cluster.fencing_policy.enabled: 'xs:boolean', cluster.fencing_policy.skip_if_sd_active.enabled: 'xs:boolean', cluster.fencing_policy.skip_if_connectivity_broken.enabled: 'xs:boolean', cluster.fencing_policy.skip_if_connectivity_broken.threshold: 'xs:int',
-        cluster.management_network.id|name: 'xs:string'}
+        cluster.management_network.id|name: 'xs:string', cluster.maintenance_reason_required: 'xs:boolean'}
         description: add a new cluster to the system
     urlparams: {}
     headers:

@@ -1708,6 +1708,7 @@
           <xs:element name="trusted_service" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="ha_reservation" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="optional_reason" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="maintenance_reason_required" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="ballooning_enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="display" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="ksm" minOccurs="0" maxOccurs="1"/>
