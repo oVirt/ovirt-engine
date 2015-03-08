@@ -1242,7 +1242,40 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                 }, null);
     }
 
-    public void maintenance()
+    private Guid getClusterIdOfSelectedHosts() {
+        Guid clusterId = null;
+        for (Object item : getSelectedItems())
+        {
+            VDS host = (VDS) item;
+            if (clusterId == null) {
+                clusterId = host.getVdsGroupId();
+            } else if (!clusterId.equals(host.getVdsGroupId())) {
+                clusterId = null;
+                break;
+            }
+        }
+        return clusterId;
+    }
+
+    public void maintenance() {
+        Guid clusterId = getClusterIdOfSelectedHosts();
+        if (clusterId == null) {
+            maintenance(false);
+        } else {
+            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object target, Object returnValue) {
+                            VDSGroup cluster = (VDSGroup) returnValue;
+                            if (cluster != null) {
+                                maintenance(cluster.isMaintenanceReasonRequired());
+                            }
+                        }
+                    }), clusterId);
+        }
+    }
+
+    private void maintenance(boolean isMaintenanceReasonVisible)
     {
         if (getConfirmWindow() != null)
         {
@@ -1257,6 +1290,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
         model.setMessage(ConstantsManager.getInstance()
                 .getConstants()
                 .areYouSureYouWantToPlaceFollowingHostsIntoMaintenanceModeMsg());
+        model.setReasonVisible(isMaintenanceReasonVisible);
         // model.Items = SelectedItems.Cast<VDS>().Select(a => a.vds_name);
         ArrayList<String> vdss = new ArrayList<String>();
         for (Object item : getSelectedItems())
@@ -1289,7 +1323,7 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
             VDS vds = (VDS) item;
             vdss.add(vds.getId());
         }
-        list.add(new MaintenanceNumberOfVdssParameters(vdss, false));
+        list.add(new MaintenanceNumberOfVdssParameters(vdss, false, model.getReason().getEntity()));
 
         model.startProgress(null);
 

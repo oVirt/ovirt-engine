@@ -113,7 +113,7 @@ public class HostModule extends AbstractGinModule {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(HostListModel<Void> source,
                             UICommand lastExecutedCommand) {
-                        if (lastExecutedCommand == getModel().getRemoveCommand()) {
+                        if (lastExecutedCommand == getModel().getRemoveCommand() || lastExecutedCommand == getModel().getMaintenanceCommand()) {
                             return removeConfirmPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getManualFenceCommand()) {
                             return manualFenceConfirmPopupProvider.get();
