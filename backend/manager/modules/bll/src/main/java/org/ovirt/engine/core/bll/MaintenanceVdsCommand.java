@@ -187,6 +187,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
             }
         } else {
             if (getSucceeded() && !haMaintenanceFailed) {
+                addCustomValue("Reason", getVds().getMaintenanceReason());
                 return AuditLogType.USER_VDS_MAINTENANCE;
             } else if (getSucceeded()) {
                 return AuditLogType.USER_VDS_MAINTENANCE_MANUAL_HA;

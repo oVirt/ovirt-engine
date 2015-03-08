@@ -7,6 +7,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class SetVdsStatusVDSCommandParameters extends VdsIdVDSCommandParametersBase {
     private VDSStatus _status;
     private NonOperationalReason nonOperationalReason;
+    private String maintenanceReason;
 
     /**
      * Flag to display SPM stop command failure in audit log
@@ -18,6 +19,11 @@ public class SetVdsStatusVDSCommandParameters extends VdsIdVDSCommandParametersB
         _status = status;
         nonOperationalReason = NonOperationalReason.NONE;
         stopSpmFailureLogged = false;
+    }
+
+    public SetVdsStatusVDSCommandParameters(Guid vdsId, VDSStatus status, String maintenanceReason) {
+        this(vdsId, status);
+        this.maintenanceReason = maintenanceReason;
     }
 
     public SetVdsStatusVDSCommandParameters(Guid vdsId, VDSStatus status, NonOperationalReason nonOperationalReason) {
@@ -51,12 +57,21 @@ public class SetVdsStatusVDSCommandParameters extends VdsIdVDSCommandParametersB
         this.stopSpmFailureLogged = stopSpmFailureLogged;
     }
 
+    public String getMaintenanceReason() {
+        return maintenanceReason;
+    }
+
+    public void setMaintenanceReason(String maintenanceReason) {
+        this.maintenanceReason = maintenanceReason;
+    }
+
     @Override
     public String toString() {
-        return String.format("%s, status=%s, nonOperationalReason=%s, stopSpmFailureLogged=%s",
+        return String.format("%s, status=%s, nonOperationalReason=%s, stopSpmFailureLogged=%s, maintenanceReason=%s",
                 super.toString(),
                 getStatus(),
                 getNonOperationalReason(),
-                isStopSpmFailureLogged());
+                isStopSpmFailureLogged(),
+                getMaintenanceReason());
     }
 }

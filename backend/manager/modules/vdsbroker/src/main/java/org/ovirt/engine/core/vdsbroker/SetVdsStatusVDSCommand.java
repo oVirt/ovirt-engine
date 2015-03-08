@@ -73,5 +73,6 @@ public class SetVdsStatusVDSCommand<P extends SetVdsStatusVDSCommandParameters> 
 
     private void updateVdsFromParameters(SetVdsStatusVDSCommandParameters parameters, VDS vds) {
         vds.getDynamicData().setNonOperationalReason(parameters.getNonOperationalReason());
+        vds.getDynamicData().setMaintenanceReason(parameters.getMaintenanceReason());
     }
 }

@@ -710,6 +710,8 @@ public class HostMonitoring {
     private void moveVDSToMaintenanceIfNeeded() {
         if (vds.getStatus() == VDSStatus.PreparingForMaintenance) {
             if (monitoringStrategy.canMoveToMaintenance(vds)) {
+                VdsDynamic dbVds = getDbFacade().getVdsDynamicDao().get(vds.getId());
+                vds.setMaintenanceReason(dbVds.getMaintenanceReason());
                 vdsManager.setStatus(VDSStatus.Maintenance, vds);
                 saveVdsDynamic = true;
                 saveVdsStatistics = true;

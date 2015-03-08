@@ -101,7 +101,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
         if (vds.getStatus() != VDSStatus.PreparingForMaintenance && vds.getStatus() != VDSStatus.NonResponsive
                 && vds.getStatus() != VDSStatus.Down) {
             SetVdsStatusVDSCommandParameters params =
-                    new SetVdsStatusVDSCommandParameters(vds.getId(), VDSStatus.PreparingForMaintenance);
+                    new SetVdsStatusVDSCommandParameters(vds.getId(), VDSStatus.PreparingForMaintenance, getParameters().getReason());
             params.setStopSpmFailureLogged(true);
             result = runVdsCommand(VDSCommandType.SetVdsStatus, params).getSucceeded();
         }

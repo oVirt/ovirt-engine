@@ -20,9 +20,16 @@ public class MaintenanceNumberOfVdssParameters extends VdcActionParametersBase {
      */
     private boolean keepPolicyPMEnabled = false;
 
+    private String reason;
+
     public MaintenanceNumberOfVdssParameters(List<Guid> vdsIdList, boolean isInternal) {
+        this(vdsIdList, isInternal, "");
+    }
+
+    public MaintenanceNumberOfVdssParameters(List<Guid> vdsIdList, boolean isInternal, String reason) {
         _vdsIdList = vdsIdList;
         _isInternal = isInternal;
+        this.reason = reason;
     }
 
     public MaintenanceNumberOfVdssParameters(List<Guid> vdsIdList, boolean isInternal, boolean keepPolicyPMEnabled) {
@@ -48,6 +55,14 @@ public class MaintenanceNumberOfVdssParameters extends VdcActionParametersBase {
 
     public void setKeepPolicyPMEnabled(boolean _keepPolicyPMEnabled) {
         this.keepPolicyPMEnabled = _keepPolicyPMEnabled;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String value) {
+        reason = value;
     }
 
     public MaintenanceNumberOfVdssParameters() {
