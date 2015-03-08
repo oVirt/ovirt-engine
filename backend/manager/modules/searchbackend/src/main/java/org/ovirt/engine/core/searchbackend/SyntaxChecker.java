@@ -923,11 +923,9 @@ public class SyntaxChecker implements ISyntaxChecker {
                         "SELECT * FROM %1$s WHERE ( %2$s IN (%3$s)",
                                 mSearchObjectAC.getRelatedTableName(searchObjStr, false),
                                 primeryKey,
-                                getInnerQuery(tableName, primeryKey, fromStatement,
-                                wherePhrase));
+                                getInnerQuery(tableName, primeryKey, fromStatement, wherePhrase, sortExpr));
             } else {
-                inQuery = "(" + getInnerQuery(tableName, "*", fromStatement,
-                        wherePhrase);
+                inQuery = "(" + getInnerQuery(tableName, "*", fromStatement, wherePhrase, sortExpr);
             }
             if (syntax.getSearchFrom() > 0) {
                 inQuery = StringFormat.format("%1$s and  %2$s >  %3$s", inQuery, primeryKey, syntax.getSearchFrom());
@@ -948,9 +946,16 @@ public class SyntaxChecker implements ISyntaxChecker {
         return retval;
     }
 
-    private String getInnerQuery(String tableName, String primeryKey, String fromStatement, StringBuilder wherePhrase) {
-        return StringFormat.format("SELECT distinct %1$s.%2$s FROM %3$s %4$s", tableName, primeryKey, fromStatement,
-                wherePhrase);
+    private String getInnerQuery(String tableName, String primeryKey, String fromStatement, StringBuilder wherePhrase, StringBuilder sortExpr) {
+        // prevent using distinct when the sort expression has a function call since when distinct is used it is performed first and sorting
+        // is done on the result, so all fields in the sort clause should appear in the result set after distinct is applied
+
+        if (sortExpr.indexOf("(") > 0) {
+            return StringFormat.format("SELECT %1$s.%2$s FROM %3$s %4$s", tableName, primeryKey, fromStatement, wherePhrase);
+        }
+        else {
+            return StringFormat.format("SELECT distinct %1$s.%2$s FROM %3$s %4$s", tableName, primeryKey, fromStatement, wherePhrase);
+        }
     }
 
     protected String getPagePhrase(SyntaxContainer syntax, String pageNumber) {

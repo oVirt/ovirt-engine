@@ -185,6 +185,10 @@ public class SyntaxCheckerTest {
         // Used to validate that searching values not in fields search all fields
         testValidSql("Vm: mac=00:1a:4a:d4:53:94",
                 "SELECT * FROM (SELECT * FROM vms WHERE ( vm_guid IN (SELECT distinct vms_with_tags.vm_guid FROM  vms_with_tags   WHERE  (  vms_with_tags.description LIKE '%mac=00:1a:4a:d4:53:94%' OR  vms_with_tags.free_text_comment LIKE '%mac=00:1a:4a:d4:53:94%' OR  vms_with_tags.guest_cur_user_name LIKE '%mac=00:1a:4a:d4:53:94%' OR  vms_with_tags.quota_name LIKE '%mac=00:1a:4a:d4:53:94%' OR  vms_with_tags.run_on_vds_name LIKE '%mac=00:1a:4a:d4:53:94%' OR  vms_with_tags.storage_pool_name LIKE '%mac=00:1a:4a:d4:53:94%' OR  vms_with_tags.tag_name LIKE '%mac=00:1a:4a:d4:53:94%' OR  vms_with_tags.vds_group_name LIKE '%mac=00:1a:4a:d4:53:94%' OR  vms_with_tags.vm_fqdn LIKE '%mac=00:1a:4a:d4:53:94%' OR  vms_with_tags.vm_host LIKE '%mac=00:1a:4a:d4:53:94%' OR  vms_with_tags.vm_ip LIKE '%mac=00:1a:4a:d4:53:94%' OR  vms_with_tags.vm_name LIKE '%mac=00:1a:4a:d4:53:94%' OR  vms_with_tags.vm_pool_name LIKE '%mac=00:1a:4a:d4:53:94%' ) ))  ORDER BY vm_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+        // Testing that in case that function is used in the ORDER BY clause then no DISTINCT is generated
+        testValidSql("Vms: SORTBY IP DESC",
+                "SELECT * FROM ((SELECT vms.* FROM  vms  )  ORDER BY fn_get_comparable_ip_list(vm_ip) DESC NULLS LAST,vm_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+
     }
 
     @Test
