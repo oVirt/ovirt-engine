@@ -138,25 +138,24 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
 
     @Override
     protected boolean canDoAction() {
-        boolean retValue = super.canDoAction();
-        if (retValue) {
-            for (DiskImage dit : getVmTemplate().getDiskTemplateMap().values()) {
-                retValue =
-                        ImagesHandler.checkImageConfiguration(destStorages.get(diskInfoDestinationMap.get(dit.getId()).getStorageIds().get(0))
-                                .getStorageStaticData(),
-                                diskInfoDestinationMap.get(dit.getId()),
-                                getReturnValue().getCanDoActionMessages());
-                if (!retValue) {
-                    break;
-                }
-            }
+        if (!super.canDoAction()) {
+            return false;
+        }
 
-            if (getParameters().getVm().isUseLatestVersion()) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_USE_LATEST_WITH_CLONE);
+        for (DiskImage dit : getVmTemplate().getDiskTemplateMap().values()) {
+            if (!ImagesHandler.checkImageConfiguration(destStorages.get(diskInfoDestinationMap.get(dit.getId()).getStorageIds().get(0))
+                    .getStorageStaticData(),
+                    diskInfoDestinationMap.get(dit.getId()),
+                    getReturnValue().getCanDoActionMessages())) {
+                return false;
             }
         }
 
-        return retValue;
+        if (getParameters().getVm().isUseLatestVersion()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_USE_LATEST_WITH_CLONE);
+        }
+
+        return true;
     }
 
     private Set<GraphicsType> getEntityGraphicsTypes(Guid id) {
