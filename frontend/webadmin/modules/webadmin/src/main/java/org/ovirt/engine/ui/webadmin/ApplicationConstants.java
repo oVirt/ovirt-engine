@@ -190,6 +190,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Enable to set VM maintenance reason")
     String clusterPolicyEnableReasonLabel();
 
+    @DefaultStringValue("Enable to set Host maintenance reason")
+    String clusterPolicyEnableHostMaintenanceReasonLabel();
+
     @DefaultStringValue("KSM control")
     String ksmLabelTitle();
 

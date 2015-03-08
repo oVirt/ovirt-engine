@@ -702,6 +702,16 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         this.enableOptionalReason = value;
     }
 
+    private EntityModel<Boolean> enableHostMaintenanceReason;
+
+    public EntityModel<Boolean> getEnableHostMaintenanceReason() {
+        return enableHostMaintenanceReason;
+    }
+
+    public void setEnableHostMaintenanceReason(EntityModel<Boolean> value) {
+        this.enableHostMaintenanceReason = value;
+    }
+
     private EntityModel<Boolean> privateEnableTrustedService;
 
     private EntityModel<Boolean> privateEnableHaReservation;
@@ -849,6 +859,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         setEnableTrustedService(new EntityModel<Boolean>(false));
         setEnableHaReservation(new EntityModel<Boolean>(false));
         setEnableOptionalReason(new EntityModel<Boolean>(false));
+        setEnableHostMaintenanceReason(new EntityModel<Boolean>(false));
         setAllowClusterWithVirtGlusterEnabled(true);
         AsyncDataProvider.getInstance().getAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
             @Override

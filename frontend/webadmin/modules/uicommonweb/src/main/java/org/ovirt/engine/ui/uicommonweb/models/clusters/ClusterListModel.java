@@ -370,6 +370,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         clusterModel.getEnableTrustedService().setEntity(cluster.supportsTrustedService());
         clusterModel.getEnableHaReservation().setEntity(cluster.supportsHaReservation());
         clusterModel.getEnableOptionalReason().setEntity(cluster.isOptionalReasonRequired());
+        clusterModel.getEnableHostMaintenanceReason().setEntity(cluster.isMaintenanceReasonRequired());
         setWindow(clusterModel);
         clusterModel.setTitle(ConstantsManager.getInstance().getConstants().editClusterTitle());
         clusterModel.setHelpTag(HelpTag.edit_cluster);
@@ -690,6 +691,7 @@ public class ClusterListModel<E> extends ListWithDetailsAndReportsModel<E, VDSGr
         cluster.setTrustedService(model.getEnableTrustedService().getEntity());
         cluster.setHaReservation(model.getEnableHaReservation().getEntity());
         cluster.setOptionalReasonRequired(model.getEnableOptionalReason().getEntity());
+        cluster.setMaintenanceReasonRequired(model.getEnableHostMaintenanceReason().getEntity());
         cluster.setClusterPolicyId(model.getClusterPolicy().getSelectedItem().getId());
         cluster.setClusterPolicyProperties(KeyValueModel.convertProperties(model.getCustomPropertySheet().serialize()));
         if (model.getOptimizeForSpeed().getEntity()) {

@@ -1339,6 +1339,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         cluster.setVirtService(model.getEnableOvirtService().getEntity());
         cluster.setGlusterService(model.getEnableGlusterService().getEntity());
         cluster.setOptionalReasonRequired(model.getEnableOptionalReason().getEntity());
+        cluster.setMaintenanceReasonRequired(model.getEnableHostMaintenanceReason().getEntity());
         if (model.getClusterPolicy().getSelectedItem() != null) {
             ClusterPolicy selectedPolicy = model.getClusterPolicy().getSelectedItem();
             cluster.setClusterPolicyId(selectedPolicy.getId());

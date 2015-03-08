@@ -178,6 +178,11 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @WithElementId
     EntityModelCheckBoxEditor enableOptionalReasonEditor;
 
+    @UiField(provided = true)
+    @Path(value = "enableHostMaintenanceReason.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor enableHostMaintenanceReasonEditor;
+
     @UiField
     @Ignore
     Label rngLabel;
@@ -439,6 +444,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         enableTrustedServiceEditor.setContentWidgetContainerStyleName(style.fullWidth());
         enableHaReservationEditor.setContentWidgetContainerStyleName(style.fullWidth());
         enableOptionalReasonEditor.setContentWidgetContainerStyleName(style.fullWidth());
+        enableHostMaintenanceReasonEditor.setContentWidgetContainerStyleName(style.fullWidth());
     }
 
     private void localize(ApplicationConstants constants) {
@@ -486,6 +492,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         enableTrustedServiceEditor.setLabel(constants.clusterPolicyEnableTrustedServiceLabel());
         enableHaReservationEditor.setLabel(constants.clusterPolicyEnableHaReservationLabel());
         enableOptionalReasonEditor.setLabel(constants.clusterPolicyEnableReasonLabel());
+        enableHostMaintenanceReasonEditor.setLabel(constants.clusterPolicyEnableHostMaintenanceReasonLabel());
         clusterPolicyEditor.setLabel(constants.clusterPolicySelectPolicyLabel());
 
         enableKsm.setLabel(constants.enableKsmLabel());
@@ -589,6 +596,8 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         enableHaReservationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         enableOptionalReasonEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+
+        enableHostMaintenanceReasonEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         enableKsm = new EntityModelCheckBoxEditor(Align.RIGHT);
         enableKsm.getContentWidgetContainer().setWidth("350px"); //$NON-NLS-1$
