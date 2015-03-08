@@ -1,18 +1,19 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import com.google.gwt.resources.client.ImageResource;
-import org.ovirt.engine.core.common.businessentities.Reasoned;
 
-public class ReasonColumn<T extends Reasoned> extends AbstractWebAdminImageResourceColumn<T> {
+public abstract class ReasonColumn<T> extends AbstractWebAdminImageResourceColumn<T> {
 
     @Override
     public ImageResource getValue(T value) {
-        setTitle(value.getStopReason());
-        if (value.getStopReason() != null && !value.getStopReason().trim().isEmpty()) {
+        setTitle(getReason(value));
+        if (getReason(value) != null && !getReason(value).trim().isEmpty()) {
             return getApplicationResources().commentImage();
         }
         return null;
     }
+
+    protected abstract String getReason(T value);
 
     @Override
     public ImageResource getDefaultImage() {

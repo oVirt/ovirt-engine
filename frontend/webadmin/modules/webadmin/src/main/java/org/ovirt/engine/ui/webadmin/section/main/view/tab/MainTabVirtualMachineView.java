@@ -200,7 +200,14 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
         };
 
-        ReasonColumn<VM> reasonColumn = new ReasonColumn<VM>();
+        ReasonColumn<VM> reasonColumn = new ReasonColumn<VM>() {
+
+            @Override
+            protected String getReason(VM value) {
+                return value.getStopReason();
+            }
+
+        };
 
         CellWithElementId<VM> compositeCell = new StatusCompositeCellWithElementId(
                 new ArrayList<HasCell<VM, ?>>(Arrays.asList(

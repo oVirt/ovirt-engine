@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,7 +15,10 @@ import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
+import org.ovirt.engine.ui.common.widget.table.cell.CellWithElementId;
+import org.ovirt.engine.ui.common.widget.table.cell.StatusCompositeCellWithElementId;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractSortableColumnWithElementId;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -31,11 +36,13 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetails
 import org.ovirt.engine.ui.webadmin.uicommon.ReportActionsHelper;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractPercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractPercentColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.ReasonColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmCountColumn;
 
+import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
@@ -143,8 +150,30 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return object.getStatus();
             }
         };
-        statusColumn.makeSortable(VdsConditionFieldAutoCompleter.STATUS);
-        getTable().addColumn(statusColumn, constants.statusHost(), "100px"); //$NON-NLS-1$
+
+        ReasonColumn<VDS> reasonColumn = new ReasonColumn<VDS>() {
+
+            @Override
+            protected String getReason(VDS value) {
+                return value.getMaintenanceReason();
+            }
+
+        };
+
+        CellWithElementId<VDS> compositeCell = new StatusCompositeCellWithElementId(
+                new ArrayList<HasCell<VDS, ?>>(Arrays.asList(
+                        statusColumn,
+                        reasonColumn)));
+
+        AbstractSortableColumnWithElementId<VDS, VDS> statusTextColumn =
+                new AbstractSortableColumnWithElementId<VDS, VDS>(compositeCell) {
+                    @Override
+                    public VDS getValue(VDS object) {
+                        return object;
+                    }
+                };
+        statusTextColumn.makeSortable(VdsConditionFieldAutoCompleter.STATUS);
+        getTable().addColumn(statusTextColumn, constants.statusHost(), "100px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
             VmCountColumn vmCountColumn = new VmCountColumn();
