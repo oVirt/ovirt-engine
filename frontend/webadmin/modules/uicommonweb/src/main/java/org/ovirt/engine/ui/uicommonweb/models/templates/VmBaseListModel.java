@@ -281,7 +281,6 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
             VmType vmtype,
             SystemTreeItemModel systemTreeItemModel,
             List<UICommand> uiCommands) {
-        setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newVmTitle());
         model.setHelpTag(HelpTag.new_vm);
         model.setHashName("new_vm"); //$NON-NLS-1$
