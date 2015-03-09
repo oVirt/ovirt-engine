@@ -3,8 +3,10 @@ package org.ovirt.engine.core.vdsbroker.gluster;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterSnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -23,10 +25,10 @@ public final class GlusterVolumeSnapshotInfoReturnForXmlRpc extends StatusReturn
     private static final String SNAPSHOT_LIST = "snapshotList";
     private static final String SNAPSHOTS = "snapshots";
     private static final String NAME = "name";
-    private static final String DESCRIPTION = "snapDescription";
+    private static final String DESCRIPTION = "description";
     private static final String CREATETIME = "createTime";
-    private static final String SNAPSHOT_UUID = "snapshotUuid";
-    private static final String SNAPSHOT_NAME = "snapshotName";
+    private static final String EPOCH_TIME = "epochTime";
+    private static final String SNAPSHOT_ID = "id";
     private static final String SNAP_VOLUME_STATUS = "snapVolumeStatus";
 
     private StatusForXmlRpc status;
@@ -62,13 +64,19 @@ public final class GlusterVolumeSnapshotInfoReturnForXmlRpc extends StatusReturn
                 GlusterVolumeSnapshotEntity newSnapshot = new GlusterVolumeSnapshotEntity();
                 newSnapshot.setClusterId(clusterId);
                 newSnapshot.setVolumeId(volumeEntity.getId());
-                newSnapshot.setSnapshotId(Guid.createGuidFromString((String) individualSnapshot.get(SNAPSHOT_UUID)));
-                newSnapshot.setSnapshotName((String) individualSnapshot.get(SNAPSHOT_NAME));
+                newSnapshot.setSnapshotId(Guid.createGuidFromString((String) individualSnapshot.get(SNAPSHOT_ID)));
+                newSnapshot.setSnapshotName((String) individualSnapshot.get(NAME));
                 newSnapshot.setDescription((String) individualSnapshot.get(DESCRIPTION));
                 newSnapshot.setStatus(GlusterSnapshotStatus.from((String) individualSnapshot.get(SNAP_VOLUME_STATUS)));
                 try {
-                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    newSnapshot.setCreatedAt(df.parse((String) individualSnapshot.get(CREATETIME)));
+                    Map<String, Object> createTimeDetail = (Map<String, Object>) individualSnapshot.get(CREATETIME);
+                    long millis = ((Integer) createTimeDetail.get(EPOCH_TIME)).intValue() * 1000L;
+                    Date createDate = new Date(millis);
+                    // Convert to UTC
+                    DateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+                    format.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
+                    String formattedCreateDate = format.format(createDate);
+                    newSnapshot.setCreatedAt(new Date(formattedCreateDate));
                 } catch (Exception e) {
                     log.info("Could not populate creation time for snapshot '{}' of volume '{}' on cluster '{}': {}",
                             (String) snapshotInfo.get(NAME),

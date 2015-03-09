@@ -852,9 +852,6 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Gluster snapshot info failed")
     String GlusterSnapshotInfoFailedException();
 
-    @DefaultStringValue("Failed to delete the snapshots for the gluster volume")
-    String GlusterSnapshotDeleteVolumeFailedException();
-
     @DefaultStringValue("Failed to delete gluster volume snapshot")
     String GlusterSnapshotDeleteFailedException();
 
@@ -870,6 +867,12 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Failed to create snapshot for gluster volume")
     String GlusterSnapshotCreateFailedException();
 
-    @DefaultStringValue("Failed to set the Gluster snapshot configuration")
+    @DefaultStringValue("Failed to configure gluster volume snapshot")
     String GlusterSnapshotConfigFailedException();
+
+    @DefaultStringValue("Failed to set the gluster volume snapshot configuration")
+    String GlusterSnapshotConfigSetFailedException();
+
+    @DefaultStringValue("Failed to get the gluster volume snapshot configuration")
+    String GlusterSnapshotConfigGetFailedException();
 }

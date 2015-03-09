@@ -239,7 +239,7 @@ public class GlusterSnapshotSyncJobTest {
         snap1.setCreatedAt(existingSnapsCreateDate);
         snap1.setDescription("");
         snap1.setSnapshotName(existingSnapshotNames[0]);
-        snap1.setStatus(GlusterSnapshotStatus.STARTED);
+        snap1.setStatus(GlusterSnapshotStatus.ACTIVATED);
         snap1.setVolumeId(VOLUME_ID_1);
         snapsList.add(snap1);
 
@@ -249,7 +249,7 @@ public class GlusterSnapshotSyncJobTest {
         snap2.setCreatedAt(existingSnapsCreateDate);
         snap2.setDescription("");
         snap2.setSnapshotName(existingSnapshotNames[1]);
-        snap2.setStatus(GlusterSnapshotStatus.STARTED);
+        snap2.setStatus(GlusterSnapshotStatus.ACTIVATED);
         snap2.setVolumeId(VOLUME_ID_1);
         snapsList.add(snap2);
 
@@ -306,7 +306,7 @@ public class GlusterSnapshotSyncJobTest {
         snap1.setDescription("");
         snap1.setId(existingSnapshotIds[0]);
         snap1.setSnapshotName(existingSnapshotNames[0]);
-        snap1.setStatus(GlusterSnapshotStatus.STOPPED);
+        snap1.setStatus(GlusterSnapshotStatus.DEACTIVATED);
         snap1.setVolumeId(VOLUME_ID_1);
         snapshots.add(snap1);
 
@@ -316,7 +316,7 @@ public class GlusterSnapshotSyncJobTest {
         snap2.setDescription("");
         snap2.setId(newSnapshotId);
         snap2.setSnapshotName(newSnapshotName);
-        snap2.setStatus(GlusterSnapshotStatus.STARTED);
+        snap2.setStatus(GlusterSnapshotStatus.ACTIVATED);
         snap2.setVolumeId(VOLUME_ID_1);
         snapshots.add(snap2);
 

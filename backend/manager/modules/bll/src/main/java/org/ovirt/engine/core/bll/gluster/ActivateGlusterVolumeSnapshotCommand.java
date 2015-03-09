@@ -31,7 +31,7 @@ public class ActivateGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotC
         if (!getSucceeded()) {
             handleVdsError(AuditLogType.GLUSTER_VOLUME_SNAPSHOT_ACTIVATE_FAILED, retVal.getVdsError().getMessage());
         } else {
-            getGlusterVolumeSnapshotDao().updateSnapshotStatus(getSnapshot().getId(), GlusterSnapshotStatus.STARTED);
+            getGlusterVolumeSnapshotDao().updateSnapshotStatus(getSnapshot().getId(), GlusterSnapshotStatus.ACTIVATED);
         }
     }
 
@@ -41,7 +41,7 @@ public class ActivateGlusterVolumeSnapshotCommand extends GlusterVolumeSnapshotC
             return false;
         }
 
-        if (getSnapshot().getStatus() == GlusterSnapshotStatus.STARTED) {
+        if (getSnapshot().getStatus() == GlusterSnapshotStatus.ACTIVATED) {
             failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SNAPSHOT_ALREADY_ACTIVATED,
                     getSnapshot().getSnapshotName());
         }
