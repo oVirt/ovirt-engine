@@ -1898,7 +1898,13 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             getLockManager().releaseLock(context.getLock());
             log.info("Lock freed to object '{}'", context.getLock());
             context.withLock(null);
+            // free other locks here to guarantee they will be freed only once
+            freeCustomLocks();
         }
+    }
+
+    /** hook for subclasses that hold additional custom locks */
+    protected void freeCustomLocks() {
     }
 
     protected LockManager getLockManager() {

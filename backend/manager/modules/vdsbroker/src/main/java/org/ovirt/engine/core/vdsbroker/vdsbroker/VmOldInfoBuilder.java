@@ -281,4 +281,9 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
     protected void buildVmNumaProperties() {
         // Not supported in old code
     }
+
+    @Override
+    protected void buildVmHostDevices() {
+        // Not supported in old code
+    }
 }

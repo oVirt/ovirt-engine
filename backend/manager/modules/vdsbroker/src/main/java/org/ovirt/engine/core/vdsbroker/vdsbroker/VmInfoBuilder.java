@@ -1214,4 +1214,21 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         }
     }
 
+    @Override
+    protected void buildVmHostDevices() {
+        List<VmDevice> vmDevices =
+                DbFacade.getInstance()
+                        .getVmDeviceDao()
+                        .getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.HOSTDEV);
+
+        for (VmDevice vmDevice : vmDevices) {
+            Map<String, Object> struct = new HashMap<>();
+            struct.put(VdsProperties.Type, VmDeviceType.HOST_DEVICE.getName());
+            struct.put(VdsProperties.Device, vmDevice.getDevice());
+            struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
+            struct.put(VdsProperties.DeviceId, vmDevice.getId().getDeviceId().toString());
+            addAddress(vmDevice, struct);
+            devices.add(struct);
+        }
+    }
 }

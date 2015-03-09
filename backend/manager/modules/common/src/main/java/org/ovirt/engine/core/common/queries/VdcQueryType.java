@@ -58,6 +58,8 @@ public enum VdcQueryType implements Serializable {
     GetFenceAgentsByVdsId,
     GetHostDevicesByHostId,
     GetHostDeviceByHostIdAndDeviceName,
+    GetExtendedHostDevicesByHostId,
+    GetExtendedVmHostDevicesByVmId,
     GetErrataForHost,
     GetErratumByIdForHost,
     GetErrataForSystem,
@@ -397,6 +399,9 @@ public enum VdcQueryType implements Serializable {
     GetConsoleDevices(VdcQueryAuthType.User),
     GetRngDevice(VdcQueryAuthType.User),
     GetGraphicsDevices(VdcQueryAuthType.User),
+
+    GetVmHostDevices,
+    GetVmHostDeviceByVmIdAndDeviceName,
 
     ConfigureConsoleOptions(VdcQueryAuthType.User),
     GetConsoleDescriptorFile(VdcQueryAuthType.User),

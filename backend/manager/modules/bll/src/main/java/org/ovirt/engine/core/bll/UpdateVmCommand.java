@@ -171,11 +171,19 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             updateWatchdog();
             updateRngDevice();
             updateGraphicsDevice();
+            updateVmHostDevices();
         }
         VmHandler.updateVmInitToDB(getParameters().getVmStaticData());
 
         checkTrustedService();
         setSucceeded(true);
+    }
+
+    private void updateVmHostDevices() {
+        if (isDedicatedVmForVdsChanged()) {
+            log.info("Pinned host changed for VM: {}. Dropping configured host devices.", getVm().getName());
+            getVmDeviceDao().removeVmDevicesByVmIdAndType(getVmId(), VmDeviceGeneralType.HOSTDEV);
+        }
     }
 
     private boolean updateRngDevice() {
@@ -764,17 +772,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
 
             // host-specific parameters can be changed by administration role only
-            final boolean isDedicatedVmForVdsChanged =
-                    !(getVm().getDedicatedVmForVds() == null ?
-                            getParameters().getVmStaticData().getDedicatedVmForVds() == null :
-                            getVm().getDedicatedVmForVds().equals(getParameters().getVmStaticData().getDedicatedVmForVds()));
-
-            final boolean isCpuPinningChanged =
-                    !(getVm().getCpuPinning() == null ?
-                            getParameters().getVmStaticData().getCpuPinning() == null :
-                            getVm().getCpuPinning().equals(getParameters().getVmStaticData().getCpuPinning()));
-
-            if (isDedicatedVmForVdsChanged || isCpuPinningChanged) {
+            if (isDedicatedVmForVdsChanged() || isCpuPinningChanged()) {
                 permissionList.add(
                         new PermissionSubject(getParameters().getVmId(),
                                 VdcObjectType.VM,
@@ -783,6 +781,18 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         return permissionList;
+    }
+
+    private boolean isDedicatedVmForVdsChanged() {
+        return !(getVm().getDedicatedVmForVds() == null ?
+                getParameters().getVmStaticData().getDedicatedVmForVds() == null :
+                getVm().getDedicatedVmForVds().equals(getParameters().getVmStaticData().getDedicatedVmForVds()));
+    }
+
+    private boolean isCpuPinningChanged() {
+        return !(getVm().getCpuPinning() == null ?
+                getParameters().getVmStaticData().getCpuPinning() == null :
+                getVm().getCpuPinning().equals(getParameters().getVmStaticData().getCpuPinning()));
     }
 
     @Override

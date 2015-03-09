@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
@@ -76,6 +77,8 @@ import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+
 @NonTransactiveCommandAttribute
 public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         implements QuotaVdsDependent {
@@ -103,11 +106,15 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private boolean memoryFromSnapshotUsed;
 
     private Guid cachedActiveIsoDomainId;
+    private boolean needsHostDevices = false;
 
     public static final String ISO_PREFIX = "iso://";
     public static final String STATELESS_SNAPSHOT_DESCRIPTION = "stateless snapshot";
 
     private static final Logger log = LoggerFactory.getLogger(RunVmCommand.class);
+
+    @Inject
+    private HostDeviceManager hostDeviceManager;
 
     protected RunVmCommand(Guid commandId) {
         super(commandId);
@@ -124,6 +131,16 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         // Load payload from Database (only if none was sent via the parameters)
         loadPayloadDevice();
 
+    }
+
+    @Override
+    protected void postConstruct() {
+        super.postConstruct();
+
+        if (getVm() != null) {
+            needsHostDevices = hostDeviceManager.checkVmNeedsHostDevices(getVm());
+        }
+        acquireHostDevicesLock();
     }
 
     @Override
@@ -222,6 +239,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 if (connectLunDisks(getVdsId())) {
                     status = createVm();
                     ExecutionHandler.setAsyncJob(getExecutionContext(), true);
+                    markHostDevicesAsUsed();
                 }
             } catch(VdcBLLException e) {
                 // if the returned exception is such that shoudn't trigger the re-run process,
@@ -261,6 +279,28 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
     }
 
+    private void markHostDevicesAsUsed() {
+        if (needsHostDevices) {
+            hostDeviceManager.allocateVmHostDevices(getVmId());
+        }
+    }
+
+    private void acquireHostDevicesLock() {
+        if (needsHostDevices) {
+            hostDeviceManager.acquireHostDevicesLock(getVm().getDedicatedVmForVds());
+        }
+    }
+
+    private void releaseHostDevicesLock() {
+        if (needsHostDevices) {
+            hostDeviceManager.releaseHostDevicesLock(getVm().getDedicatedVmForVds());
+        }
+    }
+
+    @Override
+    protected void freeCustomLocks() {
+        releaseHostDevicesLock();
+    }
 
     @Override
     protected void executeVmCommand() {
@@ -272,6 +312,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     @Override
     public void rerun() {
         setFlow(null);
+        // re-acquire the host device lock (if needed) as the canDoAction already expects this
+        // lock to be held (originally acquired in 'postConstruct'
+        acquireHostDevicesLock();
         super.rerun();
     }
 
@@ -906,6 +949,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                    getParameters().getVmPayload().getDeviceType() == VmDeviceType.CDROM) {
                return failCanDoAction(VdcBllMessages.VMPAYLOAD_CDROM_WITH_CLOUD_INIT);
            }
+        }
+
+        if (needsHostDevices && !hostDeviceManager.checkVmHostDeviceAvailability(getVm(), getVm().getDedicatedVmForVds())) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_HOST_DEVICE_NOT_AVAILABLE);
         }
 
         return true;

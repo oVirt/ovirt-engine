@@ -422,6 +422,10 @@ public enum VdcActionType {
     UpdateGraphicsDevice(2251, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
     RemoveGraphicsDevice(2252, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
 
+    // Vm Host Device CRUD
+    AddVmHostDevices(2350, ActionGroup.EDIT_ADMIN_VM_PROPERTIES, false, QuotaDependency.NONE),
+    RemoveVmHostDevices(2351, ActionGroup.EDIT_ADMIN_VM_PROPERTIES, false, QuotaDependency.NONE),
+
     // Audit Log
     RemoveAuditLogById(2100, false, QuotaDependency.NONE),
     ClearAllDismissedAuditLogs(2101, false, QuotaDependency.NONE),

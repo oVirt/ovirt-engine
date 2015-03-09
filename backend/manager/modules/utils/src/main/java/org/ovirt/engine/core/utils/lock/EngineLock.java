@@ -17,8 +17,12 @@ public class EngineLock implements AutoCloseable {
 
     }
 
-    public EngineLock(Map<String, Pair<String, String>> exclusiveLocks, Map<String, Pair<String, String>> sharedLocks) {
+    public EngineLock(Map<String, Pair<String, String>> exclusiveLocks) {
         this.exclusiveLocks = exclusiveLocks;
+    }
+
+    public EngineLock(Map<String, Pair<String, String>> exclusiveLocks, Map<String, Pair<String, String>> sharedLocks) {
+        this(exclusiveLocks);
         this.sharedLocks = sharedLocks;
     }
 

@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
@@ -31,11 +32,16 @@ import org.ovirt.engine.core.dao.VmPoolDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class ProcessDownVmCommand<T extends IdParameters> extends CommandBase<T> {
 
     private static final Logger log = LoggerFactory.getLogger(ProcessDownVmCommand.class);
+
+    @Inject
+    private HostDeviceManager hostDeviceManager;
 
     protected ProcessDownVmCommand(Guid commandId) {
         super(commandId);
@@ -71,7 +77,20 @@ public class ProcessDownVmCommand<T extends IdParameters> extends CommandBase<T>
         QuotaManager.getInstance().rollbackQuotaByVmId(getVmId());
         removeStatelessVmUnmanagedDevices();
 
+        releaseUsedHostDevices();
+
         applyNextRunConfiguration();
+    }
+
+    private void releaseUsedHostDevices() {
+        if (hostDeviceManager.checkVmNeedsHostDevices(getVm())) {
+            try {
+                hostDeviceManager.acquireHostDevicesLock(getVm().getDedicatedVmForVds());
+                hostDeviceManager.freeVmHostDevices(getVmId());
+            } finally {
+                hostDeviceManager.releaseHostDevicesLock(getVm().getDedicatedVmForVds());
+            }
+        }
     }
 
     private boolean detachUsers() {

@@ -3777,4 +3777,13 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("The engine server is not associated with any host provider.")
     String NO_HOST_PROVIDER_FOR_SYSTEM();
+
+    @DefaultStringValue("Cannot ${action} ${type}. VM must be pinned to a host.")
+    String ACTION_TYPE_FAILED_VM_NOT_PINNED_TO_HOST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. One or more of specified host devices not found.")
+    String ACTION_TYPE_FAILED_HOST_DEVICE_NOT_FOUND();
+
+    @DefaultStringValue("Cannot ${action} ${type}. One or more configured host devices are unavailable.")
+    String ACTION_TYPE_FAILED_HOST_DEVICE_NOT_AVAILABLE();
 }

@@ -179,6 +179,10 @@ public enum VmDeviceGeneralType {
                 type = WATCHDOG;
                 break;
 
+            case HOST_DEVICE:
+                type = HOSTDEV;
+                break;
+
             default:
                 // try to guess from String value
                 type = forValue(value.getName());

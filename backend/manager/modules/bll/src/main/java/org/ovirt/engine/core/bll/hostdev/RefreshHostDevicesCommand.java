@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.hostdev;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,16 +12,20 @@ import org.ovirt.engine.core.bll.RefreshHostInfoCommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.host.HostNicVfsConfigHelper;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
+import org.ovirt.engine.core.dao.HostDeviceDao;
+import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -34,7 +37,13 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
     private ResourceManager resourceManager;
 
     @Inject
-    private DbFacade dbFacade;
+    private HostDeviceDao hostDeviceDao;
+
+    @Inject
+    private VmDeviceDAO vmDeviceDao;
+
+    @Inject
+    private HostDeviceManager hostDeviceManager;
 
     @Inject
     private HostNicVfsConfigDao hostNicVfsConfigDao;
@@ -59,10 +68,12 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
         }
 
         List<HostDevice> fetchedDevices = (List<HostDevice>) vdsReturnValue.getReturnValue();
-        List<HostDevice> oldDevices = dbFacade.getHostDeviceDao().getHostDevicesByHostId(getVdsId());
+        List<HostDevice> oldDevices = hostDeviceDao.getHostDevicesByHostId(getVdsId());
+        List<VmDevice> vmDevices = vmDeviceDao.getVmDeviceByType(VmDeviceGeneralType.HOSTDEV);
 
-        Map<String, HostDevice> fetchedMap = groupDevicesByName(fetchedDevices);
-        final Map<String, HostDevice> oldMap = groupDevicesByName(oldDevices);
+        Map<String, HostDevice> fetchedMap = Entities.entitiesByName(fetchedDevices);
+        final Map<String, HostDevice> oldMap = Entities.entitiesByName(oldDevices);
+        Map<String, VmDevice> vmDeviceMap = Entities.vmDevicesByDevice(vmDevices);
 
         final List<HostDevice> newDevices = new ArrayList<>();
         final List<HostDevice> changedDevices = new ArrayList<>();
@@ -79,25 +90,40 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
         }
 
         final List<HostDevice> removedDevices = new ArrayList<>();
+        final List<VmDevice> removedVmDevices = new ArrayList<>();
         for (Map.Entry<String, HostDevice> entry : oldMap.entrySet()) {
-            if (!fetchedMap.containsKey(entry.getKey())) {
+            final String deviceName = entry.getKey();
+            if (!fetchedMap.containsKey(deviceName)) {
                 removedDevices.add(entry.getValue());
+
+                if (vmDeviceMap.containsKey(deviceName)) {
+                    VmDevice vmDevice = vmDeviceMap.get(deviceName);
+                    log.warn("Removing VM[{}]'s hostDevice[{}] because it no longer exists on host {}",
+                            vmDevice.getVmId(), deviceName, getVds());
+                    removedVmDevices.add(vmDevice);
+                }
             }
         }
 
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                dbFacade.getHostDeviceDao().saveAllInBatch(newDevices);
-                dbFacade.getHostDeviceDao().updateAllInBatch(changedDevices);
+        try {
+            hostDeviceManager.acquireHostDevicesLock(getVdsId());
+            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+                @Override
+                public Void runInTransaction() {
+                    hostDeviceDao.saveAllInBatch(newDevices);
+                    hostDeviceDao.updateAllInBatch(changedDevices);
 
-                handleHostNicVfsConfigUpdate(oldMap, newDevices, changedDevices, removedDevices);
+                    handleHostNicVfsConfigUpdate(oldMap, newDevices, changedDevices, removedDevices);
 
-                dbFacade.getHostDeviceDao().removeAllInBatch(removedDevices);
+                    hostDeviceDao.removeAllInBatch(removedDevices);
+                    vmDeviceDao.removeAllInBatch(removedVmDevices);
 
-                return null;
-            }
-        });
+                    return null;
+                }
+            });
+        } finally {
+            hostDeviceManager.releaseHostDevicesLock(getVdsId());
+        }
 
         setSucceeded(true);
     }
@@ -178,13 +204,5 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REFRESH);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST_DEVICES);
-    }
-
-    private static Map<String, HostDevice> groupDevicesByName(List<HostDevice> devices) {
-        Map<String, HostDevice> map = new HashMap<>();
-        for (HostDevice device : devices) {
-            map.put(device.getDeviceName(), device);
-        }
-        return map;
     }
 }

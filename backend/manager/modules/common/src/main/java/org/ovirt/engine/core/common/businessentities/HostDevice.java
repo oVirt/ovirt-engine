@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.compat.Guid;
 
-public class HostDevice implements BusinessEntity<HostDeviceId> {
+public class HostDevice extends IVdcQueryable implements BusinessEntity<HostDeviceId>, Nameable {
 
     private Guid hostId;
     private String deviceName;
@@ -19,6 +19,11 @@ public class HostDevice implements BusinessEntity<HostDeviceId> {
     private Integer totalVirtualFunctions;
     private String networkInterfaceName;
     private Guid vmId;
+
+    @Override
+    public Object getQueryableId() {
+        return getId();
+    }
 
     public Guid getHostId() {
         return hostId;
@@ -194,5 +199,10 @@ public class HostDevice implements BusinessEntity<HostDeviceId> {
                 .append("networkInterfaceName", networkInterfaceName)
                 .append("vmId", vmId)
                 .build();
+    }
+
+    @Override
+    public String getName() {
+        return getDeviceName();
     }
 }

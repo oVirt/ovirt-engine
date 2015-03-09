@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.queries.HostDeviceParameters;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.HostDeviceDao;
 
 import javax.inject.Inject;
 
@@ -13,11 +13,11 @@ public class GetHostDeviceByHostIdAndDeviceNameQuery<P extends HostDeviceParamet
     }
 
     @Inject
-    DbFacade dbFacade;
+    HostDeviceDao hostDeviceDao;
 
     @Override
     protected void executeQueryCommand() {
-        HostDevice hostDevice = dbFacade.getHostDeviceDao().getHostDeviceByHostIdAndDeviceName(getParameters().getHostId(), getParameters().getDeviceName());
+        HostDevice hostDevice = hostDeviceDao.getHostDeviceByHostIdAndDeviceName(getParameters().getHostId(), getParameters().getDeviceName());
         getQueryReturnValue().setReturnValue(hostDevice);
     }
 }
