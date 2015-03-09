@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# Copyright 2013 Red Hat
+# Copyright (C) 2013-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,24 +14,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-import sys
-import signal
+import config
 import gettext
 import json
+import os
+import signal
+import sys
 import urllib
-_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine')
-
 
 import websockify
+from ovirt_engine import configfile, service, ticket
 
 
-import config
-
-
-from ovirt_engine import configfile
-from ovirt_engine import service
-from ovirt_engine import ticket
+def _(m):
+    return gettext.dgettext(message=m, domain='ovirt-engine')
 
 
 class OvirtWebSocketProxy(websockify.WebSocketProxy):

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# Copyright 2014 Red Hat
+# Copyright (C) 2014-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,21 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import config
 import gettext
 import os
 import sys
 
+from ovirt_engine import configfile, service
 
-import config
 import db
 import listener
 
 
-from ovirt_engine import configfile
-from ovirt_engine import service
-
-
-_ = lambda m: gettext.dgettext(message=m, domain="ovirt-fence-kdump-listener")
+def _(m):
+    return gettext.dgettext(message=m, domain="ovirt-fence-kdump-listener")
 
 
 class Daemon(service.Daemon):

@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013-2014 Red Hat, Inc.
+# Copyright (C) 2013-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,19 +19,19 @@
 """Engine plugin."""
 
 
-import os
+import distutils.version
 import gettext
-_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
-
+import os
 
 from otopi import constants as otopicons
-from otopi import util
-from otopi import plugin
-import distutils.version
-
+from otopi import plugin, util
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import dialog
+
+
+def _(m):
+    return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
 @util.export

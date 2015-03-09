@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013-2014 Red Hat, Inc.
+# Copyright (C) 2013-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,15 +15,16 @@
 # limitations under the License.
 #
 
+import gettext
 import os
 import re
 import tempfile
-import gettext
-_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
+
+from otopi import base, util
 
 
-from otopi import base
-from otopi import util
+def _(m):
+    return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
 @util.export

@@ -16,17 +16,17 @@
 #
 
 
+import gettext
 import re
 import socket
-import gettext
-_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
-
-from otopi import util
-from otopi import base
-
+from otopi import base, util
 
 from ovirt_engine_setup import constants as osetupcons
+
+
+def _(m):
+    return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
 @util.export

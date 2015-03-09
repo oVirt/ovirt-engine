@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2014 Red Hat, Inc.
+# Copyright (C) 2014-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,19 +19,18 @@
 """Constants."""
 
 
-import os
 import gettext
-_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
-
+import os
 
 from otopi import util
 
-
-from ovirt_engine_setup.constants import osetupattrsclass
-from ovirt_engine_setup.constants import osetupattrs
-
+from ovirt_engine_setup.constants import osetupattrs, osetupattrsclass
 
 from . import config as wspconfig
+
+
+def _(m):
+    return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
 @util.export

@@ -19,22 +19,21 @@
 """Simple plugin."""
 
 
-import os
+import gettext
 import glob
 import hashlib
-import configparser
-import gettext
-_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
+import os
 
-
-from otopi import util
-from otopi import plugin
 from otopi import constants as otopicons
-from otopi import filetransaction
+from otopi import filetransaction, plugin, util
 
-
+import configparser
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import dialog
+
+
+def _(m):
+    return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
 @util.export

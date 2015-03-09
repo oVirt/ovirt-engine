@@ -1,5 +1,5 @@
 #
-# Copyright 2013 Red Hat
+# Copyright (C) 2013-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@
 
 
 import logging
-
 
 from . import util
 

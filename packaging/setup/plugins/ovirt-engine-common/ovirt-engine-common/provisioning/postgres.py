@@ -20,15 +20,14 @@
 
 
 import gettext
-_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
+
+from otopi import plugin, util
+
+from ovirt_engine_setup.engine_common import constants as oengcommcons
 
 
-from otopi import util
-from otopi import plugin
-
-
-from ovirt_engine_setup.engine_common \
-    import constants as oengcommcons
+def _(m):
+    return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
 @util.export

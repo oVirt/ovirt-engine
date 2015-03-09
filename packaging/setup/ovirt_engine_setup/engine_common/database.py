@@ -17,29 +17,24 @@
 
 
 import atexit
-import os
-import tempfile
 import datetime
-import socket
-import re
 import gettext
-_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
-
+import os
+import re
+import socket
+import tempfile
 
 import psycopg2
-
-
-from otopi import base
-from otopi import util
-
-
+from otopi import base, util
 from ovirt_engine import util as outil
 
-
-from ovirt_engine_setup import dialog
 from ovirt_engine_setup import util as osetuputil
-from ovirt_engine_setup.engine_common \
-    import constants as oengcommcons
+from ovirt_engine_setup import dialog
+from ovirt_engine_setup.engine_common import constants as oengcommcons
+
+
+def _(m):
+    return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
 @util.export

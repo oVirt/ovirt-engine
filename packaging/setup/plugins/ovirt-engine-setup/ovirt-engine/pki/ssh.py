@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,27 +19,22 @@
 """ssh plugin."""
 
 
-import re
 import base64
-import struct
 import gettext
-_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
+import re
+import struct
 
-
-from M2Crypto import X509
-from M2Crypto import EVP
-
-
-from otopi import util
-from otopi import plugin
+from M2Crypto import EVP, X509
 from otopi import constants as otopicons
-from otopi import filetransaction
-
+from otopi import filetransaction, plugin, util
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
-from ovirt_engine_setup.engine_common \
-    import constants as oengcommcons
+from ovirt_engine_setup.engine_common import constants as oengcommcons
+
+
+def _(m):
+    return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
 @util.export

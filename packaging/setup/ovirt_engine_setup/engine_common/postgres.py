@@ -17,27 +17,24 @@
 
 
 import datetime
+import gettext
 import os
 import platform
 import random
 import re
 import time
-import gettext
-_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
-
-from otopi import base
-from otopi import util
-from otopi import transaction
-from otopi import filetransaction
 from otopi import constants as otopicons
-
+from otopi import base, filetransaction, transaction, util
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup.engine_common \
-    import constants as oengcommcons
-from ovirt_engine_setup.engine_common import database
 from ovirt_engine_setup import util as osetuputil
+from ovirt_engine_setup.engine_common import constants as oengcommcons
+from ovirt_engine_setup.engine_common import database
+
+
+def _(m):
+    return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
 @util.export

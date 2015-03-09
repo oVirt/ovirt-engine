@@ -11,12 +11,10 @@ import re
 import sys
 
 
-if sys.version_info[0] < 3:
-    import ConfigParser
-    sys.modules['configparser'] = ConfigParser
-
-
-import configparser
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
 
 
 COMMAND_DIFF = 'diff'

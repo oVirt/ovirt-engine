@@ -1,5 +1,5 @@
 #
-# Copyright 2013 Red Hat
+# Copyright (C) 2013-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,14 +15,16 @@
 #
 
 
+import gettext
+import glob
 import os
 import re
-import glob
-import gettext
-_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine')
-
 
 from . import base
+
+
+def _(m):
+    return gettext.dgettext(message=m, domain='ovirt-engine')
 
 
 class ConfigFile(base.Base):

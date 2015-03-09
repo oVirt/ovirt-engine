@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2014 Red Hat, Inc.
+# Copyright (C) 2014-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,25 +16,20 @@
 #
 
 
+import gettext
 import os
 import tempfile
 import time
-import gettext
-_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
-
-from M2Crypto import X509
-from M2Crypto import EVP
-from M2Crypto import RSA
-
-
-from otopi import util
-from otopi import base
+from M2Crypto import EVP, RSA, X509
 from otopi import constants as otopicons
-from otopi import filetransaction
-
+from otopi import base, filetransaction, util
 
 from ovirt_engine_setup import constants as osetupcons
+
+
+def _(m):
+    return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
 @util.export

@@ -20,20 +20,17 @@
 
 
 import gettext
-_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
-
-from otopi import util
-from otopi import plugin
 from otopi import constants as otopicons
-from otopi import filetransaction
-
-
+from otopi import filetransaction, plugin, util
 from ovirt_engine import configfile
-
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
+
+
+def _(m):
+    return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
 @util.export

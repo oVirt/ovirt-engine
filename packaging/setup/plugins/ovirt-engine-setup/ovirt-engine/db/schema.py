@@ -19,22 +19,20 @@
 """Schema plugin."""
 
 
-import os
 import gettext
-_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
-
+import os
 
 from otopi import constants as otopicons
-from otopi import util
-from otopi import plugin
-from otopi import transaction
-
+from otopi import plugin, transaction, util
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
-from ovirt_engine_setup.engine_common \
-    import constants as oengcommcons
+from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.engine_common import database
+
+
+def _(m):
+    return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
 @util.export

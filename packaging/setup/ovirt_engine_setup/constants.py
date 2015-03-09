@@ -19,16 +19,17 @@
 """Constants."""
 
 
+import gettext
 import os
 import sys
-import gettext
-_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
-
 
 from otopi import util
 
-
 from . import config
+
+
+def _(m):
+    return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
 def osetupattrsclass(o):

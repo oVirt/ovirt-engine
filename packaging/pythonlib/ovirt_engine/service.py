@@ -1,5 +1,5 @@
 #
-# Copyright 2013-2014 Red Hat
+# Copyright (C) 2013-2015 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,28 +14,28 @@
 # limitations under the License.
 
 
+import contextlib
+import gettext
 import logging
 import logging.handlers
-import contextlib
 import optparse
 import os
+import resource
 import shutil
 import signal
 import socket
 import subprocess
 import sys
-import time
 import tempfile
-import resource
-import gettext
-_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine')
-
+import time
 
 import daemon
 
+from . import base, util
 
-from . import base
-from . import util
+
+def _(m):
+    return gettext.dgettext(message=m, domain='ovirt-engine')
 
 
 @util.export

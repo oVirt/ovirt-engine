@@ -19,16 +19,16 @@
 """Config plugin."""
 
 
-import os
 import gettext
-_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
+import os
 
-
-from otopi import util
-from otopi import plugin
-
+from otopi import plugin, util
 
 from ovirt_engine_setup.engine import constants as oenginecons
+
+
+def _(m):
+    return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
 @util.export
