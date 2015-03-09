@@ -102,6 +102,17 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetHostDevicesByHostIdAndIommuGroup(v_host_id UUID, v_iommu_group INTEGER)
+RETURNS SETOF host_device STABLE
+AS $procedure$
+BEGIN
+  RETURN QUERY
+  SELECT  *
+  FROM    host_device
+  WHERE   host_id = v_host_id AND iommu_group = v_iommu_group;
+END; $procedure$
+LANGUAGE plpgsql;
+
 CREATE OR REPLACE FUNCTION GetHostDeviceByHostIdAndDeviceName(v_host_id UUID, v_device_name VARCHAR(255))
 RETURNS SETOF host_device STABLE
 AS $procedure$
@@ -120,5 +131,65 @@ BEGIN
   RETURN QUERY
   SELECT  *
   FROM    host_device;
+END; $procedure$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetVmExtendedHostDevicesByVmId(v_vm_id UUID)
+RETURNS SETOF vm_host_device_view STABLE
+AS $procedure$
+BEGIN
+  RETURN QUERY
+  SELECT vm_host_device_view.*
+  FROM   vm_host_device_view
+  WHERE  vm_host_device_view.configured_vm_id = v_vm_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetExtendedHostDevicesByHostId(v_host_id UUID)
+RETURNS SETOF host_device_view STABLE
+AS $procedure$
+BEGIN
+  RETURN QUERY
+  SELECT host_device_view.*
+  FROM   host_device_view
+  WHERE  host_device_view.host_id = v_host_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION CheckVmHostDeviceAvailability(v_vm_id UUID, v_host_id UUID)
+RETURNS BOOLEAN STABLE
+AS $procedure$
+BEGIN
+  RETURN NOT EXISTS(
+    SELECT 1
+    FROM vm_device
+    WHERE vm_id = v_vm_id AND
+          device IN (SELECT device_name
+                     FROM host_device
+                     WHERE host_id = v_host_id AND vm_id IS NOT NULL AND vm_id <> v_vm_id)); -- device free or already belonging to the vm
+END; $procedure$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION MarkHostDevicesUsedByVmId(v_vm_id UUID)
+RETURNS VOID
+AS $procedure$
+BEGIN
+  UPDATE host_device
+  SET vm_id = v_vm_id
+  WHERE device_name IN (SELECT device
+                        FROM vm_device
+                        WHERE vm_id = v_vm_id AND type = 'hostdev');
+END; $procedure$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION FreeHostDevicesUsedByVmId(v_vm_id UUID)
+RETURNS VOID
+AS $procedure$
+BEGIN
+  UPDATE host_device
+  SET vm_id = NULL
+  WHERE device_name IN (SELECT device
+                        FROM vm_device
+                        WHERE vm_id = v_vm_id AND type = 'hostdev');
 END; $procedure$
 LANGUAGE plpgsql;

@@ -72,6 +72,11 @@ public enum VmDeviceGeneralType {
     WATCHDOG,
 
     /**
+     * A pass-through host device
+     */
+    HOSTDEV,
+
+    /**
      * Unknown device
      */
     UNKNOWN;
@@ -130,7 +135,6 @@ public enum VmDeviceGeneralType {
 
             case INTERFACE:
             case BRIDGE:
-            case HOST_DEVICE:
                 type = INTERFACE;
                 break;
 

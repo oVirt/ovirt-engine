@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.HostDeviceId;
+import org.ovirt.engine.core.common.businessentities.HostDeviceView;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -57,18 +58,53 @@ public class HostDeviceDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<
     }
 
     @Override
+    public List<HostDevice> getHostDevicesByHostIdAndIommuGroup(Guid hostId, int iommuGroup) {
+        return getCallsHandler().executeReadList("GetHostDevicesByHostIdAndIommuGroup",
+                createEntityRowMapper(),
+                getCustomMapSqlParameterSource().addValue("host_id", hostId).addValue("iommu_group", iommuGroup));
+    }
+
+    @Override
     public HostDevice getHostDeviceByHostIdAndDeviceName(Guid hostId, String deviceName) {
         return get(new HostDeviceId(hostId, deviceName));
     }
 
-    private static class HostDeviceRowMapper implements RowMapper<HostDevice> {
+    @Override
+    public boolean checkVmHostDeviceAvailability(Guid vmId, Guid hostId) {
+        return getCallsHandler().executeRead("CheckVmHostDeviceAvailability",
+                createBooleanMapper(),
+                getCustomMapSqlParameterSource().addValue("vm_id", vmId).addValue("host_id", hostId));
+    }
 
-        public static final HostDeviceRowMapper instance = new HostDeviceRowMapper();
+    @Override
+    public void markHostDevicesUsedByVmId(Guid vmId) {
+        getCallsHandler().executeModification("MarkHostDevicesUsedByVmId",
+                getCustomMapSqlParameterSource().addValue("vm_id", vmId));
+    }
 
-        @Override
-        public HostDevice mapRow(ResultSet rs, int rowNum) throws SQLException {
-            HostDevice device = new HostDevice();
+    @Override
+    public void freeHostDevicesUsedByVmId(Guid vmId) {
+        getCallsHandler().executeModification("FreeHostDevicesUsedByVmId",
+                getCustomMapSqlParameterSource().addValue("vm_id", vmId));
+    }
 
+    @Override
+    public List<HostDeviceView> getVmExtendedHostDevicesByVmId(Guid vmId) {
+        return getCallsHandler().executeReadList("GetVmExtendedHostDevicesByVmId",
+                ExtendedHostDeviceRowMapper.instance,
+                getCustomMapSqlParameterSource().addValue("vm_id", vmId));
+    }
+
+    @Override
+    public List<HostDeviceView> getExtendedHostDevicesByHostId(Guid hostId) {
+        return getCallsHandler().executeReadList("GetExtendedHostDevicesByHostId",
+                ExtendedHostDeviceRowMapper.instance,
+                getCustomMapSqlParameterSource().addValue("host_id", hostId));
+    }
+
+    private static abstract class BaseHostDeviceRowMapper<T extends HostDevice> implements RowMapper<T> {
+
+        protected void map(ResultSet rs, HostDevice device) throws SQLException{
             device.setHostId(getGuid(rs, "host_id"));
             device.setDeviceName(rs.getString("device_name"));
             device.setParentDeviceName(rs.getString("parent_device_name"));
@@ -82,6 +118,35 @@ public class HostDeviceDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<
             device.setTotalVirtualFunctions((Integer) rs.getObject("total_vfs"));
             device.setNetworkInterfaceName(rs.getString("net_iface_name"));
             device.setVmId(getGuid(rs, "vm_id"));
+
+        }
+    }
+
+    private static class HostDeviceRowMapper extends BaseHostDeviceRowMapper<HostDevice> {
+
+        public static final HostDeviceRowMapper instance = new HostDeviceRowMapper();
+
+        @Override
+        public HostDevice mapRow(ResultSet rs, int rowNum) throws SQLException {
+            HostDevice device = new HostDevice();
+            map(rs, device);
+
+            return device;
+        }
+    }
+
+    private static class ExtendedHostDeviceRowMapper extends BaseHostDeviceRowMapper<HostDeviceView> {
+
+        public static final ExtendedHostDeviceRowMapper instance = new ExtendedHostDeviceRowMapper();
+
+        @Override
+        public HostDeviceView mapRow(ResultSet rs, int rowNum) throws SQLException {
+            HostDeviceView device = new HostDeviceView();
+            map(rs, device);
+
+            device.setConfiguredVmId(getGuid(rs, "configured_vm_id"));
+            device.setAttachedVmNames(split(rs.getString("attached_vm_names")));
+            device.setRunningVmName(rs.getString("running_vm_name"));
 
             return device;
         }

@@ -115,11 +115,26 @@ public class VmDeviceDAODbFacadeImpl extends
     }
 
     @Override
+    public List<VmDevice> getVmDeviceByType(VmDeviceGeneralType type) {
+        return getCallsHandler().executeReadList("GetVmDeviceByType",
+                createEntityRowMapper(),
+                getCustomMapSqlParameterSource().addValue("type", type.getValue()));
+    }
+
+    @Override
     public List<VmDevice> getUnmanagedDevicesByVmId(Guid vmId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_id", vmId);
         return getCallsHandler().executeReadList("GetVmUnmanagedDevicesByVmId",
                 createEntityRowMapper(), parameterSource);
+    }
+
+    @Override
+    public boolean existsVmDeviceByVmIdAndType(Guid vmId, VmDeviceGeneralType type) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_id", vmId).addValue("type", type.getValue());
+        return getCallsHandler().executeRead("ExistsVmDeviceByVmIdAndType",
+                createBooleanMapper(), parameterSource);
     }
 
     @Override
@@ -176,6 +191,13 @@ public class VmDeviceDAODbFacadeImpl extends
         for (VmDeviceId vmDeviceId : removedDeviceIds) {
             remove(vmDeviceId);
         }
+    }
+
+    @Override
+    public void removeVmDevicesByVmIdAndType(Guid vmId, VmDeviceGeneralType type) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_id", vmId).addValue("type", type.getValue());
+        getCallsHandler().executeModification("DeleteVmDevicesByVmIdAndType", parameterSource);
     }
 
     @Override

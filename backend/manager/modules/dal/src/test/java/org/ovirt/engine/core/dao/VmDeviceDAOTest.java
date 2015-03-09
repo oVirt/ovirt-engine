@@ -6,9 +6,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
@@ -25,9 +27,13 @@ import org.ovirt.engine.core.compat.Guid;
 public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice, VmDeviceDAO> {
 
     private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
+    private static final Guid EXISTING_VM_ID_2 = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
+    private static final Guid EXISTING_VM_ID_3 = new Guid("77296e00-0cad-4e5a-9299-008a7b6f5002");
     private static final Guid EXISTING_DEVICE_ID = new Guid("e14ed6f0-3b12-11e1-b614-63d00126418d");
-    private static final int TOTAL_DEVICES = 12;
+    private static final Guid NON_EXISTING_VM_ID = Guid.newGuid();
+    private static final int TOTAL_DEVICES = 15;
     private static final int TOTAL_DEVICES_FOR_EXISTING_VM = 5;
+    private static final int TOTAL_HOST_DEVICES = 3;
 
     @Override
     protected VmDeviceId generateNonExistingId() {
@@ -212,4 +218,29 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
         assertEquals(vmDevice.getBootOrder(), newBootOrderValue);
     }
 
+    @Test
+    public void testExistsVmDeviceByVmIdAndType() {
+        assertTrue(dao.existsVmDeviceByVmIdAndType(EXISTING_VM_ID, VmDeviceGeneralType.HOSTDEV));
+        assertFalse(dao.existsVmDeviceByVmIdAndType(NON_EXISTING_VM_ID, VmDeviceGeneralType.HOSTDEV));
+    }
+
+    @Test
+    public void testGetVmDeviceByType() {
+        List<VmDevice> devices = dao.getVmDeviceByType(VmDeviceGeneralType.HOSTDEV);
+        assertEquals("Expected to retrieve " + TOTAL_HOST_DEVICES + " host devices.", TOTAL_HOST_DEVICES, devices.size());
+        Set<Guid> vmIds = new HashSet<>();
+        for (VmDevice device : devices) {
+            vmIds.add(device.getVmId());
+        }
+        assertTrue(vmIds.contains(EXISTING_VM_ID));
+        assertTrue(vmIds.contains(EXISTING_VM_ID_2));
+        assertTrue(vmIds.contains(EXISTING_VM_ID_3));
+    }
+
+    @Test
+    public void testRemoveVmDevicesByVmIdAndType() {
+        dao.removeVmDevicesByVmIdAndType(EXISTING_VM_ID, VmDeviceGeneralType.HOSTDEV);
+        assertFalse(dao.existsVmDeviceByVmIdAndType(EXISTING_VM_ID, VmDeviceGeneralType.HOSTDEV));
+        assertTrue(dao.existsVmDeviceByVmIdAndType(EXISTING_VM_ID_2, VmDeviceGeneralType.HOSTDEV));
+    }
 }

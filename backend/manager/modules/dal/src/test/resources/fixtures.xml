@@ -2198,7 +2198,7 @@
             <value>1</value>
             <null />
             <null />
-            <null />
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>1</value>
             <value>0</value>
             <value>0</value>
@@ -3096,7 +3096,7 @@
             <value>1</value>
             <value>2010-11-18 11:13:24</value>
             <null />
-            <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>0</value>
             <value>0</value>
             <value>0</value>
@@ -6087,7 +6087,7 @@
             <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
             <value>rhel5-pool-50</value>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
-            <value>1</value>
+            <value>1</value>vm_
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>magenta-vdsc</value>
             <value>2010-12-20 13:09:29</value>
@@ -6550,6 +6550,54 @@
             <value>true</value>
             <value>false</value>
             <value>alias</value>
+            <null />
+            <null />
+        </row>
+        <row>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a42</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>hostdev</value>
+            <value>pci_0000_00_1f_0</value>
+            <value>sample</value>
+            <value>1</value>
+            <value>{}</value>
+            <value>true</value>
+            <value>true</value>
+            <value>false</value>
+            <value>alias</value>
+            <null />
+            <null />
+            <null />
+        </row>
+        <row>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a43</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+            <value>hostdev</value>
+            <value>pci_0000_00_1f_2</value>
+            <value>sample</value>
+            <value>1</value>
+            <value>{}</value>
+            <value>true</value>
+            <value>true</value>
+            <value>false</value>
+            <value>alias</value>
+            <null />
+            <null />
+            <null />
+        </row>
+        <row>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a44</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f5002</value>
+            <value>hostdev</value>
+            <value>pci_0000_00_1f_2</value>
+            <value>sample</value>
+            <value>1</value>
+            <value>{}</value>
+            <value>true</value>
+            <value>true</value>
+            <value>false</value>
+            <value>alias</value>
+            <null />
             <null />
             <null />
         </row>
@@ -7982,7 +8030,7 @@
              <value>0x8086</value>
              <null/>
              <null/>
-             <null/>
+             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
              <null/>
          </row>
          <row>
