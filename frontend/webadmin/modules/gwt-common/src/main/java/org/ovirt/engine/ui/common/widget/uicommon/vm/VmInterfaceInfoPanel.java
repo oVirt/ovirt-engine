@@ -125,7 +125,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
         AbstractNullableNumberColumn<VmNetworkInterface> totalRxColumn = new AbstractNullableNumberColumn<VmNetworkInterface>() {
             @Override
             protected Number getRawValue(VmNetworkInterface object) {
-                return object.getStatistics().getReceivedBytes();
+                return object != null ? object.getStatistics().getReceivedBytes() : null;
             }
         };
 
@@ -134,7 +134,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
         AbstractNullableNumberColumn<VmNetworkInterface> totalTxColumn = new AbstractNullableNumberColumn<VmNetworkInterface>() {
             @Override
             protected Number getRawValue(VmNetworkInterface object) {
-                return object.getStatistics().getTransmittedBytes();
+                return object != null ? object.getStatistics().getTransmittedBytes() : null;
             }
         };
 
