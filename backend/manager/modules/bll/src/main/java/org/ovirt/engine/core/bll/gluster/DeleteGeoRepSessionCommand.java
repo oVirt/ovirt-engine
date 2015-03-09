@@ -52,7 +52,7 @@ public class DeleteGeoRepSessionCommand extends GeoRepSessionCommandBase<Gluster
     @Override
     public AuditLogType getAuditLogTypeValue() {
         if (getSucceeded()) {
-            return AuditLogType.GEOREP_SESSION_DELETE;
+            return AuditLogType.GEOREP_SESSION_DELETED;
         } else {
             return errorType == null ? AuditLogType.GEOREP_SESSION_DELETE_FAILED : errorType;
         }
