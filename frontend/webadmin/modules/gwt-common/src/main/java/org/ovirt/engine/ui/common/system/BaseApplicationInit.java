@@ -129,7 +129,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
             }
         };
 
-        frontend.logoffAsync(frontend.getLoggedInUser(), query);
+        frontend.logoffAsync(query);
     }
 
     protected void performLogin(T loginModel) {

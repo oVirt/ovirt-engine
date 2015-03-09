@@ -159,7 +159,7 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
     }
 
     @Override
-    public VdcReturnValueBase logOff(DbUser userToLogoff) {
+    public VdcReturnValueBase logOff() {
         VdcActionParametersBase params = new VdcActionParametersBase();
         params.setSessionId(getEngineSessionId());
         VdcReturnValueBase returnValue = getBackend().logoff(params);

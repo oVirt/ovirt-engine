@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -508,16 +507,15 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
 
     /**
      * Log the user out.
-     * @param userObject The object containing the user information.
      * @param callback The callback to call when the operation is complete.
      */
     @Override
-    public void logout(final Object userObject, final UserCallback callback) {
+    public void logout(final UserCallback callback) {
         getService(new ServiceCallback() {
 
             @Override
             public void serviceFound(GenericApiGWTServiceAsync foundService) {
-                foundService.logOff((DbUser) userObject, new AsyncCallback<VdcReturnValueBase>() {
+                foundService.logOff(new AsyncCallback<VdcReturnValueBase>() {
                     @Override
                     public void onSuccess(final VdcReturnValueBase result) {
                         //Remove the rpc token when logging out.

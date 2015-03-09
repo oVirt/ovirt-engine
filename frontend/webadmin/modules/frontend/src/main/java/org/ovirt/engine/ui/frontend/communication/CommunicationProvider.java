@@ -26,10 +26,9 @@ public interface CommunicationProvider {
 
     /**
      * Log out user, using the communications provider.
-     * @param userObject The object with the user information.
      * @param callback The callback object to call after the operation is completed.
      */
-    void logout(Object userObject, UserCallback<?> callback);
+    void logout(UserCallback<?> callback);
 
     /**
      * Store a {@code String} key value pair in the {@code HttpSession} on the server side. As a result these keys

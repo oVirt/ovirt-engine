@@ -833,13 +833,12 @@ public class Frontend implements HasHandlers {
 
     /**
      * Log off the currently logged in user.
-     * @param dbUser The user object to use to log off.
      * @param callback The callback to call when the user is logged off.
      */
-    public void logoffAsync(final DbUser dbUser, final AsyncQuery callback) {
+    public void logoffAsync(final AsyncQuery callback) {
         logger.finer("Frontend: Invoking async logoff."); //$NON-NLS-1$
 
-        getOperationManager().logoutUser(dbUser, new UserCallback<VdcReturnValueBase>() {
+        getOperationManager().logoutUser(new UserCallback<VdcReturnValueBase>() {
             @Override
             public void onSuccess(final VdcReturnValueBase result) {
                 logger.finer("Succesful returned result from logoff."); //$NON-NLS-1$

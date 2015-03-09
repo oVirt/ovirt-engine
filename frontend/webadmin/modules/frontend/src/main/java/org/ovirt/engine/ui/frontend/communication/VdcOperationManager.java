@@ -148,12 +148,11 @@ public class VdcOperationManager {
 
     /**
      * Log out the user.
-     * @param userObject The object containing enough information for the provider to log the user out.
      * @param callback The callback to call when the operation is completed.
      */
-    public void logoutUser(final Object userObject, final UserCallback<?> callback) {
+    public void logoutUser(final UserCallback<?> callback) {
         loggedIn = false;
-        processor.logoutUser(userObject, callback);
+        processor.logoutUser(callback);
     }
 
     /**

@@ -891,10 +891,8 @@ public class FrontendActionTest {
     public void testLogoffAsync_ignored_failure() {
         Object model = new Object();
         when(mockAsyncQuery.getModel()).thenReturn(model);
-        DbUser testUser = new DbUser();
-        testUser.setLoginName("testUser"); //$NON-NLS-1$
-        frontend.logoffAsync(testUser, mockAsyncQuery);
-        verify(mockService).logOff(eq(testUser), callbackAction.capture());
+        frontend.logoffAsync(mockAsyncQuery);
+        verify(mockService).logOff(callbackAction.capture());
         StatusCodeException exception = new StatusCodeException(0, "0 status code"); //$NON-NLS-1$
         callbackAction.getValue().onFailure(exception);
         verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (FrontendFailureEventArgs) any());
@@ -916,10 +914,8 @@ public class FrontendActionTest {
     public void testLogoffAsync_404_failure() {
         Object model = new Object();
         when(mockAsyncQuery.getModel()).thenReturn(model);
-        DbUser testUser = new DbUser();
-        testUser.setLoginName("testUser"); //$NON-NLS-1$
-        frontend.logoffAsync(testUser, mockAsyncQuery);
-        verify(mockService).logOff(eq(testUser), callbackAction.capture());
+        frontend.logoffAsync(mockAsyncQuery);
+        verify(mockService).logOff(callbackAction.capture());
         StatusCodeException exception = new StatusCodeException(HttpServletResponse.SC_NOT_FOUND,
                 "404 status code"); //$NON-NLS-1$
         callbackAction.getValue().onFailure(exception);
@@ -941,10 +937,8 @@ public class FrontendActionTest {
     public void testLogoffAsync_success() {
         Object model = new Object();
         when(mockAsyncQuery.getModel()).thenReturn(model);
-        DbUser testUser = new DbUser();
-        testUser.setLoginName("testUser"); //$NON-NLS-1$
-        frontend.logoffAsync(testUser, mockAsyncQuery);
-        verify(mockService).logOff(eq(testUser), callbackAction.capture());
+        frontend.logoffAsync(mockAsyncQuery);
+        verify(mockService).logOff(callbackAction.capture());
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockAsyncCallback).onSuccess(model, returnValue);
