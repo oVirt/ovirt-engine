@@ -75,8 +75,8 @@ public class MultipleActionsRunner {
             returnValue = ExecutionHandler.evaluateCorrelationId(parameter);
             if (returnValue == null) {
                 CommandBase<?> command = isInternal ?
-                        CommandsFactory.createCommand(actionType, parameter, commandContext.clone()
-                                .withoutCompensationContext()) :
+                        CommandsFactory.createCommand(actionType, parameter,
+                                commandContext != null ? commandContext.clone().withoutCompensationContext() : null) :
                                 CommandsFactory.createCommand(actionType, parameter);
 
                 command.setInternalExecution(isInternal);
