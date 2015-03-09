@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.uicompat;
 
-import org.ovirt.engine.core.common.AuditLogSeverity;
-
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 
 public interface LocalizedEnums extends ConstantsWithLookup {
@@ -455,7 +453,7 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___GEOREP_SESSION_STOP_FAILED();
 
-    String AuditLogType___GEOREP_SESSION_DELETE();
+    String AuditLogType___GEOREP_SESSION_DELETED();
 
     String AuditLogType___GEOREP_SESSION_DELETE_FAILED();
 
@@ -470,6 +468,10 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String AuditLogType___GLUSTER_GEOREP_CONFIG_SET_DEFAULT();
 
     String AuditLogType___GLUSTER_GEOREP_CONFIG_SET_DEFAULT_FAILED();
+
+    String AuditLogType___GLUSTER_GEOREP_CONFIG_LIST();
+
+    String AuditLogType___GLUSTER_GEOREP_CONFIG_LIST_FAILED();
 
     String AuditLogType___GLUSTER_VOLUME_SNAPSHOT_DELETED();
 
