@@ -105,6 +105,20 @@ public class Entities {
         }
     }
 
+    public static <E extends VmDevice> Map<String, E> vmDevicesByDevice(Collection<E> deviceList) {
+        if (deviceList != null) {
+            Map<String, E> map = new HashMap<>();
+            for (E device : deviceList) {
+                if (device.getDevice() != null) {
+                    map.put(device.getDevice(), device);
+                }
+            }
+            return map;
+        } else {
+            return Collections.emptyMap();
+        }
+    }
+
     public static <E extends Nameable> Set<String> objectNames(Collection<E> entities) {
         if (entities != null && !entities.isEmpty()) {
             Set<String> names = new HashSet<String>();
