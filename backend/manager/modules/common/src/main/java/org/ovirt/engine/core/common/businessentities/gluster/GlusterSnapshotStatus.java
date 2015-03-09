@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
 public enum GlusterSnapshotStatus {
-    STARTED,
-    STOPPED,
+    ACTIVATED,
+    DEACTIVATED,
     UNKNOWN;
 
     public static GlusterSnapshotStatus from(String status) {

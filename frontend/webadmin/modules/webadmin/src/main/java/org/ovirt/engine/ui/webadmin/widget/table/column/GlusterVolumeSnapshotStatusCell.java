@@ -35,11 +35,11 @@ public class GlusterVolumeSnapshotStatusCell extends AbstractCell<GlusterVolumeS
         String tooltip;
 
         switch (status) {
-        case STARTED:
+        case ACTIVATED:
             statusImage = resources.upImage();
             tooltip = constants.up();
             break;
-        case STOPPED:
+        case DEACTIVATED:
             statusImage = resources.downImage();
             tooltip = constants.down();
             break;

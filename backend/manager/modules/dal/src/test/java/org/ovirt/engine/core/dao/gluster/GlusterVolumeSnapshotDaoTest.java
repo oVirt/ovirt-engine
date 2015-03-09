@@ -150,13 +150,13 @@ public class GlusterVolumeSnapshotDaoTest extends BaseDAOTestCase {
 
     @Test
     public void testUpdateSnapshotStatus() {
-        dao.updateSnapshotStatus(existingSnapshot.getSnapshotId(), GlusterSnapshotStatus.STOPPED);
+        dao.updateSnapshotStatus(existingSnapshot.getSnapshotId(), GlusterSnapshotStatus.DEACTIVATED);
         GlusterVolumeSnapshotEntity snapshot = dao.getById(existingSnapshot.getSnapshotId());
 
         assertNotNull(snapshot);
 
         assertFalse(snapshot.equals(existingSnapshot));
-        existingSnapshot.setStatus(GlusterSnapshotStatus.STOPPED);
+        existingSnapshot.setStatus(GlusterSnapshotStatus.DEACTIVATED);
         assertEquals(existingSnapshot, snapshot);
     }
 
@@ -164,13 +164,13 @@ public class GlusterVolumeSnapshotDaoTest extends BaseDAOTestCase {
     public void testUpdateSnapshotStatusByName() {
         dao.updateSnapshotStatusByName(existingSnapshot.getVolumeId(),
                 existingSnapshot.getSnapshotName(),
-                GlusterSnapshotStatus.STOPPED);
+                GlusterSnapshotStatus.DEACTIVATED);
         GlusterVolumeSnapshotEntity snapshot = dao.getById(existingSnapshot.getSnapshotId());
 
         assertNotNull(snapshot);
 
         assertFalse(snapshot.equals(existingSnapshot));
-        existingSnapshot.setStatus(GlusterSnapshotStatus.STOPPED);
+        existingSnapshot.setStatus(GlusterSnapshotStatus.DEACTIVATED);
         assertEquals(existingSnapshot, snapshot);
     }
 
@@ -179,8 +179,8 @@ public class GlusterVolumeSnapshotDaoTest extends BaseDAOTestCase {
         existingSnapshot = dao.getById(EXISTING_SNAPSHOT_ID);
         existingSnapshot1 = dao.getById(EXISTING_SNAPSHOT_ID_1);
 
-        existingSnapshot.setStatus(GlusterSnapshotStatus.STOPPED);
-        existingSnapshot1.setStatus(GlusterSnapshotStatus.STOPPED);
+        existingSnapshot.setStatus(GlusterSnapshotStatus.DEACTIVATED);
+        existingSnapshot1.setStatus(GlusterSnapshotStatus.DEACTIVATED);
 
         List<GlusterVolumeSnapshotEntity> snapshots = new ArrayList<>();
         snapshots.add(existingSnapshot);
@@ -191,8 +191,8 @@ public class GlusterVolumeSnapshotDaoTest extends BaseDAOTestCase {
         GlusterVolumeSnapshotEntity tmpSnapshot = dao.getById(EXISTING_SNAPSHOT_ID);
         GlusterVolumeSnapshotEntity tmpSnapshot1 = dao.getById(EXISTING_SNAPSHOT_ID_1);
 
-        assertEquals(tmpSnapshot.getStatus(), GlusterSnapshotStatus.STOPPED);
-        assertEquals(tmpSnapshot1.getStatus(), GlusterSnapshotStatus.STOPPED);
+        assertEquals(tmpSnapshot.getStatus(), GlusterSnapshotStatus.DEACTIVATED);
+        assertEquals(tmpSnapshot1.getStatus(), GlusterSnapshotStatus.DEACTIVATED);
     }
 
     private GlusterVolumeSnapshotEntity insertTestSnapshot() {
@@ -204,7 +204,7 @@ public class GlusterVolumeSnapshotDaoTest extends BaseDAOTestCase {
         snapshot.setSnapshotName(NEW_SNAPSHOT_NAME);
         snapshot.setVolumeId(VOLUME_ID);
         snapshot.setDescription("test-description");
-        snapshot.setStatus(GlusterSnapshotStatus.STARTED);
+        snapshot.setStatus(GlusterSnapshotStatus.ACTIVATED);
         snapshot.setCreatedAt(new Date());
 
         dao.save(snapshot);

@@ -1609,15 +1609,10 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public GlusterVolumeSnapshotConfigReturnForXmlRpc glusterVolumeSnapshotConfigGet(Guid clusterId, String volumeName) {
+    public GlusterVolumeSnapshotConfigReturnForXmlRpc glusterSnapshotConfigList(Guid clusterId) {
         try {
             Map<String, Object> xmlRpcReturnValue;
-            if (volumeName == null) {
-                xmlRpcReturnValue = vdsServer.glusterSnapshotConfigGet("");
-            } else {
-                xmlRpcReturnValue = vdsServer.glusterSnapshotConfigGet(volumeName);
-            }
-
+            xmlRpcReturnValue = vdsServer.glusterSnapshotConfigList();
             GlusterVolumeSnapshotConfigReturnForXmlRpc wrapper =
                     new GlusterVolumeSnapshotConfigReturnForXmlRpc(clusterId, xmlRpcReturnValue);
             return wrapper;

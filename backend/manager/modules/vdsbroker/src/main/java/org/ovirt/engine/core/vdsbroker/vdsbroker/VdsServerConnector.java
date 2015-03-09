@@ -329,7 +329,7 @@ public interface VdsServerConnector {
 
     public Map<String, Object> glusterSnapshotInfo(String snapshotName, String volumeName);
 
-    public Map<String, Object> glusterSnapshotConfigGet(String volumeName);
+    public Map<String, Object> glusterSnapshotConfigList();
 
     public Map<String, Object> glusterSnapshotDelete(String snapshotName);
 

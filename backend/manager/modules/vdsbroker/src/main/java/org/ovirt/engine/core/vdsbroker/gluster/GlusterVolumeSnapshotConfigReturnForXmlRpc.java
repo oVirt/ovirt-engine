@@ -11,8 +11,8 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
 public class GlusterVolumeSnapshotConfigReturnForXmlRpc extends StatusReturnForXmlRpc {
     private static final String STATUS = "status";
     private static final String SNAPSHOT_CONFIG = "snapshotConfig";
-    private static final String SYSTEM_CONFIG = "systemConfig";
-    private static final String VOLUME_CONFIG = "volumeConfig";
+    private static final String SYSTEM_CONFIG = "system";
+    private static final String VOLUME_CONFIG = "volume";
 
     private StatusForXmlRpc status;
     private GlusterSnapshotConfigInfo glusterSnapshotConfigInfo = new GlusterSnapshotConfigInfo();

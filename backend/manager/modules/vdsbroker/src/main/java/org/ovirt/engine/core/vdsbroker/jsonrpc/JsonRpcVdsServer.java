@@ -1655,10 +1655,9 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public GlusterVolumeSnapshotConfigReturnForXmlRpc glusterVolumeSnapshotConfigGet(Guid clusterId, String volumeName) {
+    public GlusterVolumeSnapshotConfigReturnForXmlRpc glusterSnapshotConfigList(Guid clusterId) {
         JsonRpcRequest request =
-                new RequestBuilder("GlusterSnapshot.configList").withOptionalParameter("volumeName", volumeName)
-                        .build();
+                new RequestBuilder("GlusterSnapshot.configList").build();
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
         return new GlusterVolumeSnapshotConfigReturnForXmlRpc(clusterId, response);
     }
@@ -1717,7 +1716,7 @@ public class JsonRpcVdsServer implements IVdsServer {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.snapshotCreate").withParameter("volumeName", volumeName)
                         .withParameter("snapName", snapshotName)
-                        .withOptionalParameter("description", description)
+                        .withOptionalParameter("snapDescription", description)
                         .withParameter("force", force)
                         .build();
         Map<String, Object> response =
@@ -1729,8 +1728,8 @@ public class JsonRpcVdsServer implements IVdsServer {
     public StatusOnlyReturnForXmlRpc glusterVolumeSnapshotConfigSet(String volumeName, String configName, String configValue) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.snapshotConfigSet").withParameter("volumeName", volumeName)
-                        .withParameter("option", configName)
-                        .withParameter("value", configValue)
+                        .withParameter("optionName", configName)
+                        .withParameter("optionValue", configValue)
                         .build();
 
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
@@ -1740,8 +1739,8 @@ public class JsonRpcVdsServer implements IVdsServer {
     @Override
     public StatusOnlyReturnForXmlRpc glusterSnapshotConfigSet(String configName, String configValue) {
         JsonRpcRequest request =
-                new RequestBuilder("GlusterSnapshot.configSet").withParameter("option", configName)
-                        .withParameter("value", configValue)
+                new RequestBuilder("GlusterSnapshot.configSet").withParameter("optionName", configName)
+                        .withParameter("optionValue", configValue)
                         .build();
 
         Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();

@@ -19,8 +19,7 @@ public class GetGlusterVolumeSnapshotConfigInfoVDSCommand<P extends GlusterVolum
     @Override
     protected void executeVdsBrokerCommand() {
         Guid clusterId = getParameters().getClusterId();
-        String volumeName = getParameters().getVolumeName();
-        infoReturn = getBroker().glusterVolumeSnapshotConfigGet(clusterId, volumeName);
+        infoReturn = getBroker().glusterSnapshotConfigList(clusterId);
         proceedProxyReturnValue();
 
         if (getVDSReturnValue().getSucceeded()) {
