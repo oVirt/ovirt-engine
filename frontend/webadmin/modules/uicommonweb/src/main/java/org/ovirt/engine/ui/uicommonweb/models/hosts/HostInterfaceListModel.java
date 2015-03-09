@@ -174,7 +174,7 @@ public class HostInterfaceListModel extends SearchableListModel<VDS, VdsNetworkI
 
     public void setEntity(VDS value)
     {
-        if (super.getEntity() != null)
+        if (super.getEntity() != null && value != null)
         {
             VDS currentItem = super.getEntity();
 
