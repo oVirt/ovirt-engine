@@ -68,6 +68,18 @@ class Plugin(plugin.PluginBase):
     def _subjectComponentEscape(self, s):
         return outil.escape(s, '/\\')
 
+    def _setupUninstall(self, files):
+        self.environment[
+            osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
+        ].createGroup(
+            group='ca_pki',
+            description='PKI keys',
+            optional=True,
+        ).addFiles(
+            group='ca_pki',
+            fileList=files,
+        )
+
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
         self._enabled = False
@@ -136,6 +148,72 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
+        condition=lambda self: (
+            self.environment[oenginecons.CoreEnv.ENABLE] and
+            os.path.exists(
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+            )
+        ),
+    )
+    def _miscUpgrade(self):
+        self.logger.info(_('Upgrading CA'))
+
+        #
+        # LEGACY NOTE
+        # Since 3.0 and maybe before the method of
+        # allowing user to override AIA was to explict
+        # edit files. Until we rewrite the entire PKI
+        # we must preserve this approach.
+        # The template may change over time, so regenerate.
+        #
+        aia = None
+        template = oenginecons.FileLocations.OVIRT_ENGINE_PKI_CERT_TEMPLATE[
+            :-len('.in')
+        ]
+        if os.path.exists(template):
+            with open(template) as f:
+                PREFIX = 'caIssuers;URI:'
+                for l in f.readlines():
+                    if l.startswith('authorityInfoAccess'):
+                        aia = l[l.find(PREFIX)+len(PREFIX):]
+                        break
+
+        uninstall_files = []
+        self._setupUninstall(uninstall_files)
+        if aia is not None:
+            localtransaction = transaction.Transaction()
+            with localtransaction:
+                for name in (
+                    oenginecons.FileLocations.OVIRT_ENGINE_PKI_CA_TEMPLATE,
+                    oenginecons.FileLocations.OVIRT_ENGINE_PKI_CERT_TEMPLATE,
+                ):
+                    localtransaction.append(
+                        filetransaction.FileTransaction(
+                            name=name[:-len('.in')],
+                            content=outil.processTemplate(
+                                name,
+                                {
+                                    '@AIA@': aia,
+                                }
+                            ),
+                            modifiedList=uninstall_files,
+                        ),
+                    )
+                    localtransaction.append(
+                        filetransaction.FileTransaction(
+                            name=name[:-len('.template.in')] + '.conf',
+                            content=outil.processTemplate(
+                                name,
+                                {
+                                    '@AIA@': aia,
+                                }
+                            ),
+                            modifiedList=uninstall_files,
+                        ),
+                    )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
         name=oenginecons.Stages.CA_AVAILABLE,
         condition=lambda self: (
             self.environment[oenginecons.CoreEnv.ENABLE] and
@@ -153,22 +231,12 @@ class Plugin(plugin.PluginBase):
         # need to work this out to allow transactional
         # for now just delete files if we fail
         uninstall_files = []
+        self._setupUninstall(uninstall_files)
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             self.CATransaction(
                 parent=self,
                 uninstall_files=uninstall_files,
             )
-        )
-
-        self.environment[
-            osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
-        ].createGroup(
-            group='ca_pki',
-            description='PKI keys',
-            optional=True,
-        ).addFiles(
-            group='ca_pki',
-            fileList=uninstall_files,
         )
 
         # LEGACY NOTE
