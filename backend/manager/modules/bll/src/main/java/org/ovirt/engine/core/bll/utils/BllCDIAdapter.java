@@ -7,8 +7,11 @@ import javax.inject.Singleton;
 
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.PermissionDAO;
+import org.ovirt.engine.core.dao.HostDeviceDao;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
+import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -84,6 +87,21 @@ public class BllCDIAdapter {
     @Singleton
     private PermissionDAO producePermissionDao(DbFacade dbFacade) {
         return dbFacade.getPermissionDao();
+    }
+
+    @Produces
+    private VmDeviceDAO produceVmDeviceDao(DbFacade dbFacade) {
+        return dbFacade.getVmDeviceDao();
+    }
+
+    @Produces
+    private HostDeviceDao produceHostDeviceDao(DbFacade dbFacade) {
+        return dbFacade.getHostDeviceDao();
+    }
+
+    @Produces
+    private VdsDAO produceVdsDao(DbFacade dbFacade) {
+        return dbFacade.getVdsDao();
     }
 
     protected BllCDIAdapter() {
