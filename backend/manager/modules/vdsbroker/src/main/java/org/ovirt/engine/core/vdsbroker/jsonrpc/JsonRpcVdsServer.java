@@ -1768,9 +1768,9 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StorageDeviceListReturnForXmlRpc getStorageDeviceList() {
+    public StorageDeviceListReturnForXmlRpc glusterStorageDeviceList() {
         JsonRpcRequest request = new RequestBuilder("GlusterHost.storageDevicesList").build();
-        Map<String, Object> response = new FutureMap(this.client, request).withResponseKey("deviceInfo");
+        Map<String, Object> response = new FutureMap(this.client, request).withIgnoreResponseKey();
         return new StorageDeviceListReturnForXmlRpc(response);
     }
 
