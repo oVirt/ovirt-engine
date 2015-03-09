@@ -13,7 +13,7 @@ public class GetStorageDeviceListVDSCommand<P extends VdsIdVDSCommandParametersB
 
     @Override
     protected void executeVdsBrokerCommand() {
-        result = getBroker().getStorageDeviceList();
+        result = getBroker().glusterStorageDeviceList();
 
         proceedProxyReturnValue();
         setReturnValue(result.getStorageDevices());

@@ -158,7 +158,6 @@ public interface IVdsServer {
 
     LUNListReturnForXmlRpc getDeviceList(int storageType);
 
-    StorageDeviceListReturnForXmlRpc getStorageDeviceList();
 
     DevicesVisibilityMapReturnForXmlRpc getDevicesVisibility(String[] devicesList);
 
@@ -394,4 +393,6 @@ public interface IVdsServer {
             Map<String, Object> raidParams,
             String fsType,
             String[] storageDevices);
+
+    StorageDeviceListReturnForXmlRpc glusterStorageDeviceList();
 }

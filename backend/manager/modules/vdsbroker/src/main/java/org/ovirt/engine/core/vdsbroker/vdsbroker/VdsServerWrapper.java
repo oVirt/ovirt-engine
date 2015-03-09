@@ -1759,7 +1759,7 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StorageDeviceListReturnForXmlRpc getStorageDeviceList() {
+    public StorageDeviceListReturnForXmlRpc glusterStorageDeviceList() {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.glusterStorageDevicesList();
             StorageDeviceListReturnForXmlRpc wrapper = new StorageDeviceListReturnForXmlRpc(xmlRpcReturnValue);
