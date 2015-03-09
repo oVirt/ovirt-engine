@@ -481,7 +481,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
     }
 
     private void vmInitLoaded(VmTemplate template) {
-        UnitVmModel model = new UnitVmModel(createBehavior(template));
+        UnitVmModel model = new UnitVmModel(createBehavior(template), this);
         model.setIsAdvancedModeLocalStorageKey(getEditTemplateAdvancedModelKey());
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().editTemplateTitle());
@@ -610,7 +610,7 @@ public class TemplateListModel extends VmBaseListModel<Void, VmTemplate> impleme
         commands.add(UICommand.createDefaultOkUiCommand("OnSaveVm", this)); //$NON-NLS-1$
         commands.add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
 
-        setupNewVmModel(new UnitVmModel(new NewVmFromTemplateModelBehavior(template)),
+        setupNewVmModel(new UnitVmModel(new NewVmFromTemplateModelBehavior(template), this),
                 template.getVmType(), getSystemTreeSelectedItem(), commands);
     }
 

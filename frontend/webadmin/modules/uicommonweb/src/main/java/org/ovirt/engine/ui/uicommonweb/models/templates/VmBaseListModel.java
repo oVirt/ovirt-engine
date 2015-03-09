@@ -64,8 +64,8 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
     VmInterfaceCreatingManager addVmFromBlankTemplateNetworkManager =
             new VmInterfaceCreatingManager(new VmInterfaceCreatingManager.PostVnicCreatedCallback() {
                 @Override
-                public void vnicCreated(Guid vmId) {
-                    // do nothing
+                public void vnicCreated(Guid vmId, UnitVmModel unitVmModel) {
+                    executeDiskModifications(vmId, unitVmModel);
                 }
 
                 @Override
@@ -77,10 +77,11 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
     protected VmInterfaceCreatingManager defaultNetworkCreatingManager =
             new VmInterfaceCreatingManager(new VmInterfaceCreatingManager.PostVnicCreatedCallback() {
                 @Override
-                public void vnicCreated(Guid vmId) {
+                public void vnicCreated(Guid vmId, UnitVmModel unitVmModel) {
                     getWindow().stopProgress();
                     cancel();
                     updateActionsAvailability();
+                    executeDiskModifications(vmId, unitVmModel);
                 }
 
                 @Override
@@ -89,6 +90,10 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
                     cancel();
                 }
             });
+
+    protected void executeDiskModifications(Guid vmId, UnitVmModel model) {
+
+    }
 
     protected void export()
     {
@@ -410,7 +415,6 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
                     if (returnValue != null && returnValue.getSucceeded()) {
                         setWindow(null);
                         updateActionsAvailability();
-                        createUnitVmModelNetworkSucceeded(returnValue);
                     } else {
                         cancel();
                     }
@@ -420,10 +424,6 @@ public abstract class VmBaseListModel<E, T> extends ListWithDetailsAndReportsMod
         }
 
         return new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager);
-    }
-
-    protected void createUnitVmModelNetworkSucceeded(VdcReturnValueBase returnValue) {
-        // no-op by default. Override if needed.
     }
 
     public static void buildVmOnSave(UnitVmModel model, VM vm) {

@@ -43,7 +43,8 @@ public class InstanceTypeInterfaceCreatingManager extends BaseInterfaceCreatingM
             final ArrayList<VdcActionParametersBase> updateVnicParameters,
             final ArrayList<VdcActionParametersBase> removeVnicParameters,
             final boolean isAddingNewVm,
-            final Guid id) {
+            final Guid id,
+            final UnitVmModel unitVmModel) {
         Frontend.getInstance().runMultipleActions(VdcActionType.AddVmTemplateInterface,
                 createVnicParameters,
                 new IFrontendActionAsyncCallback() {
@@ -63,7 +64,7 @@ public class InstanceTypeInterfaceCreatingManager extends BaseInterfaceCreatingM
                                                     @Override
                                                     public void executed(FrontendActionAsyncResult result) {
                                                         // no need to reorder - it will be done for the VMs when creating from instance type
-                                                        getCallback().vnicCreated(id);
+                                                        getCallback().vnicCreated(id, unitVmModel);
                                                     }
                                                 }, this);
                                     }

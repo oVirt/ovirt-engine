@@ -13,6 +13,8 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
+import java.util.ArrayList;
+
 public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
 
     protected void setUpVm(VmBase vm) {
@@ -75,7 +77,7 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
         final VDSGroup cluster = new VDSGroup();
         cluster.setCompatibilityVersion(Version.v3_5);
 
-        UnitVmModel model = new UnitVmModel(behavior) {
+        UnitVmModel model = new UnitVmModel(behavior, null) {
             @Override
             public EntityModel<Boolean> getIsSingleQxlEnabled() {
                 return new EntityModel<Boolean>(true);
@@ -87,6 +89,7 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
             }
         };
         model.initialize(null);
+        model.getInstanceImages().setItems(new ArrayList<InstanceImageLineModel>());
         return model;
     }
 

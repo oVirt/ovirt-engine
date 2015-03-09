@@ -105,12 +105,13 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
     VmInterfaceCreatingManager defaultNetworkCreatingManager = new VmInterfaceCreatingManager(new VmInterfaceCreatingManager.PostVnicCreatedCallback() {
         @Override
-        public void vnicCreated(Guid vmId) {
+        public void vnicCreated(Guid vmId, UnitVmModel unitVmModel) {
             if (getWindow() != null) {
                 getWindow().stopProgress();
             }
             cancel();
             updateActionAvailability();
+            executeDiskModifications(vmId, unitVmModel);
         }
 
         @Override
@@ -545,7 +546,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         }
 
         VM vm = (VM) selectedItem.getEntity();
-        UnitVmModel windowModel = new UnitVmModel(new UserPortalNewTemplateVmModelBehavior(vm));
+        UnitVmModel windowModel = new UnitVmModel(new UserPortalNewTemplateVmModelBehavior(vm), this);
         setWindow(windowModel);
         windowModel.setTitle(ConstantsManager.getInstance().getConstants().newTemplateTitle());
         windowModel.setHelpTag(HelpTag.new_template);
@@ -741,7 +742,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
     private void newInternal()
     {
-        UnitVmModel model = new UnitVmModel(new UserPortalNewVmModelBehavior());
+        UnitVmModel model = new UnitVmModel(new UserPortalNewVmModelBehavior(), this);
         model.getVmType().setSelectedItem(VmType.Server);
         model.setTitle(ConstantsManager.getInstance()
                 .getConstants().newVmTitle());
@@ -798,7 +799,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     }
 
     private void vmInitLoaded(VM vm) {
-        UnitVmModel model = new UnitVmModel(new UserPortalExistingVmModelBehavior(vm));
+        UnitVmModel model = new UnitVmModel(new UserPortalExistingVmModelBehavior(vm), this);
 
         model.setTitle(ConstantsManager.getInstance()
                                .getConstants().editVmTitle());
@@ -1414,4 +1415,9 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         return ConsoleContext.UP_EXTENDED;
     }
 
+    protected void executeDiskModifications(Guid vmId, UnitVmModel model) {
+        // this is done on the background - the window is not visible anymore
+        gettempVm().setId(vmId);
+        model.getInstanceImages().executeDiskModifications(gettempVm());
+    }
 }

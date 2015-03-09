@@ -638,7 +638,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
 
         VM selectedVm = getEntity();
 
-        UnitVmModel model = new UnitVmModel(new CloneVmFromSnapshotModelBehavior());
+        UnitVmModel model = new UnitVmModel(new CloneVmFromSnapshotModelBehavior(), this);
         model.getVmType().setSelectedItem(selectedVm.getVmType());
         model.setIsAdvancedModeLocalStorageKey("wa_snapshot_dialog");  //$NON-NLS-1$
         setWindow(model);

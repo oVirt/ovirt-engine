@@ -396,6 +396,16 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         return instanceTypes;
     }
 
+    private InstanceImagesModel instanceImages;
+
+    public InstanceImagesModel getInstanceImages() {
+        return instanceImages;
+    }
+
+    public void setInstanceImages(InstanceImagesModel instanceImages) {
+        this.instanceImages = instanceImages;
+    }
+
     private NotChangableForVmInPoolListModel<VmType> vmType;
 
     public void setVmType(NotChangableForVmInPoolListModel<VmType> vmType) {
@@ -1437,7 +1447,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.migrateCompressed = migrateCompressed;
     }
 
-    public UnitVmModel(VmModelBehaviorBase behavior) {
+    public UnitVmModel(VmModelBehaviorBase behavior, ListModel parentModel) {
         this.behavior = behavior;
         this.behavior.setModel(this);
 
@@ -1531,6 +1541,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getTemplateWithVersion().getSelectedItemChangedEvent().addListener(this);
 
         setInstanceTypes(new NotChangableForVmInPoolListModel<InstanceType>());
+        setInstanceImages(new InstanceImagesModel(this, parentModel));
 
         setQuota(new NotChangableForVmInPoolListModel<Quota>());
         getQuota().setIsAvailable(false);
@@ -2121,6 +2132,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         updateWatchdogModels();
         updateBootMenu();
+        getInstanceImages().updateActionsAvailability();
     }
 
     private void updateBootMenu() {
@@ -2216,6 +2228,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         updateWatchdogModels(osType);
 
         vmInitEnabledChanged();
+        getInstanceImages().updateActionsAvailability();
     }
 
     private void updateWatchdogModels() {
@@ -2683,7 +2696,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 }
             }
         }
-
 
         setValidTab(TabName.GENERAL_TAB, isValidTab(TabName.GENERAL_TAB)
                 && getDataCenterWithClustersList().getIsValid()

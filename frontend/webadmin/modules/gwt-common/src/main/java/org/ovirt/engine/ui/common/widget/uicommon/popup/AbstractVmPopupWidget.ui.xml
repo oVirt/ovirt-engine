@@ -10,7 +10,7 @@
              xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value"
              xmlns:p="urn:import:org.ovirt.engine.ui.common.widget.profile"
              xmlns:vm="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.vm"
-             xmlns:we="urn:import:org.ovirt.engine.ui.common.widget.editor">
+             xmlns:ii="urn:import:org.ovirt.engine.ui.common.widget.uicommon.instanceimages">
 
     <ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
     <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
@@ -511,6 +511,9 @@
                             <ge:EntityModelCheckBoxEditor ui:field="isRunAndPauseEditor" contentWidgetContainerStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
                             <ge:EntityModelCheckBoxEditor ui:field="isDeleteProtectedEditor" contentWidgetContainerStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
                             <ge:EntityModelCheckBoxEditor ui:field="copyTemplatePermissionsEditor" contentWidgetContainerStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
+                        </g:FlowPanel>
+                        <g:FlowPanel addStyleNames="{style.sectionPanel}">
+                            <ii:InstanceImagesEditor ui:field="instanceImagesEditor"/>
                         </g:FlowPanel>
                         <g:FlowPanel ui:field="logicalNetworksEditorPanel" addStyleNames="{style.sectionPanel}">
                             <p:ProfilesInstanceTypeEditor ui:field="profilesInstanceTypeEditor" />

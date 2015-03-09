@@ -64,7 +64,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
     private final InstanceTypeInterfaceCreatingManager addInstanceTypeNetworkManager =
             new InstanceTypeInterfaceCreatingManager(new BaseInterfaceCreatingManager.PostVnicCreatedCallback() {
                 @Override
-                public void vnicCreated(Guid vmId) {
+                public void vnicCreated(Guid vmId, UnitVmModel model) {
                     getWindow().stopProgress();
                     cancel();
                     updateActionAvailability();
@@ -310,7 +310,7 @@ public class InstanceTypeListModel extends ListWithSimpleDetailsModel<Void, Inst
             return;
         }
 
-        UnitVmModel model = new UnitVmModel(behavior);
+        UnitVmModel model = new UnitVmModel(behavior, this);
         model.setIsAdvancedModeLocalStorageKey("instance_type_dialog"); //$NON-NLS-1$
         setWindow(model);
 

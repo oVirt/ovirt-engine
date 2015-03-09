@@ -27,12 +27,17 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateInterfaceListMod
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateStorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateVmListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.AttachDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.EditDiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateEditPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.SingleSelectionVmDiskAttachPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
@@ -57,6 +62,8 @@ public class TemplateModule extends AbstractGinModule {
             final Provider<VmPopupPresenterWidget> createVmPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<TemplateListModel> modelProvider,
+            final Provider<VmDiskPopupPresenterWidget> newDiskPopupProvider,
+            final Provider<SingleSelectionVmDiskAttachPopupPresenterWidget> attachDiskPopupProvider,
             final Provider<CommonModel> commonModelProvider) {
 
         MainTabModelProvider<VmTemplate, TemplateListModel> result =
@@ -72,7 +79,13 @@ public class TemplateModule extends AbstractGinModule {
                         } else if (lastExecutedCommand == getModel().getExportCommand()) {
                             return exportPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getCreateVmFromTemplateCommand()) {
-                            return createVmPopupProvider.get();
+                            if (windowModel instanceof AttachDiskModel) {
+                                return attachDiskPopupProvider.get();
+                            } else if ((windowModel instanceof NewDiskModel) || (windowModel instanceof EditDiskModel)) {
+                                return newDiskPopupProvider.get();
+                            } else {
+                                return createVmPopupProvider.get();
+                            }
                         } else {
                             return super.getModelPopup(source, lastExecutedCommand, windowModel);
                         }

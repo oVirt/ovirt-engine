@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 public class PoolModel extends UnitVmModel {
 
     public PoolModel(VmModelBehaviorBase behavior) {
-        super(behavior);
+        super(behavior, null);
 
         ArrayList<EntityModel<VmPoolType>> poolTypeItems = new ArrayList<EntityModel<VmPoolType>>();
 

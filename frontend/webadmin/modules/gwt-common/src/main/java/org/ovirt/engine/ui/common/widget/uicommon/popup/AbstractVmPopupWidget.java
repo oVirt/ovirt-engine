@@ -1,6 +1,7 @@
 
 package org.ovirt.engine.ui.common.widget.uicommon.popup;
 
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
 import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
 
 import com.google.gwt.core.client.GWT;
@@ -98,6 +99,7 @@ import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.MemorySizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.uicommon.instanceimages.InstanceImagesEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.SerialNumberPolicyWidget;
@@ -238,6 +240,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @UiField
     public Panel logicalNetworksEditorPanel;
+
+    @UiField
+    @Ignore
+    @WithElementId("instanceImages")
+    public InstanceImagesEditor instanceImagesEditor;
 
     @UiField
     @Ignore
@@ -1527,6 +1534,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         priorityEditor.asEditor().edit(model.getPriority());
         driver.edit(model);
         profilesInstanceTypeEditor.edit(model.getNicsWithLogicalNetworks());
+        instanceImagesEditor.edit(model.getInstanceImages());
         customPropertiesSheetEditor.edit(model.getCustomPropertySheet());
         vmInitEditor.edit(model.getVmInitModel());
         serialNumberPolicyEditor.edit(model.getSerialNumberPolicy());
@@ -2019,7 +2027,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 putOne(isSoundcardEnabledEditor, simpleField().visibleInAdvancedModeOnly()).
                 putOne(isConsoleDeviceEnabledEditor, simpleField().visibleInAdvancedModeOnly()).
                 putOne(spiceFileTransferEnabledEditor, simpleField().visibleInAdvancedModeOnly()).
-                putOne(spiceCopyPasteEnabledEditor, simpleField().visibleInAdvancedModeOnly());
+                putOne(spiceCopyPasteEnabledEditor, simpleField().visibleInAdvancedModeOnly()).
+                putOne(instanceImagesEditor, hiddenField());
     }
 
     protected List<Widget> consoleTabWidgets() {

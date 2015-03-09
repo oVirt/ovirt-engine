@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 
 import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
 
 public class VmPopupWidget extends AbstractVmPopupWidget {
 
@@ -47,7 +48,9 @@ public class VmPopupWidget extends AbstractVmPopupWidget {
     protected PopupWidgetConfigMap createWidgetConfiguration() {
         PopupWidgetConfigMap widgetConfiguration = super.createWidgetConfiguration().
                 putAll(poolSpecificFields(), hiddenField()).
-                putOne(baseTemplateEditor, hiddenField());
+                putOne(baseTemplateEditor, hiddenField()).
+                update(templateVersionNameEditor, hiddenField()).
+                update(instanceImagesEditor, simpleField());
 
         updateOrAddToWidgetConfiguration(widgetConfiguration, detachableWidgets(), UpdateToDetachable.INSTANCE);
         updateOrAddToWidgetConfiguration(widgetConfiguration, adminOnlyWidgets(), UpdateToAdminOnly.INSTANCE);

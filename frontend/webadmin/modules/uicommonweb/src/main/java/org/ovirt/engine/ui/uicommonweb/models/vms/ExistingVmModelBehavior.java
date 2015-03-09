@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -261,8 +262,27 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         updateCpuSharesAvailability();
         updateVirtioScsiAvailability();
         updateOSValues();
+        updateInstanceImages();
 
         instanceTypeManager.updateAll();
+    }
+
+    private void updateInstanceImages() {
+        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery(getModel(), new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                List<InstanceImageLineModel> imageLineModels = new ArrayList<>();
+
+                for (Disk disk : ((ArrayList<Disk>) returnValue)) {
+                    InstanceImageLineModel lineModel = new InstanceImageLineModel(getModel().getInstanceImages());
+                    lineModel.initialize(disk, getVm());
+                    imageLineModels.add(lineModel);
+                }
+
+                getModel().getInstanceImages().setItems(imageLineModels);
+                getModel().getInstanceImages().setVm(getVm());
+            }
+        }), getVm().getId());
     }
 
     @Override

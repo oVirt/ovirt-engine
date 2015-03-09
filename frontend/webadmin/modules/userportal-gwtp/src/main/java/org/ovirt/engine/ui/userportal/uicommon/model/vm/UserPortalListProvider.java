@@ -9,10 +9,15 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.AttachDiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.EditDiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceToGuestWithNonRespAgentModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncInfoModel;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.CloneVmPopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.SingleSelectionVmDiskAttachPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmNextRunConfigurationPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmPopupPresenterWidget;
@@ -36,6 +41,8 @@ public class UserPortalListProvider extends AbstractUserPortalListProvider<UserP
     private final Provider<DefaultConfirmationPopupPresenterWidget> spiceToGuestWithNonRespAgentPopupProvider;
     private final Provider<CloneVmPopupPresenterWidget> cloneVmProvider;
     private final Provider<VmNextRunConfigurationPresenterWidget> nextRunProvider;
+    private final Provider<VmDiskPopupPresenterWidget> newDiskPopupProvider;
+    private final Provider<SingleSelectionVmDiskAttachPopupPresenterWidget> attachDiskPopupProvider;
 
     @Inject
     public UserPortalListProvider(EventBus eventBus,
@@ -50,7 +57,9 @@ public class UserPortalListProvider extends AbstractUserPortalListProvider<UserP
             Provider<DefaultConfirmationPopupPresenterWidget> spiceToGuestWithNonRespAgentPopupProvider,
             Provider<ConsolePopupPresenterWidget> consolePopupProvider,
             Provider<CloneVmPopupPresenterWidget> cloneVmProvider,
-            Provider<VmNextRunConfigurationPresenterWidget> nextRunProvider) {
+            Provider<VmNextRunConfigurationPresenterWidget> nextRunProvider,
+            Provider<VmDiskPopupPresenterWidget> newDiskPopupProvider,
+            Provider<SingleSelectionVmDiskAttachPopupPresenterWidget> attachDiskPopupProvider) {
         super(eventBus, defaultConfirmPopupProvider, user);
         this.newVmPopupProvider = newVmPopupProvider;
         this.runOncePopupProvider = runOncePopupProvider;
@@ -62,6 +71,8 @@ public class UserPortalListProvider extends AbstractUserPortalListProvider<UserP
         this.spiceToGuestWithNonRespAgentPopupProvider = spiceToGuestWithNonRespAgentPopupProvider;
         this.cloneVmProvider = cloneVmProvider;
         this.nextRunProvider = nextRunProvider;
+        this.newDiskPopupProvider = newDiskPopupProvider;
+        this.attachDiskPopupProvider = attachDiskPopupProvider;
     }
 
     @Override
@@ -73,10 +84,14 @@ public class UserPortalListProvider extends AbstractUserPortalListProvider<UserP
             return runOncePopupProvider.get();
         } else if (lastExecutedCommand == getModel().getChangeCdCommand()) {
             return changeCDPopupProvider.get();
-        } else if (lastExecutedCommand == getModel().getNewVmCommand()) {
-            return newVmPopupProvider.get();
-        } else if (lastExecutedCommand == getModel().getEditCommand()) {
-            return newVmPopupProvider.get();
+        } else if (lastExecutedCommand == getModel().getNewVmCommand() || lastExecutedCommand == getModel().getEditCommand()) {
+            if (windowModel instanceof AttachDiskModel) {
+                return attachDiskPopupProvider.get();
+            } else if ((windowModel instanceof NewDiskModel) || (windowModel instanceof EditDiskModel)) {
+                return newDiskPopupProvider.get();
+            } else {
+                return newVmPopupProvider.get();
+            }
         } else if (windowModel instanceof VncInfoModel) {
             return vncInfoPopupProvider.get();
         } else if (windowModel instanceof SpiceToGuestWithNonRespAgentModel) {

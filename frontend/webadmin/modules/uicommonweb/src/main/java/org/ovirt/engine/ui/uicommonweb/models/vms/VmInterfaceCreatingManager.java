@@ -55,7 +55,8 @@ public class VmInterfaceCreatingManager extends BaseInterfaceCreatingManager {
             final ArrayList<VdcActionParametersBase> updateVnicParameters,
             final ArrayList<VdcActionParametersBase> removeVnicParameters,
             final boolean isAddingNewVm,
-            final Guid id) {
+            final Guid id,
+            final UnitVmModel unitVmModel) {
         Frontend.getInstance().runMultipleActions(VdcActionType.AddVmInterface,
                 createVnicParameters,
                 new IFrontendActionAsyncCallback() {
@@ -78,11 +79,11 @@ public class VmInterfaceCreatingManager extends BaseInterfaceCreatingManager {
                                                             VmOperationParameterBase reorderParams = new VmOperationParameterBase(id);
                                                             Frontend.getInstance().runAction(VdcActionType.ReorderVmNics, reorderParams, new IFrontendActionAsyncCallback() {
                                                                 public void executed(FrontendActionAsyncResult result) {
-                                                                    getCallback().vnicCreated(id);
+                                                                    getCallback().vnicCreated(id, unitVmModel);
                                                                 }
                                                             });
                                                         } else {
-                                                            getCallback().vnicCreated(id);
+                                                            getCallback().vnicCreated(id, unitVmModel);
                                                         }
                                                     }
                                                 }, this);

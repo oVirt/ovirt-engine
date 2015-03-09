@@ -28,6 +28,9 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_grou
 import org.ovirt.engine.ui.uicommonweb.models.storage.ImportCloneModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmsModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.AttachDiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.EditDiskModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
@@ -48,6 +51,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAl
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportCloneDialogPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmFromExportDomainPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.CloneVmPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.SingleSelectionVmDiskAttachPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskAttachPopupPresenterWidget;
@@ -102,7 +106,10 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<CloneVmPopupPresenterWidget> cloneVmProvider,
             final Provider<ImportVmFromExportDomainPopupPresenterWidget> importVmFromExportDomainPopupProvider,
             final Provider<VmListModel<Void>> modelProvider,
-            final Provider<CommonModel> commonModelProvider) {
+            final Provider<CommonModel> commonModelProvider,
+            final Provider<VmDiskPopupPresenterWidget> newDiskPopupProvider,
+            final Provider<SingleSelectionVmDiskAttachPopupPresenterWidget> attachDiskPopupProvider,
+            final Provider<VmDiskRemovePopupPresenterWidget> removeDiskConfirmPopupProvider) {
         MainTabModelProvider<VM, VmListModel<Void>> result =
                 new MainTabModelProvider<VM, VmListModel<Void>>(eventBus, defaultConfirmPopupProvider, commonModelProvider) {
                     @Override
@@ -122,10 +129,14 @@ public class VirtualMachineModule extends AbstractGinModule {
                             return createSnapshotPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getMigrateCommand()) {
                             return migratePopupProvider.get();
-                        } else if (lastExecutedCommand == getModel().getNewVmCommand()) {
-                            return newVmPopupProvider.get();
-                        } else if (lastExecutedCommand == getModel().getEditCommand()) {
-                            return newVmPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getEditCommand() || lastExecutedCommand == getModel().getNewVmCommand() || "OnSave".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
+                            if (windowModel instanceof AttachDiskModel) {
+                                return attachDiskPopupProvider.get();
+                            } else if ((windowModel instanceof NewDiskModel) || (windowModel instanceof EditDiskModel)) {
+                                return newDiskPopupProvider.get();
+                            } else {
+                                return newVmPopupProvider.get();
+                            }
                         } else if (lastExecutedCommand == getModel().getGuideCommand()) {
                             return guidePopupProvider.get();
                         } else if (windowModel instanceof VncInfoModel) {
@@ -156,6 +167,8 @@ public class VirtualMachineModule extends AbstractGinModule {
                             return importClonePopupProvider.get();
                         } else if ("OnSave".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
                             return nextRunProvider.get();
+                        } else if (lastExecutedCommand == getModel().getEditCommand()) {
+                            return removeDiskConfirmPopupProvider.get();
                         } else {
                             return super.getConfirmModelPopup(source, lastExecutedCommand);
                         }

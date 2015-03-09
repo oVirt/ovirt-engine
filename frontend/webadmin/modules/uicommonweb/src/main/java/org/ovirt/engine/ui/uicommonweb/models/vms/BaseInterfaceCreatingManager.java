@@ -29,7 +29,7 @@ public abstract class BaseInterfaceCreatingManager {
     }
 
     public static interface PostVnicCreatedCallback {
-        void vnicCreated(Guid vmId);
+        void vnicCreated(Guid vmId, UnitVmModel unitVmModel);
 
         void queryFailed();
     }
@@ -93,7 +93,7 @@ public abstract class BaseInterfaceCreatingManager {
                     }
                 }
 
-                doNicManipulation(createVnicParameters, updateVnicParameters, removeVnicParameters, unitVmModel.getIsNew(), vmId);
+                doNicManipulation(createVnicParameters, updateVnicParameters, removeVnicParameters, unitVmModel.getIsNew(), vmId, unitVmModel);
             }
 
         };
@@ -112,5 +112,6 @@ public abstract class BaseInterfaceCreatingManager {
             final ArrayList<VdcActionParametersBase> updateVnicParameters,
             final ArrayList<VdcActionParametersBase> removeVnicParameters,
             final boolean isAddingNewVm,
-            final Guid id);
+            final Guid id,
+            final UnitVmModel unitVmModel);
 }

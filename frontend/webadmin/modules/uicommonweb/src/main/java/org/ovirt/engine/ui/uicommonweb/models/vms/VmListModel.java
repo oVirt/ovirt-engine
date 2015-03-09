@@ -719,7 +719,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         List<UICommand> commands = new ArrayList<>();
         commands.add(UICommand.createDefaultOkUiCommand("OnSave", this)); //$NON-NLS-1$
         commands.add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
-        UnitVmModel model = new UnitVmModel(new NewVmModelBehavior());
+        UnitVmModel model = new UnitVmModel(new NewVmModelBehavior(), this);
         setupNewVmModel(model, VmType.Server, getSystemTreeSelectedItem(), commands);
     }
 
@@ -772,7 +772,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     }
 
     private void vmInitLoaded(VM vm) {
-        UnitVmModel model = new UnitVmModel(new ExistingVmModelBehavior(vm));
+        UnitVmModel model = new UnitVmModel(new ExistingVmModelBehavior(vm), this);
         model.getVmType().setSelectedItem(vm.getVmType());
         model.setVmAttachedToPool(vm.getVmPoolId() != null);
         model.setIsAdvancedModeLocalStorageKey("wa_vm_dialog");  //$NON-NLS-1$
@@ -1273,7 +1273,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             return;
         }
 
-        UnitVmModel model = new UnitVmModel(new NewTemplateVmModelBehavior(vm));
+        UnitVmModel model = new UnitVmModel(new NewTemplateVmModelBehavior(vm), this);
 
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newTemplateTitle());
@@ -1948,13 +1948,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             VmManagementParametersBase updateVmParams = getUpdateVmParameters(applyCpuChangesLater);
             Frontend.getInstance().runAction(VdcActionType.UpdateVm, updateVmParams, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager, getcurrentVm().getId()), this);
         }
-    }
-
-    @Override
-    protected void createUnitVmModelNetworkSucceeded(VdcReturnValueBase returnValue) {
-        setGuideContext(returnValue.getActionReturnValue());
-        updateActionsAvailability();
-        getGuideCommand().execute();
     }
 
     public VmManagementParametersBase getUpdateVmParameters(boolean applyCpuChangesLater) {
@@ -2808,5 +2801,12 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
                     .getMessages()
                     .suffixCauseToClonedVmNameCollision(existingName);
         }
+    }
+
+    @Override
+    protected void executeDiskModifications(Guid vmId, UnitVmModel model) {
+        // this is done on the background - the window is not visible anymore
+        getcurrentVm().setId(vmId);
+        model.getInstanceImages().executeDiskModifications(getcurrentVm());
     }
 }
