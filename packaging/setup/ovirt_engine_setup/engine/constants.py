@@ -348,7 +348,6 @@ class Stages(object):
 
     MEMORY_CHECK = 'osetup.memory.check'
 
-    CA_ALLOWED = 'osetup.engine.pki.ca.allow'
     CA_AVAILABLE = 'osetup.pki.ca.available'
 
     POSTGRES_PROVISIONING_ALLOWED = 'osetup.engine.provisioning.pgsql.allow'
