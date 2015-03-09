@@ -82,7 +82,7 @@ public class RestApiSessionMgmtFilter implements Filter {
                     InitialContext ctx = new InitialContext();
                     try {
                         FiltersHelper.getBackend(ctx).runAction(
-                                VdcActionType.LogoutBySession,
+                                VdcActionType.LogoutSession,
                                 new VdcActionParametersBase(engineSessionId)
                                 );
                         HttpSession session = req.getSession(false);

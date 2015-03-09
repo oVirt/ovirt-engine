@@ -12,8 +12,11 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 
-public class LogoutUserCommand<T extends VdcActionParametersBase> extends CommandBase<T> {
-    public LogoutUserCommand(T parameters) {
+/**
+ * Tries to log out a user identified by its session id
+ */
+public class LogoutSessionCommand<T extends VdcActionParametersBase> extends CommandBase<T> {
+    public LogoutSessionCommand(T parameters) {
         super(parameters);
     }
 

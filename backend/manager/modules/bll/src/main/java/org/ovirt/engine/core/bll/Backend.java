@@ -590,7 +590,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     @Override
     public VdcReturnValueBase logoff(VdcActionParametersBase parameters) {
-        return runAction(VdcActionType.LogoutUser, parameters);
+        return runAction(VdcActionType.LogoutSession, parameters);
     }
 
     @Override
