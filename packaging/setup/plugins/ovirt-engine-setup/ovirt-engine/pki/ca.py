@@ -106,15 +106,6 @@ class Plugin(plugin.PluginBase):
         )
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_SETUP,
-        condition=lambda self: not os.path.exists(
-            oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
-        )
-    )
-    def _setup(self):
-        self._enabled = True
-
-    @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         before=(
             oengcommcons.Stages.DIALOG_TITLES_E_PKI,
@@ -123,54 +114,45 @@ class Plugin(plugin.PluginBase):
             osetupcons.Stages.CONFIG_PROTOCOLS_CUSTOMIZATION,
             oengcommcons.Stages.DIALOG_TITLES_S_PKI,
         ),
-        name=oenginecons.Stages.CA_ALLOWED,
-    )
-    def _customization_enable(self):
-        if not self.environment[oenginecons.CoreEnv.ENABLE]:
-            self._enabled = False
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        before=(
-            oengcommcons.Stages.DIALOG_TITLES_E_PKI,
+        condition=lambda self: (
+            self.environment[oenginecons.CoreEnv.ENABLE] and
+            not os.path.exists(
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+            ) and
+            self.environment[oenginecons.PKIEnv.ORG] is None
         ),
-        after=(
-            osetupcons.Stages.CONFIG_PROTOCOLS_CUSTOMIZATION,
-            oengcommcons.Stages.DIALOG_TITLES_S_PKI,
-            oenginecons.Stages.CA_ALLOWED
-        ),
-        condition=lambda self: self._enabled,
     )
     def _customization(self):
-        if self._enabled:
-            if self.environment[oenginecons.PKIEnv.ORG] is None:
-                org = 'Test'
-                if '.' in self.environment[osetupcons.ConfigEnv.FQDN]:
-                    org = self.environment[
-                        osetupcons.ConfigEnv.FQDN
-                    ].split('.', 1)[1]
+        org = 'Test'
+        if '.' in self.environment[osetupcons.ConfigEnv.FQDN]:
+            org = self.environment[
+                osetupcons.ConfigEnv.FQDN
+            ].split('.', 1)[1]
 
-                self.environment[
-                    oenginecons.PKIEnv.ORG
-                ] = self.dialog.queryString(
-                    name='OVESETUP_PKI_ORG',
-                    note=_(
-                        'Organization name for certificate [@DEFAULT@]: '
-                    ),
-                    prompt=True,
-                    default=org,
-                )
-        else:
-            self.dialog.note(
-                text=_('PKI is already configured'),
-            )
+        self.environment[
+            oenginecons.PKIEnv.ORG
+        ] = self.dialog.queryString(
+            name='OVESETUP_PKI_ORG',
+            note=_(
+                'Organization name for certificate [@DEFAULT@]: '
+            ),
+            prompt=True,
+            default=org,
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         name=oenginecons.Stages.CA_AVAILABLE,
-        condition=lambda self: self._enabled,
+        condition=lambda self: (
+            self.environment[oenginecons.CoreEnv.ENABLE] and
+            not os.path.exists(
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+            )
+        ),
     )
     def _misc(self):
+        self._enabled = True
+
         # TODO
         # this implementaiton is not transactional
         # too many issues with legacy ca implementation
@@ -184,12 +166,6 @@ class Plugin(plugin.PluginBase):
             )
         )
 
-        # LEGACY NOTE
-        # This is needed for avoiding error in create_ca when supporting
-        # max cn length of 64.
-        # please DON'T increase this size, any value over 55 will fail the
-        # setup. the truncated host-fqdn is concatenated with a random string
-        # to create a unique CN value.
         self.environment[
             osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
         ].createGroup(
@@ -200,6 +176,13 @@ class Plugin(plugin.PluginBase):
             group='ca_pki',
             fileList=uninstall_files,
         )
+
+        # LEGACY NOTE
+        # This is needed for avoiding error in create_ca when supporting
+        # max cn length of 64.
+        # please DON'T increase this size, any value over 55 will fail the
+        # setup. the truncated host-fqdn is concatenated with a random string
+        # to create a unique CN value.
         MAX_HOST_FQDN_LEN = 55
 
         self.logger.info(_('Creating CA'))
