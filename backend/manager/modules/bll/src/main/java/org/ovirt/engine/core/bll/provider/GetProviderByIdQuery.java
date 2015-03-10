@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 
-@SuppressWarnings("unused")
 public class GetProviderByIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
     public GetProviderByIdQuery(P parameters) {
@@ -33,7 +32,7 @@ public class GetProviderByIdQuery<P extends IdQueryParameters> extends QueriesCo
     protected void executeQueryCommand() {
         Guid id = getParameters().getId();
         ProviderDao dao = getDbFacade().getProviderDao();
-        Provider provider = dao.get(id);
+        Provider<?> provider = dao.get(id);
         getQueryReturnValue().setReturnValue(provider);
     }
 }
