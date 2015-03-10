@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -63,7 +64,11 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private String cachedDiskIsBeingRemovedLockMessage;
 
     public RemoveDiskCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public RemoveDiskCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         setStorageDomainId(getParameters().getStorageDomainId());
     }
 
