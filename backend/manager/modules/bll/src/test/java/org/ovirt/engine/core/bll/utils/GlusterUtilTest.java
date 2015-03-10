@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.utils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anySetOf;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -58,14 +58,13 @@ public class GlusterUtilTest {
         doThrow(AuthenticationException.class).when(glusterUtil).authenticate(client, USER, WRONG_PASSWORD);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testGetPeersWithFingerprint() throws AuthenticationException, IOException {
         EXPECTED_MAP.put(SERVER_NAME1, FINGER_PRINT1);
         EXPECTED_MAP.put(SERVER_NAME2, FINGER_PRINT2);
         doReturn(client).when(glusterUtil).getSSHClient();
         doNothing().when(glusterUtil).connect(client, SERVER_NAME1);
-        doReturn(EXPECTED_MAP).when(glusterUtil).getFingerprints(any(Set.class));
+        doReturn(EXPECTED_MAP).when(glusterUtil).getFingerprints(anySetOf(String.class));
         Map<String, String> peers = glusterUtil.getPeers(SERVER_NAME1, USER, PASSWORD, FINGER_PRINT1);
         assertNotNull(peers);
         peers.containsKey(SERVER_NAME1);
@@ -74,34 +73,31 @@ public class GlusterUtilTest {
         assertEquals(FINGER_PRINT2, peers.get(SERVER_NAME2));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testGetPeers() throws AuthenticationException, IOException {
         EXPECTED_MAP.put(SERVER_NAME1, FINGER_PRINT1);
         EXPECTED_MAP.put(SERVER_NAME2, FINGER_PRINT2);
         doReturn(client).when(glusterUtil).getSSHClient();
         doNothing().when(glusterUtil).connect(client, SERVER_NAME1);
-        doReturn(EXPECTED_MAP).when(glusterUtil).getFingerprints(any(Set.class));
+        doReturn(EXPECTED_MAP).when(glusterUtil).getFingerprints(anySetOf(String.class));
         Set<String> peers = glusterUtil.getPeers(SERVER_NAME1, USER, PASSWORD);
         assertNotNull(peers);
         assertTrue(peers.contains(SERVER_NAME1));
         assertTrue(peers.contains(SERVER_NAME2));
     }
 
-    @SuppressWarnings("unchecked")
     @Test(expected = AuthenticationException.class)
     public void testGetPeersWithWrongPassword() throws AuthenticationException, IOException {
         EXPECTED_MAP.put(SERVER_NAME1, FINGER_PRINT1);
         doReturn(client).when(glusterUtil).getSSHClient();
-        doReturn(EXPECTED_MAP).when(glusterUtil).getFingerprints(any(Set.class));
+        doReturn(EXPECTED_MAP).when(glusterUtil).getFingerprints(anySetOf(String.class));
         glusterUtil.getPeers(SERVER_NAME1, USER, WRONG_PASSWORD);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testHasPeersTrue() {
         EXPECTED_MAP.put(SERVER_NAME1, FINGER_PRINT1);
-        doReturn(EXPECTED_MAP).when(glusterUtil).getFingerprints(any(Set.class));
+        doReturn(EXPECTED_MAP).when(glusterUtil).getFingerprints(anySetOf(String.class));
         assertNotNull(glusterUtil.getPeers(client));
         assertEquals(2, glusterUtil.getPeers(client).size());
     }
@@ -109,7 +105,7 @@ public class GlusterUtilTest {
     @Test
     public void testHasPeersFalse() {
         EXPECTED_MAP.put(SERVER_NAME1, FINGER_PRINT1);
-        doReturn(EXPECTED_MAP).when(glusterUtil).getFingerprints(any(Set.class));
+        doReturn(EXPECTED_MAP).when(glusterUtil).getFingerprints(anySetOf(String.class));
         doReturn(OUTPUT_XML_NO_PEERS).when(glusterUtil).executePeerStatusCommand(client);
         assertTrue(glusterUtil.getPeers(client).isEmpty());
     }
