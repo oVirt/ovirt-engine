@@ -222,11 +222,10 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     public List<Guid> getChildCommandIds(Guid cmdId) {
         initChildHierarchy();
-        List<Guid> childIds = Collections.EMPTY_LIST;
         if (childHierarchy.containsKey(cmdId)) {
-            childIds = childHierarchy.get(cmdId);
+            return childHierarchy.get(cmdId);
         }
-        return childIds;
+        return Collections.emptyList();
     }
 
     public List<CommandEntity> getChildCmdsByParentCmdId(Guid cmdId) {
