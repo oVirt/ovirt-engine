@@ -46,7 +46,7 @@ public class ReorderVmNicsCommand<T extends VmOperationParameterBase> extends Vm
 
     private Map<Guid, VmDevice> getVmInterfaceDevices() {
         List<VmDevice> vmInterfaceDevicesList = getVmDeviceDao().getVmDeviceByVmIdAndType(getParameters().getVmId(), VmDeviceGeneralType.INTERFACE);
-        Map<Guid, VmDevice> vmInterfaceDevices = new HashMap();
+        Map<Guid, VmDevice> vmInterfaceDevices = new HashMap<>();
         for (VmDevice device : vmInterfaceDevicesList) {
             vmInterfaceDevices.put(device.getDeviceId(), device);
         }
