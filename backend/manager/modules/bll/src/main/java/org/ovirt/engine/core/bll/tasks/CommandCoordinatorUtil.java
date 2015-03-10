@@ -57,7 +57,7 @@ public class CommandCoordinatorUtil {
 
     public static Guid createTask(
             Guid taskId,
-            CommandBase command,
+            CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand,
             String description,
@@ -72,7 +72,7 @@ public class CommandCoordinatorUtil {
 
     public static SPMAsyncTask concreteCreateTask(
             Guid taskId,
-            CommandBase command,
+            CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
         return coco.concreteCreateTask(taskId,
@@ -81,24 +81,24 @@ public class CommandCoordinatorUtil {
                 parentCommand);
     }
 
-    public static void cancelTasks(final CommandBase command) {
+    public static void cancelTasks(final CommandBase<?> command) {
         coco.cancelTasks(command);
     }
 
-    public static void revertTasks(final CommandBase command) {
+    public static void revertTasks(final CommandBase<?> command) {
         coco.revertTasks(command);
     }
 
     public static AsyncTask getAsyncTask(
             Guid taskId,
-            CommandBase command,
+            CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
         return coco.getAsyncTask(taskId, command, asyncTaskCreationInfo, parentCommand);
     }
 
     public static AsyncTask createAsyncTask(
-            CommandBase command,
+            CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
         return coco.createAsyncTask(command, asyncTaskCreationInfo, parentCommand);
