@@ -28,13 +28,15 @@ public class ProtocolDetector {
 
     private Integer connectionTimeout = null;
     private Integer retryAttempts = null;
+    private final ResourceManager resourceManager;
 
     private VDS vds;
 
-    public ProtocolDetector(VDS vds) {
+    public ProtocolDetector(VDS vds, ResourceManager resourceManager) {
         this.vds = vds;
         this.retryAttempts = Config.<Integer> getValue(ConfigValues.ProtocolFallbackRetries);
         this.connectionTimeout = Config.<Integer> getValue(ConfigValues.ProtocolFallbackTimeoutInMilliSeconds);
+        this.resourceManager = resourceManager;
     }
 
     /**
@@ -68,7 +70,7 @@ public class ProtocolDetector {
      * Stops {@code VdsManager} for a host.
      */
     public void stopConnection() {
-        ResourceManager.getInstance().RemoveVds(this.vds.getId());
+        resourceManager.RemoveVds(this.vds.getId());
     }
 
     /**
@@ -78,7 +80,7 @@ public class ProtocolDetector {
      */
     public boolean attemptFallbackProtocol() {
         vds.setProtocol(VdsProtocol.XML);
-        ResourceManager.getInstance().AddVds(vds, false);
+        resourceManager.AddVds(vds, false);
         return attemptConnection();
     }
 

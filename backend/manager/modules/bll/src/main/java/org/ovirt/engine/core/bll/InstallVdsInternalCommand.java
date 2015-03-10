@@ -15,13 +15,13 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.InstallVdsParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -176,7 +176,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 case Complete:
                     if (checkProtocolTofallback(getVds())) {
                         // we need to check whether we are connecting to vdsm which supports xmlrpc only
-                        ProtocolDetector detector = new ProtocolDetector(getVds());
+                        ProtocolDetector detector = new ProtocolDetector(getVds(), resourceManager);
                         if (!detector.attemptConnection()) {
                             detector.stopConnection();
                             if (detector.attemptFallbackProtocol()) {
