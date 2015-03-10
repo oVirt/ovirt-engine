@@ -8,6 +8,7 @@ import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -17,12 +18,21 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
  */
 public class LogoutSessionCommand<T extends VdcActionParametersBase> extends CommandBase<T> {
     public LogoutSessionCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public LogoutSessionCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.USER_VDC_LOGOUT : AuditLogType.USER_VDC_LOGOUT_FAILED;
+    }
+
+    @Override
+    protected boolean canDoAction() {
+        return SessionDataContainer.getInstance().isSessionExists(getParameters().getSessionId());
     }
 
     @Override
