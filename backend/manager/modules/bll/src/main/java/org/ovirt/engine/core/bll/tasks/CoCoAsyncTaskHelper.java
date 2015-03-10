@@ -288,7 +288,10 @@ public class CoCoAsyncTaskHelper {
             CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
-        Guid parentCommandId = command.getParameters().getParentParameters() == null ? Guid.Empty : command.getParameters().getParentParameters().getCommandId();
+        Guid parentCommandId =
+                command.getParameters().getParentParameters() == null ? Guid.Empty : command.getParameters()
+                        .getParentParameters()
+                        .getCommandId();
         VdcActionParametersBase parentParameters = command.getParentParameters(parentCommand);
         if (VdcActionType.Unknown.equals(command.getParameters().getCommandType())) {
             command.getParameters().setCommandType(command.getActionType());
@@ -342,7 +345,8 @@ public class CoCoAsyncTaskHelper {
                                         ExecutionContext executionContext,
                                         CommandStatus cmdStatus) {
         CommandBase<?> command;
-        CommandContext cmdContext = new CommandContext(new EngineContext()).withExecutionContext(executionContext == null ? new ExecutionContext() : executionContext);
+        ExecutionContext cmdExecutionContext = executionContext == null ? new ExecutionContext() : executionContext;
+        CommandContext cmdContext = new CommandContext(new EngineContext()).withExecutionContext(cmdExecutionContext);
         if (CommandsFactory.hasConstructor(actionType, parameters, cmdContext)) {
             command = CommandsFactory.createCommand(actionType, parameters, cmdContext);
         } else {
