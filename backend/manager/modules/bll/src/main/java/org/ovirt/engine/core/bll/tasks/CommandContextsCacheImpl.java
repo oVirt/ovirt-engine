@@ -10,7 +10,6 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class CommandContextsCacheImpl implements CommandContextsCache {
 
-    private static final String COMMAND_CONTEXT_MAP_NAME = "commandContextMap";
     private final CommandsCache commandsCache;
     private CacheWrapper<Guid, CommandContext> contextsMap;
     private volatile boolean cacheInitialized;
@@ -18,7 +17,7 @@ public class CommandContextsCacheImpl implements CommandContextsCache {
 
     public CommandContextsCacheImpl(final CommandsCache commandsCache) {
         this.commandsCache = commandsCache;
-        contextsMap = CacheProviderFactory.<Guid, CommandContext> getCacheWrapper(COMMAND_CONTEXT_MAP_NAME);
+        contextsMap = CacheProviderFactory.<Guid, CommandContext> getCacheWrapper();
     }
 
     private void initializeCache() {

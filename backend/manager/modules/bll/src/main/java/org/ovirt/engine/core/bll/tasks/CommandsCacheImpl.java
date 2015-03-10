@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.tasks;
 import java.util.List;
 import java.util.Set;
 
+import javax.transaction.Transaction;
+
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.DateTime;
@@ -10,17 +12,14 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-import javax.transaction.Transaction;
-
 public class CommandsCacheImpl implements CommandsCache {
 
-    private static final String COMMAND_MAP_NAME = "commandMap";
     CacheWrapper<Guid, CommandEntity> commandMap;
     private volatile boolean cacheInitialized;
     private Object LOCK = new Object();
 
     public CommandsCacheImpl() {
-        commandMap = CacheProviderFactory.<Guid, CommandEntity> getCacheWrapper(COMMAND_MAP_NAME);
+        commandMap = CacheProviderFactory.<Guid, CommandEntity> getCacheWrapper();
     }
 
     private void initializeCache() {
