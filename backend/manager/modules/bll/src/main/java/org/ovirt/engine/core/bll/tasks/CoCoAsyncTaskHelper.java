@@ -64,7 +64,7 @@ public class CoCoAsyncTaskHelper {
      * @return Guid of the created task.
      */
     public Guid createTask(Guid taskId,
-                           CommandBase command,
+            CommandBase<?> command,
                            AsyncTaskCreationInfo asyncTaskCreationInfo,
                            VdcActionType parentCommand,
                            String description,
@@ -99,7 +99,7 @@ public class CoCoAsyncTaskHelper {
      */
     public SPMAsyncTask concreteCreateTask(
             Guid taskId,
-            CommandBase command,
+            CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
         AsyncTaskParameters p =
@@ -109,7 +109,7 @@ public class CoCoAsyncTaskHelper {
         return createTask(internalGetTaskType(command), p);
     }
 
-    public void revertTasks(CommandBase command) {
+    public void revertTasks(CommandBase<?> command) {
         if (command.getParameters().getVdsmTaskIds() != null) {
             // list to send to the pollTasks method
             ArrayList<Guid> taskIdAsList = new ArrayList<Guid>();
@@ -130,7 +130,7 @@ public class CoCoAsyncTaskHelper {
         }
     }
 
-    public void cancelTasks(final CommandBase command, final Logger log) {
+    public void cancelTasks(final CommandBase<?> command, final Logger log) {
         if (command.hasTasks()) {
             ThreadPoolUtil.execute(new Runnable() {
                 @Override
@@ -255,7 +255,7 @@ public class CoCoAsyncTaskHelper {
     }
 
     public AsyncTask getAsyncTask(Guid taskId,
-            CommandBase command,
+            CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
         AsyncTask asyncTask = null;
@@ -285,7 +285,7 @@ public class CoCoAsyncTaskHelper {
     }
 
     public AsyncTask createAsyncTask(
-            CommandBase command,
+            CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
         Guid parentCommandId = command.getParameters().getParentParameters() == null ? Guid.Empty : command.getParameters().getParentParameters().getCommandId();
@@ -307,7 +307,7 @@ public class CoCoAsyncTaskHelper {
         return asyncTask;
     }
 
-    private CommandEntity getChildCommandEntity(CommandBase command, VdcActionType parentCommand) {
+    private CommandEntity getChildCommandEntity(CommandBase<?> command, VdcActionType parentCommand) {
         CommandEntity cmdEntity = coco.getCommandEntity(command.getCommandId());
         if (cmdEntity == null) {
             command.persistCommand(parentCommand, command.getCallBack() != null);
@@ -367,7 +367,7 @@ public class CoCoAsyncTaskHelper {
      * {@link UnsupportedOperationException}
      *
      */
-    private AsyncTaskType internalGetTaskType(CommandBase command) {
+    private AsyncTaskType internalGetTaskType(CommandBase<?> command) {
         if (command.hasTaskHandlers()) {
             if (command.getParameters().getExecutionReason() == VdcActionParametersBase.CommandExecutionReason.REGULAR_FLOW) {
                 return command.getCurrentTaskHandler().getTaskType();
