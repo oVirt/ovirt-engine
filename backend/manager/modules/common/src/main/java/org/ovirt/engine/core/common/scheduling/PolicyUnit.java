@@ -5,12 +5,13 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
  * Policy unit BE represents scheduling unit with the following methods: filter, score & balance.
  */
-public class PolicyUnit extends IVdcQueryable implements BusinessEntity<Guid>, Serializable {
+public class PolicyUnit extends IVdcQueryable implements BusinessEntity<Guid>, Serializable, Nameable {
     private static final long serialVersionUID = 7739555364433134921L;
 
     /**
@@ -62,6 +63,7 @@ public class PolicyUnit extends IVdcQueryable implements BusinessEntity<Guid>, S
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }

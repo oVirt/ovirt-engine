@@ -3,14 +3,16 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 import java.io.Serializable;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 
-public class GlusterVolumeProfileStats implements Serializable {
+public class GlusterVolumeProfileStats implements Serializable, Nameable {
     private static final long serialVersionUID = 1L;
 
     private String name;
     private List<StatsInfo> profileStats;
 
+    @Override
     public String getName() {
         return name;
     }

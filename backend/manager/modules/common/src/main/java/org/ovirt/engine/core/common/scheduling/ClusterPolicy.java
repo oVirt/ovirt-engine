@@ -6,13 +6,14 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
  * Bussiness entity for cluster policy, holds logic for host selections and load balancing logic.
  */
-public class ClusterPolicy extends IVdcQueryable implements BusinessEntity<Guid>, Serializable {
+public class ClusterPolicy extends IVdcQueryable implements BusinessEntity<Guid>, Serializable, Nameable {
     private static final long serialVersionUID = 7739745365583134911L;
 
     /**
@@ -74,6 +75,7 @@ public class ClusterPolicy extends IVdcQueryable implements BusinessEntity<Guid>
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }

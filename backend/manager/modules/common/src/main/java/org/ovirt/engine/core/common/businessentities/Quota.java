@@ -26,7 +26,7 @@ import org.ovirt.engine.core.compat.Guid;
  * <BR/>
  * Take in notice there can not be general limitation and specific limitation on the same resource type.
  */
-public class Quota extends IVdcQueryable implements BusinessEntity<Guid> {
+public class Quota extends IVdcQueryable implements BusinessEntity<Guid>, Nameable {
 
     /**
      * Automatic generated serial version ID.
@@ -218,6 +218,11 @@ public class Quota extends IVdcQueryable implements BusinessEntity<Guid> {
      */
     public String getQuotaName() {
         return quotaName;
+    }
+
+    @Override
+    public String getName() {
+        return getQuotaName();
     }
 
     /**

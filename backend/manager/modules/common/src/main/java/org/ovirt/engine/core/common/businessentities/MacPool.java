@@ -10,7 +10,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-public class MacPool extends IVdcQueryable implements BusinessEntity<Guid> {
+public class MacPool extends IVdcQueryable implements BusinessEntity<Guid>, Nameable {
 
     private static final long serialVersionUID = -7952435653821354188L;
 
@@ -46,6 +46,7 @@ public class MacPool extends IVdcQueryable implements BusinessEntity<Guid> {
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }
