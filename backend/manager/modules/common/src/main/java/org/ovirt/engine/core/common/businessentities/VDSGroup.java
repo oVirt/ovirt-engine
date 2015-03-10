@@ -79,6 +79,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     private boolean optionalReasonRequired;
 
+    private boolean maintenanceReasonRequired;
+
     private Guid clusterPolicyId;
 
     private String clusterPolicyName;
@@ -286,6 +288,14 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         this.optionalReasonRequired = optionalReasonRequired;
     }
 
+    public boolean isMaintenanceReasonRequired() {
+        return maintenanceReasonRequired;
+    }
+
+    public void setMaintenanceReasonRequired(boolean maintenanceReasonRequired) {
+        this.maintenanceReasonRequired = maintenanceReasonRequired;
+    }
+
     public Guid getClusterPolicyId() {
         return clusterPolicyId;
     }
@@ -448,6 +458,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         result = prime * result + (fencingPolicy == null ? 0 : fencingPolicy.hashCode());
         result = prime * result + (autoConverge == null ? 0 : autoConverge.hashCode());
         result = prime * result + (migrateCompressed == null ? 0 : migrateCompressed.hashCode());
+        result = prime * result + (maintenanceReasonRequired ? 1231 : 1237);
         return result;
     }
 
@@ -493,7 +504,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
                 && ObjectUtils.objectsEqual(requiredRngSources, other.requiredRngSources)
                 && ObjectUtils.objectsEqual(fencingPolicy, other.fencingPolicy)
                 && ObjectUtils.objectsEqual(autoConverge, other.autoConverge)
-                && ObjectUtils.objectsEqual(migrateCompressed, other.migrateCompressed);
+                && ObjectUtils.objectsEqual(migrateCompressed, other.migrateCompressed)
+                && ObjectUtils.objectsEqual(maintenanceReasonRequired, other.maintenanceReasonRequired);
     }
 
 }

@@ -794,6 +794,7 @@
         <column>fencing_enabled</column>
         <column>is_auto_converge</column>
         <column>is_migrate_compressed</column>
+        <column>maintenance_reason_required</column>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
             <value>rhel6.iscsi</value>
@@ -825,6 +826,7 @@
             <value>true</value>
             <value>true</value>
             <value>true</value>
+            <value>false</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d2</value>
@@ -856,6 +858,7 @@
             <value>50</value>
             <value>true</value>
             <value>true</value>
+            <value>false</value>
             <value>false</value>
         </row>
         <row>
@@ -889,6 +892,7 @@
             <value>true</value>
             <value>false</value>
             <value>true</value>
+            <value>false</value>
         </row>
         <row>
             <value>0e57070e-2469-4b38-84a2-f111aaabd49d</value>
@@ -921,6 +925,7 @@
             <value>true</value>
             <null />
             <value>true</value>
+            <value>false</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
@@ -953,6 +958,7 @@
             <value>true</value>
             <value>true</value>
             <null />
+            <value>false</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7d</value>
@@ -984,6 +990,7 @@
             <value>50</value>
             <value>false</value>
             <null />
+            <value>false</value>
             <value>false</value>
         </row>
         <row>
@@ -1017,6 +1024,7 @@
             <value>true</value>
             <value>false</value>
             <null />
+            <value>false</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7f</value>
@@ -1049,6 +1057,7 @@
             <value>true</value>
             <null />
             <null />
+            <value>false</value>
         </row>
         <row>
             <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
@@ -1081,6 +1090,7 @@
             <value>false</value>
             <null />
             <null />
+            <value>true</value>
         </row>
     </table>
 

@@ -213,6 +213,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 .addValue("trusted_service", group.supportsTrustedService())
                 .addValue("ha_reservation", group.supportsHaReservation())
                 .addValue("optional_reason", group.isOptionalReasonRequired())
+                .addValue("maintenance_reason_required", group.isMaintenanceReasonRequired())
                 .addValue("cluster_policy_id", group.getClusterPolicyId())
                 .addValue("cluster_policy_custom_properties",
                                 SerializationFactory.getSerializer().serialize(group.getClusterPolicyProperties()))
@@ -278,6 +279,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.setTrustedService(rs.getBoolean("trusted_service"));
             entity.setHaReservation(rs.getBoolean("ha_reservation"));
             entity.setOptionalReasonRequired(rs.getBoolean("optional_reason"));
+            entity.setMaintenanceReasonRequired(rs.getBoolean("maintenance_reason_required"));
             entity.setClusterPolicyId(Guid.createGuidFromString(rs.getString("cluster_policy_id")));
             entity.setClusterPolicyName(rs.getString("cluster_policy_name"));
             entity.setClusterPolicyProperties(SerializationFactory.getDeserializer()
