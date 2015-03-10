@@ -301,21 +301,21 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     public AsyncTask getAsyncTask(
             Guid taskId,
-            CommandBase command,
+            CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
         return coCoAsyncTaskHelper.getAsyncTask(taskId, command, asyncTaskCreationInfo, parentCommand);
     }
 
     public AsyncTask createAsyncTask(
-            CommandBase command,
+            CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
         return coCoAsyncTaskHelper.createAsyncTask(command, asyncTaskCreationInfo, parentCommand);
     }
 
     public Guid createTask(Guid taskId,
-                           CommandBase command,
+            CommandBase<?> command,
                            AsyncTaskCreationInfo asyncTaskCreationInfo,
                            VdcActionType parentCommand,
                            String description,
@@ -326,17 +326,17 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     public SPMAsyncTask concreteCreateTask(
             Guid taskId,
-            CommandBase command,
+            CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
         return coCoAsyncTaskHelper.concreteCreateTask(taskId, command, asyncTaskCreationInfo, parentCommand);
     }
 
-    public void cancelTasks(final CommandBase command) {
+    public void cancelTasks(final CommandBase<?> command) {
         coCoAsyncTaskHelper.cancelTasks(command, log);
     }
 
-    public void revertTasks(CommandBase command) {
+    public void revertTasks(CommandBase<?> command) {
         coCoAsyncTaskHelper.revertTasks(command);
     }
 

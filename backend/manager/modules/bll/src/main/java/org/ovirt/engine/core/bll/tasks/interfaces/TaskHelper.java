@@ -32,7 +32,7 @@ public interface TaskHelper {
 
     Guid createTask(
             Guid taskId,
-            CommandBase command,
+            CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand,
             String description,
@@ -40,22 +40,22 @@ public interface TaskHelper {
 
     SPMAsyncTask concreteCreateTask(
             Guid taskId,
-            CommandBase command,
+            CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand);
 
-    void cancelTasks(CommandBase command);
+    void cancelTasks(CommandBase<?> command);
 
-    void revertTasks(CommandBase command);
+    void revertTasks(CommandBase<?> command);
 
     AsyncTask getAsyncTask(
             Guid taskId,
-            CommandBase command,
+            CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand);
 
     public AsyncTask createAsyncTask(
-            CommandBase command,
+            CommandBase<?> command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand);
 
