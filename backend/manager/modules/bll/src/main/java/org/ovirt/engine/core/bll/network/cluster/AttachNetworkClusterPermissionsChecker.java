@@ -2,9 +2,7 @@ package org.ovirt.engine.core.bll.network.cluster;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.CommandBase;
@@ -13,19 +11,9 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 
 @Singleton
 class AttachNetworkClusterPermissionsChecker {
-
-    private final NetworkClusterDao networkClusterDao;
-
-    @Inject
-    AttachNetworkClusterPermissionsChecker(NetworkClusterDao networkClusterDao) {
-        Objects.requireNonNull(networkClusterDao, "networkClusterDao cannot be null");
-
-        this.networkClusterDao = networkClusterDao;
-    }
 
     public boolean checkPermissions(CommandBase<?> command, List<PermissionSubject> permissionCheckSubjects) {
         final List<String> messages = new ArrayList<>();
