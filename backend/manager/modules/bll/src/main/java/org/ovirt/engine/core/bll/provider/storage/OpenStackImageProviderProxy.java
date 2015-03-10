@@ -153,14 +153,14 @@ public class OpenStackImageProviderProxy implements ProviderProxy {
         }
     }
 
-    private Provider getProvider() {
+    private Provider<?> getProvider() {
         return provider;
     }
 
     public static OpenStackImageProviderProxy getFromStorageDomainId(Guid storageDomainId) {
         StorageDomainStatic storageDomainStatic = getDbFacade().getStorageDomainStaticDao().get(storageDomainId);
         if (storageDomainStatic != null) {
-            Provider provider = getDbFacade().getProviderDao().get(new Guid(storageDomainStatic.getStorage()));
+            Provider<?> provider = getDbFacade().getProviderDao().get(new Guid(storageDomainStatic.getStorage()));
             return ProviderProxyFactory.getInstance().create(provider);
         }
         return null;
