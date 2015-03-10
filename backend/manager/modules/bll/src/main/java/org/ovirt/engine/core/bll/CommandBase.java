@@ -13,8 +13,6 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.TransactionRolledbackLocalException;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
@@ -26,7 +24,6 @@ import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.context.DefaultCompensationContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
-import org.ovirt.engine.core.bll.interfaces.BackendCommandObjectsHandler;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -108,9 +105,6 @@ import org.springframework.dao.DataAccessException;
 
 public abstract class CommandBase<T extends VdcActionParametersBase> extends AuditLogableBase implements
         RollbackHandler, TransactionMethod<Object>, Command<T> {
-
-    @Inject
-    private Instance<BackendCommandObjectsHandler> commandObjectsHandlerProvider;
 
     /* Multiplier used to convert GB to bytes or vice versa. */
     protected static final long BYTES_IN_GB = 1024 * 1024 * 1024;
