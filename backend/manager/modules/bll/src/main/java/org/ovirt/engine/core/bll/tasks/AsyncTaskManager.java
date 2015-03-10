@@ -107,7 +107,7 @@ public final class AsyncTaskManager {
     }
 
     public void initAsyncTaskManager() {
-        tasksInDbAfterRestart = new ConcurrentHashMap();
+        tasksInDbAfterRestart = new ConcurrentHashMap<>();
         Map<Guid, List<AsyncTask>> rootCommandIdToTasksMap = groupTasksByRootCommandId(coco.getAllAsyncTasksFromDb());
         int numberOfCommandsPartiallyExecuted = 0;
         for (Entry<Guid, List<AsyncTask>> entry : rootCommandIdToTasksMap.entrySet()) {
@@ -319,14 +319,6 @@ public final class AsyncTaskManager {
         spmTask.updateTask(failureStatus);
     }
 
-    private static VdcActionType getEndActionType(AsyncTask dbAsyncTask) {
-        VdcActionType commandType = dbAsyncTask.getActionParameters().getCommandType();
-        if (!VdcActionType.Unknown.equals(commandType)) {
-            return commandType;
-        }
-        return dbAsyncTask.getActionType();
-    }
-
     public static void removeTaskFromDbByTaskId(Guid taskId) {
         try {
             if (CommandCoordinatorUtil.callRemoveTaskFromDbByTaskId(taskId) != 0) {
@@ -457,7 +449,6 @@ public final class AsyncTaskManager {
      * @return poolsAsyncTaskMap - Map which contains tasks for each storage
      * pool id.
      */
-    @SuppressWarnings("unchecked")
     private Map<Guid, Map<Guid, AsyncTaskStatus>> getSPMsTasksStatuses(Set<Guid> poolsOfActiveTasks) {
         Map<Guid, Map<Guid, AsyncTaskStatus>> poolsAsyncTaskMap = new HashMap<Guid, Map<Guid, AsyncTaskStatus>>();
 
