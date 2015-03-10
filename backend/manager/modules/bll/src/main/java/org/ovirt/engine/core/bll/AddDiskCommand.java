@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
@@ -147,6 +148,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                     return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS);
                 }
             }
+            break;
+        default:
             break;
         }
 
