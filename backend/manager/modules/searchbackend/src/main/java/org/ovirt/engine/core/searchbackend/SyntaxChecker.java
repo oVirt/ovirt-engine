@@ -711,7 +711,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                 }
                 if (refObjList.contains(SearchObjects.VDC_USER_OBJ_NAME)) {
                     innerJoins.addLast(mSearchObjectAC.getInnerJoin(SearchObjects.VM_OBJ_NAME,
-                            SearchObjects.VDC_USER_OBJ_NAME, useTags));
+                            SearchObjects.VDC_USER_OBJ_NAME, true));
                     refObjList.remove(SearchObjects.VDC_USER_OBJ_NAME);
                 }
                 if (refObjList.contains(SearchObjects.VDS_OBJ_NAME)) {

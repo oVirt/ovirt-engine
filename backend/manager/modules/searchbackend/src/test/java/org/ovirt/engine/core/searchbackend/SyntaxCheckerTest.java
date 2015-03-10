@@ -239,6 +239,12 @@ public class SyntaxCheckerTest {
     }
 
     @Test
+    public void testTemplateUsers() {
+        testValidSql("Templates: Users.usrname = *",
+                "SELECT * FROM ((SELECT distinct vm_templates_view.* FROM  vm_templates_view   LEFT OUTER JOIN vms_with_tags ON vm_templates_view.vmt_guid=vms_with_tags.vmt_guid    LEFT OUTER JOIN vdc_users_with_tags ON vms_with_tags.vm_guid=vdc_users_with_tags.vm_guid    WHERE  vdc_users_with_tags.username LIKE % )  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+    }
+
+    @Test
     public void testUser() {
         testValidSql("User:",
                 "SELECT * FROM (SELECT * FROM vdc_users WHERE ( user_id IN (SELECT distinct vdc_users_with_tags.user_id FROM  vdc_users_with_tags  ))  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
