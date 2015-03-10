@@ -27,7 +27,6 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
     @Inject
     private UpdateNetworkClusterPermissionsChecker permissionsChecker;
 
-    private Network managementNetwork;
     private NetworkCluster oldNetworkCluster;
 
     public UpdateNetworkOnClusterCommand(T parameters) {
@@ -36,18 +35,6 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
 
     public UpdateNetworkOnClusterCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
-    }
-
-    private void setManagementNetwork(Network managementNetwork) {
-        this.managementNetwork = managementNetwork;
-    }
-
-    private Network getManagementNetwork() {
-        if (managementNetwork == null) {
-            setManagementNetwork(managementNetworkUtil.getManagementNetwork(getVdsGroupId()));
-        }
-
-        return managementNetwork;
     }
 
     private NetworkCluster getOldNetworkCluster() {
