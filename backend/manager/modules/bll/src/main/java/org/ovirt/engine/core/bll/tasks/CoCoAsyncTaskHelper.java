@@ -334,7 +334,7 @@ public class CoCoAsyncTaskHelper {
         VdcActionType actionType = getEndActionType(dbAsyncTask);
         VdcActionParametersBase parameters = dbAsyncTask.getActionParameters();
         CommandBase<?> command = buildCommand(actionType, parameters, context, coco.getCommandStatus(dbAsyncTask.getCommandId()));
-        return new DecoratedCommand(command).endAction();
+        return new DecoratedCommand<>(command).endAction();
     }
 
     private CommandBase<?> buildCommand(VdcActionType actionType,
