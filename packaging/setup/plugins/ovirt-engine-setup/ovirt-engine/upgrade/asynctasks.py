@@ -431,6 +431,9 @@ class Plugin(plugin.PluginBase):
             ] and
             self.environment[
                 oenginecons.AsyncTasksEnv.CLEAR_TASKS
+            ] and
+            not self.environment[
+                osetupcons.CoreEnv.DEVELOPER_MODE
             ]
         )
 
