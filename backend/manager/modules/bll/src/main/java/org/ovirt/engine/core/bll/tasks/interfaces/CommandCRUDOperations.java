@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.tasks.interfaces;
 
+import java.util.List;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -8,8 +10,6 @@ import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.List;
 
 public interface CommandCRUDOperations {
     public boolean hasCommandEntitiesWithRootCommandId(Guid rootCommandId);
