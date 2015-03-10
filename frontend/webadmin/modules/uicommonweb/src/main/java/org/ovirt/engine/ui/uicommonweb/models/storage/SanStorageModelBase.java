@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.queries.DiscoverSendTargetsQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -527,5 +528,9 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
     public String getLoginButtonLabel() {
         return ""; //$NON-NLS-1$
+    }
+
+    public boolean isSupportedInVersion(Version dcVersion) {
+        return true;
     }
 }

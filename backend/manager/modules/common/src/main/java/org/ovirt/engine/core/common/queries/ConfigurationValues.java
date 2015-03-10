@@ -134,6 +134,8 @@ public enum ConfigurationValues {
     IscsiMultipathingSupported,
     BootMenuSupported(ConfigAuthType.User),
     MixedDomainTypesInDataCenter,
+    GlusterFsStorageEnabled,
+    PosixStorageEnabled,
     VirtIoRngDeviceSupported(ConfigAuthType.User),
     ClusterRequiredRngSourcesDefault(ConfigAuthType.User),
     SpiceFileTransferToggleSupported(ConfigAuthType.User),

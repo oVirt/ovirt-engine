@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 
 @SuppressWarnings("unused")
@@ -25,4 +26,6 @@ public interface IStorageModel
     void prepareForEdit(StorageDomain storage);
 
     boolean isEditable(StorageDomain storage);
+
+    boolean isSupportedInVersion(Version dcVersion);
 }

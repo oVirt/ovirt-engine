@@ -5,7 +5,10 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -123,5 +126,11 @@ public class PosixStorageModel extends FileStorageModel {
         boolean isEditable = isEditable(storage);
         setVfsChangeability(isEditable);
         getMountOptions().setIsChangable(isEditable);
+    }
+
+    @Override
+    public boolean isSupportedInVersion(Version dcVersion) {
+        return (Boolean) AsyncDataProvider.getInstance()
+                .getConfigValuePreConverted(ConfigurationValues.PosixStorageEnabled, dcVersion.toString());
     }
 }
