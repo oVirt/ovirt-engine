@@ -729,7 +729,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         VmDeviceGeneralType.DISK,
                         deviceType.getName());
         for (VmDevice vmDevice : vmDevices) {
-            if (VmPayload.isPayload(vmDevice.getSpecParams())) {
+            if (vmDevice.getIsManaged() && VmPayload.isPayload(vmDevice.getSpecParams())) {
                 return new VmPayload(vmDevice);
             }
         }
