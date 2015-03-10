@@ -198,8 +198,10 @@ public class HostMapper {
         model.setProtocol(protocol != null ? protocol.value() : null);
         HostStatus status = map(entity.getStatus(), null);
         model.setStatus(StatusUtils.create(status));
-        if (status==HostStatus.NON_OPERATIONAL) {
+        if (status == HostStatus.NON_OPERATIONAL) {
             model.getStatus().setDetail(entity.getNonOperationalReason().name().toLowerCase());
+        } else if (status == HostStatus.MAINTENANCE || status == HostStatus.PREPARING_FOR_MAINTENANCE) {
+            model.getStatus().setDetail(entity.getMaintenanceReason());
         }
         StorageManager sm = new StorageManager();
         sm.setPriority(entity.getVdsSpmPriority());
@@ -298,6 +300,7 @@ public class HostMapper {
             model.setExternalHostProvider(new ExternalHostProvider());
             model.getExternalHostProvider().setId(entity.getHostProviderId().toString());
         }
+
         return model;
     }
 

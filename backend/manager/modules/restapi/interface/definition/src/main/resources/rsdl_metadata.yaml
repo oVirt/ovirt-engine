@@ -2977,7 +2977,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long', action.reason: 'xs:string'}
         description: deactivate the specified host
     urlparams: {}
     headers:

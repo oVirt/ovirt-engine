@@ -209,6 +209,8 @@
       <xs:element ref="storage_domains" minOccurs="0" maxOccurs="1"/>
       <!-- For import Glance disk -->
       <xs:element ref="disk" minOccurs="0" maxOccurs="1"/>
+      <!-- For host maintenance (deactivate) -->
+      <xs:element name="reason" type="xs:string" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:group>
 

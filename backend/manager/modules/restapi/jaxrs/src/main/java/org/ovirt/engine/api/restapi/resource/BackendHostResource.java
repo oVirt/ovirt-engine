@@ -249,8 +249,9 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     @Override
     public Response deactivate(Action action) {
         return doAction(VdcActionType.MaintenanceNumberOfVdss,
-                        new MaintenanceNumberOfVdssParameters(asList(guid), false),
-                        action);
+                new MaintenanceNumberOfVdssParameters(asList(guid), false, action.isSetReason() ? action.getReason()
+                        : null),
+                action);
     }
 
     @Override
