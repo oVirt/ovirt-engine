@@ -293,7 +293,8 @@ Create or replace FUNCTION UpdateVdsDynamic(v_cpu_cores INTEGER ,
  v_supported_rng_sources VARCHAR(255),
  v_is_live_snapshot_supported BOOLEAN,
  v_is_live_merge_supported BOOLEAN,
- v_online_cpus TEXT)
+ v_online_cpus TEXT,
+ v_maintenance_reason TEXT)
 RETURNS VOID
 
 	--The [vds_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -331,7 +332,8 @@ BEGIN
       supported_rng_sources = v_supported_rng_sources,
       is_live_snapshot_supported = v_is_live_snapshot_supported,
       is_live_merge_supported = v_is_live_merge_supported,
-      online_cpus = v_online_cpus
+      online_cpus = v_online_cpus,
+      maintenance_reason = v_maintenance_reason
       WHERE vds_id = v_vds_id;
    END;
 

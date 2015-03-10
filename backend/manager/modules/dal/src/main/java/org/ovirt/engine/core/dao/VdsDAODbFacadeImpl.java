@@ -376,6 +376,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setLiveMergeSupport(rs.getBoolean("is_live_merge_supported"));
             entity.setBalloonEnabled(rs.getBoolean("enable_balloon"));
             entity.setCountThreadsAsCores(rs.getBoolean("count_threads_as_cores"));
+            entity.setMaintenanceReason(rs.getString("maintenance_reason"));
             Guid agentGuid = getGuid(rs, "agent_id");
             if (agentGuid != null) {
                 FenceAgent agent = new FenceAgent();

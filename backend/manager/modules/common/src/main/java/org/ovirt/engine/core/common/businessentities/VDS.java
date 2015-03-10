@@ -7,8 +7,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import java.util.Set;
+
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
@@ -1304,5 +1304,13 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
 
     public boolean isFenceAgentsExist() {
         return !getFenceAgents().isEmpty();
+    }
+
+    public String getMaintenanceReason() {
+        return vdsDynamic.getMaintenanceReason();
+    }
+
+    public void setMaintenanceReason(String value) {
+        vdsDynamic.setMaintenanceReason(value);
     }
 }

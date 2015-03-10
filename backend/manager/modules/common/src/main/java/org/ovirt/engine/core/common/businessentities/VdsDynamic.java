@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
@@ -154,6 +155,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
     private boolean numaSupport;
 
     private Set<VmRngDevice.Source> supportedRngSources;
+
+    private String maintenanceReason;
 
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
@@ -667,6 +670,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.supportedEmulatedMachines = supportedEmulatedMachines;
     }
 
+    public String getMaintenanceReason() {
+        return maintenanceReason;
+    }
+
+    public void setMaintenanceReason(String maintenanceReason) {
+        this.maintenanceReason = maintenanceReason;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -728,6 +739,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         result = prime * result + (numaSupport ? 0 : 1);
         result = prime * result + (liveSnapshotSupport ? 0 : 1);
         result = prime * result + (liveMergeSupport ? 0 : 1);
+        result = prime * result + (maintenanceReason == null ? 0 : maintenanceReason.hashCode());
 
         return result;
     }
@@ -799,6 +811,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && powerManagementControlledByPolicy == other.powerManagementControlledByPolicy
                 && ObjectUtils.objectsEqual(supportedRngSources, other.supportedRngSources)
                 && liveSnapshotSupport == other.liveSnapshotSupport
-                && liveMergeSupport == other.liveMergeSupport;
+                && liveMergeSupport == other.liveMergeSupport
+                && ObjectUtils.objectsEqual(maintenanceReason, other.maintenanceReason);
     }
 }

@@ -105,6 +105,7 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
             entity.setLiveMergeSupport(rs.getBoolean("is_live_merge_supported"));
             entity.setSupportedEmulatedMachines(rs.getString("supported_emulated_machines"));
             entity.getSupportedRngSources().addAll(VmRngDevice.csvToSourcesSet(rs.getString("supported_rng_sources")));
+            entity.setMaintenanceReason(rs.getString("maintenance_reason"));
             return entity;
         }
     }
@@ -256,7 +257,8 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
                 .addValue("supported_rng_sources", VmRngDevice.sourcesToCsv(vds.getSupportedRngSources()))
                 .addValue("supported_emulated_machines", vds.getSupportedEmulatedMachines())
                 .addValue("is_live_snapshot_supported", vds.getLiveSnapshotSupport())
-                .addValue("is_live_merge_supported", vds.getLiveMergeSupport());
+                .addValue("is_live_merge_supported", vds.getLiveMergeSupport())
+                .addValue("maintenance_reason", vds.getMaintenanceReason());
 
         return parameterSource;
     }
