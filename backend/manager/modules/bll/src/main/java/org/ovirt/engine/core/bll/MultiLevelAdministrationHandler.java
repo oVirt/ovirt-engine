@@ -56,7 +56,7 @@ public class MultiLevelAdministrationHandler {
         List<Role> userRoles =
                 getRoleDAO().getAnyAdminRoleForUserAndGroups(user.getId(), StringUtils.join(user.getGroupIds(), ","));
         if (!userRoles.isEmpty()) {
-            log.debug("LoginAdminUser: User logged to admin using role '{}'", userRoles.get(0).getname());
+            log.debug("LoginAdminUser: User logged to admin using role '{}'", userRoles.get(0).getName());
             return true;
         }
         return false;

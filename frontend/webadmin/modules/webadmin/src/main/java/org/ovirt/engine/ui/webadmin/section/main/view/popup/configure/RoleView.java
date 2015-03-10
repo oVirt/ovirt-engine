@@ -151,7 +151,7 @@ public class RoleView extends Composite {
         AbstractTextColumnWithTooltip<Role> nameColumn = new AbstractTextColumnWithTooltip<Role>() {
             @Override
             public String getValue(Role object) {
-                return object.getname();
+                return object.getName();
             }
         };
 
@@ -164,7 +164,7 @@ public class RoleView extends Composite {
         AbstractTextColumnWithTooltip<Role> descColumn = new AbstractTextColumnWithTooltip<Role>() {
             @Override
             public String getValue(Role object) {
-                return object.getdescription();
+                return object.getDescription();
             }
         };
         table.addColumn(descColumn, constants.descriptionRole(), "300px"); //$NON-NLS-1$

@@ -1327,7 +1327,7 @@ public final class Linq
 
         @Override
         public int compare(Role left, Role right) {
-            return left.getname().compareTo(right.getname());
+            return left.getName().compareTo(right.getName());
         }
     }
 

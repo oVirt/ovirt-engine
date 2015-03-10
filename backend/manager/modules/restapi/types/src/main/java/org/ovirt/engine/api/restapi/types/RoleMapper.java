@@ -9,10 +9,10 @@ public class RoleMapper {
     @Mapping(from = org.ovirt.engine.core.common.businessentities.Role.class, to = Role.class)
     public static Role map(org.ovirt.engine.core.common.businessentities.Role entity, Role template) {
         Role model = template != null ? template : new Role();
-        model.setName(entity.getname());
-        model.setDescription(entity.getdescription());
+        model.setName(entity.getName());
+        model.setDescription(entity.getDescription());
         model.setId(entity.getId().toString());
-        model.setMutable(!entity.getis_readonly());
+        model.setMutable(!entity.isReadonly());
         model.setAdministrative(RoleType.ADMIN.equals(entity.getType()));
         return model;
     }
@@ -24,13 +24,13 @@ public class RoleMapper {
             entity.setId(GuidUtils.asGuid(model.getId()));
         }
         if (model.isSetName()) {
-            entity.setname(model.getName());
+            entity.setName(model.getName());
         }
         if (model.isSetDescription()) {
-            entity.setdescription(model.getDescription());
+            entity.setDescription(model.getDescription());
         }
         if (model.isSetMutable()) {
-            entity.setis_readonly(!model.isMutable());
+            entity.setReadonly(!model.isMutable());
         }
         if (model.isSetAdministrative()) {
             entity.setType(model.isAdministrative() ? RoleType.ADMIN : RoleType.USER);

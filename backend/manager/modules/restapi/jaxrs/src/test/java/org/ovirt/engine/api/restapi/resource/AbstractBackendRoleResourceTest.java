@@ -65,9 +65,9 @@ public abstract class AbstractBackendRoleResourceTest
     protected org.ovirt.engine.core.common.businessentities.Role getEntity(int index) {
         org.ovirt.engine.core.common.businessentities.Role role = new org.ovirt.engine.core.common.businessentities.Role();
         role.setId(GUIDS[index]);
-        role.setname(NAMES[index]);
-        role.setdescription(DESCRIPTIONS[index]);
-        role.setis_readonly(false);
+        role.setName(NAMES[index]);
+        role.setDescription(DESCRIPTIONS[index]);
+        role.setReadonly(false);
         role.setType(RoleType.ADMIN);
         return role;
     }

@@ -101,7 +101,7 @@ public class BackendRolesResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpCreationExpectations(VdcActionType.AddRoleWithActionGroups,
                                   RoleWithActionGroupsParameters.class,
-                                  new String[] { "Role.Id", "Role.name" },
+                                  new String[] { "Role.Id", "Role.Name" },
                                   new Object[] { GUIDS[0], NAMES[0] },
                                   true,
                                   true,
@@ -195,9 +195,9 @@ public class BackendRolesResourceTest
     protected org.ovirt.engine.core.common.businessentities.Role getEntity(int index) {
         org.ovirt.engine.core.common.businessentities.Role role = new org.ovirt.engine.core.common.businessentities.Role();
         role.setId(GUIDS[index]);
-        role.setname(NAMES[index]);
-        role.setdescription(DESCRIPTIONS[index]);
-        role.setis_readonly(false);
+        role.setName(NAMES[index]);
+        role.setDescription(DESCRIPTIONS[index]);
+        role.setReadonly(false);
         role.setType(RoleType.ADMIN);
         return role;
     }

@@ -64,7 +64,7 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
 
     public String getRoleName() {
         Role role = getRoleDao().get(getParameters().getPermission().getrole_id());
-        return role == null ? null : role.getname();
+        return role == null ? null : role.getName();
     }
 
     public String getSubjectName() {

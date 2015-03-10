@@ -19,7 +19,7 @@ public class GetAllRolesQueryTest extends AbstractUserQueryTest<MultilevelAdmini
     public void testExecuteQueryCommand() {
         // Prepare the result
         Role role = new Role();
-        role.setname("test role");
+        role.setName("test role");
         List<Role> result = Collections.singletonList(role);
 
         // Mock the DAO

@@ -28,8 +28,8 @@ public class UpdateRoleCommand<T extends RolesOperationsParameters> extends Role
             if (checkIfRoleIsReadOnly(getReturnValue().getCanDoActionMessages())) {
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
-            } else if (!StringUtils.equals(getRole().getname(), oldRole.getname())
-                    && getRoleDao().getByName(getRole().getname()) != null) {
+            } else if (!StringUtils.equals(getRole().getName(), oldRole.getName())
+                    && getRoleDao().getByName(getRole().getName()) != null) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                 returnValue = false;
             } // changing role type isn't allowed

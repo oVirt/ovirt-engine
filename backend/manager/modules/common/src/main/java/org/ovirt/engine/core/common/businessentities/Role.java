@@ -72,15 +72,15 @@ public class Role extends IVdcQueryable implements BusinessEntity<Guid> {
                 && appMode == other.appMode);
     }
 
-    public String getdescription() {
+    public String getDescription() {
         return this.description;
     }
 
-    public boolean getis_readonly() {
+    public boolean isReadonly() {
         return this.readOnly;
     }
 
-    public String getname() {
+    public String getName() {
         return this.name;
     }
 
@@ -89,15 +89,15 @@ public class Role extends IVdcQueryable implements BusinessEntity<Guid> {
         return getId();
     }
 
-    public void setdescription(String value) {
+    public void setDescription(String value) {
         this.description = value;
     }
 
-    public void setis_readonly(boolean value) {
+    public void setReadonly(boolean value) {
         this.readOnly = value;
     }
 
-    public void setname(String value) {
+    public void setName(String value) {
         this.name = value;
     }
 

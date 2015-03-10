@@ -137,7 +137,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
         roleSelection = new ListModelListBoxEditor<Role>(new NullSafeRenderer<Role>() {
             @Override
             public String renderNullSafe(Role object) {
-                return object.getname();
+                return object.getName();
             }
         });
 

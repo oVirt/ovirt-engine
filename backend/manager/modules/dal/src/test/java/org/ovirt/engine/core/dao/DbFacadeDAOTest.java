@@ -294,7 +294,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     public void testGetEntityNameByIdAndTypeForRole() {
         Role role = dbFacade.getRoleDao().get(ROLE_ID);
         assertNotNull(role);
-        String name = role.getname();
+        String name = role.getName();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(ROLE_ID, VdcObjectType.Role)));
     }
 

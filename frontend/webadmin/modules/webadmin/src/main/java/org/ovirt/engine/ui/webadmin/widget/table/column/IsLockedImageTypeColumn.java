@@ -11,7 +11,7 @@ public class IsLockedImageTypeColumn extends AbstractWebAdminImageResourceColumn
 
     @Override
     public ImageResource getValue(Role role) {
-        if (role.getis_readonly()) {
+        if (role.isReadonly()) {
             return getApplicationResources().lockImage();
         }
         return null;

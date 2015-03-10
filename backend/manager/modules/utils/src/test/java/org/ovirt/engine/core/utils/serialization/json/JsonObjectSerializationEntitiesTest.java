@@ -155,9 +155,9 @@ public class JsonObjectSerializationEntitiesTest {
     private static Role randomRole() {
         RandomUtils random = RandomUtils.instance();
         Role role = new Role();
-        role.setdescription(random.nextString(10));
+        role.setDescription(random.nextString(10));
         role.setId(Guid.newGuid());
-        role.setname(random.nextString(10));
+        role.setName(random.nextString(10));
         return role;
     }
 

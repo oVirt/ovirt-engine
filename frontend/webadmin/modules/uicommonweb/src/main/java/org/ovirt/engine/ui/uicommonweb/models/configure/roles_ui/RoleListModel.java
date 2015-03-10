@@ -254,7 +254,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         ArrayList<String> list = new ArrayList<String>();
         for (Role role : Linq.<Role> cast(getSelectedItems()))
         {
-            list.add(role.getname());
+            list.add(role.getName());
         }
         model.setItems(list);
 
@@ -337,7 +337,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         Role role = getSelectedItem();
         RoleModel model = (RoleModel) getWindow();
         ArrayList<SelectionTreeNodeModel> selectionTree =
-                RoleTreeView.getRoleTreeView((model.getIsNew() ? false : role.getis_readonly()),
+                RoleTreeView.getRoleTreeView((model.getIsNew() ? false : role.isReadonly()),
                         model.getIsAdminRole().getEntity());
         for (SelectionTreeNodeModel sm : selectionTree)
         {
@@ -383,16 +383,16 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         }
         model.getIsAdminRole().getEntityChangedEvent().addListener(this);
         model.getIsAdminRole().setEntity(RoleType.ADMIN.equals(role.getType()));
-        model.getName().setEntity(role.getname());
+        model.getName().setEntity(role.getName());
         if (commandType == CommandType.Clone)
         {
-            model.getName().setEntity(COPY_OF + role.getname());
+            model.getName().setEntity(COPY_OF + role.getName());
         }
-        model.getDescription().setEntity(role.getdescription());
+        model.getDescription().setEntity(role.getDescription());
         if (commandType == CommandType.Edit)
         {
-            model.getName().setIsChangable(!role.getis_readonly());
-            model.getDescription().setIsChangable(!role.getis_readonly());
+            model.getName().setIsChangable(!role.isReadonly());
+            model.getDescription().setIsChangable(!role.isReadonly());
         }
         switch (commandType)
         {
@@ -415,7 +415,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
                 break;
         }
 
-        if (!role.getis_readonly() || commandType == CommandType.Clone)
+        if (!role.isReadonly() || commandType == CommandType.Clone)
         {
             UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
             model.getCommands().add(tempVar);
@@ -425,10 +425,10 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         }
 
         UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar3.setTitle(!role.getis_readonly() ? ConstantsManager.getInstance().getConstants().cancel()
+        tempVar3.setTitle(!role.isReadonly() ? ConstantsManager.getInstance().getConstants().cancel()
                 : ConstantsManager.getInstance().getConstants().close());
         tempVar3.setIsCancel(true);
-        tempVar3.setIsDefault(role.getis_readonly());
+        tempVar3.setIsDefault(role.isReadonly());
         model.getCommands().add(tempVar3);
     }
 
@@ -475,8 +475,8 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         // return;
         // }
 
-        role.setname(model.getName().getEntity());
-        role.setdescription(model.getDescription().getEntity());
+        role.setName(model.getName().getEntity());
+        role.setDescription(model.getDescription().getEntity());
 
         ArrayList<ActionGroup> actions = new ArrayList<ActionGroup>();
         HashMap<ActionGroup, ActionGroup> actionDistinctSet =
@@ -614,7 +614,7 @@ public class RoleListModel extends ListWithSimpleDetailsModel<Void, Role> {
         for (Object item : roles)
         {
             Role r = (Role) item;
-            if (r.getis_readonly())
+            if (r.isReadonly())
             {
                 return true;
             }

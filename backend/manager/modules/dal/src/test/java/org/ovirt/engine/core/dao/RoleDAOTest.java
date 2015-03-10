@@ -33,8 +33,8 @@ public class RoleDAOTest extends BaseDAOTestCase {
         existingRole = dao.get(new Guid("f5972bfa-7102-4d33-ad22-9dd421bfba78"));
 
         newRole = new Role();
-        newRole.setname("new role");
-        newRole.setdescription("This is a new role.");
+        newRole.setName("new role");
+        newRole.setDescription("This is a new role.");
         newRole.setType(RoleType.USER);
         newRole.setAllowsViewingChildren(false);
         newRole.setAppMode(ApplicationMode.AllModes);
@@ -76,7 +76,7 @@ public class RoleDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetRoleByName() {
-        Role result = dao.getByName(existingRole.getname());
+        Role result = dao.getByName(existingRole.getName());
 
         assertNotNull(result);
         assertEquals(existingRole, result);
@@ -131,7 +131,7 @@ public class RoleDAOTest extends BaseDAOTestCase {
     public void testSaveRole() {
         dao.save(newRole);
 
-        Role result = dao.getByName(newRole.getname());
+        Role result = dao.getByName(newRole.getName());
 
         assertNotNull(result);
         assertEquals(newRole, result);
@@ -142,7 +142,7 @@ public class RoleDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testUpdateRole() {
-        existingRole.setdescription("This is an updated description");
+        existingRole.setDescription("This is an updated description");
 
         dao.update(existingRole);
 

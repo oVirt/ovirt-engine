@@ -30,7 +30,7 @@ public class RolesCommandBaseTest extends AbstractRolesCommandTestBase {
 
     @Test
     public void testCheckIfRoleIsReadOnlyTrue() {
-        getRole().setis_readonly(true);
+        getRole().setReadonly(true);
         List<String> messages = new ArrayList<String>(1);
         assertTrue("Role should be read only", getCommand().checkIfRoleIsReadOnly(messages));
         assertEquals("Wrong canDoAction message",
@@ -40,7 +40,7 @@ public class RolesCommandBaseTest extends AbstractRolesCommandTestBase {
 
     @Test
     public void testCheckIfRoleIsReadOnlyFalse() {
-        getRole().setis_readonly(false);
+        getRole().setReadonly(false);
         List<String> messages = new ArrayList<String>();
         assertFalse("Role should be read only", getCommand().checkIfRoleIsReadOnly(messages));
         assertTrue("Shouldn't be any canDoAction messages", messages.isEmpty());

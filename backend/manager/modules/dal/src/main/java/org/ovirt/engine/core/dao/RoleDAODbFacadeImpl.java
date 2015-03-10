@@ -28,10 +28,10 @@ public class RoleDAODbFacadeImpl extends BaseDAODbFacade implements RoleDAO {
         @Override
         public Role mapRow(ResultSet rs, int rowNum) throws SQLException {
             Role entity = new Role();
-            entity.setdescription(rs.getString("description"));
+            entity.setDescription(rs.getString("description"));
             entity.setId(getGuidDefaultEmpty(rs, "id"));
-            entity.setname(rs.getString("name"));
-            entity.setis_readonly(rs.getBoolean("is_readonly"));
+            entity.setName(rs.getString("name"));
+            entity.setReadonly(rs.getBoolean("is_readonly"));
             entity.setType(RoleType.getById(rs.getInt("role_type")));
             entity.setAllowsViewingChildren(rs.getBoolean("allows_viewing_children"));
             entity.setAppMode(ApplicationMode.from(rs.getInt("app_mode")));
@@ -84,9 +84,9 @@ public class RoleDAODbFacadeImpl extends BaseDAODbFacade implements RoleDAO {
     @Override
     public void save(Role role) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("description", role.getdescription())
-                .addValue("id", role.getId()).addValue("name", role.getname())
-                .addValue("is_readonly", role.getis_readonly())
+                .addValue("description", role.getDescription())
+                .addValue("id", role.getId()).addValue("name", role.getName())
+                .addValue("is_readonly", role.isReadonly())
                 .addValue("role_type", role.getType().getId())
                 .addValue("allows_viewing_children", role.allowsViewingChildren())
                 .addValue("app_mode", role.getAppMode().getValue());
@@ -97,9 +97,9 @@ public class RoleDAODbFacadeImpl extends BaseDAODbFacade implements RoleDAO {
     @Override
     public void update(Role role) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("description", role.getdescription())
-                .addValue("id", role.getId()).addValue("name", role.getname())
-                .addValue("is_readonly", role.getis_readonly())
+                .addValue("description", role.getDescription())
+                .addValue("id", role.getId()).addValue("name", role.getName())
+                .addValue("is_readonly", role.isReadonly())
                 .addValue("role_type", role.getType().getId())
                 .addValue("allows_viewing_children", role.allowsViewingChildren());
 

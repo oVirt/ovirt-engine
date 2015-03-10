@@ -41,12 +41,12 @@ public abstract class RolesCommandBase<T extends RolesParameterBase> extends Com
     }
 
     public String getRoleName() {
-        return getRole().getname();
+        return getRole().getName();
     }
 
     protected boolean checkIfRoleIsReadOnly(List<String> CanDoActionMessages) {
         boolean result = false;
-        if (getRole().getis_readonly()) {
+        if (getRole().isReadonly()) {
             result = true;
             CanDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_ROLE_IS_READ_ONLY.toString());
         }
