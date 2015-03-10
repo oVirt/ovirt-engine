@@ -2959,7 +2959,7 @@ actions:
     body:
       parameterType: Action
       signatures:
-      - mandatoryArguments: {action.iscsi.address: 'xs:string', action.target: 'xs:string'}
+      - optionalArguments: {action.iscsi.address: 'xs:string', action.target: 'xs:string'}
         description: Discover the Storage Domains which are candidiates to be imported to the setup
     urlparams: {}
     headers:
