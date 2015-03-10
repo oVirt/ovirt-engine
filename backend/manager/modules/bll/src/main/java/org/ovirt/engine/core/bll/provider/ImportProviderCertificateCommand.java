@@ -32,7 +32,7 @@ public class ImportProviderCertificateCommand<P extends ImportProviderCertificat
         super(parameters);
     }
 
-    private Provider getProvider() {
+    private Provider<?> getProvider() {
         return getParameters().getProvider();
     }
 
