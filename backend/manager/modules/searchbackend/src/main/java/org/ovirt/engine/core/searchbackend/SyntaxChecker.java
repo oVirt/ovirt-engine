@@ -1081,7 +1081,8 @@ public class SyntaxChecker implements ISyntaxChecker {
                 customizedRelation,
                 fieldName,
                 objName,
-                conditionType);
+                conditionType,
+                useTags);
     }
 
     private String buildCustomizedRelation(final boolean caseSensitive,
@@ -1135,7 +1136,8 @@ public class SyntaxChecker implements ISyntaxChecker {
             String customizedRelation,
             String fieldName,
             String objName,
-            ConditionType conditionType) {
+            ConditionType conditionType,
+            boolean useTags) {
 
         String tableName;
 
@@ -1144,7 +1146,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         if (conditionType == ConditionType.ConditionwithSpesificObj) {
             tableName = mSearchObjectAC.getRelatedTableName(objName, true);
         } else {
-            tableName = mSearchObjectAC.getRelatedTableName(objName, fieldName);
+            tableName = mSearchObjectAC.getRelatedTableName(objName, fieldName, useTags);
         }
         if (customizedRelation.equalsIgnoreCase("LIKE") || customizedRelation.equalsIgnoreCase("ILIKE")) {
             // Since '_' is treated in Postgres as '?' when using like, (i.e. match any single character)

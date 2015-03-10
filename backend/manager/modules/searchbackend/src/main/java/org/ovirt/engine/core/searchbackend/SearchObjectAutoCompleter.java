@@ -10,6 +10,7 @@ import org.ovirt.engine.core.searchbackend.gluster.GlusterVolumeCrossRefAutoComp
 
 public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
     private final Map<String, String[]> mJoinDictionary = new HashMap<String, String[]>();
+    private final Map<String, Boolean> requiresFullTable = new HashMap<String, Boolean>();
 
     public SearchObjectAutoCompleter() {
 
@@ -48,6 +49,8 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         mVerbs.add(SearchObjects.INSTANCE_TYPE_OBJ_NAME);
         mVerbs.add(SearchObjects.IMAGE_TYPE_OBJ_NAME);
         mVerbs.add(SearchObjects.SESSION_OBJ_NAME);
+
+        requiresFullTable.put(SearchObjects.VDC_USER_ROLE_SEARCH, true);
 
         // vms - vds
         addJoin(SearchObjects.VM_OBJ_NAME,
@@ -493,9 +496,17 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
         return null;
     }
 
-    public String getRelatedTableName(String obj, String fieldName) {
+    public String getRelatedTableName(String obj, String fieldName, boolean useTagsInFrom) {
         return getRelatedTableName(obj, fieldName == null || fieldName.length() == 0
-                || fieldName.toLowerCase().equalsIgnoreCase("tag"));
+                        || fieldName.toLowerCase().equalsIgnoreCase("tag")
+                        || requiresTagsForField(obj, fieldName, useTagsInFrom));
+    }
+
+    private boolean requiresTagsForField(String obj, String fieldName, boolean useTagsInFrom) {
+        if (useTagsInFrom) {
+            return requiresFullTable.containsKey(obj + "-" + fieldName);
+        }
+        return false;
     }
 
     public String getRelatedTableName(String obj, boolean useTags) {

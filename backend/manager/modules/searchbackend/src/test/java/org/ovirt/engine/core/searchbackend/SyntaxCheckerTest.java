@@ -254,6 +254,12 @@ public class SyntaxCheckerTest {
     }
 
     @Test
+    public void testUsersAllRoles() {
+        testValidSql("Users: role = * ",
+                "SELECT * FROM (SELECT * FROM vdc_users WHERE ( user_id IN (SELECT distinct vdc_users_with_tags.user_id FROM  vdc_users_with_tags   WHERE  vdc_users_with_tags.mla_role LIKE % ))  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+    }
+
+    @Test
     public void testGroup() {
         testValidSql("Group:",
                 "SELECT * FROM ((SELECT distinct ad_groups.* FROM  ad_groups  )  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");

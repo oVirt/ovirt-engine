@@ -53,6 +53,9 @@ public final class SearchObjects {
     public static final String SESSION_OBJ_NAME = "SESSION";
     public static final String SESSION_PLU_OBJ_NAME = "SESSIONS";
 
+    // Special fields that require tag based search
+    public static final String VDC_USER_ROLE_SEARCH = SearchObjects.VDC_USER_OBJ_NAME + "-ROLE";
+
     //special searches
     private static final String ALERT = "EVENTS: severity=alert";
     private static final String ERROR = "Events: severity=error";
