@@ -114,7 +114,7 @@ public class SessionDataContainer {
     public String getSessionIdBySeqId(long sessionSequenceId) {
         String sessionId = null;
         for (SessionInfo sessionInfo : sessionInfoMap.values()) {
-            if (sessionInfo.contentOfSession.get(ENGINE_SESSION_SEQ_ID) == sessionSequenceId) {
+            if (sessionInfo.contentOfSession.get(ENGINE_SESSION_SEQ_ID).equals(sessionSequenceId)) {
                 sessionId = (String) sessionInfo.contentOfSession.get(ENGINE_SESSION_ID);
                 break;
             }
