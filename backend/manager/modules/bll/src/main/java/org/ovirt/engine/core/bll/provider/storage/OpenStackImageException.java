@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll.provider.storage;
 
 public class OpenStackImageException extends RuntimeException {
 
+    private static final long serialVersionUID = 8324838739774296612L;
+
     public static enum ErrorType {
         UNSUPPORTED_CONTAINER_FORMAT,
         UNSUPPORTED_DISK_FORMAT,
