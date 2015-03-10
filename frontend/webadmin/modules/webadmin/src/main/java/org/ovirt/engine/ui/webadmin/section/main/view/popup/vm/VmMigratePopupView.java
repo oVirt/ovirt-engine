@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.vms.MigrateModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -95,19 +95,9 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
         selectHostAutomaticallyEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
         selectDestinationHostEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
 
-        hostsListEditor = new ListModelListBoxEditor<VDS>(new NullSafeRenderer<VDS>() {
-            @Override
-            public String renderNullSafe(VDS vds) {
-                return vds.getName();
-            }
-        });
+        hostsListEditor = new ListModelListBoxEditor<>(new NameRenderer<VDS>());
 
-        clustersEditor = new ListModelListBoxEditor<VDSGroup>(new NullSafeRenderer<VDSGroup>() {
-            @Override
-            protected String renderNullSafe(VDSGroup cluster) {
-                return cluster.getName();
-            }
-        });
+        clustersEditor = new ListModelListBoxEditor<>(new NameRenderer<VDSGroup>());
     }
 
     void localize(ApplicationConstants constants, ApplicationMessages messages) {

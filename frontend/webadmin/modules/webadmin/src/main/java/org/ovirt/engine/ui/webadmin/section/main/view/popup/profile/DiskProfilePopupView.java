@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.DiskProfileBaseModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -58,18 +58,8 @@ public class DiskProfilePopupView extends AbstractModelBoundPopupView<DiskProfil
     @Inject
     public DiskProfilePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
-        storageDomainEditor = new ListModelListBoxEditor<StorageDomain>(new NullSafeRenderer<StorageDomain>() {
-            @Override
-            public String renderNullSafe(StorageDomain storageDomain) {
-                return storageDomain.getName();
-            }
-        });
-        qosEditor = new ListModelListBoxEditor<StorageQos>(new NullSafeRenderer<StorageQos>() {
-            @Override
-            public String renderNullSafe(StorageQos storageQos) {
-                return storageQos.getName();
-            }
-        });
+        storageDomainEditor = new ListModelListBoxEditor<>(new NameRenderer<StorageDomain>());
+        qosEditor = new ListModelListBoxEditor<>(new NameRenderer<StorageQos>());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
         ViewIdHandler.idHandler.generateAndSetIds(this);

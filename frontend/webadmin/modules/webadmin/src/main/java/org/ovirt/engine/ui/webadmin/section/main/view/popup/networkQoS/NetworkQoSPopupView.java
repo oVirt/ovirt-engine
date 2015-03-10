@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkQoSModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -64,12 +64,7 @@ public class NetworkQoSPopupView extends AbstractModelBoundPopupView<NetworkQoSM
     }
 
     private void initListBoxEditors() {
-        dataCenterEditor = new ListModelListBoxEditor<StoragePool>(new NullSafeRenderer<StoragePool>() {
-            @Override
-            public String renderNullSafe(StoragePool dataCenter) {
-                return dataCenter.getName();
-            }
-        });
+        dataCenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
     }
 
     private void localize(ApplicationConstants constants) {

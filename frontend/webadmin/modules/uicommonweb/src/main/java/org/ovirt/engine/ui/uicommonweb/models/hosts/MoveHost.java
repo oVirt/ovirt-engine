@@ -17,16 +17,16 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 
 @SuppressWarnings("unused")
-public class MoveHost extends ListModel
+public class MoveHost extends ListModel<EntityModel<VDS>>
 {
-    private ListModel privateCluster;
+    private ListModel<VDSGroup> privateCluster;
 
-    public ListModel getCluster()
+    public ListModel<VDSGroup> getCluster()
     {
         return privateCluster;
     }
 
-    private void setCluster(ListModel value)
+    private void setCluster(ListModel<VDSGroup> value)
     {
         privateCluster = value;
     }
@@ -55,7 +55,7 @@ public class MoveHost extends ListModel
 
     public MoveHost()
     {
-        setCluster(new ListModel());
+        setCluster(new ListModel<VDSGroup>());
         getCluster().getSelectedItemChangedEvent().addListener(this);
     }
 
@@ -67,9 +67,8 @@ public class MoveHost extends ListModel
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
 
-                    MoveHost moveHost = (MoveHost) target;
                     ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
-                    moveHost.postGetHostList(hosts);
+                    postGetHostList(hosts);
                 }
             }));
         }
@@ -77,8 +76,8 @@ public class MoveHost extends ListModel
 
     private void postGetHostList(ArrayList<VDS> hosts) {
 
-        VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
-        ArrayList<EntityModel> items = new ArrayList<EntityModel>();
+        VDSGroup cluster = getCluster().getSelectedItem();
+        ArrayList<EntityModel<VDS>> items = new ArrayList<>();
 
         for (VDS vds : hosts)
         {
@@ -86,33 +85,32 @@ public class MoveHost extends ListModel
                     (vds.getStatus() == VDSStatus.Maintenance || vds.getStatus() == VDSStatus.PendingApproval)
                     && vds.getSupportedClusterVersionsSet().contains(cluster.getCompatibilityVersion()))
             {
-                EntityModel entity = new EntityModel();
+                EntityModel<VDS> entity = new EntityModel<>();
                 entity.setEntity(vds);
                 items.add(entity);
             }
         }
 
-        ArrayList<Guid> previouslySelectedHostIDs = new ArrayList<Guid>();
+        ArrayList<Guid> previouslySelectedHostIDs = new ArrayList<>();
         if (getItems() != null)
         {
-            for (Object item : getItems())
+            for (EntityModel<VDS> entity : getItems())
             {
-                EntityModel entity = (EntityModel) item;
                 if (entity.getIsSelected())
                 {
-                    previouslySelectedHostIDs.add(((VDS) entity.getEntity()).getId());
+                    previouslySelectedHostIDs.add(entity.getEntity().getId());
                 }
             }
         }
         setItems(items);
-        for (EntityModel entity : items)
+        for (EntityModel<VDS> entity : items)
         {
-            entity.setIsSelected(previouslySelectedHostIDs.contains(((VDS) entity.getEntity()).getId()));
+            entity.setIsSelected(previouslySelectedHostIDs.contains((entity.getEntity()).getId()));
         }
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args)
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args)
     {
         super.eventRaised(ev, sender, args);
 

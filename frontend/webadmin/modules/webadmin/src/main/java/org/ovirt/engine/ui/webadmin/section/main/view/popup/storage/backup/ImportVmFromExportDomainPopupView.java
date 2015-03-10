@@ -20,7 +20,7 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.StorageDomainFreeSpaceRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
@@ -85,7 +85,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
 
     @UiField(provided = true)
     @Path(value = "cluster.selectedItem")
-    ListModelListBoxEditor<Object> destClusterEditor;
+    ListModelListBoxEditor<VDSGroup> destClusterEditor;
 
     @UiField(provided = true)
     @Path(value = "cpuProfiles.selectedItem")
@@ -93,7 +93,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
 
     @UiField(provided = true)
     @Path(value = "clusterQuota.selectedItem")
-    ListModelListBoxEditor<Object> destClusterQuotaEditor;
+    ListModelListBoxEditor<Quota> destClusterQuotaEditor;
 
     @UiField(provided = true)
     @Path(value = "storage.selectedItem")
@@ -618,27 +618,11 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
     }
 
     private void initListBoxEditors() {
-        destClusterEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<Object>() {
-            @Override
-            public String renderNullSafe(Object object) {
-                return ((VDSGroup) object).getName();
-            }
-        });
-        destClusterQuotaEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<Object>() {
-            @Override
-            public String renderNullSafe(Object object) {
-                return ((Quota) object).getQuotaName();
-            }
-        });
+        destClusterEditor = new ListModelListBoxEditor<>(new NameRenderer<VDSGroup>());
+        destClusterQuotaEditor = new ListModelListBoxEditor<>(new NameRenderer<Quota>());
         destStorageEditor = new ListModelListBoxEditor<>(new StorageDomainFreeSpaceRenderer());
 
-        cpuProfileEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<CpuProfile>() {
-
-            @Override
-            protected String renderNullSafe(CpuProfile object) {
-                return object.getName();
-            }
-        });
+        cpuProfileEditor = new ListModelListBoxEditor<>(new NameRenderer<CpuProfile>());
     }
 
     private void localize(ApplicationConstants constants) {

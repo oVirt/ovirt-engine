@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -130,13 +131,7 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
 
         bondSuggestEditor = new ListModelSuggestBoxEditor();
         bondEditor = new ListModelListBoxEditor<String>();
-        networkEditor = new ListModelListBoxEditor<Network>(new NullSafeRenderer<Network>() {
-            @Override
-            protected String renderNullSafe(Network network) {
-                return network.getName();
-            }
-
-        });
+        networkEditor = new ListModelListBoxEditor<>(new NameRenderer<Network>());
         bondingModeEditor = new ListModelListBoxEditor<Map.Entry<String, EntityModel<String>>>(new NullSafeRenderer<Map.Entry<String, EntityModel<String>>>() {
             @SuppressWarnings("unchecked")
             @Override

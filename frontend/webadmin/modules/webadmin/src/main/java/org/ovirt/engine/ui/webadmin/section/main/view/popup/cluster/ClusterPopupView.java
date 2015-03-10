@@ -26,6 +26,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAre
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.renderer.BooleanRendererWithNullText;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.SerialNumberPolicyWidget;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -537,12 +538,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     }
 
     private void initListBoxEditors(ApplicationConstants constants) {
-        dataCenterEditor = new ListModelListBoxEditor<StoragePool>(new NullSafeRenderer<StoragePool>() {
-            @Override
-            public String renderNullSafe(StoragePool object) {
-                return object.getName();
-            }
-        });
+        dataCenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
 
         cpuEditor = new ListModelListBoxEditor<ServerCpu>(new NullSafeRenderer<ServerCpu>() {
             @Override
@@ -565,12 +561,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
             }
         });
 
-        clusterPolicyEditor = new ListModelListBoxEditor<ClusterPolicy>(new NullSafeRenderer<ClusterPolicy>() {
-            @Override
-            public String renderNullSafe(ClusterPolicy object) {
-                return object.getName();
-            }
-        });
+        clusterPolicyEditor = new ListModelListBoxEditor<>(new NameRenderer<ClusterPolicy>());
         hostsWithBrokenConnectivityThresholdEditor = new ListModelListBoxEditor<Integer>(new NullSafeRenderer<Integer>() {
             @Override
             public String renderNullSafe(Integer object) {

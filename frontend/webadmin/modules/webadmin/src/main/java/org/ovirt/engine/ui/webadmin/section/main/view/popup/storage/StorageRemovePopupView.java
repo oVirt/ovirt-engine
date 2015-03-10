@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.storage.RemoveStorageModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -68,12 +68,7 @@ public class StorageRemovePopupView extends AbstractModelBoundPopupView<RemoveSt
     }
 
     void initListBoxEditors() {
-        hostListEditor = new ListModelListBoxEditor<VDS>(new NullSafeRenderer<VDS>() {
-            @Override
-            public String renderNullSafe(VDS vds) {
-                return vds.getName();
-            }
-        });
+        hostListEditor = new ListModelListBoxEditor<>(new NameRenderer<VDS>());
     }
 
     void initCheckBoxEditors() {

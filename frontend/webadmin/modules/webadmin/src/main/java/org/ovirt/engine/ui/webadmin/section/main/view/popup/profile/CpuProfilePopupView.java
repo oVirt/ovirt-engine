@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.CpuProfileBaseModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -58,18 +58,8 @@ public class CpuProfilePopupView extends AbstractModelBoundPopupView<CpuProfileB
     @Inject
     public CpuProfilePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
-        clusterEditor = new ListModelListBoxEditor<VDSGroup>(new NullSafeRenderer<VDSGroup>() {
-            @Override
-            public String renderNullSafe(VDSGroup cluster) {
-                return cluster.getName();
-            }
-        });
-        qosEditor = new ListModelListBoxEditor<CpuQos>(new NullSafeRenderer<CpuQos>() {
-            @Override
-            public String renderNullSafe(CpuQos cpuQos) {
-                return cpuQos.getName();
-            }
-        });
+        clusterEditor = new ListModelListBoxEditor<>(new NameRenderer<VDSGroup>());
+        qosEditor = new ListModelListBoxEditor<>(new NameRenderer<CpuQos>());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
         ViewIdHandler.idHandler.generateAndSetIds(this);

@@ -20,7 +20,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.form.Slider;
 import org.ovirt.engine.ui.common.widget.form.Slider.SliderValueChange;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaModel;
@@ -63,7 +63,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     private static final String MIN_COLOR = "#AFBF27"; //$NON-NLS-1$
 
     private static final DiskSizeRenderer<Number> diskSizeRenderer =
-            new DiskSizeRenderer<Number>(SizeConverter.SizeUnit.GB);
+            new DiskSizeRenderer<>(SizeConverter.SizeUnit.GB);
 
     @UiField
     WidgetStyle style;
@@ -165,8 +165,8 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
 
     private boolean firstTime = false;
 
-    ArrayList<Guid> selectedClusterGuid = new ArrayList<Guid>();
-    ArrayList<Guid> selectedStorageGuid = new ArrayList<Guid>();
+    ArrayList<Guid> selectedClusterGuid = new ArrayList<>();
+    ArrayList<Guid> selectedStorageGuid = new ArrayList<>();
 
     interface Driver extends SimpleBeanEditorDriver<QuotaModel, QuotaPopupView> {
     }
@@ -223,7 +223,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     }
 
     private void initQuotaStorageTable(final ApplicationConstants constants, final ApplicationMessages messages) {
-        quotaStorageTable = new ListModelObjectCellTable<QuotaStorage, ListModel>();
+        quotaStorageTable = new ListModelObjectCellTable<>();
         storageQuotaTableContainer.add(quotaStorageTable);
 
         isStorageInQuotaColumn = new Column<QuotaStorage, Boolean>(
@@ -310,7 +310,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     }
 
     private void initQuotaClusterTable(final ApplicationConstants constants, final ApplicationMessages messages) {
-        quotaClusterTable = new ListModelObjectCellTable<QuotaVdsGroup, ListModel>();
+        quotaClusterTable = new ListModelObjectCellTable<>();
         clusterQuotaTableContainer.add(quotaClusterTable);
 
         isClusterInQuotaColumn = new Column<QuotaVdsGroup, Boolean>(
@@ -415,12 +415,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     }
 
     private void initListBoxEditors() {
-        dataCenterEditor = new ListModelListBoxEditor<StoragePool>(new NullSafeRenderer<StoragePool>() {
-            @Override
-            public String renderNullSafe(StoragePool pool) {
-                return pool.getName();
-            }
-        });
+        dataCenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
     }
 
     void localize(ApplicationConstants constants) {

@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -95,13 +96,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         this.messages = messages;
 
         // Initialize Editors
-        DataCentersEditor = new ListModelListBoxEditor<StoragePool>(new NullSafeRenderer<StoragePool>() {
-
-            @Override
-            protected String renderNullSafe(StoragePool sp) {
-                return sp.getName();
-            }
-        });
+        DataCentersEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
         importSourcesEditor = new ListModelListBoxEditor<ImportSource>(new NullSafeRenderer<ImportSource>() {
 
             @Override

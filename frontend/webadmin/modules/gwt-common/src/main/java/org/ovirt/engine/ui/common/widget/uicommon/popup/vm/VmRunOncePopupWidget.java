@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.VncKeyMapRenderer;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadChangeableListBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -363,7 +363,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     }
 
     void initListBoxEditors() {
-        vncKeyboardLayoutEditor = new ListModelListBoxEditor<String>(new VncKeyMapRenderer(messages));
+        vncKeyboardLayoutEditor = new ListModelListBoxEditor<>(new VncKeyMapRenderer(messages));
     }
 
     void initRadioButtonEditors() {
@@ -376,7 +376,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     }
 
     void initComboBox() {
-        sysPrepDomainNameListBoxEditor = new ListModelListBoxEditor<String>();
+        sysPrepDomainNameListBoxEditor = new ListModelListBoxEditor<>();
         sysPrepDomainNameTextBoxEditor = new StringEntityModelTextBoxEditor();
 
         sysPrepDomainNameListBoxEditor.asListBox().addDomHandler(new FocusHandler() {
@@ -393,14 +393,9 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
             }
         }, ChangeEvent.getType());
 
-        sysPrepDomainNameComboBox = new ComboBox<String>(sysPrepDomainNameListBoxEditor, sysPrepDomainNameTextBoxEditor);
+        sysPrepDomainNameComboBox = new ComboBox<>(sysPrepDomainNameListBoxEditor, sysPrepDomainNameTextBoxEditor);
 
-        defaultHostEditor = new ListModelListBoxEditor<VDS>(new NullSafeRenderer<VDS>() {
-            @Override
-            public String renderNullSafe(VDS vds) {
-                return vds.getName();
-            }
-        });
+        defaultHostEditor = new ListModelListBoxEditor<>(new NameRenderer<VDS>());
 
         emulatedMachine = new ListModelTypeAheadChangeableListBoxEditor(
                 new ListModelTypeAheadChangeableListBoxEditor.NullSafeSuggestBoxRenderer() {

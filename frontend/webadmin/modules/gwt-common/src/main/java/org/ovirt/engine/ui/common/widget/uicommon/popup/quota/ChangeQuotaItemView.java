@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
 
 import com.google.gwt.core.client.GWT;
@@ -68,12 +68,7 @@ public class ChangeQuotaItemView extends Composite implements HasEditorDriver<Ch
     }
 
     void initEditors() {
-        quotaListEditor = new ListModelListBoxEditor<Quota>(new NullSafeRenderer<Quota>() {
-            @Override
-            public String renderNullSafe(Quota quota) {
-                return quota.getQuotaName();
-            }
-        });
+        quotaListEditor = new ListModelListBoxEditor<>(new NameRenderer<Quota>());
     }
 
     void updateStyles() {

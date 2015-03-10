@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEdito
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -165,20 +166,8 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
 
         super(eventBus, resources);
 
-        networkEditor = new ListModelListBoxEditor<Network>(new NullSafeRenderer<Network>() {
-            @Override
-            protected String renderNullSafe(Network network) {
-                return network.getName();
-            }
-
-        });
-        interfaceEditor = new ListModelListBoxEditor<VdsNetworkInterface>(new NullSafeRenderer<VdsNetworkInterface>() {
-            @Override
-            protected String renderNullSafe(VdsNetworkInterface network) {
-                return network.getName();
-            }
-
-        });
+        networkEditor = new ListModelListBoxEditor<>(new NameRenderer<Network>());
+        interfaceEditor = new ListModelListBoxEditor<>(new NameRenderer<VdsNetworkInterface>());
         bondingModeEditor = new ListModelListBoxEditor<Map.Entry<String, EntityModel<String>>>(new NullSafeRenderer<Map.Entry<String, EntityModel<String>>>() {
             @Override
             protected String renderNullSafe(Map.Entry<String, EntityModel<String>> pair) {

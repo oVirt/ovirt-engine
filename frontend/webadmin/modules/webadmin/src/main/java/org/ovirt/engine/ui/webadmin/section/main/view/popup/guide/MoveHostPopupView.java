@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -47,7 +47,7 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
     @UiField(provided = true)
     @Path(value = "cluster.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<Object> clusterListEditor;
+    ListModelListBoxEditor<VDSGroup> clusterListEditor;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -66,38 +66,33 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
     }
 
     private void initListBoxEditors() {
-        clusterListEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            public String renderNullSafe(Object object) {
-                return ((VDSGroup) object).getName();
-            }
-        });
+        clusterListEditor = new ListModelListBoxEditor<>(new NameRenderer<VDSGroup>());
     }
 
     private void initTable(ApplicationConstants constants) {
-        table = new EntityModelCellTable<MoveHost>(true);
+        table = new EntityModelCellTable<>(true);
         table.setWidth("100%", true); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<EntityModel> nameColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
+        AbstractTextColumnWithTooltip<EntityModel<VDS>> nameColumn = new AbstractTextColumnWithTooltip<EntityModel<VDS>>() {
             @Override
-            public String getValue(EntityModel object) {
-                return ((VDS) object.getEntity()).getName();
+            public String getValue(EntityModel<VDS> object) {
+                return object.getEntity().getName();
             }
         };
         table.addColumn(nameColumn, constants.nameHost());
 
-        AbstractTextColumnWithTooltip<EntityModel> hostColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
+        AbstractTextColumnWithTooltip<EntityModel<VDS>> hostColumn = new AbstractTextColumnWithTooltip<EntityModel<VDS>>() {
             @Override
-            public String getValue(EntityModel object) {
-                return ((VDS) object.getEntity()).getHostName();
+            public String getValue(EntityModel<VDS> object) {
+                return object.getEntity().getHostName();
             }
         };
         table.addColumn(hostColumn, constants.ipHost());
 
-        AbstractTextColumnWithTooltip<EntityModel> statusColumn = new AbstractEnumColumn<EntityModel, VDSStatus>() {
+        AbstractTextColumnWithTooltip<EntityModel<VDS>> statusColumn = new AbstractEnumColumn<EntityModel<VDS>, VDSStatus>() {
             @Override
-            public VDSStatus getRawValue(EntityModel object) {
-                return ((VDS) object.getEntity()).getStatus();
+            public VDSStatus getRawValue(EntityModel<VDS> object) {
+                return object.getEntity().getStatus();
             }
         };
         table.addColumn(statusColumn, constants.statusHost(), "90px"); //$NON-NLS-1$

@@ -20,7 +20,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEdito
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.table.header.CheckboxHeader;
@@ -192,24 +192,9 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
             ApplicationConstants constants, ApplicationTemplates templates, final ApplicationMessages messages) {
         super(eventBus, resources);
         // Initialize Editors
-        dataCenterEditor = new ListModelListBoxEditor<StoragePool>(new NullSafeRenderer<StoragePool>() {
-            @Override
-            public String renderNullSafe(StoragePool storagePool) {
-                return storagePool.getName();
-            }
-        });
-        externalProviderEditor = new ListModelListBoxEditor<Provider>(new NullSafeRenderer<Provider>() {
-            @Override
-            public String renderNullSafe(Provider provider) {
-                return provider.getName();
-            }
-        });
-        qosEditor = new ListModelListBoxEditor<HostNetworkQos>(new NullSafeRenderer<HostNetworkQos>() {
-            @Override
-            protected String renderNullSafe(HostNetworkQos qos) {
-                return qos.getName();
-            }
-        });
+        dataCenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
+        externalProviderEditor = new ListModelListBoxEditor<>(new NameRenderer<Provider>());
+        qosEditor = new ListModelListBoxEditor<>(new NameRenderer<HostNetworkQos>());
         exportEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         exportEditor.asCheckBox().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
@@ -222,7 +207,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         vlanTagging = new EntityModelCheckBoxEditor(Align.RIGHT);
         mtuEditor = new IntegerEntityModelTextBoxOnlyEditor();
         createSubnetEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        this.clustersTable = new EntityModelCellTable<ListModel<NetworkClusterModel>>(SelectionMode.NONE, true);
+        this.clustersTable = new EntityModelCellTable<>(SelectionMode.NONE, true);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initEntityModelCellTable(constants, templates);
         localize(constants);

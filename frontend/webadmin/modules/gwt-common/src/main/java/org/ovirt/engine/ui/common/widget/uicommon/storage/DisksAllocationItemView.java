@@ -17,7 +17,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEd
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.StorageDomainFreeSpaceRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 
@@ -108,25 +108,15 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
     }
 
     void initEditors() {
-        volumeTypeListEditor = new ListModelListBoxEditor<VolumeType>(new EnumRenderer<VolumeType>());
+        volumeTypeListEditor = new ListModelListBoxEditor<>(new EnumRenderer<VolumeType>());
 
-        storageListEditor = new ListModelListBoxEditor<StorageDomain>(new StorageDomainFreeSpaceRenderer<StorageDomain>());
+        storageListEditor = new ListModelListBoxEditor<>(new StorageDomainFreeSpaceRenderer<>());
 
-        sourceStorageListEditor = new ListModelListBoxEditor<StorageDomain>(new StorageDomainFreeSpaceRenderer<StorageDomain>());
+        sourceStorageListEditor = new ListModelListBoxEditor<>(new StorageDomainFreeSpaceRenderer<>());
 
-        diskProfileListEditor = new ListModelListBoxEditor<DiskProfile>(new NullSafeRenderer<DiskProfile>() {
-            @Override
-            protected String renderNullSafe(DiskProfile object) {
-                return object.getName();
-            }
-        });
+        diskProfileListEditor = new ListModelListBoxEditor<>(new NameRenderer<DiskProfile>());
 
-        quotaListEditor = new ListModelListBoxEditor<Quota>(new NullSafeRenderer<Quota>() {
-            @Override
-            public String renderNullSafe(Quota quota) {
-                return quota.getQuotaName();
-            }
-        });
+        quotaListEditor = new ListModelListBoxEditor<>(new NameRenderer<Quota>());
     }
 
     void updateStyles(Boolean isNarrowStyle) {

@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -71,12 +71,7 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
     public VnicProfileWidget() {
         publicUseEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         publicInfo = new InfoIcon(templates.italicText(constants.profilePublicUseLabel()), resources);
-        networkQoSEditor = new ListModelListBoxEditor<NetworkQoS>(new NullSafeRenderer<NetworkQoS>() {
-            @Override
-            public String renderNullSafe(NetworkQoS networkQoS) {
-                return networkQoS.getName();
-            }
-        });
+        networkQoSEditor = new ListModelListBoxEditor<>(new NameRenderer<NetworkQoS>());
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         publicUseEditor.setLabel(constants.profilePublicUseInstanceTypeLabel());
         networkQoSEditor.setLabel(constants.profileQoSInstanceTypeLabel());

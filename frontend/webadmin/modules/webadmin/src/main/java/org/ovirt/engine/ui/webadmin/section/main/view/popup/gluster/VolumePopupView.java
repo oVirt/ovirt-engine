@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -172,21 +172,11 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     }
 
     private void initListBoxEditors() {
-        dataCenterEditor = new ListModelListBoxEditor<StoragePool>(new NullSafeRenderer<StoragePool>() {
-            @Override
-            public String renderNullSafe(StoragePool storagePool) {
-                return storagePool.getName();
-            }
-        });
+        dataCenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
 
-        clusterEditor = new ListModelListBoxEditor<VDSGroup>(new NullSafeRenderer<VDSGroup>() {
-            @Override
-            public String renderNullSafe(VDSGroup vdsGroup) {
-                return vdsGroup.getName();
-            }
-        });
+        clusterEditor = new ListModelListBoxEditor<>(new NameRenderer<VDSGroup>());
 
-        typeListEditor = new ListModelListBoxEditor<GlusterVolumeType>(new EnumRenderer<GlusterVolumeType>());
+        typeListEditor = new ListModelListBoxEditor<>(new EnumRenderer<GlusterVolumeType>());
     }
 
     private void initAddBricksButton() {

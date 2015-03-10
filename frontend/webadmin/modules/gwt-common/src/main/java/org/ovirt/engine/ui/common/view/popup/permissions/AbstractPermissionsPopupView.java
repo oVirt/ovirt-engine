@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.TextBoxChanger;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -134,12 +135,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
             }
         });
 
-        roleSelection = new ListModelListBoxEditor<Role>(new NullSafeRenderer<Role>() {
-            @Override
-            public String renderNullSafe(Role object) {
-                return object.getName();
-            }
-        });
+        roleSelection = new ListModelListBoxEditor<>(new NameRenderer<Role>());
 
         namespaceSelection = new ListModelListBoxEditor<String>(new NullSafeRenderer<String>() {
             @Override

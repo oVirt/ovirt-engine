@@ -4,7 +4,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -34,7 +33,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEdito
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.StorageDomainFreeSpaceRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
@@ -238,40 +237,20 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     private void initManualWidgets(CommonApplicationConstants constants,
                                    CommonApplicationResources resources,
                                    CommonApplicationTemplates templates) {
-        storageDomainEditor = new ListModelListBoxEditor<StorageDomain>(new StorageDomainFreeSpaceRenderer());
+        storageDomainEditor = new ListModelListBoxEditor<>(new StorageDomainFreeSpaceRenderer());
 
-        hostListEditor = new ListModelListBoxEditor<VDS>(new AbstractRenderer<VDS>() {
-            @Override
-            public String render(VDS vds) {
-                return vds == null ? "" : vds.getName(); //$NON-NLS-1$
-            }
-        });
+        hostListEditor = new ListModelListBoxEditor<>(new NameRenderer<VDS>());
 
-        diskProfileEditor = new ListModelListBoxEditor<DiskProfile>(new NullSafeRenderer<DiskProfile>() {
-            @Override
-            protected String renderNullSafe(DiskProfile object) {
-                return object.getName();
-            }
-        });
+        diskProfileEditor = new ListModelListBoxEditor<>(new NameRenderer<DiskProfile>());
 
-        quotaEditor = new ListModelListBoxEditor<Quota>(new NullSafeRenderer<Quota>() {
-            @Override
-            public String renderNullSafe(Quota quota) {
-                return quota.getQuotaName();
-            }
-        });
+        quotaEditor = new ListModelListBoxEditor<>(new NameRenderer<Quota>());
 
-        interfaceEditor = new ListModelListBoxEditor<DiskInterface>(new EnumRenderer());
+        interfaceEditor = new ListModelListBoxEditor<>(new EnumRenderer());
 
-        datacenterEditor = new ListModelListBoxEditor<StoragePool>(new NullSafeRenderer<StoragePool>() {
-            @Override
-            public String renderNullSafe(StoragePool storagePool) {
-                return storagePool.getName();
-            }
-        });
+        datacenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
 
-        volumeTypeEditor = new ListModelListBoxEditor<VolumeType>(new EnumRenderer());
-        storageTypeEditor = new ListModelListBoxEditor<StorageType>(new EnumRenderer());
+        volumeTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer());
+        storageTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer());
         plugDiskToVmEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         wipeAfterDeleteEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -371,7 +350,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
             fcpStorageModel.setIgnoreGrayedOut(true);
 
             // Set 'StorageModel' items
-            ArrayList<IStorageModel> items = new ArrayList<IStorageModel>();
+            ArrayList<IStorageModel> items = new ArrayList<>();
             items.add(iscsiStorageModel);
             items.add(fcpStorageModel);
             storageModel.setItems(items);

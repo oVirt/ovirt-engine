@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.NewClusterPolicyModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -136,12 +136,7 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
     }
 
     private void initListBoxEditors() {
-        loadBalanceListEditor = new ListModelListBoxOnlyEditor<PolicyUnit>(new NullSafeRenderer<PolicyUnit>() {
-            @Override
-            public String renderNullSafe(PolicyUnit policyUnit) {
-                return policyUnit.getName();
-            }
-        });
+        loadBalanceListEditor = new ListModelListBoxOnlyEditor<>(new NameRenderer<PolicyUnit>());
     }
 
     private void localize(ApplicationConstants constants) {

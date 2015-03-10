@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.common.widget.HorizontalSplitTable;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEditTextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractListModelListBoxColumn;
@@ -77,13 +77,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
             ApplicationConstants constants, ApplicationTemplates templates) {
         super(eventBus, resources);
         // Initialize Editors
-        providersEditor = new ListModelListBoxEditor<Provider<?>>(new NullSafeRenderer<Provider<?>>() {
-
-            @Override
-            protected String renderNullSafe(Provider<?> provider) {
-                return provider.getName();
-            }
-        });
+        providersEditor = new ListModelListBoxEditor<>(new NameRenderer<Provider<?>>());
         providerNetworks = new EntityModelCellTable<ListModel<ExternalNetwork>>(true, false, true);
         importedNetworks = new EntityModelCellTable<ListModel<ExternalNetwork>>(true, false, true);
         splitTable =
@@ -140,12 +134,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
         providerNetworks.addColumn(idColumn, constants.idNetworkHeader());
         importedNetworks.addColumn(idColumn, constants.idNetworkHeader());
 
-        dcColumn = new AbstractListModelListBoxColumn<ExternalNetwork, StoragePool>(new NullSafeRenderer<StoragePool>() {
-            @Override
-            public String renderNullSafe(StoragePool dc) {
-                return dc.getName();
-            }
-        })
+        dcColumn = new AbstractListModelListBoxColumn<ExternalNetwork, StoragePool>(new NameRenderer<StoragePool>())
         {
             @Override
             public ListModel<StoragePool> getValue(ExternalNetwork network) {

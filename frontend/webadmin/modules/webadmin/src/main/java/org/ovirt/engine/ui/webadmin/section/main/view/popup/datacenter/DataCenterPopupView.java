@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.BooleanRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterModel;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.MacPoolModel;
@@ -113,12 +114,7 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
 
         quotaEnforceTypeEditor = new ListModelListBoxEditor<QuotaEnforcementTypeEnum>(new EnumRenderer());
 
-        macPoolListEditor = new ListModelListBoxEditor<MacPool>(new NullSafeRenderer<MacPool>() {
-            @Override
-            protected String renderNullSafe(MacPool macPool) {
-                return macPool.getName();
-            }
-        });
+        macPoolListEditor = new ListModelListBoxEditor<>(new NameRenderer<MacPool>());
     }
 
     void localize(ApplicationConstants constants) {

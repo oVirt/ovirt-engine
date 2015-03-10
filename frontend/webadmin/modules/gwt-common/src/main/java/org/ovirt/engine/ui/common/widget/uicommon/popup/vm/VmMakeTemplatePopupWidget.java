@@ -13,7 +13,7 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.DisksAllocationView;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
@@ -148,7 +148,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     }
 
     void initListBoxEditors() {
-        clusterEditor = new ListModelTypeAheadListBoxEditor<DataCenterWithCluster>(
+        clusterEditor = new ListModelTypeAheadListBoxEditor<>(
                 new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<DataCenterWithCluster>() {
 
                     @Override
@@ -172,14 +172,9 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
 
                 });
 
-        quotaEditor = new ListModelListBoxEditor<Quota>(new NullSafeRenderer<Quota>() {
-            @Override
-            public String renderNullSafe(Quota object) {
-                return object.getQuotaName();
-            }
-        });
+        quotaEditor = new ListModelListBoxEditor<>(new NameRenderer<Quota>());
 
-        baseTemplateEditor = new ListModelTypeAheadListBoxEditor<VmTemplate>(
+        baseTemplateEditor = new ListModelTypeAheadListBoxEditor<>(
                 new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<VmTemplate>() {
 
                     @Override
@@ -196,12 +191,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
                     }
                 });
 
-        cpuProfilesEditor = new ListModelListBoxEditor<CpuProfile>(new NullSafeRenderer<CpuProfile>() {
-            @Override
-            protected String renderNullSafe(CpuProfile object) {
-                return object.getName();
-            }
-        });
+        cpuProfilesEditor = new ListModelListBoxEditor<>(new NameRenderer<CpuProfile>());
     }
 
     private String typeAheadNameDescriptionTemplateNullSafe(String name, String description) {

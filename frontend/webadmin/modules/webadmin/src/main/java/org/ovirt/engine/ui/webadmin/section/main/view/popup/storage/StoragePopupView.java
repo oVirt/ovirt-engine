@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.FcpStorageView;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.ImportFcpStorageView;
@@ -172,12 +173,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
 
         formatListEditor = new ListModelListBoxEditor<StorageFormatType>(new EnumRenderer());
 
-        hostListEditor = new ListModelListBoxEditor<VDS>(new AbstractRenderer<VDS>() {
-            @Override
-            public String render(VDS vds) {
-                return vds == null ? "" : vds.getName(); //$NON-NLS-1$
-            }
-        });
+        hostListEditor = new ListModelListBoxEditor<>(new NameRenderer<VDS>());
 
         storageTypeListEditor = new ListModelListBoxEditor<IStorageModel>(new AbstractRenderer<IStorageModel>() {
             @Override

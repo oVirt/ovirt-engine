@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeProfileStatisticsModel;
@@ -160,18 +160,8 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
     private void initEditors() {
         nfsRefreshIcon = new RefreshActionIcon(SafeHtmlUtils.EMPTY_SAFE_HTML, resources);
         brickRefreshIcon = new RefreshActionIcon(SafeHtmlUtils.EMPTY_SAFE_HTML, resources);
-        bricks = new ListModelListBoxEditor<BrickProfileDetails>(new NullSafeRenderer<BrickProfileDetails>() {
-            @Override
-            protected String renderNullSafe(BrickProfileDetails object) {
-                return object.getName();
-            }
-        });
-        nfsServers = new ListModelListBoxEditor<GlusterVolumeProfileStats>(new NullSafeRenderer<GlusterVolumeProfileStats>() {
-            @Override
-            protected String renderNullSafe(GlusterVolumeProfileStats object) {
-                return object.getName();
-            }
-        });
+        bricks = new ListModelListBoxEditor<>(new NameRenderer<BrickProfileDetails>());
+        nfsServers = new ListModelListBoxEditor<>(new NameRenderer<GlusterVolumeProfileStats>());
         volumeProfileStats = new EntityModelCellTable<ListModel>(false, true);
 
         volumeProfileStats.addEntityModelColumn(new AbstractEntityModelTextColumn<FopStats>() {

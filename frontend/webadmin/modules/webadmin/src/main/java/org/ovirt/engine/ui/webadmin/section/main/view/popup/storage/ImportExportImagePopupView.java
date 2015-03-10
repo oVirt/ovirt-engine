@@ -24,7 +24,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMode;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -89,36 +89,16 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
                                       final ApplicationConstants constants) {
         super(eventBus, resources);
 
-        dataCenterEditor = new ListModelListBoxEditor<StoragePool>(new NullSafeRenderer<StoragePool>() {
-            @Override
-            public String renderNullSafe(StoragePool storagePool) {
-                return storagePool.getName();
-            }
-        });
+        dataCenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
         dataCenterEditor.setLabel(constants.dataCenter());
 
-        clusterEditor = new ListModelListBoxEditor<VDSGroup>(new NullSafeRenderer<VDSGroup>() {
-            @Override
-            public String renderNullSafe(VDSGroup vdsGroup) {
-                return vdsGroup.getName();
-            }
-        });
+        clusterEditor = new ListModelListBoxEditor<>(new NameRenderer<VDSGroup>());
         clusterEditor.setLabel(constants.makeTemplateClusterLabel());
 
-        storageDomainEditor = new ListModelListBoxEditor<StorageDomain>(new NullSafeRenderer<StorageDomain>() {
-            @Override
-            public String renderNullSafe(StorageDomain storageDomain) {
-                return storageDomain.getStorageName();
-            }
-        });
+        storageDomainEditor = new ListModelListBoxEditor<>(new NameRenderer<StorageDomain>());
         storageDomainEditor.setLabel(constants.domainNameStorage());
 
-        quotaEditor = new ListModelListBoxEditor<Quota>(new NullSafeRenderer<Quota>() {
-            @Override
-            public String renderNullSafe(Quota quota) {
-                return quota.getQuotaName();
-            }
-        });
+        quotaEditor = new ListModelListBoxEditor<>(new NameRenderer<Quota>());
         quotaEditor.setLabel(constants.quota());
 
         importAsTemplateEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -126,7 +106,7 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
 
         imageListPanel = new SimplePanel();
 
-        imageList = new EntityModelCellTable<ListModel>(SelectionMode.NONE, true);
+        imageList = new EntityModelCellTable<>(SelectionMode.NONE, true);
         imageList.addEntityModelColumn(new AbstractEntityModelTextColumn<Object>() {
             @Override
             public String getText(Object image) {

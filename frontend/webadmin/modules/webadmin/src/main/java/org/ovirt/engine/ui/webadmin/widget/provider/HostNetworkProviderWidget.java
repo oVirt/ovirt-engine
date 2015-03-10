@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabel;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.providers.HostNetworkProviderModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.NeutronAgentModel;
@@ -79,12 +79,7 @@ public class HostNetworkProviderWidget extends AbstractModelBoundPopupWidget<Hos
     public HostNetworkProviderWidget() {
 
         networkProviderLabel = new StringEntityModelLabel();
-        networkProviderEditor = new ListModelListBoxOnlyEditor<Provider<OpenstackNetworkProviderProperties>>(new NullSafeRenderer<Provider<OpenstackNetworkProviderProperties>>() {
-            @Override
-            public String renderNullSafe(Provider<OpenstackNetworkProviderProperties> provider) {
-                return provider.getName();
-            }
-        });
+        networkProviderEditor = new ListModelListBoxOnlyEditor<>(new NameRenderer<Provider<OpenstackNetworkProviderProperties>>());
         networkProvider = new EntityModelWidgetWithInfo<String>(networkProviderLabel, networkProviderEditor);
         networkProviderTypeEditor = new ListModelListBoxEditor<ProviderType>(new EnumRenderer<ProviderType>());
         neutronAgentWidget = new NeutronAgentWidget();

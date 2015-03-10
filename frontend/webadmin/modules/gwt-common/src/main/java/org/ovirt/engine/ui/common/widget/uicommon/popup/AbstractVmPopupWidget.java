@@ -97,6 +97,7 @@ import org.ovirt.engine.ui.common.widget.profile.ProfilesInstanceTypeEditor;
 import org.ovirt.engine.ui.common.widget.renderer.BooleanRendererWithNullText;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.MemorySizeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.instanceimages.InstanceImagesEditor;
@@ -1317,12 +1318,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         specificHost = new RadioButton("runVmOnHostGroup"); //$NON-NLS-1$
         isAutoAssignEditor =
                 new EntityModelRadioButtonEditor("runVmOnHostGroup", new ModeSwitchingVisibilityRenderer()); //$NON-NLS-1$
-        defaultHostEditor = new ListModelListBoxEditor<VDS>(new NullSafeRenderer<VDS>() {
-            @Override
-            public String renderNullSafe(VDS object) {
-                return object.getName();
-            }
-        }, new ModeSwitchingVisibilityRenderer());
+        defaultHostEditor = new ListModelListBoxEditor<>(new NameRenderer<VDS>(), new ModeSwitchingVisibilityRenderer());
 
         migrationModeEditor =
                 new ListModelListBoxEditor<MigrationSupport>(new EnumRenderer<MigrationSupport>(), new ModeSwitchingVisibilityRenderer());
@@ -1366,12 +1362,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         }, new ModeSwitchingVisibilityRenderer());
 
-        cpuProfilesEditor = new ListModelListBoxEditor<CpuProfile>(new NullSafeRenderer<CpuProfile>() {
-            @Override
-            protected String renderNullSafe(CpuProfile object) {
-                return object.getName();
-            }
-        });
+        cpuProfilesEditor = new ListModelListBoxEditor<>(new NameRenderer<CpuProfile>());
 
         cpuSharesAmountSelectionEditor =
                 new ListModelListBoxOnlyEditor<UnitVmModel.CpuSharesAmount>(new EnumRenderer<UnitVmModel.CpuSharesAmount>(), new ModeSwitchingVisibilityRenderer());

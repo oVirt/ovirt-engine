@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -73,15 +73,9 @@ public class GlusterClusterSnapshotConfigureOptionsPopupView extends AbstractMod
     }
 
     private void initEditors() {
-        clusterEditor = new ListModelListBoxEditor<VDSGroup>(new NullSafeRenderer<VDSGroup>() {
-            @Override
-            protected String renderNullSafe(VDSGroup object) {
-                return object.getName();
-            }
-        });
+        clusterEditor = new ListModelListBoxEditor<>(new NameRenderer<VDSGroup>());
 
-        configsTable =
-                new EntityModelCellTable<ListModel<EntityModel<GlusterVolumeSnapshotConfig>>>(false, true);
+        configsTable = new EntityModelCellTable<>(false, true);
 
         configsTable.addColumn(new AbstractEntityModelTextColumn<GlusterVolumeSnapshotConfig>() {
             @Override
@@ -90,19 +84,19 @@ public class GlusterClusterSnapshotConfigureOptionsPopupView extends AbstractMod
             }
         }, constants.volumeSnapshotConfigName(), "200px"); //$NON-NLS-1$
 
-        Column<EntityModel, String> valueColumn = new Column<EntityModel, String>(new TextInputCell()) {
+        Column<EntityModel<GlusterVolumeSnapshotConfig>, String> valueColumn = new Column<EntityModel<GlusterVolumeSnapshotConfig>, String>(new TextInputCell()) {
             @Override
-            public String getValue(EntityModel object) {
-                return ((GlusterVolumeSnapshotConfig) object.getEntity()).getParamValue();
+            public String getValue(EntityModel<GlusterVolumeSnapshotConfig> object) {
+                return object.getEntity().getParamValue();
             }
         };
         configsTable.addColumn(valueColumn, constants.volumeSnapshotConfigValue(), "100px"); //$NON-NLS-1$
 
-        valueColumn.setFieldUpdater(new FieldUpdater<EntityModel, String>() {
+        valueColumn.setFieldUpdater(new FieldUpdater<EntityModel<GlusterVolumeSnapshotConfig>, String>() {
 
             @Override
-            public void update(int index, EntityModel object, String value) {
-                ((GlusterVolumeSnapshotConfig) object.getEntity()).setParamValue(value);
+            public void update(int index, EntityModel<GlusterVolumeSnapshotConfig> object, String value) {
+                object.getEntity().setParamValue(value);
             }
         });
     }

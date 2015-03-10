@@ -34,7 +34,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBo
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.StringRenderer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
@@ -532,39 +532,19 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         publicKeyEditor = new StringEntityModelTextAreaLabelEditor();
 
         // List boxes
-        dataCenterEditor = new ListModelListBoxEditor<StoragePool>(new NullSafeRenderer<StoragePool>() {
-            @Override
-            public String renderNullSafe(StoragePool storagePool) {
-                return storagePool.getName();
-            }
-        });
+        dataCenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
 
-        clusterEditor = new ListModelListBoxEditor<VDSGroup>(new NullSafeRenderer<VDSGroup>() {
-            @Override
-            public String renderNullSafe(VDSGroup vdsGroup) {
-                return vdsGroup.getName();
-            }
-        });
+        clusterEditor = new ListModelListBoxEditor<>(new NameRenderer<VDSGroup>());
 
-        externalHostNameEditor = new ListModelListBoxEditor<VDS>(new NullSafeRenderer<VDS>() {
-            @Override
-            public String renderNullSafe(VDS vds) {
-                return vds.getName();
-            }
-        });
+        externalHostNameEditor = new ListModelListBoxEditor<>(new NameRenderer<VDS>());
 
-        providersEditor = new ListModelListBoxEditor<Provider>(new NullSafeRenderer<Provider>() {
-            @Override
-            public String renderNullSafe(Provider provider) {
-                return provider.getName();
-            }
-        });
+        providersEditor = new ListModelListBoxEditor<>(new NameRenderer<Provider>());
 
-        pmVariantsEditor = new ListModelListBoxOnlyEditor<String>(new StringRenderer<String>());
+        pmVariantsEditor = new ListModelListBoxOnlyEditor<>(new StringRenderer<String>());
 
-        pmTypeEditor = new ListModelListBoxEditor<String>(new StringRenderer<String>());
+        pmTypeEditor = new ListModelListBoxEditor<>(new StringRenderer<String>());
 
-        pmSecondaryTypeEditor = new ListModelListBoxEditor<String>(new StringRenderer<String>());
+        pmSecondaryTypeEditor = new ListModelListBoxEditor<>(new StringRenderer<String>());
 
         externalDiscoveredHostsEditor = getListModelTypeAheadListBoxEditor();
         externalHostGroupsEditor = getListModelTypeAheadListBoxEditor();
@@ -581,7 +561,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     }
 
     private ListModelTypeAheadListBoxEditor<ExternalEntityBase> getListModelTypeAheadListBoxEditor() {
-        return new ListModelTypeAheadListBoxEditor<ExternalEntityBase>(
+        return new ListModelTypeAheadListBoxEditor<>(
                 new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<ExternalEntityBase>() {
                     @Override
                     public String getReplacementStringNullSafe(ExternalEntityBase data) {
