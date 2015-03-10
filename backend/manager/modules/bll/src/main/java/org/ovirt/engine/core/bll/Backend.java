@@ -614,12 +614,15 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             case CORSSupport:
             case CORSAllowedOrigins:
                 return runQueryImpl(actionType, parameters, false);
+            default:
+                break;
             }
 
-            return getErrorQueryReturnValue(VdcBllMessages.USER_CANNOT_RUN_QUERY_NOT_PUBLIC);
         default:
-            return getErrorQueryReturnValue(VdcBllMessages.USER_CANNOT_RUN_QUERY_NOT_PUBLIC);
+            break;
         }
+
+        return getErrorQueryReturnValue(VdcBllMessages.USER_CANNOT_RUN_QUERY_NOT_PUBLIC);
     }
 
     @Override
