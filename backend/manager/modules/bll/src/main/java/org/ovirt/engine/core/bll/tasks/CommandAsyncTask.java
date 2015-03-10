@@ -194,14 +194,6 @@ public class CommandAsyncTask extends SPMAsyncTask {
         }
     }
 
-    private VdcActionType getEndActionType(AsyncTask dbAsyncTask) {
-        VdcActionType commandType = dbAsyncTask.getActionParameters().getCommandType();
-        if (!VdcActionType.Unknown.equals(commandType)) {
-            return commandType;
-        }
-        return dbAsyncTask.getActionType();
-    }
-
     private String getErrorMessage() {
         return String.format("[within thread]: endAction for action type %1$s threw an exception.",
                 getParameters().getDbAsyncTask().getActionParameters().getCommandType());
