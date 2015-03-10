@@ -286,19 +286,25 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     public Response unregisteredStorageDomainsDiscover(Action action) {
-        validateParameters(action, "iscsi.address");
+        StorageType storageType =
+                ((action.getIscsi() != null) && (action.getIscsi().getAddress() != null)) ? StorageType.ISCSI
+                        : StorageType.FCP;
+
 
         // Validate if the Host exists.
         getEntity();
         List<StorageServerConnections> storageServerConnections = new ArrayList<>();
-        for (String iscsiTarget : action.getIscsiTargets()) {
-            StorageServerConnections connectionDetails = getInitializedConnectionIscsiDetails(action);
-            connectionDetails.setiqn(iscsiTarget);
-            storageServerConnections.add(connectionDetails);
+        if (storageType == StorageType.ISCSI) {
+            for (String iscsiTarget : action.getIscsiTargets()) {
+                StorageServerConnections connectionDetails = getInitializedConnectionIscsiDetails(action);
+                connectionDetails.setiqn(iscsiTarget);
+                storageServerConnections.add(connectionDetails);
+            }
+        } else {
+            // For FC we don't need to do anything.
         }
         GetUnregisteredBlockStorageDomainsParameters unregisteredBlockStorageDomainsParameters =
-                new GetUnregisteredBlockStorageDomainsParameters(guid, StorageType.ISCSI, storageServerConnections);
-
+                new GetUnregisteredBlockStorageDomainsParameters(guid, storageType, storageServerConnections);
         try {
             Pair<List<StorageDomain>, List<StorageServerConnections>> pair =
                     getEntity(Pair.class,
