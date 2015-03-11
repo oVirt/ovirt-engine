@@ -210,8 +210,8 @@ class Plugin(plugin.PluginBase):
                     'DC Name:           {name:30}'
                 ).format(
                     task_id=entry['task_id'],
-                    task_name=ASYNC_TASKS_MAP[entry['action_type']][0],
-                    task_desc=ASYNC_TASKS_MAP[entry['action_type']][1],
+                    task_name=ASYNC_TASKS_MAP[str(entry['action_type'])][0],
+                    task_desc=ASYNC_TASKS_MAP[str(entry['action_type'])][1],
                     started_at=entry['started_at'],
                     name=entry['name'],
                 )
