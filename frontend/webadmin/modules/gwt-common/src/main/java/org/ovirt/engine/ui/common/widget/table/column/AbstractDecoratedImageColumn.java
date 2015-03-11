@@ -6,9 +6,9 @@ import org.ovirt.engine.ui.uicompat.EnumTranslator;
 
 import com.google.gwt.user.cellview.client.Column;
 
-public abstract class AbstractImageWithDecoratorColumn<T> extends Column<T, ImageWithDecorator> {
+public abstract class AbstractDecoratedImageColumn<T> extends Column<T, ImageWithDecorator> {
 
-    public AbstractImageWithDecoratorColumn() {
+    public AbstractDecoratedImageColumn() {
         super(new DecoratedImageResouceCell());
     }
 
