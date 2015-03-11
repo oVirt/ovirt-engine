@@ -551,12 +551,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         boolean exceptionOccurred = false;
         try {
             if (isEndSuccessfully()) {
-                if (getCallBack() == null) {
+                if (getCallback() == null) {
                     setCommandStatus(CommandStatus.SUCCEEDED);
                 }
                 internalEndSuccessfully();
             } else {
-                if (getCallBack() == null) {
+                if (getCallback() == null) {
                     setCommandStatus(CommandStatus.FAILED);
                 }
                 internalEndWithFailure();
@@ -1202,7 +1202,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 // set the status to SUCCEEDED if the status is ACTIVE
                 if (getTaskType() == AsyncTaskType.notSupported &&
                         getReturnValue().getVdsmTaskIdList().isEmpty() &&
-                        getCallBack() == null &&
+                        getCallback() == null &&
                         commandStatus == CommandStatus.ACTIVE) {
                     setCommandStatus(CommandStatus.SUCCEEDED);
                 }
@@ -1323,7 +1323,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected final void execute() {
         setCommandStatus(CommandStatus.ACTIVE);
-        if (getCallBack() != null) {
+        if (getCallback() != null) {
             persistCommand(getParameters().getParentCommand(), true);
         }
         getReturnValue().setCanDoAction(true);
@@ -2230,7 +2230,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return commandStatus;
     }
 
-    public CommandCallBack getCallBack() {
+    public CommandCallBack getCallback() {
         return null;
     }
 

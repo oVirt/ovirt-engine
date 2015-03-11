@@ -233,7 +233,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     }
 
     @Override
-    public CommandCallBack getCallBack() {
+    public CommandCallBack getCallback() {
         // Handle first execution based on vm status, and recovery based on isLiveMerge (VM may be down)
         if (isLiveMerge()) {
             return new RemoveDiskSnapshotsCommandCallback();

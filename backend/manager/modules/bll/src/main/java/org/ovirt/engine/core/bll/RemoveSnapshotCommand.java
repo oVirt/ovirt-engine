@@ -453,7 +453,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     @Override
-    public CommandCallBack getCallBack() {
+    public CommandCallBack getCallback() {
         return getVm().isQualifiedForLiveSnapshotMerge() ? new RemoveSnapshotCommandCallback() : null;
     }
 }

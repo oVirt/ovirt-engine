@@ -313,7 +313,7 @@ public class CoCoAsyncTaskHelper {
     private CommandEntity getChildCommandEntity(CommandBase<?> command, VdcActionType parentCommand) {
         CommandEntity cmdEntity = coco.getCommandEntity(command.getCommandId());
         if (cmdEntity == null) {
-            command.persistCommand(parentCommand, command.getCallBack() != null);
+            command.persistCommand(parentCommand, command.getCallback() != null);
         }
         return coco.getCommandEntity(command.getCommandId());
     }

@@ -450,7 +450,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
     }
 
     @Override
-    public CommandCallBack getCallBack() {
+    public CommandCallBack getCallback() {
         return new RemoveSnapshotSingleDiskLiveCommandCallback();
     }
 }

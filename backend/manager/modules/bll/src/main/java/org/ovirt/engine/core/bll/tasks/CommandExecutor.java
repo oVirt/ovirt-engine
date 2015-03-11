@@ -133,8 +133,8 @@ public class CommandExecutor {
     public void addToCallBackMap(CommandEntity cmdEntity) {
         if (!cmdCallBackMap.containsKey(cmdEntity.getId())) {
             CommandBase<?> cmd = coco.retrieveCommand(cmdEntity.getId());
-            if (cmd != null && cmd.getCallBack() != null) {
-                cmdCallBackMap.put(cmdEntity.getId(), cmd.getCallBack());
+            if (cmd != null && cmd.getCallback() != null) {
+                cmdCallBackMap.put(cmdEntity.getId(), cmd.getCallback());
             }
         }
     }
@@ -143,7 +143,7 @@ public class CommandExecutor {
                                                           final VdcActionParametersBase parameters,
                                                           final CommandContext cmdContext) {
         final CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters, cmdContext);
-        CommandCallBack callBack = command.getCallBack();
+        CommandCallBack callBack = command.getCallback();
         command.persistCommand(command.getParameters().getParentCommand(), cmdContext, callBack != null);
         if (callBack != null) {
             cmdCallBackMap.put(command.getCommandId(), callBack);
@@ -167,7 +167,7 @@ public class CommandExecutor {
     }
 
     private VdcReturnValueBase executeCommand(final CommandBase<?> command, final CommandContext cmdContext) {
-        CommandCallBack callBack = command.getCallBack();
+        CommandCallBack callBack = command.getCallback();
         VdcReturnValueBase result = BackendUtils.getBackendCommandObjectsHandler(log).runAction(command, null);
         updateCommand(command, result);
         if (callBack != null) {

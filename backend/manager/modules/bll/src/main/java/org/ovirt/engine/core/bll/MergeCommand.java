@@ -84,7 +84,7 @@ public class MergeCommand<T extends MergeParameters>
     }
 
     @Override
-    public CommandCallBack getCallBack() {
+    public CommandCallBack getCallback() {
         return new MergeCommandCallback();
     }
 }
