@@ -179,6 +179,9 @@ public interface CommonApplicationResources extends ClientBundle {
     @Source("images/volume_georep_slave.png")
     ImageResource volumeGeoRepSlave();
 
+    @Source("images/snapshot_scheduled.png")
+    ImageResource snapshotScheduledImage();
+
     // Model-bound widgets
 
     @Source("images/snapshot.png")

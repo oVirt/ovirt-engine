@@ -169,16 +169,6 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         snapshotCountColumn.makeSortable();
         getTable().addColumn(snapshotCountColumn, constants.noOfSnapshotsLabel(), "100px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<GlusterVolumeEntity> snapshotScheduledColumn =
-                new TextColumnWithTooltip<GlusterVolumeEntity>() {
-            @Override
-            public String getValue(GlusterVolumeEntity object) {
-                return object.getSnapshotScheduled().toString();
-            }
-        };
-        snapshotScheduledColumn.makeSortable();
-        getTable().addColumn(snapshotScheduledColumn, constants.snapshotScheduledLabel(), "100px"); //$NON-NLS-1$
-
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.newVolume()) {
             @Override
             protected UICommand resolveCommand() {
