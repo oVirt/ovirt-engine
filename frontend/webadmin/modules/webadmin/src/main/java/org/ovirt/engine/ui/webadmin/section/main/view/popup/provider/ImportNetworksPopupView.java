@@ -13,7 +13,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractEditTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEditTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractListModelListBoxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.header.CheckboxHeader;
@@ -113,7 +113,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
             }
         }, constants.nameNetworkHeader());
 
-        importedNetworks.addColumn(new AbstractEditTextColumnWithTooltip<ExternalNetwork>(new FieldUpdater<ExternalNetwork, String>() {
+        importedNetworks.addColumn(new AbstractEditTextColumn<ExternalNetwork>(new FieldUpdater<ExternalNetwork, String>() {
             @Override
             public void update(int index, ExternalNetwork model, String value) {
                 model.setDisplayName(value);
