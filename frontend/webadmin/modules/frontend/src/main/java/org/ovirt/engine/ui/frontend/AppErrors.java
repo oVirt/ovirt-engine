@@ -3195,7 +3195,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Cluster Policy is locked, and cannot be editable.")
     String ACTION_TYPE_FAILED_CLUSTER_POLICY_LOCKED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Cluster Policy is attached to cluster(s), please assign these cluster(s) to other policy.")
+    @DefaultStringValue("Cannot ${action} ${type}. Scheduling Policy is attached to cluster(s): ${clusters}, please unassign cluster(s).")
     String ACTION_TYPE_FAILED_CLUSTER_POLICY_INUSE();
 
     @DefaultStringValue("Cannot ${action} ${type}. Policy unit is unknown.")
