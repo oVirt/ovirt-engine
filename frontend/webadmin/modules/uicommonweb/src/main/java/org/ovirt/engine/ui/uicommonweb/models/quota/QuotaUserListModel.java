@@ -252,12 +252,14 @@ public class QuotaUserListModel extends SearchableListModel {
         PermissionsOperationsParameters permissionParams;
         for (DbUser user : items)
         {
-            Permissions tempVar2 = new Permissions();
-            tempVar2.setad_element_id(user.getId());
-            tempVar2.setrole_id(ApplicationGuids.quotaConsumer.asGuid());
-            Permissions perm = tempVar2;
-            perm.setObjectId(((Quota) getEntity()).getId());
-            perm.setObjectType(VdcObjectType.Quota);
+            Permissions perm = new Permissions(
+                    user.getId(),
+                    ApplicationGuids.quotaConsumer.asGuid(),
+                    ((Quota) getEntity()).getId(),
+                    VdcObjectType.Quota);
+            // set id to Guid.Empty as GWT cannot generate new random UUID, AddPermissionCommand will replace
+            // Guid.Empty with correct Guid
+            perm.setId(Guid.Empty);
 
             permissionParams = new PermissionsOperationsParameters();
             if (user.isGroup())
