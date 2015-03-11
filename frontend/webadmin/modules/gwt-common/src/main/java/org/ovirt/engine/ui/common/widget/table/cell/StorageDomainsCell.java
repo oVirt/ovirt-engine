@@ -6,12 +6,12 @@ import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 
-public class StorageDomainsCell extends TextCellWithTooltip {
+public class StorageDomainsCell extends TextCell {
 
     private String title = ""; //$NON-NLS-1$
 
     public StorageDomainsCell() {
-        super(TextCellWithTooltip.UNLIMITED_LENGTH);
+        super(TextCell.UNLIMITED_LENGTH);
     }
 
     @Override

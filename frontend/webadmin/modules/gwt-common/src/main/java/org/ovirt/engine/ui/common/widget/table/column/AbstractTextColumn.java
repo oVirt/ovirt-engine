@@ -3,11 +3,11 @@ package org.ovirt.engine.ui.common.widget.table.column;
 import java.util.Comparator;
 
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
-import org.ovirt.engine.ui.common.widget.table.cell.TextCellWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.cell.TextCell;
 
 
 /**
- * Column for displaying text using {@link TextCellWithTooltip}.
+ * Column for displaying text using {@link TextCell}.
  *
  * @param <T>
  *            Table row data type.
@@ -15,14 +15,14 @@ import org.ovirt.engine.ui.common.widget.table.cell.TextCellWithTooltip;
 public abstract class AbstractTextColumn<T> extends AbstractSortableColumn<T, String> implements ColumnWithElementId {
 
     public AbstractTextColumn() {
-        this(TextCellWithTooltip.UNLIMITED_LENGTH);
+        this(TextCell.UNLIMITED_LENGTH);
     }
 
     public AbstractTextColumn(int maxTextLength) {
-        this(new TextCellWithTooltip(maxTextLength));
+        this(new TextCell(maxTextLength));
     }
 
-    public AbstractTextColumn(TextCellWithTooltip cell) {
+    public AbstractTextColumn(TextCell cell) {
         super(cell);
     }
 
@@ -33,8 +33,8 @@ public abstract class AbstractTextColumn<T> extends AbstractSortableColumn<T, St
     }
 
     @Override
-    public TextCellWithTooltip getCell() {
-        return (TextCellWithTooltip) super.getCell();
+    public TextCell getCell() {
+        return (TextCell) super.getCell();
     }
 
     public void setTitle(String tooltipText) {

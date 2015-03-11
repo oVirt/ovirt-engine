@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
 import org.ovirt.engine.ui.common.widget.table.cell.EditTextCellWithTooltip;
-import org.ovirt.engine.ui.common.widget.table.cell.TextCellWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.cell.TextCell;
 
 import com.google.gwt.cell.client.FieldUpdater;
 
@@ -18,7 +18,7 @@ public abstract class AbstractEditTextColumnWithTooltip<T> extends AbstractTextC
     }
 
     public AbstractEditTextColumnWithTooltip(FieldUpdater<T, String> fieldUpdater) {
-        this(TextCellWithTooltip.UNLIMITED_LENGTH, fieldUpdater);
+        this(TextCell.UNLIMITED_LENGTH, fieldUpdater);
     }
 
     public AbstractEditTextColumnWithTooltip(int maxTextLength, FieldUpdater<T, String> fieldUpdater) {

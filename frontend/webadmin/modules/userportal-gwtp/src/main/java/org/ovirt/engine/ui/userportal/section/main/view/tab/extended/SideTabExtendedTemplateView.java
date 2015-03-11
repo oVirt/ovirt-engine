@@ -5,7 +5,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
-import org.ovirt.engine.ui.common.widget.table.cell.TextCellWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.cell.TextCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
@@ -111,7 +111,7 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
         };
         getTable().addColumn(nameColumn, commonConstants.templateName(), "350px"); //$NON-NLS-1$
 
-        final TextCellWithTooltip subversionNumberCell = new TextCellWithTooltip(TextCellWithTooltip.UNLIMITED_LENGTH);
+        final TextCell subversionNumberCell = new TextCell(TextCell.UNLIMITED_LENGTH);
 
         final AbstractTextColumn<VmTemplate> subversionNumberColumn = new AbstractTextColumn<VmTemplate>(subversionNumberCell) {
 
@@ -122,7 +122,7 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
         };
         table.addColumn(subversionNumberColumn, commonConstants.templateVersion(), "140px"); //$NON-NLS-1$
 
-        final TextCellWithTooltip subversionNameCell = new TextCellWithTooltip(TextCellWithTooltip.UNLIMITED_LENGTH);
+        final TextCell subversionNameCell = new TextCell(TextCell.UNLIMITED_LENGTH);
 
         final AbstractTextColumn<VmTemplate> subversionNameColumn = new AbstractTextColumn<VmTemplate>(subversionNameCell) {
 
@@ -135,7 +135,7 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
         };
         table.addColumn(subversionNameColumn, commonConstants.templateVersionName(), "350px"); //$NON-NLS-1$
 
-        final TextCellWithTooltip descriptionCell = new TextCellWithTooltip(TextCellWithTooltip.UNLIMITED_LENGTH);
+        final TextCell descriptionCell = new TextCell(TextCell.UNLIMITED_LENGTH);
 
         final AbstractTextColumn<VmTemplate> descriptionColumn = new AbstractTextColumn<VmTemplate>(descriptionCell) {
 

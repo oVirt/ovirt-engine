@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
-import org.ovirt.engine.ui.common.widget.table.cell.TextCellWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.cell.TextCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaStorageListModel;
@@ -75,8 +75,8 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
             }
 
             @Override
-            public TextCellWithTooltip getCell() {
-                TextCellWithTooltip TextCellWithTooltip = super.getCell();
+            public TextCell getCell() {
+                TextCell TextCellWithTooltip = super.getCell();
                 TextCellWithTooltip.setTitle(constants.quotaCalculationsMessage());
                 return TextCellWithTooltip;
             }

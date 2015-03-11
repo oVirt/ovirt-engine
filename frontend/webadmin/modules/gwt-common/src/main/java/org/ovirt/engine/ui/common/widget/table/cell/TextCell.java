@@ -18,7 +18,7 @@ import com.google.gwt.user.client.ui.HTML;
  * <p/>
  * This cell escapes the (String) value when rendering cell HTML.
  */
-public class TextCellWithTooltip extends AbstractCellWithTooltip<String> implements HasStyleClass {
+public class TextCell extends AbstractCellWithTooltip<String> implements HasStyleClass {
 
     interface CellTemplate extends SafeHtmlTemplates {
 
@@ -40,11 +40,11 @@ public class TextCellWithTooltip extends AbstractCellWithTooltip<String> impleme
 
     private static CellTemplate template;
 
-    public TextCellWithTooltip(int maxTextLength) {
+    public TextCell(int maxTextLength) {
         this(maxTextLength, BrowserEvents.MOUSEOVER);
     }
 
-    public TextCellWithTooltip(int maxTextLength, String... consumedEvents) {
+    public TextCell(int maxTextLength, String... consumedEvents) {
         super(consumedEvents);
         this.maxTextLength = maxTextLength;
 

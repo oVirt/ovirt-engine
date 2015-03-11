@@ -11,9 +11,9 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.view.client.CellPreviewEvent;
 
 /**
- * A {@link TextCellWithTooltip} whose text may be edited.
+ * A {@link TextCell} whose text may be edited.
  */
-public class EditTextCellWithTooltip extends TextCellWithTooltip implements EventHandlingCell {
+public class EditTextCellWithTooltip extends TextCell implements EventHandlingCell {
 
     private EditTextCell delegate;
 

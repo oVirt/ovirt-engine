@@ -10,11 +10,11 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
 /**
  * This class may be used to display links in cell widgets. It allows the full functionality of a
- * {@link TextCellWithTooltip}, and wraps the HTML result of its rendering within link tags. Click events are caught and
+ * {@link TextCell}, and wraps the HTML result of its rendering within link tags. Click events are caught and
  * passed to a ValueUpdater.
  */
 @SuppressWarnings("deprecation")
-public class LinkCell extends TextCellWithTooltip {
+public class LinkCell extends TextCell {
 
     public LinkCell(int maxTextLength) {
         super(maxTextLength, BrowserEvents.MOUSEOVER, BrowserEvents.CLICK);
