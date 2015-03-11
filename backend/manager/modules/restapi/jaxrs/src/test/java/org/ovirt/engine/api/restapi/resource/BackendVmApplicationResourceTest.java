@@ -15,7 +15,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.api.model.Application;
 import org.ovirt.engine.api.model.Applications;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
-import static org.easymock.classextension.EasyMock.expect;
+import static org.easymock.EasyMock.expect;
 
 public class BackendVmApplicationResourceTest
         extends AbstractBackendSubResourceTest<Application, Applications, BackendVmApplicationResource> {

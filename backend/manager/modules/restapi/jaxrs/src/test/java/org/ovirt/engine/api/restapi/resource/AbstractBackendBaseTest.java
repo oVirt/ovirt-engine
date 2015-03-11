@@ -19,9 +19,9 @@ import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.easymock.IMocksControl;
-import org.easymock.classextension.EasyMock;
 import org.jboss.resteasy.specimpl.MultivaluedMapImpl;
 import org.junit.After;
 import org.junit.Assert;

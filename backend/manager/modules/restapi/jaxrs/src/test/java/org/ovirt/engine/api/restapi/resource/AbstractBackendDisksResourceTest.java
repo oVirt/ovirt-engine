@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.expect;
 
 @Ignore
 public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyDevicesResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk>>

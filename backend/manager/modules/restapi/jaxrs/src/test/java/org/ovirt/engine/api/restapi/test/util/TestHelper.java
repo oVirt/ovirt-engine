@@ -6,8 +6,8 @@ import java.util.List;
 
 import java.lang.reflect.Method;
 
+import org.easymock.EasyMock;
 import org.easymock.IArgumentMatcher;
-import org.easymock.classextension.EasyMock;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.queries.SearchParameters;

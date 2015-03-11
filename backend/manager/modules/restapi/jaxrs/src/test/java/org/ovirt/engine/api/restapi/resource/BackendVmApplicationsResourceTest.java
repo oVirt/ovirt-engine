@@ -10,9 +10,10 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import static org.easymock.classextension.EasyMock.expect;
 import org.ovirt.engine.api.model.Application;
 import org.ovirt.engine.api.model.Applications;
+
+import static org.easymock.EasyMock.expect;
 
 public class BackendVmApplicationsResourceTest extends AbstractBackendResourceTest {
 
