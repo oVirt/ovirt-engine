@@ -56,7 +56,7 @@ public abstract class AbstractTooltipCell<C> extends AbstractCell<C> implements 
      * @see com.google.gwt.cell.client.AbstractCell#onBrowserEvent(com.google.gwt.cell.client.Cell.Context, com.google.gwt.dom.client.Element, java.lang.Object, com.google.gwt.dom.client.NativeEvent, com.google.gwt.cell.client.ValueUpdater)
      */
     @Override
-    public void onBrowserEvent(Context context, Element parent, C value, NativeEvent event, ValueUpdater<C> valueUpdater) {
+    public final void onBrowserEvent(Context context, Element parent, C value, NativeEvent event, ValueUpdater<C> valueUpdater) {
         onBrowserEvent(context, parent, value, null, event, valueUpdater);
     }
 
@@ -84,6 +84,8 @@ public abstract class AbstractTooltipCell<C> extends AbstractCell<C> implements 
         if (BrowserEvents.MOUSEDOWN.equals(event.getType())) {
             TooltipMixin.hideAllTooltips();
         }
+
+        super.onBrowserEvent(context, parent, value, event, valueUpdater);
     }
 
     /**
@@ -100,7 +102,7 @@ public abstract class AbstractTooltipCell<C> extends AbstractCell<C> implements 
      *
      * @see com.google.gwt.cell.client.AbstractCell#render(com.google.gwt.cell.client.Cell.Context, java.lang.Object, com.google.gwt.safehtml.shared.SafeHtmlBuilder)
      */
-    public void render(Context context, C value, SafeHtmlBuilder sb) {
+    public final void render(Context context, C value, SafeHtmlBuilder sb) {
         String id = ElementIdUtils.createTableCellElementId(getElementIdPrefix(), getColumnId(), context);
         render(context, value, sb, id);
     }
