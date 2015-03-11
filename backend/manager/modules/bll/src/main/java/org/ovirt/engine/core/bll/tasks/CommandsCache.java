@@ -1,30 +1,30 @@
 package org.ovirt.engine.core.bll.tasks;
 
+import java.util.List;
+import java.util.Set;
+
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 
-import java.util.List;
-import java.util.Set;
-
 public interface CommandsCache {
 
-    public CommandEntity get(Guid commandId);
+    CommandEntity get(Guid commandId);
 
-    public Set<Guid> keySet();
+    Set<Guid> keySet();
 
-    public void remove(Guid commandId);
+    void remove(Guid commandId);
 
-    public void put(CommandEntity cmdEntity);
+    void put(CommandEntity cmdEntity);
 
-    public void removeAllCommandsBeforeDate(DateTime cutoff);
+    void removeAllCommandsBeforeDate(DateTime cutoff);
 
-    public void updateCommandStatus(Guid commandId, CommandStatus status);
+    void updateCommandStatus(Guid commandId, CommandStatus status);
 
-    public void updateCommandExecuted(Guid commandId);
+    void updateCommandExecuted(Guid commandId);
 
-    public void updateCallbackNotified(Guid commandId);
+    void updateCallbackNotified(Guid commandId);
 
     List<CommandEntity> getChildCmdsByParentCmdId(Guid cmdId);
 }
