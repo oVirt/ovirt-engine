@@ -4165,9 +4165,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Snapshot")
     String volumeSnapshotMainTabTitle();
 
-    @DefaultStringValue("Snapshot Scheduled")
-    String snapshotScheduledLabel();
-
     @DefaultStringValue("Options - Cluster")
     String configureClusterSnapshotOptions();
 
@@ -4287,4 +4284,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Warning : Recommendations for geo-replication not met -")
     String geoReplicationRecommendedConfigViolation();
+
+    @DefaultStringValue("Volume snapshots are scheduled.")
+    String glusterVolumeSnapshotsScheduledToolTip();
 }

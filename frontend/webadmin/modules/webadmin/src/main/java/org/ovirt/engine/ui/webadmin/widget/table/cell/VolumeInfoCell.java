@@ -23,6 +23,7 @@ public class VolumeInfoCell extends AbstractCell<GlusterVolumeEntity> {
 
     protected ImageResource geoRepMasterImage = resources.volumeGeoRepMaster();
     protected ImageResource geoRepSlaveImage = resources.volumeGeoRepSlave();
+    protected ImageResource snapshotScheduledImage = resources.snapshotScheduledImage();
 
     @Override
     public void render(Context context, GlusterVolumeEntity volume, SafeHtmlBuilder sb, String id) {
@@ -43,6 +44,12 @@ public class VolumeInfoCell extends AbstractCell<GlusterVolumeEntity> {
             String clusterName = volClusterNames.length == 2 ? volClusterNames[1] : "UNKNOWN"; //$NON-NLS-1$
             sb.append(applicationTemplates.statusTemplate(geoRepSlaveHtml,
                     messages.geoRepSlaveVolumeToolTip(volName, clusterName)));
+        }
+        if (volume.getSnapshotScheduled()) {
+            SafeHtml snapshotScheduledHtml =
+                    SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(snapshotScheduledImage).getHTML());
+            sb.append(applicationTemplates.statusTemplate(snapshotScheduledHtml,
+                    constants.glusterVolumeSnapshotsScheduledToolTip()));
         }
     }
 
