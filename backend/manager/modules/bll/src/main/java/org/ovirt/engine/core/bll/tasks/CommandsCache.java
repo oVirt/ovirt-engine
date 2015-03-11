@@ -24,7 +24,7 @@ public interface CommandsCache {
 
     public void updateCommandExecuted(Guid commandId);
 
-    public void updateCallBackNotified(Guid commandId);
+    public void updateCallbackNotified(Guid commandId);
 
     List<CommandEntity> getChildCmdsByParentCmdId(Guid cmdId);
 }

@@ -92,7 +92,7 @@ public class CommandsCacheImpl implements CommandsCache {
         }
     }
 
-    public void updateCallBackNotified(final Guid commandId) {
+    public void updateCallbackNotified(final Guid commandId) {
         CommandEntity cmdEntity = get(commandId);
         if (cmdEntity != null) {
             cmdEntity.setCallBackNotified(true);

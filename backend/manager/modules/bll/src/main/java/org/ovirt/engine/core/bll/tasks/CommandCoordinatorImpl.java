@@ -204,7 +204,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
     }
 
     public void updateCallBackNotified(final Guid commandId) {
-        commandsCache.updateCallBackNotified(commandId);
+        commandsCache.updateCallbackNotified(commandId);
     }
 
     public boolean hasCommandEntitiesWithRootCommandId(Guid rootCommandId) {
