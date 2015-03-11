@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.permissions.PermissionWithInheritedPermissionListModelTable;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -79,8 +79,8 @@ public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<Di
     public void initTable(final CommonApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        AbstractTextColumnWithTooltip<DiskProfile> nameColumn =
-                new AbstractTextColumnWithTooltip<DiskProfile>() {
+        AbstractTextColumn<DiskProfile> nameColumn =
+                new AbstractTextColumn<DiskProfile>() {
                     @Override
                     public String getValue(DiskProfile object) {
                         return object.getName();
@@ -89,8 +89,8 @@ public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<Di
         getTable().addColumn(nameColumn, constants.profileNameLabel(), "200px"); //$NON-NLS-1$
         nameColumn.makeSortable();
 
-        AbstractTextColumnWithTooltip<DiskProfile> descriptionColumn =
-                new AbstractTextColumnWithTooltip<DiskProfile>() {
+        AbstractTextColumn<DiskProfile> descriptionColumn =
+                new AbstractTextColumn<DiskProfile>() {
                     @Override
                     public String getValue(DiskProfile object) {
                         return object.getDescription();
@@ -99,7 +99,7 @@ public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<Di
         getTable().addColumn(descriptionColumn, constants.profileDescriptionLabel(), "200px"); //$NON-NLS-1$
         descriptionColumn.makeSortable();
 
-        AbstractTextColumnWithTooltip<DiskProfile> qosColumn = new AbstractTextColumnWithTooltip<DiskProfile>() {
+        AbstractTextColumn<DiskProfile> qosColumn = new AbstractTextColumn<DiskProfile>() {
             @Override
             public String getValue(DiskProfile object) {
                 String name = constants.unlimitedQos();

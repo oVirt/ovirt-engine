@@ -11,7 +11,7 @@ import com.google.gwt.text.shared.Renderer;
  * @param <C>
  *            Column value type.
  */
-public abstract class AbstractRenderedTextColumn<T, C> extends AbstractTextColumnWithTooltip<T> {
+public abstract class AbstractRenderedTextColumn<T, C> extends AbstractTextColumn<T> {
 
     protected final Renderer<C> renderer;
 

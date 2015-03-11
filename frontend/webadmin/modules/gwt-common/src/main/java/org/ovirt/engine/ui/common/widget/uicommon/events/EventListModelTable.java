@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AuditLogSeverityColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 
@@ -35,7 +35,7 @@ public class EventListModelTable<T extends EventListModel> extends AbstractModel
 
         getTable().addColumn(new AuditLogSeverityColumn(), constants.empty(), "20px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<AuditLog> logTimeColumn = new AbstractFullDateTimeColumn<AuditLog>() {
+        AbstractTextColumn<AuditLog> logTimeColumn = new AbstractFullDateTimeColumn<AuditLog>() {
             @Override
             protected Date getRawValue(AuditLog object) {
                 return object.getLogTime();
@@ -44,7 +44,7 @@ public class EventListModelTable<T extends EventListModel> extends AbstractModel
         logTimeColumn.makeSortable(AuditLogConditionFieldAutoCompleter.TIME);
         getTable().addColumn(logTimeColumn, constants.timeEvent(), "170px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<AuditLog> messageColumn = new AbstractTextColumnWithTooltip<AuditLog>() {
+        AbstractTextColumn<AuditLog> messageColumn = new AbstractTextColumn<AuditLog>() {
             @Override
             public String getValue(AuditLog object) {
                 return object.getMessage();
@@ -53,7 +53,7 @@ public class EventListModelTable<T extends EventListModel> extends AbstractModel
         messageColumn.makeSortable(AuditLogConditionFieldAutoCompleter.MESSAGE);
         getTable().addColumn(messageColumn, constants.messageEvent(), "600px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<AuditLog> correlationIdColumn = new AbstractTextColumnWithTooltip<AuditLog>() {
+        AbstractTextColumn<AuditLog> correlationIdColumn = new AbstractTextColumn<AuditLog>() {
             @Override
             public String getValue(AuditLog object) {
                 return object.getCorrelationId();
@@ -62,7 +62,7 @@ public class EventListModelTable<T extends EventListModel> extends AbstractModel
         correlationIdColumn.makeSortable(AuditLogConditionFieldAutoCompleter.CORRELATION_ID);
         getTable().addColumn(correlationIdColumn, constants.correltaionIdEvent(), "100px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<AuditLog> originColumn = new AbstractTextColumnWithTooltip<AuditLog>() {
+        AbstractTextColumn<AuditLog> originColumn = new AbstractTextColumn<AuditLog>() {
             @Override
             public String getValue(AuditLog object) {
                 return object.getOrigin();
@@ -71,7 +71,7 @@ public class EventListModelTable<T extends EventListModel> extends AbstractModel
         originColumn.makeSortable(AuditLogConditionFieldAutoCompleter.ORIGIN);
         getTable().addColumn(originColumn, constants.originEvent(), "100px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<AuditLog> customEventIdColumn = new AbstractTextColumnWithTooltip<AuditLog>() {
+        AbstractTextColumn<AuditLog> customEventIdColumn = new AbstractTextColumn<AuditLog>() {
             @Override
             public String getValue(AuditLog object) {
 

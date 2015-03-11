@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterCpuQosListModel;
@@ -42,7 +42,7 @@ public class SubTabDataCenterCpuQosView extends AbstractSubTabTableView<StorageP
     void initTable(final ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        AbstractTextColumnWithTooltip<CpuQos> nameColumn = new AbstractTextColumnWithTooltip<CpuQos>() {
+        AbstractTextColumn<CpuQos> nameColumn = new AbstractTextColumn<CpuQos>() {
             @Override
             public String getValue(CpuQos object) {
                 return object.getName() == null ? "" : object.getName(); //$NON-NLS-1$
@@ -51,7 +51,7 @@ public class SubTabDataCenterCpuQosView extends AbstractSubTabTableView<StorageP
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.cpuQosName(), "200px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<CpuQos> descColumn = new AbstractTextColumnWithTooltip<CpuQos>() {
+        AbstractTextColumn<CpuQos> descColumn = new AbstractTextColumn<CpuQos>() {
             @Override
             public String getValue(CpuQos object) {
                 return object.getDescription() == null ? "" : object.getDescription(); //$NON-NLS-1$
@@ -60,7 +60,7 @@ public class SubTabDataCenterCpuQosView extends AbstractSubTabTableView<StorageP
         descColumn.makeSortable();
         getTable().addColumn(descColumn, constants.cpuQosDescription(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<CpuQos> cpuLimitColumn = new AbstractTextColumnWithTooltip<CpuQos>() {
+        AbstractTextColumn<CpuQos> cpuLimitColumn = new AbstractTextColumn<CpuQos>() {
             @Override
             public String getValue(CpuQos object) {
                 return object.getCpuLimit() == null ? constants.unlimitedQos()

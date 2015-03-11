@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -37,7 +37,7 @@ public class SubTabDataCenterClusterView extends AbstractSubTabTableView<Storage
     void initTable(ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        AbstractTextColumnWithTooltip<VDSGroup> nameColumn = new AbstractTextColumnWithTooltip<VDSGroup>() {
+        AbstractTextColumn<VDSGroup> nameColumn = new AbstractTextColumn<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
                 return object.getName();
@@ -46,7 +46,7 @@ public class SubTabDataCenterClusterView extends AbstractSubTabTableView<Storage
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameCluster(), "300px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VDSGroup> versionColumn = new AbstractTextColumnWithTooltip<VDSGroup>() {
+        AbstractTextColumn<VDSGroup> versionColumn = new AbstractTextColumn<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
                 return object.getCompatibilityVersion().getValue();
@@ -55,7 +55,7 @@ public class SubTabDataCenterClusterView extends AbstractSubTabTableView<Storage
         versionColumn.makeSortable();
         getTable().addColumn(versionColumn, constants.comptVersCluster(), "300px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VDSGroup> descColumn = new AbstractTextColumnWithTooltip<VDSGroup>() {
+        AbstractTextColumn<VDSGroup> descColumn = new AbstractTextColumn<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
                 return object.getDescription();

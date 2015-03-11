@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlWithSafeHtmlTooltipColumn;
 import org.ovirt.engine.ui.common.widget.table.column.SimpleStatusColumnComparator;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
@@ -73,7 +73,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
     void initTable() {
         getTable().enableColumnResizing();
 
-        AbstractTextColumnWithTooltip<PairQueryable<VDSGroup, NetworkCluster>> nameColumn = new AbstractTextColumnWithTooltip<PairQueryable<VDSGroup, NetworkCluster>>() {
+        AbstractTextColumn<PairQueryable<VDSGroup, NetworkCluster>> nameColumn = new AbstractTextColumn<PairQueryable<VDSGroup, NetworkCluster>>() {
             @Override
             public String getValue(PairQueryable<VDSGroup, NetworkCluster> object) {
                 return object.getFirst().getName();
@@ -82,7 +82,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameCluster(), "400px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<PairQueryable<VDSGroup, NetworkCluster>> versionColumn = new AbstractTextColumnWithTooltip<PairQueryable<VDSGroup, NetworkCluster>>() {
+        AbstractTextColumn<PairQueryable<VDSGroup, NetworkCluster>> versionColumn = new AbstractTextColumn<PairQueryable<VDSGroup, NetworkCluster>>() {
             @Override
             public String getValue(PairQueryable<VDSGroup, NetworkCluster> object) {
                 return object.getFirst().getCompatibilityVersion().getValue();
@@ -200,7 +200,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         });
         getTable().addColumn(netRoleColumn, constants.roleNetCluster(), "120px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<PairQueryable<VDSGroup, NetworkCluster>> descriptionColumn = new AbstractTextColumnWithTooltip<PairQueryable<VDSGroup, NetworkCluster>>() {
+        AbstractTextColumn<PairQueryable<VDSGroup, NetworkCluster>> descriptionColumn = new AbstractTextColumn<PairQueryable<VDSGroup, NetworkCluster>>() {
             @Override
             public String getValue(PairQueryable<VDSGroup, NetworkCluster> object) {
                 return object.getFirst().getDescription();

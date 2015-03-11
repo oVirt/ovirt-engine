@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterHostNetworkQosListModel;
@@ -42,7 +42,7 @@ public class SubTabDataCenterHostNetworkQosView extends AbstractSubTabTableView<
     void initTable(final ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        AbstractTextColumnWithTooltip<HostNetworkQos> nameColumn = new AbstractTextColumnWithTooltip<HostNetworkQos>() {
+        AbstractTextColumn<HostNetworkQos> nameColumn = new AbstractTextColumn<HostNetworkQos>() {
             @Override
             public String getValue(HostNetworkQos object) {
                 assert object.getName() != null : "QoS entitites in a DC context must be named!"; //$NON-NLS-1$
@@ -52,7 +52,7 @@ public class SubTabDataCenterHostNetworkQosView extends AbstractSubTabTableView<
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.qosName(), "200px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<HostNetworkQos> descColumn = new AbstractTextColumnWithTooltip<HostNetworkQos>() {
+        AbstractTextColumn<HostNetworkQos> descColumn = new AbstractTextColumn<HostNetworkQos>() {
             @Override
             public String getValue(HostNetworkQos object) {
                 return object.getDescription() == null ? "" : object.getDescription(); //$NON-NLS-1$
@@ -61,7 +61,7 @@ public class SubTabDataCenterHostNetworkQosView extends AbstractSubTabTableView<
         descColumn.makeSortable();
         getTable().addColumn(descColumn, constants.qosDescription(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<HostNetworkQos> outAverageLinkshareColumn = new AbstractTextColumnWithTooltip<HostNetworkQos>() {
+        AbstractTextColumn<HostNetworkQos> outAverageLinkshareColumn = new AbstractTextColumn<HostNetworkQos>() {
             @Override
             public String getValue(HostNetworkQos object) {
                 return object.getOutAverageLinkshare() == null ? constants.unlimitedQos()
@@ -71,7 +71,7 @@ public class SubTabDataCenterHostNetworkQosView extends AbstractSubTabTableView<
         outAverageLinkshareColumn.makeSortable();
         getTable().addColumn(outAverageLinkshareColumn, constants.hostNetworkQosTabOutAverageLinkshare(), "105px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<HostNetworkQos> outAverageUpperlimitColumn = new AbstractTextColumnWithTooltip<HostNetworkQos>() {
+        AbstractTextColumn<HostNetworkQos> outAverageUpperlimitColumn = new AbstractTextColumn<HostNetworkQos>() {
             @Override
             public String getValue(HostNetworkQos object) {
                 return object.getOutAverageUpperlimit() == null ? constants.unlimitedQos()
@@ -81,7 +81,7 @@ public class SubTabDataCenterHostNetworkQosView extends AbstractSubTabTableView<
         outAverageUpperlimitColumn.makeSortable();
         getTable().addColumn(outAverageUpperlimitColumn, constants.hostNetworkQosTabOutAverageUpperlimit(), "105px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<HostNetworkQos> outAverageRealtimeColumn = new AbstractTextColumnWithTooltip<HostNetworkQos>() {
+        AbstractTextColumn<HostNetworkQos> outAverageRealtimeColumn = new AbstractTextColumn<HostNetworkQos>() {
             @Override
             public String getValue(HostNetworkQos object) {
                 return object.getOutAverageRealtime() == null ? constants.unlimitedQos()

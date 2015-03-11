@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGlusterHookListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
@@ -51,7 +51,7 @@ public class SubTabClusterGlusterHookView
         getTable().addColumn(new GlusterHookSyncStatusColumn(),
                 constants.empty(), "10px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<GlusterHookEntity> nameColumn = new AbstractTextColumnWithTooltip<GlusterHookEntity>() {
+        AbstractTextColumn<GlusterHookEntity> nameColumn = new AbstractTextColumn<GlusterHookEntity>() {
             @Override
             public String getValue(GlusterHookEntity object) {
                 return object.getName();
@@ -59,7 +59,7 @@ public class SubTabClusterGlusterHookView
         };
         getTable().addColumn(nameColumn, constants.nameHook(), "200px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<GlusterHookEntity> statusColumn = new AbstractEnumColumn<GlusterHookEntity, GlusterHookStatus>() {
+        AbstractTextColumn<GlusterHookEntity> statusColumn = new AbstractEnumColumn<GlusterHookEntity, GlusterHookStatus>() {
 
             @Override
             protected GlusterHookStatus getRawValue(GlusterHookEntity object) {
@@ -68,7 +68,7 @@ public class SubTabClusterGlusterHookView
         };
         getTable().addColumn(statusColumn, constants.statusHook(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<GlusterHookEntity> glusterCommandColumn = new AbstractTextColumnWithTooltip<GlusterHookEntity>() {
+        AbstractTextColumn<GlusterHookEntity> glusterCommandColumn = new AbstractTextColumn<GlusterHookEntity>() {
             @Override
             public String getValue(GlusterHookEntity object) {
                 return object.getGlusterCommand();
@@ -78,7 +78,7 @@ public class SubTabClusterGlusterHookView
         getTable().addColumn(glusterCommandColumn,
                 constants.glusterVolumeEventHook(), "100px"); //$NON-NLS-1$;
 
-        AbstractTextColumnWithTooltip<GlusterHookEntity> stageColumn = new AbstractEnumColumn<GlusterHookEntity, GlusterHookStage>() {
+        AbstractTextColumn<GlusterHookEntity> stageColumn = new AbstractEnumColumn<GlusterHookEntity, GlusterHookStage>() {
 
             @Override
             protected GlusterHookStage getRawValue(GlusterHookEntity object) {
@@ -87,7 +87,7 @@ public class SubTabClusterGlusterHookView
         };
         getTable().addColumn(stageColumn, constants.stageHook(), "100px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<GlusterHookEntity> contentTypeColumn =
+        AbstractTextColumn<GlusterHookEntity> contentTypeColumn =
                 new AbstractEnumColumn<GlusterHookEntity, GlusterHookContentType>() {
 
                     @Override

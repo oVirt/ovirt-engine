@@ -19,7 +19,7 @@ import org.ovirt.engine.ui.common.widget.table.cell.CellWithElementId;
 import org.ovirt.engine.ui.common.widget.table.cell.StatusCompositeCellWithElementId;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSortableColumnWithElementId;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
@@ -81,7 +81,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         vmTypeColumn.makeSortable(VmConditionFieldAutoCompleter.TYPE);
         getTable().addColumn(vmTypeColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> nameColumn = new AbstractTextColumnWithTooltip<VM>() {
+        AbstractTextColumn<VM> nameColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getName();
@@ -93,7 +93,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         CommentColumn<VM> commentColumn = new CommentColumn<VM>();
         getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> hostColumn = new AbstractTextColumnWithTooltip<VM>() {
+        AbstractTextColumn<VM> hostColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getRunOnVdsName();
@@ -102,7 +102,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         hostColumn.makeSortable(VmConditionFieldAutoCompleter.HOST);
         getTable().addColumn(hostColumn, constants.hostVm(), "120px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> ipColumn = new AbstractTextColumnWithTooltip<VM>() {
+        AbstractTextColumn<VM> ipColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getVmIp();
@@ -111,7 +111,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         ipColumn.makeSortable(VmConditionFieldAutoCompleter.IP);
         getTable().addColumn(ipColumn, constants.ipVm(), "120px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> fqdnColumn = new AbstractTextColumnWithTooltip<VM>() {
+        AbstractTextColumn<VM> fqdnColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getVmFQDN();
@@ -121,7 +121,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         fqdnColumn.makeSortable(VmConditionFieldAutoCompleter.FQDN);
         getTable().addColumn(fqdnColumn, constants.fqdn(), "120px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> clusterColumn = new AbstractTextColumnWithTooltip<VM>() {
+        AbstractTextColumn<VM> clusterColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getVdsGroupName();
@@ -130,7 +130,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         clusterColumn.makeSortable(VmConditionFieldAutoCompleter.CLUSTER);
         getTable().addColumn(clusterColumn, constants.clusterVm(), "120px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> dcColumn = new AbstractTextColumnWithTooltip<VM>() {
+        AbstractTextColumn<VM> dcColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getStoragePoolName();
@@ -180,7 +180,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         migrationProgressColumn.makeSortable(VmConditionFieldAutoCompleter.MIGRATION_PROGRESS_PERCENT);
         getTable().addColumn(migrationProgressColumn, constants.migrationProgress(), "70px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> displayColumn = new AbstractEnumColumn<VM, UnitVmModel.GraphicsTypes>() {
+        AbstractTextColumn<VM> displayColumn = new AbstractEnumColumn<VM, UnitVmModel.GraphicsTypes>() {
             @Override
             protected UnitVmModel.GraphicsTypes getRawValue(VM vm) {
                 if ((vm.getStatus() == VMStatus.Down) || (vm.getStatus() == VMStatus.ImageLocked)) {
@@ -193,7 +193,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         };
         getTable().addColumn(displayColumn, constants.displayVm(), "70px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> statusColumn = new AbstractEnumColumn<VM, VMStatus>() {
+        AbstractTextColumn<VM> statusColumn = new AbstractEnumColumn<VM, VMStatus>() {
             @Override
             public VMStatus getRawValue(VM object) {
                 return object.getStatus();
@@ -223,7 +223,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         statusTextColumn.makeSortable(VmConditionFieldAutoCompleter.STATUS);
         getTable().addColumn(statusTextColumn, constants.statusVm(), "80px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> uptimeColumn = new AbstractUptimeColumn<VM>() {
+        AbstractTextColumn<VM> uptimeColumn = new AbstractUptimeColumn<VM>() {
             @Override
             public Double getRawValue(VM object) {
                 return object.getRoundedElapsedTime();
@@ -232,7 +232,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         uptimeColumn.makeSortable(VmConditionFieldAutoCompleter.UPTIME);
         getTable().addColumn(uptimeColumn, constants.uptimeVm(), "100px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> descriptionColumn = new AbstractTextColumnWithTooltip<VM>() {
+        AbstractTextColumn<VM> descriptionColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getDescription();

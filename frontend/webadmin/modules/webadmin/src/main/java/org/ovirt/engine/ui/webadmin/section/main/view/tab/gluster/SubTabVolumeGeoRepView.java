@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessio
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeoRepListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
@@ -40,21 +40,21 @@ implements SubTabVolumeGeoRepPresenter.ViewDef {
 
     void initTable(ApplicationConstants constants) {
         getTable().enableColumnResizing();
-        getTable().addColumn(new AbstractTextColumnWithTooltip<GlusterGeoRepSession>() {
+        getTable().addColumn(new AbstractTextColumn<GlusterGeoRepSession>() {
             @Override
             public String getValue(GlusterGeoRepSession object) {
                 return object.getSlaveHostName();
             }
         }, constants.volumeSubTabGeoRepSlaveClusterHostColumn(), "220px"); //$NON-NLS-1$
 
-        getTable().addColumn(new AbstractTextColumnWithTooltip<GlusterGeoRepSession>() {
+        getTable().addColumn(new AbstractTextColumn<GlusterGeoRepSession>() {
             @Override
             public String getValue(GlusterGeoRepSession object) {
                 return object.getSlaveVolumeName();
             }
         }, constants.volumeSubTabGeoRepSlaveVolumeColumn(), "220px"); //$NON-NLS-1$
 
-        getTable().addColumn(new AbstractTextColumnWithTooltip<GlusterGeoRepSession>() {
+        getTable().addColumn(new AbstractTextColumn<GlusterGeoRepSession>() {
             @Override
             public String getValue(GlusterGeoRepSession object) {
                 return object.getStatus().toString();

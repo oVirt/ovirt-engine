@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -42,8 +42,8 @@ public class SubTabGlusterVolumeSnapshotView extends AbstractSubTabTableView<Glu
         snapshotStatusColumn.makeSortable();
         getTable().addColumn(snapshotStatusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<GlusterVolumeSnapshotEntity> snapshotNameColumn =
-                new AbstractTextColumnWithTooltip<GlusterVolumeSnapshotEntity>() {
+        AbstractTextColumn<GlusterVolumeSnapshotEntity> snapshotNameColumn =
+                new AbstractTextColumn<GlusterVolumeSnapshotEntity>() {
                     @Override
                     public String getValue(GlusterVolumeSnapshotEntity snapshot) {
                         return snapshot.getSnapshotName();
@@ -52,8 +52,8 @@ public class SubTabGlusterVolumeSnapshotView extends AbstractSubTabTableView<Glu
         snapshotNameColumn.makeSortable();
         getTable().addColumn(snapshotNameColumn, constants.volumeSnapshotName(), "300px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<GlusterVolumeSnapshotEntity> descriptionColumn =
-                new AbstractTextColumnWithTooltip<GlusterVolumeSnapshotEntity>() {
+        AbstractTextColumn<GlusterVolumeSnapshotEntity> descriptionColumn =
+                new AbstractTextColumn<GlusterVolumeSnapshotEntity>() {
                     @Override
                     public String getValue(GlusterVolumeSnapshotEntity snapshot) {
                         return snapshot.getDescription();
@@ -62,8 +62,8 @@ public class SubTabGlusterVolumeSnapshotView extends AbstractSubTabTableView<Glu
         descriptionColumn.makeSortable();
         getTable().addColumn(descriptionColumn, constants.volumeSnapshotDescription(), "400px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<GlusterVolumeSnapshotEntity> creationTimeColumn =
-                new AbstractTextColumnWithTooltip<GlusterVolumeSnapshotEntity>() {
+        AbstractTextColumn<GlusterVolumeSnapshotEntity> creationTimeColumn =
+                new AbstractTextColumn<GlusterVolumeSnapshotEntity>() {
                     @Override
                     public String getValue(GlusterVolumeSnapshotEntity snapshot) {
                         DateTimeFormat df = DateTimeFormat.getFormat("yyyy-MM-dd, HH:mm:ss"); //$NON-NLS-1$

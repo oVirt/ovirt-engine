@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskVmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -54,7 +54,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         };
         getTable().addColumn(pluggedColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> nameColumn = new AbstractTextColumnWithTooltip<VM>() {
+        AbstractTextColumn<VM> nameColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getName();
@@ -65,7 +65,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
 
         getTable().addColumn(new VmTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> clusterColumn = new AbstractTextColumnWithTooltip<VM>() {
+        AbstractTextColumn<VM> clusterColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getVdsGroupName();
@@ -74,7 +74,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         clusterColumn.makeSortable();
         getTable().addColumn(clusterColumn, constants.clusterVm(), "140px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> ipColumn = new AbstractTextColumnWithTooltip<VM>() {
+        AbstractTextColumn<VM> ipColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getVmIp();
@@ -83,7 +83,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         ipColumn.makeSortable();
         getTable().addColumn(ipColumn, constants.ipVm(), "140px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> fqdnColumn = new AbstractTextColumnWithTooltip<VM>() {
+        AbstractTextColumn<VM> fqdnColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getVmFQDN();
@@ -116,7 +116,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         };
         getTable().addColumn(netColumn, constants.networkVm(), "140px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> statusColumn = new AbstractEnumColumn<VM, VMStatus>() {
+        AbstractTextColumn<VM> statusColumn = new AbstractEnumColumn<VM, VMStatus>() {
             @Override
             protected VMStatus getRawValue(VM object) {
                 return object.getStatus();
@@ -125,7 +125,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         statusColumn.makeSortable();
         getTable().addColumn(statusColumn, constants.statusVm(), "140px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> hostColumn = new AbstractUptimeColumn<VM>() {
+        AbstractTextColumn<VM> hostColumn = new AbstractUptimeColumn<VM>() {
             @Override
             protected Double getRawValue(VM object) {
                 return object.getRoundedElapsedTime();

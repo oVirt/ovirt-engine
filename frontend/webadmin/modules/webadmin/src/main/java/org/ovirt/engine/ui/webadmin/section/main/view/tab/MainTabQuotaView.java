@@ -8,7 +8,7 @@ import org.ovirt.engine.core.searchbackend.QuotaConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -46,7 +46,7 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
 
         getTable().addColumn(new QuotaDcStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<Quota> nameColumn = new AbstractTextColumnWithTooltip<Quota>() {
+        AbstractTextColumn<Quota> nameColumn = new AbstractTextColumn<Quota>() {
             @Override
             public String getValue(Quota object) {
                 return object.getQuotaName() == null ? "" : object.getQuotaName(); //$NON-NLS-1$
@@ -55,7 +55,7 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
         nameColumn.makeSortable(QuotaConditionFieldAutoCompleter.NAME);
         getTable().addColumn(nameColumn, constants.nameQuota(), "120px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<Quota> descriptionColumn = new AbstractTextColumnWithTooltip<Quota>() {
+        AbstractTextColumn<Quota> descriptionColumn = new AbstractTextColumn<Quota>() {
             @Override
             public String getValue(Quota object) {
                 return object.getDescription() == null ? "" : object.getDescription(); //$NON-NLS-1$
@@ -98,7 +98,7 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
         },
         constants.usedMemoryQuota(), "100px"); //$NON-NLS-1$
 
-        getTable().addColumn(new AbstractTextColumnWithTooltip<Quota>() {
+        getTable().addColumn(new AbstractTextColumn<Quota>() {
             @Override
             public String getValue(Quota object) {
                 int value;
@@ -167,7 +167,7 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
         },
         constants.runningCpuQuota(), "100px"); //$NON-NLS-1$
 
-        getTable().addColumn(new AbstractTextColumnWithTooltip<Quota>() {
+        getTable().addColumn(new AbstractTextColumn<Quota>() {
             @Override
             public String getValue(Quota object) {
                 int value;
@@ -235,7 +235,7 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
         },
         constants.usedStorageQuota(), "100px"); //$NON-NLS-1$
 
-        getTable().addColumn(new AbstractTextColumnWithTooltip<Quota>() {
+        getTable().addColumn(new AbstractTextColumn<Quota>() {
             @Override
             public String getValue(Quota object) {
                 double value;

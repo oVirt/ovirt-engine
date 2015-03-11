@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileVmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -41,7 +41,7 @@ public class SubTabVnicProfileVmView extends AbstractSubTabTableView<VnicProfile
     void initTable() {
         getTable().enableColumnResizing();
 
-        AbstractTextColumnWithTooltip<VM> nameColumn = new AbstractTextColumnWithTooltip<VM>() {
+        AbstractTextColumn<VM> nameColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getName();

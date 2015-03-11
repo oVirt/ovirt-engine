@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskStorageListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -46,7 +46,7 @@ public class SubTabDiskStorageView extends AbstractSubTabTableView<Disk, Storage
 
         getTable().addColumn(new StorageDomainSharedStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<StorageDomain> nameColumn = new AbstractTextColumnWithTooltip<StorageDomain>() {
+        AbstractTextColumn<StorageDomain> nameColumn = new AbstractTextColumn<StorageDomain>() {
             @Override
             public String getValue(StorageDomain object) {
                 return object.getStorageName();
@@ -55,7 +55,7 @@ public class SubTabDiskStorageView extends AbstractSubTabTableView<Disk, Storage
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.domainNameStorage(), "160px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<StorageDomain> typeColumn = new AbstractEnumColumn<StorageDomain, StorageDomainType>() {
+        AbstractTextColumn<StorageDomain> typeColumn = new AbstractEnumColumn<StorageDomain, StorageDomainType>() {
             @Override
             public StorageDomainType getRawValue(StorageDomain object) {
                 return object.getStorageDomainType();
@@ -64,7 +64,7 @@ public class SubTabDiskStorageView extends AbstractSubTabTableView<Disk, Storage
         typeColumn.makeSortable();
         getTable().addColumn(typeColumn, constants.domainTypeStorage(), "160px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<StorageDomain> statusColumn = new AbstractEnumColumn<StorageDomain, StorageDomainStatus>() {
+        AbstractTextColumn<StorageDomain> statusColumn = new AbstractEnumColumn<StorageDomain, StorageDomainStatus>() {
             @Override
             public StorageDomainStatus getRawValue(StorageDomain object) {
                 return object.getStatus();
@@ -103,7 +103,7 @@ public class SubTabDiskStorageView extends AbstractSubTabTableView<Disk, Storage
         totalColumn.makeSortable();
         getTable().addColumn(totalColumn, constants.totalSpaceStorage(), "160px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<StorageDomain> descriptionColumn = new AbstractTextColumnWithTooltip<StorageDomain>() {
+        AbstractTextColumn<StorageDomain> descriptionColumn = new AbstractTextColumn<StorageDomain>() {
             @Override
             public String getValue(StorageDomain object) {
                 return object.getDescription();

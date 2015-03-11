@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.permissions.PermissionListModelTable;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -110,14 +110,14 @@ public class SharedMacPoolView extends Composite {
                 return macPool.isDefaultPool() ? resources.lockImage() : null;
             }
         }, constants.empty(), "20px"); //$NON-NLS-1$
-        macPoolTable.addColumn(new AbstractTextColumnWithTooltip<MacPool>() {
+        macPoolTable.addColumn(new AbstractTextColumn<MacPool>() {
 
             @Override
             public String getValue(MacPool macPool) {
                 return macPool.getName();
             }
         }, constants.configureMacPoolNameColumn(), "100px"); //$NON-NLS-1$
-        macPoolTable.addColumn(new AbstractTextColumnWithTooltip<MacPool>() {
+        macPoolTable.addColumn(new AbstractTextColumn<MacPool>() {
 
             @Override
             public String getValue(MacPool macPool) {

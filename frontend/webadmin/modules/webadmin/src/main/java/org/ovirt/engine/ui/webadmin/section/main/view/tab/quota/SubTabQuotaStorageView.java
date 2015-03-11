@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
 import org.ovirt.engine.ui.common.widget.table.cell.TextCellWithEditableTooltip;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithEditableTooltip;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaStorageListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -48,7 +48,7 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
     private void initTable(final ApplicationConstants constants, final ApplicationMessages messages) {
         getTable().enableColumnResizing();
 
-        AbstractTextColumnWithTooltip<QuotaStorage> nameColumn = new AbstractTextColumnWithTooltip<QuotaStorage>() {
+        AbstractTextColumn<QuotaStorage> nameColumn = new AbstractTextColumn<QuotaStorage>() {
             @Override
             public String getValue(QuotaStorage object) {
                 return object.getStorageName() == null || object.getStorageName().equals("") ? constants.utlQuotaAllStoragesQuotaPopup()

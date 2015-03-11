@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.common.view.ViewRadioGroup;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractNullableNumberColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlWithSafeHtmlTooltipColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.SimpleStatusColumnComparator;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkHostFilter;
@@ -92,21 +92,21 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
 
     private final HostStatusColumn<PairQueryable<VdsNetworkInterface, VDS>> hostStatus = new HostStatusColumn<PairQueryable<VdsNetworkInterface, VDS>>();
 
-    private final AbstractTextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> nameColumn = new AbstractTextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>>() {
+    private final AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>> nameColumn = new AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
         @Override
         public String getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
             return object.getSecond().getName();
         }
     };
 
-    private final AbstractTextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> clusterColumn = new AbstractTextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>>() {
+    private final AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>> clusterColumn = new AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
         @Override
         public String getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
             return object.getSecond().getVdsGroupName();
         }
     };
 
-    private final AbstractTextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> dcColumn = new AbstractTextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>>() {
+    private final AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>> dcColumn = new AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
         @Override
         public String getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
             return object.getSecond().getStoragePoolName();
@@ -146,8 +146,8 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
                 }
             };
 
-    private final AbstractTextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> speedColumn =
-            new AbstractTextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>>() {
+    private final AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>> speedColumn =
+            new AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
                 @Override
                 public String getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
                     if (object.getFirst() != null && object.getFirst().getSpeed() != null) {
@@ -157,7 +157,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
                 }
             };
 
-    private final AbstractTextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> nicRxColumn = new AbstractRxTxRateColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
+    private final AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>> nicRxColumn = new AbstractRxTxRateColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
         @Override
         protected Double getRate(PairQueryable<VdsNetworkInterface, VDS> object) {
             if (object.getFirst() != null){
@@ -176,7 +176,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         }
     };
 
-    private final AbstractTextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> nicTxColumn = new AbstractRxTxRateColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
+    private final AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>> nicTxColumn = new AbstractRxTxRateColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
         @Override
         protected Double getRate(PairQueryable<VdsNetworkInterface, VDS> object) {
             if (object.getFirst() != null){
@@ -196,7 +196,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         }
     };
 
-    private final AbstractTextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> totalRxColumn =
+    private final AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>> totalRxColumn =
             new AbstractNullableNumberColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
                 @Override
                 protected Number getRawValue(PairQueryable<VdsNetworkInterface, VDS> object) {
@@ -204,7 +204,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
                 }
             };
 
-    private final AbstractTextColumnWithTooltip<PairQueryable<VdsNetworkInterface, VDS>> totalTxColumn =
+    private final AbstractTextColumn<PairQueryable<VdsNetworkInterface, VDS>> totalTxColumn =
             new AbstractNullableNumberColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
                 @Override
                 protected Number getRawValue(PairQueryable<VdsNetworkInterface, VDS> object) {

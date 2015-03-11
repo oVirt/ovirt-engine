@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.instancetypes.InstanceTypeGeneralModelForm;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.configure.instancetypes.InstanceTypeGeneralModel;
@@ -83,7 +83,7 @@ public class InstanceTypesView extends Composite {
         table = new SimpleActionTable<InstanceType>(instanceTypeModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
-        AbstractTextColumnWithTooltip<InstanceType> nameColumn = new AbstractTextColumnWithTooltip<InstanceType>() {
+        AbstractTextColumn<InstanceType> nameColumn = new AbstractTextColumn<InstanceType>() {
             @Override
             public String getValue(InstanceType object) {
                 return object.getName();

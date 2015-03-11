@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.ManagePolicyUnitModel;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
@@ -83,21 +83,21 @@ public class ManagePolicyUnitPopupView extends AbstractModelBoundPopupView<Manag
                 return resources.exteranlPolicyUnitImage();
             }
         }, constants.empty(), "20px"); //$NON-NLS-1$
-        policyUnitTable.addColumn(new AbstractTextColumnWithTooltip<PolicyUnit>() {
+        policyUnitTable.addColumn(new AbstractTextColumn<PolicyUnit>() {
             @Override
             public String getValue(PolicyUnit object) {
                 return object.getName();
             }
         }, constants.policyUnitName(), "180px"); //$NON-NLS-1$
 
-        policyUnitTable.addColumn(new AbstractTextColumnWithTooltip<PolicyUnit>() {
+        policyUnitTable.addColumn(new AbstractTextColumn<PolicyUnit>() {
             @Override
             public String getValue(PolicyUnit object) {
                 return EnumTranslator.getInstance().translate(object.getPolicyUnitType());
             }
         }, constants.policyUnitType(), "100px"); //$NON-NLS-1$
 
-        policyUnitTable.addColumn(new AbstractTextColumnWithTooltip<PolicyUnit>() {
+        policyUnitTable.addColumn(new AbstractTextColumn<PolicyUnit>() {
             @Override
             public String getValue(PolicyUnit object) {
                 if (!object.isEnabled()) {

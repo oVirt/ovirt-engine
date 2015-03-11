@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.common.widget.renderer.FullDateTimeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -27,7 +27,7 @@ public class SnapshotsViewColumns {
     private static final CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
     private static final CommonApplicationMessages messages = GWT.create(CommonApplicationMessages.class);
 
-    public static final AbstractTextColumnWithTooltip<Snapshot> dateColumn = new AbstractTextColumnWithTooltip<Snapshot>() {
+    public static final AbstractTextColumn<Snapshot> dateColumn = new AbstractTextColumn<Snapshot>() {
         @Override
         public String getValue(Snapshot snapshot) {
             if (snapshot.getType() == SnapshotType.ACTIVE) {
@@ -37,7 +37,7 @@ public class SnapshotsViewColumns {
         }
     };
 
-    public static final AbstractTextColumnWithTooltip<Snapshot> statusColumn = new AbstractEnumColumn<Snapshot, SnapshotStatus>() {
+    public static final AbstractTextColumn<Snapshot> statusColumn = new AbstractEnumColumn<Snapshot, SnapshotStatus>() {
         @Override
         protected SnapshotStatus getRawValue(Snapshot snapshot) {
             return snapshot.getStatus();

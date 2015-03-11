@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractBooleanColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
@@ -52,7 +52,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
 
         getTable().addColumn(new DcStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<StoragePool> nameColumn = new AbstractTextColumnWithTooltip<StoragePool>() {
+        AbstractTextColumn<StoragePool> nameColumn = new AbstractTextColumn<StoragePool>() {
             @Override
             public String getValue(StoragePool object) {
                 return object.getName();
@@ -64,7 +64,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         CommentColumn<StoragePool> commentColumn = new CommentColumn<StoragePool>();
         getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<StoragePool> storageTypeColumn = new AbstractBooleanColumn<StoragePool>(
+        AbstractTextColumn<StoragePool> storageTypeColumn = new AbstractBooleanColumn<StoragePool>(
                 constants.storageTypeLocal(), constants.storageTypeShared()) {
             @Override
             protected Boolean getRawValue(StoragePool object) {
@@ -74,7 +74,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         storageTypeColumn.makeSortable(StoragePoolFieldAutoCompleter.LOCAL);
         getTable().addColumn(storageTypeColumn, constants.storgeTypeDc(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<StoragePool> statusColumn = new AbstractEnumColumn<StoragePool, StoragePoolStatus>() {
+        AbstractTextColumn<StoragePool> statusColumn = new AbstractEnumColumn<StoragePool, StoragePoolStatus>() {
             @Override
             public StoragePoolStatus getRawValue(StoragePool object) {
                 return object.getStatus();
@@ -83,7 +83,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         statusColumn.makeSortable(StoragePoolFieldAutoCompleter.STATUS);
         getTable().addColumn(statusColumn, constants.statusDc(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<StoragePool> versionColumn = new AbstractTextColumnWithTooltip<StoragePool>() {
+        AbstractTextColumn<StoragePool> versionColumn = new AbstractTextColumn<StoragePool>() {
             @Override
             public String getValue(StoragePool object) {
                 return object.getCompatibilityVersion().getValue();
@@ -92,7 +92,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         versionColumn.makeSortable(StoragePoolFieldAutoCompleter.COMPATIBILITY_VERSION);
         getTable().addColumn(versionColumn, constants.comptVersDc(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<StoragePool> descColumn = new AbstractTextColumnWithTooltip<StoragePool>() {
+        AbstractTextColumn<StoragePool> descColumn = new AbstractTextColumn<StoragePool>() {
             @Override
             public String getValue(StoragePool object) {
                 return object.getdescription();

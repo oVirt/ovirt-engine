@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
@@ -51,7 +51,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
 
         getTable().addColumn(new VmStatusColumn<VM>(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> nameColumn = new AbstractTextColumnWithTooltip<VM>() {
+        AbstractTextColumn<VM> nameColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getName();
@@ -63,7 +63,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         VmTypeColumn typeColumn = new VmTypeColumn();
         getTable().addColumn(typeColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> clusterColumn = new AbstractTextColumnWithTooltip<VM>() {
+        AbstractTextColumn<VM> clusterColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getVdsGroupName();
@@ -72,7 +72,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         clusterColumn.makeSortable();
         getTable().addColumn(clusterColumn, constants.clusterVm(), "160px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> ipColumn = new AbstractTextColumnWithTooltip<VM>() {
+        AbstractTextColumn<VM> ipColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getVmIp();
@@ -81,7 +81,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         ipColumn.makeSortable();
         getTable().addColumn(ipColumn, constants.ipVm(), "200px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> fqdnColumn = new AbstractTextColumnWithTooltip<VM>() {
+        AbstractTextColumn<VM> fqdnColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getVmFQDN();
@@ -117,7 +117,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         netColumn.makeSortable();
         getTable().addColumn(netColumn, constants.networkVm(), "120px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> statusColumn = new AbstractEnumColumn<VM, VMStatus>() {
+        AbstractTextColumn<VM> statusColumn = new AbstractEnumColumn<VM, VMStatus>() {
             @Override
             protected VMStatus getRawValue(VM object) {
                 // check, if the current host is a target for the migration, then override status
@@ -132,7 +132,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         statusColumn.makeSortable();
         getTable().addColumn(statusColumn, constants.statusVm(), "130px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> uptimeColumn = new AbstractUptimeColumn<VM>() {
+        AbstractTextColumn<VM> uptimeColumn = new AbstractUptimeColumn<VM>() {
             @Override
             protected Double getRawValue(VM object) {
                 return object.getRoundedElapsedTime();

@@ -6,7 +6,7 @@ import org.ovirt.engine.core.searchbackend.ProviderConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -40,7 +40,7 @@ public class MainTabProviderView extends AbstractMainTabWithDetailsTableView<Pro
     void initTable() {
         getTable().enableColumnResizing();
 
-        AbstractTextColumnWithTooltip<Provider> nameColumn = new AbstractTextColumnWithTooltip<Provider>() {
+        AbstractTextColumn<Provider> nameColumn = new AbstractTextColumn<Provider>() {
             @Override
             public String getValue(Provider object) {
                 return object.getName();
@@ -50,7 +50,7 @@ public class MainTabProviderView extends AbstractMainTabWithDetailsTableView<Pro
 
         getTable().addColumn(nameColumn, constants.nameProvider(), "200px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<Provider> typeColumn = new AbstractEnumColumn<Provider, ProviderType>() {
+        AbstractTextColumn<Provider> typeColumn = new AbstractEnumColumn<Provider, ProviderType>() {
             @Override
             protected ProviderType getRawValue(Provider object) {
                 return object.getType();
@@ -60,7 +60,7 @@ public class MainTabProviderView extends AbstractMainTabWithDetailsTableView<Pro
 
         getTable().addColumn(typeColumn, constants.typeProvider(), "200px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<Provider> descriptionColumn = new AbstractTextColumnWithTooltip<Provider>() {
+        AbstractTextColumn<Provider> descriptionColumn = new AbstractTextColumn<Provider>() {
             @Override
             public String getValue(Provider object) {
                 return object.getDescription();
@@ -70,7 +70,7 @@ public class MainTabProviderView extends AbstractMainTabWithDetailsTableView<Pro
 
         getTable().addColumn(descriptionColumn, constants.descriptionProvider(), "300px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<Provider> urlColumn = new AbstractTextColumnWithTooltip<Provider>() {
+        AbstractTextColumn<Provider> urlColumn = new AbstractTextColumn<Provider>() {
             @Override
             public String getValue(Provider object) {
                 return object.getUrl();

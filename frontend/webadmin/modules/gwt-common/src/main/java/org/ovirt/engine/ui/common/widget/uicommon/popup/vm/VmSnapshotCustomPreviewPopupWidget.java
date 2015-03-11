@@ -17,7 +17,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.cell.RadioboxCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.VmSnapshotInfoPanel;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -129,7 +129,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
             }
         }, constants.dateSnapshot(), "140px"); //$NON-NLS-1$
 
-        previewTable.addColumn(new AbstractTextColumnWithTooltip<SnapshotModel>() {
+        previewTable.addColumn(new AbstractTextColumn<SnapshotModel>() {
             @Override
             public String getValue(SnapshotModel snapshotModel) {
                 return snapshotModel.getEntity().getDescription();

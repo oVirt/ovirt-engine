@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractBooleanColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkProfileListModel;
@@ -40,8 +40,8 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
     void initTable(ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        AbstractTextColumnWithTooltip<VnicProfileView> nameColumn =
-                new AbstractTextColumnWithTooltip<VnicProfileView>() {
+        AbstractTextColumn<VnicProfileView> nameColumn =
+                new AbstractTextColumn<VnicProfileView>() {
                     @Override
                     public String getValue(VnicProfileView object) {
                         return object.getName();
@@ -50,7 +50,7 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameVnicProfile(), "400px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VnicProfileView> networkColumn = new AbstractTextColumnWithTooltip<VnicProfileView>() {
+        AbstractTextColumn<VnicProfileView> networkColumn = new AbstractTextColumn<VnicProfileView>() {
             @Override
             public String getValue(VnicProfileView object) {
                 return object.getNetworkName();
@@ -59,7 +59,7 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
         networkColumn.makeSortable();
         getTable().addColumn(networkColumn, constants.networkVnicProfile(), "200px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VnicProfileView> dcColumn = new AbstractTextColumnWithTooltip<VnicProfileView>() {
+        AbstractTextColumn<VnicProfileView> dcColumn = new AbstractTextColumn<VnicProfileView>() {
             @Override
             public String getValue(VnicProfileView object) {
                 return object.getDataCenterName();
@@ -68,8 +68,8 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
         dcColumn.makeSortable();
         getTable().addColumn(dcColumn, constants.dcVnicProfile(), "200px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VnicProfileView> compatibilityVersionColumn =
-                new AbstractTextColumnWithTooltip<VnicProfileView>() {
+        AbstractTextColumn<VnicProfileView> compatibilityVersionColumn =
+                new AbstractTextColumn<VnicProfileView>() {
                     @Override
                     public String getValue(VnicProfileView object) {
                         return object.getCompatibilityVersion().toString();
@@ -78,7 +78,7 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
         compatibilityVersionColumn.makeSortable();
         getTable().addColumn(compatibilityVersionColumn, constants.compatibilityVersionVnicProfile(), "200px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VnicProfileView> qosColumn = new AbstractTextColumnWithTooltip<VnicProfileView>() {
+        AbstractTextColumn<VnicProfileView> qosColumn = new AbstractTextColumn<VnicProfileView>() {
             @Override
             public String getValue(VnicProfileView object) {
                 return object.getNetworkQosName();
@@ -97,8 +97,8 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
         portMirroringColumn.makeSortable();
         getTable().addColumnWithHtmlHeader(portMirroringColumn, constants.portMirroringVnicProfile(), "85px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VnicProfileView> descriptionColumn =
-                new AbstractTextColumnWithTooltip<VnicProfileView>() {
+        AbstractTextColumn<VnicProfileView> descriptionColumn =
+                new AbstractTextColumn<VnicProfileView>() {
                     @Override
                     public String getValue(VnicProfileView object) {
                         return object.getDescription();

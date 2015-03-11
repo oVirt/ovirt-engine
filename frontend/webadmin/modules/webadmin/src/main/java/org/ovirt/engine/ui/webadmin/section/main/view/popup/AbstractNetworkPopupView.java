@@ -22,7 +22,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEdito
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.header.CheckboxHeader;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
@@ -336,7 +336,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
             }
         };
 
-        clustersTable.addColumn(new AbstractTextColumnWithTooltip<NetworkClusterModel>() {
+        clustersTable.addColumn(new AbstractTextColumn<NetworkClusterModel>() {
             @Override
             public String getValue(NetworkClusterModel model) {
                 return model.getName();

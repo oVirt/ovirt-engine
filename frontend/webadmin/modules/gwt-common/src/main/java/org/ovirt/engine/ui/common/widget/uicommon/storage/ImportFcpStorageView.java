@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ImportFcpStorageModel;
@@ -78,7 +78,7 @@ public class ImportFcpStorageView extends AbstractStorageView<ImportFcpStorageMo
         storageDomainsTable = new ListModelObjectCellTable<StorageDomain, ListModel>(true, true);
         storageDomainsTable.enableColumnResizing();
 
-        AbstractTextColumnWithTooltip<StorageDomain> nameColumn = new AbstractTextColumnWithTooltip<StorageDomain>() {
+        AbstractTextColumn<StorageDomain> nameColumn = new AbstractTextColumn<StorageDomain>() {
             @Override
             public String getValue(StorageDomain object) {
                 return object.getStorageName();
@@ -86,7 +86,7 @@ public class ImportFcpStorageView extends AbstractStorageView<ImportFcpStorageMo
         };
         storageDomainsTable.addColumn(nameColumn, constants.storageName(), "50%"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<StorageDomain> storageIdColumn = new AbstractTextColumnWithTooltip<StorageDomain>() {
+        AbstractTextColumn<StorageDomain> storageIdColumn = new AbstractTextColumn<StorageDomain>() {
             @Override
             public String getValue(StorageDomain object) {
                 return object.getId().toString();

@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlWithSafeHtmlTooltipColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
@@ -72,7 +72,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
 
         getTable().addColumn(new NetworkStatusColumn(), "", "20px"); //$NON-NLS-1$ //$NON-NLS-2$
 
-        AbstractTextColumnWithTooltip<Network> nameColumn = new AbstractTextColumnWithTooltip<Network>() {
+        AbstractTextColumn<Network> nameColumn = new AbstractTextColumn<Network>() {
             @Override
             public String getValue(Network object) {
                 return object.getName();
@@ -81,7 +81,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameNetwork(), "400px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<Network> statusColumn = new AbstractEnumColumn<Network, NetworkStatus>() {
+        AbstractTextColumn<Network> statusColumn = new AbstractEnumColumn<Network, NetworkStatus>() {
             @Override
             public NetworkStatus getRawValue(Network object) {
                 return object.getCluster().getStatus();
@@ -144,7 +144,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
 
         getTable().addColumn(roleColumn, constants.roleNetwork(), "90px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<Network> descColumn = new AbstractTextColumnWithTooltip<Network>() {
+        AbstractTextColumn<Network> descColumn = new AbstractTextColumn<Network>() {
             @Override
             public String getValue(Network object) {
                 return object.getDescription();

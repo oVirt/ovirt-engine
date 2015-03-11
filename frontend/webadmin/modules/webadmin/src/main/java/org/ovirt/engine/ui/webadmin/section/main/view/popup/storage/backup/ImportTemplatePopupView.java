@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
@@ -58,7 +58,7 @@ public class ImportTemplatePopupView extends ImportVmFromExportDomainPopupView i
         };
         table.addColumn(cloneTemplateColumn, constants.cloneVM(), "50px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<Object> nameColumn = new AbstractTextColumnWithTooltip<Object>() {
+        AbstractTextColumn<Object> nameColumn = new AbstractTextColumn<Object>() {
             @Override
             public String getValue(Object object) {
                 return ((ImportTemplateData) object).getTemplate().getName();
@@ -66,7 +66,7 @@ public class ImportTemplatePopupView extends ImportVmFromExportDomainPopupView i
         };
         table.addColumn(nameColumn, constants.nameTemplate(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<Object> versionNameColumn = new AbstractTextColumnWithTooltip<Object>() {
+        AbstractTextColumn<Object> versionNameColumn = new AbstractTextColumn<Object>() {
             @Override
             public String getValue(Object object) {
                 VmTemplate template = ((ImportTemplateData) object).getTemplate();
@@ -81,7 +81,7 @@ public class ImportTemplatePopupView extends ImportVmFromExportDomainPopupView i
         };
         table.addColumn(versionNameColumn, constants.versionTemplate(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<Object> originColumn = new AbstractEnumColumn<Object, OriginType>() {
+        AbstractTextColumn<Object> originColumn = new AbstractEnumColumn<Object, OriginType>() {
             @Override
             protected OriginType getRawValue(Object object) {
                 return ((ImportTemplateData) object).getTemplate().getOrigin();
@@ -89,7 +89,7 @@ public class ImportTemplatePopupView extends ImportVmFromExportDomainPopupView i
         };
         table.addColumn(originColumn, constants.originTemplate(), "100px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<Object> memoryColumn = new AbstractTextColumnWithTooltip<Object>() {
+        AbstractTextColumn<Object> memoryColumn = new AbstractTextColumn<Object>() {
             @Override
             public String getValue(Object object) {
                 return String.valueOf(((ImportTemplateData) object).getTemplate().getMemSizeMb()) + " MB"; //$NON-NLS-1$
@@ -97,7 +97,7 @@ public class ImportTemplatePopupView extends ImportVmFromExportDomainPopupView i
         };
         table.addColumn(memoryColumn, constants.memoryTemplate(), "100px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<Object> cpuColumn = new AbstractTextColumnWithTooltip<Object>() {
+        AbstractTextColumn<Object> cpuColumn = new AbstractTextColumn<Object>() {
             @Override
             public String getValue(Object object) {
                 return String.valueOf(((ImportTemplateData) object).getTemplate().getNumOfCpus());
@@ -105,7 +105,7 @@ public class ImportTemplatePopupView extends ImportVmFromExportDomainPopupView i
         };
         table.addColumn(cpuColumn, constants.cpusTemplate(), "50px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<Object> archColumn = new AbstractTextColumnWithTooltip<Object>() {
+        AbstractTextColumn<Object> archColumn = new AbstractTextColumn<Object>() {
             @Override
             public String getValue(Object object) {
                 return String.valueOf(((ImportTemplateData) object).getTemplate().getClusterArch());
@@ -113,7 +113,7 @@ public class ImportTemplatePopupView extends ImportVmFromExportDomainPopupView i
         };
         table.addColumn(archColumn, constants.architectureTemplate(), "50px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<Object> diskColumn = new AbstractTextColumnWithTooltip<Object>() {
+        AbstractTextColumn<Object> diskColumn = new AbstractTextColumn<Object>() {
             @Override
             public String getValue(Object object) {
                 return String.valueOf(((ImportTemplateData) object).getTemplate().getDiskList().size());

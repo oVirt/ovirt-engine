@@ -17,7 +17,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlWithSafeHtmlTooltipColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -57,7 +57,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
     void initTable() {
         getTable().enableColumnResizing();
 
-        AbstractTextColumnWithTooltip<NetworkView> nameColumn = new AbstractTextColumnWithTooltip<NetworkView>() {
+        AbstractTextColumn<NetworkView> nameColumn = new AbstractTextColumn<NetworkView>() {
             @Override
             public String getValue(NetworkView object) {
                 return object.getName();
@@ -70,7 +70,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         CommentColumn<NetworkView> commentColumn = new CommentColumn<>();
         getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<NetworkView> dcColumn = new AbstractTextColumnWithTooltip<NetworkView>() {
+        AbstractTextColumn<NetworkView> dcColumn = new AbstractTextColumn<NetworkView>() {
             @Override
             public String getValue(NetworkView object) {
                 return object.getDataCenterName();
@@ -80,7 +80,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
 
         getTable().addColumn(dcColumn, constants.dcNetwork(), "200px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<NetworkView> descriptionColumn = new AbstractTextColumnWithTooltip<NetworkView>() {
+        AbstractTextColumn<NetworkView> descriptionColumn = new AbstractTextColumn<NetworkView>() {
             @Override
             public String getValue(NetworkView object) {
                 return object.getDescription();
@@ -120,7 +120,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
 
         getTable().addColumn(roleColumn, constants.roleNetwork(), "60px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<NetworkView> vlanColumn = new AbstractTextColumnWithTooltip<NetworkView>() {
+        AbstractTextColumn<NetworkView> vlanColumn = new AbstractTextColumn<NetworkView>() {
             @Override
             public String getValue(NetworkView object) {
                 return object.getVlanId() == null ? "-" : object.getVlanId().toString(); //$NON-NLS-1$
@@ -129,7 +129,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         vlanColumn.makeSortable(NetworkConditionFieldAutoCompleter.VLAN_ID);
         getTable().addColumn(vlanColumn, constants.vlanNetwork(), "60px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<NetworkView> labelColumn = new AbstractTextColumnWithTooltip<NetworkView>() {
+        AbstractTextColumn<NetworkView> labelColumn = new AbstractTextColumn<NetworkView>() {
             @Override
             public String getValue(NetworkView object) {
                 return object.getLabel() == null ? "-" : object.getLabel(); //$NON-NLS-1$

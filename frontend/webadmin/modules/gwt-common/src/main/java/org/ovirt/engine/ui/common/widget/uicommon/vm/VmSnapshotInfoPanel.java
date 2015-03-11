@@ -20,7 +20,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSumUpColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -100,7 +100,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
 
         disksTable.addColumn(new DiskImageStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<DiskImage> aliasColumn = new AbstractTextColumnWithTooltip<DiskImage>() {
+        AbstractTextColumn<DiskImage> aliasColumn = new AbstractTextColumn<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
                 return object.getDiskAlias();
@@ -124,7 +124,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         };
         disksTable.addColumn(actualSizeColumn, constants.sizeDisk(), "70px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<DiskImage> allocationColumn = new AbstractEnumColumn<DiskImage, VolumeType>() {
+        AbstractTextColumn<DiskImage> allocationColumn = new AbstractEnumColumn<DiskImage, VolumeType>() {
             @Override
             protected VolumeType getRawValue(DiskImage object) {
                 return VolumeType.forValue(object.getVolumeType().getValue());
@@ -132,7 +132,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         };
         disksTable.addColumn(allocationColumn, constants.allocationDisk(), "110px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<DiskImage> interfaceColumn = new AbstractTextColumnWithTooltip<DiskImage>() {
+        AbstractTextColumn<DiskImage> interfaceColumn = new AbstractTextColumn<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
                 return object.getDiskInterface().toString();
@@ -140,7 +140,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         };
         disksTable.addColumn(interfaceColumn, constants.interfaceDisk(), "95px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<DiskImage> statusColumn = new AbstractEnumColumn<DiskImage, ImageStatus>() {
+        AbstractTextColumn<DiskImage> statusColumn = new AbstractEnumColumn<DiskImage, ImageStatus>() {
             @Override
             protected ImageStatus getRawValue(DiskImage object) {
                 return object.getImageStatus();
@@ -148,7 +148,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         };
         disksTable.addColumn(statusColumn, constants.statusDisk(), "65px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<DiskImage> dateCreatedColumn = new AbstractFullDateTimeColumn<DiskImage>() {
+        AbstractTextColumn<DiskImage> dateCreatedColumn = new AbstractFullDateTimeColumn<DiskImage>() {
             @Override
             protected Date getRawValue(DiskImage object) {
                 return object.getCreationDate();
@@ -156,7 +156,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         };
         disksTable.addColumn(dateCreatedColumn, constants.creationDateDisk(), "80px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<DiskImage> diskSnapshotIDColumn = new AbstractTextColumnWithTooltip<DiskImage>() {
+        AbstractTextColumn<DiskImage> diskSnapshotIDColumn = new AbstractTextColumn<DiskImage>() {
             @Override
             public String getValue(DiskImage diskImage) {
                 return diskImage.getImageId().toString();
@@ -164,7 +164,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         };
         disksTable.addColumn(diskSnapshotIDColumn, constants.diskSnapshotIDDisk(), "260px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<DiskImage> descriptionColumn = new AbstractTextColumnWithTooltip<DiskImage>() {
+        AbstractTextColumn<DiskImage> descriptionColumn = new AbstractTextColumn<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
                 return object.getDiskDescription();
@@ -181,7 +181,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         nicsTable = new EntityModelCellTable<ListModel>(false, true);
         nicsTable.enableColumnResizing();
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> nameColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumn<VmNetworkInterface> nameColumn = new AbstractTextColumn<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getName();
@@ -189,7 +189,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         };
         nicsTable.addColumn(nameColumn, constants.nameInterface(), "80px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> networkNameColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumn<VmNetworkInterface> networkNameColumn = new AbstractTextColumn<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getNetworkName();
@@ -197,7 +197,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         };
         nicsTable.addColumn(networkNameColumn, constants.networkNameInterface(), "80px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> profileNameColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumn<VmNetworkInterface> profileNameColumn = new AbstractTextColumn<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getVnicProfileName();
@@ -205,7 +205,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         };
         nicsTable.addColumn(profileNameColumn, constants.profileNameInterface(), "80px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> typeColumn = new AbstractEnumColumn<VmNetworkInterface, VmInterfaceType>() {
+        AbstractTextColumn<VmNetworkInterface> typeColumn = new AbstractEnumColumn<VmNetworkInterface, VmInterfaceType>() {
             @Override
             protected VmInterfaceType getRawValue(VmNetworkInterface object) {
                 return VmInterfaceType.forValue(object.getType());
@@ -213,7 +213,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         };
         nicsTable.addColumn(typeColumn, constants.typeInterface(), "80px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> macColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumn<VmNetworkInterface> macColumn = new AbstractTextColumn<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getMacAddress();
@@ -221,7 +221,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         };
         nicsTable.addColumn(macColumn, constants.macInterface(), "80px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> speedColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumn<VmNetworkInterface> speedColumn = new AbstractTextColumn<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 if (object.getSpeed() != null) {
@@ -233,7 +233,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         };
         nicsTable.addColumn(speedColumn, templates.sub(constants.speedInterface(), constants.mbps()), "80px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> rxColumn = new AbstractRxTxRateColumn<VmNetworkInterface>() {
+        AbstractTextColumn<VmNetworkInterface> rxColumn = new AbstractRxTxRateColumn<VmNetworkInterface>() {
             @Override
             protected Double getRate(VmNetworkInterface object) {
                 return object.getStatistics().getReceiveRate();
@@ -250,7 +250,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         };
         nicsTable.addColumn(rxColumn, templates.sub(constants.rxRate(), constants.mbps()), "80px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> txColumn = new AbstractRxTxRateColumn<VmNetworkInterface>() {
+        AbstractTextColumn<VmNetworkInterface> txColumn = new AbstractRxTxRateColumn<VmNetworkInterface>() {
             @Override
             protected Double getRate(VmNetworkInterface object) {
                 return object.getStatistics().getTransmitRate();
@@ -267,7 +267,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         };
         nicsTable.addColumn(txColumn, templates.sub(constants.txRate(), constants.mbps()), "80px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> dropsColumn = new AbstractSumUpColumn<VmNetworkInterface>() {
+        AbstractTextColumn<VmNetworkInterface> dropsColumn = new AbstractSumUpColumn<VmNetworkInterface>() {
             @Override
             protected Double[] getRawValue(VmNetworkInterface object) {
                 Double receiveDropRate = object != null ? object.getStatistics().getReceiveDropRate() : null;
@@ -285,7 +285,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
     private void initAppsTable() {
         appsTable = new EntityModelCellTable<ListModel>(false, true);
 
-        AbstractTextColumnWithTooltip<String> appNameColumn = new AbstractTextColumnWithTooltip<String>() {
+        AbstractTextColumn<String> appNameColumn = new AbstractTextColumn<String>() {
             @Override
             public String getValue(String appName) {
                 return appName;

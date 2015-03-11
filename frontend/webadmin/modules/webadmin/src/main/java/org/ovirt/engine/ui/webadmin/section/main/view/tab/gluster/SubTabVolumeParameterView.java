@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeParameterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
@@ -37,7 +37,7 @@ public class SubTabVolumeParameterView extends AbstractSubTabTableView<GlusterVo
     void initTable(ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        AbstractTextColumnWithTooltip<GlusterVolumeOptionEntity> optionKeyColumn = new AbstractTextColumnWithTooltip<GlusterVolumeOptionEntity>() {
+        AbstractTextColumn<GlusterVolumeOptionEntity> optionKeyColumn = new AbstractTextColumn<GlusterVolumeOptionEntity>() {
             @Override
             public String getValue(GlusterVolumeOptionEntity option) {
                 return option.getKey();
@@ -45,8 +45,8 @@ public class SubTabVolumeParameterView extends AbstractSubTabTableView<GlusterVo
         };
         optionKeyColumn.makeSortable();
         getTable().addColumn(optionKeyColumn, constants.optionKeyVolumeParameter(), "400px"); //$NON-NLS-1$
-        AbstractTextColumnWithTooltip<GlusterVolumeOptionEntity> optionValueColumn =
-                new AbstractTextColumnWithTooltip<GlusterVolumeOptionEntity>() {
+        AbstractTextColumn<GlusterVolumeOptionEntity> optionValueColumn =
+                new AbstractTextColumn<GlusterVolumeOptionEntity>() {
                     @Override
                     public String getValue(GlusterVolumeOptionEntity option) {
                         return option.getValue();

@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.comparators.UserGroupComparator;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserGroup;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserGroupListModel;
@@ -37,7 +37,7 @@ public class SubTabUserGroupView extends AbstractSubTabTableView<DbUser, UserGro
 
     void initTable(ApplicationConstants constants) {
         getTable().enableColumnResizing();
-        AbstractTextColumnWithTooltip<UserGroup> nameColumn = new AbstractTextColumnWithTooltip<UserGroup>() {
+        AbstractTextColumn<UserGroup> nameColumn = new AbstractTextColumn<UserGroup>() {
             @Override
             public String getValue(UserGroup object) {
                 return object.getGroupName();
@@ -46,7 +46,7 @@ public class SubTabUserGroupView extends AbstractSubTabTableView<DbUser, UserGro
         nameColumn.makeSortable(UserGroupComparator.NAME);
         getTable().addColumn(nameColumn, constants.groupNameGroup(), "300px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<UserGroup> namespaceColumn = new AbstractTextColumnWithTooltip<UserGroup>() {
+        AbstractTextColumn<UserGroup> namespaceColumn = new AbstractTextColumn<UserGroup>() {
             @Override
             public String getValue(UserGroup object) {
                 return object.getNamespace();
@@ -55,7 +55,7 @@ public class SubTabUserGroupView extends AbstractSubTabTableView<DbUser, UserGro
         namespaceColumn.makeSortable(UserGroupComparator.NAMESPACE);
         getTable().addColumn(namespaceColumn, constants.namespaceGroup(), "300px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<UserGroup> authzColumn = new AbstractTextColumnWithTooltip<UserGroup>() {
+        AbstractTextColumn<UserGroup> authzColumn = new AbstractTextColumn<UserGroup>() {
             @Override
             public String getValue(UserGroup object) {
                 return object.getAuthz();

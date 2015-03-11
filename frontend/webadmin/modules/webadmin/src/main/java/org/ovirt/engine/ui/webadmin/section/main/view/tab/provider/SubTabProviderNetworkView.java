@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumnWithTooltip;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderNetworkListModel;
@@ -58,8 +58,8 @@ public class SubTabProviderNetworkView extends AbstractSubTabTableView<Provider,
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameNetwork(), "200px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<NetworkView> externalIdColumn =
-                new AbstractTextColumnWithTooltip<NetworkView>() {
+        AbstractTextColumn<NetworkView> externalIdColumn =
+                new AbstractTextColumn<NetworkView>() {
                     @Override
                     public String getValue(NetworkView object) {
                         return object.getProvidedBy().getExternalId();
@@ -68,7 +68,7 @@ public class SubTabProviderNetworkView extends AbstractSubTabTableView<Provider,
         externalIdColumn.makeSortable();
         getTable().addColumn(externalIdColumn, constants.externalIdProviderNetwork(), "300px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<NetworkView> dcColumn = new AbstractTextColumnWithTooltip<NetworkView>() {
+        AbstractTextColumn<NetworkView> dcColumn = new AbstractTextColumn<NetworkView>() {
             @Override
             public String getValue(NetworkView object) {
                 return object.getDataCenterName();

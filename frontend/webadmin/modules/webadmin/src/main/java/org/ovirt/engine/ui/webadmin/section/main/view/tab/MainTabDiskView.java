@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewRadioGroup;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -49,18 +49,18 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
     private DisksViewRadioGroup disksViewRadioGroup;
     private boolean isQuotaVisible;
 
-    private static AbstractTextColumnWithTooltip<Disk> aliasColumn;
-    private static AbstractTextColumnWithTooltip<Disk> idColumn;
+    private static AbstractTextColumn<Disk> aliasColumn;
+    private static AbstractTextColumn<Disk> idColumn;
     private static AbstractDiskSizeColumn sizeColumn;
-    private static AbstractTextColumnWithTooltip<Disk> allocationColumn;
-    private static AbstractTextColumnWithTooltip<Disk> dateCreatedColumn;
-    private static AbstractTextColumnWithTooltip<Disk> statusColumn;
-    private static AbstractTextColumnWithTooltip<Disk> lunIdColumn;
-    private static AbstractTextColumnWithTooltip<Disk> lunSerialColumn;
-    private static AbstractTextColumnWithTooltip<Disk> lunVendorIdColumn;
-    private static AbstractTextColumnWithTooltip<Disk> lunProductIdColumn;
-    private static AbstractTextColumnWithTooltip<Disk> qoutaColumn;
-    private static AbstractTextColumnWithTooltip<Disk> descriptionColumn;
+    private static AbstractTextColumn<Disk> allocationColumn;
+    private static AbstractTextColumn<Disk> dateCreatedColumn;
+    private static AbstractTextColumn<Disk> statusColumn;
+    private static AbstractTextColumn<Disk> lunIdColumn;
+    private static AbstractTextColumn<Disk> lunSerialColumn;
+    private static AbstractTextColumn<Disk> lunVendorIdColumn;
+    private static AbstractTextColumn<Disk> lunProductIdColumn;
+    private static AbstractTextColumn<Disk> qoutaColumn;
+    private static AbstractTextColumn<Disk> descriptionColumn;
 
     @Inject
     Provider<CommonModel> commonModelProvider;

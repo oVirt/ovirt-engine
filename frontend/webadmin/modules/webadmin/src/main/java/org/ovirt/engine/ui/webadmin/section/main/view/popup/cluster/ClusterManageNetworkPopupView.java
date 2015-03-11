@@ -21,7 +21,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMode;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlWithSafeHtmlTooltipColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.header.CheckboxHeader;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkManageModel;
@@ -143,7 +143,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
                 && !clusterNetworkModel.isExternal();
     }
 
-    private static final class NetworkNameTextColumnWithTooltip extends AbstractTextColumnWithTooltip<ClusterNetworkModel> {
+    private static final class NetworkNameTextColumnWithTooltip extends AbstractTextColumn<ClusterNetworkModel> {
         @Override
         public String getValue(ClusterNetworkModel clusterNetworkModel) {
             return clusterNetworkModel.getDisplayedName();

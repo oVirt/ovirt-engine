@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
@@ -42,7 +42,7 @@ public class SubTabStorageDataCenterView extends AbstractSubTabTableView<Storage
 
         getTable().addColumn(new StorageDomainStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<StorageDomain> nameColumn = new AbstractTextColumnWithTooltip<StorageDomain>() {
+        AbstractTextColumn<StorageDomain> nameColumn = new AbstractTextColumn<StorageDomain>() {
             @Override
             public String getValue(StorageDomain object) {
                 return object.getStoragePoolName();
@@ -51,7 +51,7 @@ public class SubTabStorageDataCenterView extends AbstractSubTabTableView<Storage
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameDc(), "600px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<StorageDomain> domainStatusColumn =
+        AbstractTextColumn<StorageDomain> domainStatusColumn =
                 new AbstractEnumColumn<StorageDomain, StorageDomainStatus>() {
                     @Override
                     protected StorageDomainStatus getRawValue(StorageDomain object) {

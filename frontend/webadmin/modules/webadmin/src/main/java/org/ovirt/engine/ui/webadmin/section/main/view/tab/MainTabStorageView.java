@@ -13,7 +13,7 @@ import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractStorageSizeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
@@ -53,7 +53,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
 
         getTable().addColumn(new StorageDomainSharedStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<StorageDomain> nameColumn = new AbstractTextColumnWithTooltip<StorageDomain>() {
+        AbstractTextColumn<StorageDomain> nameColumn = new AbstractTextColumn<StorageDomain>() {
             @Override
             public String getValue(StorageDomain object) {
                 return object.getStorageName();
@@ -65,7 +65,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         CommentColumn<StorageDomain> commentColumn = new CommentColumn<StorageDomain>();
         getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<StorageDomain> domainTypeColumn = new AbstractEnumColumn<StorageDomain, StorageDomainType>() {
+        AbstractTextColumn<StorageDomain> domainTypeColumn = new AbstractEnumColumn<StorageDomain, StorageDomainType>() {
             @Override
             protected StorageDomainType getRawValue(StorageDomain object) {
                 return object.getStorageDomainType();
@@ -73,7 +73,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         };
         getTable().addColumn(domainTypeColumn, constants.domainTypeStorage(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<StorageDomain> storageTypeColumn = new AbstractEnumColumn<StorageDomain, StorageType>() {
+        AbstractTextColumn<StorageDomain> storageTypeColumn = new AbstractEnumColumn<StorageDomain, StorageType>() {
             @Override
             protected StorageType getRawValue(StorageDomain object) {
                 return object.getStorageType();
@@ -82,7 +82,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         storageTypeColumn.makeSortable(StorageDomainFieldAutoCompleter.TYPE);
         getTable().addColumn(storageTypeColumn, constants.storageTypeStorage(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<StorageDomain> formatColumn = new AbstractEnumColumn<StorageDomain, StorageFormatType>() {
+        AbstractTextColumn<StorageDomain> formatColumn = new AbstractEnumColumn<StorageDomain, StorageFormatType>() {
             @Override
             protected StorageFormatType getRawValue(StorageDomain object) {
                 return object.getStorageFormat();
@@ -90,8 +90,8 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         };
         getTable().addColumn(formatColumn, constants.formatStorage(), "140px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<StorageDomain> crossDataCenterStatusColumn =
-                new AbstractTextColumnWithTooltip<StorageDomain>() {
+        AbstractTextColumn<StorageDomain> crossDataCenterStatusColumn =
+                new AbstractTextColumn<StorageDomain>() {
                     @Override
                     public String getValue(StorageDomain object) {
                         if (object.getStorageDomainType() == StorageDomainType.ISO) {
@@ -123,7 +123,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         freeSpaceColumn.makeSortable(StorageDomainFieldAutoCompleter.SIZE);
         getTable().addColumn(freeSpaceColumn, constants.freeSpaceStorage(), "130px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<StorageDomain> descriptionColumn = new AbstractTextColumnWithTooltip<StorageDomain>() {
+        AbstractTextColumn<StorageDomain> descriptionColumn = new AbstractTextColumn<StorageDomain>() {
             @Override
             public String getValue(StorageDomain object) {
                 return object.getDescription();

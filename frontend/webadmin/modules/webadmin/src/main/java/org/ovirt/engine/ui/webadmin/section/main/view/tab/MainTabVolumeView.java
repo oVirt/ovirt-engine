@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.frontend.utils.GlusterVolumeUtils;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
@@ -65,7 +65,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         });
         getTable().addColumn(statusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<GlusterVolumeEntity> nameColumn = new AbstractTextColumnWithTooltip<GlusterVolumeEntity>() {
+        AbstractTextColumn<GlusterVolumeEntity> nameColumn = new AbstractTextColumn<GlusterVolumeEntity>() {
             @Override
             public String getValue(GlusterVolumeEntity object) {
                 return object.getName();
@@ -75,7 +75,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
 
         getTable().addColumn(nameColumn, constants.NameVolume(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<GlusterVolumeEntity> clusterColumn = new AbstractTextColumnWithTooltip<GlusterVolumeEntity>() {
+        AbstractTextColumn<GlusterVolumeEntity> clusterColumn = new AbstractTextColumn<GlusterVolumeEntity>() {
             @Override
             public String getValue(GlusterVolumeEntity object) {
                 return object.getVdsGroupName();
@@ -84,7 +84,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         clusterColumn.makeSortable();
         getTable().addColumn(clusterColumn, constants.clusterVolume(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<GlusterVolumeEntity> volumeTypeColumn =
+        AbstractTextColumn<GlusterVolumeEntity> volumeTypeColumn =
                 new AbstractEnumColumn<GlusterVolumeEntity, GlusterVolumeType>() {
 
                     @Override
@@ -150,8 +150,8 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                 constants.activitiesOnVolume(),
                 "100px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<GlusterVolumeEntity> snapshotCountColumn =
-                new AbstractTextColumnWithTooltip<GlusterVolumeEntity>() {
+        AbstractTextColumn<GlusterVolumeEntity> snapshotCountColumn =
+                new AbstractTextColumn<GlusterVolumeEntity>() {
             @Override
             public String getValue(GlusterVolumeEntity object) {
                 return object.getSnapshotsCount().toString();

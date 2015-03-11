@@ -9,7 +9,7 @@ import org.ovirt.engine.core.searchbackend.VmTemplateConditionFieldAutoCompleter
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -39,7 +39,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
     void initTable(ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        AbstractTextColumnWithTooltip<VmTemplate> nameColumn = new AbstractTextColumnWithTooltip<VmTemplate>() {
+        AbstractTextColumn<VmTemplate> nameColumn = new AbstractTextColumn<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
                 return object.getName();
@@ -48,7 +48,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         nameColumn.makeSortable(VmTemplateConditionFieldAutoCompleter.NAME);
         getTable().addColumn(nameColumn, constants.namePool(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmTemplate> versionNameColumn = new AbstractTextColumnWithTooltip<VmTemplate>() {
+        AbstractTextColumn<VmTemplate> versionNameColumn = new AbstractTextColumn<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
                 if (object.getId().equals(object.getBaseTemplateId())) {
@@ -66,7 +66,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         CommentColumn<VmTemplate> commentColumn = new CommentColumn<VmTemplate>();
         getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmTemplate> creationDateColumn = new AbstractGeneralDateTimeColumn<VmTemplate>() {
+        AbstractTextColumn<VmTemplate> creationDateColumn = new AbstractGeneralDateTimeColumn<VmTemplate>() {
             @Override
             protected Date getRawValue(VmTemplate object) {
                 return object.getCreationDate();
@@ -75,7 +75,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         creationDateColumn.makeSortable(VmTemplateConditionFieldAutoCompleter.CREATIONDATE);
         getTable().addColumn(creationDateColumn, constants.creationDateTemplate(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmTemplate> statusColumn = new AbstractEnumColumn<VmTemplate, VmTemplateStatus>() {
+        AbstractTextColumn<VmTemplate> statusColumn = new AbstractEnumColumn<VmTemplate, VmTemplateStatus>() {
             @Override
             protected VmTemplateStatus getRawValue(VmTemplate object) {
                 return object.getStatus();
@@ -84,7 +84,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         statusColumn.makeSortable(VmTemplateConditionFieldAutoCompleter.STATUS);
         getTable().addColumn(statusColumn, constants.statusTemplate(), "100px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmTemplate> clusterColumn = new AbstractTextColumnWithTooltip<VmTemplate>() {
+        AbstractTextColumn<VmTemplate> clusterColumn = new AbstractTextColumn<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
                 return object.getVdsGroupName();
@@ -93,7 +93,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         clusterColumn.makeSortable(VmTemplateConditionFieldAutoCompleter.CLUSTER);
         getTable().addColumn(clusterColumn, constants.clusterTemplate(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmTemplate> dcColumn = new AbstractTextColumnWithTooltip<VmTemplate>() {
+        AbstractTextColumn<VmTemplate> dcColumn = new AbstractTextColumn<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
                 return object.getStoragePoolName();
@@ -102,7 +102,7 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         dcColumn.makeSortable(VmTemplateConditionFieldAutoCompleter.DATACENTER);
         getTable().addColumn(dcColumn, constants.dcTemplate(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmTemplate> descriptionColumn = new AbstractTextColumnWithTooltip<VmTemplate>() {
+        AbstractTextColumn<VmTemplate> descriptionColumn = new AbstractTextColumn<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
                 return object.getDescription();

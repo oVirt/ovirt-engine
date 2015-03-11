@@ -24,7 +24,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.StorageDomainsColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 
@@ -38,8 +38,8 @@ public class DisksViewColumns {
     private static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
     private static final CommonApplicationMessages messages = GWT.create(CommonApplicationMessages.class);
 
-    public static AbstractTextColumnWithTooltip<Disk> getAliasColumn(String sortBy) {
-        AbstractTextColumnWithTooltip<Disk> column = new AbstractTextColumnWithTooltip<Disk>() {
+    public static AbstractTextColumn<Disk> getAliasColumn(String sortBy) {
+        AbstractTextColumn<Disk> column = new AbstractTextColumn<Disk>() {
             @Override
             public String getValue(Disk object) {
                 return object.getDiskAlias();
@@ -49,8 +49,8 @@ public class DisksViewColumns {
         return makeSortable(column, sortBy);
     }
 
-    public static AbstractTextColumnWithTooltip<Disk> getIdColumn(String sortBy) {
-        AbstractTextColumnWithTooltip<Disk> column = new AbstractTextColumnWithTooltip<Disk>() {
+    public static AbstractTextColumn<Disk> getIdColumn(String sortBy) {
+        AbstractTextColumn<Disk> column = new AbstractTextColumn<Disk>() {
             @Override
             public String getValue(Disk object) {
                 return object.getId().toString();
@@ -60,8 +60,8 @@ public class DisksViewColumns {
         return makeSortable(column, sortBy);
     }
 
-    public static AbstractTextColumnWithTooltip<Disk> getQoutaColumn(String sortBy) {
-        AbstractTextColumnWithTooltip<Disk> column = new AbstractTextColumnWithTooltip<Disk>() {
+    public static AbstractTextColumn<Disk> getQoutaColumn(String sortBy) {
+        AbstractTextColumn<Disk> column = new AbstractTextColumn<Disk>() {
             @Override
             public String getValue(Disk object) {
                 String value = "";
@@ -169,7 +169,7 @@ public class DisksViewColumns {
 
     public static final DiskContainersColumn diskContainersColumn = new DiskContainersColumn();
 
-    public static final AbstractTextColumnWithTooltip<Disk> diskAlignmentColumn = new AbstractTextColumnWithTooltip<Disk>() {
+    public static final AbstractTextColumn<Disk> diskAlignmentColumn = new AbstractTextColumn<Disk>() {
         @Override
         public String getValue(Disk object) {
             if (object.getLastAlignmentScan() != null) {
@@ -185,7 +185,7 @@ public class DisksViewColumns {
 
     public static final StorageDomainsColumn storageDomainsColumn = new StorageDomainsColumn();
 
-    public static final AbstractTextColumnWithTooltip<Disk> storageTypeColumn = new AbstractEnumColumn<Disk, StorageType>() {
+    public static final AbstractTextColumn<Disk> storageTypeColumn = new AbstractEnumColumn<Disk, StorageType>() {
         @Override
         protected StorageType getRawValue(Disk object) {
             if (object.getDiskStorageType() != DiskStorageType.IMAGE) {
@@ -223,8 +223,8 @@ public class DisksViewColumns {
         return makeSortable(column, sortBy);
     }
 
-    public static final AbstractTextColumnWithTooltip<Disk> getAllocationColumn(String sortBy) {
-        AbstractTextColumnWithTooltip<Disk> column = new AbstractEnumColumn<Disk, VolumeType>() {
+    public static final AbstractTextColumn<Disk> getAllocationColumn(String sortBy) {
+        AbstractTextColumn<Disk> column = new AbstractEnumColumn<Disk, VolumeType>() {
             @Override
             protected VolumeType getRawValue(Disk object) {
                 return object.getDiskStorageType() == DiskStorageType.IMAGE ?
@@ -235,8 +235,8 @@ public class DisksViewColumns {
         return makeSortable(column, sortBy);
     }
 
-    public static final AbstractTextColumnWithTooltip<Disk> getInterfaceColumn(String sortBy) {
-        AbstractTextColumnWithTooltip<Disk> column = new AbstractEnumColumn<Disk, DiskInterface>() {
+    public static final AbstractTextColumn<Disk> getInterfaceColumn(String sortBy) {
+        AbstractTextColumn<Disk> column = new AbstractEnumColumn<Disk, DiskInterface>() {
             @Override
             protected DiskInterface getRawValue(Disk object) {
                 return object.getDiskInterface();
@@ -246,8 +246,8 @@ public class DisksViewColumns {
         return makeSortable(column, sortBy);
     }
 
-    public static final AbstractTextColumnWithTooltip<Disk> getDateCreatedColumn(String sortBy) {
-        AbstractTextColumnWithTooltip<Disk> column = new AbstractFullDateTimeColumn<Disk>() {
+    public static final AbstractTextColumn<Disk> getDateCreatedColumn(String sortBy) {
+        AbstractTextColumn<Disk> column = new AbstractFullDateTimeColumn<Disk>() {
             @Override
             protected Date getRawValue(Disk object) {
                 return object.getDiskStorageType() == DiskStorageType.IMAGE ?
@@ -258,8 +258,8 @@ public class DisksViewColumns {
         return makeSortable(column, sortBy);
     }
 
-    public static final AbstractTextColumnWithTooltip<Disk> getStatusColumn(String sortBy) {
-        AbstractTextColumnWithTooltip<Disk> column = new AbstractEnumColumn<Disk, ImageStatus>() {
+    public static final AbstractTextColumn<Disk> getStatusColumn(String sortBy) {
+        AbstractTextColumn<Disk> column = new AbstractEnumColumn<Disk, ImageStatus>() {
             @Override
             protected ImageStatus getRawValue(Disk object) {
                 return object.getDiskStorageType() == DiskStorageType.IMAGE ?
@@ -270,8 +270,8 @@ public class DisksViewColumns {
         return makeSortable(column, sortBy);
     }
 
-    public static final AbstractTextColumnWithTooltip<Disk> getDescriptionColumn(String sortBy) {
-        AbstractTextColumnWithTooltip<Disk> column = new AbstractTextColumnWithTooltip<Disk>() {
+    public static final AbstractTextColumn<Disk> getDescriptionColumn(String sortBy) {
+        AbstractTextColumn<Disk> column = new AbstractTextColumn<Disk>() {
             @Override
             public String getValue(Disk object) {
                 return object.getDiskDescription();
@@ -281,8 +281,8 @@ public class DisksViewColumns {
         return makeSortable(column, sortBy);
     }
 
-    public static final AbstractTextColumnWithTooltip<Disk> getLunIdColumn(String sortBy) {
-        AbstractTextColumnWithTooltip<Disk> column = new AbstractTextColumnWithTooltip<Disk>() {
+    public static final AbstractTextColumn<Disk> getLunIdColumn(String sortBy) {
+        AbstractTextColumn<Disk> column = new AbstractTextColumn<Disk>() {
             @Override
             public String getValue(Disk object) {
                 return object.getDiskStorageType() == DiskStorageType.LUN ?
@@ -293,8 +293,8 @@ public class DisksViewColumns {
         return makeSortable(column, sortBy);
     }
 
-    public static final AbstractTextColumnWithTooltip<Disk> getLunVendorIdColumn(String sortBy) {
-        AbstractTextColumnWithTooltip<Disk> column = new AbstractTextColumnWithTooltip<Disk>() {
+    public static final AbstractTextColumn<Disk> getLunVendorIdColumn(String sortBy) {
+        AbstractTextColumn<Disk> column = new AbstractTextColumn<Disk>() {
             @Override
             public String getValue(Disk object) {
                 return object.getDiskStorageType() == DiskStorageType.LUN ?
@@ -305,8 +305,8 @@ public class DisksViewColumns {
         return makeSortable(column, sortBy);
     }
 
-    public static final AbstractTextColumnWithTooltip<Disk> getLunProductIdColumn(String sortBy) {
-        AbstractTextColumnWithTooltip<Disk> column = new AbstractTextColumnWithTooltip<Disk>() {
+    public static final AbstractTextColumn<Disk> getLunProductIdColumn(String sortBy) {
+        AbstractTextColumn<Disk> column = new AbstractTextColumn<Disk>() {
             @Override
             public String getValue(Disk object) {
                 return object.getDiskStorageType() == DiskStorageType.LUN ?
@@ -317,8 +317,8 @@ public class DisksViewColumns {
         return makeSortable(column, sortBy);
     }
 
-    public static final AbstractTextColumnWithTooltip<Disk> getLunSerialColumn(String sortBy) {
-        AbstractTextColumnWithTooltip<Disk> column = new AbstractTextColumnWithTooltip<Disk>() {
+    public static final AbstractTextColumn<Disk> getLunSerialColumn(String sortBy) {
+        AbstractTextColumn<Disk> column = new AbstractTextColumn<Disk>() {
             @Override
             public String getValue(Disk object) {
                 return object.getDiskStorageType() == DiskStorageType.LUN ?
@@ -364,8 +364,8 @@ public class DisksViewColumns {
         return makeSortable(column, sortBy);
     }
 
-    public static final AbstractTextColumnWithTooltip<Disk> getSnapshotDescriptionColumn(String sortBy) {
-        AbstractTextColumnWithTooltip<Disk> column = new AbstractTextColumnWithTooltip<Disk>() {
+    public static final AbstractTextColumn<Disk> getSnapshotDescriptionColumn(String sortBy) {
+        AbstractTextColumn<Disk> column = new AbstractTextColumn<Disk>() {
             @Override
             public String getValue(Disk object) {
                 return ((DiskImage) object).getVmSnapshotDescription();
@@ -375,8 +375,8 @@ public class DisksViewColumns {
         return makeSortable(column, sortBy);
     }
 
-    public static final AbstractTextColumnWithTooltip<Disk> getDiskSnapshotIDColumn(String sortBy) {
-        AbstractTextColumnWithTooltip<Disk> column = new AbstractTextColumnWithTooltip<Disk>() {
+    public static final AbstractTextColumn<Disk> getDiskSnapshotIDColumn(String sortBy) {
+        AbstractTextColumn<Disk> column = new AbstractTextColumn<Disk>() {
             @Override
             public String getValue(Disk disk) {
                 return disk.getDiskStorageType() == DiskStorageType.IMAGE ?
@@ -387,7 +387,7 @@ public class DisksViewColumns {
         return makeSortable(column, sortBy);
     }
 
-    public static <C extends AbstractTextColumnWithTooltip<T>, T> C makeSortable(C column, String sortBy) {
+    public static <C extends AbstractTextColumn<T>, T> C makeSortable(C column, String sortBy) {
         if (sortBy == null ) {
             // Client sorting
             column.makeSortable();

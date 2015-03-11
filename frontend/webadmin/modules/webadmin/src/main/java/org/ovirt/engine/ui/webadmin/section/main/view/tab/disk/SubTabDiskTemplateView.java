@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskTemplateListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -41,7 +41,7 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<Disk, VmTemp
     void initTable(ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        AbstractTextColumnWithTooltip<VmTemplate> nameColumn = new AbstractTextColumnWithTooltip<VmTemplate>() {
+        AbstractTextColumn<VmTemplate> nameColumn = new AbstractTextColumn<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
                 return object.getName();
@@ -50,7 +50,7 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<Disk, VmTemp
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameTemplate(), "200px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmTemplate> disksColumn = new AbstractTextColumnWithTooltip<VmTemplate>() {
+        AbstractTextColumn<VmTemplate> disksColumn = new AbstractTextColumn<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
                 return String.valueOf(object.getDiskTemplateMap().size());

@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterStorageDevicesListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
@@ -44,8 +44,8 @@ public class SubTabHostGlusterStorageDevicesView extends AbstractSubTabTableView
         storageDeviceStatusColumn.makeSortable();
         getTable().addColumn(storageDeviceStatusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<StorageDevice> deviceNameColumn =
-                new AbstractTextColumnWithTooltip<StorageDevice>() {
+        AbstractTextColumn<StorageDevice> deviceNameColumn =
+                new AbstractTextColumn<StorageDevice>() {
             @Override
             public String getValue(StorageDevice object) {
                 return object.getName();
@@ -54,8 +54,8 @@ public class SubTabHostGlusterStorageDevicesView extends AbstractSubTabTableView
         deviceNameColumn.makeSortable();
         getTable().addColumn(deviceNameColumn, constants.deviceName(), "250px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<StorageDevice> descriptionColumn =
-                new AbstractTextColumnWithTooltip<StorageDevice>() {
+        AbstractTextColumn<StorageDevice> descriptionColumn =
+                new AbstractTextColumn<StorageDevice>() {
             @Override
             public String getValue(StorageDevice object) {
                 return object.getDescription();
@@ -65,8 +65,8 @@ public class SubTabHostGlusterStorageDevicesView extends AbstractSubTabTableView
         descriptionColumn.makeSortable();
         getTable().addColumn(descriptionColumn, constants.description(), "300px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<StorageDevice> sizeColumn =
-                new AbstractTextColumnWithTooltip<StorageDevice>() {
+        AbstractTextColumn<StorageDevice> sizeColumn =
+                new AbstractTextColumn<StorageDevice>() {
             @Override
             public String getValue(StorageDevice object) {
                     Pair<SizeUnit, Double> convertedSize = SizeConverter.autoConvert(object.getSize(), SizeUnit.MB);
@@ -77,8 +77,8 @@ public class SubTabHostGlusterStorageDevicesView extends AbstractSubTabTableView
         sizeColumn.makeSortable();
         getTable().addColumn(sizeColumn, constants.size(), "100px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<StorageDevice> mountPointColumn =
-                new AbstractTextColumnWithTooltip<StorageDevice>() {
+        AbstractTextColumn<StorageDevice> mountPointColumn =
+                new AbstractTextColumn<StorageDevice>() {
             @Override
             public String getValue(StorageDevice object) {
                 return object.getMountPoint();
@@ -87,8 +87,8 @@ public class SubTabHostGlusterStorageDevicesView extends AbstractSubTabTableView
         mountPointColumn.makeSortable();
         getTable().addColumn(mountPointColumn, constants.mountPoint(), "170px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<StorageDevice> fsTypeColumn =
-                new AbstractTextColumnWithTooltip<StorageDevice>() {
+        AbstractTextColumn<StorageDevice> fsTypeColumn =
+                new AbstractTextColumn<StorageDevice>() {
             @Override
             public String getValue(StorageDevice object) {
                 return object.getFsType();

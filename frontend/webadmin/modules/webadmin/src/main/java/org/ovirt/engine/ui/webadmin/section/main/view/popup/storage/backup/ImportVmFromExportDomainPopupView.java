@@ -27,7 +27,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportDiskData;
@@ -222,7 +222,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
     protected void initAppTable() {
         appTable = new ListModelObjectCellTable<>();
 
-        appTable.addColumn(new AbstractTextColumnWithTooltip<String>() {
+        appTable.addColumn(new AbstractTextColumn<String>() {
             @Override
             public String getValue(String object) {
                 return object;
@@ -289,7 +289,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         };
         table.addColumn(cloneVMColumn, constants.cloneVM(), "50px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<Object> nameColumn = new AbstractTextColumnWithTooltip<Object>() {
+        AbstractTextColumn<Object> nameColumn = new AbstractTextColumn<Object>() {
             @Override
             public String getValue(Object object) {
                 return ((ImportVmData) object).getVm().getName();
@@ -297,7 +297,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         };
         table.addColumn(nameColumn, constants.nameVm(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<Object> originColumn = new AbstractEnumColumn<Object, OriginType>() {
+        AbstractTextColumn<Object> originColumn = new AbstractEnumColumn<Object, OriginType>() {
             @Override
             protected OriginType getRawValue(Object object) {
                 return ((ImportVmData) object).getVm().getOrigin();
@@ -313,7 +313,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
                     }
                 }, constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<Object> memoryColumn = new AbstractTextColumnWithTooltip<Object>() {
+        AbstractTextColumn<Object> memoryColumn = new AbstractTextColumn<Object>() {
             @Override
             public String getValue(Object object) {
                 return String.valueOf(((ImportVmData) object).getVm().getVmMemSizeMb()) + " MB"; //$NON-NLS-1$
@@ -321,7 +321,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         };
         table.addColumn(memoryColumn, constants.memoryVm(), "100px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<Object> cpuColumn = new AbstractTextColumnWithTooltip<Object>() {
+        AbstractTextColumn<Object> cpuColumn = new AbstractTextColumn<Object>() {
             @Override
             public String getValue(Object object) {
                 return String.valueOf(((ImportVmData) object).getVm().getNumOfCpus());
@@ -329,7 +329,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         };
         table.addColumn(cpuColumn, constants.cpusVm(), "50px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<Object> archColumn = new AbstractTextColumnWithTooltip<Object>() {
+        AbstractTextColumn<Object> archColumn = new AbstractTextColumn<Object>() {
             @Override
             public String getValue(Object object) {
                 return String.valueOf(((ImportVmData) object).getVm().getClusterArch());
@@ -337,7 +337,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         };
         table.addColumn(archColumn, constants.architectureVm(), "50px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<Object> diskColumn = new AbstractTextColumnWithTooltip<Object>() {
+        AbstractTextColumn<Object> diskColumn = new AbstractTextColumn<Object>() {
             @Override
             public String getValue(Object object) {
                 return String.valueOf(((ImportVmData) object).getVm().getDiskMap().size());
@@ -374,7 +374,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
     private void initNicsTable() {
         nicTable = new ListModelObjectCellTable<>();
         nicTable.enableColumnResizing();
-        AbstractTextColumnWithTooltip<VmNetworkInterface> nameColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumn<VmNetworkInterface> nameColumn = new AbstractTextColumn<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getName();
@@ -382,7 +382,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         };
         nicTable.addColumn(nameColumn, constants.nameInterface(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> networkColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumn<VmNetworkInterface> networkColumn = new AbstractTextColumn<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getNetworkName();
@@ -390,7 +390,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         };
         nicTable.addColumn(networkColumn, constants.networkNameInterface(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> profileColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumn<VmNetworkInterface> profileColumn = new AbstractTextColumn<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getVnicProfileName();
@@ -398,7 +398,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         };
         nicTable.addColumn(profileColumn, constants.profileNameInterface(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> typeColumn = new AbstractEnumColumn<VmNetworkInterface, VmInterfaceType>() {
+        AbstractTextColumn<VmNetworkInterface> typeColumn = new AbstractEnumColumn<VmNetworkInterface, VmInterfaceType>() {
             @Override
             protected VmInterfaceType getRawValue(VmNetworkInterface object) {
                 return VmInterfaceType.forValue(object.getType());
@@ -406,7 +406,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         };
         nicTable.addColumn(typeColumn, constants.typeInterface(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> macColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumn<VmNetworkInterface> macColumn = new AbstractTextColumn<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getMacAddress();
@@ -420,7 +420,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
     private void initDiskTable() {
         diskTable = new ListModelObjectCellTable<>();
         diskTable.enableColumnResizing();
-        AbstractTextColumnWithTooltip<DiskImage> aliasColumn = new AbstractTextColumnWithTooltip<DiskImage>() {
+        AbstractTextColumn<DiskImage> aliasColumn = new AbstractTextColumn<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
                 return object.getDiskAlias();
@@ -463,7 +463,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         };
         diskTable.addColumn(actualSizeColumn, constants.sizeDisk(), "130px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<DiskImage> dateCreatedColumn = new AbstractFullDateTimeColumn<DiskImage>() {
+        AbstractTextColumn<DiskImage> dateCreatedColumn = new AbstractFullDateTimeColumn<DiskImage>() {
             @Override
             protected Date getRawValue(DiskImage object) {
                 return object.getCreationDate();

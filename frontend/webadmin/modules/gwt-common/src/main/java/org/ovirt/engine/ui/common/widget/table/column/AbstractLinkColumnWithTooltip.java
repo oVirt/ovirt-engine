@@ -11,7 +11,7 @@ import com.google.gwt.cell.client.FieldUpdater;
  * @param <T>
  *            the row type.
  */
-public abstract class AbstractLinkColumnWithTooltip<T> extends AbstractTextColumnWithTooltip<T> {
+public abstract class AbstractLinkColumnWithTooltip<T> extends AbstractTextColumn<T> {
 
     public AbstractLinkColumnWithTooltip() {
         this(null);

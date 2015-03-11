@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.NicActivateStatusColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSumUpColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
@@ -33,7 +33,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
     public void initTable(final CommonApplicationConstants constants) {
         getTable().addColumn(new NicActivateStatusColumn<VmNetworkInterface>(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> nameColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumn<VmNetworkInterface> nameColumn = new AbstractTextColumn<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getName();
@@ -55,7 +55,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
 
         getTable().addColumnWithHtmlHeader(pluggedColumn, constants.plugged(), "60px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> networkNameColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumn<VmNetworkInterface> networkNameColumn = new AbstractTextColumn<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getNetworkName();
@@ -63,7 +63,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
         };
         getTable().addColumn(networkNameColumn, constants.networkNameInterface());
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> profileNameColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumn<VmNetworkInterface> profileNameColumn = new AbstractTextColumn<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getVnicProfileName();
@@ -83,7 +83,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
 
         getTable().addColumnWithHtmlHeader(linkStateColumn, constants.linkStateNetworkInterface(), "65px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> typeColumn = new AbstractEnumColumn<VmNetworkInterface, VmInterfaceType>() {
+        AbstractTextColumn<VmNetworkInterface> typeColumn = new AbstractEnumColumn<VmNetworkInterface, VmInterfaceType>() {
             @Override
             protected VmInterfaceType getRawValue(VmNetworkInterface object) {
                 return VmInterfaceType.forValue(object.getType());
@@ -91,7 +91,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
         };
         getTable().addColumn(typeColumn, constants.typeInterface());
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> macColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumn<VmNetworkInterface> macColumn = new AbstractTextColumn<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 return object.getMacAddress();
@@ -99,7 +99,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
         };
         getTable().addColumn(macColumn, constants.macInterface());
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> speedColumn = new AbstractTextColumnWithTooltip<VmNetworkInterface>() {
+        AbstractTextColumn<VmNetworkInterface> speedColumn = new AbstractTextColumn<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
                 if (object.getSpeed() != null) {
@@ -112,7 +112,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
         getTable().addColumnWithHtmlHeader(speedColumn,
                 templates.sub(constants.speedInterface(), constants.mbps()).asString());
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> rxColumn = new AbstractRxTxRateColumn<VmNetworkInterface>() {
+        AbstractTextColumn<VmNetworkInterface> rxColumn = new AbstractRxTxRateColumn<VmNetworkInterface>() {
             @Override
             protected Double getRate(VmNetworkInterface object) {
                 return object.getStatistics().getReceiveRate();
@@ -130,7 +130,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
         getTable().addColumnWithHtmlHeader(rxColumn,
                 templates.sub(constants.rxRate(), constants.mbps()).asString());
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> txColumn = new AbstractRxTxRateColumn<VmNetworkInterface>() {
+        AbstractTextColumn<VmNetworkInterface> txColumn = new AbstractRxTxRateColumn<VmNetworkInterface>() {
             @Override
             protected Double getRate(VmNetworkInterface object) {
                 return object.getStatistics().getTransmitRate();
@@ -148,7 +148,7 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
         getTable().addColumnWithHtmlHeader(txColumn,
                 templates.sub(constants.txRate(), constants.mbps()).asString());
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> dropsColumn = new AbstractSumUpColumn<VmNetworkInterface>() {
+        AbstractTextColumn<VmNetworkInterface> dropsColumn = new AbstractSumUpColumn<VmNetworkInterface>() {
             @Override
             protected Double[] getRawValue(VmNetworkInterface object) {
                 Double receiveDropRate = object != null ? object.getStatistics().getReceiveDropRate() : null;

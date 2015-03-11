@@ -9,7 +9,7 @@ import org.ovirt.engine.core.searchbackend.VmConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterVmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -47,7 +47,7 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
         statusIconColumn.makeSortable(VmConditionFieldAutoCompleter.STATUS);
         getTable().addColumn(statusIconColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> nameColumn = new AbstractTextColumnWithTooltip<VM>() {
+        AbstractTextColumn<VM> nameColumn = new AbstractTextColumn<VM>() {
             @Override
             public String getValue(VM object) {
                 return object.getName();
@@ -60,7 +60,7 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
         typeColumn.makeSortable(VmConditionFieldAutoCompleter.TYPE);
         getTable().addColumn(typeColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> statusColumn = new AbstractEnumColumn<VM, VMStatus>() {
+        AbstractTextColumn<VM> statusColumn = new AbstractEnumColumn<VM, VMStatus>() {
             @Override
             protected VMStatus getRawValue(VM object) {
                 return object.getStatus();
@@ -69,7 +69,7 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
         statusColumn.makeSortable(VmConditionFieldAutoCompleter.STATUS);
         getTable().addColumn(statusColumn, constants.statusVm(), "220px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VM> uptimeColumn = new AbstractUptimeColumn<VM>() {
+        AbstractTextColumn<VM> uptimeColumn = new AbstractUptimeColumn<VM>() {
             @Override
             protected Double getRawValue(VM object) {
                 return object.getRoundedElapsedTime();

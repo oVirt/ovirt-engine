@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.ActionCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.resources.ResourcesModel;
@@ -220,21 +220,21 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
             }
         };
 
-        AbstractTextColumnWithTooltip<EntityModel> virtualSizeColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
+        AbstractTextColumn<EntityModel> virtualSizeColumn = new AbstractTextColumn<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
                 return asDisk(entity).getSizeInGigabytes() + "GB"; //$NON-NLS-1$
             }
         };
 
-        AbstractTextColumnWithTooltip<EntityModel> actualSizeColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
+        AbstractTextColumn<EntityModel> actualSizeColumn = new AbstractTextColumn<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
                 return ((Double) asDisk(entity).getActualDiskWithSnapshotsSize()).intValue() + "GB"; //$NON-NLS-1$
             }
         };
 
-        AbstractTextColumnWithTooltip<EntityModel> snapshotsColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
+        AbstractTextColumn<EntityModel> snapshotsColumn = new AbstractTextColumn<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
                 return asDisk(entity).getSnapshots().size() + ""; //$NON-NLS-1$
@@ -268,7 +268,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
                     }
                 };
 
-        AbstractTextColumnWithTooltip<EntityModel> diskSizeColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
+        AbstractTextColumn<EntityModel> diskSizeColumn = new AbstractTextColumn<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
                 ArrayList<DiskImage> diskImages = asVm(entity).getDiskList();
@@ -276,7 +276,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
             }
         };
 
-        AbstractTextColumnWithTooltip<EntityModel> virtualSizeColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
+        AbstractTextColumn<EntityModel> virtualSizeColumn = new AbstractTextColumn<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
                 return ((Double) asVm(entity).getDiskSize()).intValue() + "GB"; //$NON-NLS-1$
@@ -284,14 +284,14 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
 
         };
 
-        AbstractTextColumnWithTooltip<EntityModel> actualSizeColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
+        AbstractTextColumn<EntityModel> actualSizeColumn = new AbstractTextColumn<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
                 return ((Double) asVm(entity).getActualDiskWithSnapshotsSize()).intValue() + "GB"; //$NON-NLS-1$
             }
         };
 
-        AbstractTextColumnWithTooltip<EntityModel> snapshotsColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
+        AbstractTextColumn<EntityModel> snapshotsColumn = new AbstractTextColumn<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
                 ArrayList<DiskImage> diskImages = asVm(entity).getDiskList();
@@ -325,7 +325,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
 
         };
 
-        final AbstractTextColumnWithTooltip<EntityModel> driveMappingColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
+        final AbstractTextColumn<EntityModel> driveMappingColumn = new AbstractTextColumn<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
                 return asDisk(entity).getDiskAlias(); //$NON-NLS-1$
@@ -360,7 +360,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
 
         };
 
-        final AbstractTextColumnWithTooltip<EntityModel> nameColumn = new AbstractTextColumnWithTooltip<EntityModel>() {
+        final AbstractTextColumn<EntityModel> nameColumn = new AbstractTextColumn<EntityModel>() {
             @Override
             public String getValue(EntityModel entity) {
                 return asVm(entity).getName();

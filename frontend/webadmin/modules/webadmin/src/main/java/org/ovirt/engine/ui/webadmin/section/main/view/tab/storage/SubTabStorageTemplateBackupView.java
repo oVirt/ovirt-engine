@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.TemplateBackupModel;
@@ -45,8 +45,8 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
     void initTable(final ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        AbstractTextColumnWithTooltip<VmTemplate> nameColumn =
-                new AbstractTextColumnWithTooltip<VmTemplate>() {
+        AbstractTextColumn<VmTemplate> nameColumn =
+                new AbstractTextColumn<VmTemplate>() {
                     @Override
                     public String getValue(VmTemplate object) {
                         return object.getName();
@@ -55,7 +55,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameTemplate(), "160px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmTemplate> versionNameColumn = new AbstractTextColumnWithTooltip<VmTemplate>() {
+        AbstractTextColumn<VmTemplate> versionNameColumn = new AbstractTextColumn<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
                 if (object.isBaseTemplate()) {
@@ -70,8 +70,8 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
         versionNameColumn.makeSortable();
         table.addColumn(versionNameColumn, constants.versionTemplate(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmTemplate> originColumn =
-                new AbstractTextColumnWithTooltip<VmTemplate>() {
+        AbstractTextColumn<VmTemplate> originColumn =
+                new AbstractTextColumn<VmTemplate>() {
                     @Override
                     public String getValue(VmTemplate object) {
                         return object.getOrigin() == null ? messageConstants.notSpecifiedLabel() : object.getOrigin()
@@ -81,8 +81,8 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
         originColumn.makeSortable();
         getTable().addColumn(originColumn, constants.originTemplate(), "160px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmTemplate> memoryColumn =
-                new AbstractTextColumnWithTooltip<VmTemplate>() {
+        AbstractTextColumn<VmTemplate> memoryColumn =
+                new AbstractTextColumn<VmTemplate>() {
                     @Override
                     public String getValue(VmTemplate object) {
                         return String.valueOf(object.getMemSizeMb()) + " MB"; //$NON-NLS-1$
@@ -91,8 +91,8 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
         memoryColumn.makeSortable();
         getTable().addColumn(memoryColumn, constants.memoryTemplate(), "160px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmTemplate> cpuColumn =
-                new AbstractTextColumnWithTooltip<VmTemplate>() {
+        AbstractTextColumn<VmTemplate> cpuColumn =
+                new AbstractTextColumn<VmTemplate>() {
                     @Override
                     public String getValue(VmTemplate object) {
                         return String.valueOf(object.getNumOfCpus());
@@ -101,8 +101,8 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
         cpuColumn.makeSortable();
         getTable().addColumn(cpuColumn, constants.cpusVm(), "160px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmTemplate> archColumn =
-                new AbstractTextColumnWithTooltip<VmTemplate>() {
+        AbstractTextColumn<VmTemplate> archColumn =
+                new AbstractTextColumn<VmTemplate>() {
                     @Override
                     public String getValue(VmTemplate object) {
                         return String.valueOf(object.getClusterArch());
@@ -111,8 +111,8 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
         archColumn.makeSortable();
         getTable().addColumn(archColumn, constants.architectureVm(), "160px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmTemplate> diskColumn =
-                new AbstractTextColumnWithTooltip<VmTemplate>() {
+        AbstractTextColumn<VmTemplate> diskColumn =
+                new AbstractTextColumn<VmTemplate>() {
                     @Override
                     public String getValue(VmTemplate object) {
                         return String.valueOf(object.getDiskList().size());
@@ -121,7 +121,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
         diskColumn.makeSortable();
         getTable().addColumn(diskColumn, constants.disksTemplate(), "160px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmTemplate> creationDateColumn =
+        AbstractTextColumn<VmTemplate> creationDateColumn =
                 new AbstractGeneralDateTimeColumn<VmTemplate>() {
                     @Override
                     protected Date getRawValue(VmTemplate object) {
@@ -131,7 +131,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
         creationDateColumn.makeSortable();
         getTable().addColumn(creationDateColumn, constants.creationDateTemplate(), "160px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmTemplate> exportDateColumn =
+        AbstractTextColumn<VmTemplate> exportDateColumn =
             new AbstractGeneralDateTimeColumn<VmTemplate>() {
                 @Override
                 protected Date getRawValue(VmTemplate object) {

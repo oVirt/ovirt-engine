@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.table.cell.TextCellWithTooltip;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
@@ -113,7 +113,7 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
 
         final TextCellWithTooltip subversionNumberCell = new TextCellWithTooltip(TextCellWithTooltip.UNLIMITED_LENGTH);
 
-        final AbstractTextColumnWithTooltip<VmTemplate> subversionNumberColumn = new AbstractTextColumnWithTooltip<VmTemplate>(subversionNumberCell) {
+        final AbstractTextColumn<VmTemplate> subversionNumberColumn = new AbstractTextColumn<VmTemplate>(subversionNumberCell) {
 
             @Override
             public String getValue(VmTemplate template) {
@@ -124,7 +124,7 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
 
         final TextCellWithTooltip subversionNameCell = new TextCellWithTooltip(TextCellWithTooltip.UNLIMITED_LENGTH);
 
-        final AbstractTextColumnWithTooltip<VmTemplate> subversionNameColumn = new AbstractTextColumnWithTooltip<VmTemplate>(subversionNameCell) {
+        final AbstractTextColumn<VmTemplate> subversionNameColumn = new AbstractTextColumn<VmTemplate>(subversionNameCell) {
 
             @Override
             public String getValue(VmTemplate template) {
@@ -137,7 +137,7 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
 
         final TextCellWithTooltip descriptionCell = new TextCellWithTooltip(TextCellWithTooltip.UNLIMITED_LENGTH);
 
-        final AbstractTextColumnWithTooltip<VmTemplate> descriptionColumn = new AbstractTextColumnWithTooltip<VmTemplate>(descriptionCell) {
+        final AbstractTextColumn<VmTemplate> descriptionColumn = new AbstractTextColumn<VmTemplate>(descriptionCell) {
 
             @Override
             public String getValue(VmTemplate template) {

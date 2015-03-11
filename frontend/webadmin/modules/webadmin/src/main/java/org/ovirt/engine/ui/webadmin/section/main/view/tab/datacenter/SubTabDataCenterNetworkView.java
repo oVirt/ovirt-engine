@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkListModel;
@@ -39,7 +39,7 @@ public class SubTabDataCenterNetworkView extends AbstractSubTabTableView<Storage
     void initTable(ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        AbstractTextColumnWithTooltip<Network> nameColumn = new AbstractTextColumnWithTooltip<Network>() {
+        AbstractTextColumn<Network> nameColumn = new AbstractTextColumn<Network>() {
             @Override
             public String getValue(Network object) {
                 return object.getName();
@@ -48,7 +48,7 @@ public class SubTabDataCenterNetworkView extends AbstractSubTabTableView<Storage
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameNetwork(), "400px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<Network> descriptionColumn = new AbstractTextColumnWithTooltip<Network>() {
+        AbstractTextColumn<Network> descriptionColumn = new AbstractTextColumn<Network>() {
             @Override
             public String getValue(Network object) {
                 return object.getDescription();

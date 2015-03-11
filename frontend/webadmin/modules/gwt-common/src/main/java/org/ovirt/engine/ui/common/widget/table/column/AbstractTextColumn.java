@@ -12,17 +12,17 @@ import org.ovirt.engine.ui.common.widget.table.cell.TextCellWithTooltip;
  * @param <T>
  *            Table row data type.
  */
-public abstract class AbstractTextColumnWithTooltip<T> extends AbstractSortableColumn<T, String> implements ColumnWithElementId {
+public abstract class AbstractTextColumn<T> extends AbstractSortableColumn<T, String> implements ColumnWithElementId {
 
-    public AbstractTextColumnWithTooltip() {
+    public AbstractTextColumn() {
         this(TextCellWithTooltip.UNLIMITED_LENGTH);
     }
 
-    public AbstractTextColumnWithTooltip(int maxTextLength) {
+    public AbstractTextColumn(int maxTextLength) {
         this(new TextCellWithTooltip(maxTextLength));
     }
 
-    public AbstractTextColumnWithTooltip(TextCellWithTooltip cell) {
+    public AbstractTextColumn(TextCellWithTooltip cell) {
         super(cell);
     }
 

@@ -23,7 +23,7 @@ import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -104,14 +104,14 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
         disksTable = new ListModelObjectCellTable<DiskImage, ListModel>(true, true);
         disksTable.enableColumnResizing();
 
-        disksTable.addColumn(new AbstractTextColumnWithTooltip<DiskImage>() {
+        disksTable.addColumn(new AbstractTextColumn<DiskImage>() {
             @Override
             public String getValue(DiskImage diskImage) {
                 return diskImage.getDiskAlias();
             }
         }, constants.aliasDisk(), "150px"); //$NON-NLS-1$
 
-        disksTable.addColumn(new AbstractTextColumnWithTooltip<DiskImage>() {
+        disksTable.addColumn(new AbstractTextColumn<DiskImage>() {
             @Override
             public String getValue(DiskImage diskImage) {
                 return diskImage.getDiskDescription();

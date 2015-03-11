@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -98,7 +98,7 @@ public class ClusterPolicyView extends Composite {
 
         }, constants.empty(), "20px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<ClusterPolicy> nameColumn = new AbstractTextColumnWithTooltip<ClusterPolicy>() {
+        AbstractTextColumn<ClusterPolicy> nameColumn = new AbstractTextColumn<ClusterPolicy>() {
             @Override
             public String getValue(ClusterPolicy object) {
                 return object.getName();
@@ -106,7 +106,7 @@ public class ClusterPolicyView extends Composite {
         };
         table.addColumn(nameColumn, constants.clusterPolicyNameLabel(), "100px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<ClusterPolicy> descColumn = new AbstractTextColumnWithTooltip<ClusterPolicy>() {
+        AbstractTextColumn<ClusterPolicy> descColumn = new AbstractTextColumn<ClusterPolicy>() {
             @Override
             public String getValue(ClusterPolicy object) {
                 return object.getDescription();
@@ -170,7 +170,7 @@ public class ClusterPolicyView extends Composite {
         clusterTable = new SimpleActionTable<VDSGroup>(clusterPolicyClusterModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
-        AbstractTextColumnWithTooltip<VDSGroup> clusterColumn = new AbstractTextColumnWithTooltip<VDSGroup>() {
+        AbstractTextColumn<VDSGroup> clusterColumn = new AbstractTextColumn<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
                 return object.getName();

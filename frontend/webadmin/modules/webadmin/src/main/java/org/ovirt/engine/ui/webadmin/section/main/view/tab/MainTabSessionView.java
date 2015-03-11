@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.searchbackend.SessionConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SessionListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -34,8 +34,8 @@ public class MainTabSessionView extends AbstractMainTabWithDetailsTableView<Engi
     void initTable() {
         getTable().enableColumnResizing();
 
-        AbstractTextColumnWithTooltip<EngineSession> sessionDbIdColumn =
-                new AbstractTextColumnWithTooltip<EngineSession>() {
+        AbstractTextColumn<EngineSession> sessionDbIdColumn =
+                new AbstractTextColumn<EngineSession>() {
                     @Override
                     public String getValue(EngineSession session) {
                         return Long.toString(session.getId());
@@ -43,8 +43,8 @@ public class MainTabSessionView extends AbstractMainTabWithDetailsTableView<Engi
                 };
         getTable().addColumn(sessionDbIdColumn, constants.sessionDbId(), "100px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<EngineSession> userNameColumn =
-                new AbstractTextColumnWithTooltip<EngineSession>() {
+        AbstractTextColumn<EngineSession> userNameColumn =
+                new AbstractTextColumn<EngineSession>() {
                     @Override
                     public String getValue(EngineSession session) {
                         return session.getUserName();
@@ -53,7 +53,7 @@ public class MainTabSessionView extends AbstractMainTabWithDetailsTableView<Engi
         userNameColumn.makeSortable(SessionConditionFieldAutoCompleter.USER_NAME);
         getTable().addColumn(userNameColumn, constants.userNameUser(), "200px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<EngineSession> userIdColumn = new AbstractTextColumnWithTooltip<EngineSession>() {
+        AbstractTextColumn<EngineSession> userIdColumn = new AbstractTextColumn<EngineSession>() {
             @Override
             public String getValue(EngineSession session) {
                 return session.getUserId().toString();

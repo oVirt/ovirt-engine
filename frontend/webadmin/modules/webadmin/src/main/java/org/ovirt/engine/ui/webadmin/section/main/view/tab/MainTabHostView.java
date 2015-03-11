@@ -19,7 +19,7 @@ import org.ovirt.engine.ui.common.widget.table.cell.CellWithElementId;
 import org.ovirt.engine.ui.common.widget.table.cell.StatusCompositeCellWithElementId;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSortableColumnWithElementId;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
@@ -103,7 +103,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
 
         getTable().addColumn(new HostStatusColumn<VDS>(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VDS> nameColumn = new AbstractTextColumnWithTooltip<VDS>() {
+        AbstractTextColumn<VDS> nameColumn = new AbstractTextColumn<VDS>() {
             @Override
             public String getValue(VDS object) {
                 return object.getName();
@@ -115,7 +115,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         CommentColumn<VDS> commentColumn = new CommentColumn<VDS>();
         getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VDS> hostColumn = new AbstractTextColumnWithTooltip<VDS>() {
+        AbstractTextColumn<VDS> hostColumn = new AbstractTextColumn<VDS>() {
             @Override
             public String getValue(VDS object) {
                 return object.getHostName();
@@ -124,7 +124,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         hostColumn.makeSortable(VdsConditionFieldAutoCompleter.ADDRESS);
         getTable().addColumn(hostColumn, constants.ipHost(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VDS> clusterColumn = new AbstractTextColumnWithTooltip<VDS>() {
+        AbstractTextColumn<VDS> clusterColumn = new AbstractTextColumn<VDS>() {
             @Override
             public String getValue(VDS object) {
                 return object.getVdsGroupName();
@@ -134,7 +134,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         getTable().addColumn(clusterColumn, constants.clusterHost(), "150px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-            AbstractTextColumnWithTooltip<VDS> dcColumn = new AbstractTextColumnWithTooltip<VDS>() {
+            AbstractTextColumn<VDS> dcColumn = new AbstractTextColumn<VDS>() {
                 @Override
                 public String getValue(VDS object) {
                     return object.getStoragePoolName();
@@ -144,7 +144,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             getTable().addColumn(dcColumn, constants.dcHost(), "150px"); //$NON-NLS-1$
         }
 
-        AbstractTextColumnWithTooltip<VDS> statusColumn = new AbstractEnumColumn<VDS, VDSStatus>() {
+        AbstractTextColumn<VDS> statusColumn = new AbstractEnumColumn<VDS, VDSStatus>() {
             @Override
             public VDSStatus getRawValue(VDS object) {
                 return object.getStatus();
@@ -209,7 +209,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         getTable().addColumn(netColumn, constants.networkHost(), "60px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-            AbstractTextColumnWithTooltip<VDS> spmColumn = new AbstractTextColumnWithTooltip<VDS>() {
+            AbstractTextColumn<VDS> spmColumn = new AbstractTextColumn<VDS>() {
                 @Override
                 public String getValue(VDS object) {
                     int value = object.getVdsSpmPriority();

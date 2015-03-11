@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractObjectNameColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RoleModelProvider;
@@ -148,7 +148,7 @@ public class RoleView extends Composite {
         this.table = new SimpleActionTable<Role>(roleModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
-        AbstractTextColumnWithTooltip<Role> nameColumn = new AbstractTextColumnWithTooltip<Role>() {
+        AbstractTextColumn<Role> nameColumn = new AbstractTextColumn<Role>() {
             @Override
             public String getValue(Role object) {
                 return object.getName();
@@ -161,7 +161,7 @@ public class RoleView extends Composite {
 
         table.addColumn(nameColumn, constants.nameRole(), "100px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<Role> descColumn = new AbstractTextColumnWithTooltip<Role>() {
+        AbstractTextColumn<Role> descColumn = new AbstractTextColumn<Role>() {
             @Override
             public String getValue(Role object) {
                 return object.getDescription();
@@ -218,7 +218,7 @@ public class RoleView extends Composite {
         permissionTable = new SimpleActionTable<Permissions>(permissionModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
-        AbstractTextColumnWithTooltip<Permissions> userColumn = new AbstractTextColumnWithTooltip<Permissions>() {
+        AbstractTextColumn<Permissions> userColumn = new AbstractTextColumn<Permissions>() {
             @Override
             public String getValue(Permissions object) {
                 return object.getOwnerName();
@@ -226,7 +226,7 @@ public class RoleView extends Composite {
         };
         permissionTable.addColumn(userColumn, constants.userPermission());
 
-        AbstractTextColumnWithTooltip<Permissions> permissionColumn = new AbstractObjectNameColumn<Permissions>() {
+        AbstractTextColumn<Permissions> permissionColumn = new AbstractObjectNameColumn<Permissions>() {
             @Override
             protected Object[] getRawValue(Permissions object) {
                 return new Object[] { object.getObjectType(), object.getObjectName() };

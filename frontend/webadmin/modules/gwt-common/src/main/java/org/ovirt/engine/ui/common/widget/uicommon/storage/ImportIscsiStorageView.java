@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.header.SelectAllCheckBoxHeader;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -123,7 +123,7 @@ public class ImportIscsiStorageView extends AbstractStorageView<ImportIscsiStora
 
         addTargetsSelectionColumn();
 
-        AbstractTextColumnWithTooltip<SanTargetModel> iqnColumn = new AbstractTextColumnWithTooltip<SanTargetModel>() {
+        AbstractTextColumn<SanTargetModel> iqnColumn = new AbstractTextColumn<SanTargetModel>() {
             @Override
             public String getValue(SanTargetModel model) {
                 return model.getEntity().getiqn();
@@ -131,7 +131,7 @@ public class ImportIscsiStorageView extends AbstractStorageView<ImportIscsiStora
         };
         targetsTable.addColumn(iqnColumn, constants.iqn(), "60%"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<SanTargetModel> addressColumn = new AbstractTextColumnWithTooltip<SanTargetModel>() {
+        AbstractTextColumn<SanTargetModel> addressColumn = new AbstractTextColumn<SanTargetModel>() {
             @Override
             public String getValue(SanTargetModel model) {
                 return model.getEntity().getconnection();
@@ -139,7 +139,7 @@ public class ImportIscsiStorageView extends AbstractStorageView<ImportIscsiStora
         };
         targetsTable.addColumn(addressColumn, constants.addressSanStorage(), "130px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<SanTargetModel> portColumn = new AbstractTextColumnWithTooltip<SanTargetModel>() {
+        AbstractTextColumn<SanTargetModel> portColumn = new AbstractTextColumn<SanTargetModel>() {
             @Override
             public String getValue(SanTargetModel model) {
                 return model.getEntity().getport();
@@ -203,7 +203,7 @@ public class ImportIscsiStorageView extends AbstractStorageView<ImportIscsiStora
         storageDomainsTable = new ListModelObjectCellTable<StorageDomain, ListModel>(true, true);
         storageDomainsTable.enableColumnResizing();
 
-        AbstractTextColumnWithTooltip<StorageDomain> nameColumn = new AbstractTextColumnWithTooltip<StorageDomain>() {
+        AbstractTextColumn<StorageDomain> nameColumn = new AbstractTextColumn<StorageDomain>() {
             @Override
             public String getValue(StorageDomain object) {
                 return object.getStorageName();
@@ -211,7 +211,7 @@ public class ImportIscsiStorageView extends AbstractStorageView<ImportIscsiStora
         };
         storageDomainsTable.addColumn(nameColumn, constants.storageName(), "50%"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<StorageDomain> storageIdColumn = new AbstractTextColumnWithTooltip<StorageDomain>() {
+        AbstractTextColumn<StorageDomain> storageIdColumn = new AbstractTextColumn<StorageDomain>() {
             @Override
             public String getValue(StorageDomain object) {
                 return object.getId().toString();

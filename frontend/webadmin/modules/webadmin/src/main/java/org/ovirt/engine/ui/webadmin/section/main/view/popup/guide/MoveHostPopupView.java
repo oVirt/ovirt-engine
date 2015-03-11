@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MoveHost;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -73,7 +73,7 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
         table = new EntityModelCellTable<>(true);
         table.setWidth("100%", true); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<EntityModel<VDS>> nameColumn = new AbstractTextColumnWithTooltip<EntityModel<VDS>>() {
+        AbstractTextColumn<EntityModel<VDS>> nameColumn = new AbstractTextColumn<EntityModel<VDS>>() {
             @Override
             public String getValue(EntityModel<VDS> object) {
                 return object.getEntity().getName();
@@ -81,7 +81,7 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
         };
         table.addColumn(nameColumn, constants.nameHost());
 
-        AbstractTextColumnWithTooltip<EntityModel<VDS>> hostColumn = new AbstractTextColumnWithTooltip<EntityModel<VDS>>() {
+        AbstractTextColumn<EntityModel<VDS>> hostColumn = new AbstractTextColumn<EntityModel<VDS>>() {
             @Override
             public String getValue(EntityModel<VDS> object) {
                 return object.getEntity().getHostName();
@@ -89,7 +89,7 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
         };
         table.addColumn(hostColumn, constants.ipHost());
 
-        AbstractTextColumnWithTooltip<EntityModel<VDS>> statusColumn = new AbstractEnumColumn<EntityModel<VDS>, VDSStatus>() {
+        AbstractTextColumn<EntityModel<VDS>> statusColumn = new AbstractEnumColumn<EntityModel<VDS>, VDSStatus>() {
             @Override
             public VDSStatus getRawValue(EntityModel<VDS> object) {
                 return object.getEntity().getStatus();

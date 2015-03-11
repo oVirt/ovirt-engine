@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractNullableNumberColu
 import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlWithSafeHtmlTooltipColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSumUpColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
@@ -84,7 +84,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
         statisticsTable = new EntityModelCellTable<ListModel>(false, true);
         statisticsTable.enableColumnResizing();
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> rxColumn = new AbstractRxTxRateColumn<VmNetworkInterface>() {
+        AbstractTextColumn<VmNetworkInterface> rxColumn = new AbstractRxTxRateColumn<VmNetworkInterface>() {
             @Override
             protected Double getRate(VmNetworkInterface object) {
                 return object.getStatistics().getReceiveRate();
@@ -103,7 +103,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
         statisticsTable.addColumn(rxColumn,
                 templates.sub(constants.rxRate(), constants.mbps()), "100px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> txColumn = new AbstractRxTxRateColumn<VmNetworkInterface>() {
+        AbstractTextColumn<VmNetworkInterface> txColumn = new AbstractRxTxRateColumn<VmNetworkInterface>() {
             @Override
             protected Double getRate(VmNetworkInterface object) {
                 return object.getStatistics().getTransmitRate();
@@ -140,7 +140,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
 
         statisticsTable.addColumn(totalTxColumn, templates.sub(constants.txTotal(), constants.bytes()), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmNetworkInterface> dropsColumn = new AbstractSumUpColumn<VmNetworkInterface>() {
+        AbstractTextColumn<VmNetworkInterface> dropsColumn = new AbstractSumUpColumn<VmNetworkInterface>() {
             @Override
             protected Double[] getRawValue(VmNetworkInterface object) {
                 Double receiveDropRate = object != null ? object.getStatistics().getReceiveDropRate() : null;
@@ -160,7 +160,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
         guestAgentDataTable = new EntityModelCellTable<ListModel>(false, true);
         guestAgentDataTable.enableColumnResizing();
 
-        AbstractTextColumnWithTooltip<VmGuestAgentInterface> nameColumn = new AbstractTextColumnWithTooltip<VmGuestAgentInterface>() {
+        AbstractTextColumn<VmGuestAgentInterface> nameColumn = new AbstractTextColumn<VmGuestAgentInterface>() {
 
             @Override
             public String getValue(VmGuestAgentInterface object) {
@@ -222,7 +222,7 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
         guestAgentDataTable.addColumn(ipv6Column,
                 constants.ipv6VmGuestAgent(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<VmGuestAgentInterface> macColumn = new AbstractTextColumnWithTooltip<VmGuestAgentInterface>() {
+        AbstractTextColumn<VmGuestAgentInterface> macColumn = new AbstractTextColumn<VmGuestAgentInterface>() {
 
             @Override
             public String getValue(VmGuestAgentInterface object) {

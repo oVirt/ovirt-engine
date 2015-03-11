@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractObjectNameColumn;
 import org.ovirt.engine.ui.common.widget.table.column.PermissionTypeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserPermissionListModel;
@@ -42,7 +42,7 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, Pe
     void initTable(ApplicationConstants constants) {
         getTable().addColumn(new PermissionTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<Permissions> roleColumn = new AbstractTextColumnWithTooltip<Permissions>() {
+        AbstractTextColumn<Permissions> roleColumn = new AbstractTextColumn<Permissions>() {
             @Override
             public String getValue(Permissions object) {
                 return object.getRoleName();
@@ -51,7 +51,7 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, Pe
         roleColumn.makeSortable();
         getTable().addColumn(roleColumn, constants.rolePermission());
 
-        AbstractTextColumnWithTooltip<Permissions> permissionColumn = new AbstractObjectNameColumn<Permissions>() {
+        AbstractTextColumn<Permissions> permissionColumn = new AbstractObjectNameColumn<Permissions>() {
             @Override
             protected Object[] getRawValue(Permissions object) {
                 return new Object[] { object.getObjectType(), object.getObjectName() };
@@ -60,7 +60,7 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, Pe
         permissionColumn.makeSortable();
         getTable().addColumn(permissionColumn, constants.objectPermission());
 
-        AbstractTextColumnWithTooltip<Permissions> inheritedColumn = new AbstractGroupNameColumn<Permissions>() {
+        AbstractTextColumn<Permissions> inheritedColumn = new AbstractGroupNameColumn<Permissions>() {
             @Override
             protected Object[] getRawValue(Permissions object) {
                 return new Object[] { getDetailModel().getEntity(), object.getad_element_id(), object.getOwnerName() };

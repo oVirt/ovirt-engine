@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.searchbackend.VdcUserConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.frontend.utils.FormatUtils;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
@@ -36,7 +36,7 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
 
         getTable().addColumn(new UserStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<DbUser> firstNameColumn = new AbstractTextColumnWithTooltip<DbUser>() {
+        AbstractTextColumn<DbUser> firstNameColumn = new AbstractTextColumn<DbUser>() {
             @Override
             public String getValue(DbUser object) {
                 return object.getFirstName();
@@ -45,7 +45,7 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
         firstNameColumn.makeSortable(VdcUserConditionFieldAutoCompleter.FIRST_NAME);
         getTable().addColumn(firstNameColumn, constants.firstnameUser(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<DbUser> lastNameColumn = new AbstractTextColumnWithTooltip<DbUser>() {
+        AbstractTextColumn<DbUser> lastNameColumn = new AbstractTextColumn<DbUser>() {
             @Override
             public String getValue(DbUser object) {
                 return object.getLastName();
@@ -54,7 +54,7 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
         lastNameColumn.makeSortable(VdcUserConditionFieldAutoCompleter.LAST_NAME);
         getTable().addColumn(lastNameColumn, constants.lastNameUser(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<DbUser> userNameColumn = new AbstractTextColumnWithTooltip<DbUser>() {
+        AbstractTextColumn<DbUser> userNameColumn = new AbstractTextColumn<DbUser>() {
             @Override
             public String getValue(DbUser object) {
                 return FormatUtils.getFullLoginName(object);
@@ -63,7 +63,7 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
         userNameColumn.makeSortable(VdcUserConditionFieldAutoCompleter.USER_NAME);
         getTable().addColumn(userNameColumn, constants.userNameUser(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<DbUser> authzColumn = new AbstractTextColumnWithTooltip<DbUser>() {
+        AbstractTextColumn<DbUser> authzColumn = new AbstractTextColumn<DbUser>() {
             @Override
             public String getValue(DbUser object) {
                 return object.getDomain();
@@ -72,7 +72,7 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
         authzColumn.makeSortable(VdcUserConditionFieldAutoCompleter.DIRECTORY);
         getTable().addColumn(authzColumn, constants.authz(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<DbUser> namespaceColumn = new AbstractTextColumnWithTooltip<DbUser>() {
+        AbstractTextColumn<DbUser> namespaceColumn = new AbstractTextColumn<DbUser>() {
             @Override
             public String getValue(DbUser object) {
                 return object.getNamespace();
@@ -81,7 +81,7 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
         namespaceColumn.makeSortable();
         getTable().addColumn(namespaceColumn, constants.namespace(), "150px"); //$NON-NLS-1$
 
-        getTable().addColumn(new AbstractTextColumnWithTooltip<DbUser>() {
+        getTable().addColumn(new AbstractTextColumn<DbUser>() {
             @Override
             public String getValue(DbUser object) {
                 return object.getEmail();

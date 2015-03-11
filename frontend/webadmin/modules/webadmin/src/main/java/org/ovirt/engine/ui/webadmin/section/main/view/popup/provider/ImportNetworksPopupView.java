@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEditTextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractListModelListBoxColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.header.CheckboxHeader;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.ImportNetworksModel;
@@ -106,7 +106,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
             final ApplicationTemplates templates,
             final ApplicationResources resources) {
 
-        providerNetworks.addColumn(new AbstractTextColumnWithTooltip<ExternalNetwork>() {
+        providerNetworks.addColumn(new AbstractTextColumn<ExternalNetwork>() {
             @Override
             public String getValue(ExternalNetwork model) {
                 return model.getDisplayName();
@@ -125,7 +125,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
             }
         }, constants.nameNetworkHeader());
 
-        Column<ExternalNetwork, String> idColumn = new AbstractTextColumnWithTooltip<ExternalNetwork>() {
+        Column<ExternalNetwork, String> idColumn = new AbstractTextColumn<ExternalNetwork>() {
             @Override
             public String getValue(ExternalNetwork model) {
                 return model.getNetwork().getProvidedBy().getExternalId();

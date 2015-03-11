@@ -5,7 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractBooleanColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.AffinityGroupListModel;
@@ -26,7 +26,7 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
     private void initTable(final ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        AbstractTextColumnWithTooltip<AffinityGroup> nameColumn = new AbstractTextColumnWithTooltip<AffinityGroup>() {
+        AbstractTextColumn<AffinityGroup> nameColumn = new AbstractTextColumn<AffinityGroup>() {
             @Override
             public String getValue(AffinityGroup object) {
                 return object.getName();
@@ -35,7 +35,7 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameAffinityGroup(), "150px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<AffinityGroup> descColumn = new AbstractTextColumnWithTooltip<AffinityGroup>() {
+        AbstractTextColumn<AffinityGroup> descColumn = new AbstractTextColumn<AffinityGroup>() {
             @Override
             public String getValue(AffinityGroup object) {
                 return object.getDescription();
@@ -66,7 +66,7 @@ public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDeta
         enforceColumn.makeSortable();
         getTable().addColumn(enforceColumn, constants.enforceAffinityGroup(), "100px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithTooltip<AffinityGroup> membersColumn = new AbstractTextColumnWithTooltip<AffinityGroup>() {
+        AbstractTextColumn<AffinityGroup> membersColumn = new AbstractTextColumn<AffinityGroup>() {
             @Override
             public String getValue(AffinityGroup object) {
                 String join = join(getEntityNames(object), ", "); //$NON-NLS-1$
