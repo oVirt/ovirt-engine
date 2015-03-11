@@ -18,9 +18,9 @@ import com.google.gwt.user.cellview.client.Column;
  * @param <C>
  *            Cell data type.
  */
-public abstract class AbstractColumn<T, C> extends Column<T, C> implements ColumnWithElementId {
+public abstract class AbstractTooltipColumn<T, C> extends Column<T, C> implements ColumnWithElementId {
 
-    public AbstractColumn(TooltipCell<C> cell) {
+    public AbstractTooltipColumn(TooltipCell<C> cell) {
         super(cell);
     }
 

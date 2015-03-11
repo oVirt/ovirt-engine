@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.Commented;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.table.cell.ImageResourceCell2;
 import org.ovirt.engine.ui.common.widget.table.cell.TooltipCell;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTooltipColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
@@ -17,7 +17,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
  *
  * @param <T> row type
  */
-public class CommentColumn2<T extends Commented> extends AbstractColumn<T, ImageResource> {
+public class CommentColumn2<T extends Commented> extends AbstractTooltipColumn<T, ImageResource> {
 
     private static final CommonApplicationResources RESOURCES = GWT.create(CommonApplicationResources.class);
 
@@ -45,7 +45,7 @@ public class CommentColumn2<T extends Commented> extends AbstractColumn<T, Image
     /**
      * Using some row value of type T, build a SafeHtml tooltip to render when this column is moused over.
      *
-     * @see org.ovirt.engine.ui.common.widget.table.column.AbstractColumn#getTooltip(java.lang.Object)
+     * @see org.ovirt.engine.ui.common.widget.table.column.AbstractTooltipColumn#getTooltip(java.lang.Object)
      */
     @Override
     public SafeHtml getTooltip(T value) {
