@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
 import org.ovirt.engine.ui.common.widget.ImageWithDecorator;
-import org.ovirt.engine.ui.common.widget.table.cell.DecoratedImageResouceCell;
+import org.ovirt.engine.ui.common.widget.table.cell.DecoratedImageResourceCell;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 
 import com.google.gwt.user.cellview.client.Column;
@@ -9,12 +9,12 @@ import com.google.gwt.user.cellview.client.Column;
 public abstract class AbstractDecoratedImageColumn<T> extends Column<T, ImageWithDecorator> {
 
     public AbstractDecoratedImageColumn() {
-        super(new DecoratedImageResouceCell());
+        super(new DecoratedImageResourceCell());
     }
 
     @Override
-    public DecoratedImageResouceCell getCell() {
-        return (DecoratedImageResouceCell) super.getCell();
+    public DecoratedImageResourceCell getCell() {
+        return (DecoratedImageResourceCell) super.getCell();
     }
 
     public void setTitle(String title) {
