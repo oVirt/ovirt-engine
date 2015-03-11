@@ -20,12 +20,20 @@ public class Permissions extends IVdcQueryable implements BusinessEntity<Guid> {
 
     private String namespace;
 
+    /**
+     * WARNING: When this constructor is invoked inside GWT compiled code, please set {@code id} to
+     * {@code Guid.Empty} before sending this instance to backend, otherwise nasty NPE will be raised.
+     */
     public Permissions() {
         this (Guid.Empty, Guid.Empty, null, null);
     }
 
+    /**
+     * WARNING: When this constructor is invoked inside GWT compiled code, please set {@code id} to
+     * {@code Guid.Empty} before sending this instance to backend, otherwise nasty NPE will be raised.
+     */
     public Permissions(Guid adElementId, Guid roleId, Guid objectId, VdcObjectType objectType) {
-        this.id = Guid.Empty;
+        this.id = Guid.newGuid();
         this.adElementId = adElementId;
         this.roleId = roleId;
         this.objectId = objectId;
