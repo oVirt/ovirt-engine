@@ -12,20 +12,36 @@ import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 
 public interface CommandCRUDOperations {
-    public boolean hasCommandEntitiesWithRootCommandId(Guid rootCommandId);
-    public CommandEntity createCommandEntity(Guid cmdId, VdcActionType actionType, VdcActionParametersBase params);
-    public List<Guid> getChildCommandIds(Guid commandId);
-    public CommandEntity getCommandEntity(Guid commandId);
-    public CommandStatus getCommandStatus(Guid commandId);
-    public List<CommandEntity> getCommandsWithCallBackEnabled();
-    public void persistCommand(CommandEntity cmdEntity);
-    public void persistCommand(CommandEntity cmdEntity, CommandContext cmdContext);
-    public CommandBase<?> retrieveCommand(Guid commandId);
-    public void removeCommand(Guid commandId);
-    public void removeAllCommandsInHierarchy(Guid commandId);
-    public void removeAllCommandsBeforeDate(DateTime cutoff);
-    public void updateCommandStatus(Guid commandId, CommandStatus status);
-    public void updateCommandExecuted(Guid commandId);
-    public void updateCallbackNotified(Guid commandId);
-    public List<CommandEntity> getChildCmdsByParentCmdId(Guid cmdId);
+
+    boolean hasCommandEntitiesWithRootCommandId(Guid rootCommandId);
+
+    CommandEntity createCommandEntity(Guid cmdId, VdcActionType actionType, VdcActionParametersBase params);
+
+    List<Guid> getChildCommandIds(Guid commandId);
+
+    CommandEntity getCommandEntity(Guid commandId);
+
+    CommandStatus getCommandStatus(Guid commandId);
+
+    List<CommandEntity> getCommandsWithCallBackEnabled();
+
+    void persistCommand(CommandEntity cmdEntity);
+
+    void persistCommand(CommandEntity cmdEntity, CommandContext cmdContext);
+
+    CommandBase<?> retrieveCommand(Guid commandId);
+
+    void removeCommand(Guid commandId);
+
+    void removeAllCommandsInHierarchy(Guid commandId);
+
+    void removeAllCommandsBeforeDate(DateTime cutoff);
+
+    void updateCommandStatus(Guid commandId, CommandStatus status);
+
+    void updateCommandExecuted(Guid commandId);
+
+    void updateCallbackNotified(Guid commandId);
+
+    List<CommandEntity> getChildCmdsByParentCmdId(Guid cmdId);
 }
