@@ -2,11 +2,9 @@ package org.ovirt.engine.ui.common.idhandler;
 
 import com.google.gwt.cell.client.Cell;
 
-// TODO I think all of our custom cells should implement this. No reason
-// not to have IDs on every table cell.
-
 /**
  * A cell that sets an ID when it renders.
+ * TODO All of our custom cells should implement this.
  *
  * @param <C>
  *            Cell data type.
@@ -25,7 +23,13 @@ public interface CellWithElementId<C> extends Cell<C> {
      */
     public void setColumnId(String columnId);
 
+    /**
+     * Get the element id prefix.
+     */
     public String getElementIdPrefix();
 
+    /**
+     * Get the column id.
+     */
     public String getColumnId();
 }
