@@ -2,12 +2,9 @@ package org.ovirt.engine.ui.common.widget.table.column;
 
 import java.util.Comparator;
 
-import org.ovirt.engine.ui.common.widget.table.cell.EventHandlingCell;
-import org.ovirt.engine.ui.common.widget.table.cell.RadioboxCell;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 import com.google.gwt.cell.client.Cell.Context;
-import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
@@ -22,33 +19,7 @@ public abstract class AbstractCheckboxColumn<T> extends AbstractSortableColumn<T
     private boolean centered = false;
     private boolean multipleSelectionAllowed = true;
 
-    static class EnabledDisabledCheckboxCell extends CheckboxCell implements EventHandlingCell {
-
-        public EnabledDisabledCheckboxCell() {
-            super(true, false);
-        }
-
-        @Override
-        public boolean handlesEvent(CellPreviewEvent<EntityModel> event) {
-            return AbstractCheckboxColumn.handlesEvent(event);
-        }
-
-    }
-
-    static class EnabledDisabledRadioCell extends RadioboxCell implements EventHandlingCell {
-
-        public EnabledDisabledRadioCell() {
-            super(true, false);
-        }
-
-        @Override
-        public boolean handlesEvent(CellPreviewEvent<EntityModel> event) {
-            return AbstractCheckboxColumn.handlesEvent(event);
-        }
-
-    }
-
-    private static boolean handlesEvent(CellPreviewEvent<EntityModel> event) {
+    static boolean handlesEvent(CellPreviewEvent<EntityModel> event) {
         NativeEvent nativeEvent = event.getNativeEvent();
         if (!BrowserEvents.CLICK.equals(nativeEvent.getType())) {
             return false;
