@@ -16,7 +16,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
 
-public class InterfaceLabelWithToolTip extends Composite {
+public class InterfaceLabel extends Composite {
     private final static ApplicationResources resources = GWT.create(ApplicationResources.class);
     private final static ApplicationTemplates templates = GWT.create(ApplicationTemplates.class);
     private final static SafeHtml labelImage =
@@ -24,7 +24,7 @@ public class InterfaceLabelWithToolTip extends Composite {
 
     private final LabelWithCustomToolTip label;
 
-    public InterfaceLabelWithToolTip(VdsNetworkInterface iface) {
+    public InterfaceLabel(VdsNetworkInterface iface) {
         label = createInterfaceLabel(iface);
         initWidget(label);
     }
@@ -42,7 +42,7 @@ public class InterfaceLabelWithToolTip extends Composite {
     }
 
     private SafeHtml createLabelToolTip(Set<String> labels) {
-        SafeHtmlBuilder tooltip = new SafeHtmlBuilder(); //$NON-NLS-1$
+        SafeHtmlBuilder tooltip = new SafeHtmlBuilder();
         boolean isFirst = true;
 
         if (labels == null) {

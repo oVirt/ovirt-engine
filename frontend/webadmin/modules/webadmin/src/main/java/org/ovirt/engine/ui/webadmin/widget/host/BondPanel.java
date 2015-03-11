@@ -41,7 +41,7 @@ public class BondPanel extends TogglePanel {
             setCellWidth(bondIcon, "20%"); //$NON-NLS-1$
 
             // Bond name
-            add(new InterfaceLabelWithToolTip(lineModel.getInterface()));
+            add(new InterfaceLabel(lineModel.getInterface()));
         } else {
             add(new Label("")); //$NON-NLS-1$
         }
