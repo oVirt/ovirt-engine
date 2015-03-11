@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.searchbackend.NetworkConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlWithSafeHtmlTooltipColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -39,7 +39,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
     private final SafeHtml vmImage;
     private final SafeHtml emptyImage;
 
-    private AbstractLinkColumnWithTooltip<NetworkView> providerColumn;
+    private AbstractLinkColumn<NetworkView> providerColumn;
 
     @Inject
     public MainTabNetworkView(MainModelProvider<NetworkView, NetworkListModel> modelProvider,
@@ -138,7 +138,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         labelColumn.makeSortable(NetworkConditionFieldAutoCompleter.LABEL);
         getTable().addColumn(labelColumn, constants.networkLabelNetworksTab(), "200px"); //$NON-NLS-1$
 
-        providerColumn = new AbstractLinkColumnWithTooltip<NetworkView>() {
+        providerColumn = new AbstractLinkColumn<NetworkView>() {
             @Override
             public String getValue(NetworkView object) {
                 return object.getProvidedBy() == null ? "" : object.getProviderName(); //$NON-NLS-1$

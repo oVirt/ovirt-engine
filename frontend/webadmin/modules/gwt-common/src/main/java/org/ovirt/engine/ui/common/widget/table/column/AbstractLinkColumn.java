@@ -11,17 +11,17 @@ import com.google.gwt.cell.client.FieldUpdater;
  * @param <T>
  *            the row type.
  */
-public abstract class AbstractLinkColumnWithTooltip<T> extends AbstractTextColumn<T> {
+public abstract class AbstractLinkColumn<T> extends AbstractTextColumn<T> {
 
-    public AbstractLinkColumnWithTooltip() {
+    public AbstractLinkColumn() {
         this(null);
     }
 
-    public AbstractLinkColumnWithTooltip(FieldUpdater<T, String> fieldUpdater) {
+    public AbstractLinkColumn(FieldUpdater<T, String> fieldUpdater) {
         this(TextCell.UNLIMITED_LENGTH, fieldUpdater);
     }
 
-    public AbstractLinkColumnWithTooltip(int maxTextLength, FieldUpdater<T, String> fieldUpdater) {
+    public AbstractLinkColumn(int maxTextLength, FieldUpdater<T, String> fieldUpdater) {
         super(new LinkCell(maxTextLength));
         setFieldUpdater(fieldUpdater);
     }

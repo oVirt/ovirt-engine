@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
@@ -29,7 +29,7 @@ public class SubTabProviderNetworkView extends AbstractSubTabTableView<Provider,
 
     private final ApplicationConstants constants;
 
-    private AbstractLinkColumnWithTooltip<NetworkView> nameColumn;
+    private AbstractLinkColumn<NetworkView> nameColumn;
 
     @Inject
     public SubTabProviderNetworkView(SearchableDetailModelProvider<NetworkView, ProviderListModel, ProviderNetworkListModel> modelProvider,
@@ -49,7 +49,7 @@ public class SubTabProviderNetworkView extends AbstractSubTabTableView<Provider,
     void initTable() {
         getTable().enableColumnResizing();
 
-        nameColumn = new AbstractLinkColumnWithTooltip<NetworkView>() {
+        nameColumn = new AbstractLinkColumn<NetworkView>() {
             @Override
             public String getValue(NetworkView object) {
                 return object.getName();
