@@ -25,7 +25,7 @@ public class AttachNetworkToVdsGroupCommand extends NetworkClusterCommandBase<At
         super(attachNetworkToVdsGroupParameter, cmdContext);
     }
 
-    protected AttachNetworkToVdsGroupCommand(AttachNetworkToVdsGroupParameter attachNetworkToVdsGroupParameter) {
+    public AttachNetworkToVdsGroupCommand(AttachNetworkToVdsGroupParameter attachNetworkToVdsGroupParameter) {
         super(attachNetworkToVdsGroupParameter);
     }
 
