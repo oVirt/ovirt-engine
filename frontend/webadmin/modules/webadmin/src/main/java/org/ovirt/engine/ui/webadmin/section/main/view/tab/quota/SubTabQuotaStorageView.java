@@ -10,8 +10,7 @@ import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
-import org.ovirt.engine.ui.common.widget.table.cell.TextCellWithEditableTooltip;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumnWithEditableTooltip;
+import org.ovirt.engine.ui.common.widget.table.cell.TextCellWithTooltip;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaStorageListModel;
@@ -58,7 +57,7 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
         nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameQuotaStorage(), "400px"); //$NON-NLS-1$
 
-        AbstractTextColumnWithEditableTooltip<QuotaStorage> usedColumn = new AbstractTextColumnWithEditableTooltip<QuotaStorage>() {
+        AbstractTextColumn<QuotaStorage> usedColumn = new AbstractTextColumn<QuotaStorage>() {
             @Override
             public String getValue(QuotaStorage object) {
                 if (object.getStorageSizeGB() == null) {
@@ -76,10 +75,10 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
             }
 
             @Override
-            public TextCellWithEditableTooltip getCell() {
-                TextCellWithEditableTooltip textCellWithEditableTooltip = super.getCell();
-                textCellWithEditableTooltip.setTitle(constants.quotaCalculationsMessage());
-                return textCellWithEditableTooltip;
+            public TextCellWithTooltip getCell() {
+                TextCellWithTooltip TextCellWithTooltip = super.getCell();
+                TextCellWithTooltip.setTitle(constants.quotaCalculationsMessage());
+                return TextCellWithTooltip;
             }
         };
         usedColumn.makeSortable(new Comparator<QuotaStorage>() {
