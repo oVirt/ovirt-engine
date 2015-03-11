@@ -19,7 +19,7 @@ import com.google.gwt.view.client.CellPreviewEvent;
 
 public abstract class AbstractCheckboxColumn<T> extends AbstractSortableColumn<T, Boolean> {
 
-    private boolean isCentralized = false;
+    private boolean centered = false;
     private boolean multipleSelectionAllowed = true;
 
     static class EnabledDisabledCheckboxCell extends CheckboxCell implements EventHandlingCell {
@@ -70,9 +70,9 @@ public abstract class AbstractCheckboxColumn<T> extends AbstractSortableColumn<T
         super(new EnabledDisabledCheckboxCell());
     }
 
-    public AbstractCheckboxColumn(boolean isCentralized) {
+    public AbstractCheckboxColumn(boolean centered) {
         super(new EnabledDisabledCheckboxCell());
-        this.isCentralized = isCentralized;
+        this.centered = centered;
     }
 
     public AbstractCheckboxColumn(FieldUpdater<T, Boolean> fieldUpdater) {
@@ -88,7 +88,7 @@ public abstract class AbstractCheckboxColumn<T> extends AbstractSortableColumn<T
 
     @Override
     public void render(Context context, T object, SafeHtmlBuilder sb) {
-        if (isCentralized) {
+        if (centered) {
             sb.appendHtmlConstant("<div style='text-align: center'>"); //$NON-NLS-1$
         }
 
@@ -108,7 +108,7 @@ public abstract class AbstractCheckboxColumn<T> extends AbstractSortableColumn<T
             super.render(context, object, sb);
         }
 
-        if (isCentralized) {
+        if (centered) {
             sb.appendHtmlConstant("</div>"); //$NON-NLS-1$
         }
     }
