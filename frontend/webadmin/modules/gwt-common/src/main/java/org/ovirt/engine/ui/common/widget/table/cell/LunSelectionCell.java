@@ -23,7 +23,7 @@ public class LunSelectionCell extends AbstractCell<LunModel> {
 
     @Override
     public void render(Context context, LunModel value, SafeHtmlBuilder sb) {
-        StyledImageResourceCell imageCell = new StyledImageResourceCell();
+        ImageResourceCell imageCell = new ImageResourceCell();
         imageCell.setStyle("text-align: center;"); //$NON-NLS-1$
 
         if (value.getIsIncluded()) {

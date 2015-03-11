@@ -1,7 +1,6 @@
-package org.ovirt.engine.ui.common.widget.table.column;
+package org.ovirt.engine.ui.common.widget.table.cell;
 
 import org.ovirt.engine.ui.common.widget.table.HasStyleClass;
-import org.ovirt.engine.ui.common.widget.table.cell.AbstractTooltipCell;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
@@ -12,10 +11,10 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
- * Cell that renders and ImageResource. Supports setting a style / class. Supports tooltips.
- * TODO: this will replace StyledImageResourceCell. Delete it and change references.
+ * Cell that renders an ImageResource. Supports setting a style / class. Supports tooltips.
+ * TODO: this will replace ImageResourceCell in a follow-up patch.
  */
-public class ImageResourceCell extends AbstractTooltipCell<ImageResource> implements HasStyleClass {
+public class ImageResourceCell2 extends AbstractTooltipCell<ImageResource> implements HasStyleClass {
 
     interface CellTemplate extends SafeHtmlTemplates {
         @Template("<div id=\"{0}\" style=\"{1}\" class=\"{2}\">{3}</div>")
@@ -27,7 +26,7 @@ public class ImageResourceCell extends AbstractTooltipCell<ImageResource> implem
 
     private CellTemplate template;
 
-    public ImageResourceCell() {
+    public ImageResourceCell2() {
         super();
 
         // Delay cell template creation until the first time it's needed

@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import org.ovirt.engine.core.common.businessentities.Commented;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.widget.table.cell.ImageResourceCell2;
 import org.ovirt.engine.ui.common.widget.table.cell.TooltipCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
-import org.ovirt.engine.ui.common.widget.table.column.ImageResourceCell;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
@@ -22,7 +22,7 @@ public class CommentColumn2<T extends Commented> extends AbstractColumn<T, Image
     private static final CommonApplicationResources RESOURCES = GWT.create(CommonApplicationResources.class);
 
     public CommentColumn2() {
-        super(new ImageResourceCell());
+        super(new ImageResourceCell2());
     }
 
     public CommentColumn2(TooltipCell<ImageResource> cell) {

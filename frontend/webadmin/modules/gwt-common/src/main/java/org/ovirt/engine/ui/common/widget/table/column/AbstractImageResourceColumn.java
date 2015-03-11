@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.common.widget.table.column;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
-import org.ovirt.engine.ui.common.widget.table.cell.StyledImageResourceCell;
+import org.ovirt.engine.ui.common.widget.table.cell.ImageResourceCell;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 
 import com.google.gwt.core.client.GWT;
@@ -12,7 +12,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
- * Column for rendering {@link ImageResource} instances using {@link StyledImageResourceCell}.
+ * Column for rendering {@link ImageResource} instances using {@link ImageResourceCell}.
  *
  * @param <T>
  *            Table row data type.
@@ -24,12 +24,12 @@ public abstract class AbstractImageResourceColumn<T> extends AbstractSortableCol
     private static final CommonApplicationTemplates TEMPLATES = GWT.create(CommonApplicationTemplates.class);
 
     public AbstractImageResourceColumn() {
-        super(new StyledImageResourceCell());
+        super(new ImageResourceCell());
     }
 
     @Override
-    public StyledImageResourceCell getCell() {
-        return (StyledImageResourceCell) super.getCell();
+    public ImageResourceCell getCell() {
+        return (ImageResourceCell) super.getCell();
     }
 
     public void setTitle(String title) {
