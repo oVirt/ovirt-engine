@@ -6,9 +6,11 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class AsyncTaskCreationInfo implements Serializable {
 
-    private Guid vdsmTaskID;
-    private Guid privateStoragePoolID;
-    private AsyncTaskType privateTaskType;
+    private static final long serialVersionUID = -4968721903478353741L;
+
+    private Guid vdsmTaskId;
+    private Guid storagePoolId;
+    private AsyncTaskType taskType;
 
     /**
      * The id of the step which monitors the task execution
@@ -26,27 +28,27 @@ public class AsyncTaskCreationInfo implements Serializable {
     }
 
     public Guid getVdsmTaskId() {
-        return vdsmTaskID;
+        return vdsmTaskId;
     }
 
-    public void setVdsmTaskId(Guid value) {
-        vdsmTaskID = value;
+    public void setVdsmTaskId(Guid vdsmTaskId) {
+        this.vdsmTaskId = vdsmTaskId;
     }
 
     public AsyncTaskType getTaskType() {
-        return privateTaskType;
+        return taskType;
     }
 
-    public void setTaskType(AsyncTaskType value) {
-        privateTaskType = value;
+    public void setTaskType(AsyncTaskType taskType) {
+        this.taskType = taskType;
     }
 
     public Guid getStoragePoolID() {
-        return privateStoragePoolID;
+        return storagePoolId;
     }
 
-    public void setStoragePoolID(Guid value) {
-        privateStoragePoolID = value;
+    public void setStoragePoolID(Guid storagePoolId) {
+        this.storagePoolId = storagePoolId;
     }
 
     public Guid getStepId() {
