@@ -120,7 +120,9 @@ Create or replace FUNCTION UpdateJob(
     v_start_time TIMESTAMP WITH TIME ZONE,
     v_end_time TIMESTAMP WITH TIME ZONE,
     v_last_update_time TIMESTAMP WITH TIME ZONE,
-    v_correlation_id VARCHAR(50))
+    v_correlation_id VARCHAR(50),
+    v_is_external boolean,
+    v_is_auto_cleared boolean)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -133,7 +135,9 @@ BEGIN
         start_time = v_start_time,
         end_time = v_end_time,
         last_update_time = v_last_update_time,
-        correlation_id = v_correlation_id
+        correlation_id = v_correlation_id,
+        is_external = v_is_external,
+        is_auto_cleared = v_is_auto_cleared
     WHERE job_id = v_job_id;
 END; $procedure$
 LANGUAGE plpgsql;

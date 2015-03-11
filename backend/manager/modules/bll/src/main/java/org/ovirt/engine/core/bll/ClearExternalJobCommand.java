@@ -50,7 +50,7 @@ public class ClearExternalJobCommand <T extends VdcActionParametersBase> extends
         job = getJobDao().get((Guid) getParameters().getJobId());
         job.setAutoCleared(true);
         getJobDao().update(job);
-
+        setSucceeded(true);
     }
 
     @Override
