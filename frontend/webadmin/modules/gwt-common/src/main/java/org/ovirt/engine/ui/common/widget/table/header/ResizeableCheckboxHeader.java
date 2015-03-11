@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.widget.table.header;
 
-import org.ovirt.engine.ui.common.widget.table.cell.SafeHtmlCellWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.cell.SafeHtmlCell;
 import org.ovirt.engine.ui.common.widget.table.resize.HasResizableColumns;
 
 import com.google.gwt.cell.client.Cell.Context;
@@ -16,7 +16,7 @@ public class ResizeableCheckboxHeader<T> extends ResizableHeader<T> {
 
     public ResizeableCheckboxHeader(CheckboxHeader checkboxHeader,
             Column<T, ?> column, HasResizableColumns<T> table) {
-        super(checkboxHeader.getTitle(), column, table, new SafeHtmlCellWithTooltip(
+        super(checkboxHeader.getTitle(), column, table, new SafeHtmlCell(
                 BrowserEvents.CLICK,
                 BrowserEvents.MOUSEDOWN,
                 BrowserEvents.MOUSEMOVE,

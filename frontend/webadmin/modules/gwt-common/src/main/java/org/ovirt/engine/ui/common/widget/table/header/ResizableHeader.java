@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.widget.table.header;
 
-import org.ovirt.engine.ui.common.widget.table.cell.SafeHtmlCellWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.cell.SafeHtmlCell;
 import org.ovirt.engine.ui.common.widget.table.resize.ColumnResizeHandler;
 import org.ovirt.engine.ui.common.widget.table.resize.HasResizableColumns;
 
@@ -109,7 +109,7 @@ public class ResizableHeader<T> extends Header<SafeHtml> {
      * @param table The table containing the header/column.
      */
     public ResizableHeader(SafeHtml text, Column<T, ?> column, HasResizableColumns<T> table, boolean applyStyle) {
-        this(text, column, table, new SafeHtmlCellWithTooltip(BrowserEvents.CLICK,
+        this(text, column, table, new SafeHtmlCell(BrowserEvents.CLICK,
                 BrowserEvents.MOUSEDOWN,
                 BrowserEvents.MOUSEMOVE,
                 BrowserEvents.MOUSEOVER), applyStyle);

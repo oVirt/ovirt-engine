@@ -8,7 +8,7 @@ import java.util.Map;
 
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.system.ClientStorage;
-import org.ovirt.engine.ui.common.widget.table.cell.SafeHtmlCellWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.cell.SafeHtmlCell;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
 import org.ovirt.engine.ui.common.widget.table.header.CheckboxHeader;
 import org.ovirt.engine.ui.common.widget.table.header.ResizableHeader;
@@ -184,7 +184,7 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
     }
 
     Header<?> createSafeHtmlHeader(final SafeHtml text) {
-        return new Header<SafeHtml>(new SafeHtmlCellWithTooltip()) {
+        return new Header<SafeHtml>(new SafeHtmlCell()) {
             @Override
             public SafeHtml getValue() {
                 if (text != null && applyResizableHeaderStyle) {

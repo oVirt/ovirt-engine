@@ -11,13 +11,13 @@ import com.google.gwt.user.client.ui.HTML;
  * This cell does not escape the (SafeHtml) value when rendering cell HTML, i.e. the value is considered to be 'safe'
  * already.
  */
-public class SafeHtmlCellWithTooltip extends AbstractCellWithTooltip<SafeHtml> {
+public class SafeHtmlCell extends AbstractCellWithTooltip<SafeHtml> {
 
-    public SafeHtmlCellWithTooltip() {
+    public SafeHtmlCell() {
         super(BrowserEvents.MOUSEOVER);
     }
 
-    public SafeHtmlCellWithTooltip(String... consumedEvents) {
+    public SafeHtmlCell(String... consumedEvents) {
         super(consumedEvents);
     }
 
