@@ -757,39 +757,27 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
             getAttachStorageCommand().setIsExecutionAllowed(!getEntity().isLocal());
         }
 
-        boolean isMasterPresents = false;
-        for (StorageDomain a : items)
-        {
-            if (a.getStorageDomainType() == StorageDomainType.Master && a.getStatus() != null
-                    && a.getStatus() == StorageDomainStatus.Active)
-            {
-                isMasterPresents = true;
+        boolean isMasterPresent = false;
+        boolean isISOPresent = false;
+        boolean isBackupPresent = false;
+        for (StorageDomain domain : items) {
+            if (isDomainMasterAndActive(domain)) {
+                isMasterPresent = true;
+            } else if (domain.getStorageDomainType() == StorageDomainType.ISO) {
+                isISOPresent = true;
+            } else if (domain.getStorageDomainType() == StorageDomainType.ImportExport) {
+                isBackupPresent = true;
+            }
+
+            if (isMasterPresent && isISOPresent && isBackupPresent) {
                 break;
             }
         }
 
-        boolean isISOPresents = false;
-        for (StorageDomain a : items)
-        {
-            if (a.getStorageDomainType() == StorageDomainType.ISO)
-            {
-                isISOPresents = true;
-                break;
-            }
-        }
         getAttachISOCommand().setIsExecutionAllowed(false);
-        getAttachISOCommand().setIsExecutionAllowed(items.size() > 0 && isMasterPresents && !isISOPresents);
+        getAttachISOCommand().setIsExecutionAllowed(items.size() > 0 && isMasterPresent && !isISOPresent);
 
-        boolean isBackupPresents = false;
-        for (StorageDomain a : items)
-        {
-            if (a.getStorageDomainType() == StorageDomainType.ImportExport)
-            {
-                isBackupPresents = true;
-                break;
-            }
-        }
-        getAttachBackupCommand().setIsExecutionAllowed(items.size() > 0 && isMasterPresents && !isBackupPresents);
+        getAttachBackupCommand().setIsExecutionAllowed(items.size() > 0 && isMasterPresent && !isBackupPresent);
 
         getDetachCommand().setIsExecutionAllowed(selectedItems.size() > 0
                 && VdcActionUtils.canExecute(selectedItems,
@@ -803,6 +791,10 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
                 && VdcActionUtils.canExecute(selectedItems,
                 StorageDomain.class,
                 VdcActionType.DeactivateStorageDomainWithOvfUpdate));
+    }
+
+    private boolean isDomainMasterAndActive(StorageDomain domain) {
+        return domain.getStorageDomainType() == StorageDomainType.Master && domain.getStatus() == StorageDomainStatus.Active;
     }
 
     @Override
