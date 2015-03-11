@@ -3,12 +3,12 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
              xmlns:w="urn:import:org.ovirt.engine.ui.common.widget" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
-	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
+    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
 
-	<ui:style>
-		.container {
-			width: 100%;
-		}
+    <ui:style>
+        .container {
+            width: 100%;
+        }
 
         .errorMessageLabel {
             color: #CD2127;
@@ -19,41 +19,41 @@
         }
 
         @external obrand_diskTypePanel;
-		.obrand_diskTypePanel {
-			height: 36px;
-			width: 100%;
-			padding-top: 6px;
-			margin-bottom: 6px;
-			color: white;
-			font-weight: bold;
-			display: block;
-		}
+        .obrand_diskTypePanel {
+            height: 36px;
+            width: 100%;
+            padding-top: 6px;
+            margin-bottom: 6px;
+            color: white;
+            font-weight: bold;
+            display: block;
+        }
 
-		.mainPanel {
-			width: 100%;
-		}
+        .mainPanel {
+            width: 100%;
+        }
 
-		.isPluggedEditor {
-			position: absolute;
-			bottom: 10px;
-		}
+        .isPluggedEditor {
+            position: absolute;
+            bottom: 10px;
+        }
 
-		.attachDiskPanel {
-			position: absolute;
-			top: 40px;
-			bottom: 60px;
-			padding: 2px;
-			margin-right: 2px;
-		}
-	</ui:style>
+        .attachDiskPanel {
+            position: absolute;
+            top: 40px;
+            bottom: 60px;
+            padding: 2px;
+            margin-right: 2px;
+        }
+    </ui:style>
 
-	<g:FlowPanel addStyleNames="{style.container}">
+    <g:FlowPanel addStyleNames="{style.container}">
         <w:RadioButtonsHorizontalPanel ui:field="diskTypePanel" name="diskTypePanel" addStyleNames="{style.obrand_diskTypePanel}"/>
-		<g:VerticalPanel ui:field="attachDiskContainer" addStyleNames="{style.mainPanel}">
-			<w:ValidatedPanelWidget ui:field="attachDiskPanel" addStyleNames="{style.attachDiskPanel}" />
+        <g:VerticalPanel ui:field="attachDiskContainer" addStyleNames="{style.mainPanel}">
+            <w:ValidatedPanelWidget ui:field="attachDiskPanel" addStyleNames="{style.attachDiskPanel}" />
             <g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}" />
             <ge:EntityModelCheckBoxEditor ui:field="isPluggedEditor" addStyleNames="{style.isPluggedEditor}" />
         </g:VerticalPanel>
-	</g:FlowPanel>
+    </g:FlowPanel>
 
 </ui:UiBinder>
