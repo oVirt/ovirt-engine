@@ -14,9 +14,9 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
  * passed to a ValueUpdater.
  */
 @SuppressWarnings("deprecation")
-public class LinkCellWithTooltip extends TextCellWithTooltip {
+public class LinkCell extends TextCellWithTooltip {
 
-    public LinkCellWithTooltip(int maxTextLength) {
+    public LinkCell(int maxTextLength) {
         super(maxTextLength, BrowserEvents.MOUSEOVER, BrowserEvents.CLICK);
     }
 

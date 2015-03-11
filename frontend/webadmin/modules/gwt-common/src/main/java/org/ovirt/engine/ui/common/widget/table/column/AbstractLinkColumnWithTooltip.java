@@ -1,12 +1,12 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
-import org.ovirt.engine.ui.common.widget.table.cell.LinkCellWithTooltip;
+import org.ovirt.engine.ui.common.widget.table.cell.LinkCell;
 import org.ovirt.engine.ui.common.widget.table.cell.TextCellWithTooltip;
 
 import com.google.gwt.cell.client.FieldUpdater;
 
 /**
- * Column for displaying links using {@link LinkCellWithTooltip}.
+ * Column for displaying links using {@link LinkCell}.
  *
  * @param <T>
  *            the row type.
@@ -22,7 +22,7 @@ public abstract class AbstractLinkColumnWithTooltip<T> extends AbstractTextColum
     }
 
     public AbstractLinkColumnWithTooltip(int maxTextLength, FieldUpdater<T, String> fieldUpdater) {
-        super(new LinkCellWithTooltip(maxTextLength));
+        super(new LinkCell(maxTextLength));
         setFieldUpdater(fieldUpdater);
     }
 
