@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
-import org.ovirt.engine.ui.common.widget.table.cell.CellWithElementId;
+import org.ovirt.engine.ui.common.idhandler.CellWithElementId;
 
 /**
  * A {@link AbstractSortableColumn} that implements ColumnWithElementId (has an id).

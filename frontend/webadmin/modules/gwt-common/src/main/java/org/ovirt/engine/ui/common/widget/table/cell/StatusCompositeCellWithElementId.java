@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.table.cell;
 
 import java.util.List;
 
+import org.ovirt.engine.ui.common.idhandler.CellWithElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.table.HasStyleClass;
 

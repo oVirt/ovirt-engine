@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.common.widget.table.cell;
+package org.ovirt.engine.ui.common.idhandler;
 
 import com.google.gwt.cell.client.Cell;
 

@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.common.widget.table.cell;
 
 import java.util.List;
 
+import org.ovirt.engine.ui.common.idhandler.CellWithElementId;
+
 import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.user.client.DOM;

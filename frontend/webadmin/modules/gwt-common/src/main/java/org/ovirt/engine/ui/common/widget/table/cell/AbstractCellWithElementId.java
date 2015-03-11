@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.table.cell;
 
+import org.ovirt.engine.ui.common.idhandler.CellWithElementId;
+
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.user.client.DOM;
 

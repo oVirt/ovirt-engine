@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.table.cell;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.ovirt.engine.ui.common.idhandler.CellWithElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
 
