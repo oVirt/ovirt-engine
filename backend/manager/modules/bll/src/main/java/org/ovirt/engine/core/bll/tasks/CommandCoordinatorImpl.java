@@ -203,7 +203,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         commandsCache.updateCommandExecuted(commandId);
     }
 
-    public void updateCallBackNotified(final Guid commandId) {
+    public void updateCallbackNotified(final Guid commandId) {
         commandsCache.updateCallbackNotified(commandId);
     }
 

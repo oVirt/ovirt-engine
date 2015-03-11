@@ -82,7 +82,7 @@ public class CommandExecutor {
                 handleError(ex, status, cmdId);
             } finally {
                 if (CommandStatus.FAILED.equals(status) || (CommandStatus.SUCCEEDED.equals(status) && !errorInCallback)) {
-                    coco.updateCallBackNotified(cmdId);
+                    coco.updateCallbackNotified(cmdId);
                     iterator.remove();
                 }
             }

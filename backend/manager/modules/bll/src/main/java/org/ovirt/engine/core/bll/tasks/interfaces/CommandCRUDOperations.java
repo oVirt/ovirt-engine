@@ -26,6 +26,6 @@ public interface CommandCRUDOperations {
     public void removeAllCommandsBeforeDate(DateTime cutoff);
     public void updateCommandStatus(Guid commandId, CommandStatus status);
     public void updateCommandExecuted(Guid commandId);
-    public void updateCallBackNotified(Guid commandId);
+    public void updateCallbackNotified(Guid commandId);
     public List<CommandEntity> getChildCmdsByParentCmdId(Guid cmdId);
 }
