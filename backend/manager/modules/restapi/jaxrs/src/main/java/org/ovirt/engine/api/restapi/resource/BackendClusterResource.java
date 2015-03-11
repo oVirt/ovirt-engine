@@ -1,8 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
 
-import static org.ovirt.engine.api.restapi.resource.BackendClustersResource.SUB_COLLECTIONS;
-
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.resource.AffinityGroupsResource;
 import org.ovirt.engine.api.resource.AssignedCpuProfilesResource;
@@ -23,11 +21,16 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendClusterResource extends AbstractBackendSubResource<Cluster, VDSGroup> implements
-        ClusterResource {
+import static org.ovirt.engine.api.restapi.resource.BackendClustersResource.SUB_COLLECTIONS;
 
-    public BackendClusterResource(String id) {
+public class BackendClusterResource<P extends BackendClustersResource>
+        extends AbstractBackendSubResource<Cluster, VDSGroup> implements ClusterResource {
+
+    protected final P parent;
+
+    public BackendClusterResource(String id, P parent) {
         super(id, Cluster.class, VDSGroup.class, SUB_COLLECTIONS);
+        this.parent = parent;
     }
 
     @Override
@@ -71,8 +74,8 @@ public class BackendClusterResource extends AbstractBackendSubResource<Cluster, 
     }
 
     @Override
-    protected Cluster doPopulate(Cluster model, VDSGroup entity) {
-        return model;
+    protected Cluster doPopulate(Cluster cluster, VDSGroup entity) {
+        return parent.doPopulate(cluster, entity);
     }
 
     @Override

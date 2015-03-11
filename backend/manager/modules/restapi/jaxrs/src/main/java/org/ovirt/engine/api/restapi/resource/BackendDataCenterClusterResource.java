@@ -6,12 +6,10 @@ import java.util.List;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 
-public class BackendDataCenterClusterResource extends BackendClusterResource {
+public class BackendDataCenterClusterResource extends BackendClusterResource<BackendDataCenterClustersResource> {
 
-    private BackendDataCenterClustersResource parent;
     public BackendDataCenterClusterResource(BackendDataCenterClustersResource parent, String id) {
-        super(id);
-        this.parent = parent;
+        super(id, parent);
     }
 
     @Override

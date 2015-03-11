@@ -70,7 +70,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
     @Override
     @SingleEntityResource
     public ClusterResource getClusterSubResource(String id) {
-        return inject(new BackendClusterResource(id));
+        return inject(new BackendClusterResource(id, this));
     }
 
     @Override
@@ -131,7 +131,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
     protected Clusters mapCollection(List<VDSGroup> entities) {
         Clusters collection = new Clusters();
         for (org.ovirt.engine.core.common.businessentities.VDSGroup entity : entities) {
-            collection.getClusters().add(addLinks(map(entity)));
+            collection.getClusters().add(addLinks(populate(map(entity), entity)));
         }
         return collection;
     }
@@ -153,7 +153,21 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
     }
 
     @Override
-    protected Cluster doPopulate(Cluster model, VDSGroup entity) {
-        return model;
+    protected Cluster doPopulate(Cluster cluster, VDSGroup entity) {
+        final Guid clusterId = entity.getId();
+        final org.ovirt.engine.core.common.businessentities.network.Network network =
+                getOptionalEntity(org.ovirt.engine.core.common.businessentities.network.Network.class,
+                        VdcQueryType.GetManagementNetwork,
+                        new IdQueryParameters(clusterId),
+                        clusterId.toString(),
+                        false);
+        if (network != null) {
+            final Network managementNetwork = new org.ovirt.engine.api.model.Network();
+            managementNetwork.setCluster(cluster);
+            managementNetwork.setId(network.getId().toString());
+            cluster.setManagementNetwork(managementNetwork);
+        }
+
+        return cluster;
     }
 }

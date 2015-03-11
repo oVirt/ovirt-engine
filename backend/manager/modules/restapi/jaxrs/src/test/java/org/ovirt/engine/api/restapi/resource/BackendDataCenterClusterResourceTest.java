@@ -1,33 +1,45 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.ovirt.engine.api.restapi.resource.BackendClustersResourceTest.getModel;
-import static org.ovirt.engine.api.restapi.resource.BackendClustersResourceTest.setUpEntityExpectations;
-
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendDataCenterClusterResourceTest
-        extends AbstractBackendSubResourceTest<Cluster, VDSGroup, BackendClusterResource> {
+import static org.easymock.EasyMock.expect;
+import static org.ovirt.engine.api.restapi.resource.BackendClustersResourceTest.getModel;
+import static org.ovirt.engine.api.restapi.resource.BackendClustersResourceTest.setUpEntityExpectations;
 
-    static Guid clusterId = GUIDS[0];
-    static Guid dataCenterId = GUIDS[1];
+public class BackendDataCenterClusterResourceTest
+        extends AbstractBackendSubResourceTest<Cluster, VDSGroup, BackendClusterResource<BackendDataCenterClustersResource>> {
+
+    private static final Guid MANAGEMENT_NETWORK_ID = Guid.newGuid();
+    private static final Guid clusterId = GUIDS[0];
+    private static final Guid dataCenterId = GUIDS[1];
+
+    private boolean isPopulateSet = false;
 
     public BackendDataCenterClusterResourceTest() {
         super(new BackendDataCenterClusterResource(
                 new BackendDataCenterClustersResource(dataCenterId.toString()),
                 clusterId.toString()));
+    }
+
+    @Before
+    public void initParent() {
+        initResource(resource.parent);
     }
 
     @Override
@@ -103,6 +115,7 @@ public class BackendDataCenterClusterResourceTest
     @Test
     public void testUpdate() throws Exception {
         setUpGetEntityExpectations(2);
+        setUpManagementNetworkExpectation();
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVdsGroup,
                                            VdsGroupOperationParameters.class,
@@ -111,7 +124,41 @@ public class BackendDataCenterClusterResourceTest
                                            true,
                                            true));
 
-        verifyModel(resource.update(getModel(0)), 0);
+        final Cluster updatedCluster = resource.update(getModel(0));
+
+        verifyModel(updatedCluster, 0);
+
+        verifyManagementNetwork(updatedCluster);
+    }
+
+    private void verifyManagementNetwork(Cluster updatedCluster) {
+        assertEquals(String.format("%s/%s/%s/%s/%s",
+                        BASE_PATH,
+                        "clusters",
+                        GUIDS[0],
+                        "networks",
+                        MANAGEMENT_NETWORK_ID),
+                updatedCluster.getManagementNetwork().getHref());
+    }
+
+    private void setUpManagementNetworkExpectation() throws Exception {
+        setUpPopulateExpectation();
+        final Network mockNetwork = control.createMock(Network.class);
+        expect(mockNetwork.getId()).andReturn(MANAGEMENT_NETWORK_ID);
+
+        setUpGetEntityExpectations(VdcQueryType.GetManagementNetwork,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                mockNetwork);
+    }
+
+    private void setUpPopulateExpectation() {
+        if (!isPopulateSet) {
+            expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(Collections.singletonList("true"))
+                    .anyTimes();
+            isPopulateSet = true;
+        }
     }
 
     @Test

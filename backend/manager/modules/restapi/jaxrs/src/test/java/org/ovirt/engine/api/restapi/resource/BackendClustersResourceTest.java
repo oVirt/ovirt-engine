@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -102,6 +103,12 @@ public class BackendClustersResourceTest extends
                                    new Object[] { GUIDS[1] },
                                    setUpStoragePool(-1));
 
+        setUpGetEntityExpectations(VdcQueryType.GetManagementNetwork,
+                                   IdQueryParameters.class,
+                                   new String[] { "Id" },
+                                   new Object[] { GUIDS[0] },
+                                   null);
+
         setUpCreationExpectations(VdcActionType.AddVdsGroup,
                                   AddClusterOperationParameters.class,
                                   new String[] { "VdsGroup.CompatibilityVersion" },
@@ -132,6 +139,12 @@ public class BackendClustersResourceTest extends
                                    new String[] { "Id" },
                                    new Object[] { GUIDS[1] },
                                    setUpStoragePool(-1));
+
+        setUpGetEntityExpectations(VdcQueryType.GetManagementNetwork,
+                                   IdQueryParameters.class,
+                                   new String[] { "Id" },
+                                   new Object[] { GUIDS[0] },
+                                   null);
 
         setUpCreationExpectations(VdcActionType.AddVdsGroup,
                                   AddClusterOperationParameters.class,
@@ -202,6 +215,12 @@ public class BackendClustersResourceTest extends
                 new String[] { "Name" },
                 new Object[] { NAMES[1] },
                 setUpStoragePool(1));
+
+        setUpGetEntityExpectations(VdcQueryType.GetManagementNetwork,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                null);
 
         setUpCreationExpectations(VdcActionType.AddVdsGroup,
                                   AddClusterOperationParameters.class,
