@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -162,10 +163,10 @@ public class SystemPermissionListModel extends SearchableListModel
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (DbUser user : items)
         {
-            Permissions tempVar = new Permissions();
-            tempVar.setad_element_id(user.getId());
-            tempVar.setrole_id(role.getId());
-            Permissions perm = tempVar;
+            Permissions perm = new Permissions(user.getId(), role.getId(), null, null);
+            // set id to Guid.Empty as GWT cannot generate new random UUID, AddPermissionCommand will replace
+            // Guid.Empty with correct Guid
+            perm.setId(Guid.Empty);
 
             if (user.isGroup())
             {
