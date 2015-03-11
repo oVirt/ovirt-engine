@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.widget.table.cell;
 
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
-import com.google.gwt.cell.client.EditTextCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
@@ -13,14 +12,14 @@ import com.google.gwt.view.client.CellPreviewEvent;
 /**
  * A {@link TextCell} whose text may be edited.
  */
-public class EditTextCellWithTooltip extends TextCell implements EventHandlingCell {
+public class EditTextCell extends TextCell implements EventHandlingCell {
 
-    private EditTextCell delegate;
+    private com.google.gwt.cell.client.EditTextCell delegate;
 
-    public EditTextCellWithTooltip(int maxTextLength) {
+    public EditTextCell(int maxTextLength) {
         super(maxTextLength, BrowserEvents.MOUSEOVER, BrowserEvents.CLICK,
                 BrowserEvents.KEYUP, BrowserEvents.KEYDOWN, BrowserEvents.BLUR);
-        delegate = new EditTextCell();
+        delegate = new com.google.gwt.cell.client.EditTextCell();
     }
 
     @Override
