@@ -5,14 +5,14 @@ CREATE OR REPLACE FUNCTION GetAsyncTasksZombies() RETURNS SETOF async_tasks
    AS $procedure$
 DECLARE
     zombie_task_life varchar;
-    zombie_date date;
+    zombie_timestamptz timestamp with time zone;
 BEGIN
    zombie_task_life = option_value FROM vdc_options WHERE option_name = 'AsyncTaskZombieTaskLifeInMinutes';
-   EXECUTE 'SELECT now() - interval ''' || zombie_task_life || ' minute'''  INTO zombie_date;
+   EXECUTE 'SELECT now() - interval ''' || zombie_task_life || ' minute'''  INTO zombie_timestamptz;
 
    RETURN QUERY SELECT *
    FROM async_tasks
-   WHERE started_at < zombie_date
+   WHERE started_at < zombie_timestamptz
    ORDER BY command_id;
 
 END; $procedure$
