@@ -10,13 +10,14 @@ import com.google.gwt.user.client.DOM;
 
 /**
  * A composite cell that sets an ID when it renders.
+ * TODO tt add tooltip support
  *
  * @param <C>
  *            Cell data type.
  */
-public class CompositeCellWithElementId<C> extends CompositeCell<C> implements CellWithElementId<C> {
+public class CompositeTooltipCell<C> extends CompositeCell<C> implements CellWithElementId<C> {
 
-    public CompositeCellWithElementId(List<HasCell<C, ?>> hasCells) {
+    public CompositeTooltipCell(List<HasCell<C, ?>> hasCells) {
         super(hasCells);
     }
 
