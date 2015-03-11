@@ -133,9 +133,9 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
         setUpCreationExpectations(VdcActionType.AddPermission,
                                   PermissionsOperationsParameters.class,
                                   new String[] { principalParameterName,
-                                                 "Permission.ad_element_id",
+                                                 "Permission.AdElementId",
                                                  "Permission.ObjectId",
-                                                 "Permission.role_id" },
+                                                 "Permission.RoleId" },
                                   new Object[] { GUIDS[1], chooseElementId(), chooseObjectId(), GUIDS[3] },
                                   true,
                                   true,
@@ -242,10 +242,10 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
     protected Permissions getEntity(int index) {
         Permissions permission = new Permissions();
         permission.setId(GUIDS[index]);
-        permission.setad_element_id(GUIDS[1]);
+        permission.setAdElementId(GUIDS[1]);
         permission.setObjectId(GUIDS[2]);
         permission.setObjectType(VdcObjectType.StoragePool);
-        permission.setrole_id(GUIDS[3]);
+        permission.setRoleId(GUIDS[3]);
         return permission;
     }
 
@@ -261,7 +261,7 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
         List<Permissions> perms = new ArrayList<Permissions>();
         for (int i = 0; i < NAMES.length; i++) {
             Permissions entity = getEntity(i);
-            entity.setad_element_id(adElementId);
+            entity.setAdElementId(adElementId);
             perms.add(entity);
         }
         return perms;

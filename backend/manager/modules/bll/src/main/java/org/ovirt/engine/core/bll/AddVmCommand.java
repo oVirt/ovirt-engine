@@ -1255,14 +1255,14 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         List<Permissions> templatePermissions = dao.getAllForEntity(getVmTemplateId(), getEngineSessionSeqId(), false);
 
         for (Permissions templatePermission : templatePermissions) {
-            boolean templateOwnerRole = templatePermission.getrole_id().equals(PredefinedRoles.TEMPLATE_OWNER.getId());
-            boolean templateUserRole = templatePermission.getrole_id().equals(PredefinedRoles.TEMPLATE_USER.getId());
+            boolean templateOwnerRole = templatePermission.getRoleId().equals(PredefinedRoles.TEMPLATE_OWNER.getId());
+            boolean templateUserRole = templatePermission.getRoleId().equals(PredefinedRoles.TEMPLATE_USER.getId());
 
             if (templateOwnerRole || templateUserRole) {
                 continue;
             }
 
-            permissionsToAdd.addPermission(templatePermission.getad_element_id(), templatePermission.getrole_id(),
+            permissionsToAdd.addPermission(templatePermission.getAdElementId(), templatePermission.getRoleId(),
                     getVmId(), VdcObjectType.VM);
         }
 

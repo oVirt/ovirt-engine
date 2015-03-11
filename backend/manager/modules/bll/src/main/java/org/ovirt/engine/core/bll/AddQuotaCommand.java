@@ -120,7 +120,7 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
                         getEngineSessionSeqId(),
                         false);
         for (Permissions vmPermission : vmPermissions) {
-            permissionsToAdd.addPermission(vmPermission.getad_element_id(), vmPermission.getrole_id(),
+            permissionsToAdd.addPermission(vmPermission.getAdElementId(), vmPermission.getRoleId(),
                     getQuotaId(), vmPermission.getObjectType());
         }
         if (!permissionsToAdd.isEmpty()) {

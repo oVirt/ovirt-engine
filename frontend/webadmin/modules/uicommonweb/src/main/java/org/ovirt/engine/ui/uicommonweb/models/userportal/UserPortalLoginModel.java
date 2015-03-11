@@ -206,9 +206,9 @@ public class UserPortalLoginModel extends LoginModel
                                     || isEveryoneVnicProfileUserPermission(permission)) {
                                 continue;
                             }
-                            if (!roleIdList.contains(permission.getrole_id()))
+                            if (!roleIdList.contains(permission.getRoleId()))
                             {
-                                roleIdList.add(permission.getrole_id());
+                                roleIdList.add(permission.getRoleId());
                             }
                         }
                         UserPortalLoginModel loginModel1 = (UserPortalLoginModel) target;
@@ -226,20 +226,20 @@ public class UserPortalLoginModel extends LoginModel
                     }
 
                     private boolean isEveryoneVnicProfileUserPermission(Permissions permission) {
-                        return permission.getad_element_id().equals(ApplicationGuids.everyone.asGuid()) &&
-                                permission.getrole_id().equals(ApplicationGuids.vnicProfileUser.asGuid());
+                        return permission.getAdElementId().equals(ApplicationGuids.everyone.asGuid()) &&
+                                permission.getRoleId().equals(ApplicationGuids.vnicProfileUser.asGuid());
                     }
 
                     private boolean isEveryoneUserPortalBasedVmPermission(Permissions permission) {
-                        return permission.getad_element_id().equals(ApplicationGuids.everyone.asGuid())
+                        return permission.getAdElementId().equals(ApplicationGuids.everyone.asGuid())
                                 &&
-                                permission.getrole_id()
+                                permission.getRoleId()
                                         .equals(ApplicationGuids.userTemplateBasedVM.asGuid());
                     }
 
                     private boolean isEveryoneQuotaConsumerPermission(Permissions permission) {
-                        return permission.getad_element_id().equals(ApplicationGuids.everyone.asGuid()) &&
-                                permission.getrole_id().equals(ApplicationGuids.quotaConsumer.asGuid());
+                        return permission.getAdElementId().equals(ApplicationGuids.everyone.asGuid()) &&
+                                permission.getRoleId().equals(ApplicationGuids.quotaConsumer.asGuid());
                     }
                 }), loginModel.getLoggedUser().getId());
     }

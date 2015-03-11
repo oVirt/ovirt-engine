@@ -41,11 +41,11 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
     protected boolean canDoAction() {
         boolean returnValue = true;
         Permissions p = getPermissionDAO().get(getParameters().getPermission().getId());
-        if (p.getad_element_id().equals(PredefinedUsers.ADMIN_USER.getId()) &&
-                (p.getrole_id().equals(PredefinedRoles.SUPER_USER.getId()))) {
+        if (p.getAdElementId().equals(PredefinedUsers.ADMIN_USER.getId()) &&
+                (p.getRoleId().equals(PredefinedRoles.SUPER_USER.getId()))) {
             addCanDoActionMessage(VdcBllMessages.USER_CANNOT_REMOVE_ADMIN_USER);
             returnValue = false;
-        } else if (MultiLevelAdministrationHandler.isLastSuperUserPermission(p.getrole_id())) {
+        } else if (MultiLevelAdministrationHandler.isLastSuperUserPermission(p.getRoleId())) {
             getReturnValue().getCanDoActionMessages()
                     .add(VdcBllMessages.ERROR_CANNOT_REMOVE_LAST_SUPER_USER_ROLE.toString());
             returnValue = false;
@@ -59,12 +59,12 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
     @Override
     protected void executeCommand() {
         Permissions perms = getParameters().getPermission();
-        Guid userId = perms.getad_element_id();
+        Guid userId = perms.getAdElementId();
 
         // if removing engine user permission from vm,
         // check if vm is from pool and detach it
         if (perms.getObjectType().equals(VdcObjectType.VM)
-                && perms.getrole_id().equals(PredefinedRoles.ENGINE_USER.getId())) {
+                && perms.getRoleId().equals(PredefinedRoles.ENGINE_USER.getId())) {
             VM vm = getVmDAO().get(perms.getObjectId());
             if (vm != null && vm.getVmPoolId() != null) {
                 runInternalActionWithTasksContext(VdcActionType.DetachUserFromVmFromPool,

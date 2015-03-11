@@ -42,7 +42,7 @@ public class BackendPermissionResource
     @Override
     protected Permission map(Permissions entity, Permission template) {
         Map<Guid, DbUser> users = parent.getUsers();
-        return parent.map(entity, users.containsKey(entity.getad_element_id()) ? users.get(entity.getad_element_id()) : null);
+        return parent.map(entity, users.containsKey(entity.getAdElementId()) ? users.get(entity.getAdElementId()) : null);
     }
 
     @Override

@@ -156,7 +156,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
             return null;
         }
 
-        return perms.iterator().next().getad_element_id();
+        return perms.iterator().next().getAdElementId();
     }
 
     private RemoveVmFromPoolParameters buildRemoveVmFromPoolParameters() {

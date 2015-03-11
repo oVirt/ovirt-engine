@@ -63,7 +63,7 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
     }
 
     public String getRoleName() {
-        Role role = getRoleDao().get(getParameters().getPermission().getrole_id());
+        Role role = getRoleDao().get(getParameters().getPermission().getRoleId());
         return role == null ? null : role.getName();
     }
 
@@ -89,10 +89,10 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
 
     public void initUserAndGroupData() {
         if (dbUser == null) {
-            dbUser = getDbUserDAO().get(getParameters().getPermission().getad_element_id());
+            dbUser = getDbUserDAO().get(getParameters().getPermission().getAdElementId());
         }
         if (dbUser == null && dbGroup == null) {
-            dbGroup = getAdGroupDAO().get(getParameters().getPermission().getad_element_id());
+            dbGroup = getAdGroupDAO().get(getParameters().getPermission().getAdElementId());
         }
     }
 

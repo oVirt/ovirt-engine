@@ -47,8 +47,8 @@ public class BackendAssignedRolesResourceTest
     protected Permissions getEntity(int index) {
         Permissions permission = new Permissions();
         permission.setId(GUIDS[(index + 1) % 3]);
-        permission.setad_element_id(GUIDS[0]);
-        permission.setrole_id(GUIDS[index]);
+        permission.setAdElementId(GUIDS[0]);
+        permission.setRoleId(GUIDS[index]);
         permission.setObjectType(VdcObjectType.System);
         return permission;
     }

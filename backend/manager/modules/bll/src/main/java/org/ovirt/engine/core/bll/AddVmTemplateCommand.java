@@ -850,7 +850,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         List<Permissions> vmPermissions = dao.getAllForEntity(getVmId(), getEngineSessionSeqId(), false);
 
         for (Permissions vmPermission : vmPermissions) {
-            permissionsToAdd.addPermission(vmPermission.getad_element_id(), vmPermission.getrole_id(),
+            permissionsToAdd.addPermission(vmPermission.getAdElementId(), vmPermission.getRoleId(),
                     getParameters().getVmTemplateId(), VdcObjectType.VmTemplate);
         }
 

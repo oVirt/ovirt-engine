@@ -47,8 +47,8 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
             return false;
         }
 
-        Role role = getRoleDao().get(perm.getrole_id());
-        Guid adElementId = perm.getad_element_id();
+        Role role = getRoleDao().get(perm.getRoleId());
+        Guid adElementId = perm.getAdElementId();
 
         if (role == null) {
             addCanDoActionMessage(VdcBllMessages.PERMISSION_ADD_FAILED_INVALID_ROLE_ID);
@@ -141,18 +141,18 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
             principalId = group.getId();
         }
         else {
-            principalId = parameters.getPermission().getad_element_id();
+            principalId = parameters.getPermission().getAdElementId();
         }
 
         final Permissions paramPermission = parameters.getPermission();
 
         Permissions permission =
-                getPermissionDAO().getForRoleAndAdElementAndObject(paramPermission.getrole_id(), principalId,
+                getPermissionDAO().getForRoleAndAdElementAndObject(paramPermission.getRoleId(), principalId,
                         paramPermission.getObjectId());
 
         if (permission == null) {
             paramPermission.setId(Guid.newGuid());
-            paramPermission.setad_element_id(principalId);
+            paramPermission.setAdElementId(principalId);
 
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
                 @Override
@@ -177,9 +177,9 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
     private void updateAdminStatus(Permissions perm) {
         // if the role of the permission is of type admin update the user
         // lastAdminCheckStatus to true
-        Role role = getRoleDao().get(perm.getrole_id());
+        Role role = getRoleDao().get(perm.getRoleId());
         if (role.getType() == RoleType.ADMIN) {
-            MultiLevelAdministrationHandler.setIsAdminGUIFlag(perm.getad_element_id(), true);
+            MultiLevelAdministrationHandler.setIsAdminGUIFlag(perm.getAdElementId(), true);
         }
     }
 

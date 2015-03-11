@@ -120,7 +120,7 @@ public class MultiLevelAdministrationHandler {
             // get group role
             permissions = getPermissionDAO().getAllForAdElement(groupId);
             for (Permissions permission : permissions){
-                if (permission.getrole_id().equals(PredefinedRoles.SUPER_USER.getId())){
+                if (permission.getRoleId().equals(PredefinedRoles.SUPER_USER.getId())){
                     retValue = true;
                     break;
                 }
@@ -135,10 +135,10 @@ public class MultiLevelAdministrationHandler {
 
     public static void addPermission(Guid userId, Guid entityId, PredefinedRoles role, VdcObjectType objectType) {
         Permissions perms = new Permissions();
-        perms.setad_element_id(userId);
+        perms.setAdElementId(userId);
         perms.setObjectType(objectType);
         perms.setObjectId(entityId);
-        perms.setrole_id(role.getId());
+        perms.setRoleId(role.getId());
         addPermission(perms);
     }
 }

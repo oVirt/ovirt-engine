@@ -93,8 +93,8 @@ public class BackendPermissionResourceTest
     protected Permissions getEntity(int index) {
         Permissions permission = new Permissions();
         permission.setId(GUIDS[0]);
-        permission.setad_element_id(GUIDS[1]);
-        permission.setrole_id(GUIDS[2]);
+        permission.setAdElementId(GUIDS[1]);
+        permission.setRoleId(GUIDS[2]);
         return permission;
     }
 

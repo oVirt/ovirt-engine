@@ -121,8 +121,8 @@ public class PermissionDAOTest extends BaseDAOTestCase {
                 AD_ELEMENT_ID, VM_ENTITY_ID);
 
         assertNotNull(result);
-        assertEquals(ROLE_ID, result.getrole_id());
-        assertEquals(AD_ELEMENT_ID, result.getad_element_id());
+        assertEquals(ROLE_ID, result.getRoleId());
+        assertEquals(AD_ELEMENT_ID, result.getAdElementId());
         assertEquals(VM_ENTITY_ID, result.getObjectId());
     }
 
@@ -135,7 +135,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllForQuotaId() {
         List<Permissions> result = dao.getConsumedPermissionsForQuotaId(FixturesTool.QUOTA_GENERAL);
-        assertEquals(result.get(0).getad_element_id(), FixturesTool.USER_EXISTING_ID);
+        assertEquals(result.get(0).getAdElementId(), FixturesTool.USER_EXISTING_ID);
     }
 
     /**
@@ -218,7 +218,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (Permissions permission : result) {
-            assertEquals(AD_ELEMENT_ID, permission.getad_element_id());
+            assertEquals(AD_ELEMENT_ID, permission.getAdElementId());
 
         }
     }
@@ -306,7 +306,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (Permissions permission : result) {
-            assertEquals(ROLE_ID, permission.getrole_id());
+            assertEquals(ROLE_ID, permission.getRoleId());
         }
     }
 
@@ -345,8 +345,8 @@ public class PermissionDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (Permissions permission : result) {
-            assertEquals(ROLE_ID, permission.getrole_id());
-            assertEquals(AD_ELEMENT_ID, permission.getad_element_id());
+            assertEquals(ROLE_ID, permission.getRoleId());
+            assertEquals(AD_ELEMENT_ID, permission.getAdElementId());
         }
     }
 
@@ -382,7 +382,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (Permissions permission : result) {
-            assertEquals(ROLE_ID, permission.getrole_id());
+            assertEquals(ROLE_ID, permission.getRoleId());
             assertEquals(VM_ENTITY_ID, permission.getObjectId());
         }
     }
@@ -592,8 +592,8 @@ public class PermissionDAOTest extends BaseDAOTestCase {
         dao.save(new_permissions);
 
         Permissions result = dao.getForRoleAndAdElementAndObject(
-                new_permissions.getrole_id(),
-                new_permissions.getad_element_id(),
+                new_permissions.getRoleId(),
+                new_permissions.getAdElementId(),
                 new_permissions.getObjectId());
 
         assertNotNull(result);

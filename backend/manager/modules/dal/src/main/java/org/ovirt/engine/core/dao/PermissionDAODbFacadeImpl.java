@@ -218,9 +218,9 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
     @Override
     public void save(Permissions permission) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("ad_element_id", permission.getad_element_id())
+                .addValue("ad_element_id", permission.getAdElementId())
                 .addValue("id", permission.getId())
-                .addValue("role_id", permission.getrole_id())
+                .addValue("role_id", permission.getRoleId())
                 .addValue("object_id", permission.getObjectId())
                 .addValue("object_type_id",
                         permission.getObjectType().getValue());
@@ -259,9 +259,9 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
         @Override
         public Permissions mapRow(ResultSet rs, int rowNum) throws SQLException {
             Permissions entity = new Permissions();
-            entity.setad_element_id(getGuidDefaultEmpty(rs, "ad_element_id"));
+            entity.setAdElementId(getGuidDefaultEmpty(rs, "ad_element_id"));
             entity.setId(getGuidDefaultEmpty(rs, "id"));
-            entity.setrole_id(getGuidDefaultEmpty(rs, "role_id"));
+            entity.setRoleId(getGuidDefaultEmpty(rs, "role_id"));
             entity.setObjectId(getGuidDefaultEmpty(rs, "object_id"));
             entity.setObjectType(VdcObjectType.forValue(rs
                     .getInt(("object_type_id"))));

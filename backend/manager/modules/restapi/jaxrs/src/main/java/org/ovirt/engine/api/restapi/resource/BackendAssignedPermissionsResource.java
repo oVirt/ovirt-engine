@@ -120,17 +120,17 @@ public class BackendAssignedPermissionsResource
         org.ovirt.engine.api.model.Permissions collection = new org.ovirt.engine.api.model.Permissions();
         for (Permissions entity : entities) {
              castEveryonePermissionsToUser(entity);
-             Permission permission = map(entity, getUserById(entity.getad_element_id()));
+             Permission permission = map(entity, getUserById(entity.getAdElementId()));
              collection.getPermissions().add(addLinks(permission, permission.getUser() != null ? suggestedParentType : Group.class));
         }
         return collection;
     }
 
     private void castEveryonePermissionsToUser(Permissions entity) {
-        if (entity.getad_element_id() != null &&
-            entity.getad_element_id().equals(Guid.EVERYONE) &&
+        if (entity.getAdElementId() != null &&
+            entity.getAdElementId().equals(Guid.EVERYONE) &&
             queryType.equals(VdcQueryType.GetPermissionsByAdElementId)) {
-            entity.setad_element_id(this.targetId);
+            entity.setAdElementId(this.targetId);
         }
     }
 
@@ -168,13 +168,13 @@ public class BackendAssignedPermissionsResource
      */
     public Permission map(Permissions entity, DbUser user) {
         Permission template = new Permission();
-        if (entity.getad_element_id() != null) {
+        if (entity.getAdElementId() != null) {
             if (isUser(user)) {
                 template.setUser(new User());
-                template.getUser().setId(entity.getad_element_id().toString());
+                template.getUser().setId(entity.getAdElementId().toString());
             } else {
                 template.setGroup(new Group());
-                template.getGroup().setId(entity.getad_element_id().toString());
+                template.getGroup().setId(entity.getAdElementId().toString());
             }
         }
         return map(entity, template);
@@ -238,12 +238,12 @@ public class BackendAssignedPermissionsResource
         Object principal = getPrincipal(model);
         if (principal instanceof DbUser) {
             DbUser user = (DbUser) principal;
-            entity.setad_element_id(user.getId());
+            entity.setAdElementId(user.getId());
             parameters.setUser(user);
         }
         if (principal instanceof DbGroup) {
             DbGroup group = (DbGroup) principal;
-            entity.setad_element_id(group.getId());
+            entity.setAdElementId(group.getId());
             parameters.setGroup(group);
         }
         return parameters;

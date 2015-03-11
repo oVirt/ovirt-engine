@@ -63,7 +63,7 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, Pe
         AbstractTextColumn<Permissions> inheritedColumn = new AbstractGroupNameColumn<Permissions>() {
             @Override
             protected Object[] getRawValue(Permissions object) {
-                return new Object[] { getDetailModel().getEntity(), object.getad_element_id(), object.getOwnerName() };
+                return new Object[] { getDetailModel().getEntity(), object.getAdElementId(), object.getOwnerName() };
             }
         };
         inheritedColumn.makeSortable();

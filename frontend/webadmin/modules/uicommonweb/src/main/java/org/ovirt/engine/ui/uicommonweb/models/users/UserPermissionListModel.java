@@ -84,7 +84,7 @@ public class UserPermissionListModel extends SearchableListModel<DbUser, Permiss
                 ArrayList<Permissions> list = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 ArrayList<Permissions> newList = new ArrayList<Permissions>();
                 for (Permissions permission : list) {
-                    if (!permission.getrole_id().equals(ApplicationGuids.quotaConsumer.asGuid())) {
+                    if (!permission.getRoleId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
                         newList.add(permission);
                     }
                 }
@@ -184,7 +184,7 @@ public class UserPermissionListModel extends SearchableListModel<DbUser, Permiss
 
         Permissions p = getSelectedItem();
         if (p != null && getEntity() != null) {
-            isInherited = !p.getad_element_id().equals(getEntity().getId());
+            isInherited = !p.getAdElementId().equals(getEntity().getId());
         }
 
         getRemoveCommand().setIsExecutionAllowed(!isInherited && (getSelectedItem() != null

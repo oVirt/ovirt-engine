@@ -158,8 +158,8 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
         perms.setRoleType(RoleType.ADMIN);
 
         // An available role from the fixtures
-        perms.setrole_id(ADMIN_ROLE_TYPE_FROM_FIXTURE_ID);
-        perms.setad_element_id(nonAdminUser.getId());
+        perms.setRoleId(ADMIN_ROLE_TYPE_FROM_FIXTURE_ID);
+        perms.setAdElementId(nonAdminUser.getId());
         perms.setObjectId(SYSTEM_OBJECT_ID);
         perms.setObjectType(VdcObjectType.System);
 

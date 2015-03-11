@@ -43,16 +43,16 @@ class PermissionWithUniqueKeyEquals extends Permissions {
     }
 
     public Permissions asPermission() {
-        return new Permissions(getad_element_id(), getrole_id(), getObjectId(), getObjectType());
+        return new Permissions(getAdElementId(), getRoleId(), getObjectId(), getObjectType());
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getad_element_id() == null) ? 0 : getad_element_id().hashCode());
+        result = prime * result + ((getAdElementId() == null) ? 0 : getAdElementId().hashCode());
         result = prime * result + ((getObjectId() == null) ? 0 : getObjectId().hashCode());
-        result = prime * result + ((getrole_id() == null) ? 0 : getrole_id().hashCode());
+        result = prime * result + ((getRoleId() == null) ? 0 : getRoleId().hashCode());
         return result;
     }
 
@@ -68,8 +68,8 @@ class PermissionWithUniqueKeyEquals extends Permissions {
             return false;
         }
         Permissions other = (Permissions) obj;
-        return Objects.equals(getad_element_id(), other.getad_element_id())
-                && Objects.equals(getrole_id(), other.getrole_id())
+        return Objects.equals(getAdElementId(), other.getAdElementId())
+                && Objects.equals(getRoleId(), other.getRoleId())
                 && Objects.equals(getObjectId(), other.getObjectId());
     }
 }

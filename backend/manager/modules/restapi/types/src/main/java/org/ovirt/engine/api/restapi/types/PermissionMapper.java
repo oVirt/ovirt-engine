@@ -25,7 +25,7 @@ public class PermissionMapper {
             entity.setId(GuidUtils.asGuid(model.getId()));
         }
         if (model.isSetRole() && model.getRole().isSetId()) {
-            entity.setrole_id(GuidUtils.asGuid(model.getRole().getId()));
+            entity.setRoleId(GuidUtils.asGuid(model.getRole().getId()));
         }
         entity.setObjectId(map(model, template != null ? template.getObjectId() : null));
         entity.setObjectType(map(model, template != null ? template.getObjectType() : null));
@@ -36,7 +36,7 @@ public class PermissionMapper {
     public static Role map(Permissions entity, Role template) {
         Role model = template != null ? template : new Role();
         model.setName(entity.getRoleName());
-        model.setId(entity.getrole_id().toString());
+        model.setId(entity.getRoleId().toString());
         return model;
     }
 
@@ -44,13 +44,13 @@ public class PermissionMapper {
     public static Permission map(Permissions entity, Permission template) {
         Permission model = template != null ? template : new Permission();
         model.setId(entity.getId().toString());
-        if (entity.getrole_id() != null) {
+        if (entity.getRoleId() != null) {
             model.setRole(new Role());
-            model.getRole().setId(entity.getrole_id().toString());
+            model.getRole().setId(entity.getRoleId().toString());
         }
-        if (entity.getad_element_id() != null && (template == null || !template.isSetGroup())) {
+        if (entity.getAdElementId() != null && (template == null || !template.isSetGroup())) {
             model.setUser(new User());
-            model.getUser().setId(entity.getad_element_id().toString());
+            model.getUser().setId(entity.getAdElementId().toString());
         }
         if (entity.getObjectId() != null) {
             setObjectId(model, entity);

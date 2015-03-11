@@ -27,7 +27,7 @@ public class GetPermissionsByAdElementIdQueryTest extends AbstractUserQueryTest<
 
         // Create expected result
         Permissions expected = new Permissions();
-        expected.setad_element_id(adElementGuid);
+        expected.setAdElementId(adElementGuid);
 
         // Mock the DAOs
         PermissionDAO permissionDAOMock = mock(PermissionDAO.class);

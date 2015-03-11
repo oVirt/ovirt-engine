@@ -84,17 +84,17 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permissions> 
                 Map<Guid, Permissions> map = new HashMap<Guid, Permissions>();
                 for (Permissions permission : list) {
                     //filter out sys-admin and dc admin from consumers sub-tab
-                    if (permission.getrole_id().equals(ApplicationGuids.superUser.asGuid())
-                            || permission.getrole_id().equals(ApplicationGuids.dataCenterAdmin.asGuid())) {
+                    if (permission.getRoleId().equals(ApplicationGuids.superUser.asGuid())
+                            || permission.getRoleId().equals(ApplicationGuids.dataCenterAdmin.asGuid())) {
                         continue;
                     }
-                    if (!map.containsKey(permission.getad_element_id())) {
-                        map.put(permission.getad_element_id(), permission);
+                    if (!map.containsKey(permission.getAdElementId())) {
+                        map.put(permission.getAdElementId(), permission);
                     } else {
-                        if (map.get(permission.getad_element_id())
-                                .getrole_id()
+                        if (map.get(permission.getAdElementId())
+                                .getRoleId()
                                 .equals(ApplicationGuids.quotaConsumer.asGuid())) {
-                            map.put(permission.getad_element_id(), permission);
+                            map.put(permission.getAdElementId(), permission);
                         }
                     }
                 }
@@ -145,7 +145,7 @@ public class QuotaUserListModel extends SearchableListModel<Quota, Permissions> 
             removeExe = true;
         }
         for (Permissions perm : items) {
-            if (!perm.getrole_id().equals(ApplicationGuids.quotaConsumer.asGuid())) {
+            if (!perm.getRoleId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
                 removeExe = false;
                 break;
             }
