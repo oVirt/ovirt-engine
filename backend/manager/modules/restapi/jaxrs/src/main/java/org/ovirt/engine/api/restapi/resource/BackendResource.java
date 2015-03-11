@@ -102,8 +102,25 @@ public class BackendResource extends BaseBackendResource {
                               VdcQueryParametersBase queryParams,
                               String identifier,
                               boolean notFoundAs404) {
+        return getEntity(clz, query, queryParams, identifier, notFoundAs404, true);
+    }
+
+    public <T> T getOptionalEntity(Class<T> clz,
+                              VdcQueryType query,
+                              VdcQueryParametersBase queryParams,
+                              String identifier,
+                              boolean notFoundAs404) {
+        return getEntity(clz, query, queryParams, identifier, notFoundAs404, false);
+    }
+
+    private <T> T getEntity(Class<T> clz,
+                              VdcQueryType query,
+                              VdcQueryParametersBase queryParams,
+                              String identifier,
+                              boolean notFoundAs404,
+                              boolean isMandatory) {
         try {
-            return doGetEntity(clz, query, queryParams, identifier);
+            return doGetEntity(clz, query, queryParams, identifier, isMandatory);
         } catch (Exception e) {
             return handleError(clz, e, notFoundAs404);
         }
@@ -113,12 +130,24 @@ public class BackendResource extends BaseBackendResource {
                                 VdcQueryType query,
                                 VdcQueryParametersBase queryParams,
                                 String identifier) throws BackendFailureException {
+        return doGetEntity(clz, query, queryParams, identifier, true);
+    }
+
+    protected <T> T doGetEntity(Class<T> clz,
+                                VdcQueryType query,
+                                VdcQueryParametersBase queryParams,
+                                String identifier,
+                                boolean isMandatory) throws BackendFailureException {
         VdcQueryReturnValue result = runQuery(query, queryParams);
-        if (!result.getSucceeded() || result.getReturnValue() == null) {
+        if (!result.getSucceeded() || (isMandatory && result.getReturnValue() == null)) {
             if (result.getExceptionString() != null) {
                 backendFailure(result.getExceptionString());
             } else {
                 throw new EntityNotFoundException(identifier);
+            }
+        } else {
+            if (result.getReturnValue() == null) {
+                return null;
             }
         }
         return castQueryResultToEntity(clz, result, identifier);
