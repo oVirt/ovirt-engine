@@ -65,10 +65,10 @@ public class CoCoAsyncTaskHelper {
      */
     public Guid createTask(Guid taskId,
             CommandBase<?> command,
-                           AsyncTaskCreationInfo asyncTaskCreationInfo,
-                           VdcActionType parentCommand,
-                           String description,
-                           Map<Guid, VdcObjectType> entitiesMap) {
+            AsyncTaskCreationInfo asyncTaskCreationInfo,
+            VdcActionType parentCommand,
+            String description,
+            Map<Guid, VdcObjectType> entitiesMap) {
         Step taskStep =
                 ExecutionHandler.addTaskStep(command.getExecutionContext(),
                         StepEnum.getStepNameByTaskType(asyncTaskCreationInfo.getTaskType()),
