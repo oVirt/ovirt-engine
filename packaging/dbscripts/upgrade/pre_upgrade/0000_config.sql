@@ -558,7 +558,8 @@ select fn_db_add_config_value('vdsTimeout','180','general');
 select fn_db_add_config_value('VM32BitMaxMemorySizeInMB','20480','general');
 select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','524288','3.0');
 select fn_db_add_config_value_for_versions_up_to('VM64BitMaxMemorySizeInMB','2097152','3.3');
-select fn_db_add_config_value_for_versions_up_to('VM64BitMaxMemorySizeInMB','4096000','3.6');
+select fn_db_add_config_value_for_versions_up_to('VM64BitMaxMemorySizeInMB','4096000','3.5');
+select fn_db_add_config_value_for_versions_up_to('VM64BitMaxMemorySizeInMB','4194304','3.6');
 select fn_db_add_config_value('VmGracefulShutdownMessage','System Administrator has initiated shutdown of this Virtual Machine. Virtual Machine is shutting down.','general');
 select fn_db_add_config_value('VmGracefulShutdownTimeout','30','general');
 select fn_db_add_config_value('VMMinMemorySizeInMB','256','general');
@@ -848,6 +849,7 @@ select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','2097152','3.2');
 select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','2097152','3.3');
 select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','4096000','3.4');
 select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','4096000','3.5');
+select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','4194304','3.6');
 select fn_db_update_config_value('AutoStartVmsRunnerIntervalInSeconds','1','general');
 
 -- enable migration, memory snapshot and suspend in the ppc64 architecture
