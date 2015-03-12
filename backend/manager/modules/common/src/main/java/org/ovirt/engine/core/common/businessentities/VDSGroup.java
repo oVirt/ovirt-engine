@@ -464,7 +464,6 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         result = prime * result + (optimizationType == null ? 0 : optimizationType.hashCode());
         result = prime * result + (serialNumberPolicy == null ? 0 : serialNumberPolicy.hashCode());
         result = prime * result + (customSerialNumber == null ? 0 : customSerialNumber.hashCode());
-        result = prime * result + (groupHostsAndVms == null ? 0 : groupHostsAndVms.hashCode());
         result = prime * result + (fencingPolicy == null ? 0 : fencingPolicy.hashCode());
         result = prime * result + (autoConverge == null ? 0 : autoConverge.hashCode());
         result = prime * result + (migrateCompressed == null ? 0 : migrateCompressed.hashCode());
@@ -511,7 +510,6 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
                 && optimizationType == other.optimizationType)
                 && serialNumberPolicy == other.serialNumberPolicy
                 && ObjectUtils.objectsEqual(customSerialNumber, other.customSerialNumber)
-                && ObjectUtils.objectsEqual(groupHostsAndVms, other.groupHostsAndVms)
                 && ObjectUtils.objectsEqual(requiredRngSources, other.requiredRngSources)
                 && ObjectUtils.objectsEqual(fencingPolicy, other.fencingPolicy)
                 && ObjectUtils.objectsEqual(autoConverge, other.autoConverge)
