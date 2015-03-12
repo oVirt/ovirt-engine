@@ -340,12 +340,14 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         coCoAsyncTaskHelper.revertTasks(command);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public ArrayList<AsyncTaskCreationInfo> getAllTasksInfo(Guid storagePoolID) {
         return (ArrayList<AsyncTaskCreationInfo>) runVdsCommand(VDSCommandType.SPMGetAllTasksInfo,
                 new IrsBaseVDSCommandParameters(storagePoolID)).getReturnValue();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Map<Guid, AsyncTaskStatus>  getAllTasksStatuses(Guid storagePoolID) {
         return (Map<Guid, AsyncTaskStatus> ) runVdsCommand(VDSCommandType.SPMGetAllTasksStatuses,
