@@ -15,7 +15,6 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -23,7 +22,10 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractBackendAssignedPermissionsResourceTest
-        extends AbstractBackendCollectionResourceTest<Permission, Permissions, BackendAssignedPermissionsResource> {
+        extends AbstractBackendCollectionResourceTest<
+                        Permission,
+                        org.ovirt.engine.core.common.businessentities.Permissions,
+                        BackendAssignedPermissionsResource> {
 
     private Guid targetId;
     private Class<? extends BaseResource> targetType;
@@ -204,7 +206,7 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         assertEquals("", query);
 
-        List<Permissions> perms = setUpPermissions();
+        List<org.ovirt.engine.core.common.businessentities.Permissions> perms = setUpPermissions();
         setUpEntityQueryExpectations(queryType,
                                      queryParams.getClass(),
                                      new String[] { queryParameterName },
@@ -228,7 +230,10 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
         control.replay();
     }
 
-    protected void setUpGetEntityExpectations(int times, Guid entityId, Permissions permission) throws Exception {
+    protected void setUpGetEntityExpectations(
+            int times,
+            Guid entityId,
+            org.ovirt.engine.core.common.businessentities.Permissions permission) throws Exception {
         while (times-->0) {
             setUpGetEntityExpectations(VdcQueryType.GetPermissionById,
                                        IdQueryParameters.class,
@@ -239,8 +244,9 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
     }
 
     @Override
-    protected Permissions getEntity(int index) {
-        Permissions permission = new Permissions();
+    protected org.ovirt.engine.core.common.businessentities.Permissions getEntity(int index) {
+        org.ovirt.engine.core.common.businessentities.Permissions permission =
+                new org.ovirt.engine.core.common.businessentities.Permissions();
         permission.setId(GUIDS[index]);
         permission.setAdElementId(GUIDS[1]);
         permission.setObjectId(GUIDS[2]);
@@ -249,18 +255,19 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
         return permission;
     }
 
-    protected List<Permissions> setUpPermissions() {
-        List<Permissions> perms = new ArrayList<Permissions>();
+    protected List<org.ovirt.engine.core.common.businessentities.Permissions> setUpPermissions() {
+        List<org.ovirt.engine.core.common.businessentities.Permissions> perms = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             perms.add(getEntity(i));
         }
         return perms;
     }
 
-    protected List<Permissions> setUpPermissionsWithAdElementId(Guid adElementId) {
-        List<Permissions> perms = new ArrayList<Permissions>();
+    protected List<org.ovirt.engine.core.common.businessentities.Permissions> setUpPermissionsWithAdElementId(
+            Guid adElementId) {
+        List<org.ovirt.engine.core.common.businessentities.Permissions> perms = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
-            Permissions entity = getEntity(i);
+            org.ovirt.engine.core.common.businessentities.Permissions entity = getEntity(i);
             entity.setAdElementId(adElementId);
             perms.add(entity);
         }

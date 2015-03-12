@@ -1,12 +1,18 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.Permission;
-import org.ovirt.engine.core.common.businessentities.Permissions;
 
-public class PermissionMapperTest extends AbstractInvertibleMappingTest<Permission, Permissions, Permissions> {
+public class PermissionMapperTest
+        extends AbstractInvertibleMappingTest<
+                        Permission,
+                        org.ovirt.engine.core.common.businessentities.Permissions,
+                        org.ovirt.engine.core.common.businessentities.Permissions> {
 
     public PermissionMapperTest() {
-        super(Permission.class, Permissions.class, Permissions.class);
+        super(
+                Permission.class,
+                org.ovirt.engine.core.common.businessentities.Permissions.class,
+                org.ovirt.engine.core.common.businessentities.Permissions.class);
     }
 
     @Override

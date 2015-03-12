@@ -10,7 +10,6 @@ import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Permission;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -18,7 +17,10 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendPermissionResourceTest
-        extends AbstractBackendSubResourceTest<Permission, Permissions, BackendPermissionResource> {
+        extends AbstractBackendSubResourceTest<
+                        Permission,
+                        org.ovirt.engine.core.common.businessentities.Permissions,
+                        BackendPermissionResource> {
 
     public BackendPermissionResourceTest() {
         super(new BackendPermissionResource(GUIDS[0].toString(),
@@ -90,8 +92,9 @@ public class BackendPermissionResourceTest
     }
 
     @Override
-    protected Permissions getEntity(int index) {
-        Permissions permission = new Permissions();
+    protected org.ovirt.engine.core.common.businessentities.Permissions getEntity(int index) {
+        org.ovirt.engine.core.common.businessentities.Permissions permission =
+                new org.ovirt.engine.core.common.businessentities.Permissions();
         permission.setId(GUIDS[0]);
         permission.setAdElementId(GUIDS[1]);
         permission.setRoleId(GUIDS[2]);
