@@ -377,9 +377,11 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
 
     private IStorageModel prepareStorageForEdit(StorageDomain storage, StorageModel model) {
         final IStorageModel storageTypeModel = getStorageModelByStorage(storage);
-        storageTypeModel.setContainer(model);
-        storageTypeModel.setRole(storage.getStorageDomainType());
-        storageTypeModel.prepareForEdit(storage);
+        if (storageTypeModel != null) {
+            storageTypeModel.setContainer(model);
+            storageTypeModel.setRole(storage.getStorageDomainType());
+            storageTypeModel.prepareForEdit(storage);
+        }
 
         return storageTypeModel;
     }
