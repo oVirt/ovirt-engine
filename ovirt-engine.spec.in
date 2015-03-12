@@ -241,6 +241,8 @@ Requires:	objectweb-asm
 Requires:	openstack-java-client >= %{openstack_java_version}
 Requires:	openstack-java-glance-client >= %{openstack_java_version}
 Requires:	openstack-java-glance-model >= %{openstack_java_version}
+Requires:	openstack-java-cinder-client >= %{openstack_java_version}
+Requires:	openstack-java-cinder-model >= %{openstack_java_version}
 Requires:	openstack-java-keystone-client >= %{openstack_java_version}
 Requires:	openstack-java-keystone-model >= %{openstack_java_version}
 Requires:	openstack-java-quantum-client >= %{openstack_java_version}
@@ -758,6 +760,8 @@ common/com/mchange/c3p0/main/c3p0.jar
 %endif
 common/com/woorea/openstack/sdk/main/glance-client.jar openstack-java-sdk/glance-client.jar
 common/com/woorea/openstack/sdk/main/glance-model.jar openstack-java-sdk/glance-model.jar
+common/com/woorea/openstack/sdk/main/cinder-client.jar openstack-java-sdk/cinder-client.jar
+common/com/woorea/openstack/sdk/main/cinder-model.jar openstack-java-sdk/cinder-model.jar
 common/com/woorea/openstack/sdk/main/keystone-client.jar openstack-java-sdk/keystone-client.jar
 common/com/woorea/openstack/sdk/main/keystone-model.jar openstack-java-sdk/keystone-model.jar
 common/com/woorea/openstack/sdk/main/openstack-client.jar openstack-java-sdk/openstack-client.jar

@@ -5,6 +5,8 @@
   <resources>
     <resource-root path="glance-client.jar"/>
     <resource-root path="glance-model.jar"/>
+    <resource-root path="cinder-client.jar"/>
+    <resource-root path="cinder-model.jar"/>
     <resource-root path="keystone-client.jar"/>
     <resource-root path="keystone-model.jar"/>
     <resource-root path="openstack-client.jar"/>

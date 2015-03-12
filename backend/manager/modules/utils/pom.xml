@@ -146,6 +146,12 @@
       <version>${openstack-client.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>cinder-client</artifactId>
+      <version>${openstack-client.version}</version>
+    </dependency>
+
   </dependencies>
 
   <build>
