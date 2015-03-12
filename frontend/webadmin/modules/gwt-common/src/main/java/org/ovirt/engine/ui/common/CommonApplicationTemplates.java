@@ -100,4 +100,7 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
 
     @Template("<div style='border-right: 1px solid #D7D7E1; height: 32px;'>{0}</div>")
     SafeHtml nonResizeableColumnHeader(SafeHtml text);
+
+    @Template("<abbr title='{1}'>{0}</abbr>")
+    SafeHtml textWithTooltip(String text, String tooltip);
 }

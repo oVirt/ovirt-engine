@@ -178,9 +178,6 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<div style='max-width: 250px; display:inline-block;'>{0}</div>")
     SafeHtml maxWidthNteworkItemPopup(String text);
 
-    @Template("<abbr title='{1}'>{0}</abbr>")
-    SafeHtml textWithTooltip(String text, String tooltip);
-
     @Template("<span style='position: relative; margin-right: 3px; white-space: nowrap; height: 14px; line-height: 14px;'>{0}</span>"
             + "<span style='position: relative; display: inline-block; vertical-align: top; height: 14px; line-height: 14px;'>{1}</span>")
     SafeHtml textImageLabels(String text, SafeHtml image);
