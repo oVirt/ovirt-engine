@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.tasks;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.transaction.Transaction;
@@ -14,12 +16,12 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class CommandsCacheImpl implements CommandsCache {
 
-    private CacheWrapper<Guid, CommandEntity> commandMap;
+    private Map<Guid, CommandEntity> commandMap;
     private volatile boolean cacheInitialized;
     private Object LOCK = new Object();
 
     public CommandsCacheImpl() {
-        commandMap = CacheProviderFactory.<Guid, CommandEntity> getCacheWrapper();
+        commandMap = new HashMap<>();
     }
 
     private void initializeCache() {

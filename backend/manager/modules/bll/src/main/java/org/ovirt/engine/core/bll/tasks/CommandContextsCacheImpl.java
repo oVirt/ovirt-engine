@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.tasks;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
@@ -11,13 +14,13 @@ import org.ovirt.engine.core.compat.Guid;
 public class CommandContextsCacheImpl implements CommandContextsCache {
 
     private final CommandsCache commandsCache;
-    private CacheWrapper<Guid, CommandContext> contextsMap;
+    private Map<Guid, CommandContext> contextsMap;
     private volatile boolean cacheInitialized;
     private Object LOCK = new Object();
 
     public CommandContextsCacheImpl(final CommandsCache commandsCache) {
         this.commandsCache = commandsCache;
-        contextsMap = CacheProviderFactory.<Guid, CommandContext> getCacheWrapper();
+        contextsMap = new HashMap<>();
     }
 
     private void initializeCache() {
