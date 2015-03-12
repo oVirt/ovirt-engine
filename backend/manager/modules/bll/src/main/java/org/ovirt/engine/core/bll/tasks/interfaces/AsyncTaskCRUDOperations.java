@@ -1,16 +1,23 @@
 package org.ovirt.engine.core.bll.tasks.interfaces;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.compat.Guid;
 
-import java.util.List;
-
 public interface AsyncTaskCRUDOperations {
-    public abstract List<AsyncTask> getAllAsyncTasksFromDb();
-    public abstract void saveAsyncTaskToDb(AsyncTask asyncTask);
-    public abstract AsyncTask getAsyncTaskFromDb(Guid asyncTaskId);
-    public abstract int removeTaskFromDbByTaskId(Guid taskId) throws RuntimeException;
-    public abstract AsyncTask getByVdsmTaskId(Guid vdsmTaskId);
-    public abstract int removeByVdsmTaskId(Guid vdsmTaskId);
-    public abstract void addOrUpdateTaskInDB(AsyncTask asyncTask);
+
+    List<AsyncTask> getAllAsyncTasksFromDb();
+
+    void saveAsyncTaskToDb(AsyncTask asyncTask);
+
+    AsyncTask getAsyncTaskFromDb(Guid asyncTaskId);
+
+    int removeTaskFromDbByTaskId(Guid taskId) throws RuntimeException;
+
+    AsyncTask getByVdsmTaskId(Guid vdsmTaskId);
+
+    int removeByVdsmTaskId(Guid vdsmTaskId);
+
+    void addOrUpdateTaskInDB(AsyncTask asyncTask);
 }
