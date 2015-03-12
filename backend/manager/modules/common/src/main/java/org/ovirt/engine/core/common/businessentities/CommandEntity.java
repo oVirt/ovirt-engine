@@ -21,10 +21,14 @@ public class CommandEntity implements BusinessEntity<Guid> {
     private VdcActionParametersBase commandParameters;
     private VdcReturnValueBase returnValue;
     private Date createdAt;
-    private CommandStatus commandStatus = CommandStatus.UNKNOWN;
-    private boolean callBackEnabled = false;
-    private boolean callBackNotified = false;
-    private boolean executed = false;
+    private CommandStatus commandStatus;
+    private boolean callbackEnabled;
+    private boolean callbackNotified;
+    private boolean executed;
+
+    public CommandEntity() {
+        commandStatus = CommandStatus.UNKNOWN;
+    }
 
     @Override
     public int hashCode() {
@@ -102,20 +106,20 @@ public class CommandEntity implements BusinessEntity<Guid> {
         this.commandStatus = commandStatus;
     }
 
-    public boolean isCallBackEnabled() {
-        return callBackEnabled;
+    public boolean isCallbackEnabled() {
+        return callbackEnabled;
     }
 
-    public void setCallBackEnabled(boolean callBackEnabled) {
-        this.callBackEnabled = callBackEnabled;
+    public void setCallbackEnabled(boolean callbackEnabled) {
+        this.callbackEnabled = callbackEnabled;
     }
 
-    public boolean isCallBackNotified() {
-        return callBackNotified;
+    public boolean isCallbackNotified() {
+        return callbackNotified;
     }
 
-    public void setCallBackNotified(boolean callBackNotified) {
-        this.callBackNotified = callBackNotified;
+    public void setCallbackNotified(boolean callbackNotified) {
+        this.callbackNotified = callbackNotified;
     }
 
     public static CommandEntity buildCommandEntity(Guid userId,
@@ -126,7 +130,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
                                                    VdcActionType actionType,
                                                    VdcActionParametersBase params,
                                                    CommandStatus status,
-                                                   boolean callBackEnabled,
+                                                   boolean callbackEnabled,
                                                    VdcReturnValueBase returnValue) {
         CommandEntity entity = new CommandEntity();
         entity.setUserId(userId);
@@ -137,7 +141,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
         entity.setCommandType(actionType);
         entity.setCommandParameters(params);
         entity.setCommandStatus(status);
-        entity.setCallBackEnabled(callBackEnabled);
+        entity.setCallbackEnabled(callbackEnabled);
         entity.setReturnValue(returnValue);
         return entity;
     }

@@ -89,7 +89,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
             case SUCCEEDED:
                 CommandEntity cmdEntity = CommandCoordinatorUtil.getCommandEntity(currentChildId);
-                if (!cmdEntity.isCallBackNotified()) {
+                if (!cmdEntity.isCallbackNotified()) {
                     log.info("Waiting on Live Merge command step '{}' to finalize",
                             getParameters().getCommandStep());
                     return;
@@ -386,7 +386,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                     Backend.getInstance().endAction(VdcActionType.DestroyImage,
                             command.getParameters(),
                             cloneContextAndDetachFromParent());
-                    CommandCoordinatorUtil.getCommandEntity(currentChildId).setCallBackNotified(true);
+                    CommandCoordinatorUtil.getCommandEntity(currentChildId).setCallbackNotified(true);
                 }
             }
         } else {

@@ -95,7 +95,7 @@ public class CommandsCacheImpl implements CommandsCache {
     public void updateCallbackNotified(final Guid commandId) {
         CommandEntity cmdEntity = get(commandId);
         if (cmdEntity != null) {
-            cmdEntity.setCallBackNotified(true);
+            cmdEntity.setCallbackNotified(true);
             DbFacade.getInstance().getCommandEntityDao().updateNotified(commandId);
         }
     }

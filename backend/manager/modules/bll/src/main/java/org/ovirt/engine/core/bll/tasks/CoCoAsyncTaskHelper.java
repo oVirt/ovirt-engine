@@ -199,7 +199,7 @@ public class CoCoAsyncTaskHelper {
                 int retVal = DbFacade.getInstance().getAsyncTaskDao().remove(taskId);
                 if (asyncTask != null && !Guid.isNullOrEmpty(asyncTask.getCommandId())) {
                     CommandEntity cmdEntity = coco.getCommandEntity(asyncTask.getCommandId());
-                    if (cmdEntity != null && !cmdEntity.isCallBackEnabled()) {
+                    if (cmdEntity != null && !cmdEntity.isCallbackEnabled()) {
                         coco.removeCommand(asyncTask.getCommandId());
                         if (!coco.hasCommandEntitiesWithRootCommandId(asyncTask.getRootCommandId())) {
                             coco.removeCommand(asyncTask.getRootCommandId());
@@ -229,7 +229,7 @@ public class CoCoAsyncTaskHelper {
                 int retVal = DbFacade.getInstance().getAsyncTaskDao().removeByVdsmTaskId(vdsmTaskId);
                 if (asyncTask != null && !Guid.isNullOrEmpty(asyncTask.getCommandId())) {
                     CommandEntity cmdEntity = coco.getCommandEntity(asyncTask.getCommandId());
-                    if (cmdEntity != null && !cmdEntity.isCallBackEnabled()) {
+                    if (cmdEntity != null && !cmdEntity.isCallbackEnabled()) {
                         coco.removeCommand(asyncTask.getCommandId());
                         if (!coco.hasCommandEntitiesWithRootCommandId(asyncTask.getRootCommandId())) {
                             coco.removeCommand(asyncTask.getRootCommandId());

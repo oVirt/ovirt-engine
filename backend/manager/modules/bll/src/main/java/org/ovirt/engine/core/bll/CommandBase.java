@@ -2168,7 +2168,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
     }
 
-    private CommandEntity buildCommandEntity(Guid parentCommandId, boolean callBackEnabled) {
+    private CommandEntity buildCommandEntity(Guid parentCommandId, boolean enableCallback) {
         return CommandEntity.buildCommandEntity(getUserId(),
                 getCommandId(),
                 parentCommandId,
@@ -2177,7 +2177,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 getActionType(),
                 getParameters(),
                 commandStatus,
-                callBackEnabled,
+                enableCallback,
                 getReturnValue());
     }
 
@@ -2215,7 +2215,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         try {
             CommandEntity cmdEntity = CommandCoordinatorUtil.getCommandEntity(getCommandId());
             if (cmdEntity != null) {
-                CommandCoordinatorUtil.persistCommand(buildCommandEntity(cmdEntity.getRootCommandId(), cmdEntity.isCallBackEnabled()), getContext());
+                CommandCoordinatorUtil.persistCommand(buildCommandEntity(cmdEntity.getRootCommandId(),
+                        cmdEntity.isCallbackEnabled()),
+                        getContext());
                 CommandCoordinatorUtil.updateCommandExecuted(getCommandId());
             }
         } finally {

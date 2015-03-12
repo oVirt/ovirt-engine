@@ -198,11 +198,11 @@ public class AsyncTask implements Serializable {
     }
 
     public void setCallBackEnabled(boolean enabled) {
-        childCmdEntity.setCallBackEnabled(enabled);
+        childCmdEntity.setCallbackEnabled(enabled);
     }
 
     public boolean isCallBackEnabled() {
-        return childCmdEntity.isCallBackEnabled();
+        return childCmdEntity.isCallbackEnabled();
     }
 
     @Override

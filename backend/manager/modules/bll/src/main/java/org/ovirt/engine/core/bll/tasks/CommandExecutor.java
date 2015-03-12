@@ -123,7 +123,7 @@ public class CommandExecutor {
                         cmdEntity.getCommandStatus() != CommandStatus.FAILED_RESTARTED) {
                     coco.retrieveCommand(cmdEntity.getId()).setCommandStatus(CommandStatus.FAILED_RESTARTED);
                 }
-                if (!cmdEntity.isCallBackNotified()) {
+                if (!cmdEntity.isCallbackNotified()) {
                     addToCallBackMap(cmdEntity);
                 }
             }

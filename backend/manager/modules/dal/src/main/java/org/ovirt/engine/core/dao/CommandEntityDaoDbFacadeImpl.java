@@ -37,8 +37,8 @@ public class CommandEntityDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Comm
             result.setReturnValue(deserializeReturnValue(resultSet.getString("return_value"), resultSet.getString("return_value_class")));
             result.setCommandStatus(getCommandStatus(resultSet.getString("status")));
             result.setExecuted(resultSet.getBoolean("executed"));
-            result.setCallBackEnabled(resultSet.getBoolean("callback_enabled"));
-            result.setCallBackNotified(resultSet.getBoolean("callback_notified"));
+            result.setCallbackEnabled(resultSet.getBoolean("callback_enabled"));
+            result.setCallbackNotified(resultSet.getBoolean("callback_notified"));
             return result;
         }
     };
@@ -68,7 +68,7 @@ public class CommandEntityDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Comm
                 .addValue("command_params_class", entity.getCommandParameters() == null ? null : entity.getCommandParameters().getClass().getName())
                 .addValue("status", entity.getCommandStatus().toString())
                 .addValue("executed", entity.isExecuted())
-                .addValue("callback_enabled", entity.isCallBackEnabled())
+                .addValue("callback_enabled", entity.isCallbackEnabled())
                 .addValue("return_value", serializeReturnValue(entity.getReturnValue()))
                 .addValue("return_value_class", entity.getReturnValue() == null ? null : entity.getReturnValue().getClass().getName());
     }

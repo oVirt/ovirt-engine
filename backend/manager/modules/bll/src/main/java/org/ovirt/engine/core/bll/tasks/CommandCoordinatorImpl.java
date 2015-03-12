@@ -78,17 +78,17 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         CommandEntity existingCmdEntity = commandsCache.get(cmdEntity.getId());
         if (existingCmdEntity != null) {
             cmdEntity.setExecuted(existingCmdEntity.isExecuted());
-            cmdEntity.setCallBackNotified(existingCmdEntity.isCallBackNotified());
+            cmdEntity.setCallbackNotified(existingCmdEntity.isCallbackNotified());
         }
         commandsCache.put(cmdEntity);
         // check if callback is enabled or if parent command has callback enabled
-        if (cmdEntity.isCallBackEnabled() ||
+        if (cmdEntity.isCallbackEnabled() ||
                 (!Guid.isNullOrEmpty(cmdEntity.getRootCommandId()) &&
                         commandsCache.get(cmdEntity.getRootCommandId()) != null &&
-                        commandsCache.get(cmdEntity.getRootCommandId()).isCallBackEnabled()
+                        commandsCache.get(cmdEntity.getRootCommandId()).isCallbackEnabled()
                 )) {
             buildCmdHierarchy(cmdEntity);
-            if (!cmdEntity.isCallBackNotified()) {
+            if (!cmdEntity.isCallbackNotified()) {
                 cmdExecutor.addToCallBackMap(cmdEntity);
             }
         }
@@ -130,7 +130,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         CommandEntity cmdEntity;
         for (Guid cmdId : commandsCache.keySet()) {
             cmdEntity = commandsCache.get(cmdId);
-            if (commandsCache.get(cmdId).isCallBackEnabled()) {
+            if (commandsCache.get(cmdId).isCallbackEnabled()) {
                 cmdEntities.add(cmdEntity);
             }
         }
