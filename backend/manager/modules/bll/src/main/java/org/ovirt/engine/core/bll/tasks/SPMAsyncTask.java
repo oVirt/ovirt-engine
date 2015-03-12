@@ -22,20 +22,24 @@ import org.slf4j.LoggerFactory;
 public class SPMAsyncTask implements SPMTask {
     private static final Logger log = LoggerFactory.getLogger(SPMAsyncTask.class);
 
-
     protected final CommandCoordinator coco;
-
     private boolean zombieTask;
+    private AsyncTaskParameters parameters;
+    private Map<Guid, VdcObjectType> entitiesMap;
+    private AsyncTaskState state;
+    private AsyncTaskStatus lastTaskStatus;
+    private boolean partiallyCompletedCommandTask;
+
+    // Indicates time in milliseconds when task status recently changed.
+    private long lastAccessToStatusSinceEnd;
 
     public SPMAsyncTask(CommandCoordinator coco, AsyncTaskParameters parameters) {
         this.coco = coco;
         setParameters(parameters);
         setState(AsyncTaskState.Initializing);
+        setLastTaskStatus(new AsyncTaskStatus(AsyncTaskStatusEnum.init));
+        lastAccessToStatusSinceEnd = System.currentTimeMillis();
     }
-
-    private AsyncTaskParameters privateParameters;
-
-    private Map<Guid, VdcObjectType> entitiesMap;
 
     public Map<Guid, VdcObjectType> getEntitiesMap() {
         return entitiesMap;
@@ -46,11 +50,11 @@ public class SPMAsyncTask implements SPMTask {
     }
 
     public AsyncTaskParameters getParameters() {
-        return privateParameters;
+        return parameters;
     }
 
-    public void setParameters(AsyncTaskParameters value) {
-        privateParameters = value;
+    public void setParameters(AsyncTaskParameters parameters) {
+        this.parameters = parameters;
     }
 
     public Guid getVdsmTaskId() {
@@ -61,14 +65,12 @@ public class SPMAsyncTask implements SPMTask {
         return getParameters().getStoragePoolID();
     }
 
-    private AsyncTaskState privateState = AsyncTaskState.forValue(0);
-
     public AsyncTaskState getState() {
-        return privateState;
+        return state;
     }
 
-    public void setState(AsyncTaskState value) {
-        privateState = value;
+    public void setState(AsyncTaskState state) {
+        this.state = state;
     }
 
     public boolean getShouldPoll() {
@@ -78,22 +80,20 @@ public class SPMAsyncTask implements SPMTask {
                 && (getParameters().getEntityInfo() == null ? isTaskOverPrePollingLapse() : true);
     }
 
-    private AsyncTaskStatus _lastTaskStatus = new AsyncTaskStatus(AsyncTaskStatusEnum.init);
-
     @Override
     public AsyncTaskStatus getLastTaskStatus() {
-        return _lastTaskStatus;
+        return lastTaskStatus;
     }
 
     /**
-     * Set the _lastTaskStatus with taskStatus.
+     * Set the lastTaskStatus with taskStatus.
      *
-     * @param taskStatus
+     * @param lastTaskStatus
      *            - task status to set.
      */
     @Override
-    public void setLastTaskStatus(AsyncTaskStatus taskStatus) {
-        _lastTaskStatus = taskStatus;
+    public void setLastTaskStatus(AsyncTaskStatus lastTaskStatus) {
+        this.lastTaskStatus = lastTaskStatus;
     }
 
     /**
@@ -106,16 +106,13 @@ public class SPMAsyncTask implements SPMTask {
                 || getState() == AsyncTaskState.AttemptingEndAction
                 || getState() == AsyncTaskState.ClearFailed
                 || getState() == AsyncTaskState.Cleared) {
-            _lastAccessToStatusSinceEnd = System.currentTimeMillis();
+            lastAccessToStatusSinceEnd = System.currentTimeMillis();
         }
     }
 
-    // Indicates time in milliseconds when task status recently changed.
-    protected long _lastAccessToStatusSinceEnd = System.currentTimeMillis();
-
     @Override
     public long getLastAccessToStatusSinceEnd() {
-        return _lastAccessToStatusSinceEnd;
+        return lastAccessToStatusSinceEnd;
     }
 
     @Override
@@ -224,22 +221,22 @@ public class SPMAsyncTask implements SPMTask {
         // Fail zombie task and task that belongs to a partially submitted command
         if (isZombieTask() || isPartiallyCompletedCommandTask()) {
             getParameters().getDbAsyncTask().getTaskParameters().setTaskGroupSuccess(false);
-            ExecutionHandler.endTaskStep(privateParameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FAILED);
+            ExecutionHandler.endTaskStep(parameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FAILED);
             onTaskEndFailure();
         }
 
         if (hasTaskEndedSuccessfully()) {
-            ExecutionHandler.endTaskStep(privateParameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FINISHED);
+            ExecutionHandler.endTaskStep(parameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FINISHED);
             onTaskEndSuccess();
         }
 
         else if (hasTaskEndedInFailure()) {
-            ExecutionHandler.endTaskStep(privateParameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FAILED);
+            ExecutionHandler.endTaskStep(parameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FAILED);
             onTaskEndFailure();
         }
 
         else if (!doesTaskExist()) {
-            ExecutionHandler.endTaskStep(privateParameters.getDbAsyncTask().getStepId(), JobExecutionStatus.UNKNOWN);
+            ExecutionHandler.endTaskStep(parameters.getDbAsyncTask().getStepId(), JobExecutionStatus.UNKNOWN);
             onTaskDoesNotExist();
         }
     }
@@ -475,8 +472,6 @@ public class SPMAsyncTask implements SPMTask {
     protected void logTaskCleanFailure() {
         log.error("SPMAsyncTask::ClearAsyncTask: Clearing task '{}' failed.", getVdsmTaskId());
     }
-
-    private boolean partiallyCompletedCommandTask = false;
 
     public boolean isPartiallyCompletedCommandTask() {
         return partiallyCompletedCommandTask;
