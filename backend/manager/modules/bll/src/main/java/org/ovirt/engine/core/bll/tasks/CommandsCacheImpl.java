@@ -14,7 +14,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class CommandsCacheImpl implements CommandsCache {
 
-    CacheWrapper<Guid, CommandEntity> commandMap;
+    private CacheWrapper<Guid, CommandEntity> commandMap;
     private volatile boolean cacheInitialized;
     private Object LOCK = new Object();
 
