@@ -66,6 +66,6 @@ public class RemoveDiskSnapshotsCommandCallback extends CommandCallBack {
     }
 
     private RemoveDiskSnapshotsCommand<RemoveDiskSnapshotsParameters> getCommand(Guid cmdId) {
-        return (RemoveDiskSnapshotsCommand<RemoveDiskSnapshotsParameters>) CommandCoordinatorUtil.retrieveCommand(cmdId);
+        return CommandCoordinatorUtil.retrieveCommand(cmdId);
     }
 }

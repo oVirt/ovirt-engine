@@ -148,8 +148,9 @@ public class CommandCoordinatorUtil {
         return coco.getCommandEntity(commandId);
     }
 
-    public static CommandBase<?> retrieveCommand(Guid commandId) {
-        return coco.retrieveCommand(commandId);
+    @SuppressWarnings("unchecked")
+    public static <C extends CommandBase<?>> C retrieveCommand(Guid commandId) {
+        return (C) coco.retrieveCommand(commandId);
     }
 
     public static void removeCommand(Guid commandId) {

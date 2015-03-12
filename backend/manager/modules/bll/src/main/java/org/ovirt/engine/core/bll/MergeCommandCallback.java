@@ -51,6 +51,6 @@ public class MergeCommandCallback extends CommandCallBack {
     }
 
     private MergeCommand<MergeParameters> getCommand(Guid cmdId) {
-        return (MergeCommand<MergeParameters>) CommandCoordinatorUtil.retrieveCommand(cmdId);
+        return CommandCoordinatorUtil.retrieveCommand(cmdId);
     }
 }

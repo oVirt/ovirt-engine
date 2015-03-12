@@ -52,6 +52,6 @@ public class RemoveSnapshotCommandCallback extends CommandCallBack {
     }
 
     private RemoveSnapshotCommand<RemoveSnapshotParameters> getCommand(Guid cmdId) {
-        return (RemoveSnapshotCommand<RemoveSnapshotParameters>) CommandCoordinatorUtil.retrieveCommand(cmdId);
+        return CommandCoordinatorUtil.retrieveCommand(cmdId);
     }
 }

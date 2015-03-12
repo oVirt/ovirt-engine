@@ -24,6 +24,6 @@ public class RemoveSnapshotSingleDiskLiveCommandCallback extends CommandCallBack
     }
 
     private RemoveSnapshotSingleDiskLiveCommand<RemoveSnapshotSingleDiskParameters> getCommand(Guid cmdId) {
-        return (RemoveSnapshotSingleDiskLiveCommand<RemoveSnapshotSingleDiskParameters>) CommandCoordinatorUtil.retrieveCommand(cmdId);
+        return CommandCoordinatorUtil.retrieveCommand(cmdId);
     }
 }

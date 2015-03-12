@@ -14,6 +14,6 @@ public class MergeStatusCommandCallback extends CommandCallBack {
     }
 
     private MergeStatusCommand<MergeParameters> getCommand(Guid cmdId) {
-        return (MergeStatusCommand<MergeParameters>) CommandCoordinatorUtil.retrieveCommand(cmdId);
+        return CommandCoordinatorUtil.retrieveCommand(cmdId);
     }
 }
