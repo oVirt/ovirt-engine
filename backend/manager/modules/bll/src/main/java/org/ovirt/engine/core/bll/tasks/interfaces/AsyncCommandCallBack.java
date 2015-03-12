@@ -12,7 +12,8 @@ import org.ovirt.engine.core.compat.Guid;
 public interface AsyncCommandCallBack {
 
     Map<Guid, AsyncTaskStatus> getAllTasksStatuses(Guid storagePoolID);
-    ArrayList<AsyncTaskCreationInfo> getAllTasksInfo(Guid storagePoolID);
-    VdcReturnValueBase endAction(SPMTask task, ExecutionContext context);
 
+    ArrayList<AsyncTaskCreationInfo> getAllTasksInfo(Guid storagePoolID);
+
+    VdcReturnValueBase endAction(SPMTask task, ExecutionContext context);
 }
