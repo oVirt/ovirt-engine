@@ -2151,17 +2151,16 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         persistCommand(parentCommand, getContext(), false);
     }
 
-    public void persistCommand(VdcActionType parentCommand, boolean enableCallBack) {
-        persistCommand(parentCommand, getContext(), enableCallBack);
+    public void persistCommand(VdcActionType parentCommand, boolean enableCallback) {
+        persistCommand(parentCommand, getContext(), enableCallback);
     }
 
-    public void persistCommand(VdcActionType parentCommand, CommandContext cmdContext, boolean enableCallBack) {
+    public void persistCommand(VdcActionType parentCommand, CommandContext cmdContext, boolean enableCallback) {
         Transaction transaction = TransactionSupport.suspend();
         try {
-            CommandCoordinatorUtil.persistCommand(
-                    buildCommandEntity(getParentParameters(parentCommand).getCommandId(),
-                            enableCallBack),
-                    cmdContext);
+            CommandEntity commandEntity =
+                    buildCommandEntity(getParentParameters(parentCommand).getCommandId(), enableCallback);
+            CommandCoordinatorUtil.persistCommand(commandEntity, cmdContext);
         } finally {
             if (transaction != null) {
                 TransactionSupport.resume(transaction);
