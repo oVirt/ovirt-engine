@@ -12,6 +12,6 @@ public interface CacheWrapper<K, V> {
 
     void remove(final K key);
 
-    public boolean containsKey(K key);
+    boolean containsKey(K key);
 
 }
