@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
+import org.ovirt.engine.ui.common.widget.table.cell.ImageButtonCell;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -27,7 +28,6 @@ import org.ovirt.engine.ui.userportal.widget.extended.vm.AbstractConsoleButtonCe
 import org.ovirt.engine.ui.userportal.widget.extended.vm.BorderedCompositeCell;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.ConsoleButtonCell;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.ConsoleEditButtonCell;
-import org.ovirt.engine.ui.userportal.widget.extended.vm.ImageButtonCell;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.ImageMaskCell;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.ImageMaskCell.ShowMask;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.TooltipCell;

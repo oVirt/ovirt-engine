@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.userportal.widget.extended.vm;
+package org.ovirt.engine.ui.common.widget.table.cell;
 
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
