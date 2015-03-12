@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
+import org.ovirt.engine.ui.common.widget.label.BooleanLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
@@ -44,6 +45,7 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
     TextBoxLabel diskProfileName = new TextBoxLabel();
     TextBoxLabel quotaName = new TextBoxLabel();
     TextBoxLabel alignment = new TextBoxLabel();
+    BooleanLabel wipeAfterDelete = new BooleanLabel(constants.yes(), constants.no());
 
     @UiField(provided = true)
     @WithElementId
@@ -68,7 +70,7 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
         generateIds();
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 1, 7);
+        formBuilder = new FormBuilder(formPanel, 1, 8);
 
         formBuilder.addFormItem(new FormItem(constants.aliasDisk(), alias, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.descriptionDisk(), description, 1, 0));
@@ -92,6 +94,13 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
                 return getDetailModel().isQuotaAvailable();
             }
         });
+        formBuilder.addFormItem(new FormItem(constants.wipeAfterDelete(), wipeAfterDelete, 7, 0) {
+            @Override
+            public boolean getIsAvailable() {
+                return getDetailModel().isImage();
+            }
+        });
+
         formBuilder.setRelativeColumnWidth(0, 3);
     }
 

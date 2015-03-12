@@ -111,6 +111,19 @@ public class DiskGeneralModel extends EntityModel<Disk>
         }
     }
 
+    private boolean wipeAfterDelete;
+
+    public boolean getWipeAfterDelete() {
+        return wipeAfterDelete;
+    }
+
+    public void setWipeAfterDelete(boolean wipeAfterDelete) {
+        if (this.wipeAfterDelete != wipeAfterDelete) {
+            this.wipeAfterDelete = wipeAfterDelete;
+            onPropertyChanged(new PropertyChangedEventArgs("WipeAfterDelete")); //$NON-NLS-1$
+        }
+    }
+
     private String privateDiskProfileName;
 
     public String getDiskProfileName()
@@ -218,6 +231,8 @@ public class DiskGeneralModel extends EntityModel<Disk>
         } else {
             setAlignment(disk.getAlignment().toString());
         }
+
+        setWipeAfterDelete(disk.isWipeAfterDelete());
 
         if (isImage()) {
             DiskImage diskImage = (DiskImage) disk;
