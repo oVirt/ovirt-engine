@@ -18,10 +18,10 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 /**
  * Cell that renders ActionButtonDefinition-like image buttons.
  *
- * @param <T>
+ * @param <C>
  *            The data type of the cell (the model)
  */
-public abstract class AbstractImageButtonCell<T> extends AbstractCell<T> {
+public abstract class AbstractImageButtonCell<C> extends AbstractCell<C> {
 
     private final SafeHtml imageHtml;
 
@@ -43,7 +43,7 @@ public abstract class AbstractImageButtonCell<T> extends AbstractCell<T> {
     }
 
     @Override
-    public void onBrowserEvent(Context context, Element parent, T value, NativeEvent event, ValueUpdater<T> valueUpdater) {
+    public void onBrowserEvent(Context context, Element parent, C value, NativeEvent event, ValueUpdater<C> valueUpdater) {
         super.onBrowserEvent(context, parent, value, event, valueUpdater);
 
         EventTarget eventTarget = event.getEventTarget();
@@ -57,7 +57,7 @@ public abstract class AbstractImageButtonCell<T> extends AbstractCell<T> {
     }
 
     @Override
-    public void render(Context context, T value, SafeHtmlBuilder sb) {
+    public void render(Context context, C value, SafeHtmlBuilder sb) {
         sb.appendHtmlConstant("<span id=\"" //$NON-NLS-1$
                 + ElementIdUtils.createTableCellElementId(elementIdPrefix, columnId, context)
                 + "\" style=\"vertical-align: middle;\" title=\"" //$NON-NLS-1$
@@ -67,20 +67,20 @@ public abstract class AbstractImageButtonCell<T> extends AbstractCell<T> {
         sb.appendHtmlConstant("</span>"); //$NON-NLS-1$
     }
 
-    protected abstract String getTitle(T value);
+    protected abstract String getTitle(C value);
 
     /**
      * Get the UICommand associated with the button.
      * @param value
      * @return
      */
-    protected abstract UICommand resolveCommand(T value);
+    protected abstract UICommand resolveCommand(C value);
 
     /**
      * Execute the click command.
      * @param value
      */
-    protected void onClick(T value) {
+    protected void onClick(C value) {
         UICommand command = resolveCommand(value);
         if (command != null) {
             command.execute();
