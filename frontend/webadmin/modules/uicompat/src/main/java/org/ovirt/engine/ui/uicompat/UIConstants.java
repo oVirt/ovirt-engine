@@ -2101,6 +2101,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Updating 'Link State' on a running virtual machine while the NIC is plugged is not supported for externally-provided networks")
     String hotLinkStateUpdateNotSupportedExternalNetworks();
 
+    @DefaultStringValue("Updating 'Link State' on a 'passthrough' vm network interface is not supported")
+    String linkStateUpdateNotSupportedForPassthroughVnic();
+
     @DefaultStringValue("Console connect")
     String confirmConsoleConnect();
 

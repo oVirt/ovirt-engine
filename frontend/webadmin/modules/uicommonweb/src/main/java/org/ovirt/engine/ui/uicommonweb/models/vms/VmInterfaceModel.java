@@ -29,6 +29,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.MacAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NoSpecialCharactersWithDotValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.VnicProfileValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -98,7 +99,13 @@ public abstract class VmInterfaceModel extends Model
                 updateLinkChangability();
             }
         });
-        setNicType(new ListModel<VmInterfaceType>());
+        setNicType(new ListModel<VmInterfaceType>() {
+            @Override
+            public void setSelectedItem(VmInterfaceType value) {
+                super.setSelectedItem(value);
+                updateLinkChangability();
+            }
+        });
         setMAC(new EntityModel<String>());
         setEnableMac(new EntityModel<Boolean>() {
             @Override
@@ -326,7 +333,7 @@ public abstract class VmInterfaceModel extends Model
             } else if (propArgs.propertyName.equals("IsChangable")) { //$NON-NLS-1$
                 boolean isLinkedChangeable = getLinked().getIsChangable();
 
-                getLinked_IsSelected().setChangeProhibitionReason(getChangeProhibitionReason());
+                getLinked_IsSelected().setChangeProhibitionReason(getLinked().getChangeProhibitionReason());
                 getLinked_IsSelected().setIsChangeable(isLinkedChangeable);
 
                 getUnlinked_IsSelected().setChangeProhibitionReason(getLinked().getChangeProhibitionReason());
@@ -511,6 +518,15 @@ public abstract class VmInterfaceModel extends Model
             return;
         }
         if (!hotUpdateSupported) {
+            getLinked().setIsChangeable(false);
+            return;
+        }
+        if ((VmInterfaceType.pciPassthrough.equals(getNicType().getSelectedItem())
+        || getProfile().getSelectedItem().isPassthrough())) {
+            getLinked().setEntity(true);
+            getLinked().setChangeProhibitionReason(ConstantsManager.getInstance()
+                    .getConstants()
+                    .linkStateUpdateNotSupportedForPassthroughVnic());
             getLinked().setIsChangeable(false);
             return;
         }
