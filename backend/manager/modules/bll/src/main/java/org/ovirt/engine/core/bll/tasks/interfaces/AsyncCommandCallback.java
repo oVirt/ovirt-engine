@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.compat.Guid;
 
-public interface AsyncCommandCallBack {
+public interface AsyncCommandCallback {
 
     Map<Guid, AsyncTaskStatus> getAllTasksStatuses(Guid storagePoolID);
 
