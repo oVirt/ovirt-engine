@@ -3,14 +3,14 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
-import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RemoveSnapshotCommandCallback extends CommandCallBack {
+public class RemoveSnapshotCommandCallback extends CommandCallback {
     private static final Logger log = LoggerFactory.getLogger(RemoveSnapshotCommandCallback.class);
 
     @Override

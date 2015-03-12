@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
-import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.MergeParameters;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmJob;
@@ -13,7 +13,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MergeCommandCallback extends CommandCallBack {
+public class MergeCommandCallback extends CommandCallback {
     private static final Logger log = LoggerFactory.getLogger(MergeCommandCallback.class);
 
     @Override

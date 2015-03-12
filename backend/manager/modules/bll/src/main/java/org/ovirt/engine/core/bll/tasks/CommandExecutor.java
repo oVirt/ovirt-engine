@@ -17,7 +17,7 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.CommandsFactory;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.BackendUtils;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -41,7 +41,7 @@ public class CommandExecutor {
     private static final Logger log = LoggerFactory.getLogger(CommandExecutor.class);
 
     private final CommandCoordinatorImpl coco;
-    private final Map<Guid, CommandCallBack> cmdCallBackMap = new ConcurrentHashMap<>();
+    private final Map<Guid, CommandCallback> cmdCallBackMap = new ConcurrentHashMap<>();
     private boolean cmdExecutorInitialized;
 
     CommandExecutor(CommandCoordinatorImpl coco) {
@@ -55,11 +55,11 @@ public class CommandExecutor {
     @OnTimerMethodAnnotation("invokeCallbackMethods")
     public void invokeCallbackMethods() {
         initCommandExecutor();
-        Iterator<Entry<Guid, CommandCallBack>> iterator = cmdCallBackMap.entrySet().iterator();
+        Iterator<Entry<Guid, CommandCallback>> iterator = cmdCallBackMap.entrySet().iterator();
         while (iterator.hasNext()) {
-            Entry<Guid, CommandCallBack> entry = iterator.next();
+            Entry<Guid, CommandCallback> entry = iterator.next();
             Guid cmdId = entry.getKey();
-            CommandCallBack callBack = entry.getValue();
+            CommandCallback callBack = entry.getValue();
             CommandStatus status = coco.getCommandStatus(cmdId);
             boolean errorInCallback = false;
             try {
@@ -144,7 +144,7 @@ public class CommandExecutor {
                                                           final VdcActionParametersBase parameters,
                                                           final CommandContext cmdContext) {
         final CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters, cmdContext);
-        CommandCallBack callBack = command.getCallback();
+        CommandCallback callBack = command.getCallback();
         command.persistCommand(command.getParameters().getParentCommand(), cmdContext, callBack != null);
         if (callBack != null) {
             cmdCallBackMap.put(command.getCommandId(), callBack);
@@ -168,7 +168,7 @@ public class CommandExecutor {
     }
 
     private VdcReturnValueBase executeCommand(final CommandBase<?> command, final CommandContext cmdContext) {
-        CommandCallBack callBack = command.getCallback();
+        CommandCallback callBack = command.getCallback();
         VdcReturnValueBase result = BackendUtils.getBackendCommandObjectsHandler(log).runAction(command, null);
         updateCommand(command, result);
         if (callBack != null) {

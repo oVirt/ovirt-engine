@@ -5,9 +5,9 @@ import org.ovirt.engine.core.compat.Guid;
 
 import java.util.List;
 
-public abstract class CommandCallBack {
+public abstract class CommandCallback {
 
-    public CommandCallBack() {}
+    public CommandCallback() {}
 
     public void executed(VdcReturnValueBase result) {
         return;

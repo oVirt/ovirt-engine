@@ -13,7 +13,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
-import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
@@ -233,7 +233,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     }
 
     @Override
-    public CommandCallBack getCallback() {
+    public CommandCallback getCallback() {
         // Handle first execution based on vm status, and recovery based on isLiveMerge (VM may be down)
         if (isLiveMerge()) {
             return new RemoveDiskSnapshotsCommandCallback();

@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MergeParameters;
@@ -178,7 +178,7 @@ public class MergeStatusCommand<T extends MergeParameters>
     }
 
     @Override
-    public CommandCallBack getCallback() {
+    public CommandCallback getCallback() {
         return new MergeStatusCommandCallback();
     }
 }
