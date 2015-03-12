@@ -89,7 +89,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
                 )) {
             buildCmdHierarchy(cmdEntity);
             if (!cmdEntity.isCallbackNotified()) {
-                cmdExecutor.addToCallBackMap(cmdEntity);
+                cmdExecutor.addToCallbackMap(cmdEntity);
             }
         }
     }
@@ -125,7 +125,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         return cmdEntity;
     }
 
-    public List<CommandEntity> getCommandsWithCallBackEnabled() {
+    public List<CommandEntity> getCommandsWithCallbackEnabled() {
         List<CommandEntity> cmdEntities = new ArrayList<>();
         CommandEntity cmdEntity;
         for (Guid cmdId : commandsCache.keySet()) {
@@ -237,7 +237,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
             synchronized(LOCK) {
                 if (!childHierarchyInitialized) {
                     childHierarchy.clear();
-                    for (CommandEntity cmd : getCommandsWithCallBackEnabled()) {
+                    for (CommandEntity cmd : getCommandsWithCallbackEnabled()) {
                         buildCmdHierarchy(cmd);
                     }
                 }

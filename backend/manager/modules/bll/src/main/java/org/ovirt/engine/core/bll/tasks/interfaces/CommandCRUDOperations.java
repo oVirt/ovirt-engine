@@ -23,7 +23,7 @@ public interface CommandCRUDOperations {
 
     CommandStatus getCommandStatus(Guid commandId);
 
-    List<CommandEntity> getCommandsWithCallBackEnabled();
+    List<CommandEntity> getCommandsWithCallbackEnabled();
 
     void persistCommand(CommandEntity cmdEntity);
 

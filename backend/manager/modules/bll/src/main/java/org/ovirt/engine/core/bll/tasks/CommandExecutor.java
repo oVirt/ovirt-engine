@@ -41,7 +41,7 @@ public class CommandExecutor {
     private static final Logger log = LoggerFactory.getLogger(CommandExecutor.class);
 
     private final CommandCoordinatorImpl coco;
-    private final Map<Guid, CommandCallback> cmdCallBackMap = new ConcurrentHashMap<>();
+    private final Map<Guid, CommandCallback> cmdCallbackMap = new ConcurrentHashMap<>();
     private boolean cmdExecutorInitialized;
 
     CommandExecutor(CommandCoordinatorImpl coco) {
@@ -55,24 +55,24 @@ public class CommandExecutor {
     @OnTimerMethodAnnotation("invokeCallbackMethods")
     public void invokeCallbackMethods() {
         initCommandExecutor();
-        Iterator<Entry<Guid, CommandCallback>> iterator = cmdCallBackMap.entrySet().iterator();
+        Iterator<Entry<Guid, CommandCallback>> iterator = cmdCallbackMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Entry<Guid, CommandCallback> entry = iterator.next();
             Guid cmdId = entry.getKey();
-            CommandCallback callBack = entry.getValue();
+            CommandCallback callback = entry.getValue();
             CommandStatus status = coco.getCommandStatus(cmdId);
             boolean errorInCallback = false;
             try {
                 switch (status) {
                     case FAILED:
-                        callBack.onFailed(cmdId, coco.getChildCommandIds(cmdId));
+                        callback.onFailed(cmdId, coco.getChildCommandIds(cmdId));
                         break;
                     case SUCCEEDED:
-                        callBack.onSucceeded(cmdId, coco.getChildCommandIds(cmdId));
+                        callback.onSucceeded(cmdId, coco.getChildCommandIds(cmdId));
                         break;
                     case ACTIVE:
                         if (coco.getCommandEntity(cmdId).isExecuted()) {
-                            callBack.doPolling(cmdId, coco.getChildCommandIds(cmdId));
+                            callback.doPolling(cmdId, coco.getChildCommandIds(cmdId));
                         }
                         break;
                     default:
@@ -92,7 +92,7 @@ public class CommandExecutor {
 
     private void handleError(Exception ex, CommandStatus status, Guid cmdId) {
         log.error("Error invoking callback method '{}' for '{}' command '{}'",
-                getCallBackMethod(status),
+                getCallbackMethod(status),
                 status,
                 cmdId);
         log.error("Exception", ex);
@@ -101,7 +101,7 @@ public class CommandExecutor {
         }
     }
 
-    private String getCallBackMethod(CommandStatus status) {
+    private String getCallbackMethod(CommandStatus status) {
         switch (status) {
             case FAILED:
             case FAILED_RESTARTED:
@@ -117,25 +117,25 @@ public class CommandExecutor {
 
     private void initCommandExecutor() {
         if (!cmdExecutorInitialized) {
-            for (CommandEntity cmdEntity : coco.getCommandsWithCallBackEnabled()) {
+            for (CommandEntity cmdEntity : coco.getCommandsWithCallbackEnabled()) {
                 if (!cmdEntity.isExecuted() &&
                         cmdEntity.getCommandStatus() != CommandStatus.FAILED &&
                         cmdEntity.getCommandStatus() != CommandStatus.FAILED_RESTARTED) {
                     coco.retrieveCommand(cmdEntity.getId()).setCommandStatus(CommandStatus.FAILED_RESTARTED);
                 }
                 if (!cmdEntity.isCallbackNotified()) {
-                    addToCallBackMap(cmdEntity);
+                    addToCallbackMap(cmdEntity);
                 }
             }
             cmdExecutorInitialized = true;
         }
     }
 
-    public void addToCallBackMap(CommandEntity cmdEntity) {
-        if (!cmdCallBackMap.containsKey(cmdEntity.getId())) {
+    public void addToCallbackMap(CommandEntity cmdEntity) {
+        if (!cmdCallbackMap.containsKey(cmdEntity.getId())) {
             CommandBase<?> cmd = coco.retrieveCommand(cmdEntity.getId());
             if (cmd != null && cmd.getCallback() != null) {
-                cmdCallBackMap.put(cmdEntity.getId(), cmd.getCallback());
+                cmdCallbackMap.put(cmdEntity.getId(), cmd.getCallback());
             }
         }
     }
@@ -144,10 +144,10 @@ public class CommandExecutor {
                                                           final VdcActionParametersBase parameters,
                                                           final CommandContext cmdContext) {
         final CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters, cmdContext);
-        CommandCallback callBack = command.getCallback();
-        command.persistCommand(command.getParameters().getParentCommand(), cmdContext, callBack != null);
-        if (callBack != null) {
-            cmdCallBackMap.put(command.getCommandId(), callBack);
+        CommandCallback callback = command.getCallback();
+        command.persistCommand(command.getParameters().getParentCommand(), cmdContext, callback != null);
+        if (callback != null) {
+            cmdCallbackMap.put(command.getCommandId(), callback);
         }
         Future<VdcReturnValueBase> retVal;
         try {
@@ -168,11 +168,11 @@ public class CommandExecutor {
     }
 
     private VdcReturnValueBase executeCommand(final CommandBase<?> command, final CommandContext cmdContext) {
-        CommandCallback callBack = command.getCallback();
+        CommandCallback callback = command.getCallback();
         VdcReturnValueBase result = BackendUtils.getBackendCommandObjectsHandler(log).runAction(command, null);
         updateCommand(command, result);
-        if (callBack != null) {
-            callBack.executed(result);
+        if (callback != null) {
+            callback.executed(result);
         }
         return result;
     }
