@@ -1,7 +1,9 @@
 package org.ovirt.engine.ui.userportal.widget.extended.vm;
 
 
-import com.google.gwt.cell.client.AbstractCell;
+import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
+import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
+
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -15,10 +17,6 @@ import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.client.DOM;
-
-import org.ovirt.engine.ui.common.utils.ElementIdUtils;
-import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 
 public abstract class AbstractConsoleButtonCell extends AbstractCell<UserPortalItemModel> {
 
@@ -44,10 +42,6 @@ public abstract class AbstractConsoleButtonCell extends AbstractCell<UserPortalI
 
     private final String title;
 
-    // DOM element ID settings for the text container element
-    private String elementIdPrefix = DOM.createUniqueId();
-    private String columnId;
-
     private static CellTemplate template;
 
     public AbstractConsoleButtonCell(String enabledCss, String disabledCss,
@@ -62,14 +56,6 @@ public abstract class AbstractConsoleButtonCell extends AbstractCell<UserPortalI
         if (template == null) {
             template = GWT.create(CellTemplate.class);
         }
-    }
-
-    public void setElementIdPrefix(String elementIdPrefix) {
-        this.elementIdPrefix = elementIdPrefix;
-    }
-
-    public void setColumnId(String columnId) {
-        this.columnId = columnId;
     }
 
     @Override
@@ -102,9 +88,9 @@ public abstract class AbstractConsoleButtonCell extends AbstractCell<UserPortalI
     }
 
     @Override
-    public void render(Context context, UserPortalItemModel model, SafeHtmlBuilder sb) {
+    public void render(Context context, UserPortalItemModel model, SafeHtmlBuilder sb, String id) {
         sb.append(template.consoleButton(
-                ElementIdUtils.createTableCellElementId(elementIdPrefix, columnId, context),
+                id,
                 title,
                 shouldRenderCell(model) ? enabledCss : disabledCss));
     }

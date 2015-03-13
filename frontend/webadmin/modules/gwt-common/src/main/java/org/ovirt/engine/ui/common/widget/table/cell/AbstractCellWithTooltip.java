@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.widget.table.cell;
 
 import org.ovirt.engine.ui.common.utils.ElementUtils;
 
-import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;

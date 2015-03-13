@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.widget.table.cell;
 
-import com.google.gwt.cell.client.TextInputCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -9,8 +8,11 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 public class PasswordTextInputCell extends TextInputCell {
 
     interface PasswordTemplate extends SafeHtmlTemplates {
-        @Template("<input type=\"password\" value=\"{0}\" tabindex=\"-1\"></input>")
-        SafeHtml input(String value);
+        @Template("<input id=\"{0}\" type=\"password\" value=\"{1}\" tabindex=\"-1\"></input>")
+        SafeHtml inputWithValue(String id, String value);
+
+        @Template("<input id=\"{0}\" type=\"password\" tabindex=\"-1\"></input>")
+        SafeHtml input(String id);
     }
 
     private static PasswordTemplate template;
@@ -22,7 +24,7 @@ public class PasswordTextInputCell extends TextInputCell {
     }
 
     @Override
-    public void render(Context context, String value, SafeHtmlBuilder sb) {
+    public void render(Context context, String value, SafeHtmlBuilder sb, String id) {
         // Get the view data.
         Object key = context.getKey();
         ViewData viewData = getViewData(key);
@@ -33,9 +35,9 @@ public class PasswordTextInputCell extends TextInputCell {
 
         String s = (viewData != null) ? viewData.getCurrentValue() : value;
         if (s != null) {
-            sb.append(template.input(s));
+            sb.append(template.inputWithValue(id, s));
         } else {
-            sb.appendHtmlConstant("<input type=\"password\" tabindex=\"-1\"></input>"); //$NON-NLS-1$
+            sb.append(template.input(id));
         }
     }
 }

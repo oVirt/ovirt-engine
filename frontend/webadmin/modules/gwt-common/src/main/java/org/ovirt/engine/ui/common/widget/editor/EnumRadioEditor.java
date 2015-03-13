@@ -92,7 +92,7 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
 
             @SuppressWarnings("unchecked")
             @Override
-            public void render(com.google.gwt.cell.client.Cell.Context context, Boolean value, SafeHtmlBuilder sb) {
+            public void render(Context context, Boolean value, SafeHtmlBuilder sb, String id) {
                 // Get the view data.
                 Object key = context.getKey();
                 E keyValue = (E) key;
@@ -111,7 +111,7 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
                     }
                 } else {
                     // enabled
-                    super.render(context, value, sb);
+                    super.render(context, value, sb, id);
                 }
             }
         }

@@ -22,9 +22,9 @@ public class SafeHtmlCell extends AbstractCellWithTooltip<SafeHtml> {
     }
 
     @Override
-    public void render(Context context, SafeHtml value, SafeHtmlBuilder sb) {
+    public void render(Context context, SafeHtml value, SafeHtmlBuilder sb, String id) {
         if (value != null) {
-            sb.appendHtmlConstant("<div style='display:block'>"); //$NON-NLS-1$
+            sb.appendHtmlConstant("<div id=\"" + id + "\" style='display:block'>"); //$NON-NLS-1$ //$NON-NLS-2$
             sb.append(value);
             sb.appendHtmlConstant("</div>"); //$NON-NLS-1$
         }

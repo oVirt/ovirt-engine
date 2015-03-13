@@ -35,7 +35,8 @@ public class ImageResourceCell extends AbstractTitlePanelCell<ImageResource> imp
     }
 
     @Override
-    public void render(Context context, ImageResource value, SafeHtmlBuilder sb) {
+    public void render(Context context, ImageResource value, SafeHtmlBuilder sb, String id) {
+        // this class is removed in a follow-up patch. that is why i'm ignoring the id here.
         if (value != null) {
             sb.append(template.imageContainerWithStyleClass(
                     style,

@@ -2,10 +2,10 @@ package org.ovirt.engine.ui.webadmin.widget.table.cell;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
-import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 public class HostStatusCell extends AbstractCell<VDS> {
 
     @Override
-    public void render(Context context, VDS vds, SafeHtmlBuilder sb) {
+    public void render(Context context, VDS vds, SafeHtmlBuilder sb, String id) {
         // Nothing to render if no host is provided:
         if (vds == null) {
             return;
@@ -81,7 +81,7 @@ public class HostStatusCell extends AbstractCell<VDS> {
         // Generate the HTML for the cell including the exclamation mark only if
         // power management is not enabled or there are network configuration
         // changes that haven't been saved yet:
-        sb.appendHtmlConstant("<div style=\"text-align: center;\">"); //$NON-NLS-1$
+        sb.appendHtmlConstant("<div id=\"" + id + "\" style=\"text-align: center;\">"); //$NON-NLS-1$ //$NON-NLS-2$
         sb.append(statusImageHtml);
         boolean getnet_config_dirty =
                 vds.getNetConfigDirty() == null ? false : vds.getNetConfigDirty().booleanValue();

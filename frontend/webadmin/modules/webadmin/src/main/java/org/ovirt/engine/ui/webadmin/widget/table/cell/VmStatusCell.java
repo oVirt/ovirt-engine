@@ -5,12 +5,12 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
-import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -23,7 +23,7 @@ public class VmStatusCell extends AbstractCell<VM> {
     CommonApplicationConstants constants = ClientGinjectorProvider.getApplicationConstants();
 
     @Override
-    public void render(Context context, VM vm, SafeHtmlBuilder sb) {
+    public void render(Context context, VM vm, SafeHtmlBuilder sb, String id) {
         // Nothing to render if no vm is provided:
         if (vm == null) {
             return;
@@ -111,9 +111,9 @@ public class VmStatusCell extends AbstractCell<VM> {
 
         if (alertImageHtml != null) {
             // this already has the tooltip set
-            sb.append(applicationTemplates.statusWithAlertTemplate(statusImageHtml, alertImageHtml));
+            sb.append(applicationTemplates.statusWithAlertTemplate(statusImageHtml, alertImageHtml, id));
         } else {
-            sb.append(applicationTemplates.statusTemplate(statusImageHtml, tooltip));
+            sb.append(applicationTemplates.statusTemplate(statusImageHtml, tooltip, id));
         }
 
     }

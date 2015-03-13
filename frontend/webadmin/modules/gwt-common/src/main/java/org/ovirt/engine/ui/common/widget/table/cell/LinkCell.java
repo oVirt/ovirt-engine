@@ -3,9 +3,12 @@ package org.ovirt.engine.ui.common.widget.table.cell;
 import org.ovirt.engine.core.compat.StringHelper;
 
 import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
 /**
@@ -16,15 +19,24 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 @SuppressWarnings("deprecation")
 public class LinkCell extends TextCell {
 
+    private final static String CONTENT_ID_SUFFIX = "_content"; //$NON-NLS-1$
+
+    public interface CellTemplate extends SafeHtmlTemplates {
+        @Template("<a id='{0}' href='javascript:;' style='display: inline-block'>")
+        SafeHtml link(String id);
+    }
+
+    private CellTemplate template = GWT.create(CellTemplate.class);
+
     public LinkCell(int maxTextLength) {
         super(maxTextLength, BrowserEvents.MOUSEOVER, BrowserEvents.CLICK);
     }
 
     @Override
-    public void render(Context context, String value, SafeHtmlBuilder sb) {
+    public void render(Context context, String value, SafeHtmlBuilder sb, String id) {
         if (value != null) {
-            sb.appendHtmlConstant("<a href='javascript:;' style='display: inline-block'>"); //$NON-NLS-1$
-            super.render(context, value, sb);
+            sb.append(template.link(id));
+            super.render(context, value, sb, id + CONTENT_ID_SUFFIX);
             sb.appendHtmlConstant("</a>"); //$NON-NLS-1$
         }
     }

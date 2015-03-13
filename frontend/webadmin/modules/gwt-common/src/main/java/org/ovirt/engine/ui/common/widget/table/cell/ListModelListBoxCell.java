@@ -8,13 +8,13 @@ import java.util.Map;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 
-import com.google.gwt.cell.client.AbstractInputCell;
 import com.google.gwt.cell.client.SelectionCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.view.client.CellPreviewEvent;
 
@@ -61,14 +61,16 @@ public class ListModelListBoxCell<T> extends AbstractInputCell<ListModel, String
 
     @SuppressWarnings("unchecked")
     @Override
-    public void render(Context context, ListModel value, SafeHtmlBuilder sb) {
+    public void render(Context context, ListModel value, SafeHtmlBuilder sb, String id) {
         setOptions(value);
         SafeHtmlBuilder sbDelegate = new SafeHtmlBuilder();
         delegate.render(context, renderer.render((T) value.getSelectedItem()), sbDelegate);
+        String select = sbDelegate.toSafeHtml().asString();
+        select = select.replaceFirst(PATTERN_SELECT, PATTERN_SELECT + " id=\"" + id  + "\""); //$NON-NLS-1$ //$NON-NLS-2$
         if (value.getIsChangable()) {
-            sb.append(sbDelegate.toSafeHtml());
+            sb.append(SafeHtmlUtils.fromTrustedString(select));
         } else {
-            sb.appendHtmlConstant(sbDelegate.toSafeHtml().asString().replaceFirst(PATTERN_SELECT, REPLACEMENT_SELECT));
+            sb.appendHtmlConstant(select.replaceFirst(PATTERN_SELECT, REPLACEMENT_SELECT));
         }
     }
 
@@ -103,7 +105,7 @@ public class ListModelListBoxCell<T> extends AbstractInputCell<ListModel, String
         }
         Element target = nativeEvent.getEventTarget().cast();
         String tagName = target.getTagName().toLowerCase();
-        return "select".equals(tagName) || "option".equals(tagName); //$NON-NLS-1$ $NON-NLS-2$
+        return "select".equals(tagName) || "option".equals(tagName); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
 }

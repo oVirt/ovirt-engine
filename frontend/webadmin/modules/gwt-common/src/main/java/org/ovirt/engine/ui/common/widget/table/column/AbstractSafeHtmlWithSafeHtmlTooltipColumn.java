@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
-import com.google.gwt.cell.client.AbstractCell;
+import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
+
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.BrowserEvents;
@@ -27,7 +28,7 @@ public abstract class AbstractSafeHtmlWithSafeHtmlTooltipColumn<T> extends Abstr
             }
 
             @Override
-            public void render(com.google.gwt.cell.client.Cell.Context context, SafeHtml value, SafeHtmlBuilder sb) {
+            public void render(Context context, SafeHtml value, SafeHtmlBuilder sb, String id) {
                 if (value != null) {
                     sb.append(value);
                   }

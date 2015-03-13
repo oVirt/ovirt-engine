@@ -247,4 +247,38 @@
        <Bug pattern="DM_BOOLEAN_CTOR"/>
      </Match>
 
+       <!--
+        findbugs complain of using Boolean constructor instead of Boolean.valueOf
+        This calss is GWT generated code
+
+        findbugs reason:
+        Dm: Method invokes inefficient Boolean constructor; use Boolean.valueOf(...) instead (DM_BOOLEAN_CTOR)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.common.presenter.popup.numa.UpdatedVnumaEvent" />
+       <Method name="hashCode"/>
+       <Bug pattern="DM_BOOLEAN_CTOR"/>
+     </Match>
+
+    <!--
+        findbugs complains about these classes having the same names as their superclasses.
+        We want to encourage using these classes over the GWT superclasses, so this is ok.
+    -->
+    <Match>
+          <Class name="org.ovirt.engine.ui.common.widget.table.cell.AbstractCell" />
+          <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS" />
+    </Match>
+    <Match>
+          <Class name="org.ovirt.engine.ui.common.widget.table.cell.AbstractEditableCell" />
+          <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS" />
+    </Match>
+    <Match>
+          <Class name="org.ovirt.engine.ui.common.widget.table.cell.AbstractInputCell" />
+          <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS" />
+    </Match>
+    <Match>
+          <Class name="org.ovirt.engine.ui.common.widget.table.cell.TextInputCell" />
+          <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS" />
+    </Match>
+
 </FindBugsFilter>

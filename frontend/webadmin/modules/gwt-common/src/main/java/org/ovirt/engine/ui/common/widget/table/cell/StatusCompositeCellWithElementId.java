@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.common.widget.table.cell;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.idhandler.CellWithElementId;
-import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.table.HasStyleClass;
 
 import com.google.gwt.cell.client.Cell;
@@ -52,9 +51,8 @@ public class StatusCompositeCellWithElementId<C> extends CompositeTooltipCell<C>
     }
 
     @Override
-    public void render(Cell.Context context, C value, SafeHtmlBuilder sb) {
-        sb.append(getTemplate().id(ElementIdUtils.createTableCellElementId(
-                getElementIdPrefix(), getColumnId(), context)));
+    public void render(Cell.Context context, C value, SafeHtmlBuilder sb, String id) {
+        sb.append(getTemplate().id(id));
 
         for (HasCell<C, ?> hasCell : hasCells) {
             render(context, value, sb, hasCell);

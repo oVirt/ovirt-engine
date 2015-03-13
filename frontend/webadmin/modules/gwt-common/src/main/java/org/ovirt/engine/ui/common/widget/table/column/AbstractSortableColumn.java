@@ -2,7 +2,8 @@ package org.ovirt.engine.ui.common.widget.table.column;
 
 import java.util.Comparator;
 
-import com.google.gwt.cell.client.Cell;
+import org.ovirt.engine.ui.common.idhandler.CellWithElementId;
+
 import com.google.gwt.user.cellview.client.Column;
 
 /**
@@ -23,7 +24,7 @@ public abstract class AbstractSortableColumn<T, C> extends Column<T, C> {
     // (applies in case of client-side sorting)
     private Comparator<? super T> comparator;
 
-    public AbstractSortableColumn(Cell<C> cell) {
+    public AbstractSortableColumn(CellWithElementId<C> cell) {
         super(cell);
     }
 

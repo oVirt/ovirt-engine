@@ -1,9 +1,7 @@
 package org.ovirt.engine.ui.common.widget.table.cell;
 
-import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 
-import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
@@ -13,7 +11,6 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
@@ -30,10 +27,6 @@ public abstract class ImageButtonCell<T> extends AbstractCell<T> {
     private final SafeHtml disabledHtml;
     private final String disabledCss;
 
-    // DOM element ID settings for the text container element
-    private String elementIdPrefix = DOM.createUniqueId();
-    private String columnId;
-
     public ImageButtonCell(ImageResource enabledImage, String enabledCss,
             ImageResource disabledImage, String disabledCss) {
         super(BrowserEvents.CLICK);
@@ -41,14 +34,6 @@ public abstract class ImageButtonCell<T> extends AbstractCell<T> {
         this.enabledCss = enabledCss;
         this.disabledHtml = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(disabledImage).getHTML());
         this.disabledCss = disabledCss;
-    }
-
-    public void setElementIdPrefix(String elementIdPrefix) {
-        this.elementIdPrefix = elementIdPrefix;
-    }
-
-    public void setColumnId(String columnId) {
-        this.columnId = columnId;
     }
 
     @Override
@@ -67,11 +52,11 @@ public abstract class ImageButtonCell<T> extends AbstractCell<T> {
     }
 
     @Override
-    public void render(Context context, T value, SafeHtmlBuilder sb) {
+    public void render(Context context, T value, SafeHtmlBuilder sb, String id) {
         boolean isEnabled = isEnabled(value);
         // TODO(vszocs) consider using SafeHtmlTemplates instead of building HTML manually
         sb.appendHtmlConstant("<span id=\"" //$NON-NLS-1$
-                + ElementIdUtils.createTableCellElementId(elementIdPrefix, columnId, context)
+                + id
                 + "\" class=\"" //$NON-NLS-1$
                 + (isEnabled ? enabledCss : disabledCss)
                 + "\" title=\"" //$NON-NLS-1$

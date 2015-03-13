@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.table.cell;
 
-import com.google.gwt.cell.client.AbstractCell;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
+
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
@@ -10,10 +11,7 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import org.ovirt.engine.ui.common.utils.ElementIdUtils;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 
 /**
  * Cell that renders ActionButtonDefinition-like image buttons.
@@ -25,21 +23,9 @@ public abstract class AbstractImageButtonCell<C> extends AbstractCell<C> {
 
     private final SafeHtml imageHtml;
 
-    // DOM element ID settings for the text container element
-    private String elementIdPrefix = DOM.createUniqueId();
-    private String columnId;
-
     public AbstractImageButtonCell(ImageResource image) {
         super(BrowserEvents.CLICK);
         this.imageHtml = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(image).getHTML());
-    }
-
-    public void setElementIdPrefix(String elementIdPrefix) {
-        this.elementIdPrefix = elementIdPrefix;
-    }
-
-    public void setColumnId(String columnId) {
-        this.columnId = columnId;
     }
 
     @Override
@@ -57,9 +43,9 @@ public abstract class AbstractImageButtonCell<C> extends AbstractCell<C> {
     }
 
     @Override
-    public void render(Context context, C value, SafeHtmlBuilder sb) {
+    public void render(Context context, C value, SafeHtmlBuilder sb, String id) {
         sb.appendHtmlConstant("<span id=\"" //$NON-NLS-1$
-                + ElementIdUtils.createTableCellElementId(elementIdPrefix, columnId, context)
+                + id
                 + "\" style=\"vertical-align: middle;\" title=\"" //$NON-NLS-1$
                 + SafeHtmlUtils.htmlEscape(getTitle(value))
                 + "\">"); //$NON-NLS-1$

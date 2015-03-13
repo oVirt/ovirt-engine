@@ -1,33 +1,30 @@
 package org.ovirt.engine.ui.common.widget.table.cell;
 
-import com.google.gwt.cell.client.AbstractEditableCell;
 import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.InputElement;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 /**
- * A cell used to render a checkbox. The value of the checkbox may be toggled using the ENTER key as well as via mouse
+ * A cell used to render a radio button. The value of the radio may be toggled using the ENTER key as well as via mouse
  * click.
  */
 public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> {
 
-    /**
-     * An html string representation of a checked input box.
-     */
-    private static final SafeHtml INPUT_CHECKED = SafeHtmlUtils.fromSafeConstant(
-            "<input type=\"radio\" tabindex=\"-1\" checked/>"); //$NON-NLS-1$
+    interface RadioboxCellTemplates extends SafeHtmlTemplates {
+        @Template("<input id=\"{0}\" type=\"radio\" tabindex=\"-1\" checked/>")
+        SafeHtml radioChecked(String id);
+        @Template("<input id=\"{0}\" type=\"radio\" tabindex=\"-1\"/>")
+        SafeHtml radioUnchecked(String id);
+    }
 
-    /**
-     * An html string representation of an unchecked input box.
-     */
-    private static final SafeHtml INPUT_UNCHECKED = SafeHtmlUtils.fromSafeConstant(
-            "<input type=\"radio\" tabindex=\"-1\"/>"); //$NON-NLS-1$
+    private static RadioboxCellTemplates templates = GWT.create(RadioboxCellTemplates.class);
 
     private final boolean dependsOnSelection;
     private final boolean handlesSelection;
@@ -121,7 +118,7 @@ public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> {
     }
 
     @Override
-    public void render(Context context, Boolean value, SafeHtmlBuilder sb) {
+    public void render(Context context, Boolean value, SafeHtmlBuilder sb, String id) {
         // Get the view data.
         Object key = context.getKey();
         Boolean viewData = getViewData(key);
@@ -131,9 +128,9 @@ public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> {
         }
 
         if (value != null && ((viewData != null) ? viewData : value)) {
-            sb.append(INPUT_CHECKED);
+            sb.append(templates.radioChecked(id));
         } else {
-            sb.append(INPUT_UNCHECKED);
+            sb.append(templates.radioUnchecked(id));
         }
     }
 

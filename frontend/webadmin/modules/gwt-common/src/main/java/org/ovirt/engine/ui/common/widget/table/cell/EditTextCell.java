@@ -23,7 +23,8 @@ public class EditTextCell extends TextCell implements EventHandlingCell {
     }
 
     @Override
-    public void render(Context context, String value, SafeHtmlBuilder sb) {
+    public void render(Context context, String value, SafeHtmlBuilder sb, String id) {
+        // TODO use ID? perhaps wrap in a div
         delegate.render(context, value, sb);
     }
 

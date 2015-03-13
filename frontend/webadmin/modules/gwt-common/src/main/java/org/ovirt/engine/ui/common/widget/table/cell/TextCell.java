@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.common.widget.table.cell;
 
-import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.table.HasStyleClass;
 
+import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
@@ -10,7 +10,6 @@ import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.HTML;
 
 /**
@@ -29,9 +28,6 @@ public class TextCell extends AbstractCellWithTooltip<String> implements HasStyl
     public static final int UNLIMITED_LENGTH = -1;
     private static final String TOO_LONG_TEXT_POSTFIX = "..."; //$NON-NLS-1$
 
-    // DOM element ID settings for text container element
-    private String elementIdPrefix = DOM.createUniqueId();
-    private String columnId;
     private String title;
     private String styleClass = ""; //$NON-NLS-1$
 
@@ -64,21 +60,13 @@ public class TextCell extends AbstractCellWithTooltip<String> implements HasStyl
         title = value;
     }
 
-    public void setElementIdPrefix(String elementIdPrefix) {
-        this.elementIdPrefix = elementIdPrefix;
-    }
-
-    public void setColumnId(String columnId) {
-        this.columnId = columnId;
-    }
-
     @Override
-    public void render(Context context, String value, SafeHtmlBuilder sb) {
+    public void render(Context context, String value, SafeHtmlBuilder sb, String id) {
         if (value != null) {
             SafeHtml escapedValue = getEscapedValue(value);
             SafeHtml renderedValue = getRenderedValue(escapedValue);
             sb.append(template.textContainer(styleClass,
-                    ElementIdUtils.createTableCellElementId(elementIdPrefix, columnId, context),
+                    id,
                     renderedValue));
         }
     }

@@ -1,12 +1,12 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
+import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
-import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -22,7 +22,7 @@ public class StorageDeviceStatusCell extends AbstractCell<StorageDevice> {
     ApplicationTemplates applicationTemplates = ClientGinjectorProvider.getApplicationTemplates();
 
     @Override
-    public void render(Context context, StorageDevice device, SafeHtmlBuilder sb) {
+    public void render(Context context, StorageDevice device, SafeHtmlBuilder sb, String id) {
         // No lock if we can create brick from the device
         if (device.getCanCreateBrick()) {
             return;
@@ -37,7 +37,7 @@ public class StorageDeviceStatusCell extends AbstractCell<StorageDevice> {
         // Generate the HTML for the image:
         SafeHtml statusImageHtml =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(statusImage).getHTML());
-        sb.append(applicationTemplates.statusTemplate(statusImageHtml, tooltip));
+        sb.append(applicationTemplates.statusTemplate(statusImageHtml, tooltip, id));
     }
 
 }

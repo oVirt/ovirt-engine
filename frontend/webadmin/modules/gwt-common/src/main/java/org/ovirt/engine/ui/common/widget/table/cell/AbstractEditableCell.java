@@ -1,34 +1,24 @@
 package org.ovirt.engine.ui.common.widget.table.cell;
 
-import java.util.List;
-
 import org.ovirt.engine.ui.common.idhandler.CellWithElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 
-import com.google.gwt.cell.client.Cell;
-import com.google.gwt.cell.client.CompositeCell;
-import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.DOM;
 
 /**
- * A composite cell that supports rendering Element ids via the oVirt Element-ID framework.
- * TODO tt add tooltip support
- *
- * @param <C>
- *            Cell data type.
+ * <p>
+ * Base class for all Cells that would otherwise extend GWT AbstractEditableCell.
+ * Supports rendering Element ids via the oVirt Element-ID framework.
+ * </p>
  */
-public class CompositeTooltipCell<C> extends CompositeCell<C> implements CellWithElementId<C> {
+public abstract class AbstractEditableCell<C, V> extends com.google.gwt.cell.client.AbstractEditableCell<C, V> implements CellWithElementId<C> {
 
-    private final List<HasCell<C, ?>> hasCells;
-
-    // DOM element ID settings for text container element
-    private String elementIdPrefix = DOM.createUniqueId();
+    private String elementIdPrefix = DOM.createUniqueId(); // default
     private String columnId;
 
-    public CompositeTooltipCell(List<HasCell<C, ?>> hasCells) {
-        super(hasCells);
-        this.hasCells = hasCells;
+    public AbstractEditableCell(String... consumedEvents) {
+        super(consumedEvents);
     }
 
     /**
@@ -49,23 +39,7 @@ public class CompositeTooltipCell<C> extends CompositeCell<C> implements CellWit
      *
      * @see org.ovirt.engine.ui.common.widget.table.cell.TooltipCell#render(com.google.gwt.cell.client.Cell.Context, java.lang.Object, com.google.gwt.safehtml.shared.SafeHtmlBuilder, java.lang.String)
      */
-    public void render(Context context, C value, SafeHtmlBuilder sb, String id) {
-        int i = 1;
-        for (HasCell<C, ?> hasCell : hasCells) {
-            render(context, value, sb, hasCell, id + "_" + i); //$NON-NLS-1$
-            i++;
-        }
-    }
-
-    /**
-     * TODO-GWT: copied from CompositeCell, with id injected. Keep in sync on GWT upgrades.
-     */
-    protected <X> void render(Context context, C value, SafeHtmlBuilder sb, HasCell<C, X> hasCell, String id) {
-        Cell<X> cell = hasCell.getCell();
-        sb.appendHtmlConstant("<span id=\"" + id + "\">"); //$NON-NLS-1$ //$NON-NLS-2$
-        cell.render(context, hasCell.getValue(value), sb);
-        sb.appendHtmlConstant("</span>"); //$NON-NLS-1$
-    }
+    public abstract void render(Context context, C value, SafeHtmlBuilder sb, String id);
 
     public void setElementIdPrefix(String elementIdPrefix) {
         this.elementIdPrefix = elementIdPrefix;

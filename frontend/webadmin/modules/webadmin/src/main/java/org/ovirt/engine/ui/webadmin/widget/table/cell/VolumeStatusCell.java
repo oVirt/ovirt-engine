@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.table.cell;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.frontend.utils.GlusterVolumeUtils;
 import org.ovirt.engine.ui.frontend.utils.GlusterVolumeUtils.VolumeStatus;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -8,7 +9,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
-import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -61,7 +61,7 @@ public class VolumeStatusCell extends AbstractCell<GlusterVolumeEntity> {
     }
 
     @Override
-    public void render(Context context, GlusterVolumeEntity volume, SafeHtmlBuilder sb) {
+    public void render(Context context, GlusterVolumeEntity volume, SafeHtmlBuilder sb, String id) {
         // Nothing to render if no volume is provided:
         if (volume == null) {
             return;
@@ -72,6 +72,6 @@ public class VolumeStatusCell extends AbstractCell<GlusterVolumeEntity> {
         // Generate the HTML for the image:
         SafeHtml statusImageHtml =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(statusImage).getHTML());
-        sb.append(applicationTemplates.statusTemplate(statusImageHtml, tooltip));
+        sb.append(applicationTemplates.statusTemplate(statusImageHtml, tooltip, id));
     }
 }

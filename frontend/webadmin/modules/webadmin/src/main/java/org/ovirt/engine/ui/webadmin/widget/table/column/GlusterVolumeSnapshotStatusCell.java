@@ -2,12 +2,12 @@ package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterSnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
+import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
-import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -23,7 +23,7 @@ public class GlusterVolumeSnapshotStatusCell extends AbstractCell<GlusterVolumeS
     private static final ApplicationTemplates applicationTemplates = ClientGinjectorProvider.getApplicationTemplates();
 
     @Override
-    public void render(Context context, GlusterVolumeSnapshotEntity snapshot, SafeHtmlBuilder sb) {
+    public void render(Context context, GlusterVolumeSnapshotEntity snapshot, SafeHtmlBuilder sb, String id) {
         // Nothing to render if no snapshot is provided:
         if (snapshot == null) {
             return;
@@ -55,6 +55,6 @@ public class GlusterVolumeSnapshotStatusCell extends AbstractCell<GlusterVolumeS
         // Generate the HTML for the image:
         SafeHtml statusImageHtml =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(statusImage).getHTML());
-        sb.append(applicationTemplates.statusTemplate(statusImageHtml, tooltip));
+        sb.append(applicationTemplates.statusTemplate(statusImageHtml, tooltip, id));
     }
 }

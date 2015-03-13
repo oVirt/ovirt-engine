@@ -12,8 +12,8 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 public class DecoratedImageResourceCell extends AbstractTitlePanelCell<ImageWithDecorator> {
 
     interface CellTemplate extends SafeHtmlTemplates {
-        @Template("<div style=\"position: relative; left: 0; top: 0;\"><span style=\"position: relative; left: 0px; top: 0px;\">{0}</span><span style=\"position: absolute; left: {2}px; top: {3}px;\">{1}</span></div>")
-        SafeHtml doubleImageContainer(SafeHtml imageHtml, SafeHtml decoratorHtml, int left, int top);
+        @Template("<div id=\"{4}\" style=\"position: relative; left: 0; top: 0;\"><span style=\"position: relative; left: 0px; top: 0px;\">{0}</span><span style=\"position: absolute; left: {2}px; top: {3}px;\">{1}</span></div>")
+        SafeHtml doubleImageContainer(SafeHtml imageHtml, SafeHtml decoratorHtml, int left, int top, String id);
     }
 
     private static final CellTemplate template = GWT.create(CellTemplate.class);
@@ -23,10 +23,10 @@ public class DecoratedImageResourceCell extends AbstractTitlePanelCell<ImageWith
     }
 
     @Override
-    public void render(Context context, ImageWithDecorator value, SafeHtmlBuilder sb) {
+    public void render(Context context, ImageWithDecorator value, SafeHtmlBuilder sb, String id) {
         if (value != null) {
-            SafeHtml mainImageHtml = SafeHtmlUtils.fromTrustedString("");
-            SafeHtml decorateImageHtml = SafeHtmlUtils.fromTrustedString("");
+            SafeHtml mainImageHtml = SafeHtmlUtils.fromTrustedString(""); //$NON-NLS-1$
+            SafeHtml decorateImageHtml = SafeHtmlUtils.fromTrustedString(""); //$NON-NLS-1$
             if (value.getImage() != null) {
                 mainImageHtml =
                         SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(value.getImage()).getHTML());
@@ -38,7 +38,8 @@ public class DecoratedImageResourceCell extends AbstractTitlePanelCell<ImageWith
             sb.append(template.doubleImageContainer(mainImageHtml,
                     decorateImageHtml,
                     value.getDecoratorPositionLeft(),
-                    value.getDecoratorPositionTop()));
+                    value.getDecoratorPositionTop(),
+                    id));
         }
     }
 }
