@@ -303,7 +303,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
     }
 
     protected CompositeCell<UserPortalItemModel> createActionsCompositeCell(String elementIdPrefix) {
-        ImageButtonCell<UserPortalItemModel> runCell = new VmButtonsImageButtonCell(
+        ImageButtonCell<UserPortalItemModel> runCell = new AbstractVmButtonsImageButtonCell(
                 applicationResources.playIcon(), applicationResources.playDisabledIcon()) {
             @Override
             protected String getTitle(UserPortalItemModel value) {
@@ -318,7 +318,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         runCell.setElementIdPrefix(elementIdPrefix);
         runCell.setColumnId("runButton"); //$NON-NLS-1$
 
-        ImageButtonCell<UserPortalItemModel> shutdownCell = new VmButtonsImageButtonCell(
+        ImageButtonCell<UserPortalItemModel> shutdownCell = new AbstractVmButtonsImageButtonCell(
                 applicationResources.stopIcon(), applicationResources.stopDisabledIcon()) {
             @Override
             protected String getTitle(UserPortalItemModel value) {
@@ -333,7 +333,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         shutdownCell.setElementIdPrefix(elementIdPrefix);
         shutdownCell.setColumnId("shutdownButton"); //$NON-NLS-1$
 
-        ImageButtonCell<UserPortalItemModel> suspendCell = new VmButtonsImageButtonCell(
+        ImageButtonCell<UserPortalItemModel> suspendCell = new AbstractVmButtonsImageButtonCell(
                 applicationResources.suspendIcon(), applicationResources.suspendDisabledIcon()) {
             @Override
             protected String getTitle(UserPortalItemModel value) {
@@ -348,7 +348,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         suspendCell.setElementIdPrefix(elementIdPrefix);
         suspendCell.setColumnId("suspendButton"); //$NON-NLS-1$
 
-        ImageButtonCell<UserPortalItemModel> stopCell = new VmButtonsImageButtonCell(
+        ImageButtonCell<UserPortalItemModel> stopCell = new AbstractVmButtonsImageButtonCell(
                 applicationResources.powerIcon(), applicationResources.powerDisabledIcon()) {
             @Override
             protected String getTitle(UserPortalItemModel value) {
@@ -363,7 +363,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         stopCell.setElementIdPrefix(elementIdPrefix);
         stopCell.setColumnId("stopButton"); //$NON-NLS-1$
 
-        ImageButtonCell<UserPortalItemModel> rebootCell = new VmButtonsImageButtonCell(
+        ImageButtonCell<UserPortalItemModel> rebootCell = new AbstractVmButtonsImageButtonCell(
                 applicationResources.rebootIcon(), applicationResources.rebootDisabledIcon()) {
 
             @Override
@@ -399,9 +399,9 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         TableStyle cellTableStyle();
     }
 
-    abstract class VmButtonsImageButtonCell extends ImageButtonCell<UserPortalItemModel> {
+    protected abstract class AbstractVmButtonsImageButtonCell extends ImageButtonCell<UserPortalItemModel> {
 
-        public VmButtonsImageButtonCell(ImageResource enabledImage, ImageResource disabledImage) {
+        public AbstractVmButtonsImageButtonCell(ImageResource enabledImage, ImageResource disabledImage) {
             super(enabledImage, applicationResources.sideTabExtendedVmStyle().vmButtonEnabled(),
                     disabledImage, applicationResources.sideTabExtendedVmStyle().vmButtonDisabled());
         }
