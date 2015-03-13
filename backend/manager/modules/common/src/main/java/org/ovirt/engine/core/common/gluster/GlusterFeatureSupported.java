@@ -112,4 +112,16 @@ public class GlusterFeatureSupported {
   public static boolean glusterBrickProvisioning(Version version) {
         return supportedInConfig(ConfigValues.GlusterBrickProvisioningEnabled, version);
   }
+
+  /**
+  *
+  * @param version
+  *            Compatibility version to check for.
+  * @return <code>true</code> if gluster supports peer probing by multiple interfaces via gluster network role
+  *         <code>false</code> if it's not.
+  */
+  public static boolean glusterNetworkRoleSupported(Version version) {
+      return supportedInConfig(ConfigValues.GlusterNetworkRoleSupported, version);
+  }
+
 }

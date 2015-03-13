@@ -4,6 +4,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.compat.Version;
 
 /**
@@ -84,4 +85,17 @@ public class NetworkClusterValidator {
                 : ValidationResult.VALID;
     }
 
+    /**
+     * Make sure the gluster network is supported for the cluster version
+     *
+     * @param cluster
+     * @return error if gluster network role is not supported for the compatibility version
+     */
+    public ValidationResult glusterNetworkSupported() {
+        return networkCluster.isGluster()
+                && !GlusterFeatureSupported.glusterNetworkRoleSupported(version)
+                ? new ValidationResult(VdcBllMessages.GLUSTER_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL)
+                : ValidationResult.VALID;
+    }
 }
+

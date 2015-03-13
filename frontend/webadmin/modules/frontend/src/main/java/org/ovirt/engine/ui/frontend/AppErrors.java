@@ -2789,6 +2789,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Non-VM networks are not supported in this Data-Center.")
     String NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL();
 
+    @DefaultStringValue("Gluster networks are not supported in this cluster compatibility version.")
+    String GLUSTER_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL();
+
     @DefaultStringValue("Disk description must be formed only from alpha-numeric characters and special characters that conform to the standard ASCII character set.")
     String VALIDATION_DISK_DESCRIPTION_INVALID();
 

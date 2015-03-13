@@ -215,6 +215,9 @@ select fn_db_add_config_value('GlusterStorageDeviceListFileSystemTypesToIgore','
 select fn_db_add_config_value('GlusterDefaultBrickMountPoint','/gluster-bricks','general');
 
 
+-- Gluster Network Role --
+select fn_db_add_config_value_for_versions_up_to('GlusterNetworkRoleSupported', 'false', '3.5');
+
 -- OpenStack related
 select fn_db_add_config_value('KeystoneAuthUrl', '', 'general');
 

@@ -116,6 +116,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
         return (!NetworkUtils.isManagementNetwork(getNetwork())
                 || validate(validator.managementNetworkAttachment(getNetworkName())))
                 && validate(validator.migrationPropertySupported(getNetworkName()))
+                && validate(validator.glusterNetworkSupported())
                 && validate(glusterNetworkInUseAndUnset(getVdsGroup()))
                 && (!getNetwork().isExternal() || validateExternalNetwork(validator));
     }
