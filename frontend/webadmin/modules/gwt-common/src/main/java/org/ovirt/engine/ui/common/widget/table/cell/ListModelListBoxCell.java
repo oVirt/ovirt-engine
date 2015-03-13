@@ -99,13 +99,7 @@ public class ListModelListBoxCell<T> extends AbstractInputCell<ListModel, String
 
     @Override
     public boolean handlesEvent(CellPreviewEvent<EntityModel> event) {
-        NativeEvent nativeEvent = event.getNativeEvent();
-        if (!BrowserEvents.CLICK.equals(nativeEvent.getType())) {
-            return false;
-        }
-        Element target = nativeEvent.getEventTarget().cast();
-        String tagName = target.getTagName().toLowerCase();
-        return "select".equals(tagName) || "option".equals(tagName); //$NON-NLS-1$ //$NON-NLS-2$
+        return EventHandlingCellMixin.selectOptionHandlesClick(event);
     }
 
 }

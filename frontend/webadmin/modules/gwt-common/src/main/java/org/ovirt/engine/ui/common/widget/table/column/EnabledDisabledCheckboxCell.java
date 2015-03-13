@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.table.column;
 
 import org.ovirt.engine.ui.common.idhandler.CellWithElementId;
 import org.ovirt.engine.ui.common.widget.table.cell.EventHandlingCell;
+import org.ovirt.engine.ui.common.widget.table.cell.EventHandlingCellMixin;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
 import com.google.gwt.cell.client.CheckboxCell;
@@ -23,7 +24,7 @@ public class EnabledDisabledCheckboxCell extends CheckboxCell implements EventHa
 
     @Override
     public boolean handlesEvent(CellPreviewEvent<EntityModel> event) {
-        return AbstractCheckboxColumn.handlesEvent(event);
+        return EventHandlingCellMixin.inputHandlesClick(event);
     }
 
     public void setElementIdPrefix(String elementIdPrefix) {

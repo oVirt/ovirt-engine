@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.table.column;
 
 import org.ovirt.engine.ui.common.idhandler.CellWithElementId;
 import org.ovirt.engine.ui.common.widget.table.cell.EventHandlingCell;
+import org.ovirt.engine.ui.common.widget.table.cell.EventHandlingCellMixin;
 import org.ovirt.engine.ui.common.widget.table.cell.RadioboxCell;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
@@ -19,7 +20,7 @@ public class EnabledDisabledRadioCell extends RadioboxCell implements EventHandl
 
     @Override
     public boolean handlesEvent(CellPreviewEvent<EntityModel> event) {
-        return AbstractCheckboxColumn.handlesEvent(event);
+        return EventHandlingCellMixin.inputHandlesClick(event);
     }
 
 }
