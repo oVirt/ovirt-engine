@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
  * @param <T>
  *            Table row data type.
  */
-public abstract class AbstractImageResourceColumn<T> extends AbstractSortableColumn<T, ImageResource> {
+public abstract class AbstractImageResourceColumn<T> extends AbstractColumn<T, ImageResource> {
 
     private static final CommonApplicationResources RESOURCES = GWT.create(CommonApplicationResources.class);
     protected static final CommonApplicationConstants CONSTANTS = GWT.create(CommonApplicationConstants.class);

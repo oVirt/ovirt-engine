@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.cell.StatusCompositeCellWithElementId;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractSortableColumnWithElementId;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -165,8 +165,8 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                         statusColumn,
                         reasonColumn)));
 
-        AbstractSortableColumnWithElementId<VDS, VDS> statusTextColumn =
-                new AbstractSortableColumnWithElementId<VDS, VDS>(compositeCell) {
+        AbstractColumn<VDS, VDS> statusTextColumn =
+                new AbstractColumn<VDS, VDS>(compositeCell) {
                     @Override
                     public VDS getValue(VDS object) {
                         return object;

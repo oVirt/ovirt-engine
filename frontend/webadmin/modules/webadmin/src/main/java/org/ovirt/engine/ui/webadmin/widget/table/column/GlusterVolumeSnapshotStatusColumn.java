@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.webadmin.widget.table.column;
 import java.util.Comparator;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractSortableColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 
-public class GlusterVolumeSnapshotStatusColumn extends AbstractSortableColumn<GlusterVolumeSnapshotEntity, GlusterVolumeSnapshotEntity> {
+public class GlusterVolumeSnapshotStatusColumn extends AbstractColumn<GlusterVolumeSnapshotEntity, GlusterVolumeSnapshotEntity> {
 
     public GlusterVolumeSnapshotStatusColumn() {
         super(new GlusterVolumeSnapshotStatusCell());

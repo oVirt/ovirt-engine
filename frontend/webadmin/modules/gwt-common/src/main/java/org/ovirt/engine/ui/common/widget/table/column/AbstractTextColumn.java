@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.common.widget.table.cell.TextCell;
  * @param <T>
  *            Table row data type.
  */
-public abstract class AbstractTextColumn<T> extends AbstractSortableColumn<T, String> implements ColumnWithElementId {
+public abstract class AbstractTextColumn<T> extends AbstractColumn<T, String> implements ColumnWithElementId {
 
     public AbstractTextColumn() {
         this(TextCell.UNLIMITED_LENGTH);

@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class AbstractSafeHtmlWithSafeHtmlTooltipColumn<T> extends AbstractSortableColumn<T, SafeHtml>{
+public abstract class AbstractSafeHtmlWithSafeHtmlTooltipColumn<T> extends AbstractColumn<T, SafeHtml>{
 
     public AbstractSafeHtmlWithSafeHtmlTooltipColumn() {
         super(new AbstractCell<SafeHtml>(BrowserEvents.MOUSEOVER, BrowserEvents.MOUSEOUT) {

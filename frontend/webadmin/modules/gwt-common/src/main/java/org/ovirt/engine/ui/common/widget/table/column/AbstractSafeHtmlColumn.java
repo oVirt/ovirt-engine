@@ -10,7 +10,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
  * @param <T>
  *            Table row data type.
  */
-public abstract class AbstractSafeHtmlColumn<T> extends AbstractSortableColumn<T, SafeHtml> {
+public abstract class AbstractSafeHtmlColumn<T> extends AbstractColumn<T, SafeHtml> {
 
     public AbstractSafeHtmlColumn() {
         super(new SafeHtmlCell());

@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import org.ovirt.engine.core.common.businessentities.gluster.StorageDevice;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractSortableColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 
-public class StorageDeviceStatusColumn extends AbstractSortableColumn<StorageDevice, StorageDevice> {
+public class StorageDeviceStatusColumn extends AbstractColumn<StorageDevice, StorageDevice> {
 
     public StorageDeviceStatusColumn() {
         super(new StorageDeviceStatusCell());

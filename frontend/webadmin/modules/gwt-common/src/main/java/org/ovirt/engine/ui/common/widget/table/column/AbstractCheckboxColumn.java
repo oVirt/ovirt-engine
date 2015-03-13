@@ -14,7 +14,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.view.client.CellPreviewEvent;
 
-public abstract class AbstractCheckboxColumn<T> extends AbstractSortableColumn<T, Boolean> {
+public abstract class AbstractCheckboxColumn<T> extends AbstractColumn<T, Boolean> {
 
     private boolean centered = false;
     private boolean multipleSelectionAllowed = true;
