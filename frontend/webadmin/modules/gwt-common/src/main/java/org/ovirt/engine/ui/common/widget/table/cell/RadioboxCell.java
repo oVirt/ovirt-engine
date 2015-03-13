@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.table.cell;
 
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
@@ -10,12 +12,13 @@ import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.view.client.CellPreviewEvent;
 
 /**
  * A cell used to render a radio button. The value of the radio may be toggled using the ENTER key as well as via mouse
  * click.
  */
-public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> {
+public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> implements EventHandlingCell {
 
     interface RadioboxCellTemplates extends SafeHtmlTemplates {
         @Template("<input id=\"{0}\" type=\"radio\" tabindex=\"-1\" checked/>")
@@ -33,19 +36,7 @@ public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> {
      * Construct a new {@link RadioboxCell}.
      */
     public RadioboxCell() {
-        this(false);
-    }
-
-    /**
-     * Construct a new {@link RadioboxCell} that optionally controls selection.
-     *
-     * @param isSelectBox
-     *            true if the cell controls the selection state
-     * @deprecated use {@link #RadioboxCell(boolean, boolean)} instead
-     */
-    @Deprecated
-    public RadioboxCell(boolean isSelectBox) {
-        this(isSelectBox, isSelectBox);
+        this(false, false);
     }
 
     /**
@@ -132,6 +123,11 @@ public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> {
         } else {
             sb.append(templates.radioUnchecked(id));
         }
+    }
+
+    @Override
+    public boolean handlesEvent(CellPreviewEvent<EntityModel> event) {
+        return EventHandlingCellMixin.inputHandlesClick(event);
     }
 
 }
