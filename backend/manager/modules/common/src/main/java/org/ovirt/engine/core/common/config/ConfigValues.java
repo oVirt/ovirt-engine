@@ -1455,6 +1455,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("300")
     GlusterRefreshRateSnapshotDiscovery,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    GlusterNetworkRoleSupported,
+
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("AttestationService/resources/PollHosts")
     PollUri,

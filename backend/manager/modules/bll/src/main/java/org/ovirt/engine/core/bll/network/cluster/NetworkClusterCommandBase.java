@@ -46,6 +46,7 @@ public abstract class NetworkClusterCommandBase<T extends NetworkClusterParamete
         result = result && validate(validator.managementNetworkNotExternal(network));
         result = result && validate(validator.managementNetworkChange());
         result = result && validate(validator.migrationPropertySupported());
+        result = result && validate(validator.glusterNetworkSupported());
         result = result && (!getPersistedNetwork().isExternal() || validateExternalNetwork(validator));
 
         return result;

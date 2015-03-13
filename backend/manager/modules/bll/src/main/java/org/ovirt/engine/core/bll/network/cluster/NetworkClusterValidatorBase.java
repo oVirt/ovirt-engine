@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDAO;
@@ -127,6 +128,19 @@ public abstract class NetworkClusterValidatorBase {
         return networkCluster.isRequired() ?
                 new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_REQUIRED,
                         String.format(NETWORK_NAME_REPLACEMENT, networkName))
+                : ValidationResult.VALID;
+    }
+
+    /**
+     * Make sure the gluster network is supported for the cluster version
+     *
+     * @param cluster
+     * @return error if gluster network role is not supported for the compatibility version
+     */
+    public ValidationResult glusterNetworkSupported() {
+        return networkCluster.isGluster()
+                && !GlusterFeatureSupported.glusterNetworkRoleSupported(version)
+                ? new ValidationResult(VdcBllMessages.GLUSTER_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL)
                 : ValidationResult.VALID;
     }
 }
