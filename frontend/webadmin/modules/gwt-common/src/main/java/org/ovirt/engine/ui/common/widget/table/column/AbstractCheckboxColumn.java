@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.table.column;
 
 import java.util.Comparator;
 
+import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
 import org.ovirt.engine.ui.common.widget.table.cell.RadioboxCell;
 
 import com.google.gwt.cell.client.Cell.Context;
@@ -25,11 +26,11 @@ public abstract class AbstractCheckboxColumn<T> extends AbstractColumn<T, Boolea
     private static final SafeHtml TAG_CLOSE = SafeHtmlUtils.fromTrustedString("/>"); //$NON-NLS-1$
 
     public AbstractCheckboxColumn() {
-        super(new EnabledDisabledCheckboxCell());
+        super(new CheckboxCell(true, false));
     }
 
     public AbstractCheckboxColumn(boolean centered) {
-        super(new EnabledDisabledCheckboxCell());
+        super(new CheckboxCell(true, false));
         this.centered = centered;
     }
 
@@ -39,7 +40,7 @@ public abstract class AbstractCheckboxColumn<T> extends AbstractColumn<T, Boolea
     }
 
     public AbstractCheckboxColumn(boolean multipleSelectionAllowed, FieldUpdater<T, Boolean> fieldUpdater) {
-        super(multipleSelectionAllowed ? new EnabledDisabledCheckboxCell() : new RadioboxCell(true, false));
+        super(multipleSelectionAllowed ? new CheckboxCell(true, false) : new RadioboxCell(true, false));
         this.multipleSelectionAllowed = multipleSelectionAllowed;
         setFieldUpdater(fieldUpdater);
     }
