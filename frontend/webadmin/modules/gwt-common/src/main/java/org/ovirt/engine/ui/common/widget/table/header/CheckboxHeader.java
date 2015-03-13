@@ -1,7 +1,8 @@
 package org.ovirt.engine.ui.common.widget.table.header;
 
+import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
+
 import com.google.gwt.cell.client.Cell.Context;
-import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -25,8 +26,8 @@ public abstract class CheckboxHeader extends Header<Boolean> {
     public CheckboxHeader(final SafeHtml title) {
         super(new CheckboxCell(true, false) {
             @Override
-            public void render(Context context, Boolean value, SafeHtmlBuilder sb) {
-                super.render(context, value, sb);
+            public void render(Context context, Boolean value, SafeHtmlBuilder sb, String id) {
+                super.render(context, value, sb, id);
                 sb.append(title);
             }
         });

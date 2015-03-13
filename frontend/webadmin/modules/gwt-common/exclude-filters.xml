@@ -280,5 +280,9 @@
           <Class name="org.ovirt.engine.ui.common.widget.table.cell.TextInputCell" />
           <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS" />
     </Match>
+    <Match>
+          <Class name="org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell" />
+          <Bug pattern="NM_SAME_SIMPLE_NAME_AS_SUPERCLASS" />
+    </Match>
 
 </FindBugsFilter>

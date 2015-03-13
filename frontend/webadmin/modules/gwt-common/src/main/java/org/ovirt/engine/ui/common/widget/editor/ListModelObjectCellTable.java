@@ -7,12 +7,12 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.PopupTableResources;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.IsEditorDriver;
+import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
 import org.ovirt.engine.ui.common.widget.table.cell.RadioboxCell;
 import org.ovirt.engine.ui.common.widget.table.header.SelectAllCheckBoxHeader;
 import org.ovirt.engine.ui.common.widget.table.resize.ColumnResizeCellTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 
-import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.safehtml.shared.SafeHtml;

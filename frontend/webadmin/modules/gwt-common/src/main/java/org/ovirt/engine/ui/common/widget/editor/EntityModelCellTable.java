@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.PopupTableResources;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.IsEditorDriver;
 import org.ovirt.engine.ui.common.widget.table.ElementIdCellTable;
+import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
 import org.ovirt.engine.ui.common.widget.table.cell.EventHandlingCell;
 import org.ovirt.engine.ui.common.widget.table.cell.RadioboxCell;
 import org.ovirt.engine.ui.common.widget.table.header.SelectAllCheckBoxHeader;
@@ -16,7 +17,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.cell.client.Cell;
-import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;

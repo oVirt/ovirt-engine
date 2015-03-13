@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunSelectionColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -15,7 +16,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.TableLayout;

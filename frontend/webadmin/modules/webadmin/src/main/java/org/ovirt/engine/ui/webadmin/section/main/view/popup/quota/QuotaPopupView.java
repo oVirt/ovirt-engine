@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.common.widget.form.Slider;
 import org.ovirt.engine.ui.common.widget.form.Slider.SliderValueChange;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
+import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaModel;
@@ -35,7 +36,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.QuotaPopu
 import org.ovirt.engine.ui.webadmin.widget.table.cell.NullableButtonCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.QuotaUtilizationStatusColumn;
 
-import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
