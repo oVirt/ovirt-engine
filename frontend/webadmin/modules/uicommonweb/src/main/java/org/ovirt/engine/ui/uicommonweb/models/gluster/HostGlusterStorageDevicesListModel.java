@@ -105,7 +105,9 @@ public class HostGlusterStorageDevicesListModel extends SearchableListModel {
 
     private void updateActionAvailability() {
         VDS vds = getEntity();
-        getSyncStorageDevicesCommand().setIsExecutionAllowed(vds.getStatus() == VDSStatus.Up);
+        if (vds != null) {
+            getSyncStorageDevicesCommand().setIsExecutionAllowed(vds.getStatus() == VDSStatus.Up);
+        }
     }
     @Override
     public void executeCommand(UICommand command) {
