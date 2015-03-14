@@ -8,6 +8,8 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 /**
  * Image column that corresponds to XAML {@code VmTypeTemplate}.
@@ -20,7 +22,6 @@ public class VmTypeColumn extends AbstractImageResourceColumn<VM> {
     public ImageResource getValue(VM vm) {
             if (vm.getVmPoolId() == null) {
                 VmTypeConfig config = VmTypeConfig.from(vm.getVmType(), vm.isStateless(), vm.isNextRunConfigurationExists());
-                setTitle(config.getTooltip());
                 return config.getImageResource();
             } else {
                 if (!vm.isNextRunConfigurationExists()) {
@@ -30,6 +31,13 @@ public class VmTypeColumn extends AbstractImageResourceColumn<VM> {
                 }
 
             }
+    }
+
+    @Override
+    public SafeHtml getTooltip(VM vm) {
+        VmTypeConfig config = VmTypeConfig.from(vm.getVmType(), vm.isStateless(), vm.isNextRunConfigurationExists());
+        String tooltipContent = config.getTooltip();
+        return SafeHtmlUtils.fromString(tooltipContent);
     }
 
 }

@@ -13,7 +13,7 @@ import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractNullableNumberColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlWithSafeHtmlTooltipColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSumUpColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -166,8 +166,8 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
         guestAgentDataTable.addColumn(nameColumn,
                 constants.nameVmGuestAgent(), "100px"); //$NON-NLS-1$
 
-        AbstractSafeHtmlWithSafeHtmlTooltipColumn<VmGuestAgentInterface> ipv4Column =
-                new AbstractSafeHtmlWithSafeHtmlTooltipColumn<VmGuestAgentInterface>() {
+        AbstractSafeHtmlColumn<VmGuestAgentInterface> ipv4Column =
+                new AbstractSafeHtmlColumn<VmGuestAgentInterface>() {
                     @Override
                     public SafeHtml getValue(VmGuestAgentInterface object) {
 
@@ -187,12 +187,13 @@ public class VmInterfaceInfoPanel extends TabLayoutPanel {
                     public SafeHtml getTooltip(VmGuestAgentInterface object) {
                         return SafeHtmlUtils.fromTrustedString(StringUtils.join(object.getIpv4Addresses(), ", ")); //$NON-NLS-1$
                     }
+
                 };
         guestAgentDataTable.addColumn(ipv4Column,
                 constants.ipv4VmGuestAgent(), "100px"); //$NON-NLS-1$
 
-        AbstractSafeHtmlWithSafeHtmlTooltipColumn<VmGuestAgentInterface> ipv6Column =
-                new AbstractSafeHtmlWithSafeHtmlTooltipColumn<VmGuestAgentInterface>() {
+        AbstractSafeHtmlColumn<VmGuestAgentInterface> ipv6Column =
+                new AbstractSafeHtmlColumn<VmGuestAgentInterface>() {
                     @Override
                     public SafeHtml getValue(VmGuestAgentInterface object) {
 

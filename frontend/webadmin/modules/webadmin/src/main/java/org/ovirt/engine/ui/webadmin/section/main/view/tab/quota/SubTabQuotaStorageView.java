@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
-import org.ovirt.engine.ui.common.widget.table.cell.TextCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaStorageListModel;
@@ -21,6 +20,8 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuota
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, QuotaStorage, QuotaListModel, QuotaStorageListModel>
         implements SubTabQuotaStoragePresenter.ViewDef {
@@ -78,11 +79,10 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
             }
 
             @Override
-            public TextCell getCell() {
-                TextCell TextCellWithTooltip = super.getCell();
-                TextCellWithTooltip.setTitle(constants.quotaCalculationsMessage());
-                return TextCellWithTooltip;
+            public SafeHtml getTooltip(QuotaStorage object) {
+                return SafeHtmlUtils.fromSafeConstant(constants.quotaCalculationsMessage());
             }
+
         };
         usedColumn.makeSortable(new Comparator<QuotaStorage>() {
             @Override

@@ -28,10 +28,13 @@ import org.ovirt.engine.ui.common.widget.table.column.DiskStatusColumn;
 import org.ovirt.engine.ui.common.widget.table.column.StorageDomainsColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
 
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class DisksViewColumns {
 
@@ -83,86 +86,103 @@ public class DisksViewColumns {
     public static final AbstractImageResourceColumn<Disk> bootableDiskColumn = new AbstractImageResourceColumn<Disk>() {
         @Override
         public ImageResource getValue(Disk object) {
-            setTitle(object.isBoot() ? getDefaultTitle() : null);
             return object.isBoot() ? getDefaultImage() : null;
-        }
-
-        @Override
-        public String getDefaultTitle() {
-            return constants.bootableDisk();
         }
 
         @Override
         public ImageResource getDefaultImage() {
             return resources.bootableDiskIcon();
         }
+
+        @Override
+        public SafeHtml getTooltip(Disk object) {
+            if (object.isBoot()) {
+                return SafeHtmlUtils.fromSafeConstant(constants.bootableDisk());
+            }
+            return null;
+        }
     };
 
     public static final AbstractImageResourceColumn<Disk> shareableDiskColumn = new AbstractImageResourceColumn<Disk>() {
         @Override
         public ImageResource getValue(Disk object) {
-            setTitle(object.isShareable() ? getDefaultTitle() : null);
             return object.isShareable() ? getDefaultImage() : null;
-        }
-
-        @Override
-        public String getDefaultTitle() {
-            return constants.shareable();
         }
 
         @Override
         public ImageResource getDefaultImage() {
             return resources.shareableDiskIcon();
         }
+
+        @Override
+        public SafeHtml getTooltip(Disk object) {
+            if (object.isShareable()) {
+                return SafeHtmlUtils.fromSafeConstant(constants.shareable());
+            }
+            return null;
+        }
     };
 
     public static final AbstractImageResourceColumn<Disk> readOnlyDiskColumn = new AbstractImageResourceColumn<Disk>() {
         @Override
         public ImageResource getValue(Disk object) {
-            setTitle(object.getReadOnly() ? getDefaultTitle() : null);
             return object.getReadOnly() ? getDefaultImage() : null;
-        }
-
-        @Override
-        public String getDefaultTitle() {
-            return constants.readOnly();
         }
 
         @Override
         public ImageResource getDefaultImage() {
             return resources.readOnlyDiskIcon();
         }
+
+        @Override
+        public SafeHtml getTooltip(Disk object) {
+            if (object.getReadOnly()) {
+                return SafeHtmlUtils.fromSafeConstant(constants.readOnly());
+            }
+            return null;
+        }
     };
 
     public static final AbstractImageResourceColumn<Disk> lunDiskColumn = new AbstractImageResourceColumn<Disk>() {
         @Override
         public ImageResource getValue(Disk object) {
-            setTitle(object.getDiskStorageType() == DiskStorageType.LUN ? getDefaultTitle() : null);
             return object.getDiskStorageType() == DiskStorageType.LUN ?
                     resources.externalDiskIcon() : null;
-        }
-
-        @Override
-        public String getDefaultTitle() {
-            return constants.lunDisksLabel();
         }
 
         @Override
         public ImageResource getDefaultImage() {
             return resources.externalDiskIcon();
         }
+
+        @Override
+        public SafeHtml getTooltip(Disk object) {
+            if (object.getDiskStorageType() == DiskStorageType.LUN) {
+                return SafeHtmlUtils.fromSafeConstant(constants.lunDisksLabel());
+            }
+            return null;
+        }
     };
 
     public static final AbstractImageResourceColumn<Disk> diskContainersIconColumn = new AbstractImageResourceColumn<Disk>() {
         @Override
         public ImageResource getValue(Disk object) {
-            setEnumTitle(object.getVmEntityType());
             if (object.getVmEntityType() == null) {
-                setTitle(constants.unattachedDisk());
                 return null;
             }
             return object.getVmEntityType().isVmType() ? resources.vmsImage() :
                     object.getVmEntityType().isTemplateType() ? resources.templatesImage() : null;
+        }
+
+        @Override
+        public SafeHtml getTooltip(Disk object) {
+            if (object.getVmEntityType() == null) {
+                return SafeHtmlUtils.fromSafeConstant(constants.unattachedDisk());
+            }
+            else {
+                String status = EnumTranslator.getInstance().translate(object.getVmEntityType());
+                return SafeHtmlUtils.fromString(status);
+            }
         }
     };
 
@@ -173,14 +193,17 @@ public class DisksViewColumns {
     public static final AbstractTextColumn<Disk> diskAlignmentColumn = new AbstractTextColumn<Disk>() {
         @Override
         public String getValue(Disk object) {
+            return object.getAlignment().toString();
+        }
+
+        @Override
+        public SafeHtml getTooltip(Disk object) {
             if (object.getLastAlignmentScan() != null) {
                 String lastScanDate = DateTimeFormat
                         .getFormat("yyyy-MM-dd, HH:mm").format(object.getLastAlignmentScan()); //$NON-NLS-1$
-                setTitle(messages.lastDiskAlignment(lastScanDate));
-            } else {
-                setTitle(null);
+                return SafeHtmlUtils.fromString(messages.lastDiskAlignment(lastScanDate));
             }
-            return object.getAlignment().toString();
+            return null;
         }
     };
 

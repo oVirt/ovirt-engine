@@ -25,6 +25,7 @@ public class VmStatusCell extends AbstractCell<VM> {
 
     @Override
     public void render(Context context, VM vm, SafeHtmlBuilder sb, String id) {
+
         // Nothing to render if no vm is provided:
         if (vm == null) {
             return;
@@ -33,70 +34,54 @@ public class VmStatusCell extends AbstractCell<VM> {
         // Find the image corresponding to the status of the vm:
         VMStatus status = vm.getStatus();
         ImageResource statusImage;
-        String tooltip;
 
         switch (status) {
         case Up:
             if (vm.isRunOnce()) {
-                tooltip = constants.runOnce();
                 statusImage = resources.runOnceUpImage();
             } else {
-                tooltip = constants.up();
                 statusImage = resources.vmStatusRunning();
             }
             break;
         case SavingState:
-            tooltip = constants.vmStatusSaving();
             statusImage = resources.vmStatusWait();
             break;
         case RestoringState:
-            tooltip = constants.restoring();
             statusImage = resources.vmStatusWait();
             break;
         case PoweringUp:
-            tooltip = constants.poweringUp();
             statusImage = resources.vmStatusStarting();
             break;
         case PoweringDown:
-            tooltip = constants.poweringDown();
             statusImage = resources.vmStatusPoweringDown();
             break;
         case RebootInProgress:
-            tooltip = constants.rebooting();
             statusImage = resources.rebootInProgress();
             break;
         case WaitForLaunch:
-            tooltip = constants.waitForLaunchStatus();
             statusImage = resources.waitForLaunch();
             break;
         case ImageLocked:
-            tooltip = constants.imageLocked();
             statusImage = resources.vmStatusWait();
             break;
         case MigratingFrom:
         case MigratingTo:
-            tooltip = constants.migrating();
             statusImage = resources.migrationImage();
             break;
         case Suspended:
-            tooltip = constants.suspended();
             statusImage = resources.suspendedImage();
             break;
         case Paused:
-            tooltip = constants.paused();
             statusImage = resources.pauseImage();
             break;
         case Unknown:
         case Unassigned:
-            tooltip = constants.unknown();
             statusImage = resources.questionMarkImage();
             break;
         case NotResponding:
-            tooltip = constants.notResponding();
             statusImage = resources.questionMarkImage();
             break;
         default:
-            tooltip = constants.down();
             statusImage = resources.downStatusImage();
             break;
         }
@@ -109,10 +94,9 @@ public class VmStatusCell extends AbstractCell<VM> {
         SafeHtml alertImageHtml = getResourceImage(vm);
 
         if (alertImageHtml != null) {
-            // this already has the tooltip set
             sb.append(templates.statusWithAlertTemplate(statusImageHtml, alertImageHtml, id));
         } else {
-            sb.append(templates.statusTemplate(statusImageHtml, tooltip, id));
+            sb.append(templates.statusTemplate(statusImageHtml, id));
         }
 
     }
@@ -137,6 +121,5 @@ public class VmStatusCell extends AbstractCell<VM> {
 
             return SafeHtmlUtils.fromTrustedString(html);
         }
-
     }
 }

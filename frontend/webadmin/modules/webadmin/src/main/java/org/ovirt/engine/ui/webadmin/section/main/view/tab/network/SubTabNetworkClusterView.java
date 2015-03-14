@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlWithSafeHtmlTooltipColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.SimpleStatusColumnComparator;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -128,8 +128,8 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         netRequiredColumn.makeSortable();
         getTable().addColumn(netRequiredColumn, constants.requiredNetCluster(), "120px"); //$NON-NLS-1$
 
-        AbstractSafeHtmlWithSafeHtmlTooltipColumn<PairQueryable<VDSGroup, NetworkCluster>> netRoleColumn =
-                new AbstractSafeHtmlWithSafeHtmlTooltipColumn<PairQueryable<VDSGroup, NetworkCluster>>() {
+        AbstractSafeHtmlColumn<PairQueryable<VDSGroup, NetworkCluster>> netRoleColumn =
+                new AbstractSafeHtmlColumn<PairQueryable<VDSGroup, NetworkCluster>>() {
 
                     @Override
                     public SafeHtml getValue(PairQueryable<VDSGroup, NetworkCluster> object) {

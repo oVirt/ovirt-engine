@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -10,11 +9,11 @@ import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.searchbackend.VmConditionFieldAutoCompleter;
-import org.ovirt.engine.ui.common.idhandler.CellWithElementId;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
+import org.ovirt.engine.ui.common.widget.table.cell.Cell;
 import org.ovirt.engine.ui.common.widget.table.cell.StatusCompositeCellWithElementId;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
@@ -196,6 +195,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         };
 
         MigrationProgressColumn migrationProgressColumn = new MigrationProgressColumn();
+
         ReasonColumn<VM> reasonColumn = new ReasonColumn<VM>() {
 
             @Override
@@ -205,11 +205,12 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
 
         };
 
-        CellWithElementId<VM> compositeCell = new StatusCompositeCellWithElementId(
-                new ArrayList<HasCell<VM, ?>>(Arrays.asList(
-                        statusColumn,
-                        reasonColumn,
-                        migrationProgressColumn)));
+        List<HasCell<VM, ?>> list = new ArrayList<>();
+        list.add(statusColumn);
+        list.add(reasonColumn);
+        list.add(migrationProgressColumn);
+
+        Cell<VM> compositeCell = new StatusCompositeCellWithElementId<VM>(list);
 
         AbstractColumn<VM, VM> statusTextColumn = new AbstractColumn<VM, VM>(compositeCell) {
             @Override

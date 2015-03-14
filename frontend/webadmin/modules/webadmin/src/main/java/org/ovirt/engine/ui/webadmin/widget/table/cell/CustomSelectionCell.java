@@ -2,9 +2,12 @@ package org.ovirt.engine.ui.webadmin.widget.table.cell;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import com.google.gwt.cell.client.AbstractInputCell;
+import org.ovirt.engine.ui.common.widget.table.cell.AbstractInputCell;
+
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
@@ -14,7 +17,6 @@ import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-
 /**
  * A cell used to render a drop-down list.
  */
@@ -36,8 +38,6 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
 
     private boolean isEnabled = true;
 
-    private String tooltip;
-
     private String style;
 
     /**
@@ -47,7 +47,7 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
      *            the options in the cell
      */
     public CustomSelectionCell(List<String> options) {
-        super(BrowserEvents.CHANGE);
+        super();
         if (template == null) {
             template = GWT.create(CellTemplate.class);
         }
@@ -57,11 +57,22 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
             indexForOption.put(option, index++);
         }
     }
+    /**
+     * Events to sink. By default, we only sink mouse events that tooltips need. Override this
+     * (and include addAll(super.getConsumedEvents())'s events!) if your cell needs to respond
+     * to additional events.
+     */
+    @Override
+    public Set<String> getConsumedEvents() {
+        Set<String> set = new HashSet<>(super.getConsumedEvents());
+        set.add(BrowserEvents.CHANGE);
+        return set;
+    }
 
     @Override
     public void onBrowserEvent(Context context, Element parent, String value,
-            NativeEvent event, ValueUpdater<String> valueUpdater) {
-        super.onBrowserEvent(context, parent, value, event, valueUpdater);
+            SafeHtml tooltipContent, NativeEvent event, ValueUpdater<String> valueUpdater) {
+        super.onBrowserEvent(context, parent, value, tooltipContent, event, valueUpdater);
         String type = event.getType();
         if (BrowserEvents.CHANGE.equals(type)) {
             Object key = context.getKey();
@@ -76,7 +87,7 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
     }
 
     @Override
-    public void render(Context context, String value, SafeHtmlBuilder sb) {
+    public void render(Context context, String value, SafeHtmlBuilder sb, String id) {
         // Get the view data.
         Object key = context.getKey();
         String viewData = getViewData(key);
@@ -86,11 +97,7 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
         }
 
         int selectedIndex = getSelectedIndex(value);
-        if (isEnabled) {
-            sb.appendHtmlConstant("<select class='" + style + "' tabindex=\"-1\">"); //$NON-NLS-1$ //$NON-NLS-2$
-        } else {
-            sb.appendHtmlConstant("<select class='" + style + "' tabindex=\"-1\" title=\"" + tooltip + "\" disabled>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        }
+        sb.appendHtmlConstant("<select id=\"" + id + "\" class='" + style + "' tabindex=\"-1\" " + (isEnabled ? "" : "disabled") + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
         int index = 0;
         for (String option : options) {
             if (index++ == selectedIndex) {
@@ -110,9 +117,8 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
         return index.intValue();
     }
 
-    public void setEnabledWithToolTip(boolean isEnabled, String tooltip) {
+    public void setEnabled(boolean isEnabled) {
         this.isEnabled = isEnabled;
-        this.tooltip = tooltip;
     }
 
     public void setStyle(String style) {

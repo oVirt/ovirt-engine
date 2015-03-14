@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlWithSafeHtmlTooltipColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
@@ -95,8 +95,8 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
         statusColumn.makeSortable();
         getTable().addColumn(statusColumn, constants.statusNetwork(), "100px"); //$NON-NLS-1$
 
-        AbstractSafeHtmlWithSafeHtmlTooltipColumn<Network> roleColumn =
-                new AbstractSafeHtmlWithSafeHtmlTooltipColumn<Network>() {
+        AbstractSafeHtmlColumn<Network> roleColumn =
+                new AbstractSafeHtmlColumn<Network>() {
                     @Override
                     public SafeHtml getValue(Network network) {
 

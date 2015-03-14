@@ -7,6 +7,10 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
+/**
+ * LunSelectionCell. Supports tooltips.
+ *
+ */
 public class LunSelectionCell extends AbstractCell<LunModel> {
 
     private boolean multiSelection;

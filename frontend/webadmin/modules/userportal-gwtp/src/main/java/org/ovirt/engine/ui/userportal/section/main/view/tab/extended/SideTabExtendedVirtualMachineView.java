@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.userportal.section.main.view.tab.extended;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -9,6 +8,8 @@ import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.common.widget.table.cell.ImageButtonCell;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
+import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -29,23 +30,21 @@ import org.ovirt.engine.ui.userportal.widget.extended.vm.AbstractConsoleButtonCe
 import org.ovirt.engine.ui.userportal.widget.extended.vm.BorderedCompositeCell;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.ConsoleButtonCell;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.ConsoleEditButtonCell;
-import org.ovirt.engine.ui.userportal.widget.extended.vm.ImageMaskCell;
-import org.ovirt.engine.ui.userportal.widget.extended.vm.ImageMaskCell.ShowMask;
-import org.ovirt.engine.ui.userportal.widget.extended.vm.TooltipCell;
-import org.ovirt.engine.ui.userportal.widget.extended.vm.TooltipCell.TooltipProvider;
-import org.ovirt.engine.ui.userportal.widget.extended.vm.UserPortalItemSimpleColumn;
 import org.ovirt.engine.ui.userportal.widget.refresh.UserPortalRefreshManager;
 import org.ovirt.engine.ui.userportal.widget.table.UserPortalSimpleActionTable;
-import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn;
-import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn.OsTypeExtractor;
+import org.ovirt.engine.ui.userportal.widget.table.cell.VmButtonsImageButtonCell;
+import org.ovirt.engine.ui.userportal.widget.table.column.AbstractMaskedVmImageColumn;
+import org.ovirt.engine.ui.userportal.widget.table.column.AbstractMaskedVmImageColumn.ShowMask;
+import org.ovirt.engine.ui.userportal.widget.table.column.OsTypeExtractor;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmStatusColumn;
 
-import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.cellview.client.Column;
@@ -53,7 +52,7 @@ import com.google.gwt.user.cellview.client.RowStyles;
 import com.google.inject.Inject;
 
 public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetailsView<UserPortalItemModel, UserPortalListModel>
-implements SideTabExtendedVirtualMachinePresenter.ViewDef {
+        implements SideTabExtendedVirtualMachinePresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SideTabExtendedVirtualMachineView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -78,7 +77,6 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
 
     private static final VmTableResources vmTableResources = GWT.create(VmTableResources.class);
 
-    private final MainTabBasicListItemMessagesTranslator statusTranslator;
     private final ErrorPopupManager errorPopupManager;
 
     private final static ApplicationTemplates templates = AssetProvider.getTemplates();
@@ -91,7 +89,6 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
             MainTabBasicListItemMessagesTranslator translator,
             ClientStorage clientStorage) {
         super(modelProvider, clientStorage);
-        this.statusTranslator = translator;
         this.errorPopupManager = errorPopupManager;
         resources.sideTabExtendedVmStyle().ensureInjected();
         ViewIdHandler.idHandler.generateAndSetIds(this);
@@ -119,51 +116,41 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         return SideTabExtendedVirtualMachinePresenter.TYPE_SetSubTabPanelContent;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     void initTable() {
         final String elementIdPrefix = getTable().getContentTableElementId();
 
-        VmImageColumn<UserPortalItemModel> vmImageColumn =
-                new VmImageColumn<UserPortalItemModel>(new OsTypeExtractor<UserPortalItemModel>() {
+        OsTypeExtractor<UserPortalItemModel> extractor = new OsTypeExtractor<UserPortalItemModel>() {
+            @Override
+            public int extractOsType(UserPortalItemModel item) {
+                return item.getOsId();
+            }
+        };
+
+        ShowMask<UserPortalItemModel> upMask = new ShowMask<UserPortalItemModel>() {
+            @Override
+            public boolean showMask(UserPortalItemModel value) {
+                return !value.isVmUp();
+            }
+        };
+
+        ImageResource mask = resources.disabledSmallMask();
+
+        AbstractMaskedVmImageColumn<UserPortalItemModel> maskedVmImageColumn =
+                new AbstractMaskedVmImageColumn<UserPortalItemModel>(extractor, upMask, mask) {
+
                     @Override
-                    public int extractOsType(UserPortalItemModel item) {
-                        return item.getOsId();
+                    public SafeHtml getTooltip(UserPortalItemModel object) {
+                        String osId = AsyncDataProvider.getInstance().getOsName(object.getOsId());
+                        return SafeHtmlUtils.fromString(osId);
                     }
-                });
+        };
 
-        ImageMaskCell<UserPortalItemModel> vmImageColumnWithMask = new ImageMaskCell<UserPortalItemModel>(
-                vmImageColumn,
-                resources.disabledSmallMask(),
-                new ShowMask<UserPortalItemModel>() {
-                    @Override
-                    public boolean showMask(UserPortalItemModel value) {
-                        return !value.isVmUp();
-                    }
-                });
+        getTable().addColumn(maskedVmImageColumn, constants.empty(), "77px"); //$NON-NLS-1$
 
-        TooltipCell<UserPortalItemModel> vmImageColumnWithMaskAndTooltip = new TooltipCell<UserPortalItemModel>(
-                new UserPortalItemSimpleColumn(vmImageColumnWithMask),
-                new TooltipProvider<UserPortalItemModel>() {
-                    @Override
-                    public String getTooltip(UserPortalItemModel value) {
-                        return AsyncDataProvider.getInstance().getOsName(value.getOsId());
-                    }
-                });
-        getTable().addColumn(new UserPortalItemSimpleColumn(vmImageColumnWithMaskAndTooltip), constants.empty(), "77px"); //$NON-NLS-1$
+        getTable().addColumn(new VmStatusColumn(), constants.empty(), "55px"); //$NON-NLS-1$
 
-        TooltipCell<UserPortalItemModel> statusColumn = new TooltipCell<UserPortalItemModel>(
-                new VmStatusColumn(),
-                new TooltipProvider<UserPortalItemModel>() {
-                    @Override
-                    public String getTooltip(UserPortalItemModel value) {
-                        return statusTranslator.translate(value.getStatus().name());
-                    }
-                });
-        statusColumn.setElementIdPrefix(elementIdPrefix);
-        statusColumn.setColumnId("status"); //$NON-NLS-1$
-
-        getTable().addColumn(new UserPortalItemSimpleColumn(statusColumn), constants.empty(), "55px"); //$NON-NLS-1$
-
-        Cell<UserPortalItemModel> nameAndDescriptionCell = new AbstractCell<UserPortalItemModel>() {
+        AbstractCell<UserPortalItemModel> nameAndDescriptionCell = new AbstractCell<UserPortalItemModel>() {
             @Override
             public void render(Context context, UserPortalItemModel item, SafeHtmlBuilder sb, String id) {
                 sb.append(templates.vmNameCellItem(
@@ -177,8 +164,8 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
             }
         };
 
-        Column<UserPortalItemModel, UserPortalItemModel> nameAndDescriptionColumn =
-                new Column<UserPortalItemModel, UserPortalItemModel>(nameAndDescriptionCell) {
+        AbstractColumn<UserPortalItemModel, UserPortalItemModel> nameAndDescriptionColumn =
+                new AbstractColumn<UserPortalItemModel, UserPortalItemModel>(nameAndDescriptionCell) {
             @Override
             public UserPortalItemModel getValue(UserPortalItemModel item) {
                 return item;
@@ -196,7 +183,6 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         ConsoleButtonCell openConsoleCell = new ConsoleButtonCell(
                 resources.sideTabExtendedVmStyle().enabledConsoleButton(),
                 resources.sideTabExtendedVmStyle().disabledConsoleButton(),
-                constants.openConsoleLabel(),
                 new AbstractConsoleButtonCell.ConsoleButtonCommand() {
                     @Override
                     public void execute(UserPortalItemModel model) {
@@ -208,26 +194,48 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
                             errorPopupManager.show(e.getLocalizedErrorMessage());
                         }
                     }
-                });
+                }) {
+            @Override
+            public SafeHtml getTooltip(UserPortalItemModel value) {
+                return SafeHtmlUtils.fromSafeConstant(constants.openConsoleLabel());
+            }
+        };
         openConsoleCell.setElementIdPrefix(elementIdPrefix);
         openConsoleCell.setColumnId("openConsoleButton"); //$NON-NLS-1$
 
-        getTable().addColumn(new UserPortalItemSimpleColumn(openConsoleCell), constants.empty(), "100px"); //$NON-NLS-1$
+        getTable().addColumn(new AbstractColumn(openConsoleCell) {
+            @Override
+            public Object getValue(Object object) {
+                return object;
+            }
+        }, constants.empty(), "100px"); //$NON-NLS-1$
 
         ConsoleEditButtonCell consoleEditCell = new ConsoleEditButtonCell(
                 resources.sideTabExtendedVmStyle().enabledEditConsoleButton(),
                 resources.sideTabExtendedVmStyle().disabledEditConsoleButton(),
-                constants.editConsoleLabel(),
                 new AbstractConsoleButtonCell.ConsoleButtonCommand() {
                     @Override
                     public void execute(UserPortalItemModel model) {
                         getModel().getEditConsoleCommand().execute();
                     }
-                });
+                }) {
+            @Override
+            public SafeHtml getTooltip(UserPortalItemModel value) {
+                return SafeHtmlUtils.fromSafeConstant(constants.editConsoleLabel());
+            }
+        };
         consoleEditCell.setElementIdPrefix(elementIdPrefix);
         consoleEditCell.setColumnId("editConsoleButton"); //$NON-NLS-1$
 
-        getTable().addColumn(new UserPortalItemSimpleColumn(consoleEditCell), constants.empty());
+        getTable().addColumn(new AbstractColumn(consoleEditCell) {
+            @Override
+            public Object getValue(Object object) {
+                return object;
+            }
+
+        }, constants.empty(), "30px"); //$NON-NLS-1$
+
+        getTable().addColumn(new EmptyColumn<UserPortalItemModel>(), ""); //$NON-NLS-1$
 
         getTable().addActionButton(new UserPortalButtonDefinition<UserPortalItemModel>(constants.newVm()) {
             @Override
@@ -297,7 +305,6 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
                     }
                 }
 
-                @SuppressWarnings("unchecked")
                 List<UserPortalItemModel> selectedModels = getModel().getSelectedItems();
 
                 if (selectedModels == null) {
@@ -316,12 +323,13 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         });
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected CompositeCell<UserPortalItemModel> createActionsCompositeCell(String elementIdPrefix) {
-        ImageButtonCell<UserPortalItemModel> runCell = new AbstractVmButtonsImageButtonCell(
+        ImageButtonCell<UserPortalItemModel> runCell = new VmButtonsImageButtonCell(
                 resources.playIcon(), resources.playDisabledIcon()) {
             @Override
-            protected String getTitle(UserPortalItemModel value) {
-                return value.isPool() ? constants.takeVmLabel() : constants.runVmLabel();
+            public SafeHtml getTooltip(UserPortalItemModel value) {
+                return SafeHtmlUtils.fromSafeConstant(value.isPool() ? constants.takeVmLabel() : constants.runVmLabel());
             }
 
             @Override
@@ -332,11 +340,11 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         runCell.setElementIdPrefix(elementIdPrefix);
         runCell.setColumnId("runButton"); //$NON-NLS-1$
 
-        ImageButtonCell<UserPortalItemModel> shutdownCell = new AbstractVmButtonsImageButtonCell(
+        ImageButtonCell<UserPortalItemModel> shutdownCell = new VmButtonsImageButtonCell(
                 resources.stopIcon(), resources.stopDisabledIcon()) {
             @Override
-            protected String getTitle(UserPortalItemModel value) {
-                return value.isPool() ? constants.returnVmLabel() : constants.shutDownVm();
+            public SafeHtml getTooltip(UserPortalItemModel value) {
+                return SafeHtmlUtils.fromSafeConstant(value.isPool() ? constants.returnVmLabel() : constants.shutDownVm());
             }
 
             @Override
@@ -347,11 +355,11 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         shutdownCell.setElementIdPrefix(elementIdPrefix);
         shutdownCell.setColumnId("shutdownButton"); //$NON-NLS-1$
 
-        ImageButtonCell<UserPortalItemModel> suspendCell = new AbstractVmButtonsImageButtonCell(
+        ImageButtonCell<UserPortalItemModel> suspendCell = new VmButtonsImageButtonCell(
                 resources.suspendIcon(), resources.suspendDisabledIcon()) {
             @Override
-            protected String getTitle(UserPortalItemModel value) {
-                return constants.suspendVmLabel();
+            public SafeHtml getTooltip(UserPortalItemModel value) {
+                return SafeHtmlUtils.fromSafeConstant(constants.suspendVmLabel());
             }
 
             @Override
@@ -362,11 +370,11 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         suspendCell.setElementIdPrefix(elementIdPrefix);
         suspendCell.setColumnId("suspendButton"); //$NON-NLS-1$
 
-        ImageButtonCell<UserPortalItemModel> stopCell = new AbstractVmButtonsImageButtonCell(
+        ImageButtonCell<UserPortalItemModel> stopCell = new VmButtonsImageButtonCell(
                 resources.powerIcon(), resources.powerDisabledIcon()) {
             @Override
-            protected String getTitle(UserPortalItemModel value) {
-                return constants.powerOffVm();
+            public SafeHtml getTooltip(UserPortalItemModel value) {
+                return SafeHtmlUtils.fromSafeConstant(constants.powerOffVm());
             }
 
             @Override
@@ -377,12 +385,12 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         stopCell.setElementIdPrefix(elementIdPrefix);
         stopCell.setColumnId("stopButton"); //$NON-NLS-1$
 
-        ImageButtonCell<UserPortalItemModel> rebootCell = new AbstractVmButtonsImageButtonCell(
+        ImageButtonCell<UserPortalItemModel> rebootCell = new VmButtonsImageButtonCell(
                 resources.rebootIcon(), resources.rebootDisabledIcon()) {
 
             @Override
-            protected String getTitle(UserPortalItemModel value) {
-                return constants.rebootVm();
+            public SafeHtml getTooltip(UserPortalItemModel value) {
+                return SafeHtmlUtils.fromSafeConstant(constants.rebootVm());
             }
 
             @Override
@@ -393,13 +401,69 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         rebootCell.setElementIdPrefix(elementIdPrefix);
         rebootCell.setColumnId("rebootColumn"); //$NON-NLS-1$
 
-        CompositeCell<UserPortalItemModel> compositeCell = new BorderedCompositeCell<UserPortalItemModel>(
-                new ArrayList<HasCell<UserPortalItemModel, ?>>(Arrays.asList(
-                        new UserPortalItemSimpleColumn(runCell),
-                        new UserPortalItemSimpleColumn(shutdownCell),
-                        new UserPortalItemSimpleColumn(suspendCell),
-                        new UserPortalItemSimpleColumn(stopCell),
-                        new UserPortalItemSimpleColumn(rebootCell))));
+        ArrayList<HasCell<UserPortalItemModel, ?>> list = new ArrayList<HasCell<UserPortalItemModel, ?>>();
+
+        list.add(new AbstractColumn(runCell) {
+            @Override
+            public Object getValue(Object object) {
+                return object;
+            }
+
+            @Override
+            public SafeHtml getTooltip(Object object) {
+                return null;
+            }
+        });
+
+        list.add(new AbstractColumn(shutdownCell) {
+            @Override
+            public Object getValue(Object object) {
+                return object;
+            }
+
+            @Override
+            public SafeHtml getTooltip(Object object) {
+                return null;
+            }
+        });
+
+        list.add(new AbstractColumn(suspendCell) {
+            @Override
+            public Object getValue(Object object) {
+                return object;
+            }
+
+            @Override
+            public SafeHtml getTooltip(Object object) {
+                return null;
+            }
+        });
+
+        list.add(new AbstractColumn(stopCell) {
+            @Override
+            public Object getValue(Object object) {
+                return object;
+            }
+
+            @Override
+            public SafeHtml getTooltip(Object object) {
+                return null;
+            }
+        });
+
+        list.add(new AbstractColumn(rebootCell) {
+            @Override
+            public Object getValue(Object object) {
+                return object;
+            }
+
+            @Override
+            public SafeHtml getTooltip(Object object) {
+                return null;
+            }
+        });
+
+        CompositeCell<UserPortalItemModel> compositeCell = new BorderedCompositeCell<UserPortalItemModel>(list);
 
         return compositeCell;
     }

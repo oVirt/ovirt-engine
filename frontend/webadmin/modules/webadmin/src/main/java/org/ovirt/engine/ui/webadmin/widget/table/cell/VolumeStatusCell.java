@@ -43,21 +43,6 @@ public class VolumeStatusCell extends AbstractCell<GlusterVolumeEntity> {
         return statusImage;
     }
 
-    private String getToolTip(VolumeStatus status) {
-        switch (status) {
-        case DOWN:
-            return constants.down();
-        case UP:
-            return constants.up();
-        case SOME_BRICKS_DOWN:
-            return constants.volumeBricksDown();
-        case ALL_BRICKS_DOWN:
-            return constants.volumeAllBricksDown();
-        default:
-            return constants.down();
-        }
-    }
-
     @Override
     public void render(Context context, GlusterVolumeEntity volume, SafeHtmlBuilder sb, String id) {
         // Nothing to render if no volume is provided:
@@ -66,10 +51,10 @@ public class VolumeStatusCell extends AbstractCell<GlusterVolumeEntity> {
         }
         VolumeStatus status = GlusterVolumeUtils.getVolumeStatus(volume);
         ImageResource statusImage = getStatusImage(status);
-        String tooltip = getToolTip(status);
+
         // Generate the HTML for the image:
         SafeHtml statusImageHtml =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(statusImage).getHTML());
-        sb.append(templates.statusTemplate(statusImageHtml, tooltip, id));
+        sb.append(templates.statusTemplate(statusImageHtml, id));
     }
 }

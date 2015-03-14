@@ -7,8 +7,11 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
 
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class DiskStatusColumn extends AbstractImageResourceColumn<Disk> {
 
@@ -21,13 +24,27 @@ public class DiskStatusColumn extends AbstractImageResourceColumn<Disk> {
             DiskImage diskImage = (DiskImage) disk;
 
             if (diskImage.getImageStatus().equals(ImageStatus.LOCKED)) {
-                setEnumTitle(diskImage.getImageStatus());
                 return new DiskImageStatusColumn().getValue(diskImage);
             }
         }
 
         boolean isDiskPlugged = disk.getPlugged() != null && disk.getPlugged().booleanValue();
-        setTitle(isDiskPlugged ? constants.active() : constants.inactive());
         return isDiskPlugged ? resources.upImage() : resources.downImage();
+    }
+
+    @Override
+    public SafeHtml getTooltip(Disk disk) {
+        String tooltipContent = null;
+        if (disk.getDiskStorageType().equals(DiskStorageType.IMAGE)) {
+            DiskImage diskImage = (DiskImage) disk;
+            if (diskImage.getImageStatus().equals(ImageStatus.LOCKED)) {
+                tooltipContent = EnumTranslator.getInstance().translate(diskImage.getImageStatus());
+                return SafeHtmlUtils.fromString(tooltipContent);
+            }
+        }
+
+        boolean isDiskPlugged = disk.getPlugged() != null && disk.getPlugged().booleanValue();
+        tooltipContent = isDiskPlugged ? constants.active() : constants.inactive();
+        return SafeHtmlUtils.fromString(tooltipContent);
     }
 }

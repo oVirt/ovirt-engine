@@ -12,9 +12,9 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.ViewRadioGroup;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractNullableNumberColumn;
+import org.ovirt.engine.ui.common.widget.table.column.NicActivateStatusColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.common.widget.table.column.NicActivateStatusColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkVmFilter;
@@ -30,6 +30,8 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.RadioButton;
 
 public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, PairQueryable<VmNetworkInterface, VM>, NetworkListModel, NetworkVmListModel>
@@ -141,8 +143,14 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
             new AbstractTextColumn<PairQueryable<VmNetworkInterface, VM>>() {
                 @Override
                 public String getValue(PairQueryable<VmNetworkInterface, VM> object) {
-                    setTitle(object.getSecond().getVmFQDN());
                     return object.getSecond().getVmFQDN();
+                }
+
+                @Override
+                public SafeHtml getTooltip(
+                        PairQueryable<VmNetworkInterface, VM> object) {
+                    String tooltipContent = object.getSecond().getVmFQDN();
+                    return SafeHtmlUtils.fromString(tooltipContent);
                 }
             };
 

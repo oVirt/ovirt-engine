@@ -307,6 +307,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Suspend VM")
     String suspendVm();
 
+    @DefaultStringValue("Stop VM")
+    String stopVm();
+
     @DefaultStringValue("Take VM")
     String takeVm();
 

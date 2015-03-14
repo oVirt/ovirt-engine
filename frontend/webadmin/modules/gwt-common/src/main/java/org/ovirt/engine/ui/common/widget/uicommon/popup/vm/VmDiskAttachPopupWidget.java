@@ -203,20 +203,37 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
             @Override
             public ImageResource getValue(EntityModel object) {
                 Disk disk = (((DiskModel) (object.getEntity())).getDisk());
-                setTitle(disk.isBoot() ? constants.bootableDisk() : null);
                 return disk.isBoot() ? resources.bootableDiskIcon() : null;
+            }
+
+            @Override
+            public SafeHtml getTooltip(EntityModel object) {
+                Disk disk = (((DiskModel) (object.getEntity())).getDisk());
+                if (disk.isBoot()) {
+                    return SafeHtmlUtils.fromSafeConstant(constants.bootableDisk());
+                }
+                return null;
             }
         }, bootableColumnHeader, "30px"); //$NON-NLS-1$
 
         SafeHtml shareableColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
                 AbstractImagePrototype.create(resources.shareableDiskIcon()).getHTML()), constants.shareable()
         );
+
         imageDiskTable.addColumn(new AbstractImageResourceColumn<EntityModel>() {
             @Override
             public ImageResource getValue(EntityModel object) {
                 Disk disk = (((DiskModel) (object.getEntity())).getDisk());
-                setTitle(disk.isShareable() ? constants.shareable() : null);
                 return disk.isShareable() ? resources.shareableDiskIcon() : null;
+            }
+
+            @Override
+            public SafeHtml getTooltip(EntityModel object) {
+                Disk disk = (((DiskModel) (object.getEntity())).getDisk());
+                if (disk.isShareable()) {
+                    return SafeHtmlUtils.fromSafeConstant(constants.shareable());
+                }
+                return null;
             }
         }, shareableColumnHeader, "30px"); //$NON-NLS-1$
 
@@ -329,8 +346,16 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
             @Override
             public ImageResource getValue(EntityModel object) {
                 Disk disk = (((DiskModel) (object.getEntity())).getDisk());
-                setTitle(disk.isBoot() ? constants.bootableDisk() : null);
                 return disk.isBoot() ? resources.bootableDiskIcon() : null;
+            }
+
+            @Override
+            public SafeHtml getTooltip(EntityModel object) {
+                Disk disk = (((DiskModel) (object.getEntity())).getDisk());
+                if (disk.isBoot()) {
+                    return SafeHtmlUtils.fromSafeConstant(constants.bootableDisk());
+                }
+                return null;
             }
         }, bootableColumnHeader, "30px"); //$NON-NLS-1$
 
@@ -341,8 +366,16 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
             @Override
             public ImageResource getValue(EntityModel object) {
                 Disk disk = (((DiskModel) (object.getEntity())).getDisk());
-                setTitle(disk.isShareable() ? constants.shareable() : null);
                 return disk.isShareable() ? resources.shareableDiskIcon() : null;
+            }
+
+            @Override
+            public SafeHtml getTooltip(EntityModel object) {
+                Disk disk = (((DiskModel) (object.getEntity())).getDisk());
+                if (disk.isShareable()) {
+                    return SafeHtmlUtils.fromSafeConstant(constants.shareable());
+                }
+                return null;
             }
         }, shareableColumnHeader, "30px"); //$NON-NLS-1$
 

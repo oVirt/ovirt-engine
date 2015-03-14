@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.common.widget.table.cell;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 
 import com.google.gwt.cell.client.ValueUpdater;
@@ -16,16 +19,17 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
- * Cell that renders ActionButtonDefinition-like image buttons.
+ * Cell that renders ActionButtonDefinition-like image buttons. Supports tooltips.
  *
  * @param <T>
  *            The data type of the cell (the model)
+ * TODO rename abstract?
  */
 public abstract class ImageButtonCell<T> extends AbstractCell<T> {
 
     interface CellTemplate extends SafeHtmlTemplates {
-        @Template("<span id=\"{0}\" class=\"{1}\" title=\"{2}\">{3}</span>")
-        SafeHtml span(String id, String styleClass, String title, SafeHtml html);
+        @Template("<span id=\"{0}\" class=\"{1}\">{2}</span>")
+        SafeHtml span(String id, String styleClass, SafeHtml html);
     }
 
     private static CellTemplate template = GWT.create(CellTemplate.class);
@@ -38,16 +42,26 @@ public abstract class ImageButtonCell<T> extends AbstractCell<T> {
 
     public ImageButtonCell(ImageResource enabledImage, String enabledCss,
             ImageResource disabledImage, String disabledCss) {
-        super(BrowserEvents.CLICK);
+        super();
         this.enabledHtml = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(enabledImage).getHTML());
         this.enabledCss = enabledCss;
         this.disabledHtml = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(disabledImage).getHTML());
         this.disabledCss = disabledCss;
     }
 
+    /**
+     * Events to sink.
+     */
     @Override
-    public void onBrowserEvent(Context context, Element parent, T value, NativeEvent event, ValueUpdater<T> valueUpdater) {
-        super.onBrowserEvent(context, parent, value, event, valueUpdater);
+    public Set<String> getConsumedEvents() {
+        Set<String> set = new HashSet<>(super.getConsumedEvents());
+        set.add(BrowserEvents.CLICK);
+        return set;
+    }
+
+    @Override
+    public void onBrowserEvent(Context context, Element parent, T value, SafeHtml tooltip, NativeEvent event, ValueUpdater<T> valueUpdater) {
+        super.onBrowserEvent(context, parent, value, tooltip, event, valueUpdater);
 
         EventTarget eventTarget = event.getEventTarget();
         if (!Element.is(eventTarget)) {
@@ -64,17 +78,9 @@ public abstract class ImageButtonCell<T> extends AbstractCell<T> {
     public void render(Context context, T value, SafeHtmlBuilder sb, String id) {
         String css = isEnabled(value) ? enabledCss : disabledCss;
         SafeHtml html = isEnabled(value) ? enabledHtml : disabledHtml;
-        String title = SafeHtmlUtils.htmlEscape(getTitle(value));
 
-        sb.append(template.span(id, css, title, html));
+        sb.append(template.span(id, css, html));
     }
-
-    /**
-     *
-     * @param value
-     * @return
-     */
-    protected abstract String getTitle(T value);
 
     /**
      * Get the UICommand associated with the button.

@@ -136,7 +136,7 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
         };
         getTable().addColumn(nameColumn, constants.templateName(), "350px"); //$NON-NLS-1$
 
-        final TextCell subversionNumberCell = new TextCell(TextCell.UNLIMITED_LENGTH);
+        final TextCell subversionNumberCell = new TextCell();
 
         final AbstractTextColumn<VmTemplate> subversionNumberColumn = new AbstractTextColumn<VmTemplate>(subversionNumberCell) {
 
@@ -147,7 +147,7 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
         };
         table.addColumn(subversionNumberColumn, constants.templateVersion(), "140px"); //$NON-NLS-1$
 
-        final TextCell subversionNameCell = new TextCell(TextCell.UNLIMITED_LENGTH);
+        final TextCell subversionNameCell = new TextCell();
 
         final AbstractTextColumn<VmTemplate> subversionNameColumn = new AbstractTextColumn<VmTemplate>(subversionNameCell) {
 
@@ -160,7 +160,7 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
         };
         table.addColumn(subversionNameColumn, constants.templateVersionName(), "350px"); //$NON-NLS-1$
 
-        final TextCell descriptionCell = new TextCell(TextCell.UNLIMITED_LENGTH);
+        final TextCell descriptionCell = new TextCell();
 
         final AbstractTextColumn<VmTemplate> descriptionColumn = new AbstractTextColumn<VmTemplate>(descriptionCell) {
 

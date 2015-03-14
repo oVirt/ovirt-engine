@@ -30,12 +30,11 @@ public class VolumeTaskWaitingCell<T extends GlusterTaskSupport> extends Abstrac
         }
 
         ImageResource taskImage = resources.waitImage();
-        String tooltip = constants.waitForGlusterTask();
 
         // Generate the HTML for the image:
         SafeHtml activityImageHtml =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(taskImage).getHTML());
-        sb.append(templates.image(activityImageHtml, tooltip, id));
+        sb.append(templates.imageWithId(activityImageHtml, id));
     }
 
 }

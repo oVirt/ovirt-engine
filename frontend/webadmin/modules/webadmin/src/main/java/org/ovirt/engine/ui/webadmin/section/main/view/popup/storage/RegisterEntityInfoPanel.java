@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
@@ -145,7 +146,7 @@ public abstract class RegisterEntityInfoPanel<T> extends TabLayoutPanel {
         CustomSelectionCell customSelectionCell = new CustomSelectionCell(new ArrayList<String>());
         customSelectionCell.setStyle("input-group col-xs-11"); //$NON-NLS-1$
 
-        Column<DiskImage, String> column = new Column<DiskImage, String>(customSelectionCell) {
+        AbstractColumn column = new AbstractColumn<DiskImage, String>(customSelectionCell) {
             @Override
             public String getValue(DiskImage disk) {
                 List<Quota> quotas = (List<Quota>) registerEntityModel.getStorageQuota().getItems();

@@ -8,6 +8,8 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class QuotaUtilizationStatusColumn<IVdcQueryable> extends AbstractImageResourceColumn<IVdcQueryable> {
 
@@ -25,11 +27,23 @@ public class QuotaUtilizationStatusColumn<IVdcQueryable> extends AbstractImageRe
             return null;
         }
 
-        if (quotaExceeded) {
-            setTitle(constants.quotaExceeded());
+        return quotaExceeded ? resources.alertImage() : null;
+    }
+
+    @Override
+    public SafeHtml getTooltip(IVdcQueryable quota) {
+        boolean quotaExceeded = false;
+        if (quota instanceof QuotaStorage) {
+            quotaExceeded = getQuotaExceeded((QuotaStorage)quota);
+        } else if (quota instanceof QuotaVdsGroup) {
+            quotaExceeded = getQuotaExceeded((QuotaVdsGroup)quota);
         }
 
-        return quotaExceeded ? resources.alertImage() : null;
+        if (quotaExceeded) {
+            return SafeHtmlUtils.fromSafeConstant(constants.quotaExceeded());
+        }
+        return null;
+
     }
 
     private boolean getQuotaExceeded(QuotaStorage quota) {

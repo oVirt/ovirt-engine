@@ -10,7 +10,7 @@ import org.ovirt.engine.core.searchbackend.NetworkConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLinkColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlWithSafeHtmlTooltipColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
@@ -89,8 +89,8 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         descriptionColumn.makeSortable(NetworkConditionFieldAutoCompleter.DESCRIPTION);
         getTable().addColumn(descriptionColumn, constants.descriptionNetwork(), "300px"); //$NON-NLS-1$
 
-        AbstractSafeHtmlWithSafeHtmlTooltipColumn<NetworkView> roleColumn =
-                new AbstractSafeHtmlWithSafeHtmlTooltipColumn<NetworkView>() {
+        AbstractSafeHtmlColumn<NetworkView> roleColumn =
+                new AbstractSafeHtmlColumn<NetworkView>() {
                     @Override
                     public SafeHtml getValue(NetworkView networkView) {
 

@@ -5,18 +5,15 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
-import org.ovirt.engine.ui.common.widget.table.cell.StorageDomainsCell;
+import org.ovirt.engine.ui.common.widget.table.cell.TextCell;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
-import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
-public class StorageDomainsColumn extends Column<Disk, String> implements ColumnWithElementId {
+public class StorageDomainsColumn extends AbstractTextColumn<Disk> implements ColumnWithElementId {
 
     private final static CommonApplicationConstants constants = AssetProvider.getConstants();
-
-    public StorageDomainsColumn() {
-        super(new StorageDomainsCell());
-    }
 
     @Override
     public String getValue(Disk object) {
@@ -25,7 +22,6 @@ public class StorageDomainsColumn extends Column<Disk, String> implements Column
         }
 
         DiskImage diskImage = (DiskImage) object;
-        getCell().setTitle(StringUtils.join(diskImage.getStoragesNames(), ", ")); //$NON-NLS-1$
 
         int numOfStorageDomains = diskImage.getStoragesNames() != null ?
                 diskImage.getStoragesNames().size() : 0;
@@ -41,13 +37,13 @@ public class StorageDomainsColumn extends Column<Disk, String> implements Column
     }
 
     @Override
-    public void configureElementId(String elementIdPrefix, String columnId) {
-        getCell().setElementIdPrefix(elementIdPrefix);
-        getCell().setColumnId(columnId);
+    public TextCell getCell() {
+        return (TextCell) super.getCell();
     }
 
     @Override
-    public StorageDomainsCell getCell() {
-        return (StorageDomainsCell) super.getCell();
+    public SafeHtml getTooltip(Disk object) {
+        DiskImage diskImage = (DiskImage) object;
+        return SafeHtmlUtils.fromString(StringUtils.join(diskImage.getStoragesNames(), ", "));  //$NON-NLS-1$
     }
 }

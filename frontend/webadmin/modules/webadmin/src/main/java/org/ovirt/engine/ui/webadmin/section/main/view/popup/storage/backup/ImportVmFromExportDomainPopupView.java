@@ -23,6 +23,7 @@ import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.StorageDomainFreeSpaceRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
@@ -58,6 +59,8 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
@@ -239,8 +242,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
             @Override
             public void update(int index, Object model, Boolean value) {
                         ((ImportVmData) model).getCollapseSnapshots().setEntity(value);
-                        customSelectionCellFormatType.setEnabledWithToolTip(value,
-                                constants.importAllocationModifiedCollapse());
+                        customSelectionCellFormatType.setEnabled(value);
                         diskTable.asEditor().edit(importModel.getImportDiskListModel());
                     }
                 }) {
@@ -253,10 +255,19 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
             protected boolean canEdit(Object model) {
                 return ((ImportVmData) model).getCollapseSnapshots().getIsChangable();
             }
-                    @Override
-                    protected String getDisabledMessage(Object model) {
-                        return ((ImportVmData) model).getCollapseSnapshots().getChangeProhibitionReason();
-                    }
+            @Override
+            protected String getDisabledMessage(Object model) {
+                return ((ImportVmData) model).getCollapseSnapshots().getChangeProhibitionReason();
+            }
+
+            @Override
+            public SafeHtml getTooltip(Object object) {
+                SafeHtml superTooltip = super.getTooltip(object);
+                if (superTooltip == null) {
+                    return SafeHtmlUtils.fromSafeConstant(constants.importAllocationModifiedCollapse());
+                }
+                return superTooltip;
+            }
         };
         table.addColumn(collapseSnapshotsColumn, constants.collapseSnapshots(), "10px"); //$NON-NLS-1$
 
@@ -280,6 +291,11 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
             @Override
             protected String getDisabledMessage(Object model) {
                 return ((ImportVmData) model).getClone().getChangeProhibitionReason();
+            }
+
+            @Override
+            public SafeHtml getTooltip(Object object) {
+                return super.getTooltip(object);
             }
         };
         table.addColumn(cloneVMColumn, constants.cloneVM(), "50px"); //$NON-NLS-1$
@@ -353,9 +369,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
             public void onSelectionChange(SelectionChangeEvent event) {
                 ImportVmData selectedObject =
                         ((SingleSelectionModel<ImportVmData>) event.getSource()).getSelectedObject();
-                customSelectionCellFormatType.setEnabledWithToolTip(selectedObject.getCollapseSnapshots()
-                        .getEntity(),
-                        constants.importAllocationModifiedCollapse());
+                customSelectionCellFormatType.setEnabled(((Boolean) selectedObject.getCollapseSnapshots().getEntity()));
                 // diskTable.edit(importVmModel.getImportDiskListModel());
             }
         });
@@ -426,18 +440,20 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         AbstractImageResourceColumn<DiskImage> bootableDiskColumn = new AbstractImageResourceColumn<DiskImage>() {
             @Override
             public ImageResource getValue(DiskImage object) {
-                setTitle(object.isBoot() ? getDefaultTitle() : null);
                 return object.isBoot() ? getDefaultImage() : null;
-            }
-
-            @Override
-            public String getDefaultTitle() {
-                return constants.bootableDisk();
             }
 
             @Override
             public ImageResource getDefaultImage() {
                 return resources.bootableDiskIcon();
+            }
+
+            @Override
+            public SafeHtml getTooltip(DiskImage object) {
+                if (object.isBoot()) {
+                    return SafeHtmlUtils.fromSafeConstant(constants.bootableDisk());
+                }
+                return null;
             }
         };
         diskTable.addColumnWithHtmlHeader(bootableDiskColumn, bootableDiskColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
@@ -481,7 +497,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         customSelectionCellFormatType = new CustomSelectionCell(allocationTypes);
         customSelectionCellFormatType.setStyle(style.cellSelectBox());
 
-        Column<DiskImage, String> allocationColumn = new Column<DiskImage, String>(
+        AbstractColumn<DiskImage, String> allocationColumn = new AbstractColumn<DiskImage, String>(
                 customSelectionCellFormatType) {
             @Override
             public String getValue(DiskImage disk) {
@@ -492,6 +508,11 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
                 }
                 return new EnumRenderer<VolumeType>().render(VolumeType.forValue(importData.getSelectedVolumeType()
                         .getValue()));
+            }
+
+            @Override
+            public SafeHtml getTooltip(DiskImage object) {
+                return SafeHtmlUtils.fromSafeConstant(constants.importAllocationModifiedCollapse());
             }
         };
 

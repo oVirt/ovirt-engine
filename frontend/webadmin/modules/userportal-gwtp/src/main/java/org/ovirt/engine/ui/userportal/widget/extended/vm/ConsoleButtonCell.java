@@ -4,8 +4,8 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 
 public class ConsoleButtonCell extends AbstractConsoleButtonCell {
 
-    public ConsoleButtonCell(String enabledCss, String disabledCss, String title, ConsoleButtonCommand command) {
-        super(enabledCss, disabledCss, title, command);
+    public ConsoleButtonCell(String enabledCss, String disabledCss, ConsoleButtonCommand command) {
+        super(enabledCss, disabledCss, command);
     }
 
     @Override

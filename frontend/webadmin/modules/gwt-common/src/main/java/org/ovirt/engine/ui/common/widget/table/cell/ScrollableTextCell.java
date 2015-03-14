@@ -5,11 +5,15 @@ import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
+/**
+ * ScrollableTextCell. Does not support tooltips.
+ *
+ */
 public class ScrollableTextCell extends TextInputCell {
 
     public interface CellTemplate extends SafeHtmlTemplates {
         @Template("<input id=\"{2}\" style=\"background: transparent; border: 0px; width: 95%; {1}\"" +
-                "readonly=\"readonly\" type=\"text\" value=\"{0}\" title=\"{0}\"  tabindex=\"-1\"></input>")
+                "readonly=\"readonly\" type=\"text\" value=\"{0}\" tabindex=\"-1\"></input>")
         SafeHtml input(String value, String customStyle, String id);
     }
 

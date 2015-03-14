@@ -17,9 +17,8 @@ public abstract class ReasonColumn<T> extends AbstractSafeHtmlColumn<T> {
     @Override
     public SafeHtml getValue(T value) {
         if (getReason(value) != null && !getReason(value).trim().isEmpty()) {
-            return templates.inlineImageWithTitle(SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.commentImage())
-                    .getHTML()),
-                    getReason(value));
+            return templates.inlineImage(SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.commentImage())
+                    .getHTML()));
         }
         return null;
     }

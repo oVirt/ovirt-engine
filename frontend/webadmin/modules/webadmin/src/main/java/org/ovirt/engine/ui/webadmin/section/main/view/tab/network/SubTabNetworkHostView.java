@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.common.view.ViewRadioGroup;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractNullableNumberColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlWithSafeHtmlTooltipColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.SimpleStatusColumnComparator;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -122,8 +122,8 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         }
     };
 
-    private final AbstractSafeHtmlWithSafeHtmlTooltipColumn<PairQueryable<VdsNetworkInterface, VDS>> nicColumn =
-            new AbstractSafeHtmlWithSafeHtmlTooltipColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
+    private final AbstractSafeHtmlColumn<PairQueryable<VdsNetworkInterface, VDS>> nicColumn =
+            new AbstractSafeHtmlColumn<PairQueryable<VdsNetworkInterface, VDS>>() {
                 @Override
                 public SafeHtml getValue(PairQueryable<VdsNetworkInterface, VDS> object) {
                     if (object.getFirst() != null) {

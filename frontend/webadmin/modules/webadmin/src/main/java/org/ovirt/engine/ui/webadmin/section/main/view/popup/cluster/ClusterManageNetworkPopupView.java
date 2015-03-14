@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMode;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlWithSafeHtmlTooltipColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.header.CheckboxHeader;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -157,7 +157,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
     }
 
     private final class VmNetworkImageSafeHtmlWithSafeHtmlTooltipColumn
-            extends AbstractSafeHtmlWithSafeHtmlTooltipColumn<ClusterNetworkModel> {
+            extends AbstractSafeHtmlColumn<ClusterNetworkModel> {
         private final ApplicationConstants constants = AssetProvider.getConstants();
 
         private VmNetworkImageSafeHtmlWithSafeHtmlTooltipColumn() {

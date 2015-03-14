@@ -15,7 +15,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
-public class NicActivateStatusColumn<T> extends AbstractSafeHtmlWithSafeHtmlTooltipColumn<T> {
+public class NicActivateStatusColumn<T> extends AbstractSafeHtmlColumn<T> {
     private final static CommonApplicationResources resources = AssetProvider.getResources();
     private final static CommonApplicationConstants constants = AssetProvider.getConstants();
     private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
@@ -85,4 +85,5 @@ public class NicActivateStatusColumn<T> extends AbstractSafeHtmlWithSafeHtmlTool
 
         return SafeHtmlUtils.fromTrustedString(tooltip.toString());
     }
+
 }

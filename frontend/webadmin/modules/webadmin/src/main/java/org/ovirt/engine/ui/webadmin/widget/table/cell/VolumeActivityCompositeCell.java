@@ -4,9 +4,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskSupport;
+import org.ovirt.engine.ui.common.widget.table.cell.CompositeCell;
 
 import com.google.gwt.cell.client.Cell;
-import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -21,15 +21,15 @@ public class VolumeActivityCompositeCell<T extends GlusterTaskSupport> extends C
     }
 
     @Override
-    public void render(Context context, T value, SafeHtmlBuilder sb) {
+    public void render(Context context, T value, SafeHtmlBuilder sb, String id) {
         if (!isVisible(value)) {
             return;
         }
 
-        sb.appendHtmlConstant("<table style=\"margin:0 auto\"><tr>"); //$NON-NLS-1$
+        sb.appendHtmlConstant("<table id=\"" + id + "\" style=\"margin:0 auto\"><tr>"); //$NON-NLS-1$ //$NON-NLS-2$
         Iterator<HasCell<T, ?>> iterator = hasCells.iterator();
         while (iterator.hasNext()) {
-            render(context, value, sb, iterator.next());
+            render(context, value, sb, iterator.next(), id);
         }
         sb.appendHtmlConstant("</tr></table>"); //$NON-NLS-1$
     }
@@ -46,7 +46,7 @@ public class VolumeActivityCompositeCell<T extends GlusterTaskSupport> extends C
     protected <X> void render(Context context,
             T value,
             SafeHtmlBuilder sb,
-            HasCell<T, X> hasCell) {
+            HasCell<T, X> hasCell, String id) {
         Cell<X> cell = hasCell.getCell();
         sb.appendHtmlConstant("<td>"); //$NON-NLS-1$
         cell.render(context, hasCell.getValue(value), sb);

@@ -24,6 +24,7 @@ public class VolumeCapacityCell extends AbstractCell<GlusterVolumeEntity> {
             progress = 0;
         }
         String sizeString = getProgressText(sizeInfo);
+        // TODO lets not hardcode these colors
         String color = progress < 70 ? "#669966" : progress < 95 ? "#FF9900" : "#FF0000"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         SafeHtml safeHtml = templates.progressBar(progress, sizeString, color, "engine-progress-box", id); //$NON-NLS-1$
         sb.append(safeHtml);

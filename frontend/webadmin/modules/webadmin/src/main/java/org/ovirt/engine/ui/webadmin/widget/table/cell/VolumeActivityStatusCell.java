@@ -31,60 +31,47 @@ public class VolumeActivityStatusCell<T extends GlusterTaskSupport> extends Abst
         // Find the image corresponding to the task
         GlusterTaskType taskType = value.getAsyncTask().getType();
         ImageResource taskImage = null;
-        String tooltip = ""; //$NON-NLS-1$
 
         if (taskType == GlusterTaskType.REBALANCE) {
             switch (value.getAsyncTask().getStatus()) {
             case STARTED:
                 taskImage = resources.rebalanceRunning();
-                tooltip = constants.rebalanceInProgress();
                 break;
             case ABORTED:
                 taskImage = resources.rebalanceStoppped();
-                tooltip = constants.rebalanceStopped();
                 break;
             case FAILED:
                 taskImage = resources.rebalanceFailed();
-                tooltip = constants.rebalanceFailed();
                 break;
             case FINISHED:
                 taskImage = resources.rebalanceCompleted();
-                tooltip = constants.rebalanceCompleted();
                 break;
             case UNKNOWN:
                 taskImage = resources.questionMarkImage();
-                tooltip = constants.rebalanceStatusUnknown();
                 break;
             default:
                 taskImage = null;
-                tooltip = ""; //$NON-NLS-1$
             }
         }
         else if (taskType == GlusterTaskType.REMOVE_BRICK) {
             switch (value.getAsyncTask().getStatus()) {
             case STARTED:
                 taskImage = resources.removeBrickRunning();
-                tooltip = constants.removeBrickInProgress();
                 break;
             case ABORTED:
                 taskImage = resources.removeBrickStopped();
-                tooltip = constants.removeBrickStopped();
                 break;
             case FAILED:
                 taskImage = resources.removeBrickFailed();
-                tooltip = constants.removeBrickFailed();
                 break;
             case FINISHED:
                 taskImage = resources.removeBrickCommitRequired();
-                tooltip = constants.removeBrickCommitRequired();
                 break;
             case UNKNOWN:
                 taskImage = resources.questionMarkImage();
-                tooltip = constants.removeBrickStatusUnknown();
                 break;
             default:
                 taskImage = null;
-                tooltip = ""; //$NON-NLS-1$
             }
         }
 
@@ -92,7 +79,7 @@ public class VolumeActivityStatusCell<T extends GlusterTaskSupport> extends Abst
             // Generate the HTML for the image:
             SafeHtml activityImageHtml =
                     SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(taskImage).getHTML());
-            sb.append(templates.image(activityImageHtml, tooltip, id));
+            sb.append(templates.imageWithId(activityImageHtml, id));
         }
     }
 

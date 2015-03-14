@@ -34,7 +34,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -211,7 +210,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
                     }
                 };
 
-        TextColumn<EntityModel> paddingColumn = new TextColumn<EntityModel>() {
+        AbstractTextColumn<EntityModel> paddingColumn = new AbstractTextColumn<EntityModel>() {
 
             @Override
             public String getValue(EntityModel entity) {
@@ -452,7 +451,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
     /**
      * An empty column - only for the header
      */
-    private static class EmptyColumn extends TextColumn<VM> {
+    private static class EmptyColumn extends AbstractTextColumn<VM> {
 
         @Override
         public String getValue(VM object) {

@@ -27,7 +27,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.ReportActionsHelper;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn2;
+import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
@@ -65,10 +65,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
         nameColumn.makeSortable(ClusterConditionFieldAutoCompleter.NAME);
         getTable().addColumn(nameColumn, constants.nameCluster(), "150px"); //$NON-NLS-1$
 
-        CommentColumn2<VDSGroup> commentColumn = new CommentColumn2<VDSGroup>();
-        // TODO: add support for tooltips on headers
-        // TODO: don't hardcode "Comment" -- use image
-        // getTable().addColumnWithHtmlHeader(commentColumn, commentColumn.getHeaderHtml(), "30px"); //$NON-NLS-1$
+        CommentColumn<VDSGroup> commentColumn = new CommentColumn<VDSGroup>();
         getTable().addColumn(commentColumn, constants.commentLabel(), "50px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {

@@ -2023,4 +2023,56 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Graphics protocol")
     String graphicsProtocol();
+
+    @DefaultStringValue("User")
+    String user();
+
+    @DefaultStringValue("Group")
+    String group();
+
+    @DefaultStringValue("Admin")
+    String admin();
+
+    @DefaultStringValue("Unassigned")
+    String unassigned();
+
+    @DefaultStringValue("Maintenance")
+    String maintenance();
+
+    @DefaultStringValue("Non Responsive")
+    String nonResponsive();
+
+    @DefaultStringValue("Error")
+    String error();
+
+    @DefaultStringValue("Installing")
+    String installing();
+
+    @DefaultStringValue("Install Failed")
+    String installFailed();
+
+    @DefaultStringValue("Reboot")
+    String reboot();
+
+    @DefaultStringValue("Preparing For Maintenance")
+    String preparingForMaintenance();
+
+    @DefaultStringValue("Non Operational")
+    String nonOperational();
+
+    @DefaultStringValue("Pending Approval")
+    String pendingApproval();
+
+    @DefaultStringValue("Initializing")
+    String initializing();
+
+    @DefaultStringValue("Connecting")
+    String connecting();
+
+    @DefaultStringValue("Installing OS")
+    String installingOS();
+
+    @DefaultStringValue("Kdumping")
+    String kdumping();
+
 }

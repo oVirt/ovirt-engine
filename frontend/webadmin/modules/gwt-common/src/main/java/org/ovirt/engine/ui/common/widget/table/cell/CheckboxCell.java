@@ -1,9 +1,11 @@
 package org.ovirt.engine.ui.common.widget.table.cell;
 
-import org.ovirt.engine.ui.common.idhandler.CellWithElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 
+import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -15,7 +17,7 @@ import com.google.gwt.user.client.DOM;
  * Supports rendering Element ids via the oVirt Element-ID framework.
  * </p>
  */
-public class CheckboxCell extends com.google.gwt.cell.client.CheckboxCell implements CellWithElementId<Boolean> {
+public class CheckboxCell extends com.google.gwt.cell.client.CheckboxCell implements Cell<Boolean> {
 
     interface CellTemplate extends SafeHtmlTemplates {
         @Template("<input id=\"{0}\" type=\"checkbox\" tabindex=\"-1\" checked/>")
@@ -52,7 +54,7 @@ public class CheckboxCell extends com.google.gwt.cell.client.CheckboxCell implem
      *
      * TODO-GWT: this is copied from GWT's CheckboxCell, with ID injected. Keep in sync on GWT upgrade.
      *
-     * @see org.ovirt.engine.ui.common.widget.table.cell.TooltipCell#render(com.google.gwt.cell.client.Cell.Context, java.lang.Object, com.google.gwt.safehtml.shared.SafeHtmlBuilder, java.lang.String)
+     * @see org.ovirt.engine.ui.common.widget.table.cell.Cell#render(com.google.gwt.cell.client.Cell.Context, java.lang.Object, com.google.gwt.safehtml.shared.SafeHtmlBuilder, java.lang.String)
      */
     public void render(Context context, Boolean value, SafeHtmlBuilder sb, String id) {
         // Get the view data.
@@ -84,6 +86,12 @@ public class CheckboxCell extends com.google.gwt.cell.client.CheckboxCell implem
 
     public String getColumnId() {
         return columnId;
+    }
+
+    @Override
+    public void onBrowserEvent(com.google.gwt.cell.client.Cell.Context context, Element parent,
+            Boolean value, SafeHtml tooltipContent, NativeEvent event, ValueUpdater<Boolean> valueUpdater) {
+        super.onBrowserEvent(context, parent, value, event, valueUpdater);
     }
 
 }

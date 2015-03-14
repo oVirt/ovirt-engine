@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractImageButtonCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AuditLogSeverityColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -42,7 +43,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Composite;
@@ -491,7 +491,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         tasksTree.updateTree(taskModelProvider.getModel());
     }
 
-    class DismissColumn extends Column<AuditLog, AuditLog> {
+    class DismissColumn extends AbstractColumn<AuditLog, AuditLog> {
 
         DismissColumn(AlertModelProvider alertModelProvider) {
             super(new DismissAuditLogImageButtonCell(alertModelProvider));
@@ -500,6 +500,11 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         @Override
         public AuditLog getValue(AuditLog object) {
             return object;
+        }
+
+        @Override
+        public SafeHtml getTooltip(AuditLog object) {
+            return SafeHtmlUtils.fromSafeConstant(constants.dismissAlert());
         }
     }
 
@@ -510,11 +515,6 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         public DismissAuditLogImageButtonCell(AlertModelProvider alertModelProvider) {
             super(resources.dialogIconClose());
             this.alertModelProvider = alertModelProvider;
-        }
-
-        @Override
-        protected String getTitle(AuditLog value) {
-            return constants.dismissAlert();
         }
 
         @Override

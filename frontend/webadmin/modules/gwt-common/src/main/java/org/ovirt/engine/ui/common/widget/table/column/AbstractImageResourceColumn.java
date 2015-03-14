@@ -5,14 +5,13 @@ import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.table.cell.ImageResourceCell;
-import org.ovirt.engine.ui.uicompat.EnumTranslator;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
- * Column for rendering {@link ImageResource} instances using {@link ImageResourceCell}.
+ * Column for rendering {@link ImageResource} instances using {@link ImageResourceCell}. Supports tooltips.
  *
  * @param <T>
  *            Table row data type.
@@ -27,21 +26,13 @@ public abstract class AbstractImageResourceColumn<T> extends AbstractColumn<T, I
         super(new ImageResourceCell());
     }
 
+    public AbstractImageResourceColumn(ImageResourceCell cell) {
+        super(cell);
+    }
+
     @Override
     public ImageResourceCell getCell() {
         return (ImageResourceCell) super.getCell();
-    }
-
-    public void setTitle(String title) {
-        getCell().setTitle(title);
-    }
-
-    public void setEnumTitle(Enum<?> enumObj) {
-        setTitle(EnumTranslator.getInstance().translate(enumObj));
-    }
-
-    public String getDefaultTitle() {
-        return constants.empty();
     }
 
     public ImageResource getDefaultImage() {
@@ -53,8 +44,9 @@ public abstract class AbstractImageResourceColumn<T> extends AbstractColumn<T, I
             return constants.empty();
         }
 
-        return templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
-                AbstractImagePrototype.create(getDefaultImage()).getHTML()), getDefaultTitle()).asString();
+        // TODO tt (in follow-up header patch) users of AbstractImageResourceColumn will have to set the Header Tooltip
+        return templates.headerImage(SafeHtmlUtils.fromTrustedString(
+                AbstractImagePrototype.create(getDefaultImage()).getHTML())).asString();
     }
 
 }

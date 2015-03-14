@@ -3,10 +3,13 @@ package org.ovirt.engine.ui.webadmin.widget.table.column;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class StorageDomainStatusColumn extends AbstractImageResourceColumn<StorageDomain> {
 
@@ -14,7 +17,6 @@ public class StorageDomainStatusColumn extends AbstractImageResourceColumn<Stora
 
     @Override
     public ImageResource getValue(StorageDomain sp) {
-        setEnumTitle(sp.getStatus());
         switch (sp.getStatus()) {
         case Unattached:
             if (sp.getStorageType() == StorageType.GLANCE) {
@@ -38,6 +40,12 @@ public class StorageDomainStatusColumn extends AbstractImageResourceColumn<Stora
         default:
             return resources.downImage();
         }
+    }
+
+    @Override
+    public SafeHtml getTooltip(StorageDomain sp) {
+        String tooltipContent = EnumTranslator.getInstance().translate(sp.getStatus());
+        return SafeHtmlUtils.fromString(tooltipContent);
     }
 
 }

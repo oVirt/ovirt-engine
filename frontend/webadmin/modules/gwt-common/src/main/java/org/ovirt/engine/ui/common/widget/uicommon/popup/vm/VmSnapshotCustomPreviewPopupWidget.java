@@ -235,13 +235,24 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
                         sb.appendEscaped(constants.notAvailableLabel());
                     }
                     else if (image.getImageStatus() == ImageStatus.ILLEGAL) {
-                        sb.append(templates.textAndTitle(constants.notAvailableLabel(), constants.illegalStatus()));
+                        sb.append(templates.text(constants.notAvailableLabel()));
                     }
                     else {
                         super.render(context, snapshotModel, sb);
                     }
                 }
-            }, templates.iconWithTextAndTitle(imageResourceToSafeHtml(resources.diskIcon()),
+
+                @Override
+                public SafeHtml getTooltip(SnapshotModel model) {
+                    DiskImage image = model.getImageByDiskId(disk.getId());
+                    if (image.getImageStatus() == ImageStatus.ILLEGAL) {
+                        return SafeHtmlUtils.fromSafeConstant(constants.illegalStatus());
+                    }
+                    return null;
+                }
+            },
+
+            templates.iconWithTextAndTitle(imageResourceToSafeHtml(resources.diskIcon()),
                     disk.getDiskAlias(), disk.getId().toString()), "120px"); //$NON-NLS-1$ //$NON-NLS-2$
 
             // Edit preview table

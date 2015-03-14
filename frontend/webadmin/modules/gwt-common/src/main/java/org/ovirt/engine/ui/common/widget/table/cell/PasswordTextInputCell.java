@@ -5,6 +5,10 @@ import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
+/**
+ * PasswordTextInputCell. Does not support tooltips.
+ *
+ */
 public class PasswordTextInputCell extends TextInputCell {
 
     interface PasswordTemplate extends SafeHtmlTemplates {

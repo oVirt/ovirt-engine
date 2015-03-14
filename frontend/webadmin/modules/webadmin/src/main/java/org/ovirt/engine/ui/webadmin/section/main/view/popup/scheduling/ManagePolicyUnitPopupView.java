@@ -21,6 +21,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
@@ -72,11 +74,21 @@ public class ManagePolicyUnitPopupView extends AbstractModelBoundPopupView<Manag
             @Override
             public ImageResource getValue(PolicyUnit object) {
                 if (object.isInternal()) {
-                    setTitle(constants.internalPolicyUnit());
                     return resources.lockImage();
                 }
-                setTitle(constants.externalPolicyUnit());
                 return resources.exteranlPolicyUnitImage();
+            }
+
+            @Override
+            public SafeHtml getTooltip(PolicyUnit object) {
+                String tooltipContent = null;
+                if (object.isInternal()) {
+                    tooltipContent = constants.internalPolicyUnit();
+                }
+                else {
+                    tooltipContent = constants.externalPolicyUnit();
+                }
+                return SafeHtmlUtils.fromSafeConstant(tooltipContent);
             }
         }, constants.empty(), "20px"); //$NON-NLS-1$
         policyUnitTable.addColumn(new AbstractTextColumn<PolicyUnit>() {

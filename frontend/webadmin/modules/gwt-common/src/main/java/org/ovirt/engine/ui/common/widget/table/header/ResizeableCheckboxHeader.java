@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.common.widget.table.header;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.ovirt.engine.ui.common.widget.table.cell.SafeHtmlCell;
 import org.ovirt.engine.ui.common.widget.table.resize.HasResizableColumns;
 
@@ -16,13 +19,17 @@ public class ResizeableCheckboxHeader<T> extends ResizableHeader<T> {
 
     public ResizeableCheckboxHeader(CheckboxHeader checkboxHeader,
             Column<T, ?> column, HasResizableColumns<T> table) {
-        super(checkboxHeader.getTitle(), column, table, new SafeHtmlCell(
-                BrowserEvents.CLICK,
-                BrowserEvents.MOUSEDOWN,
-                BrowserEvents.MOUSEMOVE,
-                BrowserEvents.MOUSEOVER,
-                BrowserEvents.CHANGE,
-                BrowserEvents.KEYDOWN));
+        super(checkboxHeader.getTitle(), column, table,
+                new SafeHtmlCell() {
+                    @Override
+                    public Set<String> getConsumedEvents() {
+                        Set<String> set = new HashSet<>(super.getConsumedEvents());
+                        set.add(BrowserEvents.CLICK);
+                        set.add(BrowserEvents.CHANGE);
+                        set.add(BrowserEvents.KEYDOWN);
+                        return set;
+                    }
+                });
         this.checkboxHeaderDelegate = checkboxHeader;
     }
 

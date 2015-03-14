@@ -2,10 +2,8 @@ package org.ovirt.engine.ui.common.widget.table.cell;
 
 import java.util.List;
 
-import org.ovirt.engine.ui.common.idhandler.CellWithElementId;
 import org.ovirt.engine.ui.common.widget.table.HasStyleClass;
 
-import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -15,7 +13,7 @@ import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
-public class StatusCompositeCellWithElementId<C> extends CompositeCell<C> implements CellWithElementId<C> {
+public class StatusCompositeCellWithElementId<C> extends CompositeCell<C> {
     public interface StatusCompositeCellResources extends ClientBundle {
         @ClientBundle.Source("org/ovirt/engine/ui/common/css/StatusCompositeCell.css")
         StatusCompositeCellCss statusCompositeCellCss();
@@ -55,20 +53,26 @@ public class StatusCompositeCellWithElementId<C> extends CompositeCell<C> implem
         sb.append(getTemplate().id(id));
 
         for (HasCell<C, ?> hasCell : hasCells) {
-            render(context, value, sb, hasCell);
+            render(context, value, sb, hasCell, id);
         }
 
         sb.appendHtmlConstant("</div>"); //$NON-NLS-1$
     }
 
     @Override
-    protected <T> void render(Cell.Context context, C value,
-            SafeHtmlBuilder sb, HasCell<C, T> hasCell) {
-        Cell<T> cell = hasCell.getCell();
-        if (cell instanceof HasStyleClass) {
-            ((HasStyleClass) cell).setStyleClass(style.divInlineBlock());
+    protected <T> void render(Cell.Context context, C value, SafeHtmlBuilder sb, HasCell<C, T> hasCell, String id) {
+        com.google.gwt.cell.client.Cell<T> _cell = hasCell.getCell();
+        if (_cell instanceof Cell) {
+            Cell<T> cell = (Cell<T>) _cell; // cast from GWT Cell to our Cell impl
+            if (cell instanceof HasStyleClass) {
+                ((HasStyleClass) cell).setStyleClass(style.divInlineBlock());
+            }
+            cell.render(context, hasCell.getValue(value), sb, id);
         }
-        cell.render(context, hasCell.getValue(value), sb);
+        else {
+            throw new IllegalStateException("StatusCompositeCell cannot render Cells that do not implement " //$NON-NLS-1$
+                    + Cell.class.getName());
+        }
     }
 
     @Override

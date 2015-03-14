@@ -1,6 +1,9 @@
 package org.ovirt.engine.ui.userportal.widget.extended.vm;
 
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 
@@ -18,23 +21,22 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
+/**
+ * AbstractConsoleButtonCell. Supports tooltips.
+ *
+ */
 public abstract class AbstractConsoleButtonCell extends AbstractCell<UserPortalItemModel> {
 
-
     public static interface ConsoleButtonCommand {
-
         public void execute(UserPortalItemModel model);
-
     }
 
     interface CellTemplate extends SafeHtmlTemplates {
-
-        @Template("<div id=\"{0}\" title=\"{1}\" class=\"{2}\" data-class=\"consoleButton\" />")
-        SafeHtml consoleButton(String id, String title, String className);
-
+        @Template("<div id=\"{0}\" class=\"{1}\" data-class=\"consoleButton\" />")
+        SafeHtml consoleButton(String id, String className);
     }
 
-    private static CellTemplate template = GWT.create(CellTemplate.class);
+    private final CellTemplate template = GWT.create(CellTemplate.class);
 
     private final ConsoleButtonCommand command;
 
@@ -42,22 +44,28 @@ public abstract class AbstractConsoleButtonCell extends AbstractCell<UserPortalI
 
     private final String disabledCss;
 
-    private final String title;
-
-    public AbstractConsoleButtonCell(String enabledCss, String disabledCss,
-            String title, ConsoleButtonCommand command) {
-        super(BrowserEvents.CLICK);
+    public AbstractConsoleButtonCell(String enabledCss, String disabledCss, ConsoleButtonCommand command) {
+        super();
         this.enabledCss = SafeHtmlUtils.htmlEscape(enabledCss);
         this.disabledCss = SafeHtmlUtils.htmlEscape(disabledCss);
-        this.title = SafeHtmlUtils.htmlEscape(title);
         this.command = command;
+    }
+
+    /**
+     * Events to sink.
+     */
+    @Override
+    public Set<String> getConsumedEvents() {
+        Set<String> set = new HashSet<>(super.getConsumedEvents());
+        set.add(BrowserEvents.CLICK);
+        return set;
     }
 
     @Override
     public void onBrowserEvent(Context context, Element parent,
-            final UserPortalItemModel model, NativeEvent event,
+            final UserPortalItemModel model, SafeHtml tooltip, NativeEvent event,
             ValueUpdater<UserPortalItemModel> valueUpdater) {
-        super.onBrowserEvent(context, parent, model, event, valueUpdater);
+        super.onBrowserEvent(context, parent, model, tooltip, event, valueUpdater);
 
         EventTarget eventTarget = event.getEventTarget();
 
@@ -86,7 +94,6 @@ public abstract class AbstractConsoleButtonCell extends AbstractCell<UserPortalI
     public void render(Context context, UserPortalItemModel model, SafeHtmlBuilder sb, String id) {
         sb.append(template.consoleButton(
                 id,
-                title,
                 shouldRenderCell(model) ? enabledCss : disabledCss));
     }
 

@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.common.widget.table.cell;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 
 import com.google.gwt.cell.client.ValueUpdater;
@@ -24,13 +27,20 @@ public abstract class AbstractImageButtonCell<C> extends AbstractCell<C> {
     private final SafeHtml imageHtml;
 
     public AbstractImageButtonCell(ImageResource image) {
-        super(BrowserEvents.CLICK);
+        super();
         this.imageHtml = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(image).getHTML());
     }
 
     @Override
-    public void onBrowserEvent(Context context, Element parent, C value, NativeEvent event, ValueUpdater<C> valueUpdater) {
-        super.onBrowserEvent(context, parent, value, event, valueUpdater);
+    public Set<String> getConsumedEvents() {
+        Set<String> set = new HashSet<>(super.getConsumedEvents());
+        set.add(BrowserEvents.CLICK);
+        return set;
+    }
+
+    @Override
+    public void onBrowserEvent(Context context, Element parent, C value, SafeHtml tooltipContent, NativeEvent event, ValueUpdater<C> valueUpdater) {
+        super.onBrowserEvent(context, parent, value, tooltipContent, event, valueUpdater);
 
         EventTarget eventTarget = event.getEventTarget();
         if (!Element.is(eventTarget)) {
@@ -46,14 +56,10 @@ public abstract class AbstractImageButtonCell<C> extends AbstractCell<C> {
     public void render(Context context, C value, SafeHtmlBuilder sb, String id) {
         sb.appendHtmlConstant("<span id=\"" //$NON-NLS-1$
                 + id
-                + "\" style=\"vertical-align: middle;\" title=\"" //$NON-NLS-1$
-                + SafeHtmlUtils.htmlEscape(getTitle(value))
-                + "\">"); //$NON-NLS-1$
+                + "\" style=\"vertical-align: middle;\">"); //$NON-NLS-1$
         sb.append(imageHtml);
         sb.appendHtmlConstant("</span>"); //$NON-NLS-1$
     }
-
-    protected abstract String getTitle(C value);
 
     /**
      * Get the UICommand associated with the button.

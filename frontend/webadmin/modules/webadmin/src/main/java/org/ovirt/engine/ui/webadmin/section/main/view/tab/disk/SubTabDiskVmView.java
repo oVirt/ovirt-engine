@@ -23,6 +23,8 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskListModel, DiskVmListModel>
         implements SubTabDiskVmPresenter.ViewDef {
@@ -53,8 +55,15 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
             @Override
             public ImageResource getValue(VM object) {
                 boolean isDiskPlugged = getDetailModel().isDiskPluggedToVm(object);
-                setTitle(isDiskPlugged ? constants.active() : constants.inactive());
                 return isDiskPlugged ? resources.upImage() : resources.downImage();
+            }
+
+            @Override
+            public SafeHtml getTooltip(VM object) {
+                if (getDetailModel().isDiskPluggedToVm(object)) {
+                    return SafeHtmlUtils.fromSafeConstant(constants.active());
+                }
+                return SafeHtmlUtils.fromSafeConstant(constants.inactive());
             }
         };
         getTable().addColumn(pluggedColumn, constants.empty(), "30px"); //$NON-NLS-1$

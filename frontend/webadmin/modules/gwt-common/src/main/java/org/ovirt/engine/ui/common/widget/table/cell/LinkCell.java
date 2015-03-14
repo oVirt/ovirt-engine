@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.common.widget.table.cell;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.ovirt.engine.core.compat.StringHelper;
 
 import com.google.gwt.cell.client.ValueUpdater;
@@ -14,10 +17,17 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 /**
  * This class may be used to display links in cell widgets. It allows the full functionality of a
  * {@link TextCell}, and wraps the HTML result of its rendering within link tags. Click events are caught and
- * passed to a ValueUpdater.
+ * passed to a ValueUpdater. Supports tooltips.
  */
 @SuppressWarnings("deprecation")
 public class LinkCell extends TextCell {
+
+    @Override
+    public Set<String> getConsumedEvents() {
+        Set<String> set = new HashSet<>(super.getConsumedEvents());
+        set.add(BrowserEvents.CLICK);
+        return set;
+    }
 
     private final static String CONTENT_ID_SUFFIX = "_content"; //$NON-NLS-1$
 
@@ -27,10 +37,6 @@ public class LinkCell extends TextCell {
     }
 
     private CellTemplate template = GWT.create(CellTemplate.class);
-
-    public LinkCell(int maxTextLength) {
-        super(maxTextLength, BrowserEvents.MOUSEOVER, BrowserEvents.CLICK);
-    }
 
     @Override
     public void render(Context context, String value, SafeHtmlBuilder sb, String id) {
@@ -45,10 +51,11 @@ public class LinkCell extends TextCell {
     public void onBrowserEvent(Context context,
             Element parent,
             String value,
+            SafeHtml tooltipContent,
             NativeEvent event,
             ValueUpdater<String> valueUpdater) {
 
-        super.onBrowserEvent(context, parent, value, event, valueUpdater);
+        super.onBrowserEvent(context, parent, value, tooltipContent, event, valueUpdater);
         if (!BrowserEvents.CLICK.equals(event.getType())) {
             return;
         }

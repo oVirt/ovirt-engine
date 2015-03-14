@@ -2,8 +2,10 @@ package org.ovirt.engine.ui.common.widget.table.cell;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -13,16 +15,22 @@ import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.view.client.CellPreviewEvent;
 
 /**
+
  * This class may be used to display a ListBox, backed by a ListModel, in cell widgets. It mimics the behaviour of a
  * SelectionCell by passing on rendering requests and browser events to a member delegate. The SelectionCell options are
  * set by rendering the items of a ListModel using the renderer passed to the constructor. Additional functionality
  * includes enabling/disabling the ListBox according to the IsChangeable state of the ListModel.
+ * </p>
+ * <p>
+ * Supports tooltips.
+ * </p>
  *
  * @param <T>
  *            the ListModel item type.
@@ -37,9 +45,15 @@ public class ListModelListBoxCell<T> extends AbstractInputCell<ListModel, String
     private final Renderer<T> renderer;
 
     public ListModelListBoxCell(final Renderer<T> renderer) {
-        super(BrowserEvents.CHANGE);
         this.renderer = renderer;
         delegate = new SelectionCell(new ArrayList<String>()); // just to avoid null pointer in setSelection()
+    }
+
+    @Override
+    public Set<String> getConsumedEvents() {
+        Set<String> set = new HashSet<>(super.getConsumedEvents());
+        set.add(BrowserEvents.CHANGE);
+        return set;
     }
 
     @SuppressWarnings("unchecked")
@@ -79,6 +93,7 @@ public class ListModelListBoxCell<T> extends AbstractInputCell<ListModel, String
     public void onBrowserEvent(Context context,
             Element parent,
             final ListModel model,
+            SafeHtml tooltipContent,
             NativeEvent event,
             ValueUpdater<ListModel> valueUpdater) {
 

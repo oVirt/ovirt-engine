@@ -31,7 +31,7 @@ public abstract class TextInputCell extends com.google.gwt.cell.client.TextInput
      *
      * Override this and use the id in your render.
      *
-     * @see org.ovirt.engine.ui.common.widget.table.cell.TooltipCell#render(com.google.gwt.cell.client.Cell.Context, java.lang.Object, com.google.gwt.safehtml.shared.SafeHtmlBuilder, java.lang.String)
+     * @see org.ovirt.engine.ui.common.widget.table.cell.Cell#render(com.google.gwt.cell.client.Cell.Context, java.lang.Object, com.google.gwt.safehtml.shared.SafeHtmlBuilder, java.lang.String)
      */
     public abstract void render(Context context, String value, SafeHtmlBuilder sb, String id);
 

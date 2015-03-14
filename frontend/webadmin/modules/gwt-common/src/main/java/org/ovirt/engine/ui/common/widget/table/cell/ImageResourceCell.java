@@ -11,25 +11,25 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 /**
- * ImageResourceCell that supports setting a style and displaying a tooltip in a DecoratedPopupPanel.
+ * Cell that renders an ImageResource. Supports setting a style / class. Supports tooltips.
  */
-public class ImageResourceCell extends AbstractTitlePanelCell<ImageResource> implements HasStyleClass {
+public class ImageResourceCell extends AbstractCell<ImageResource> implements HasStyleClass {
 
     interface CellTemplate extends SafeHtmlTemplates {
-        @Template("<div style=\"{0}\" class=\"{1}\">{2}</div>")
-        SafeHtml imageContainerWithStyleClass(String style, String styleClass, SafeHtml imageHtml);
+        @Template("<div id=\"{0}\" style=\"{1}\" class=\"{2}\">{3}</div>")
+        SafeHtml imageContainerWithStyleClass(String id, String style, String styleClass, SafeHtml imageHtml);
     }
 
     private String style = "line-height: 100%; text-align: center; vertical-align: middle;"; //$NON-NLS-1$
     private String styleClass = ""; //$NON-NLS-1$
 
-    private static CellTemplate template = GWT.create(CellTemplate.class);
+    private CellTemplate template = GWT.create(CellTemplate.class);
 
     @Override
     public void render(Context context, ImageResource value, SafeHtmlBuilder sb, String id) {
-        // this class is removed in a follow-up patch. that is why i'm ignoring the id here.
         if (value != null) {
             sb.append(template.imageContainerWithStyleClass(
+                    id,
                     style,
                     styleClass,
                     SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(value).getHTML())));

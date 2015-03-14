@@ -31,8 +31,14 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
     @Template("<span style='width: 18px; vertical-align: middle; text-align: center; display: table-cell;' title='{1}'>{0}</span>")
     SafeHtml imageWithTitle(SafeHtml image, String title);
 
+    @Template("<span style='width: 18px; vertical-align: middle; text-align: center; display: table-cell;'>{0}</span>")
+    SafeHtml headerImage(SafeHtml image);
+
     @Template("<span style='height:22px; width: 22px; vertical-align: middle; text-align: center;' title='{1}'>{0}</span>")
     SafeHtml inlineImageWithTitle(SafeHtml image, String title);
+
+    @Template("<span style='height:22px; width: 22px; vertical-align: middle; text-align: center;'>{0}</span>")
+    SafeHtml inlineImage(SafeHtml image);
 
     @Template("<table cellspacing='0' cellpadding='0'><tr>" +
             "<td style='background: url({2});width:2px;'></td>" +
@@ -98,6 +104,9 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
 
     @Template("<span title='{1}'>{0}</span>")
     SafeHtml textAndTitle(String text, String title);
+
+    @Template("<span>{0}</span>")
+    SafeHtml text(String text);
 
     @Template("<div style='border-right: 1px solid #D7D7E1; height: 32px;'>{0}</div>")
     SafeHtml nonResizeableColumnHeader(SafeHtml text);

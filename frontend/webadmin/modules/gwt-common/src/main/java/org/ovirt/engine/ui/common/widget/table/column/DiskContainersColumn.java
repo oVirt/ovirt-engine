@@ -1,21 +1,17 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.ui.common.widget.table.cell.DiskContainersCell;
+import org.ovirt.engine.ui.common.widget.table.cell.TextCell;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
-import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
-public class DiskContainersColumn extends Column<Disk, String> implements ColumnWithElementId {
-
-    public DiskContainersColumn() {
-        super(new DiskContainersCell());
-    }
+public class DiskContainersColumn extends AbstractTextColumn<Disk> implements ColumnWithElementId {
 
     @Override
     public String getValue(Disk object) {
-        getCell().setTitle(StringUtils.join(object.getVmNames(), ", ")); //$NON-NLS-1$
 
         if (object.getNumberOfVms() == 0) {
             return ""; //$NON-NLS-1$
@@ -34,14 +30,16 @@ public class DiskContainersColumn extends Column<Disk, String> implements Column
     }
 
     @Override
-    public void configureElementId(String elementIdPrefix, String columnId) {
-        getCell().setElementIdPrefix(elementIdPrefix);
-        getCell().setColumnId(columnId);
+    public TextCell getCell() {
+        return (TextCell) super.getCell();
     }
 
     @Override
-    public DiskContainersCell getCell() {
-        return (DiskContainersCell) super.getCell();
+    public SafeHtml getTooltip(Disk object) {
+        if (object.getNumberOfVms() < 2) {
+            return null;
+        }
+        return SafeHtmlUtils.fromString(StringUtils.join(object.getVmNames(), ", ")); //$NON-NLS-1$
     }
 
 }

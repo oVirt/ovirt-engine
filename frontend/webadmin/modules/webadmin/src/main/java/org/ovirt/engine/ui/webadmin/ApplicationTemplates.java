@@ -98,8 +98,8 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<div id=\"{2}\" style=\"text-align: center;\">{0}{1}</div>")
     SafeHtml statusWithAlertTemplate(SafeHtml statusImage, SafeHtml alertImage, String id);
 
-    @Template("<div id=\"{2}\" title=\"{1}\" style=\"text-align: center;\">{0}</div>")
-    SafeHtml statusTemplate(SafeHtml statusImage, String title, String id);
+    @Template("<div id=\"{1}\" style=\"text-align: center;\">{0}</div>")
+    SafeHtml statusTemplate(SafeHtml statusImage, String id);
 
     @Template("<button type='button' tabindex='-1' style='float: right; height: 20px;'>"
             +
@@ -145,6 +145,9 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<div style='line-height: 100%; text-align: center; vertical-align: middle;'>{0}</div>")
     SafeHtml image(SafeHtml statusImage);
 
+    @Template("<div id=\"{1}\"style='line-height: 100%; text-align: center; vertical-align: middle;'>{0}</div>")
+    SafeHtml imageWithId(SafeHtml statusImage, String id);
+
     @Template("<table id=\"{4}\"> <tr> " +
             "<td> <div>{0}</div> </td>" +
             "<td> {1} </td>" +
@@ -156,11 +159,11 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<div style='line-height: 100%; text-align: center; vertical-align: middle;'>{0}</div>")
     SafeHtml volumeSnapshotsStatusTemplate(int snapshotCount);
 
-    @Template("<div style='line-height: 100%; text-align: center; vertical-align: middle; border: solid 1px transparent; '>{0}</div>")
-    SafeHtml volumeActivityMenu(SafeHtml statusImage);
+    @Template("<div id=\"{1}\" style='line-height: 100%; text-align: center; vertical-align: middle; border: solid 1px transparent; '>{0}</div>")
+    SafeHtml volumeActivityMenu(SafeHtml statusImage, String id);
 
-    @Template("<div id=\"{2}\" title=\'{1}'style='line-height: 100%; text-align: center; vertical-align: middle;'>{0}</div>")
-    SafeHtml image(SafeHtml statusImage, String title, String id);
+    @Template("<div title=\'{1}'style='line-height: 100%; text-align: center; vertical-align: middle;'>{0}</div>")
+    SafeHtml image(SafeHtml statusImage, String title);
 
     @Template("<div title=\"{0}\"><table cellspacing='0' cellpadding='0' style='line-height: 5px; width: 100%;'>" +
             "<tr>" +

@@ -18,7 +18,7 @@ import com.google.gwt.view.client.CellPreviewEvent;
  * A cell used to render a radio button. The value of the radio may be toggled using the ENTER key as well as via mouse
  * click.
  */
-public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> implements EventHandlingCell {
+public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> implements EventHandlingCell, Cell<Boolean> {
 
     interface RadioboxCellTemplates extends SafeHtmlTemplates {
         @Template("<input id=\"{0}\" type=\"radio\" tabindex=\"-1\" checked/>")
@@ -70,9 +70,11 @@ public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> impleme
         return false;
     }
 
+
     @Override
-    public void onBrowserEvent(Context context, Element parent, Boolean value,
-            NativeEvent event, ValueUpdater<Boolean> valueUpdater) {
+    public void onBrowserEvent(com.google.gwt.cell.client.Cell.Context context, Element parent,
+            Boolean value, SafeHtml tooltipContent, NativeEvent event, ValueUpdater<Boolean> valueUpdater) {
+
         String type = event.getType();
 
         boolean enterPressed = BrowserEvents.KEYDOWN.equals(type)

@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,12 +10,12 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.searchbackend.VdsConditionFieldAutoCompleter;
-import org.ovirt.engine.ui.common.idhandler.CellWithElementId;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
+import org.ovirt.engine.ui.common.widget.table.cell.Cell;
 import org.ovirt.engine.ui.common.widget.table.cell.StatusCompositeCellWithElementId;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
@@ -46,6 +45,8 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.VmCountColumn;
 
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
 
 public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, HostListModel<Void>> implements MainTabHostPresenter.ViewDef {
@@ -64,7 +65,6 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
     public MainTabHostView(MainModelProvider<VDS, HostListModel<Void>> modelProvider) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-
 
         InitSpmPriorities();
     }
@@ -162,18 +162,28 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
 
         };
 
-        CellWithElementId<VDS> compositeCell = new StatusCompositeCellWithElementId(
-                new ArrayList<HasCell<VDS, ?>>(Arrays.asList(
-                        statusColumn,
-                        reasonColumn)));
+        List<HasCell<VDS, ?>> list = new ArrayList<>();
+        list.add(statusColumn);
+        list.add(reasonColumn);
 
-        AbstractColumn<VDS, VDS> statusTextColumn =
-                new AbstractColumn<VDS, VDS>(compositeCell) {
-                    @Override
-                    public VDS getValue(VDS object) {
-                        return object;
-                    }
-                };
+        Cell<VDS> compositeCell = new StatusCompositeCellWithElementId<VDS>(list);
+
+        AbstractColumn<VDS, VDS> statusTextColumn = new AbstractColumn<VDS, VDS>(compositeCell) {
+            @Override
+            public VDS getValue(VDS object) {
+                return object;
+            }
+
+            @Override
+            public SafeHtml getTooltip(VDS value) {
+                String maintenanceReason = value.getMaintenanceReason();
+                if (maintenanceReason != null && !maintenanceReason.trim().isEmpty()) {
+                    return SafeHtmlUtils.fromString(maintenanceReason);
+                }
+                return null;
+            }
+        };
+
         statusTextColumn.makeSortable(VdsConditionFieldAutoCompleter.STATUS);
         getTable().addColumn(statusTextColumn, constants.statusHost(), "100px"); //$NON-NLS-1$
 

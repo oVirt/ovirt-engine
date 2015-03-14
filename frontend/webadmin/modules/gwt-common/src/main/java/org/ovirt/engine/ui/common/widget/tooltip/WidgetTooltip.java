@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.common.widget.tooltip;
 
-import org.gwtbootstrap3.client.ui.Tooltip;
-
 import com.google.gwt.user.client.ui.Widget;
 
 /**
