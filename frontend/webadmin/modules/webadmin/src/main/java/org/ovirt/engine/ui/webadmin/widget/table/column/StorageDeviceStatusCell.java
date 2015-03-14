@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
-import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -27,15 +26,9 @@ public class StorageDeviceStatusCell extends AbstractCell<StorageDevice> {
         }
 
         // Place a lock image to say that device is already in use and can't be used again
-        ImageResource statusImage = null;
-        String tooltip;
-        statusImage = resources.lockImage();
-        tooltip = constants.deviceIsAlreadyUsed();
-
-        // Generate the HTML for the image:
         SafeHtml statusImageHtml =
-                SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(statusImage).getHTML());
-        sb.append(templates.statusTemplate(statusImageHtml, tooltip, id));
+                SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.lockImage()).getHTML());
+        sb.append(templates.statusTemplate(statusImageHtml, constants.deviceIsAlreadyUsed(), id));
     }
 
 }
