@@ -10,7 +10,7 @@ public class EnumUtils {
     private static Map<Class, Map> cacheEnumValuesInCapitalLetters = new HashMap<Class, Map>();
 
     public static String ConvertToStringWithSpaces(String value) {
-        /*GWT-TODO
+        /*TODO-GWT
         StringBuilder result = new StringBuilder();
         RegExp r = RegExp.compile("^([A-Z]{1,}[a-z]*)|([0-9]*)$");
         com.google.gwt.regexp.shared.MatchResult = r.exec(value);

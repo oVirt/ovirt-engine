@@ -24,9 +24,9 @@ public class DateTime extends Date {
         return DayOfWeek.forValue(this.getDay());
     }
 
-    //TODO: GWT-TODO public String toString(DateFormat dateFormat) {
+    //TODO: TODO-GWT public String toString(DateFormat dateFormat) {
     public String toString(Object dateFormat) {
-        //TODO: GWT-TODO return  dateFormat.format(this);
+        //TODO: TODO-GWT return  dateFormat.format(this);
         return null;
     }
 

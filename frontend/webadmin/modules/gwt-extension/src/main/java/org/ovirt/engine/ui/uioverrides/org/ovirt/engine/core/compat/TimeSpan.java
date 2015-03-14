@@ -127,7 +127,7 @@ public class TimeSpan implements Comparable<TimeSpan>, Serializable
         if (TotalMilliseconds < 0) {
             prefix = "-" ;
         }
-        //GWT-TODO return String.format("%s%d.%02d:%02d:%02d.%03d", prefix, Days, Hours, Minutes, Seconds, Milliseconds) ;
+        // TODO-GWT return String.format("%s%d.%02d:%02d:%02d.%03d", prefix, Days, Hours, Minutes, Seconds, Milliseconds) ;
         return null;
     }
 
