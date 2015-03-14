@@ -22,6 +22,10 @@ import com.google.gwt.user.client.ui.HTMLTable.Cell;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.Label;
 
+/**
+ * This widget can be used to capture dates for monthly recurrent events. Currently it has been built to facilitate
+ * Quartz scheduling.
+ */
 public class DaysOfMonthSelector extends Composite implements TakesValue<String>, HasValue<String> {
 
     private static final int DAYS_IN_WEEK = 7;
@@ -29,7 +33,7 @@ public class DaysOfMonthSelector extends Composite implements TakesValue<String>
     private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private static Resources RESOURCES = GWT.create(Resources.class);
-    private DaysOfMonthSelectorCss style;
+    private final DaysOfMonthSelectorCss style;
 
     private final FlowPanel wrapperPanel = new FlowPanel();
     private final FlexTable daysOfMonth = new FlexTable();
@@ -42,6 +46,9 @@ public class DaysOfMonthSelector extends Composite implements TakesValue<String>
         DaysOfMonthSelectorCss daysOfMonthSelectorCSS();
     }
 
+    /**
+     * DaysOfMonthSelector
+     */
     public DaysOfMonthSelector() {
         initWidget(wrapperPanel);
         style = RESOURCES.daysOfMonthSelectorCSS();
@@ -96,6 +103,14 @@ public class DaysOfMonthSelector extends Composite implements TakesValue<String>
         wrapperPanel.add(daysOfMonth);
     }
 
+    /**
+     * When the mapped ListModel does a setSelectedItem, this is invoked. This method sets the passed dates selected
+     * @param value
+     *            Comma separated string of dates to mark selected
+     * @param fireEvents
+     *            whether to fire ValueChangeEvent
+     * @return void
+     */
     @Override
     public void setValue(String value, boolean fireEvents) {
         clearSelections();
@@ -113,6 +128,12 @@ public class DaysOfMonthSelector extends Composite implements TakesValue<String>
         }
     }
 
+    /**
+     * When the mapped ListModel does a setSelectedItem, this is invoked. This method sets the passed dates selected
+     * @param value
+     *            Comma separated string of dates to mark selected
+     * @return void
+     */
     @Override
     public void setValue(String value) {
         setValue(value, false);
@@ -125,6 +146,10 @@ public class DaysOfMonthSelector extends Composite implements TakesValue<String>
         }
     }
 
+    /**
+     * This method calculates and returns the comma-separated string of dates selected in the widget.
+     * @return String Comma-separated string of dates selected in the widget.
+     */
     @Override
     public String getValue() {
         String selectedValues = null;
