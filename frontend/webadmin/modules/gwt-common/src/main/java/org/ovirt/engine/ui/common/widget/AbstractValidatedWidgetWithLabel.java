@@ -83,13 +83,6 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
     // width in PX -- only used in legacy mode
     public static final int CONTENT_WIDTH_LEGACY = 230;
 
-    /**
-     * By default the title gets erased, when the setEnabled is called
-     * <p>
-     * This switch disables it
-     */
-    private boolean keepTitleOnSetEnabled = false;
-
     private VisibilityRenderer renderer;
 
     public AbstractValidatedWidgetWithLabel(W contentWidget, VisibilityRenderer renderer) {
@@ -275,15 +268,12 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
         } else {
             getFormLabel().getElement().replaceClassName(OvirtCss.LABEL_ENABLED, OvirtCss.LABEL_DISABLED);
         }
-
-        if (!keepTitleOnSetEnabled) {
-            updateWidgetTitle(null);
-        }
     }
 
     @Override
     public void disable(String disabilityHint) {
         setEnabled(false);
+        // TODO save the normal tooltip (done in follow-up patch)
         updateWidgetTitle(disabilityHint);
     }
 
@@ -361,10 +351,6 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
 
     public void hideLabel() {
         getFormLabel().setVisible(false);
-    }
-
-    public void setKeepTitleOnSetEnabled(boolean keepTitleOnSetEnabled) {
-        this.keepTitleOnSetEnabled = keepTitleOnSetEnabled;
     }
 
     public VisibilityRenderer getRenderer() {

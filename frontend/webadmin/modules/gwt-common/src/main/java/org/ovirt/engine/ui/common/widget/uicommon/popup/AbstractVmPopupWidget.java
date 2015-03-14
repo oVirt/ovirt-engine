@@ -959,7 +959,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         expander.initWithContent(expanderContent.getElement());
         vcpusAdvancedParameterExpander.initWithContent(vcpusAdvancedParameterExpanderContent.getElement());
-        editPrestartedVmsEditor.setKeepTitleOnSetEnabled(true);
 
         applyStyles();
 
@@ -1057,9 +1056,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     protected void initPoolSpecificWidgets() {
         createNumOfDesktopEditors();
-
-        incraseNumOfVmsEditor.setKeepTitleOnSetEnabled(true);
-        numOfVmsEditor.setKeepTitleOnSetEnabled(true);
 
         newPoolPrestartedVmsIcon =
                 new InfoIcon(templates.italicText(messages.prestartedHelp()));
