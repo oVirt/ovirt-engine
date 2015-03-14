@@ -1,11 +1,16 @@
 package org.ovirt.engine.ui.userportal.widget.table.column;
 
+import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.userportal.ApplicationResourcesWithLookup;
+import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.resources.client.ResourcePrototype;
 
-public class VmImageColumn<T> extends AbstractUserPortalImageResourceColumn<T> {
+public class VmImageColumn<T> extends AbstractImageResourceColumn<T> {
+
+    private final ApplicationResourcesWithLookup resourcesWithLookup = ClientGinjectorProvider.getApplicationResourcesWithLookup();
 
     public interface OsTypeExtractor<T> {
         int extractOsType(T item);
@@ -21,10 +26,10 @@ public class VmImageColumn<T> extends AbstractUserPortalImageResourceColumn<T> {
     @Override
     public ImageResource getValue(T item) {
         String osTypeName = AsyncDataProvider.getInstance().getOsUniqueOsNames().get(extractor.extractOsType(item));
-        ResourcePrototype resource = getApplicationResourcesWithLookup().getResource(osTypeName + "SmallImage"); //$NON-NLS-1$
+        ResourcePrototype resource = resourcesWithLookup.getResource(osTypeName + "SmallImage"); //$NON-NLS-1$
 
         if (!(resource instanceof ImageResource)) {
-            resource = getApplicationResourcesWithLookup().otherSmallImage();
+            resource = resourcesWithLookup.otherSmallImage();
         }
 
         return (ImageResource) resource;
