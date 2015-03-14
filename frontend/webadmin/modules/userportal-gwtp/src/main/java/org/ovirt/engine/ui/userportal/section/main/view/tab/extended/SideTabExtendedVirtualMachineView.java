@@ -59,6 +59,23 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    protected abstract class AbstractVmButtonsImageButtonCell extends ImageButtonCell<UserPortalItemModel> {
+
+        public AbstractVmButtonsImageButtonCell(ImageResource enabledImage, ImageResource disabledImage) {
+            super(enabledImage, applicationResources.sideTabExtendedVmStyle().vmButtonEnabled(),
+                    disabledImage, applicationResources.sideTabExtendedVmStyle().vmButtonDisabled());
+        }
+    }
+
+    public interface VmTableResources extends CellTable.Resources {
+        interface TableStyle extends CellTable.Style {
+        }
+
+        @Override
+        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/userportal/css/ExtendedVmListTable.css" })
+        TableStyle cellTableStyle();
+    }
+
     private static final VmTableResources vmTableResources = GWT.create(VmTableResources.class);
 
     private final ApplicationResources applicationResources;
@@ -388,23 +405,6 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
                         new UserPortalItemSimpleColumn(rebootCell))));
 
         return compositeCell;
-    }
-
-    public interface VmTableResources extends CellTable.Resources {
-        interface TableStyle extends CellTable.Style {
-        }
-
-        @Override
-        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/userportal/css/ExtendedVmListTable.css" })
-        TableStyle cellTableStyle();
-    }
-
-    protected abstract class AbstractVmButtonsImageButtonCell extends ImageButtonCell<UserPortalItemModel> {
-
-        public AbstractVmButtonsImageButtonCell(ImageResource enabledImage, ImageResource disabledImage) {
-            super(enabledImage, applicationResources.sideTabExtendedVmStyle().vmButtonEnabled(),
-                    disabledImage, applicationResources.sideTabExtendedVmStyle().vmButtonDisabled());
-        }
     }
 
 }

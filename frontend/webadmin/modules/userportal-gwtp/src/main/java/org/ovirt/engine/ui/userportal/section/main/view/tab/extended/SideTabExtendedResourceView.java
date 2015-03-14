@@ -63,6 +63,10 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
 
     private static final ApplicationConstants constants = GWT.create(ApplicationConstants.class);
 
+    interface Style extends CssResource {
+        String quotaNameText();
+    }
+
     @UiField
     Style style;
 
@@ -317,10 +321,6 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
     @Override
     public ResourcesModel flush() {
         return driver.flush();
-    }
-
-    interface Style extends CssResource {
-        String quotaNameText();
     }
 
 }

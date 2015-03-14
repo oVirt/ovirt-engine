@@ -38,6 +38,31 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    public interface TemplateTableResources extends CellTable.Resources {
+        interface TableStyle extends CellTable.Style {
+        }
+
+        @Override
+        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/userportal/css/ExtendedTemplateListTable.css" })
+        TableStyle cellTableStyle();
+    }
+
+    public interface TemplateTableHeaderResources extends CellTable.Resources {
+
+        @Source({ CellTable.Style.DEFAULT_CSS,
+                "org/ovirt/engine/ui/userportal/css/ExtendedTemplateListTable.css",
+                "org/ovirt/engine/ui/userportal/css/ExtendedTemplateListTableHeader.css"})
+        @Override
+        CellTable.Style cellTableStyle();
+    }
+
+    public interface TemplateSideTabWithDetailsViewStyle extends ClientBundle {
+
+        @Source({"org/ovirt/engine/ui/userportal/css/SideTabWithDetailsViewStyle.css",
+                 "org/ovirt/engine/ui/userportal/css/SideTabExtendedTemplateViewStyle.css"})
+        SideTabWithDetailsViewStyle templateSideTab();
+    }
+
     private static final TemplateTableResources templateTableResources = GWT.create(TemplateTableResources.class);
 
     private static final TemplateTableHeaderResources TEMPLATE_TABLE_HEADER_RESOURCES =
@@ -130,7 +155,7 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
             public String getValue(VmTemplate template) {
                 return template.getTemplateVersionName() != null && !template.getTemplateVersionName().isEmpty()
                         ? template.getTemplateVersionName()
-                        : "";
+                        : ""; //$NON-NLS-1$
             }
         };
         table.addColumn(subversionNameColumn, commonConstants.templateVersionName(), "350px"); //$NON-NLS-1$
@@ -143,7 +168,7 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
             public String getValue(VmTemplate template) {
                 return template.getDescription() != null && !template.getDescription().isEmpty()
                         ? template.getDescription()
-                        : "";
+                        : ""; //$NON-NLS-1$
             }
         };
         table.addColumn(descriptionColumn, commonConstants.templateDescription());
@@ -163,29 +188,6 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
         });
     }
 
-    public interface TemplateTableResources extends CellTable.Resources {
-        interface TableStyle extends CellTable.Style {
-        }
 
-        @Override
-        @Source({ CellTable.Style.DEFAULT_CSS, "org/ovirt/engine/ui/userportal/css/ExtendedTemplateListTable.css" })
-        TableStyle cellTableStyle();
-    }
-
-    public interface TemplateTableHeaderResources extends CellTable.Resources {
-
-        @Source({ CellTable.Style.DEFAULT_CSS,
-                "org/ovirt/engine/ui/userportal/css/ExtendedTemplateListTable.css",
-                "org/ovirt/engine/ui/userportal/css/ExtendedTemplateListTableHeader.css"})
-        @Override
-        CellTable.Style cellTableStyle();
-    }
-
-    public interface TemplateSideTabWithDetailsViewStyle extends ClientBundle {
-
-        @Source({"org/ovirt/engine/ui/userportal/css/SideTabWithDetailsViewStyle.css",
-                 "org/ovirt/engine/ui/userportal/css/SideTabExtendedTemplateViewStyle.css"})
-        SideTabWithDetailsViewStyle templateSideTab();
-    }
 
 }
