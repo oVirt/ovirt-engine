@@ -15,7 +15,7 @@ import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
-public class StatusCompositeCellWithElementId<C> extends CompositeTooltipCell<C> implements CellWithElementId<C> {
+public class StatusCompositeCellWithElementId<C> extends CompositeCell<C> implements CellWithElementId<C> {
     public interface StatusCompositeCellResources extends ClientBundle {
         @ClientBundle.Source("org/ovirt/engine/ui/common/css/StatusCompositeCell.css")
         StatusCompositeCellCss statusCompositeCellCss();

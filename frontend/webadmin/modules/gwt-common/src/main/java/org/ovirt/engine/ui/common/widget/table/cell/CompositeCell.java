@@ -6,19 +6,18 @@ import org.ovirt.engine.ui.common.idhandler.CellWithElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 
 import com.google.gwt.cell.client.Cell;
-import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.DOM;
 
 /**
- * A composite cell that supports rendering Element ids via the oVirt Element-ID framework.
- * TODO tt add tooltip support
- *
- * @param <C>
- *            Cell data type.
+ * <p>
+ * Base class for all Cells that would otherwise extend GWT AbstractCell.
+ * Supports rendering Element ids via the oVirt Element-ID framework.
+ * </p>
+ * @param <C> Cell data type.
  */
-public class CompositeTooltipCell<C> extends CompositeCell<C> implements CellWithElementId<C> {
+public class CompositeCell<C> extends com.google.gwt.cell.client.CompositeCell<C> implements CellWithElementId<C> {
 
     private final List<HasCell<C, ?>> hasCells;
 
@@ -26,7 +25,7 @@ public class CompositeTooltipCell<C> extends CompositeCell<C> implements CellWit
     private String elementIdPrefix = DOM.createUniqueId();
     private String columnId;
 
-    public CompositeTooltipCell(List<HasCell<C, ?>> hasCells) {
+    public CompositeCell(List<HasCell<C, ?>> hasCells) {
         super(hasCells);
         this.hasCells = hasCells;
     }

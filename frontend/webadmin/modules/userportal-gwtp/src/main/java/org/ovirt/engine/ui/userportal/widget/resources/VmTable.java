@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.common.SubTableResources;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.ActionCellTable;
-import org.ovirt.engine.ui.common.widget.table.cell.CompositeTooltipCell;
+import org.ovirt.engine.ui.common.widget.table.cell.CompositeCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
@@ -313,7 +313,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
         return new VmTreeItem(table, vm);
     }
 
-    private CompositeTooltipCell<EntityModel> createDiskImageWithMappingComoisiteCell() {
+    private CompositeCell<EntityModel> createDiskImageWithMappingComoisiteCell() {
 
         final AbstractImageResourceColumn<EntityModel> diskImageColumn = new AbstractImageResourceColumn<EntityModel>() {
 
@@ -349,7 +349,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
 
     }
 
-    private CompositeTooltipCell<EntityModel> createVmImageWithNameCompositeCell() {
+    private CompositeCell<EntityModel> createVmImageWithNameCompositeCell() {
         final AbstractImageResourceColumn<EntityModel> vmImageColumn = new AbstractImageResourceColumn<EntityModel>() {
 
             @Override
@@ -462,7 +462,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
 
 }
 
-class StyledCompositeCell<T> extends CompositeTooltipCell<T> {
+class StyledCompositeCell<T> extends CompositeCell<T> {
 
     private final List<HasCell<T, ?>> hasCells;
     private final StyledProvider<T> styleProvider;
