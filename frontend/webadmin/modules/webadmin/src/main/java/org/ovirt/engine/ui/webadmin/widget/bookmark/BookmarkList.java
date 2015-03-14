@@ -61,6 +61,7 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
 
         // Using KeyboardSelectionPolicy.BOUND_TO_SELECTION is preferable, but broken (see
         // gwt issue 6310).  Instead, use ENABLED and handle the keyboard input ourselves.
+        // TODO-GWT is this issue now fixed?
         display.addDomHandler(new KeyDownHandler() {
             @Override
             @SuppressWarnings("unchecked")
