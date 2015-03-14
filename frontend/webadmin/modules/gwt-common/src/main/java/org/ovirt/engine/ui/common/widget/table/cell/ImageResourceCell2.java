@@ -24,16 +24,7 @@ public class ImageResourceCell2 extends AbstractTooltipCell<ImageResource> imple
     private String style = "line-height: 100%; text-align: center; vertical-align: middle;"; //$NON-NLS-1$
     private String styleClass = ""; //$NON-NLS-1$
 
-    private CellTemplate template;
-
-    public ImageResourceCell2() {
-        super();
-
-        // Delay cell template creation until the first time it's needed
-        if (template == null) {
-            template = GWT.create(CellTemplate.class);
-        }
-    }
+    private CellTemplate template = GWT.create(CellTemplate.class);
 
     @Override
     public void render(Context context, ImageResource value, SafeHtmlBuilder sb, String id) {

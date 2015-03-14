@@ -23,16 +23,7 @@ public class ImageResourceCell extends AbstractTitlePanelCell<ImageResource> imp
     private String style = "line-height: 100%; text-align: center; vertical-align: middle;"; //$NON-NLS-1$
     private String styleClass = ""; //$NON-NLS-1$
 
-    private static CellTemplate template;
-
-    public ImageResourceCell() {
-        super();
-
-        // Delay cell template creation until the first time it's needed
-        if (template == null) {
-            template = GWT.create(CellTemplate.class);
-        }
-    }
+    private static CellTemplate template = GWT.create(CellTemplate.class);
 
     @Override
     public void render(Context context, ImageResource value, SafeHtmlBuilder sb, String id) {

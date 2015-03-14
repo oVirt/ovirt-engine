@@ -25,6 +25,8 @@ public class TextCell extends AbstractCellWithTooltip<String> implements HasStyl
         SafeHtml textContainer(String style, String id, SafeHtml text);
     }
 
+    private static CellTemplate template = GWT.create(CellTemplate.class);
+
     public static final int UNLIMITED_LENGTH = -1;
     private static final String TOO_LONG_TEXT_POSTFIX = "..."; //$NON-NLS-1$
 
@@ -34,8 +36,6 @@ public class TextCell extends AbstractCellWithTooltip<String> implements HasStyl
     // Text longer than this value will be shortened, providing tooltip with original text
     private final int maxTextLength;
 
-    private static CellTemplate template;
-
     public TextCell(int maxTextLength) {
         this(maxTextLength, BrowserEvents.MOUSEOVER);
     }
@@ -43,11 +43,6 @@ public class TextCell extends AbstractCellWithTooltip<String> implements HasStyl
     public TextCell(int maxTextLength, String... consumedEvents) {
         super(consumedEvents);
         this.maxTextLength = maxTextLength;
-
-        // Delay cell template creation until the first time it's needed
-        if (template == null) {
-            template = GWT.create(CellTemplate.class);
-        }
     }
 
     public void setStyleClass(String styleClass) {

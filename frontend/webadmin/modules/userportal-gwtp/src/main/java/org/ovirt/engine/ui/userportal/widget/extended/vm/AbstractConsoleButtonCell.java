@@ -34,6 +34,8 @@ public abstract class AbstractConsoleButtonCell extends AbstractCell<UserPortalI
 
     }
 
+    private static CellTemplate template = GWT.create(CellTemplate.class);
+
     private final ConsoleButtonCommand command;
 
     private final String enabledCss;
@@ -42,8 +44,6 @@ public abstract class AbstractConsoleButtonCell extends AbstractCell<UserPortalI
 
     private final String title;
 
-    private static CellTemplate template;
-
     public AbstractConsoleButtonCell(String enabledCss, String disabledCss,
             String title, ConsoleButtonCommand command) {
         super(BrowserEvents.CLICK);
@@ -51,11 +51,6 @@ public abstract class AbstractConsoleButtonCell extends AbstractCell<UserPortalI
         this.disabledCss = SafeHtmlUtils.htmlEscape(disabledCss);
         this.title = SafeHtmlUtils.htmlEscape(title);
         this.command = command;
-
-        // Delay cell template creation until the first time it's needed
-        if (template == null) {
-            template = GWT.create(CellTemplate.class);
-        }
     }
 
     @Override
