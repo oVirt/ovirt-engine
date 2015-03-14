@@ -15,10 +15,10 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
      * @param text
      *            Text to show within the progress bar.
      */
-    @Template("<div class='{3}'>" +
+    @Template("<div id=\"{4}\" class='{3}'>" +
             "<div style='background: {2}; width: {0}%; height: 100%'></div>" +
             "<div class='engine-progress-text'>{1}</div></div>")
-    SafeHtml progressBar(int progress, String text, String color, String style);
+    SafeHtml progressBar(int progress, String text, String color, String style, String id);
 
     @Template("<div>" +
             "<div style='float:right; width: {2}px; color: {3}; font-weight: {4}'>{5}%</div>" +
@@ -145,13 +145,13 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<div style='line-height: 100%; text-align: center; vertical-align: middle;'>{0}</div>")
     SafeHtml image(SafeHtml statusImage);
 
-    @Template("<table> <tr> " +
+    @Template("<table id=\"{4}\"> <tr> " +
             "<td> <div>{0}</div> </td>" +
             "<td> {1} </td>" +
             "<td> <div> {2} </div> </td>" +
             "<td> {3} </td>" +
             "</tr> </table>")
-    SafeHtml volumeBrickStatusTemplate(SafeHtml upImage, int upCount, SafeHtml downImage, int downCount);
+    SafeHtml volumeBrickStatusTemplate(SafeHtml upImage, int upCount, SafeHtml downImage, int downCount, String id);
 
     @Template("<div style='line-height: 100%; text-align: center; vertical-align: middle;'>{0}</div>")
     SafeHtml volumeSnapshotsStatusTemplate(int snapshotCount);
@@ -159,8 +159,8 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<div style='line-height: 100%; text-align: center; vertical-align: middle; border: solid 1px transparent; '>{0}</div>")
     SafeHtml volumeActivityMenu(SafeHtml statusImage);
 
-    @Template("<div title=\'{1}'style='line-height: 100%; text-align: center; vertical-align: middle;'>{0}</div>")
-    SafeHtml image(SafeHtml statusImage, String title);
+    @Template("<div id=\"{2}\" title=\'{1}'style='line-height: 100%; text-align: center; vertical-align: middle;'>{0}</div>")
+    SafeHtml image(SafeHtml statusImage, String title, String id);
 
     @Template("<div title=\"{0}\"><table cellspacing='0' cellpadding='0' style='line-height: 5px; width: 100%;'>" +
             "<tr>" +

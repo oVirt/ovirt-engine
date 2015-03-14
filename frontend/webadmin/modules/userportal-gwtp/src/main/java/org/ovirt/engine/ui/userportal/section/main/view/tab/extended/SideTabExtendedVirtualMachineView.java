@@ -6,8 +6,8 @@ import java.util.List;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
-import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
+import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.common.widget.table.cell.ImageButtonCell;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -40,7 +40,6 @@ import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn.OsTypeExtractor;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmStatusColumn;
 
-import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.HasCell;
@@ -166,9 +165,9 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
 
         Cell<UserPortalItemModel> nameAndDescriptionCell = new AbstractCell<UserPortalItemModel>() {
             @Override
-            public void render(Context context, UserPortalItemModel item, SafeHtmlBuilder sb) {
+            public void render(Context context, UserPortalItemModel item, SafeHtmlBuilder sb, String id) {
                 sb.append(templates.vmNameCellItem(
-                        ElementIdUtils.createTableCellElementId(elementIdPrefix, "name", context), //$NON-NLS-1$
+                        id,
                         item.getName()));
 
                 String description = item.getDescription();

@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.user.client.DOM;
 
 /**
  * Column for displaying generic progress bar.
@@ -44,7 +45,7 @@ public abstract class AbstractProgressBarColumn<T> extends AbstractSafeHtmlColum
         // Choose color by progress
         String color = getColorByProgress(progress);
 
-        return templates.progressBar(progress, text, color, getStyle());
+        return templates.progressBar(progress, text, color, getStyle(), DOM.createUniqueId());
     }
 
     protected String getStyle() {

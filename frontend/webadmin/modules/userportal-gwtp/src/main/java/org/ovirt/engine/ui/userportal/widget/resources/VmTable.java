@@ -8,6 +8,8 @@ import org.ovirt.engine.ui.common.SubTableResources;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.ActionCellTable;
+import org.ovirt.engine.ui.common.widget.table.cell.CompositeTooltipCell;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -18,7 +20,6 @@ import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDataBoundModelProvider;
 
-import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -257,8 +258,8 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
                         vmRowResources,
                         true);
 
-        Column<EntityModel, EntityModel> vmImageWithNameColumn =
-                new Column<EntityModel, EntityModel>(createVmImageWithNameCompositeCell()) {
+        AbstractColumn<EntityModel, EntityModel> vmImageWithNameColumn =
+                new AbstractColumn<EntityModel, EntityModel>(createVmImageWithNameCompositeCell()) {
 
                     @Override
                     public EntityModel getValue(EntityModel object) {
@@ -312,7 +313,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
         return new VmTreeItem(table, vm);
     }
 
-    private CompositeCell<EntityModel> createDiskImageWithMappingComoisiteCell() {
+    private CompositeTooltipCell<EntityModel> createDiskImageWithMappingComoisiteCell() {
 
         final AbstractImageResourceColumn<EntityModel> diskImageColumn = new AbstractImageResourceColumn<EntityModel>() {
 
@@ -348,7 +349,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
 
     }
 
-    private CompositeCell<EntityModel> createVmImageWithNameCompositeCell() {
+    private CompositeTooltipCell<EntityModel> createVmImageWithNameCompositeCell() {
         final AbstractImageResourceColumn<EntityModel> vmImageColumn = new AbstractImageResourceColumn<EntityModel>() {
 
             @Override
@@ -461,7 +462,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
 
 }
 
-class StyledCompositeCell<T> extends CompositeCell<T> {
+class StyledCompositeCell<T> extends CompositeTooltipCell<T> {
 
     private final List<HasCell<T, ?>> hasCells;
     private final StyledProvider<T> styleProvider;
@@ -473,14 +474,17 @@ class StyledCompositeCell<T> extends CompositeCell<T> {
     }
 
     @Override
-    public void render(Context context, T value, SafeHtmlBuilder sb) {
+    public void render(Context context, T value, SafeHtmlBuilder sb, String id) {
+        int i = 1;
+        // TODO use Template
         for (HasCell<T, ?> hasCell : hasCells) {
             String style =
                     styleProvider.styleStringOf(hasCell) == null ? "" : "style=\"" //$NON-NLS-1$ //$NON-NLS-2$
                             + styleProvider.styleStringOf(hasCell) + "\""; //$NON-NLS-1$
-            sb.appendHtmlConstant("<div " + style + ">"); //$NON-NLS-1$ //$NON-NLS-2$
+            sb.appendHtmlConstant("<div id=\"" + id + "_" + i + "\" " + style + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             render(context, value, sb, hasCell);
             sb.appendHtmlConstant("</div>"); //$NON-NLS-1$
+            i++;
         }
     }
 

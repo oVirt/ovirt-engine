@@ -2,11 +2,11 @@ package org.ovirt.engine.ui.webadmin.widget.table.cell;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
-import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -19,7 +19,7 @@ public class VolumeBrickStatusCell extends AbstractCell<GlusterVolumeEntity> {
     private final static ApplicationResources resources = AssetProvider.getResources();
 
     @Override
-    public void render(Context context, GlusterVolumeEntity volume, SafeHtmlBuilder sb) {
+    public void render(Context context, GlusterVolumeEntity volume, SafeHtmlBuilder sb, String id) {
         // Nothing to render if no volume is provided:
         if (volume == null) {
             return;
@@ -42,6 +42,6 @@ public class VolumeBrickStatusCell extends AbstractCell<GlusterVolumeEntity> {
         // Generate the HTML for the images
         SafeHtml upImageHtml = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(upImage).getHTML());
         SafeHtml downImageHtml = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(downImage).getHTML());
-        sb.append(templates.volumeBrickStatusTemplate(upImageHtml, upBricks, downImageHtml, downBricks));
+        sb.append(templates.volumeBrickStatusTemplate(upImageHtml, upBricks, downImageHtml, downBricks, id));
     }
 }
