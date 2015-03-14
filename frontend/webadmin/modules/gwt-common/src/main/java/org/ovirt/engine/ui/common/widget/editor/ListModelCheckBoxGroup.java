@@ -7,7 +7,7 @@ import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.user.client.ui.HasConstrainedValue;
 
 /**
- * ListModel bound CheckBoxGroup that uses {@link CheckBoxGroup}.
+ * ListModel bound CheckBoxGroup that extends {@link CheckBoxGroup}.
  */
 public class ListModelCheckBoxGroup<T> extends CheckBoxGroup<T> implements EditorWidget<List<T>, TakesValueEditor<List<T>>>, HasConstrainedValue<List<T>> {
 
@@ -15,6 +15,11 @@ public class ListModelCheckBoxGroup<T> extends CheckBoxGroup<T> implements Edito
 
     private char accessKey;
 
+    /**
+     * Constructor of ListModel bound CheckBoxGroup
+     * @param renderer
+     *            to render the values passed to ListModel's setItems and hence setAcceptableValues
+     */
     public ListModelCheckBoxGroup(Renderer<T> renderer) {
         super(renderer);
     }

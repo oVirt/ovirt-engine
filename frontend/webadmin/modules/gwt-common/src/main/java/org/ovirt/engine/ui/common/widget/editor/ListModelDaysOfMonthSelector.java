@@ -13,7 +13,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.HasConstrainedValue;
 
 /**
- * ListModel bound DaysOfMonthSelector that uses {@link DaysOfMonthSelector}.
+ * ListModel bound DaysOfMonthSelector that extends {@link DaysOfMonthSelector}.
  */
 public class ListModelDaysOfMonthSelector extends DaysOfMonthSelector implements EditorWidget<String, TakesValueEditor<String>>, HasConstrainedValue<String> {
 

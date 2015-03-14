@@ -29,9 +29,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasConstrainedValue;
 
 /**
- * The CheckboxGroup Widget is used to group together a set of Checkbox buttons. By default first checkbox is checked
- * due to default behaviour of UiCommonEditorVisitor. Use clearAllSelections to deselect all checkboxes. Any number of
- * checkboxes can be checked/set at any point in time. Pushing/Clicking any checkbox in the group toggles its state.
+ * The CheckboxGroup Widget is used to group together a set of Checkbox buttons. Any number of checkboxes can be
+ * checked/set at any point in time. Pushing/Clicking any checkbox in the group toggles its state.
  */
 
 public class CheckBoxGroup<T> extends Composite implements TakesValue<List<T>>, HasConstrainedValue<List<T>> {
@@ -41,7 +40,7 @@ public class CheckBoxGroup<T> extends Composite implements TakesValue<List<T>>, 
     private static Resources RESOURCES = GWT.create(Resources.class);
     private final FlowPanel wrapperPanel = new FlowPanel();
 
-    private CheckBoxGroupCss style;
+    private final CheckBoxGroupCss style;
 
     private boolean enabled = true;
 
@@ -54,6 +53,11 @@ public class CheckBoxGroup<T> extends Composite implements TakesValue<List<T>>, 
         CheckBoxGroupCss checkBoxGroupCss();
     }
 
+    /**
+     * CheckBoxGroup construcor.
+     * @param renderer
+     *            to render the values passed to ListModel's setItems and hence setAcceptableValues
+     */
     public CheckBoxGroup(Renderer<T> renderer) {
         this.renderer = renderer;
         style = RESOURCES.checkBoxGroupCss();
@@ -77,6 +81,7 @@ public class CheckBoxGroup<T> extends Composite implements TakesValue<List<T>>, 
         newCheckBox.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
+                // ValueChangeEvent fired to notify the mapped ListModel about the new Selection/deselection.
                 ValueChangeEvent.fire(CheckBoxGroup.this, getValue());
             }
         });
@@ -111,6 +116,9 @@ public class CheckBoxGroup<T> extends Composite implements TakesValue<List<T>>, 
 
     /**
      * Enable/disable all checkboxes
+     * @param enabled
+     *            boolean whether to enable/disable all checkboxes
+     * @return void
      */
     public void setEnabled(boolean enabled) {
         for(Entry<T, CheckBox> currentValue : checkBoxes.entrySet()) {
@@ -126,6 +134,15 @@ public class CheckBoxGroup<T> extends Composite implements TakesValue<List<T>>, 
         tabIndex = index;
     }
 
+    /**
+     * When the mapped ListModel does a setSelectedItem, this is invoked. This method sets checked, the checkboxes
+     * corresponding to the list passed to it.
+     * @param value
+     *            list of checkboxes to set checked.
+     * @param fireEvents
+     *            whether to fire ValueChangeEvent
+     * @return void
+     */
     @Override
     public void setValue(List<T> value, boolean fireEvents) {
         for (T currentvalue : value) {
@@ -143,6 +160,12 @@ public class CheckBoxGroup<T> extends Composite implements TakesValue<List<T>>, 
         return addHandler(handler, ValueChangeEvent.getType());
     }
 
+    /**
+     * Api to add list of CheckBoxes to the CheckBoxGroup. This is invoked by the mapped ListModel's setItems.
+     * @param values
+     *            list of values for which checkboxes are to be created in the group.
+     * @return void
+     */
     @Override
     public void setAcceptableValues(Collection<List<T>> values) {
         if (values.isEmpty()) {
@@ -163,11 +186,22 @@ public class CheckBoxGroup<T> extends Composite implements TakesValue<List<T>>, 
         }
     }
 
+    /**
+     * When the mapped ListModel does a setSelectedItem, this is invoked. This method sets checked, the checkboxes
+     * corresponding to the list passed to it.
+     * @param value
+     *            list of checkboxes to set checked.
+     * @return void
+     */
     @Override
     public void setValue(List<T> value) {
         setValue(value, false);
     }
 
+    /**
+     * Calculate and obtain the list of checkboxes checked
+     * @return List of checkboxes checked
+     */
     @Override
     public List<T> getValue() {
         List<T> selectedItems = new ArrayList<T>();
