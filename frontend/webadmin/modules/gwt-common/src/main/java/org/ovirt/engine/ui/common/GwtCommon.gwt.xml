@@ -8,6 +8,7 @@
     <inherits name="com.google.gwt.inject.Inject" />
 
     <inherits name="org.gwtbootstrap3.GwtBootstrap3CDN"/>
+    <inherits name="org.gwtbootstrap3.extras.datetimepicker.DateTimePicker"/>
     <inherits name="com.google.gwt.uibinder.GinUiBinder" />
 
     <!-- Inherit GWTP MVP module with automatic EntryPoint support -->

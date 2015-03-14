@@ -59,6 +59,12 @@
       <version>${gwtbootstrap3.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.gwtbootstrap3</groupId>
+      <artifactId>gwtbootstrap3-extras</artifactId>
+      <version>${gwtbootstrap3.version}</version>
+      <scope>provided</scope>
+    </dependency>
     <!-- oVirt dependencies -->
     <dependency>
       <groupId>${engine.groupId}</groupId>
