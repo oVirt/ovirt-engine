@@ -3,11 +3,13 @@ package org.ovirt.engine.ui.common.widget.table.cell;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 
 import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -20,6 +22,13 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
  *            The data type of the cell (the model)
  */
 public abstract class ImageButtonCell<T> extends AbstractCell<T> {
+
+    interface CellTemplate extends SafeHtmlTemplates {
+        @Template("<span id=\"{0}\" class=\"{1}\" title=\"{2}\">{3}</span>")
+        SafeHtml span(String id, String styleClass, String title, SafeHtml html);
+    }
+
+    private static CellTemplate template = GWT.create(CellTemplate.class);
 
     private final SafeHtml enabledHtml;
     private final String enabledCss;
@@ -53,21 +62,11 @@ public abstract class ImageButtonCell<T> extends AbstractCell<T> {
 
     @Override
     public void render(Context context, T value, SafeHtmlBuilder sb, String id) {
-        boolean isEnabled = isEnabled(value);
-        // TODO(vszocs) consider using SafeHtmlTemplates instead of building HTML manually
-        sb.appendHtmlConstant("<span id=\"" //$NON-NLS-1$
-                + id
-                + "\" class=\"" //$NON-NLS-1$
-                + (isEnabled ? enabledCss : disabledCss)
-                + "\" title=\"" //$NON-NLS-1$
-                + SafeHtmlUtils.htmlEscape(getTitle(value))
-                + "\">"); //$NON-NLS-1$
-        if (isEnabled) {
-            sb.append(enabledHtml);
-        } else {
-            sb.append(disabledHtml);
-        }
-        sb.appendHtmlConstant("</span>"); //$NON-NLS-1$
+        String css = isEnabled(value) ? enabledCss : disabledCss;
+        SafeHtml html = isEnabled(value) ? enabledHtml : disabledHtml;
+        String title = SafeHtmlUtils.htmlEscape(getTitle(value));
+
+        sb.append(template.span(id, css, title, html));
     }
 
     /**
