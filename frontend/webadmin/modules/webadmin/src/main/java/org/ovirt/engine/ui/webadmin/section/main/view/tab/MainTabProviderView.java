@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabProviderPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -24,14 +24,11 @@ public class MainTabProviderView extends AbstractMainTabWithDetailsTableView<Pro
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final ApplicationConstants constants;
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public MainTabProviderView(MainModelProvider<Provider, ProviderListModel> modelProvider,
-            ApplicationConstants constants,
-            ApplicationResources resources) {
+    public MainTabProviderView(MainModelProvider<Provider, ProviderListModel> modelProvider) {
         super(modelProvider);
-        this.constants = constants;
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
         initWidget(getTable());

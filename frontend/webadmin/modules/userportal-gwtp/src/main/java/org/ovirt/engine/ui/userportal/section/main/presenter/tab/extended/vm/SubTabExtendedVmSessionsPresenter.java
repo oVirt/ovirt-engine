@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDetailModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
@@ -22,6 +23,8 @@ public class SubTabExtendedVmSessionsPresenter
   extends AbstractSubTabExtendedVmPresenter<VmSessionsModel, SubTabExtendedVmSessionsPresenter.ViewDef, SubTabExtendedVmSessionsPresenter.ProxyDef>
 {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(UserPortalApplicationPlaces.extendedVirtualMachineSessionsSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabExtendedVmSessionsPresenter> {
@@ -33,9 +36,9 @@ public class SubTabExtendedVmSessionsPresenter
     }
 
     @TabInfo(container = ExtendedVmSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             UserPortalDetailModelProvider<UserPortalListModel, VmSessionsModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.extendedVirtualMachineSessionsSubTabLabel(), 11, modelProvider);
+        return new ModelBoundTabData(constants.extendedVirtualMachineSessionsSubTabLabel(), 11, modelProvider);
     }
 
     @Inject

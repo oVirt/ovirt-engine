@@ -10,9 +10,9 @@ import java.util.Set;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.frontend.Message;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -22,7 +22,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
  */
 public class ErrorMessageFormatter {
 
-    private static final CommonApplicationTemplates TEMPLATES = GWT.create(CommonApplicationTemplates.class);
+    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
 
     public static String formatMessages(List<Message> values) {
         // If one error message without description no need to format
@@ -69,10 +69,10 @@ public class ErrorMessageFormatter {
         SafeHtmlBuilder itemBuilder = new SafeHtmlBuilder();
 
         for (String i : items) {
-            itemBuilder.append(TEMPLATES.listItem(SafeHtmlUtils.fromSafeConstant(i)));
+            itemBuilder.append(templates.listItem(SafeHtmlUtils.fromSafeConstant(i)));
         }
 
-        return TEMPLATES.unsignedList(itemBuilder.toSafeHtml());
+        return templates.unsignedList(itemBuilder.toSafeHtml());
     }
 
     public static String formatReturnValues(List<VdcReturnValueBase> values) {

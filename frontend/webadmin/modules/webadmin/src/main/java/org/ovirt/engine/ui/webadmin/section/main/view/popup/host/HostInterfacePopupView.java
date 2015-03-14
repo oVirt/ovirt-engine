@@ -28,6 +28,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.qos.HostNetworkQosWidget;
 
@@ -158,13 +159,14 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
 
     private final Driver driver = GWT.create(Driver.class);
 
-    @Inject
-    public HostInterfacePopupView(EventBus eventBus,
-            ApplicationResources resources,
-            final ApplicationConstants constants,
-            final ApplicationTemplates templates) {
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
-        super(eventBus, resources);
+    @Inject
+    public HostInterfacePopupView(EventBus eventBus) {
+
+        super(eventBus);
 
         networkEditor = new ListModelListBoxEditor<>(new NameRenderer<Network>());
         interfaceEditor = new ListModelListBoxEditor<>(new NameRenderer<VdsNetworkInterface>());
@@ -180,14 +182,14 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
             }
         });
         bootProtocol = new EnumRadioEditor<NetworkBootProtocol>(NetworkBootProtocol.class);
-        qosWidget = new HostNetworkQosWidget(constants);
-        customPropertiesWidget = new KeyValueWidget<KeyValueModel>("320px", "160px"); //$NON-NLS-1$ $NON-NLS-2$
+        qosWidget = new HostNetworkQosWidget();
+        customPropertiesWidget = new KeyValueWidget<KeyValueModel>("320px", "160px"); //$NON-NLS-1$ //$NON-NLS-2$
 
         qosOverridden = new org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor(Align.RIGHT);
         checkConnectivity = new EntityModelCheckBoxEditor(Align.RIGHT);
         commitChanges = new EntityModelCheckBoxEditor(Align.RIGHT);
         isToSync = new EntityModelCheckBoxEditor(Align.RIGHT);
-        isToSyncInfo = new InfoIcon(templates.italicTwoLines(constants.syncNetworkInfoPart1(), constants.syncNetworkInfoPart2()), resources);
+        isToSyncInfo = new InfoIcon(templates.italicTwoLines(constants.syncNetworkInfoPart1(), constants.syncNetworkInfoPart2()));
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.view.popup.numa;
 
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -15,7 +16,7 @@ public class MemorySummaryPanel extends Composite {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    private final CommonApplicationMessages messages;
+    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
 
     @UiField
     Label totalLabel;
@@ -24,9 +25,8 @@ public class MemorySummaryPanel extends Composite {
     Label usedLabel;
 
     @Inject
-    public MemorySummaryPanel(CommonApplicationMessages messages) {
+    public MemorySummaryPanel() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        this.messages = messages;
     }
 
     public void setMemoryStats(long totalMemory, long usedMemory) {

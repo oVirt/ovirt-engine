@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.PopupSimpleTableResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
@@ -21,7 +22,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.DOM;
@@ -54,13 +54,9 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private CommonApplicationConstants constants;
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private String elementId = DOM.createUniqueId();
-
-    @UiConstructor
-    public DisksAllocationView() {
-    }
 
     @Override
     public int setTabIndexes(int nextTabIndex) {
@@ -73,8 +69,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
         return nextTabIndex;
     }
 
-    public DisksAllocationView(CommonApplicationConstants constants) {
-        this.constants = constants;
+    public DisksAllocationView() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         driver.initialize(this);
     }
@@ -137,7 +132,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
 
         int diskIndex = 0;
         for (final DiskModel diskModel : model.getDisks()) {
-            DisksAllocationItemView disksAllocationItemView = new DisksAllocationItemView(constants);
+            DisksAllocationItemView disksAllocationItemView = new DisksAllocationItemView();
             disksAllocationItemView.edit(diskModel);
             disksAllocationItemView.updateStyles(showQuota);
             disksAllocationItemView.setIsAliasChangeable(model.getIsAliasChangable());

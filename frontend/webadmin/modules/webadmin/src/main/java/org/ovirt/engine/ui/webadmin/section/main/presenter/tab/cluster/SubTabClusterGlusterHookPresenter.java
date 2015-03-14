@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGlusterHookListMod
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.ClusterSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -25,6 +26,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabClusterGlusterHookPresenter extends AbstractSubTabPresenter<VDSGroup, ClusterListModel<Void>, ClusterGlusterHookListModel, SubTabClusterGlusterHookPresenter.ViewDef, SubTabClusterGlusterHookPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.clusterGlusterHookSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabClusterGlusterHookPresenter> {
@@ -34,9 +37,9 @@ public class SubTabClusterGlusterHookPresenter extends AbstractSubTabPresenter<V
     }
 
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<GlusterHookEntity, ClusterListModel<Void>, ClusterGlusterHookListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.clusterGlusterHooksSubTabLabel(), 5, modelProvider);
+        return new ModelBoundTabData(constants.clusterGlusterHooksSubTabLabel(), 5, modelProvider);
     }
 
     @Inject

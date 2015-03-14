@@ -5,21 +5,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.ui.webadmin.widget.table.column.MigrationProgressColumn;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.searchbackend.VmConditionFieldAutoCompleter;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.CellWithElementId;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.cell.StatusCompositeCellWithElementId;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -30,16 +28,18 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVirtualMachinePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.ReportActionsHelper;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractLineChartProgressBarColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.ReasonColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractUptimeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.MigrationProgressColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.ReasonColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
@@ -53,22 +53,19 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final CommonApplicationConstants commonConstants;
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public MainTabVirtualMachineView(MainModelProvider<VM, VmListModel<Void>> modelProvider,
-            ApplicationResources resources, ApplicationConstants constants,
-            CommonApplicationConstants commonConstants) {
+    public MainTabVirtualMachineView(MainModelProvider<VM, VmListModel<Void>> modelProvider) {
         super(modelProvider);
 
-        this.commonConstants = commonConstants;
-
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(resources, constants);
+        initTable();
         initWidget(getTable());
     }
 
-    void initTable(final ApplicationResources resources, final ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         VmStatusColumn<VM> vmStatusColumn = new VmStatusColumn<VM>();
@@ -323,7 +320,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
         });
         // TODO: separator
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(commonConstants.consoleOptions(),
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.consoleOptions(),
                 CommandLocation.OnlyFromContext) { //$NON-NLS-1$
             @Override
             protected UICommand resolveCommand() {
@@ -390,12 +387,12 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         });
 
         if (ReportInit.getInstance().isReportsEnabled()) {
-            updateReportsAvailability(constants);
+            updateReportsAvailability();
         } else {
             getMainModel().getReportsAvailabilityEvent().addListener(new IEventListener<EventArgs>() {
                 @Override
                 public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                    updateReportsAvailability(constants);
+                    updateReportsAvailability();
                 }
             });
         }
@@ -409,7 +406,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         });
     }
 
-    private void updateReportsAvailability(ApplicationConstants constants) {
+    private void updateReportsAvailability() {
         if (ReportInit.getInstance().isReportsEnabled()) {
             List<ActionButtonDefinition<VM>> resourceSubActions =
                     ReportActionsHelper.getInstance().getResourceSubActions("VM", getModelProvider()); //$NON-NLS-1$

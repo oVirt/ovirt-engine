@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateVmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.SubTabTemplateVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractUptimeColumn;
@@ -26,10 +27,12 @@ public class SubTabTemplateVmView extends AbstractSubTabTableView<VmTemplate, VM
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabTemplateVmView(SearchableDetailModelProvider<VM, TemplateListModel, TemplateVmListModel> modelProvider, ApplicationConstants constants) {
+    public SubTabTemplateVmView(SearchableDetailModelProvider<VM, TemplateListModel, TemplateVmListModel> modelProvider) {
         super(modelProvider);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
@@ -38,7 +41,7 @@ public class SubTabTemplateVmView extends AbstractSubTabTableView<VmTemplate, VM
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initTable(ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         getTable().addColumn(new VmStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$

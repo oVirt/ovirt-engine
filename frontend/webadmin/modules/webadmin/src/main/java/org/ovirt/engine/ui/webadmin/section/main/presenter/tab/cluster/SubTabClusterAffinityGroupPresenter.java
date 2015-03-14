@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.ClusterAffinityGroupListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.ClusterSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -25,6 +26,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabClusterAffinityGroupPresenter extends AbstractSubTabPresenter<VDSGroup, ClusterListModel<Void>, ClusterAffinityGroupListModel, SubTabClusterAffinityGroupPresenter.ViewDef, SubTabClusterAffinityGroupPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.clusterAffinityGroupsSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabClusterAffinityGroupPresenter> {
@@ -34,9 +37,9 @@ public class SubTabClusterAffinityGroupPresenter extends AbstractSubTabPresenter
     }
 
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<AffinityGroup, ClusterListModel<Void>, ClusterAffinityGroupListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.affinityGroupSubTabLabel(), 6, modelProvider);
+        return new ModelBoundTabData(constants.affinityGroupSubTabLabel(), 6, modelProvider);
     }
 
     @Inject

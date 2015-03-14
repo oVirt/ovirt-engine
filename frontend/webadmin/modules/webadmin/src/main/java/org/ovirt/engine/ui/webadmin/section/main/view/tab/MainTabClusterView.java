@@ -17,7 +17,10 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.ReportActionsHelper;
@@ -36,16 +39,21 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
+
+
     @Inject
-    public MainTabClusterView(MainModelProvider<VDSGroup, ClusterListModel<Void>> modelProvider,
-            ApplicationResources resources, ApplicationConstants constants) {
+    public MainTabClusterView(MainModelProvider<VDSGroup, ClusterListModel<Void>> modelProvider) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(resources, constants);
+        initTable();
         initWidget(getTable());
     }
 
-    void initTable(final ApplicationResources resources, final ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         AbstractTextColumn<VDSGroup> nameColumn = new AbstractTextColumn<VDSGroup>() {
@@ -144,12 +152,12 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
         });
 
         if (ReportInit.getInstance().isReportsEnabled()) {
-            updateReportsAvailability(constants);
+            updateReportsAvailability();
         } else {
             getMainModel().getReportsAvailabilityEvent().addListener(new IEventListener<EventArgs>() {
                 @Override
                 public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                    updateReportsAvailability(constants);
+                    updateReportsAvailability();
                 }
             });
         }
@@ -163,7 +171,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
         });
     }
 
-    public void updateReportsAvailability(ApplicationConstants constants) {
+    public void updateReportsAvailability() {
 
         if (ReportInit.getInstance().isReportsEnabled()) {
             List<ActionButtonDefinition<VDSGroup>> resourceSubActions =

@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.TemplateSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -27,6 +28,8 @@ public class SubTabTemplatePermissionPresenter extends AbstractSubTabPresenter<V
     PermissionListModel<VmTemplate>, SubTabTemplatePermissionPresenter.ViewDef,
     SubTabTemplatePermissionPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.templatePermissionSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabTemplatePermissionPresenter> {
@@ -36,10 +39,10 @@ public class SubTabTemplatePermissionPresenter extends AbstractSubTabPresenter<V
     }
 
     @TabInfo(container = TemplateSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<Permission, TemplateListModel,
             PermissionListModel<VmTemplate>> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.templatePermissionSubTabLabel(), 5, modelProvider);
+        return new ModelBoundTabData(constants.templatePermissionSubTabLabel(), 5, modelProvider);
     }
 
     @Inject

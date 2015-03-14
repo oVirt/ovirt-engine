@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -9,9 +8,10 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterEntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.RegisterTemplatePopupPresenterWidget;
 
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
@@ -21,9 +21,11 @@ public class RegisterTemplatePopupView extends RegisterEntityPopupView<VmTemplat
     interface Driver extends SimpleBeanEditorDriver<RegisterEntityModel<VmTemplate>, RegisterEntityPopupView<VmTemplate>> {
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public RegisterTemplatePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, Driver driver) {
-        super(eventBus, resources, constants, driver);
+    public RegisterTemplatePopupView(EventBus eventBus, Driver driver) {
+        super(eventBus, driver);
     }
 
     private VmTemplate getEntity(Object object) {

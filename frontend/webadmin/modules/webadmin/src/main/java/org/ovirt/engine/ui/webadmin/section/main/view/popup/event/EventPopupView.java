@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAre
 import org.ovirt.engine.ui.common.widget.renderer.FullDateTimeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -49,19 +49,21 @@ public class EventPopupView extends AbstractModelBoundPopupView<EventModel> impl
     @Ignore
     StringEntityModelTextAreaLabelEditor eventMessageTextArea;
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public EventPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
+    public EventPopupView(EventBus eventBus) {
+        super(eventBus);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
-        localize(constants);
+        localize();
         applyStyles();
 
         driver = GWT.create(Driver.class);
         driver.initialize(this);
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         eventIdLabel.setLabel(constants.idEvent());
         eventTimeLabel.setLabel(constants.timeEvent());
         eventMessageTextArea.setLabel(constants.messageEvent());

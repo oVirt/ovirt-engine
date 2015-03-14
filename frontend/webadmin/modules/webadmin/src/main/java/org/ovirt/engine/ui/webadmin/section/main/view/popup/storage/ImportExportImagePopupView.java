@@ -1,14 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -22,8 +13,8 @@ import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMode;
-import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
@@ -34,8 +25,18 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.ImportExportImagePopupPresenterWidget;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.inject.Inject;
 
 
 public class ImportExportImagePopupView extends AbstractModelBoundPopupView<ImportExportRepoImageBaseModel> implements
@@ -84,10 +85,11 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public ImportExportImagePopupView(EventBus eventBus, ApplicationResources resources,
-                                      final ApplicationConstants constants) {
-        super(eventBus, resources);
+    public ImportExportImagePopupView(EventBus eventBus) {
+        super(eventBus);
 
         dataCenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
         dataCenterEditor.setLabel(constants.dataCenter());

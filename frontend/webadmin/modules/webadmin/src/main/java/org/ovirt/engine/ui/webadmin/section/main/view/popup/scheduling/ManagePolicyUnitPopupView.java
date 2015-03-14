@@ -1,21 +1,20 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling;
 
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.ManagePolicyUnitModel;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.ManagePolicyUnitPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.NullableButtonCell;
-import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractWebAdminImageResourceColumn;
 
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
@@ -52,27 +51,24 @@ public class ManagePolicyUnitPopupView extends AbstractModelBoundPopupView<Manag
 
     private ManagePolicyUnitModel model;
 
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public ManagePolicyUnitPopupView(EventBus eventBus,
-            CommonApplicationResources commonResources,
-            ApplicationResources resources,
-            ApplicationConstants constants,
-            ApplicationMessages messages) {
-        super(eventBus, commonResources);
+    public ManagePolicyUnitPopupView(EventBus eventBus) {
+        super(eventBus);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
-        initTable(resources, constants, messages);
+        initTable();
     }
 
-    private void initTable(final ApplicationResources resources,
-            final ApplicationConstants constants,
-            ApplicationMessages messages) {
+    private void initTable() {
         policyUnitTable = new ListModelObjectCellTable<PolicyUnit, ListModel>();
         policyUnitTable.enableColumnResizing();
         policyUnitTableContainer.add(policyUnitTable);
 
-        policyUnitTable.addColumn(new AbstractWebAdminImageResourceColumn<PolicyUnit>() {
+        policyUnitTable.addColumn(new AbstractImageResourceColumn<PolicyUnit>() {
             @Override
             public ImageResource getValue(PolicyUnit object) {
                 if (object.isInternal()) {

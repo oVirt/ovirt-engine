@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MoveHost;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.MoveHostPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -51,17 +51,19 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public MoveHostPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
+    public MoveHostPopupView(EventBus eventBus) {
+        super(eventBus);
         initListBoxEditors();
-        localize(constants);
-        initTable(constants);
+        localize();
+        initTable();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         driver.initialize(this);
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         clusterListEditor.setLabel(constants.moveHostPopupClusterLabel());
     }
 
@@ -69,7 +71,7 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
         clusterListEditor = new ListModelListBoxEditor<>(new NameRenderer<VDSGroup>());
     }
 
-    private void initTable(ApplicationConstants constants) {
+    private void initTable() {
         table = new EntityModelCellTable<>(true);
         table.setWidth("100%", true); //$NON-NLS-1$
 

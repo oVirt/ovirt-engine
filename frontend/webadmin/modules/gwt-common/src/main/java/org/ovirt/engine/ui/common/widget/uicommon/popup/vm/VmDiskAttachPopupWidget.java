@@ -1,14 +1,15 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -84,28 +85,27 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
     @UiField
     Label message;
 
-    @UiField
-    CommonApplicationConstants constants;
+    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    @UiField(provided = true)
+    final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     boolean isNewLunDiskEnabled;
 
-    public VmDiskAttachPopupWidget(CommonApplicationConstants constants,
-                                   CommonApplicationResources resources,
-                                   CommonApplicationTemplates templates,
-                                   boolean isLunDiskEnabled,
+    public VmDiskAttachPopupWidget(boolean isLunDiskEnabled,
                                    boolean allowMultipleSelection) {
         this.isNewLunDiskEnabled = isLunDiskEnabled;
         initManualWidgets(allowMultipleSelection);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
+        localize();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initAttachPanelWidget();
-        initInternalDiskTable(constants, resources, templates);
-        initExternalDiskTable(constants, resources, templates);
+        initInternalDiskTable();
+        initExternalDiskTable();
         driver.initialize(this);
     }
 
-    private void localize(CommonApplicationConstants constants) {
+    private void localize() {
         isPluggedEditor.setLabel(constants.activateVmDiskPopup());
     }
 
@@ -125,9 +125,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         attachDiskPanel.setWidget(verticalPanel);
     }
 
-    private void initInternalDiskTable(final CommonApplicationConstants constants,
-            final CommonApplicationResources resources,
-            final CommonApplicationTemplates templates) {
+    private void initInternalDiskTable() {
         imageDiskTable.enableColumnResizing();
 
         AbstractTextColumn<EntityModel> aliasColumn = new AbstractTextColumn<EntityModel>() {
@@ -226,9 +224,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         imageDiskTable.setHeight("100%"); //$NON-NLS-1$
     }
 
-    private void initExternalDiskTable(final CommonApplicationConstants constants,
-            final CommonApplicationResources resources,
-            final CommonApplicationTemplates templates) {
+    private void initExternalDiskTable() {
         lunDiskTable.enableColumnResizing();
 
         AbstractTextColumn<EntityModel> aliasColumn = new AbstractTextColumn<EntityModel>() {

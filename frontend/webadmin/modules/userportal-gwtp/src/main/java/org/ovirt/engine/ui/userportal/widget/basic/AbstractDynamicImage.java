@@ -19,12 +19,12 @@ import com.google.gwt.user.client.ui.Image;
  */
 public abstract class AbstractDynamicImage<T, R extends ClientBundleWithLookup> extends Image implements IsEditor<TakesValueEditor<T>>, TakesValue<T> {
 
-    private R resources;
+    private R bundle;
 
     private T value;
 
-    public AbstractDynamicImage(R resources) {
-        this.resources = resources;
+    public AbstractDynamicImage(R bundle) {
+        this.bundle = bundle;
     }
 
     @Override
@@ -44,9 +44,9 @@ public abstract class AbstractDynamicImage<T, R extends ClientBundleWithLookup> 
     }
 
     private ImageResource getImage(T value) {
-        ResourcePrototype resource = resources.getResource(imageName(value));
+        ResourcePrototype resource = bundle.getResource(imageName(value));
         if (!(resource instanceof ImageResource)) {
-            return (ImageResource) resources.getResource(defaultImageName(value));
+            return (ImageResource) bundle.getResource(defaultImageName(value));
         }
 
         return (ImageResource) resource;

@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportTemplatePopupPresenterWidget;
 
 import com.google.gwt.cell.client.FieldUpdater;
@@ -28,11 +29,11 @@ public class ImportTemplatePopupView extends ImportVmFromExportDomainPopupView i
 
     private ImportTemplateGeneralSubTabView generalView;
 
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
     @Inject
-    public ImportTemplatePopupView(EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationConstants constants) {
-        super(eventBus, resources, constants);
+    public ImportTemplatePopupView(EventBus eventBus) {
+        super(eventBus);
     }
 
     @Override
@@ -124,7 +125,7 @@ public class ImportTemplatePopupView extends ImportVmFromExportDomainPopupView i
         isObjectInSystemColumn = new AbstractImageResourceColumn<Object>() {
             @Override
             public ImageResource getValue(Object object) {
-                return ((ImportTemplateData) object).isExistsInSystem() ? getCommonResources().logNormalImage() : null;
+                return ((ImportTemplateData) object).isExistsInSystem() ? resources.logNormalImage() : null;
             }
         };
         table.addColumn(isObjectInSystemColumn, constants.templateInSetup(), "60px"); //$NON-NLS-1$
@@ -153,7 +154,7 @@ public class ImportTemplatePopupView extends ImportVmFromExportDomainPopupView i
                     public void onSubTabDeselected() {
                     }
                 };
-        generalView = new ImportTemplateGeneralSubTabView(modelProvider, constants);
+        generalView = new ImportTemplateGeneralSubTabView(modelProvider);
         generalPanel.add(generalView);
         subTabLayoutPanel.add(generalPanel, constants.generalImpTempTab());
     }

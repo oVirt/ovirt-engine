@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateInterfaceListModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
@@ -20,6 +21,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabExtendedTemplateNetworkInterfacesPresenter
         extends AbstractSubTabExtendedTemplatePresenter<TemplateInterfaceListModel, SubTabExtendedTemplateNetworkInterfacesPresenter.ViewDef, SubTabExtendedTemplateNetworkInterfacesPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(UserPortalApplicationPlaces.extendedTempplateNetworkInterfacesSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabExtendedTemplateNetworkInterfacesPresenter> {
@@ -29,8 +32,8 @@ public class SubTabExtendedTemplateNetworkInterfacesPresenter
     }
 
     @TabInfo(container = ExtendedTemplateSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants) {
-        return new TabDataBasic(applicationConstants.extendedTemplateNetworkInterfacesSubTabLabel(), 1);
+    static TabData getTabData() {
+        return new TabDataBasic(constants.extendedTemplateNetworkInterfacesSubTabLabel(), 1);
     }
 
     @Inject

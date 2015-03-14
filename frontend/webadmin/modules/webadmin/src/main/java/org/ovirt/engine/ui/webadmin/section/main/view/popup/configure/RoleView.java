@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractObjectNameColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RoleModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RolePermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -60,9 +61,10 @@ public class RoleView extends Composite {
     private final EventBus eventBus;
     private final ClientStorage clientStorage;
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public RoleView(ApplicationConstants constants,
-            RoleModelProvider roleModelProvider,
+    public RoleView(RoleModelProvider roleModelProvider,
             RolePermissionModelProvider permissionModelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
         this.roleModelProvider = roleModelProvider;
@@ -71,13 +73,13 @@ public class RoleView extends Composite {
         this.clientStorage = clientStorage;
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
+        localize();
 
         initRolesFilterRadioButtons();
         initSplitLayoutPanel();
 
-        initRoleTable(constants);
-        initPermissionTable(constants);
+        initRoleTable();
+        initPermissionTable();
     }
 
     private void initSplitLayoutPanel() {
@@ -133,7 +135,7 @@ public class RoleView extends Composite {
 
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         allRolesRadioButton.setText(constants.allRolesLabel());
         adminRolesRadioButton.setText(constants.adminRolesLabel());
         userRolesRadioButton.setText(constants.userRolesLabel());
@@ -144,7 +146,7 @@ public class RoleView extends Composite {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
-    private void initRoleTable(ApplicationConstants constants) {
+    private void initRoleTable() {
         this.table = new SimpleActionTable<Role>(roleModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
@@ -214,7 +216,7 @@ public class RoleView extends Composite {
 
     }
 
-    private void initPermissionTable(ApplicationConstants constants) {
+    private void initPermissionTable() {
         permissionTable = new SimpleActionTable<Permission>(permissionModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 

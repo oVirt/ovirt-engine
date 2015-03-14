@@ -1,22 +1,19 @@
 package org.ovirt.engine.ui.common.widget.editor.generic;
 
-import com.google.gwt.core.client.GWT;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
+import org.ovirt.engine.ui.common.widget.HasDetachable;
+
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.UIObject;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
-import org.ovirt.engine.ui.common.widget.HasDetachable;
 
 public abstract class BaseEntityModelDetachableWidget extends Composite implements HasDetachable {
 
-    private static final CommonApplicationResources resource = GWT.create(CommonApplicationResources.class);
-
     private Image attachedSeparatedImage;
-
-    private static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
 
     interface BaseStyle extends CssResource {
         String contentWidgetWithDetachable();
@@ -27,6 +24,10 @@ public abstract class BaseEntityModelDetachableWidget extends Composite implemen
     private BaseStyle style;
 
     private UIObject decoratedWidget;
+
+
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     // can not be as a constructor because needs to be called after the widgets get bind properly in children
     protected void initialize(UIObject decoratedWidget, Image attachedSeparatedImage, BaseStyle style) {
@@ -63,7 +64,7 @@ public abstract class BaseEntityModelDetachableWidget extends Composite implemen
 
     @Override
     public void setAttached(boolean attached) {
-        attachedSeparatedImage.setResource(attached ? resource.joinedIcon() : resource.separatedIcon());
+        attachedSeparatedImage.setResource(attached ? resources.joinedIcon() : resources.separatedIcon());
         attachedSeparatedImage.setTitle(attached ? constants.attachedToInstanceType() : constants.detachedFromInstanceType());
     }
 }

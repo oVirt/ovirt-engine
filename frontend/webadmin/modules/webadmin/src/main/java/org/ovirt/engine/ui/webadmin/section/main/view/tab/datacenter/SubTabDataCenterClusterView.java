@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 
@@ -22,10 +23,12 @@ public class SubTabDataCenterClusterView extends AbstractSubTabTableView<Storage
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabDataCenterClusterView(SearchableDetailModelProvider<VDSGroup, DataCenterListModel, DataCenterClusterListModel> modelProvider, ApplicationConstants constants) {
+    public SubTabDataCenterClusterView(SearchableDetailModelProvider<VDSGroup, DataCenterListModel, DataCenterClusterListModel> modelProvider) {
         super(modelProvider);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
@@ -34,7 +37,7 @@ public class SubTabDataCenterClusterView extends AbstractSubTabTableView<Storage
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initTable(ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         AbstractTextColumn<VDSGroup> nameColumn = new AbstractTextColumn<VDSGroup>() {

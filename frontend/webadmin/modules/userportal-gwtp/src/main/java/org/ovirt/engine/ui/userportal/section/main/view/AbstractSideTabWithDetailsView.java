@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.view.SubTabHelper;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.AbstractSideTabWithDetailsPresenter;
 import org.ovirt.engine.ui.userportal.widget.extended.ExtendedViewSplitLayoutPanel;
@@ -29,18 +30,19 @@ public abstract class AbstractSideTabWithDetailsView<T, M extends SearchableList
     private final ClientStorage clientStorage;
     private boolean subTabPanelVisible;
 
+    private final static ApplicationResources resources = AssetProvider.getResources();
+
     public AbstractSideTabWithDetailsView(
-            SearchableTableModelProvider<T, M> modelProvider,
-            ApplicationResources applicationResources, final ClientStorage clientStorage) {
+            SearchableTableModelProvider<T, M> modelProvider, final ClientStorage clientStorage) {
         this.modelProvider = modelProvider;
         this.table = createActionTable();
         this.table.showRefreshButton();
         this.clientStorage = clientStorage;
 
-        applicationResources.sideTabWithDetailsViewStyle().ensureInjected();
-        subTabPanelContainer.setStyleName(applicationResources.sideTabWithDetailsViewStyle().detailsContentPanel());
+        resources.sideTabWithDetailsViewStyle().ensureInjected();
+        subTabPanelContainer.setStyleName(resources.sideTabWithDetailsViewStyle().detailsContentPanel());
 
-        splitPanel = new ExtendedViewSplitLayoutPanel(applicationResources.extendedViewSplitterSnap()) {
+        splitPanel = new ExtendedViewSplitLayoutPanel(resources.extendedViewSplitterSnap()) {
             @Override
             public void onResize() {
                 super.onResize();

@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DeferredModelCommandInvoker;
@@ -74,6 +75,8 @@ import com.google.gwt.view.client.SelectionModel;
  *            Table row data type.
  */
 public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> implements ActionTable<T> {
+
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @UiField
     @WithElementId
@@ -323,7 +326,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         nextPageButton.setVisible(true);
     }
 
-    public void showSelectionCountTooltip(final CommonApplicationConstants constants) {
+    public void showSelectionCountTooltip() {
         this.selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
 
             private PopupPanel tooltip = null;

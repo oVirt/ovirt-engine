@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.NetworkSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -27,6 +28,8 @@ public class SubTabNetworkPermissionPresenter extends AbstractSubTabPresenter<Ne
     PermissionListModel<NetworkView>, SubTabNetworkPermissionPresenter.ViewDef,
     SubTabNetworkPermissionPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.networkPermissionSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabNetworkPermissionPresenter> {
@@ -36,10 +39,10 @@ public class SubTabNetworkPermissionPresenter extends AbstractSubTabPresenter<Ne
     }
 
     @TabInfo(container = NetworkSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<Permission, NetworkListModel,
             PermissionListModel<NetworkView>> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.networkPermissionSubTabLabel(), 7, modelProvider);
+        return new ModelBoundTabData(constants.networkPermissionSubTabLabel(), 7, modelProvider);
     }
 
     @Inject

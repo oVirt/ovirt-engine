@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageDataCenterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -25,10 +26,12 @@ public class SubTabStorageDataCenterView extends AbstractSubTabTableView<Storage
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabStorageDataCenterView(SearchableDetailModelProvider<StorageDomain, StorageListModel, StorageDataCenterListModel> modelProvider, ApplicationConstants constants) {
+    public SubTabStorageDataCenterView(SearchableDetailModelProvider<StorageDomain, StorageListModel, StorageDataCenterListModel> modelProvider) {
         super(modelProvider);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
@@ -37,7 +40,7 @@ public class SubTabStorageDataCenterView extends AbstractSubTabTableView<Storage
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initTable(ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         getTable().addColumn(new StorageDomainStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$

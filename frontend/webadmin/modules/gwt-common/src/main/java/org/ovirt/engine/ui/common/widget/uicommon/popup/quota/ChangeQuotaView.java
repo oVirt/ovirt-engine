@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.PopupSimpleTableResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
@@ -45,10 +46,9 @@ public class ChangeQuotaView extends Composite implements HasEditorDriver<Change
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final CommonApplicationConstants constants;
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
-    public ChangeQuotaView(CommonApplicationConstants constants) {
-        this.constants = constants;
+    public ChangeQuotaView() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         driver.initialize(this);
     }
@@ -89,7 +89,7 @@ public class ChangeQuotaView extends Composite implements HasEditorDriver<Change
         listPanel.clear();
 
         for (final ChangeQuotaItemModel itemModel : (ArrayList<ChangeQuotaItemModel>) model.getItems()) {
-            ChangeQuotaItemView itemView = new ChangeQuotaItemView(constants);
+            ChangeQuotaItemView itemView = new ChangeQuotaItemView();
             itemView.edit(itemModel);
             listPanel.add(itemView);
         }

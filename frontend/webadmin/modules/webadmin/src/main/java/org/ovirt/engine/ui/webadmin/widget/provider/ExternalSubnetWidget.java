@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ExternalSubnetModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -30,7 +31,7 @@ public class ExternalSubnetWidget extends AbstractModelBoundPopupWidget<External
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private static ApplicationConstants constants = GWT.create(ApplicationConstants.class);
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @UiField
     @Path("name.entity")
@@ -62,12 +63,12 @@ public class ExternalSubnetWidget extends AbstractModelBoundPopupWidget<External
     public ExternalSubnetWidget() {
         ipVersionEditor = new ListModelListBoxEditor<IpVersion>(new EnumRenderer<IpVersion>());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
+        localize();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         nameEditor.setLabel(constants.nameExternalSubnet());
         cidrEditor.setLabel(constants.cidrExternalSubnet());
         ipVersionEditor.setLabel(constants.ipVersionExternalSubnet());

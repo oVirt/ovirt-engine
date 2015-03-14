@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.VNodeModel;
 
 import com.google.gwt.core.client.GWT;
@@ -38,12 +39,11 @@ public class HostSummaryContentPanel extends Composite {
     @Inject
     Provider<VirtualNumaPanel> virtualNumaPanelProvider;
 
-    private final CommonApplicationMessages messages;
+    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
-    public HostSummaryContentPanel(CommonApplicationMessages messages) {
+    public HostSummaryContentPanel() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        this.messages = messages;
     }
 
     public void setModel(List<VdsNumaNode> numaNodes, List<VNodeModel> vNodeModels) {

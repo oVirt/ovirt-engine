@@ -20,8 +20,8 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotModel
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotModel.EndDateOptions;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeSnapshotCreatePopupPresenterWidget;
 
 import com.google.gwt.core.shared.GWT;
@@ -139,17 +139,15 @@ public class GlusterVolumeSnapshotCreatePopupView extends
     @WithElementId
     Label errorMsgLabel;
 
-    private final ApplicationConstants constants;
-
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public GlusterVolumeSnapshotCreatePopupView(EventBus eventBus,
-            ApplicationResources resources, ApplicationConstants constants,
-            ApplicationTemplates templates) {
-        super(eventBus, resources);
-        this.constants = constants;
-        initEditors(constants, resources, templates);
+    public GlusterVolumeSnapshotCreatePopupView(EventBus eventBus) {
+        super(eventBus);
+        initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize();
@@ -158,9 +156,8 @@ public class GlusterVolumeSnapshotCreatePopupView extends
         daysOfWeekEditor.asCheckBoxGroup().clearAllSelections();
     }
 
-    private void initEditors(ApplicationConstants constants,
-            ApplicationResources resources, ApplicationTemplates templates) {
-        snapshotNameInfoIcon = new InfoIcon(templates.italicText(constants.snapshotNameInfo()), resources);
+    private void initEditors() {
+        snapshotNameInfoIcon = new InfoIcon(templates.italicText(constants.snapshotNameInfo()));
         startAtEditor = new EntityModelDateTimeBoxEditor();
         startAtEditor.getContentWidget().setDateTimeFormat(GwtBootstrapDateTimePicker.DEFAULT_DATE_TIME_FORMAT);
         startAtEditor.getContentWidget().showDateAndTime();

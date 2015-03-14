@@ -2,14 +2,14 @@ package org.ovirt.engine.ui.common.view.popup;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -44,8 +44,8 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
 
     private final Driver driver = GWT.create(Driver.class);
 
-    protected final CommonApplicationMessages messages;
-    protected final CommonApplicationConstants constants;
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
 
     @UiField
     protected FlowPanel itemPanel;
@@ -74,21 +74,16 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
 
     @Inject
 
-    public RemoveConfirmationPopupView(EventBus eventBus,
-            CommonApplicationResources resources,
-            CommonApplicationMessages messages,
-            CommonApplicationConstants constants) {
-        super(eventBus, resources);
+    public RemoveConfirmationPopupView(EventBus eventBus) {
+        super(eventBus);
         latch = new EntityModelCheckBoxEditor(Align.RIGHT);
         latch.setLabel(constants.approveOperation());
         force = new EntityModelCheckBoxEditor(Align.RIGHT);
         force.setLabel(constants.forceRemove());
         force.getContentWidgetContainer().getElement().getStyle().setWidth(90, Unit.PCT);
-        this.constants= constants;
-        this.messages = messages;
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants);
+        localize();
         driver.initialize(this);
         reasonPanel.setVisible(false);
     }
@@ -194,7 +189,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
         reasonPanel.setVisible(model.getReasonVisible());
     }
 
-    protected void localize(CommonApplicationConstants constants) {
+    protected void localize() {
         latch.setLabel(constants.latchApproveOperationLabel());
         reasonEditor.setLabel(constants.reasonLabel());
     }

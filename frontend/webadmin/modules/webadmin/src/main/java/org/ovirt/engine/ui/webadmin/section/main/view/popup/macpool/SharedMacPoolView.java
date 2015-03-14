@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.permissions.PermissionListModelTable;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -14,10 +15,10 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.SharedMacPoolListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SharedMacPoolModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractWebAdminImageResourceColumn;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.ImageResource;
@@ -38,9 +39,10 @@ public class SharedMacPoolView extends Composite {
     private final ClientStorage clientStorage;
     private final MainTableHeaderlessResources headerlessResources;
     private final MainTableResources tableResources;
-    private final ApplicationConstants constants;
-    private final ApplicationResources resources;
     private final SplitLayoutPanel rootPanel;
+
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SharedMacPoolView(final SharedMacPoolModelProvider sharedMacPoolModelProvider,
@@ -48,9 +50,7 @@ public class SharedMacPoolView extends Composite {
             final EventBus eventBus,
             final ClientStorage clientStorage,
             final MainTableHeaderlessResources headerlessResources,
-            final MainTableResources tableResources,
-            final ApplicationConstants constants,
-            final ApplicationResources resources) {
+            final MainTableResources tableResources) {
 
         this.sharedMacPoolModelProvider = sharedMacPoolModelProvider;
         this.permissionModelProvider = permissionModelProvider;
@@ -59,12 +59,10 @@ public class SharedMacPoolView extends Composite {
         this.clientStorage = clientStorage;
         this.headerlessResources = headerlessResources;
         this.tableResources = tableResources;
-        this.constants = constants;
-        this.resources = resources;
 
         macPoolTable = createMacPoolTable();
         authorizationTable = new PermissionListModelTable<>(permissionModelProvider, eventBus, clientStorage);
-        authorizationTable.initTable(constants);
+        authorizationTable.initTable();
 
         authorizationTable.getTable().getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             @Override
@@ -103,7 +101,7 @@ public class SharedMacPoolView extends Composite {
                         tableResources,
                         eventBus,
                         clientStorage);
-        macPoolTable.addColumn(new AbstractWebAdminImageResourceColumn<MacPool>() {
+        macPoolTable.addColumn(new AbstractImageResourceColumn<MacPool>() {
 
             @Override
             public ImageResource getValue(MacPool macPool) {

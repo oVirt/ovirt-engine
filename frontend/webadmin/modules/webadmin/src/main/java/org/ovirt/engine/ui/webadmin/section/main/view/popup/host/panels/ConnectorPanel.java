@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceModel;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -11,14 +11,15 @@ import com.google.gwt.user.client.ui.HTML;
 
 public class ConnectorPanel extends FlexTable {
 
-    private final ApplicationTemplates templates = ClientGinjectorProvider.getApplicationTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+
     public ConnectorPanel(NetworkInterfaceModel nicModel, NetworkPanelsStyle style) {
         super();
         int networkSize = nicModel.getTotalItemSize();
         if (networkSize == 0) {
             return;
         }
-        ApplicationResources resources = ClientGinjectorProvider.getApplicationResources();
 
         setCellPadding(0);
         setCellSpacing(0);

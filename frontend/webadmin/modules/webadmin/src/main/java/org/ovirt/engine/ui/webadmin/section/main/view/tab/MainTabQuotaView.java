@@ -12,16 +12,16 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabQuotaPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.QuotaDcStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractQuotaPercentColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.QuotaDcStatusColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.inject.Inject;
-
 
 public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota, QuotaListModel> implements MainTabQuotaPresenter.ViewDef {
 
@@ -33,15 +33,17 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public MainTabQuotaView(MainModelProvider<Quota, QuotaListModel> modelProvider, ApplicationConstants constants) {
+    public MainTabQuotaView(MainModelProvider<Quota, QuotaListModel> modelProvider) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
-    void initTable(final ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         getTable().addColumn(new QuotaDcStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
@@ -89,11 +91,6 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                 }
                 value = (int)(((double)used/allocated) * 100);
                 return allocated < 0 ? -1 : value > 100 ? 100 : value;
-            }
-
-            @Override
-            public ApplicationConstants getaApplicationConstants() {
-                return constants;
             }
         },
         constants.usedMemoryQuota(), "100px"); //$NON-NLS-1$
@@ -159,11 +156,6 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                 value = (int)(((double)used/allocated) * 100);
                 return allocated < 0 ? -1 : value > 100 ? 100 : value;
             }
-
-            @Override
-            public ApplicationConstants getaApplicationConstants() {
-                return constants;
-            }
         },
         constants.runningCpuQuota(), "100px"); //$NON-NLS-1$
 
@@ -226,11 +218,6 @@ public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota,
                 }
                 value = (int)((used/allocated) * 100);
                 return allocated < 0 ? -1 : value > 100 ? 100 : value;
-            }
-
-            @Override
-            public ApplicationConstants getaApplicationConstants() {
-                return constants;
             }
         },
         constants.usedStorageQuota(), "100px"); //$NON-NLS-1$

@@ -1,15 +1,13 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.instancetypes;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.EventBus;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationMessages;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
-import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
+
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
-import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.EventBus;
 
 public class InstanceTypesPopupWidget extends AbstractVmPopupWidget {
 
@@ -17,12 +15,8 @@ public class InstanceTypesPopupWidget extends AbstractVmPopupWidget {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    public InstanceTypesPopupWidget(CommonApplicationConstants constants,
-                                    CommonApplicationResources resources,
-                                    CommonApplicationMessages messages,
-                                    CommonApplicationTemplates applicationTemplates,
-                                    EventBus eventBus) {
-        super(constants, resources, messages, applicationTemplates, eventBus);
+    public InstanceTypesPopupWidget(EventBus eventBus) {
+        super(eventBus);
     }
 
     @Override

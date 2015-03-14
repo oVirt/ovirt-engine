@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor.SuggestBoxRenderer;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
@@ -60,7 +61,6 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
     @UiField
     Style style;
 
-    private static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
     private final SuggestBoxRenderer<T> renderer;
 
     /**
@@ -84,6 +84,8 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
     interface ViewUiBinder extends UiBinder<FlowPanel, ListModelTypeAheadListBox> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
+
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public ListModelTypeAheadListBox(SuggestBoxRenderer<T> renderer, boolean autoAddToValidValues,
                                      SuggestionMatcher suggestionMatcher) {

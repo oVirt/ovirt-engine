@@ -1,28 +1,21 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -53,7 +46,15 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-import java.util.ArrayList;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDiskModel> {
 
@@ -187,8 +188,9 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     @Ignore
     AbstractStorageView storageView;
 
-    @UiField
-    CommonApplicationConstants constants;
+    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    @UiField(provided=true)
+    final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -198,20 +200,16 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     FcpStorageModel fcpStorageModel;
     SanStorageModel sanStorageModel;
 
-    public VmDiskPopupWidget(CommonApplicationConstants constants,
-                             CommonApplicationResources resources,
-                             CommonApplicationTemplates templates,
-                             boolean isLunDiskEnabled) {
+    public VmDiskPopupWidget(boolean isLunDiskEnabled) {
         this.isNewLunDiskEnabled = isLunDiskEnabled;
-        this.constants = constants;
-        initManualWidgets(constants, resources, templates);
+        initManualWidgets();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
+        localize();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
     }
 
-    private void localize(CommonApplicationConstants constants) {
+    private void localize() {
         aliasEditor.setLabel(constants.aliasVmDiskPopup());
         sizeEditor.setLabel(constants.sizeVmDiskPopup());
         sizeExtendEditor.setLabel(constants.extendImageSizeBy());
@@ -234,9 +232,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private void initManualWidgets(CommonApplicationConstants constants,
-                                   CommonApplicationResources resources,
-                                   CommonApplicationTemplates templates) {
+    private void initManualWidgets() {
         storageDomainEditor = new ListModelListBoxEditor<>(new StorageDomainFreeSpaceRenderer());
 
         hostListEditor = new ListModelListBoxEditor<>(new NameRenderer<VDS>());
@@ -260,7 +256,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         isScsiPassthroughEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isSgIoUnfilteredEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
-        interfaceInfoIcon = new InfoIcon(templates.italicText(constants.diskInterfaceInfo()), resources);
+        interfaceInfoIcon = new InfoIcon(templates.italicText(constants.diskInterfaceInfo()));
     }
 
     @Override

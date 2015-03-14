@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.SubTabTemplateDiskPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTreeView;
@@ -25,13 +26,14 @@ import com.google.inject.Inject;
 
 public class SubTabTemplateDiskView extends AbstractSubTabTreeView<DisksTree, VmTemplate, DiskModel, TemplateListModel, TemplateDiskListModel> implements SubTabTemplateDiskPresenter.ViewDef {
 
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
     public SubTabTemplateDiskView(final SearchableDetailModelProvider<DiskModel, TemplateListModel, TemplateDiskListModel> modelProvider,
-            EventBus eventBus,
-            ApplicationConstants constants,
-            ApplicationTemplates templates,
-            ApplicationResources resources) {
-        super(modelProvider, constants, templates, resources);
+            EventBus eventBus) {
+        super(modelProvider);
 
         actionPanel.addActionButton(new UiCommandButtonDefinition<DiskModel>(eventBus, constants.copyDisk()) {
             @Override
@@ -51,7 +53,7 @@ public class SubTabTemplateDiskView extends AbstractSubTabTreeView<DisksTree, Vm
     }
 
     @Override
-    protected void initHeader(ApplicationConstants constants) {
+    protected void initHeader() {
         table.addColumn(new EmptyColumn(), constants.aliasDisk(), ""); //$NON-NLS-1$
         SafeHtml readOnlyColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
                 AbstractImagePrototype.create(resources.readOnlyDiskIcon()).getHTML()), constants.readOnly());
@@ -66,7 +68,7 @@ public class SubTabTemplateDiskView extends AbstractSubTabTreeView<DisksTree, Vm
 
     @Override
     protected DisksTree getTree() {
-        return new DisksTree(resources, constants, templates);
+        return new DisksTree();
     }
 
     @Override

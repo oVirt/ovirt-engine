@@ -8,14 +8,12 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.utils.SizeConverter;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.label.FullDateTimeLabel;
 
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -24,13 +22,10 @@ import com.google.gwt.user.client.ui.TreeItem;
 
 public class TemplatesTree<M extends SearchableListModel> extends AbstractSubTabTree<M, VmTemplate, DiskImage> {
 
-    ApplicationResources resources;
+    private final static ApplicationResources resources = AssetProvider.getResources();
 
-    public TemplatesTree(CommonApplicationResources resources,
-            CommonApplicationConstants constants,
-            ApplicationTemplates templates) {
-        super(resources, constants, templates);
-        this.resources = (ApplicationResources) resources;
+    public TemplatesTree() {
+        super();
     }
 
     @Override

@@ -4,35 +4,12 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup;
 import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
 import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.text.shared.AbstractRenderer;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
-import com.google.gwt.user.client.ui.ButtonBase;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.ValueLabel;
-import com.google.gwt.user.client.ui.Widget;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -49,16 +26,16 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.TabbedView;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -122,6 +99,31 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.text.shared.AbstractRenderer;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.client.ui.ButtonBase;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.ValueLabel;
+import com.google.gwt.user.client.ui.Widget;
 
 public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWidget<UnitVmModel>
     implements TabbedView {
@@ -854,8 +856,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Ignore
     protected KeyValueWidget<KeyValueModel> customPropertiesSheetEditor;
 
-    private final CommonApplicationMessages messages;
-
     @UiField
     @Ignore
     protected AdvancedParametersExpander expander;
@@ -876,30 +876,22 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final CommonApplicationTemplates applicationTemplates;
-
-    private final CommonApplicationConstants constants;
+    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
 
     private final Map<TabName, DialogTab> tabMap = new HashMap<TabName, DialogTab>();
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public AbstractVmPopupWidget(CommonApplicationConstants constants,
-            CommonApplicationResources resources,
-            final CommonApplicationMessages messages,
-            CommonApplicationTemplates applicationTemplates,
-            EventBus eventBus) {
-
-        this.messages = messages;
-        this.applicationTemplates = applicationTemplates;
-        this.constants = constants;
+    public AbstractVmPopupWidget(EventBus eventBus) {
 
         initListBoxEditors();
         // Contains a special parser/renderer
         memSizeEditor = new EntityModelTextBoxEditor<Integer>(
-                new MemorySizeRenderer<Integer>(constants), new MemorySizeParser(), new ModeSwitchingVisibilityRenderer());
+                new MemorySizeRenderer<Integer>(), new MemorySizeParser(), new ModeSwitchingVisibilityRenderer());
 
         minAllocatedMemoryEditor = new EntityModelTextBoxEditor<Integer>(
-                new MemorySizeRenderer<Integer>(constants), new MemorySizeParser(), new ModeSwitchingVisibilityRenderer());
+                new MemorySizeRenderer<Integer>(), new MemorySizeParser(), new ModeSwitchingVisibilityRenderer());
 
         // TODO: How to align right without creating the widget manually?
         hostCpuEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
@@ -941,21 +933,21 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isVirtioScsiEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isSingleQxlEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         cpuPinningInfo =
-                new InfoIcon(SafeHtmlUtils.fromTrustedString(applicationTemplates.italicFixedWidth("400px", //$NON-NLS-1$
+                new InfoIcon(SafeHtmlUtils.fromTrustedString(templates.italicFixedWidth("400px", //$NON-NLS-1$
                         constants.cpuPinningLabelExplanation())
                         .asString()
-                        .replaceAll("(\r\n|\n)", "<br />")), resources);//$NON-NLS-1$ //$NON-NLS-2$
+                        .replaceAll("(\r\n|\n)", "<br />")));//$NON-NLS-1$ //$NON-NLS-2$
         isVirtioScsiEnabledInfoIcon =
-                new InfoIcon(applicationTemplates.italicText(constants.isVirtioScsiEnabledInfo()), resources);
+                new InfoIcon(templates.italicText(constants.isVirtioScsiEnabledInfo()));
         final Integer defaultMaximumMigrationDowntime = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultMaximumMigrationDowntime);
-        migrationDowntimeInfoIcon = new InfoIcon(applicationTemplates.italicText(messages.migrationDowntimeInfo(defaultMaximumMigrationDowntime)), resources);
+        migrationDowntimeInfoIcon = new InfoIcon(templates.italicText(messages.migrationDowntimeInfo(defaultMaximumMigrationDowntime)));
         priorityEditor = new EntityModelCellTable<ListModel<EntityModel<Integer>>>(
                 (Resources) GWT.create(ButtonCellTableResources.class));
-        disksAllocationView = new DisksAllocationView(constants);
+        disksAllocationView = new DisksAllocationView();
         spiceFileTransferEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         spiceCopyPasteEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
 
-        initPoolSpecificWidgets(resources, messages);
+        initPoolSpecificWidgets();
         initTextBoxEditors();
         initSpiceProxy();
         initTotalVcpus();
@@ -971,7 +963,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         applyStyles();
 
-        localize(constants);
+        localize();
 
         super.initializeModeSwitching(generalTab);
 
@@ -1038,11 +1030,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         label.addStyleName("numCPUs_pfly_fix"); //$NON-NLS-1$
         totalvCPUsEditor = new StringEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
         totalvCPUsEditorWithInfoIcon = new EntityModelDetachableWidgetWithInfo<String>(label, totalvCPUsEditor);
-        totalvCPUsEditorWithInfoIcon.setExplanation(applicationTemplates.italicText(messages.hotPlugUnplugCpuWarning()));
+        totalvCPUsEditorWithInfoIcon.setExplanation(templates.italicText(messages.hotPlugUnplugCpuWarning()));
     }
 
     public void setSpiceProxyOverrideExplanation(String explanation) {
-        spiceProxyEnabledCheckboxWithInfoIcon.setExplanation(applicationTemplates.italicText(explanation));
+        spiceProxyEnabledCheckboxWithInfoIcon.setExplanation(templates.italicText(explanation));
     }
 
     private void initTextBoxEditors() {
@@ -1063,27 +1055,26 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         editMaxAssignedVmsPerUserEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
     }
 
-    protected void initPoolSpecificWidgets(CommonApplicationResources resources,
-            final CommonApplicationMessages messages) {
+    protected void initPoolSpecificWidgets() {
         createNumOfDesktopEditors();
 
         incraseNumOfVmsEditor.setKeepTitleOnSetEnabled(true);
         numOfVmsEditor.setKeepTitleOnSetEnabled(true);
 
         newPoolPrestartedVmsIcon =
-                new InfoIcon(applicationTemplates.italicText(messages.prestartedHelp()), resources);
+                new InfoIcon(templates.italicText(messages.prestartedHelp()));
 
         editPoolPrestartedVmsIcon =
-                new InfoIcon(applicationTemplates.italicText(messages.prestartedHelp()), resources);
+                new InfoIcon(templates.italicText(messages.prestartedHelp()));
 
         poolNameIcon =
-                new InfoIcon(applicationTemplates.italicText(messages.poolNameHelp()), resources);
+                new InfoIcon(templates.italicText(messages.poolNameHelp()));
 
         newPoolMaxAssignedVmsPerUserIcon =
-                new InfoIcon(applicationTemplates.italicText(messages.maxAssignedVmsPerUserHelp()), resources);
+                new InfoIcon(templates.italicText(messages.maxAssignedVmsPerUserHelp()));
 
         editPoolMaxAssignedVmsPerUserIcon =
-                new InfoIcon(applicationTemplates.italicText(messages.maxAssignedVmsPerUserHelp()), resources);
+                new InfoIcon(templates.italicText(messages.maxAssignedVmsPerUserHelp()));
 
         outOfxInPool = new ValueLabel<Integer>(new AbstractRenderer<Integer>() {
 
@@ -1094,7 +1085,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         });
 
-        numaInfoIcon = new InfoIcon(SafeHtmlUtils.fromTrustedString(""), resources); //$NON-NLS-1$
+        numaInfoIcon = new InfoIcon(SafeHtmlUtils.fromTrustedString("")); //$NON-NLS-1$
     }
 
     /**
@@ -1294,7 +1285,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         StringEntityModelLabel label = new StringEntityModelLabel();
         label.setText(constants.tzVmPopup());
         timeZoneEditorWithInfo = new EntityModelWidgetWithInfo<String>(label, timeZoneEditor);
-        timeZoneEditorWithInfo.setExplanation(applicationTemplates.italicText(constants.timeZoneInfo()));
+        timeZoneEditorWithInfo.setExplanation(templates.italicText(constants.timeZoneInfo()));
 
         // Console tab
         displayTypeEditor = new ListModelListBoxEditor<>(
@@ -1312,7 +1303,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         }, new ModeSwitchingVisibilityRenderer());
 
-        vncKeyboardLayoutEditor = new ListModelListBoxEditor<String>(new VncKeyMapRenderer(messages), new ModeSwitchingVisibilityRenderer());
+        vncKeyboardLayoutEditor = new ListModelListBoxEditor<String>(new VncKeyMapRenderer(), new ModeSwitchingVisibilityRenderer());
 
         // Host Tab
         specificHost = new RadioButton("runVmOnHostGroup"); //$NON-NLS-1$
@@ -1371,7 +1362,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     }
 
     private String typeAheadNameDescriptionTemplateNullSafe(String name, String description) {
-        return applicationTemplates.typeAheadNameDescription(
+        return templates.typeAheadNameDescription(
                 name != null ? name : "",
                 description != null ? description : "")
                 .asString();
@@ -1379,13 +1370,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     private String typeAheadNameTemplateNullSafe(String name) {
         if (name != null && !name.trim().isEmpty()) {
-            return applicationTemplates.typeAheadName(name).asString();
+            return templates.typeAheadName(name).asString();
         } else {
-            return applicationTemplates.typeAheadEmptyContent().asString();
+            return templates.typeAheadEmptyContent().asString();
         }
     }
 
-    protected void localize(CommonApplicationConstants constants) {
+    protected void localize() {
         // Tabs
         highAvailabilityTab.setLabel(constants.highAvailVmPopup());
         resourceAllocationTab.setLabel(constants.resourceAllocVmPopup());
@@ -1554,7 +1545,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         if (message == null) {
             message = ""; //$NON-NLS-1$
         }
-        numaInfoIcon.setText(applicationTemplates.italicText(message));
+        numaInfoIcon.setText(templates.italicText(message));
     }
 
     private void enableNumaFields(boolean enabled) {

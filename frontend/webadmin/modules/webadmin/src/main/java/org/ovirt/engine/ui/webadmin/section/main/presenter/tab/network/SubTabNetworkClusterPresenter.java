@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.NetworkSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -22,10 +23,12 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public class SubTabNetworkClusterPresenter extends AbstractSubTabPresenter<NetworkView, NetworkListModel, NetworkClusterListModel, SubTabNetworkClusterPresenter.ViewDef, SubTabNetworkClusterPresenter.ProxyDef> {
+
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.networkClusterSubTabPlace)
@@ -36,9 +39,9 @@ public class SubTabNetworkClusterPresenter extends AbstractSubTabPresenter<Netwo
     }
 
     @TabInfo(container = NetworkSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<PairQueryable<VDSGroup, NetworkCluster>, NetworkListModel, NetworkClusterListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.networkClusterSubTabLabel(), 3, modelProvider);
+        return new ModelBoundTabData(constants.networkClusterSubTabLabel(), 3, modelProvider);
     }
 
     @Inject

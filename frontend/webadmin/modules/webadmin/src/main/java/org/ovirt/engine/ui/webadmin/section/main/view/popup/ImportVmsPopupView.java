@@ -19,9 +19,9 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmsModel;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.ImportVmsPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -82,7 +82,9 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
 
     private ImportVmsModel model;
 
-    private ApplicationMessages messages;
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @UiHandler("refreshButton")
     void handleRefreshButtonClick(ClickEvent event) {
@@ -90,10 +92,8 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     }
 
     @Inject
-    public ImportVmsPopupView(EventBus eventBus, ApplicationResources resources,
-            ApplicationConstants constants, ApplicationTemplates templates, ApplicationMessages messages) {
-        super(eventBus, resources);
-        this.messages = messages;
+    public ImportVmsPopupView(EventBus eventBus) {
+        super(eventBus);
 
         // Initialize Editors
         DataCentersEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
@@ -112,7 +112,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
                         constants.externalVms(),
                         constants.importedVms());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        initEntityModelCellTables(constants, templates, resources);
+        initEntityModelCellTables();
         DataCentersEditor.setLabel(constants.dataCenter());
         DataCentersEditor.addWrapperStyleName(style.providersStyle());
         importSourcesEditor.setLabel(constants.hostPopupSourceText());
@@ -120,9 +120,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         driver.initialize(this);
     }
 
-    void initEntityModelCellTables(final ApplicationConstants constants,
-            final ApplicationTemplates templates,
-            final ApplicationResources resources) {
+    void initEntityModelCellTables() {
         externalVms.addColumn(new AbstractTextColumn<EntityModel<VM>>() {
             @Override
             public String getValue(EntityModel<VM> externalVmModel) {

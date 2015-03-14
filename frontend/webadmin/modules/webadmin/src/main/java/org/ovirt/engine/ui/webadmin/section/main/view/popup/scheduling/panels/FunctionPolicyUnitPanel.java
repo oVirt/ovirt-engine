@@ -4,9 +4,9 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.ui.common.widget.MenuBar;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.NewClusterPolicyModel;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.ClusterPolicyPopupView.WidgetStyle;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -21,7 +21,8 @@ import com.google.gwt.user.client.ui.SimplePanel;
 public class FunctionPolicyUnitPanel extends PolicyUnitPanel {
     public static final String FUNCTION = "Function"; //$NON-NLS-1$
     private Integer factor;
-    private static final ApplicationResources resources = GWT.create(ApplicationResources.class);
+
+    private final static ApplicationResources resources = AssetProvider.getResources();
 
     public FunctionPolicyUnitPanel(PolicyUnit policyUnit,
             NewClusterPolicyModel model,

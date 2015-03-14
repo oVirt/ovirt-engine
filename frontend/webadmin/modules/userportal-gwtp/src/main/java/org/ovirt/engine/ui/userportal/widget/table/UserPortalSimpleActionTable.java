@@ -5,8 +5,9 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.refresh.AbstractRefreshManager;
 import org.ovirt.engine.ui.common.widget.refresh.RefreshPanel;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
+import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.SideTabWithDetailsViewStyle;
-import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
@@ -15,11 +16,13 @@ public class UserPortalSimpleActionTable<T> extends SimpleActionTable<T> {
 
     private static final SideTabWithDetailsViewStyle style;
 
+    private final static ApplicationResources resources = AssetProvider.getResources();
+
     static {
         // it has to be static - the parent constructor invokes
         // the getBarPanelStyleName and getTableContainerStyleName
         // which already needs the style prepared
-        style = ClientGinjectorProvider.getApplicationResources().sideTabWithDetailsViewStyle();
+        style = resources.sideTabWithDetailsViewStyle();
         style.ensureInjected();
     }
 

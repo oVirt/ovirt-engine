@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 
 import com.google.gwt.event.shared.EventBus;
@@ -16,12 +16,12 @@ public abstract class AbstractDiskRemoveConfirmationPopupView extends RemoveConf
 
     ArrayList<String> notes = new ArrayList<String>();
 
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+
     @Inject
-    public AbstractDiskRemoveConfirmationPopupView(EventBus eventBus,
-            CommonApplicationResources resources,
-            CommonApplicationMessages messages,
-            CommonApplicationConstants constants) {
-        super(eventBus, resources, messages, constants);
+    public AbstractDiskRemoveConfirmationPopupView(EventBus eventBus) {
+        super(eventBus);
     }
 
     @Override

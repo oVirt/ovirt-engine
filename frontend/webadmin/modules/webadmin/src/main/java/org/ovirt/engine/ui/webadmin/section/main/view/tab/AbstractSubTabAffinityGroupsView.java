@@ -10,20 +10,22 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.AffinityGroupListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 public abstract class AbstractSubTabAffinityGroupsView<I, M extends ListWithDetailsModel, T extends AffinityGroupListModel<?>> extends AbstractSubTabTableView<I, AffinityGroup, M, T> {
 
-    public AbstractSubTabAffinityGroupsView(SearchableDetailModelProvider<AffinityGroup, M, T> modelProvider,
-            ApplicationConstants constants) {
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
+    public AbstractSubTabAffinityGroupsView(SearchableDetailModelProvider<AffinityGroup, M, T> modelProvider) {
         super(modelProvider);
         generateIds();
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
-    private void initTable(final ApplicationConstants constants) {
+    private void initTable() {
         getTable().enableColumnResizing();
 
         AbstractTextColumn<AffinityGroup> nameColumn = new AbstractTextColumn<AffinityGroup>() {

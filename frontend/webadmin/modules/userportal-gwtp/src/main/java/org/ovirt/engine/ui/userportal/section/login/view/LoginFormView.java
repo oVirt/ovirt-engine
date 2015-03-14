@@ -12,9 +12,8 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalLoginModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationDynamicMessages;
-import org.ovirt.engine.ui.userportal.ApplicationMessages;
-import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.section.login.presenter.LoginFormPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -59,23 +58,21 @@ public class LoginFormView extends AbstractLoginFormView implements LoginFormPre
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public LoginFormView(EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationConstants constants,
-            ApplicationMessages messages,
-            ApplicationDynamicMessages dynamicMessages,
-            ApplicationTemplates templates) {
-        super(eventBus, resources);
+    public LoginFormView(EventBus eventBus, ApplicationDynamicMessages dynamicMessages) {
+        super(eventBus);
 
         connectAutomaticallyEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants, dynamicMessages);
+        localize();
 
         setStyles();
 
-        retrieveMessageOfTheDay(templates);
+        retrieveMessageOfTheDay();
 
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
@@ -90,7 +87,7 @@ public class LoginFormView extends AbstractLoginFormView implements LoginFormPre
         motdPanel.setVisible(false);
     }
 
-    private void retrieveMessageOfTheDay(final ApplicationTemplates templates) {
+    private void retrieveMessageOfTheDay() {
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -113,8 +110,7 @@ public class LoginFormView extends AbstractLoginFormView implements LoginFormPre
 
     }
 
-    void localize(ApplicationConstants constants,
-            ApplicationDynamicMessages dynamicMessages) {
+    void localize() {
         userNameEditor.setLabel(constants.loginFormUserNameLabel());
         passwordEditor.setLabel(constants.loginFormPasswordLabel());
         profileEditor.setLabel(constants.loginFormProfileLabel());

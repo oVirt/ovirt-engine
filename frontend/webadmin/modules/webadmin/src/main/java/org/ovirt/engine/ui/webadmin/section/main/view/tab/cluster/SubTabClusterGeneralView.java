@@ -19,7 +19,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.widget.alert.InLineAlertWidget;
 
@@ -50,9 +50,6 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
-    // to find the icon for alert messages:
-    private final ApplicationResources resources;
-
     @UiField
     WidgetStyle style;
 
@@ -82,18 +79,15 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final ApplicationConstants constants;
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public SubTabClusterGeneralView(final DetailModelProvider<ClusterListModel<Void>, ClusterGeneralModel> modelProvider,
-            ApplicationResources resources, ApplicationConstants constants) {
+    public SubTabClusterGeneralView(final DetailModelProvider<ClusterListModel<Void>, ClusterGeneralModel> modelProvider) {
         super(modelProvider);
-        this.constants = constants;
 
         // Inject a reference to the resources:
-        this.resources = resources;
 
-        this.form = new ClusterGeneralModelForm(modelProvider, constants);
+        this.form = new ClusterGeneralModelForm(modelProvider);
 
         // generate ids
         generateIds();
@@ -165,7 +159,7 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
 
     @Override
     public void addAlert(Widget alertWidget) {
-        alertsList.add(new InLineAlertWidget(resources, alertWidget));
+        alertsList.add(new InLineAlertWidget(alertWidget));
 
         // Make the panel visible if it wasn't:
         if (!alertsPanel.isVisible()) {

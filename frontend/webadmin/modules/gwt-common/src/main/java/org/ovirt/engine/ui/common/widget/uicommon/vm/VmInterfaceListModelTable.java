@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.common.widget.uicommon.vm;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
@@ -12,8 +12,8 @@ import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractBooleanColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.NicActivateStatusColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.NicActivateStatusColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
@@ -44,24 +44,21 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
 
     private final VmInterfaceInfoPanel vmInterfaceInfoPanel;
 
-    private final CommonApplicationTemplates templates;
+    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public VmInterfaceListModelTable(
             SearchableTableModelProvider<VmNetworkInterface, VmInterfaceListModel> modelProvider,
             EventBus eventBus,
-            ClientStorage clientStorage,
-            CommonApplicationConstants constants,
-            CommonApplicationMessages messages,
-            CommonApplicationTemplates templates) {
+            ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, false);
-        this.templates = templates;
 
         // Create Interfaces table
         SimpleActionTable<VmNetworkInterface> table = getTable();
         interfaceTableContainer.add(table);
 
         // Create Interface information tab panel
-        vmInterfaceInfoPanel = new VmInterfaceInfoPanel(getModel(), constants, messages, templates);
+        vmInterfaceInfoPanel = new VmInterfaceInfoPanel(getModel());
         interfaceInfoContainer.add(vmInterfaceInfoPanel);
     }
 
@@ -71,7 +68,7 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
     }
 
     @Override
-    public void initTable(final CommonApplicationConstants constants) {
+    public void initTable() {
         getTable().enableColumnResizing();
 
         NicActivateStatusColumn<VmNetworkInterface> statusColumn = new NicActivateStatusColumn<VmNetworkInterface>();

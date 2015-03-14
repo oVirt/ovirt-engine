@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -77,7 +78,7 @@ import com.google.gwt.user.client.ui.RequiresResize;
 public class SliderBar extends FocusPanel implements RequiresResize,
         HasValue<Integer>, HasValueChangeHandlers<Integer> {
 
-    CommonApplicationResources images;
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
 
     /**
      * A formatter used to format the labels displayed in the widget.
@@ -104,7 +105,7 @@ public class SliderBar extends FocusPanel implements RequiresResize,
      */
     /*
      * public static interface SliderBarImages extends ClientBundle { public static final SliderBarImages INSTANCE = GWT
-     * .create(SliderBarImages.class);
+     * .create(SliderBarresources.class);
      *
      * @Source("images/slider.gif") ImageResource slider();
      *
@@ -282,8 +283,8 @@ public class SliderBar extends FocusPanel implements RequiresResize,
      * @param maxValue
      *            the maximum value in the range
      */
-    public SliderBar(double minValue, double maxValue, CommonApplicationResources images) {
-        this(minValue, maxValue, null, images);
+    public SliderBar(double minValue, double maxValue) {
+        this(minValue, maxValue, null);
     }
 
     /**
@@ -298,13 +299,11 @@ public class SliderBar extends FocusPanel implements RequiresResize,
      * @param images
      *            the images to use for the slider
      */
-    public SliderBar(double minValue, double maxValue,
-            LabelFormatter labelFormatter, CommonApplicationResources images) {
+    public SliderBar(double minValue, double maxValue, LabelFormatter labelFormatter) {
         super();
-        images.sliderBarCss().ensureInjected();
+        resources.sliderBarCss().ensureInjected();
         this.minValue = minValue;
         this.maxValue = maxValue;
-        this.images = images;
         setLabelFormatter(labelFormatter);
 
         // Create the outer shell
@@ -318,7 +317,7 @@ public class SliderBar extends FocusPanel implements RequiresResize,
         DOM.setElementProperty(lineElement, "className", "gwt-SliderBar-line"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Create the knob
-        knobImage.setResource(images.slider());
+        knobImage.setResource(resources.slider());
         Element knobElement = knobImage.getElement();
         DOM.appendChild(getElement(), knobElement);
         DOM.setStyleAttribute(knobElement, "position", "absolute"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -616,11 +615,11 @@ public class SliderBar extends FocusPanel implements RequiresResize,
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
         if (enabled) {
-            knobImage.setResource(images.slider());
+            knobImage.setResource(resources.slider());
             DOM.setElementProperty(lineElement, "className", //$NON-NLS-1$
                     "gwt-SliderBar-line"); //$NON-NLS-1$
         } else {
-            knobImage.setResource(images.sliderDisabled());
+            knobImage.setResource(resources.sliderDisabled());
             DOM.setElementProperty(lineElement, "className", //$NON-NLS-1$
                     "gwt-SliderBar-line gwt-SliderBar-line-disabled"); //$NON-NLS-1$
         }
@@ -987,7 +986,7 @@ public class SliderBar extends FocusPanel implements RequiresResize,
                     "gwt-SliderBar-line gwt-SliderBar-line-sliding"); //$NON-NLS-1$
             DOM.setElementProperty(knobImage.getElement(), "className", //$NON-NLS-1$
                     "gwt-SliderBar-knob gwt-SliderBar-knob-sliding"); //$NON-NLS-1$
-            knobImage.setResource(images.sliderSliding());
+            knobImage.setResource(resources.sliderSliding());
         }
     }
 
@@ -1006,7 +1005,7 @@ public class SliderBar extends FocusPanel implements RequiresResize,
 
             DOM.setElementProperty(knobImage.getElement(), "className", //$NON-NLS-1$
                     "gwt-SliderBar-knob"); //$NON-NLS-1$
-            knobImage.setResource(images.slider());
+            knobImage.setResource(resources.slider());
         }
     }
 

@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
 
@@ -24,6 +25,8 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class MainTabDataCenterPresenter extends AbstractMainTabWithDetailsPresenter<StoragePool, DataCenterListModel, MainTabDataCenterPresenter.ViewDef, MainTabDataCenterPresenter.ProxyDef> {
+
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @GenEvent
     public class DataCenterSelectionChange {
@@ -41,9 +44,9 @@ public class MainTabDataCenterPresenter extends AbstractMainTabWithDetailsPresen
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             MainModelProvider<StoragePool, DataCenterListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.dataCenterMainTabLabel(), 0, modelProvider);
+        return new ModelBoundTabData(constants.dataCenterMainTabLabel(), 0, modelProvider);
     }
 
     @Inject

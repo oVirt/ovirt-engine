@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskTemplateListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskTemplatePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 
@@ -26,10 +27,12 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<Disk, VmTemp
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabDiskTemplateView(SearchableDetailModelProvider<VmTemplate, DiskListModel, DiskTemplateListModel> modelProvider, ApplicationConstants constants) {
+    public SubTabDiskTemplateView(SearchableDetailModelProvider<VmTemplate, DiskListModel, DiskTemplateListModel> modelProvider) {
         super(modelProvider);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
@@ -38,7 +41,7 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<Disk, VmTemp
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initTable(ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         AbstractTextColumn<VmTemplate> nameColumn = new AbstractTextColumn<VmTemplate>() {

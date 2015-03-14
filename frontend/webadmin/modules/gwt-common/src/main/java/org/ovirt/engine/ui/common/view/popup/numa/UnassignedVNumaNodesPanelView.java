@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.presenter.popup.numa.UnassignedVNumaNodesPanelPresenterWidget;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.VNodeModel;
@@ -23,9 +24,10 @@ import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.View;
 
 public class UnassignedVNumaNodesPanelView extends AbstractView implements
-    UnassignedVNumaNodesPanelPresenterWidget.ViewDef {
+        UnassignedVNumaNodesPanelPresenterWidget.ViewDef {
 
-    interface ViewUiBinder extends UiBinder<Widget, UnassignedVNumaNodesPanelView> {
+    interface ViewUiBinder extends
+            UiBinder<Widget, UnassignedVNumaNodesPanelView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
@@ -37,7 +39,7 @@ public class UnassignedVNumaNodesPanelView extends AbstractView implements
         String emptyPanel();
     }
 
-    private static final int UNASSIGNED = -1; //-1 means unassigned NUMA NODE.
+    private static final int UNASSIGNED = -1; // -1 means unassigned NUMA NODE.
 
     @UiField
     Label unassignedHeaderLabel;
@@ -54,8 +56,8 @@ public class UnassignedVNumaNodesPanelView extends AbstractView implements
     @UiField
     Style style;
 
-    @UiField(provided=true)
-    final CommonApplicationConstants commonConstants;
+    @UiField(provided = true)
+    final CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private final Provider<VmTitlePanel> vmTitlePanelProvider;
     private final Provider<DraggableVirtualNumaPanel> virtualNumaPanelProvider;
@@ -65,10 +67,10 @@ public class UnassignedVNumaNodesPanelView extends AbstractView implements
      * Constructor.
      */
     @Inject
-    public UnassignedVNumaNodesPanelView(final Provider<VmTitlePanel> vmTitlePanelProvider,
+    public UnassignedVNumaNodesPanelView(
+            final Provider<VmTitlePanel> vmTitlePanelProvider,
             final Provider<DraggableVirtualNumaPanel> virtualNumaPanelProvider,
-            Provider<DragTargetScrollPanel> scrollPanelProvider, final CommonApplicationConstants commonConstants) {
-        this.commonConstants = commonConstants;
+            Provider<DragTargetScrollPanel> scrollPanelProvider) {
         this.vmTitlePanelProvider = vmTitlePanelProvider;
         this.virtualNumaPanelProvider = virtualNumaPanelProvider;
         this.scrollPanelProvider = scrollPanelProvider;
@@ -89,16 +91,19 @@ public class UnassignedVNumaNodesPanelView extends AbstractView implements
         VmTitlePanel titlePanel = vmTitlePanelProvider.get();
         SafeHtmlBuilder builder = new SafeHtmlBuilder();
         builder.appendEscaped(vm.getName());
-        titlePanel.initWidget(builder.toSafeHtml(), list.size(), vm.getStatus());
+        titlePanel
+                .initWidget(builder.toSafeHtml(), list.size(), vm.getStatus());
         return titlePanel;
     }
 
     @Override
-    public IsWidget getNodePanelContent(VM vm, List<VNodeModel> virtualNodes, List<VdsNumaNode> numaNodeList) {
+    public IsWidget getNodePanelContent(VM vm, List<VNodeModel> virtualNodes,
+            List<VdsNumaNode> numaNodeList) {
         DragTargetScrollPanel scrollPanel = getScrollPanel();
         scrollPanel.clear();
-        for (VNodeModel nodeModel: virtualNodes) {
-            DraggableVirtualNumaPanel numaNodePanel = virtualNumaPanelProvider.get();
+        for (VNodeModel nodeModel : virtualNodes) {
+            DraggableVirtualNumaPanel numaNodePanel = virtualNumaPanelProvider
+                    .get();
             numaNodePanel.setModel(nodeModel, numaNodeList);
             scrollPanel.add(numaNodePanel);
         }

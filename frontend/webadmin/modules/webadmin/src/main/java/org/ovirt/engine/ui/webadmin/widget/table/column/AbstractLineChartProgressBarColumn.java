@@ -1,16 +1,17 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.Context2d;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.UriUtils;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * An implementation of the SafeHtmlColumn which renders a list of integers as a line chart to a HTML5 canvas. If the
@@ -29,7 +30,7 @@ import java.util.List;
  */
 public abstract class AbstractLineChartProgressBarColumn<T> extends AbstractSafeHtmlColumn<T> {
 
-    private static final ApplicationTemplates applicationTemplates = ClientGinjectorProvider.getApplicationTemplates();
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
 
     private static final int stepMax = 15;
 
@@ -100,7 +101,7 @@ public abstract class AbstractLineChartProgressBarColumn<T> extends AbstractSafe
                 String dataUrl = canvas.toDataUrl();
 
 
-                return applicationTemplates.lineChart(
+                return templates.lineChart(
                         UriUtils.fromTrustedString(dataUrl),
                         rightMargin,
                         textWidth,
@@ -113,7 +114,7 @@ public abstract class AbstractLineChartProgressBarColumn<T> extends AbstractSafe
         }
 
         // if the chart does not fit in, show at least the text
-        return applicationTemplates.lineChartWithoutImage(
+        return templates.lineChartWithoutImage(
                 textWidth,
                 textColor,
                 fontWeight,

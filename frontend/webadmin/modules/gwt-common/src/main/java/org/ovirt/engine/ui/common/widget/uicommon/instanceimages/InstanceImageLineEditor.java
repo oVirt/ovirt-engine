@@ -1,5 +1,17 @@
 package org.ovirt.engine.ui.common.widget.uicommon.instanceimages;
 
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.HasElementId;
+import org.ovirt.engine.ui.common.utils.ElementIdUtils;
+import org.ovirt.engine.ui.common.widget.UiCommandButton;
+import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
+import org.ovirt.engine.ui.uicommonweb.models.vms.InstanceImageLineModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -14,16 +26,6 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.Label;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.common.idhandler.HasElementId;
-import org.ovirt.engine.ui.common.utils.ElementIdUtils;
-import org.ovirt.engine.ui.common.widget.UiCommandButton;
-import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
-import org.ovirt.engine.ui.uicommonweb.models.vms.InstanceImageLineModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class InstanceImageLineEditor extends AbstractModelBoundPopupWidget<InstanceImageLineModel> implements HasValueChangeHandlers<InstanceImageLineModel>, HasEnabled, HasElementId {
 
@@ -48,8 +50,8 @@ public class InstanceImageLineEditor extends AbstractModelBoundPopupWidget<Insta
 
     private final Driver driver = GWT.create(Driver.class);
 
-    @UiField
-    CommonApplicationConstants constants;
+    @UiField(provided=true)
+    final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     interface WidgetUiBinder extends UiBinder<FlowPanel, InstanceImageLineEditor> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);

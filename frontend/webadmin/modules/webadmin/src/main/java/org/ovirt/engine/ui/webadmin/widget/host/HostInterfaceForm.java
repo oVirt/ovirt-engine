@@ -8,9 +8,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Widget;
@@ -19,8 +17,6 @@ public class HostInterfaceForm extends Composite {
 
     private final Grid grid;
     private boolean isSelectionAvailable;
-
-    private final static ApplicationResources resources = GWT.create(ApplicationResources.class);
 
     @SuppressWarnings("unchecked")
     public HostInterfaceForm(final HostInterfaceListModel listModel) {

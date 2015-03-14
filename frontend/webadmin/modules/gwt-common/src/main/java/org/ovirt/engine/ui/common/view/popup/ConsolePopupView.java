@@ -1,9 +1,8 @@
 package org.ovirt.engine.ui.common.view.popup;
 
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.presenter.popup.ConsolePopupPresenterWidget;
@@ -21,19 +20,20 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IVnc;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
 
 public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupModel> implements ConsolePopupPresenterWidget.ViewDef {
 
@@ -164,24 +164,14 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     @WithElementId
     EntityModelValueCheckBoxEditor<ConsoleModel> wanEnabled;
 
-    private final CommonApplicationConstants constants;
-
-    private final CommonApplicationMessages messages;
-
-    private final DynamicMessages dynamicMessages;
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
 
     private ConsolePopupModel model;
 
     @Inject
-    public ConsolePopupView(EventBus eventBus,
-            CommonApplicationResources resources,
-            CommonApplicationConstants constants,
-            CommonApplicationMessages messages,
-            final DynamicMessages dynamicMessages) {
-        super(eventBus, resources);
-        this.constants = constants;
-        this.messages = messages;
-        this.dynamicMessages = dynamicMessages;
+    public ConsolePopupView(EventBus eventBus, final DynamicMessages dynamicMessages) {
+        super(eventBus);
 
         spiceRadioButton = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
         spiceRadioButton.setLabel(constants.spice());

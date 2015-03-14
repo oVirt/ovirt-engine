@@ -14,8 +14,8 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.ClusterSelectionChangeEvent;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -31,12 +31,13 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public class SubTabClusterGeneralPresenter extends AbstractSubTabPresenter<VDSGroup, ClusterListModel<Void>, ClusterGeneralModel, SubTabClusterGeneralPresenter.ViewDef, SubTabClusterGeneralPresenter.ProxyDef> {
 
-    private final ApplicationConstants constants;
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.clusterGeneralSubTabPlace)
@@ -59,22 +60,16 @@ public class SubTabClusterGeneralPresenter extends AbstractSubTabPresenter<VDSGr
         void addAlert(Widget widget);
     }
 
-    private final ApplicationMessages messages;
-
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
-            DetailModelProvider<ClusterListModel<Void>, ClusterGeneralModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.clusterGeneralSubTabLabel(), 0, modelProvider);
+    static TabData getTabData(DetailModelProvider<ClusterListModel<Void>, ClusterGeneralModel> modelProvider) {
+        return new ModelBoundTabData(constants.clusterGeneralSubTabLabel(), 0, modelProvider);
     }
 
     @Inject
     public SubTabClusterGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, DetailModelProvider<ClusterListModel<Void>, ClusterGeneralModel> modelProvider, ApplicationConstants constants) {
+            PlaceManager placeManager, DetailModelProvider<ClusterListModel<Void>, ClusterGeneralModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 ClusterSubTabPanelPresenter.TYPE_SetTabContent);
-        // Inject a reference to the messages:
-        messages = ClientGinjectorProvider.getApplicationMessages();
-        this.constants = constants;
     }
 
     @Override

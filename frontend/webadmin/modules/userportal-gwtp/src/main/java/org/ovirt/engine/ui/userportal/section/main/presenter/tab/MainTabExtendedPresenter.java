@@ -1,7 +1,8 @@
 package org.ovirt.engine.ui.userportal.section.main.presenter.tab;
 
-import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
+import org.ovirt.engine.ui.userportal.ApplicationConstants;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent.UserPortalModelInitHandler;
@@ -27,6 +28,8 @@ import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
 public class MainTabExtendedPresenter extends TabContainerPresenter<MainTabExtendedPresenter.ViewDef, MainTabExtendedPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     public interface ProxyDef extends NonLeafTabContentProxy<MainTabExtendedPresenter> {
     }
@@ -44,8 +47,8 @@ public class MainTabExtendedPresenter extends TabContainerPresenter<MainTabExten
     public static final Type<RevealContentHandler<?>> TYPE_SetTabContent = new Type<RevealContentHandler<?>>();
 
     @TabInfo(container = MainTabPanelPresenter.class, nameToken = UserPortalApplicationPlaces.extendedVirtualMachineSideTabPlace)
-    static TabData getTabData(ApplicationConstants applicationConstants) {
-        return new TabDataBasic(applicationConstants.extendedMainTabLabel(), 1);
+    static TabData getTabData() {
+        return new TabDataBasic(constants.extendedMainTabLabel(), 1);
     }
 
     @Inject

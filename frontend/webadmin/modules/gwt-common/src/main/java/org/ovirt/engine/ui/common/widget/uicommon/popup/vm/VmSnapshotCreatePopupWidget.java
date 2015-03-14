@@ -1,5 +1,29 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
+import java.util.ArrayList;
+
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
+import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -12,28 +36,6 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
-import org.ovirt.engine.ui.common.CommonApplicationTemplates;
-import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.common.idhandler.WithElementId;
-import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
-import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
-import java.util.ArrayList;
 
 public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<SnapshotModel> {
 
@@ -78,20 +80,16 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
     SimplePanel warningPanel;
 
     private final Driver driver = GWT.create(Driver.class);
-    private CommonApplicationTemplates templates;
-    private CommonApplicationResources resources;
-    private CommonApplicationConstants constants;
 
-    public VmSnapshotCreatePopupWidget(CommonApplicationConstants constants, CommonApplicationTemplates templates,
-                                       CommonApplicationResources resources) {
-        this.constants = constants;
-        this.templates = templates;
-        this.resources = resources;
+    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
+    public VmSnapshotCreatePopupWidget() {
         initEditors();
         initTables();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
+        localize();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
     }
@@ -119,7 +117,7 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
         }, constants.descriptionDisk(), "150px"); //$NON-NLS-1$
     }
 
-    void localize(CommonApplicationConstants constants) {
+    void localize() {
         descriptionEditor.setLabel(constants.virtualMachineSnapshotCreatePopupDescriptionLabel());
         memoryEditor.setLabel(constants.virtualMachineSnapshotCreatePopupMemoryLabel());
         disksTableLabel.setText(constants.snapshotDisks());

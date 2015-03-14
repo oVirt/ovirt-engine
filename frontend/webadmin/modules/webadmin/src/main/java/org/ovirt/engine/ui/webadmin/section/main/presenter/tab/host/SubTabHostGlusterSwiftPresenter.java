@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.HostSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -25,6 +26,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabHostGlusterSwiftPresenter extends AbstractSubTabPresenter<VDS, HostListModel<Void>, HostGlusterSwiftListModel, SubTabHostGlusterSwiftPresenter.ViewDef, SubTabHostGlusterSwiftPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.hostGlusterSwiftSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabHostGlusterSwiftPresenter> {
@@ -34,9 +37,9 @@ public class SubTabHostGlusterSwiftPresenter extends AbstractSubTabPresenter<VDS
     }
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<GlusterServerService, HostListModel<Void>, HostGlusterSwiftListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.hostGlusterSwiftSubTabLabel(), 8, modelProvider);
+        return new ModelBoundTabData(constants.hostGlusterSwiftSubTabLabel(), 8, modelProvider);
     }
 
     @Inject

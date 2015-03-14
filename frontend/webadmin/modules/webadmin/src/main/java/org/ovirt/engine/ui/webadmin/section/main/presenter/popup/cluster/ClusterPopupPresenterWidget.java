@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -22,13 +23,11 @@ public class ClusterPopupPresenterWidget extends AbstractTabbedModelBoundPopupPr
         void setSpiceProxyOverrideExplanation(String explanation);
     }
 
-    private final ApplicationMessages messages;
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
-    public ClusterPopupPresenterWidget(EventBus eventBus, ViewDef view, ApplicationMessages messages) {
+    public ClusterPopupPresenterWidget(EventBus eventBus, ViewDef view) {
         super(eventBus, view);
-
-        this.messages = messages;
     }
 
     @Override

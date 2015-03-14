@@ -30,9 +30,8 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkClusterModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel.MtuSelector;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationMessages;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.provider.ExternalSubnetWidget;
 import org.ovirt.engine.ui.webadmin.widget.vnicProfile.VnicProfilesEditor;
@@ -187,10 +186,12 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @Ignore
     public Label profilesLabel;
 
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public AbstractNetworkPopupView(EventBus eventBus, ApplicationResources resources,
-            ApplicationConstants constants, ApplicationTemplates templates, final ApplicationMessages messages) {
-        super(eventBus, resources);
+    public AbstractNetworkPopupView(EventBus eventBus) {
+        super(eventBus);
         // Initialize Editors
         dataCenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
         externalProviderEditor = new ListModelListBoxEditor<>(new NameRenderer<Provider>());
@@ -209,12 +210,12 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         createSubnetEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         this.clustersTable = new EntityModelCellTable<>(SelectionMode.NONE, true);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        initEntityModelCellTable(constants, templates);
-        localize(constants);
+        initEntityModelCellTable();
+        localize();
         addStyles();
     }
 
-    protected void localize(ApplicationConstants constants) {
+    protected void localize() {
         generalTab.setLabel(constants.generalTabNetworkPopup());
         clusterTab.setLabel(constants.clusterTabNetworkPopup());
         profilesTab.setLabel(constants.profilesTabNetworkPopup());
@@ -279,7 +280,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         clustersTable.asEditor().edit(clustersTable.asEditor().flush());
     }
 
-    void initEntityModelCellTable(final ApplicationConstants constants, final ApplicationTemplates templates) {
+    void initEntityModelCellTable() {
         CheckboxHeader assignAllHeader = new CheckboxHeader(templates.textForCheckBoxHeader(constants.attachAll())) {
             @Override
             protected void selectionChanged(Boolean value) {

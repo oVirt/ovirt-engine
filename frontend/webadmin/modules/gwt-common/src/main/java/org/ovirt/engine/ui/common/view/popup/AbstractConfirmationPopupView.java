@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.view.popup;
 
-import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 
 import com.google.gwt.event.shared.EventBus;
@@ -14,8 +13,8 @@ public abstract class AbstractConfirmationPopupView extends AbstractModelBoundPo
     @Ignore
     public HTML messageHTML;
 
-    public AbstractConfirmationPopupView(EventBus eventBus, CommonApplicationResources resources) {
-        super(eventBus, resources);
+    public AbstractConfirmationPopupView(EventBus eventBus) {
+        super(eventBus);
     }
 
     @Override

@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterCpuQosListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DataCenterSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -27,6 +28,8 @@ public class SubTabDataCenterCpuQosPresenter extends AbstractSubTabPresenter<Sto
         DataCenterCpuQosListModel, SubTabDataCenterCpuQosPresenter.ViewDef,
         SubTabDataCenterCpuQosPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.dataCenterCpuQosSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabDataCenterCpuQosPresenter> {
@@ -36,9 +39,9 @@ public class SubTabDataCenterCpuQosPresenter extends AbstractSubTabPresenter<Sto
     }
 
     @TabInfo(container = DataCenterQosSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<CpuQos, DataCenterListModel, DataCenterCpuQosListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.dataCenterCpuQosSubTabLabel(), 3, modelProvider);
+        return new ModelBoundTabData(constants.dataCenterCpuQosSubTabLabel(), 3, modelProvider);
     }
 
     @Inject

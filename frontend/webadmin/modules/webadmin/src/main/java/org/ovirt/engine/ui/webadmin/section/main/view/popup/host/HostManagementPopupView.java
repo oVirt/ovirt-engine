@@ -6,21 +6,20 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementPopupPresenterWidget;
+
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
 public class HostManagementPopupView extends HostInterfacePopupView implements HostManagementPopupPresenterWidget.ViewDef {
 
-    @Inject
-    public HostManagementPopupView(EventBus eventBus,
-            ApplicationResources resources,
-            final ApplicationConstants constants,
-            final ApplicationTemplates templates) {
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
-        super(eventBus, resources, constants, templates);
+    @Inject
+    public HostManagementPopupView(EventBus eventBus) {
+
+        super(eventBus);
         asWidget().setHeight("600px"); //$NON-NLS-1$
 
         nameEditor.setLabel(constants.networkNameInterface() + ":"); //$NON-NLS-1$

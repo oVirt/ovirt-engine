@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 
@@ -23,11 +24,13 @@ public class SubTabQuotaClusterView extends AbstractSubTabTableView<Quota, Quota
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
+
     @Inject
-    public SubTabQuotaClusterView(SearchableDetailModelProvider<QuotaVdsGroup, QuotaListModel, QuotaClusterListModel> modelProvider,
-            ApplicationConstants constants, ApplicationMessages messages) {
+    public SubTabQuotaClusterView(SearchableDetailModelProvider<QuotaVdsGroup, QuotaListModel, QuotaClusterListModel> modelProvider) {
         super(modelProvider);
-        initTable(constants, messages);
+        initTable();
         initWidget(getTable());
     }
 
@@ -36,7 +39,7 @@ public class SubTabQuotaClusterView extends AbstractSubTabTableView<Quota, Quota
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    private void initTable(final ApplicationConstants constants, final ApplicationMessages messages) {
+    private void initTable() {
         getTable().enableColumnResizing();
 
         AbstractTextColumn<QuotaVdsGroup> nameColumn = new AbstractTextColumn<QuotaVdsGroup>() {

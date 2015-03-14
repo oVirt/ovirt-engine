@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -24,10 +25,12 @@ public class SubTabDataCenterNetworkView extends AbstractSubTabTableView<Storage
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabDataCenterNetworkView(SearchableDetailModelProvider<Network, DataCenterListModel, DataCenterNetworkListModel> modelProvider, ApplicationConstants constants) {
+    public SubTabDataCenterNetworkView(SearchableDetailModelProvider<Network, DataCenterListModel, DataCenterNetworkListModel> modelProvider) {
         super(modelProvider);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
@@ -36,7 +39,7 @@ public class SubTabDataCenterNetworkView extends AbstractSubTabTableView<Storage
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initTable(ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         AbstractTextColumn<Network> nameColumn = new AbstractTextColumn<Network>() {

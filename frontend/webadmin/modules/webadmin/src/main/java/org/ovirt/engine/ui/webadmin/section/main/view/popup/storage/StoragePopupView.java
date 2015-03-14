@@ -27,7 +27,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StoragePopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -125,21 +125,23 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public StoragePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
-        initListBoxEditors(constants);
+    public StoragePopupView(EventBus eventBus) {
+        super(eventBus);
+        initListBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initAdvancedParametersExpander();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         asWidget().enableResizeSupport(true);
-        localize(constants);
+        localize();
         addStyles();
         driver.initialize(this);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    void initListBoxEditors(final ApplicationConstants constants) {
+    void initListBoxEditors() {
         datacenterListEditor = new ListModelListBoxEditor<StoragePool>(new AbstractRenderer<StoragePool>() {
             @Override
             public String render(StoragePool storage) {
@@ -205,7 +207,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         advancedParametersExpanderContent.setStyleName(style.advancedParametersExpanderContent());
     }
 
-    void localize(ApplicationConstants constants) {
+    void localize() {
         nameEditor.setLabel(constants.storagePopupNameLabel());
         descriptionEditor.setLabel(constants.storagePopupDescriptionLabel());
         commentEditor.setLabel(constants.commentLabel());

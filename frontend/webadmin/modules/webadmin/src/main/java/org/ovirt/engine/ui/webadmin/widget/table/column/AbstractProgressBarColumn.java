@@ -3,7 +3,8 @@ package org.ovirt.engine.ui.webadmin.widget.table.column;
 import java.util.Comparator;
 
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 
@@ -14,6 +15,8 @@ import com.google.gwt.safehtml.shared.SafeHtml;
  *            Table row data type.
  */
 public abstract class AbstractProgressBarColumn<T> extends AbstractSafeHtmlColumn<T> {
+
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
 
     public static enum ProgressBarColors {
         GREEN("#669966"), //$NON-NLS-1$
@@ -41,7 +44,7 @@ public abstract class AbstractProgressBarColumn<T> extends AbstractSafeHtmlColum
         // Choose color by progress
         String color = getColorByProgress(progress);
 
-        return ClientGinjectorProvider.getApplicationTemplates().progressBar(progress, text, color, getStyle());
+        return templates.progressBar(progress, text, color, getStyle());
     }
 
     protected String getStyle() {

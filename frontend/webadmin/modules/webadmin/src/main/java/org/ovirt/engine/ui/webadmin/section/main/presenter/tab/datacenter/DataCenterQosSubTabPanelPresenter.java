@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DataCenterSelectionChangeEvent;
 import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter.DynamicTabPanel;
@@ -33,6 +34,8 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public class DataCenterQosSubTabPanelPresenter extends
     AbstractSubTabPanelPresenter<DataCenterQosSubTabPanelPresenter.ViewDef, DataCenterQosSubTabPanelPresenter.ProxyDef> {
+
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.dataCenterQosSubTabPlace)
@@ -61,9 +64,9 @@ public class DataCenterQosSubTabPanelPresenter extends
     }
 
     @TabInfo(container = DataCenterSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             ModelProvider<DataCenterListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.dataCenterQosSubTabLabel(), 2, modelProvider);
+        return new ModelBoundTabData(constants.dataCenterQosSubTabLabel(), 2, modelProvider);
     }
 
     @ProxyEvent

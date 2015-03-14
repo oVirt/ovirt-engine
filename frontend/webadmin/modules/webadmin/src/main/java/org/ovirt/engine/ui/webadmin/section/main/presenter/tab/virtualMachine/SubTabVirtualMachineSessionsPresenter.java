@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VirtualMachineSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -25,6 +26,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabVirtualMachineSessionsPresenter
     extends AbstractSubTabPresenter<VM, VmListModel<Void>, VmSessionsModel, SubTabVirtualMachineSessionsPresenter.ViewDef, SubTabVirtualMachineSessionsPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VM> {
     }
 
@@ -35,9 +38,9 @@ public class SubTabVirtualMachineSessionsPresenter
     }
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             DetailModelProvider<VmListModel<Void>, VmSessionsModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.virtualMachineSessionsSubTabLabel(), 7, modelProvider);
+        return new ModelBoundTabData(constants.virtualMachineSessionsSubTabLabel(), 7, modelProvider);
     }
 
     @Inject

@@ -11,13 +11,14 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
-import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.HostSelectionChangeEvent;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -34,11 +35,14 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public class SubTabHostGeneralInfoPresenter extends AbstractSubTabPresenter<VDS, HostListModel<Void>, HostGeneralModel,
     SubTabHostGeneralInfoPresenter.ViewDef, SubTabHostGeneralInfoPresenter.ProxyDef> {
+
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.hostGeneralInfoSubTabPlace)
@@ -61,22 +65,19 @@ public class SubTabHostGeneralInfoPresenter extends AbstractSubTabPresenter<VDS,
         void addAlert(Widget widget);
     }
 
-    // We need this to get the text of the alert messages:
-    private final ApplicationMessages messages;
+
 
     @TabInfo(container = HostGeneralSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             DetailModelProvider<HostListModel<Void>, HostGeneralModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.hostGeneralInfoSubTabLabel(), 0, modelProvider);
+        return new ModelBoundTabData(constants.hostGeneralInfoSubTabLabel(), 0, modelProvider);
     }
 
     @Inject
     public SubTabHostGeneralInfoPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, DetailModelProvider<HostListModel<Void>, HostGeneralModel> modelProvider,
-            ApplicationMessages messages) {
+            PlaceManager placeManager, DetailModelProvider<HostListModel<Void>, HostGeneralModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 HostGeneralSubTabPanelPresenter.TYPE_SetTabContent);
-        this.messages = messages;
     }
 
     @Override

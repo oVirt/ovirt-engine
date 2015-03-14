@@ -4,14 +4,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class NetworkRoleColumnHelper {
 
-    private static final ApplicationTemplates templates = GWT.create(ApplicationTemplates.class);
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
 
     public static SafeHtml getValue(List<SafeHtml> imagesHtml) {
         String images = ""; //$NON-NLS-1$

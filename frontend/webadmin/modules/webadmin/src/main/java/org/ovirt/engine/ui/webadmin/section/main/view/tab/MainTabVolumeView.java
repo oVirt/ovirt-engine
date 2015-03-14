@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.frontend.utils.GlusterVolumeUtils;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVolumePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -44,16 +45,17 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public MainTabVolumeView(MainModelProvider<GlusterVolumeEntity, VolumeListModel> modelProvider,
-            ApplicationConstants constants) {
+    public MainTabVolumeView(MainModelProvider<GlusterVolumeEntity, VolumeListModel> modelProvider) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
-    void initTable(ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         VolumeStatusColumn statusColumn = new VolumeStatusColumn();
@@ -97,8 +99,8 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
 
         getTable().addColumn(new VolumeBrickStatusColumn(), constants.bricksStatusVolume(), "150px"); //$NON-NLS-1$
 
-        MenuCell<GlusterTaskSupport> rebalanceMenuCell = getRebalanceActivityMenu(constants);
-        MenuCell<GlusterTaskSupport> removeBricksMenuCell = getRemoveBrickActivityMenu(constants);
+        MenuCell<GlusterTaskSupport> rebalanceMenuCell = getRebalanceActivityMenu();
+        MenuCell<GlusterTaskSupport> removeBricksMenuCell = getRemoveBrickActivityMenu();
         List<HasCell<GlusterTaskSupport, ?>> list = new ArrayList<HasCell<GlusterTaskSupport, ?>>();
         list.add(new VolumeActivityStatusColumn<GlusterTaskSupport>());
         list.add(new Column<GlusterTaskSupport, GlusterTaskSupport>(new VolumeActivitySeperatorCell<GlusterTaskSupport>()) {
@@ -232,11 +234,11 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                 CommandLocation.ContextAndToolBar));
 
         getTable().addActionButton(new WebAdminMenuBarButtonDefinition<GlusterVolumeEntity>(constants.volumeSnapshotMainTabTitle(),
-                getVolumeSnapshotMenu(constants),
+                getVolumeSnapshotMenu(),
                 CommandLocation.ContextAndToolBar));
     }
 
-    private List<ActionButtonDefinition<GlusterVolumeEntity>> getVolumeSnapshotMenu(ApplicationConstants constants) {
+    private List<ActionButtonDefinition<GlusterVolumeEntity>> getVolumeSnapshotMenu() {
         List<ActionButtonDefinition<GlusterVolumeEntity>> snapshotMenu =
                 new ArrayList<ActionButtonDefinition<GlusterVolumeEntity>>();
 
@@ -276,7 +278,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         return snapshotMenu;
     }
 
-    private MenuCell<GlusterTaskSupport> getRebalanceActivityMenu(ApplicationConstants constants) {
+    private MenuCell<GlusterTaskSupport> getRebalanceActivityMenu() {
         MenuCell<GlusterTaskSupport> menuCell = new MenuCell<GlusterTaskSupport>() {
             @Override
             protected boolean isVisible(GlusterTaskSupport value) {
@@ -301,7 +303,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         return menuCell;
     }
 
-    private MenuCell<GlusterTaskSupport> getRemoveBrickActivityMenu(ApplicationConstants constants) {
+    private MenuCell<GlusterTaskSupport> getRemoveBrickActivityMenu() {
         MenuCell<GlusterTaskSupport> menuCell = new MenuCell<GlusterTaskSupport>() {
             @Override
             protected boolean isVisible(GlusterTaskSupport value) {

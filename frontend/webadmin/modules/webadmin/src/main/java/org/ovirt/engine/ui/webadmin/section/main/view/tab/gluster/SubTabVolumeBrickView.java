@@ -15,14 +15,15 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeBrickListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeBrickPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.MenuCell;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.VolumeActivityCompositeCell;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.VolumeActivitySeperatorCell;
-import org.ovirt.engine.ui.webadmin.widget.table.column.BrickStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractPercentColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.BrickStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityStatusColumn;
 
@@ -37,10 +38,12 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabVolumeBrickView(SearchableDetailModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel> modelProvider, ApplicationConstants constants) {
+    public SubTabVolumeBrickView(SearchableDetailModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel> modelProvider) {
         super(modelProvider);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
@@ -49,7 +52,7 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initTable(ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         BrickStatusColumn brickStatusColumn = new BrickStatusColumn();
@@ -86,7 +89,7 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
             }
         }, constants.volumeCapacity(), "60px");//$NON-NLS-1$
 
-        getTable().addColumn(new VolumeActivityColumn<GlusterBrickEntity>(getActivityCell(constants)),
+        getTable().addColumn(new VolumeActivityColumn<GlusterBrickEntity>(getActivityCell()),
                 constants.activitiesOnVolume(), "100px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterBrickEntity>(constants.addBricksBrick()) {
@@ -118,8 +121,8 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
         });
     }
 
-    private VolumeActivityCompositeCell<GlusterTaskSupport> getActivityCell(ApplicationConstants constants) {
-        MenuCell<GlusterTaskSupport> removeBricksMenuCell = getRemoveBrickActivityMenu(constants);
+    private VolumeActivityCompositeCell<GlusterTaskSupport> getActivityCell() {
+        MenuCell<GlusterTaskSupport> removeBricksMenuCell = getRemoveBrickActivityMenu();
         List<HasCell<GlusterTaskSupport, ?>> list = new ArrayList<HasCell<GlusterTaskSupport, ?>>();
         list.add(new VolumeActivityStatusColumn<GlusterTaskSupport>());
         list.add(new Column<GlusterTaskSupport, GlusterTaskSupport>(new VolumeActivitySeperatorCell<GlusterTaskSupport>()) {
@@ -145,7 +148,7 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
         return activityCell;
     }
 
-    private MenuCell<GlusterTaskSupport> getRemoveBrickActivityMenu(ApplicationConstants constants) {
+    private MenuCell<GlusterTaskSupport> getRemoveBrickActivityMenu() {
         MenuCell<GlusterTaskSupport> menuCell = new MenuCell<GlusterTaskSupport>() {
             @Override
             protected boolean isVisible(GlusterTaskSupport value) {

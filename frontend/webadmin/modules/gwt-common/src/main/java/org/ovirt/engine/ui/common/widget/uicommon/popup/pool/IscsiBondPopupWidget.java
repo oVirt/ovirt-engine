@@ -1,14 +1,9 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.pool;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
@@ -21,6 +16,13 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.IscsiBondModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class IscsiBondPopupWidget extends AbstractModelBoundPopupWidget<IscsiBondModel> {
 
@@ -61,14 +63,16 @@ public class IscsiBondPopupWidget extends AbstractModelBoundPopupWidget<IscsiBon
 
     private final Driver driver = GWT.create(Driver.class);
 
-    public IscsiBondPopupWidget(CommonApplicationConstants constants) {
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+
+    public IscsiBondPopupWidget() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
+        localize();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initLogicalNetworksPanel();
-        initNetworksTable(constants);
+        initNetworksTable();
         initStorageConnectionsPanel();
-        initConnectionsTable(constants);
+        initConnectionsTable();
         driver.initialize(this);
     }
 
@@ -86,7 +90,7 @@ public class IscsiBondPopupWidget extends AbstractModelBoundPopupWidget<IscsiBon
         storageTargetsPanel.setWidget(panel);
     }
 
-    private void initNetworksTable(CommonApplicationConstants constants) {
+    private void initNetworksTable() {
         networksTable.enableColumnResizing();
 
         AbstractTextColumn<Network> nameColumn = new AbstractTextColumn<Network>() {
@@ -108,7 +112,7 @@ public class IscsiBondPopupWidget extends AbstractModelBoundPopupWidget<IscsiBon
         networksTable.setWidth("100%", true); //$NON-NLS-1$
     }
 
-    private void initConnectionsTable(CommonApplicationConstants constants) {
+    private void initConnectionsTable() {
         connectionsTable.enableColumnResizing();
 
         AbstractTextColumn<StorageServerConnections> iqnColumn = new AbstractTextColumn<StorageServerConnections>() {
@@ -138,7 +142,7 @@ public class IscsiBondPopupWidget extends AbstractModelBoundPopupWidget<IscsiBon
         connectionsTable.setWidth("100%", true); //$NON-NLS-1$
     }
 
-    private void localize(CommonApplicationConstants constants) {
+    private void localize() {
         nameEditor.setLabel(constants.name());
         descriptionEditor.setLabel(constants.description());
     }

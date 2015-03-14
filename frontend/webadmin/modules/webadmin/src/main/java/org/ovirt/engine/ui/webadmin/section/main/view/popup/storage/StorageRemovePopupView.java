@@ -6,12 +6,12 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.storage.RemoveStorageModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageRemovePopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -55,14 +55,16 @@ public class StorageRemovePopupView extends AbstractModelBoundPopupView<RemoveSt
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public StorageRemovePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
+    public StorageRemovePopupView(EventBus eventBus) {
+        super(eventBus);
         initListBoxEditors();
         initCheckBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants);
+        localize();
         addStyles();
         driver.initialize(this);
     }
@@ -80,7 +82,7 @@ public class StorageRemovePopupView extends AbstractModelBoundPopupView<RemoveSt
         formatEditor.addContentWidgetContainerStyleName(style.formatContentWidget());
     }
 
-    void localize(ApplicationConstants constants) {
+    void localize() {
         hostListEditor.setLabel(constants.storageRemovePopupHostLabel());
         formatEditor.setLabel(constants.storageRemovePopupFormatLabel());
     }

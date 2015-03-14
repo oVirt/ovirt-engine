@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -27,8 +27,10 @@ public class AbstractFindDcPopupView extends AbstractModelBoundPopupView<ListMod
     @UiField
     Label messageLabel;
 
-    public AbstractFindDcPopupView(EventBus eventBus, ApplicationResources resources, boolean multiSelection, final ApplicationConstants constants) {
-        super(eventBus, resources);
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
+    public AbstractFindDcPopupView(EventBus eventBus, boolean multiSelection) {
+        super(eventBus);
         table = new EntityModelCellTable<ListModel>(multiSelection);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 

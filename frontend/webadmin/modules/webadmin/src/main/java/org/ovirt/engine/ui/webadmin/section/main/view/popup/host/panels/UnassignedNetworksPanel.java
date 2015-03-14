@@ -3,8 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 import java.util.List;
 
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.widget.editor.AnimatedVerticalPanel;
 
 import com.google.gwt.dom.client.Element;
@@ -22,7 +20,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public abstract class UnassignedNetworksPanel extends FocusPanel {
 
-    protected final ApplicationConstants constants = ClientGinjectorProvider.getApplicationConstants();
     protected final AnimatedVerticalPanel animatedPanel = new AnimatedVerticalPanel();
 
     protected NetworkPanelsStyle style;

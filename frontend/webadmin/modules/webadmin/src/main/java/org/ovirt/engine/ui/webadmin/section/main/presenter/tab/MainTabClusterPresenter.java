@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
 
@@ -24,6 +25,8 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class MainTabClusterPresenter extends AbstractMainTabWithDetailsPresenter<VDSGroup, ClusterListModel<Void>, MainTabClusterPresenter.ViewDef, MainTabClusterPresenter.ProxyDef> {
+
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @GenEvent
     public class ClusterSelectionChange {
@@ -41,9 +44,9 @@ public class MainTabClusterPresenter extends AbstractMainTabWithDetailsPresenter
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             MainModelProvider<VDSGroup, ClusterListModel<Void>> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.clusterMainTabLabel(), 1, modelProvider);
+        return new ModelBoundTabData(constants.clusterMainTabLabel(), 1, modelProvider);
     }
 
     @Inject

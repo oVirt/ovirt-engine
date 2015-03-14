@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ManualFencePopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -59,17 +59,12 @@ public class ManualFenceConfirmationPopupView extends AbstractModelBoundPopupVie
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final ApplicationConstants applicationConstants;
-    private final ApplicationMessages applicationMessages;
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
-    public ManualFenceConfirmationPopupView(EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationConstants constants,
-            ApplicationMessages applicationMessages) {
-        super(eventBus, resources);
-        this.applicationConstants = constants;
-        this.applicationMessages = applicationMessages;
+    public ManualFenceConfirmationPopupView(EventBus eventBus) {
+        super(eventBus);
         latch = new EntityModelCheckBoxEditor(Align.RIGHT);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
@@ -101,23 +96,23 @@ public class ManualFenceConfirmationPopupView extends AbstractModelBoundPopupVie
                 VDS vds = (VDS) object.getItems().iterator().next();
 
                 // Message
-                messageLabel.setText(applicationMessages.manaulFencePopupMessageLabel(vds.getName()));
+                messageLabel.setText(messages.manaulFencePopupMessageLabel(vds.getName()));
 
                 // Spm warning
                 VdsSpmStatus spmStatus = vds.getSpmStatus();
                 if (spmStatus == VdsSpmStatus.None) {
-                    spmWarningLabel.setText(applicationConstants.manaulFencePopupNoneSpmWarningLabel());
+                    spmWarningLabel.setText(constants.manaulFencePopupNoneSpmWarningLabel());
                 }
                 else if (spmStatus == VdsSpmStatus.SPM) {
-                    spmWarningLabel.setText(applicationConstants.manaulFencePopupSpmWarningLabel());
+                    spmWarningLabel.setText(constants.manaulFencePopupSpmWarningLabel());
                 }
                 else if (spmStatus == VdsSpmStatus.Contending) {
-                    spmWarningLabel.setText(applicationConstants.manaulFencePopupContendingSpmWarningLabel());
+                    spmWarningLabel.setText(constants.manaulFencePopupContendingSpmWarningLabel());
 
                 }
 
                 // Warning
-                warningLabel.setText(applicationConstants.manaulFencePopupWarningLabel());
+                warningLabel.setText(constants.manaulFencePopupWarningLabel());
             }
         });
     }

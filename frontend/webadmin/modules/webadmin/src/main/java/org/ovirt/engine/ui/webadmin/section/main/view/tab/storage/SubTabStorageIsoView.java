@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageIsoListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageIsoPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -27,11 +27,12 @@ public class SubTabStorageIsoView extends AbstractSubTabTableView<StorageDomain,
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabStorageIsoView(SearchableDetailModelProvider<RepoImage, StorageListModel, StorageIsoListModel> modelProvider,
-            ApplicationResources resources, ApplicationConstants constants) {
+    public SubTabStorageIsoView(SearchableDetailModelProvider<RepoImage, StorageListModel, StorageIsoListModel> modelProvider) {
         super(modelProvider);
-        initTable(resources, constants);
+        initTable();
         initWidget(getTable());
     }
 
@@ -40,7 +41,7 @@ public class SubTabStorageIsoView extends AbstractSubTabTableView<StorageDomain,
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initTable(ApplicationResources resources, final ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         AbstractTextColumn<RepoImage> fileNameColumn = new AbstractTextColumn<RepoImage>() {

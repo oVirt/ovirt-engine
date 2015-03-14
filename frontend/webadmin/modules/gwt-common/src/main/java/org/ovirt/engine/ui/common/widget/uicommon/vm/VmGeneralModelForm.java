@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.FormItem.DefaultValueCondition;
@@ -45,13 +46,12 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     @Ignore
     TextBoxLabel monitorCount = new TextBoxLabel();
 
-    private final CommonApplicationConstants constants;
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private final Driver driver = GWT.create(Driver.class);
 
-    public VmGeneralModelForm(ModelProvider<VmGeneralModel> modelProvider, CommonApplicationConstants constants) {
+    public VmGeneralModelForm(ModelProvider<VmGeneralModel> modelProvider) {
         super(modelProvider, 3, 8);
-        this.constants = constants;
     }
 
     /**

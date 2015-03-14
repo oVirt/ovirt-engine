@@ -21,7 +21,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextCol
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.GlusterHookResolveConflictsModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.GlusterHookResolveConflictsPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -165,15 +165,17 @@ public class GlusterHookResolveConflictsPopupView extends AbstractModelBoundPopu
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public GlusterHookResolveConflictsPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
+    public GlusterHookResolveConflictsPopupView(EventBus eventBus) {
+        super(eventBus);
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         addStyles();
-        localize(constants);
-        initTableColumns(constants);
+        localize();
+        initTableColumns();
         driver.initialize(this);
     }
 
@@ -205,7 +207,7 @@ public class GlusterHookResolveConflictsPopupView extends AbstractModelBoundPopu
         statusEditor.addContentWidgetContainerStyleName(style.contentViewWidget());
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         conflictReasonsLabel.setText(constants.conflictReasonsGlusterHook());
         conflictReasonsContentDiffLabel.setText(constants.conflictReasonContentGlusterHook());
         conflictReasonsStatusDiffLabel.setText(constants.conflictReasonStatusGlusterHook());
@@ -232,7 +234,7 @@ public class GlusterHookResolveConflictsPopupView extends AbstractModelBoundPopu
         resolveMissingConflictRemoveEditor.setLabel(constants.resolveMissingConflictRemoveGlusterHook());
     }
 
-    private void initTableColumns(ApplicationConstants constants) {
+    private void initTableColumns() {
         contentSourcesTable.addEntityModelColumn(new AbstractEntityModelTextColumn<GlusterServerHook>() {
             @Override
             public String getText(GlusterServerHook entity) {

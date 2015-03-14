@@ -7,13 +7,14 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.searchbackend.AuditLogConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
-import org.ovirt.engine.ui.common.widget.table.column.AuditLogSeverityColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AuditLogSeverityColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -43,27 +44,25 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
     @UiField
     SimplePanel tablePanel;
 
-    private final ApplicationConstants constants;
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     private static final String BASIC_VIEW_MSG_COLUMN_WIDTH = "600px"; //$NON-NLS-1$
     private static final String ADV_VIEW_MSG_COLUMN_WIDTH = "150px"; //$NON-NLS-1$
     private AbstractTextColumn<AuditLog> messageColumn;
 
     @Inject
-    public MainTabEventView(MainModelProvider<AuditLog, EventListModel> modelProvider,
-            ApplicationConstants constants) {
+    public MainTabEventView(MainModelProvider<AuditLog, EventListModel> modelProvider) {
         super(modelProvider);
-        this.constants = constants;
         initTable();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
+        localize();
 
         tablePanel.setWidget(getTable());
         basicViewButton.setValue(true);
     }
 
-    void localize(ApplicationConstants constants) {
+    void localize() {
         basicViewButton.setText(constants.eventBasicViewLabel());
         advancedViewButton.setText(constants.eventAdvancedViewLabel());
     }

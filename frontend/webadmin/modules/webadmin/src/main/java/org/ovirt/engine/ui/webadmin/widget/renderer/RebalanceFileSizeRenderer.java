@@ -3,13 +3,14 @@ package org.ovirt.engine.ui.webadmin.widget.renderer;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.text.shared.AbstractRenderer;
 
 public class RebalanceFileSizeRenderer<T extends Number> extends AbstractRenderer<T> {
 
-    private ApplicationMessages messages;
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
 
     @Override
     public String render(T size) {
@@ -22,10 +23,6 @@ public class RebalanceFileSizeRenderer<T extends Number> extends AbstractRendere
         } else {
             return messages.rebalanceFileSizeBytes(formatSize(size.doubleValue()));
         }
-    }
-
-    public RebalanceFileSizeRenderer(ApplicationMessages messages) {
-        this.messages = messages;
     }
 
     public String formatSize(double size) {

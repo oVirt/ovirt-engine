@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.StorageSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -27,6 +28,8 @@ public class SubTabStoragePermissionPresenter extends AbstractSubTabPresenter<St
     PermissionListModel<StorageDomain>, SubTabStoragePermissionPresenter.ViewDef,
     SubTabStoragePermissionPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.storagePermissionSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabStoragePermissionPresenter> {
@@ -36,10 +39,10 @@ public class SubTabStoragePermissionPresenter extends AbstractSubTabPresenter<St
     }
 
     @TabInfo(container = StorageSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<Permission, StorageListModel,
             PermissionListModel<StorageDomain>> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.storagePermissionSubTabLabel(), 10, modelProvider);
+        return new ModelBoundTabData(constants.storagePermissionSubTabLabel(), 10, modelProvider);
     }
 
     @Inject

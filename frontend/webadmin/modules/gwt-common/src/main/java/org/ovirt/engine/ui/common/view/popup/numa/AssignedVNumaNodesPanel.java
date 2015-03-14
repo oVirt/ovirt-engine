@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.view.CollapsiblePanelView;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.VNodeModel;
 
@@ -46,16 +47,15 @@ public class AssignedVNumaNodesPanel extends Composite {
 
     private final DragTargetScrollPanel scrollPanel;
 
-    private final CommonApplicationResources resources;
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
 
     @Inject
     public AssignedVNumaNodesPanel(CollapsiblePanelView collapsiblePanel,
             Provider<DraggableVirtualNumaPanel> virtualNumaPanelProvider, DragTargetScrollPanel scrollPanel,
-            CommonApplicationResources resources, VNumaTitleTemplate vNumaTitleTemplate) {
+            VNumaTitleTemplate vNumaTitleTemplate) {
         this.collapsiblePanel = collapsiblePanel;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         container.add(collapsiblePanel);
-        this.resources = resources;
         this.virtualNumaPanelProvider = virtualNumaPanelProvider;
         this.scrollPanel = scrollPanel;
         this.titleTemplate = vNumaTitleTemplate;

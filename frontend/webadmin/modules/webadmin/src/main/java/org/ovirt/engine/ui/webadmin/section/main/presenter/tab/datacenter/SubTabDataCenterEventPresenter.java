@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterEventListMod
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DataCenterSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -26,6 +27,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabDataCenterEventPresenter extends AbstractSubTabPresenter<StoragePool, DataCenterListModel, DataCenterEventListModel, SubTabDataCenterEventPresenter.ViewDef, SubTabDataCenterEventPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.dataCenterEventSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabDataCenterEventPresenter> {
@@ -35,9 +38,9 @@ public class SubTabDataCenterEventPresenter extends AbstractSubTabPresenter<Stor
     }
 
     @TabInfo(container = DataCenterSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<AuditLog, DataCenterListModel, DataCenterEventListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.dataCenterEventSubTabLabel(), 6, modelProvider, Align.RIGHT);
+        return new ModelBoundTabData(constants.dataCenterEventSubTabLabel(), 6, modelProvider, Align.RIGHT);
     }
 
     @Inject

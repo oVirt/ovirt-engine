@@ -23,6 +23,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterServiceModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterServicePresenter;
 
 import com.google.gwt.core.client.GWT;
@@ -73,15 +74,16 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabClusterServiceView(final DetailModelProvider<ClusterListModel<Void>, ClusterServiceModel> modelProvider,
-            ApplicationConstants constants) {
+    public SubTabClusterServiceView(final DetailModelProvider<ClusterListModel<Void>, ClusterServiceModel> modelProvider) {
         super(modelProvider);
         servicesTable = new EntityModelCellTable<ListModel>(false, true);
         initListBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
-        initTableColumns(constants);
+        localize();
+        initTableColumns();
         initButtons();
         driver.initialize(this);
     }
@@ -116,14 +118,14 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
         });
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         hostEditor.setLabel(constants.hostService());
         serviceTypeEditor.setLabel(constants.nameService());
         filterButton.setLabel(constants.filterService());
         clearButton.setLabel(constants.showAllService());
     }
 
-    protected void initTableColumns(final ApplicationConstants constants) {
+    protected void initTableColumns() {
         // Table Entity Columns
         servicesTable.addEntityModelColumn(new AbstractEntityModelTextColumn<GlusterServerService>() {
             @Override

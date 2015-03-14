@@ -1,10 +1,9 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 
 import org.ovirt.engine.core.common.businessentities.Permission;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationMessages;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.view.popup.RemoveConfirmationPopupView;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.SystemPermissionsRemoveConfirmationPopupPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
@@ -16,19 +15,11 @@ import com.google.inject.Inject;
 public class SystemPermissionsRemoveConfirmationPopupView extends RemoveConfirmationPopupView implements
     SystemPermissionsRemoveConfirmationPopupPresenterWidget.ViewDef {
 
-    /**
-     * Constructor.
-     * @param eventBus The GWT event bus.
-     * @param resources The application resources.
-     * @param messages The application messages.
-     * @param constants The application constants.
-     */
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
+
     @Inject
-    public SystemPermissionsRemoveConfirmationPopupView(EventBus eventBus,
-            CommonApplicationResources resources,
-            CommonApplicationMessages messages,
-            CommonApplicationConstants constants) {
-        super(eventBus, resources, messages, constants);
+    public SystemPermissionsRemoveConfirmationPopupView(EventBus eventBus) {
+        super(eventBus);
         itemPanel.setHeight("80%"); //$NON-NLS-1$
     }
 

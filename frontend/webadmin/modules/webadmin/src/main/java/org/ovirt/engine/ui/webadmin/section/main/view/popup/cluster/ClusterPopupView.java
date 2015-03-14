@@ -42,6 +42,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -401,19 +402,18 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final ApplicationMessages messages;
-
-    private final ApplicationTemplates templates;
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
-    public ClusterPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, ApplicationMessages messages, ApplicationTemplates templates) {
-        super(eventBus, resources);
-        this.messages = messages;
-        this.templates = templates;
-        initListBoxEditors(constants);
+    public ClusterPopupView(EventBus eventBus) {
+        super(eventBus);
+        initListBoxEditors();
         initRadioButtonEditors();
         initCheckBoxEditors();
-        initInfoIcons(resources, constants, templates);
+        initInfoIcons();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
@@ -421,7 +421,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         serialNumberPolicyEditor.setRenderer(new VisibilityRenderer.SimpleVisibilityRenderer());
 
         addStyles();
-        localize(constants);
+        localize();
         driver.initialize(this);
         applyModeCustomizations();
     }
@@ -448,7 +448,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         enableHostMaintenanceReasonEditor.setContentWidgetContainerStyleName(style.fullWidth());
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         generalTab.setLabel(constants.clusterPopupGeneralTabLabel());
 
         dataCenterEditor.setLabel(constants.clusterPopupDataCenterLabel());
@@ -537,7 +537,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         allowOverbookingEditor = new EntityModelRadioButtonEditor("4"); //$NON-NLS-1$
     }
 
-    private void initListBoxEditors(ApplicationConstants constants) {
+    private void initListBoxEditors() {
         dataCenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
 
         cpuEditor = new ListModelListBoxEditor<ServerCpu>(new NullSafeRenderer<ServerCpu>() {
@@ -609,13 +609,13 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         skipFencingIfConnectivityBrokenCheckBox.getContentWidgetContainer().setWidth("420px"); //$NON-NLS-1$
     }
 
-    private void initInfoIcons(ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates) {
-        memoryOptimizationInfo = new InfoIcon(templates.italicFixedWidth("465px", constants.clusterPopupMemoryOptimizationInfo()), resources); //$NON-NLS-1$
+    private void initInfoIcons() {
+        memoryOptimizationInfo = new InfoIcon(templates.italicFixedWidth("465px", constants.clusterPopupMemoryOptimizationInfo())); //$NON-NLS-1$
 
-        cpuThreadsInfo = new InfoIcon(templates.italicFixedWidth("600px", constants.clusterPopupCpuThreadsInfo()), resources); //$NON-NLS-1$
+        cpuThreadsInfo = new InfoIcon(templates.italicFixedWidth("600px", constants.clusterPopupCpuThreadsInfo())); //$NON-NLS-1$
 
-        schedulerOptimizationInfoIcon = new InfoIcon(SafeHtmlUtils.EMPTY_SAFE_HTML, resources);
-        allowOverbookingInfoIcon = new InfoIcon(SafeHtmlUtils.EMPTY_SAFE_HTML, resources);
+        schedulerOptimizationInfoIcon = new InfoIcon(SafeHtmlUtils.EMPTY_SAFE_HTML);
+        allowOverbookingInfoIcon = new InfoIcon(SafeHtmlUtils.EMPTY_SAFE_HTML);
 
         StringEntityModelLabel label = new StringEntityModelLabel();
         label.setText(constants.clusterSpiceProxyEnable());
@@ -624,15 +624,12 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         spiceProxyEnabledCheckboxWithInfoIcon = new EntityModelWidgetWithInfo<String>(label, spiceProxyOverrideEnabled);
 
         fencingEnabledInfo = new InfoIcon(
-                templates.italicFixedWidth("400px", constants.fencingEnabledInfo()), //$NON-NLS-1$
-                resources);
+                templates.italicFixedWidth("400px", constants.fencingEnabledInfo())); //$NON-NLS-1$
         skipFencingIfSDActiveInfo = new InfoIcon(
-                templates.italicFixedWidth("400px", constants.skipFencingIfSDActiveInfo()), //$NON-NLS-1$
-                resources);
+                templates.italicFixedWidth("400px", constants.skipFencingIfSDActiveInfo())); //$NON-NLS-1$
 
         skipFencingIfConnectivityBrokenInfo = new InfoIcon(
-                templates.italicFixedWidth("400px", constants.skipFencingWhenConnectivityBrokenInfo()), //$NON-NLS-1$
-                resources);
+                templates.italicFixedWidth("400px", constants.skipFencingWhenConnectivityBrokenInfo())); //$NON-NLS-1$
     }
 
     @Override

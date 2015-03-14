@@ -1,13 +1,10 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.pool;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.text.shared.Parser;
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
+import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
+
 import java.text.ParseException;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationMessages;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
-import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxOnlyEditor;
@@ -18,8 +15,9 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
-import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.text.shared.Parser;
 
 public class PoolEditPopupWidget extends PoolNewPopupWidget {
 
@@ -27,12 +25,8 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    public PoolEditPopupWidget(CommonApplicationConstants constants,
-            CommonApplicationResources resources,
-            CommonApplicationMessages messages,
-            CommonApplicationTemplates applicationTemplates,
-            EventBus eventBus) {
-        super(constants, resources, messages, applicationTemplates, eventBus);
+    public PoolEditPopupWidget(EventBus eventBus) {
+        super(eventBus);
     }
 
     @Override

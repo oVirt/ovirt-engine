@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.table.cell.SafeHtmlCell;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
@@ -15,7 +16,6 @@ import org.ovirt.engine.ui.common.widget.table.header.ResizableHeader;
 import org.ovirt.engine.ui.common.widget.table.header.ResizeableCheckboxHeader;
 import org.ovirt.engine.ui.uicommonweb.models.GridController;
 
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.TableCellElement;
@@ -64,7 +64,7 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
     // used to store column width preferences
     private GridController gridController;
 
-    private final CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
+    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
 
     private final Map<Integer, Boolean> columnVisibleMap = new HashMap<Integer, Boolean>();
 

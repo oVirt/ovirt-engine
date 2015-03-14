@@ -1,10 +1,8 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SimplePanel;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -13,13 +11,16 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEdito
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
-import org.ovirt.engine.ui.uicompat.external.StringUtils;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SimplePanel;
 
 public class VmSnapshotPreviewPopupWidget extends AbstractModelBoundPopupWidget<SnapshotModel> {
 
@@ -66,13 +67,14 @@ public class VmSnapshotPreviewPopupWidget extends AbstractModelBoundPopupWidget<
     public EntityModelCheckBoxEditor memoryEditor;
 
     private final Driver driver = GWT.create(Driver.class);
-    private final CommonApplicationMessages messages;
 
-    public VmSnapshotPreviewPopupWidget(CommonApplicationConstants constants, CommonApplicationMessages messages) {
-        this.messages = messages;
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+
+    public VmSnapshotPreviewPopupWidget() {
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
+        localize();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
     }
@@ -81,7 +83,7 @@ public class VmSnapshotPreviewPopupWidget extends AbstractModelBoundPopupWidget<
         memoryEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
-    void localize(CommonApplicationConstants constants) {
+    void localize() {
         memoryEditor.setLabel(constants.virtualMachineSnapshotPreviewPopupMemoryLabel());
         messageLabel.setText(constants.snapshotContainsMemory());
     }

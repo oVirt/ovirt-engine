@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHooksListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHookPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 
@@ -30,10 +31,12 @@ public class SubTabHostHookView extends AbstractSubTabTableView<VDS, Map<String,
     private static final String PROPERTY_NAME = "PropertyName"; //$NON-NLS-1$
     private static final String PROPERTY_VALUE = "PropertyValue"; //$NON-NLS-1$
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabHostHookView(SearchableDetailModelProvider<Map<String, String>, HostListModel<Void>, HostHooksListModel> modelProvider, ApplicationConstants constants) {
+    public SubTabHostHookView(SearchableDetailModelProvider<Map<String, String>, HostListModel<Void>, HostHooksListModel> modelProvider) {
         super(modelProvider);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
@@ -42,7 +45,7 @@ public class SubTabHostHookView extends AbstractSubTabTableView<VDS, Map<String,
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initTable(ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         AbstractTextColumn<Map<String, String>> eventColumn = new AbstractTextColumn<Map<String, String>>() {

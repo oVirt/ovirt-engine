@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.UserPortalTemplateEventL
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
@@ -22,6 +23,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabExtendedTemplateEventsPresenter
         extends AbstractSubTabExtendedTemplatePresenter<UserPortalTemplateEventListModel, SubTabExtendedTemplateEventsPresenter.ViewDef, SubTabExtendedTemplateEventsPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(UserPortalApplicationPlaces.extendedTempplateEventsSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabExtendedTemplateEventsPresenter> {
@@ -31,8 +34,8 @@ public class SubTabExtendedTemplateEventsPresenter
     }
 
     @TabInfo(container = ExtendedTemplateSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants) {
-        return new TabDataBasic(applicationConstants.extendedTemplateEventsSubTabLabel(), 3);
+    static TabData getTabData() {
+        return new TabDataBasic(constants.extendedTemplateEventsSubTabLabel(), 3);
     }
 
     @Inject

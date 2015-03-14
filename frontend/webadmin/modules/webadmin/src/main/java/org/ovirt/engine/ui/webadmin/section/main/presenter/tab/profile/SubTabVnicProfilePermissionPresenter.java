@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VnicProfileSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -27,6 +28,8 @@ public class SubTabVnicProfilePermissionPresenter extends AbstractSubTabPresente
     PermissionListModel<VnicProfileView>, SubTabVnicProfilePermissionPresenter.ViewDef,
     SubTabVnicProfilePermissionPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.vnicProfilePermissionSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabVnicProfilePermissionPresenter> {
@@ -36,10 +39,10 @@ public class SubTabVnicProfilePermissionPresenter extends AbstractSubTabPresente
     }
 
     @TabInfo(container = VnicProfileSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<Permission, VnicProfileListModel,
             PermissionListModel<VnicProfileView>> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.vnicProfilePermissionSubTabLabel(), 2,
+        return new ModelBoundTabData(constants.vnicProfilePermissionSubTabLabel(), 2,
                 modelProvider);
     }
 

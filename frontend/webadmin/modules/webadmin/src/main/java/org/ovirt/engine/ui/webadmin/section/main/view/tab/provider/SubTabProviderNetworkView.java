@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderNetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.provider.SubTabProviderNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -27,16 +27,13 @@ public class SubTabProviderNetworkView extends AbstractSubTabTableView<Provider,
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final ApplicationConstants constants;
-
     private AbstractLinkColumn<NetworkView> nameColumn;
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabProviderNetworkView(SearchableDetailModelProvider<NetworkView, ProviderListModel, ProviderNetworkListModel> modelProvider,
-            ApplicationConstants constants,
-            ApplicationResources resources) {
+    public SubTabProviderNetworkView(SearchableDetailModelProvider<NetworkView, ProviderListModel, ProviderNetworkListModel> modelProvider) {
         super(modelProvider);
-        this.constants = constants;
         initTable();
         initWidget(getTable());
     }

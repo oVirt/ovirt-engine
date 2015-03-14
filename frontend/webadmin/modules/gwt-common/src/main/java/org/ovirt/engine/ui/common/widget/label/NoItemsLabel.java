@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.label;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -14,7 +15,7 @@ public class NoItemsLabel extends Composite {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    private static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @UiField
     Label label;

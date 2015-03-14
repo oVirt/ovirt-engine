@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
-import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -56,17 +53,9 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
     protected boolean isMultiSelection;
     protected boolean isControlKeyDown;
 
-    protected final CommonApplicationResources resources;
-    protected final CommonApplicationConstants constants;
-    protected final CommonApplicationTemplates templates;
-
-
     protected static final String NODE_HEADER = "nodeHeader"; //$NON-NLS-1$
 
-    public AbstractSubTabTree(CommonApplicationResources resources, CommonApplicationConstants constants, CommonApplicationTemplates templates) {
-        this.resources = resources;
-        this.constants = constants;
-        this.templates = templates;
+    public AbstractSubTabTree() {
 
         tree = new Tree();
         initWidget(tree);

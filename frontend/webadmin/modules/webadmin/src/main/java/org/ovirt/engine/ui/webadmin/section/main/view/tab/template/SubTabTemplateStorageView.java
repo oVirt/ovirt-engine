@@ -12,8 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateStorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.SubTabTemplateStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTreeView;
@@ -24,12 +23,14 @@ import com.google.inject.Inject;
 
 public class SubTabTemplateStorageView extends AbstractSubTabTreeView<StoragesTree, VmTemplate, StorageDomain, TemplateListModel, TemplateStorageListModel> implements SubTabTemplateStoragePresenter.ViewDef {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
     public SubTabTemplateStorageView(final SearchableDetailModelProvider<StorageDomain, TemplateListModel, TemplateStorageListModel> modelProvider,
-            EventBus eventBus, ApplicationConstants constant, ApplicationTemplates templates, ApplicationResources resources) {
-        super(modelProvider, constant, templates, resources);
+            EventBus eventBus) {
+        super(modelProvider);
 
-        actionPanel.addActionButton(new UiCommandButtonDefinition<DiskModel>(eventBus, constant.removeStorage()) {
+        actionPanel.addActionButton(new UiCommandButtonDefinition<DiskModel>(eventBus, constants.removeStorage()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getRemoveCommand();
@@ -40,7 +41,7 @@ public class SubTabTemplateStorageView extends AbstractSubTabTreeView<StoragesTr
     }
 
     @Override
-    protected void initHeader(ApplicationConstants constants) {
+    protected void initHeader() {
         table.addColumn(new EmptyColumn(), constants.domainNameStorage(), ""); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.domainTypeStorage(), "120px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.statusStorage(), "120px"); //$NON-NLS-1$
@@ -51,7 +52,7 @@ public class SubTabTemplateStorageView extends AbstractSubTabTreeView<StoragesTr
 
     @Override
     protected StoragesTree getTree() {
-        return new StoragesTree(resources, constants, templates);
+        return new StoragesTree();
     }
 
     @Override

@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.renderer.StringRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeParameterModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeParameterPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -68,17 +68,19 @@ public class VolumeParameterPopupView extends AbstractModelBoundPopupView<Volume
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public VolumeParameterPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
+    public VolumeParameterPopupView(EventBus eventBus) {
+        super(eventBus);
         initComboBox();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants);
+        localize();
         driver.initialize(this);
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         keyListBoxEditor.setLabel(constants.optionKeyVolumeParameter());
         descriptionEditor.setLabel(constants.descriptionVolumeParameter());
         valueEditor.setLabel(constants.optionValueVolumeParameter());

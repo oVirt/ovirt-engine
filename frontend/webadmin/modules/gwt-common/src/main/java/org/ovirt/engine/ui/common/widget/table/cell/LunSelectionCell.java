@@ -1,17 +1,17 @@
 package org.ovirt.engine.ui.common.widget.table.cell;
 
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class LunSelectionCell extends AbstractCell<LunModel> {
 
-    protected static final CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
-
     private boolean multiSelection;
+
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
 
     public LunSelectionCell() {
     }

@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 
 import java.util.List;
 
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -30,27 +29,17 @@ public abstract class AbstractSanStorageView extends AbstractStorageView<SanStor
     @UiField
     ValidatedPanelWidget contentPanel;
 
-    protected static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
-
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
     public AbstractSanStorageView() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
-        addStyles();
         driver.initialize(this);
     }
 
     public AbstractSanStorageView(boolean multiSelection) {
         this();
         this.multiSelection = multiSelection;
-    }
-
-    void addStyles() {
-    }
-
-    void localize(CommonApplicationConstants constants) {
     }
 
     protected abstract void initLists(SanStorageModelBase object);

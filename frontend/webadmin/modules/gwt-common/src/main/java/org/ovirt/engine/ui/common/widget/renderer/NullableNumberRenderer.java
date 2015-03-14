@@ -1,14 +1,14 @@
 package org.ovirt.engine.ui.common.widget.renderer;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.text.client.NumberFormatRenderer;
 
 public class NullableNumberRenderer extends NumberFormatRenderer {
 
-    private static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private String nullString = constants.unAvailablePropertyLabel();
 

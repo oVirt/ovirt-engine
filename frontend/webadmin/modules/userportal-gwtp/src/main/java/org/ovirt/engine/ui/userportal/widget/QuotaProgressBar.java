@@ -4,8 +4,8 @@ import org.ovirt.engine.core.common.businessentities.QuotaUsagePerUser;
 import org.ovirt.engine.ui.common.utils.PopupUtils;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasMouseOutHandlers;
 import com.google.gwt.event.dom.client.HasMouseOverHandlers;
 import com.google.gwt.event.dom.client.MouseOutEvent;
@@ -20,7 +20,6 @@ import com.google.gwt.user.client.ui.HTML;
 public abstract class QuotaProgressBar extends DoublePercentageProgressBar implements HasMouseOutHandlers, HasMouseOverHandlers, MouseOutHandler, MouseOverHandler {
 
     public static final int UNLIMITED = -1;
-    private static final ApplicationConstants constants = GWT.create(ApplicationConstants.class);
     protected static final SafeHtml EMPTY_HTML = new SafeHtml() {
         @Override
         public String asString() {
@@ -29,9 +28,11 @@ public abstract class QuotaProgressBar extends DoublePercentageProgressBar imple
     };
     private final HTML tooltip = new HTML();
     private final DecoratedPopupPanel tooltipPanel = new DecoratedPopupPanel();
-    private final ApplicationTemplates templates = GWT.create(ApplicationTemplates.class);
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
 
     protected QuotaUsagePerUser quotaUsagePerUser;
+
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     public QuotaProgressBar(QuotaUsagePerUser quotaUsagePerUser) {
         setQuotaUsagePerUser(quotaUsagePerUser);

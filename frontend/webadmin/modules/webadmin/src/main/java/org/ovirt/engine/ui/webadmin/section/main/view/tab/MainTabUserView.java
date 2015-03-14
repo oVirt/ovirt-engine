@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.frontend.utils.FormatUtils;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabUserPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -23,15 +24,17 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public MainTabUserView(MainModelProvider<DbUser, UserListModel> modelProvider, ApplicationConstants constants) {
+    public MainTabUserView(MainModelProvider<DbUser, UserListModel> modelProvider) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
-    void initTable(ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         getTable().addColumn(new UserStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$

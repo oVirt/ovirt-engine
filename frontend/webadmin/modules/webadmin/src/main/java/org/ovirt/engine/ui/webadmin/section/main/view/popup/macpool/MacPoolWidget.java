@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEdito
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.MacPoolModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -39,7 +40,7 @@ public class MacPoolWidget extends AbstractModelBoundPopupWidget<MacPoolModel> {
     @WithElementId
     public MacRangeWidget macRanges;
 
-    private static final ApplicationConstants constants = GWT.create(ApplicationConstants.class);
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     public MacPoolWidget() {
         allowDuplicates = new EntityModelCheckBoxEditor(Align.RIGHT);

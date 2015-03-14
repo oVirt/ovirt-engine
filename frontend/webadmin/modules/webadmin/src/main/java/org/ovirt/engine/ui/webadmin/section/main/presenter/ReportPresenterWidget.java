@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicommonweb.models.reports.ReportModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -35,14 +36,14 @@ public class ReportPresenterWidget extends PresenterWidget<ReportPresenterWidget
 
     private ReportModel model = null;
     private final ErrorPopupManager errorPopupManager;
-    private final ApplicationConstants applicationConstants;
+
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public ReportPresenterWidget(EventBus eventBus,
-            ViewDef view, ErrorPopupManager errorPopupManager, ApplicationConstants applicationConstants) {
+            ViewDef view, ErrorPopupManager errorPopupManager) {
         super(eventBus, view);
         this.errorPopupManager = errorPopupManager;
-        this.applicationConstants = applicationConstants;
     }
 
     @Override
@@ -66,7 +67,7 @@ public class ReportPresenterWidget extends PresenterWidget<ReportPresenterWidget
         this.model = model;
 
         if (model.isDifferntDcError()) {
-            errorPopupManager.show(applicationConstants.entitiesFromDifferentDCsError());
+            errorPopupManager.show(constants.entitiesFromDifferentDCsError());
         } else {
             updateReportUrl();
         }

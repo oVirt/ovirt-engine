@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.vm;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
@@ -20,26 +21,25 @@ import com.google.gwt.event.shared.EventBus;
 
 public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListModel> {
 
-    private final CommonApplicationResources resources;
-
     private final boolean showMoveButton;
 
     private ImageUiCommandButtonDefinition<Disk> plugButtonDefinition;
     private ImageUiCommandButtonDefinition<Disk> unPlugButtonDefinition;
 
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+
     public VmDiskListModelTable(
             SearchableTableModelProvider<Disk, VmDiskListModel> modelProvider,
             EventBus eventBus, ClientStorage clientStorage,
-            CommonApplicationResources resources,
             boolean showMoveButton) {
         super(modelProvider, eventBus, clientStorage);
-        this.resources = resources;
         this.showMoveButton = showMoveButton;
     }
 
     @Override
-    public void initTable(final CommonApplicationConstants constants) {
-        super.initTable(constants);
+    public void initTable() {
+        super.initTable();
 
         getTable().addActionButton(new UiCommandButtonDefinition<Disk>(getEventBus(), constants.newDisk()) {
             @Override

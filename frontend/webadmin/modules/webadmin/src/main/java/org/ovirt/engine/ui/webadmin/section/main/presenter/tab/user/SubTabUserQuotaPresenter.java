@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserQuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.UserSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -25,6 +26,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabUserQuotaPresenter extends AbstractSubTabPresenter<DbUser, UserListModel, UserQuotaListModel, SubTabUserQuotaPresenter.ViewDef, SubTabUserQuotaPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.userQuotaSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabUserQuotaPresenter> {
@@ -34,9 +37,9 @@ public class SubTabUserQuotaPresenter extends AbstractSubTabPresenter<DbUser, Us
     }
 
     @TabInfo(container = UserSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<Quota, UserListModel, UserQuotaListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.userQuotaSubTabLabel(), 2, modelProvider);
+        return new ModelBoundTabData(constants.userQuotaSubTabLabel(), 2, modelProvider);
     }
 
     @Inject

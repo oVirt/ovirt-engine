@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.user.client.ui.FlowPanel;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -23,6 +22,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.ClusterPolicyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.panels.FunctionPolicyUnitPanel;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.panels.PolicyUnitListPanel;
@@ -34,6 +34,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
@@ -50,7 +51,6 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
     }
 
     private final Driver driver = GWT.create(Driver.class);
-    private ApplicationConstants constants;
 
     @UiField
     @Path(value = "name.entity")
@@ -105,20 +105,20 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
     @UiField
     FlowPanel clusterPolicyPropertiesZone;
 
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public ClusterPolicyPopupView(EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationConstants constants,
-            ApplicationTemplates templates) {
-        super(eventBus, resources);
-        this.constants = constants;
+    public ClusterPolicyPopupView(EventBus eventBus) {
+        super(eventBus);
         initListBoxEditors();
         initPanels();
-        initInfoIcons(resources, constants, templates);
+        initInfoIcons();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
-        localize(constants);
+        localize();
     }
 
     private void initPanels() {
@@ -139,7 +139,7 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
         loadBalanceListEditor = new ListModelListBoxOnlyEditor<>(new NameRenderer<PolicyUnit>());
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         nameEditor.setLabel(constants.clusterPolicyNameLabel());
         descriptionEditor.setLabel(constants.clusterPolicyDescriptionLabel());
     }
@@ -209,22 +209,18 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
         });
     }
 
-    private void initInfoIcons(ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates) {
+    private void initInfoIcons() {
         filterInfoIcon =
-                new InfoIcon(templates.italicWordWrapMaxWidth(constants.clusterPolicyFilterInfo()),
-                        resources);
+                new InfoIcon(templates.italicWordWrapMaxWidth(constants.clusterPolicyFilterInfo()));
 
         functionInfoIcon =
-                new InfoIcon(templates.italicWordWrapMaxWidth(constants.clusterPolicyWeightFunctionInfo()),
-                        resources);
+                new InfoIcon(templates.italicWordWrapMaxWidth(constants.clusterPolicyWeightFunctionInfo()));
 
         loadBalancingInfoIcon =
-                new InfoIcon(templates.italicWordWrapMaxWidth(constants.clusterPolicyLoadBalancingInfo()),
-                        resources);
+                new InfoIcon(templates.italicWordWrapMaxWidth(constants.clusterPolicyLoadBalancingInfo()));
 
         propertiesInfoIcon =
-                new InfoIcon(templates.italicWordWrapMaxWidth(constants.clusterPolicyPropertiesInfo()),
-                        resources);
+                new InfoIcon(templates.italicWordWrapMaxWidth(constants.clusterPolicyPropertiesInfo()));
 
     }
 

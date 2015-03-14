@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.common.view.popup;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -39,8 +38,8 @@ public class DefaultConfirmationPopupView extends AbstractConfirmationPopupView 
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
-    public DefaultConfirmationPopupView(EventBus eventBus, CommonApplicationResources resources) {
-        super(eventBus, resources);
+    public DefaultConfirmationPopupView(EventBus eventBus) {
+        super(eventBus);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);

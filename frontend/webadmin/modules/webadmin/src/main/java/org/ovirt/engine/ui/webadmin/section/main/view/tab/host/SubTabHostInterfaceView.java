@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostInterfacePresenter;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.host.HostInterfaceForm;
@@ -50,19 +51,20 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
     private final VerticalPanel contentPanel;
     HostInterfaceForm hostInterfaceForm = null;
 
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
     public SubTabHostInterfaceView(SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel<Void>, HostInterfaceListModel> modelProvider,
             EventBus eventBus,
-            ClientStorage clientStorage,
-            ApplicationConstants constants,
-            ApplicationTemplates templates) {
+            ClientStorage clientStorage) {
         super(modelProvider);
         table =
                 new SimpleActionTable<HostInterfaceLineModel>(modelProvider,
                         getTableResources(),
                         eventBus,
                         clientStorage);
-        initTable(constants, templates);
+        initTable();
 
         contentPanel = new VerticalPanel();
         contentPanel.add(table);
@@ -79,7 +81,7 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
         return GWT.<Resources> create(SubTableResources.class);
     }
 
-    void initTable(ApplicationConstants constants, ApplicationTemplates templates) {
+    void initTable() {
         // Interface Panel
         table.addColumn(new EmptyColumn(), constants.empty(), "30px"); //$NON-NLS-1$
         table.addColumn(new EmptyColumn(), constants.nameInterface(), "200px"); //$NON-NLS-1$

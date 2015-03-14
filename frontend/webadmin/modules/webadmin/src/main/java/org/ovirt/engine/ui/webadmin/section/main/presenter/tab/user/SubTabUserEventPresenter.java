@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.users.UserEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.UserSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -26,6 +27,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabUserEventPresenter extends AbstractSubTabPresenter<DbUser, UserListModel, UserEventListModel, SubTabUserEventPresenter.ViewDef, SubTabUserEventPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.userEventSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabUserEventPresenter> {
@@ -35,9 +38,9 @@ public class SubTabUserEventPresenter extends AbstractSubTabPresenter<DbUser, Us
     }
 
     @TabInfo(container = UserSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<AuditLog, UserListModel, UserEventListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.userEventSubTabLabel(), 5, modelProvider, Align.RIGHT);
+        return new ModelBoundTabData(constants.userEventSubTabLabel(), 5, modelProvider, Align.RIGHT);
     }
 
     @Inject

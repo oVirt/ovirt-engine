@@ -3,8 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.permissions.AbstractPermissionsPopupView;
 import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -24,8 +22,8 @@ public class PermissionsPopupView extends AbstractPermissionsPopupView<AdElement
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
-    public PermissionsPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources, constants);
+    public PermissionsPopupView(EventBus eventBus) {
+        super(eventBus);
         driver.initialize(this);
     }
 

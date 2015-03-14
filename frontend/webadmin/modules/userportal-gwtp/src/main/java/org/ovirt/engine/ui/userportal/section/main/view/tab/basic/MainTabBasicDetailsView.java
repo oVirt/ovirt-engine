@@ -1,14 +1,12 @@
 package org.ovirt.engine.ui.userportal.section.main.view.tab.basic;
 
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.utils.DynamicMessages;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
-import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicDetailsPresenterWidget;
 import org.ovirt.engine.ui.userportal.widget.ToStringEntityModelLabel;
 import org.ovirt.engine.ui.userportal.widget.basic.DisksImageWidget;
@@ -112,9 +110,7 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
-    public MainTabBasicDetailsView(ApplicationResources resources,
-                                   final CommonApplicationConstants constants,
-                                   final DynamicMessages dynamicMessages) {
+    public MainTabBasicDetailsView(final DynamicMessages dynamicMessages) {
         operatingSystem = new ValueLabel<Integer>(new AbstractRenderer<Integer>() {
 
             @Override

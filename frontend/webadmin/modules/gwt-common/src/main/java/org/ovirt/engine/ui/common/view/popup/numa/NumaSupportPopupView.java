@@ -13,6 +13,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.presenter.popup.numa.NumaSupportPopupPresenterWidget;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -75,10 +76,9 @@ public class NumaSupportPopupView extends AbstractModelBoundPopupView<NumaSuppor
     @Inject
     Provider<HostSummaryContentPanel> hostSummaryContentProvider;
 
-
-    private final CommonApplicationConstants constants;
-    private final CommonApplicationMessages messages;
-    private final CommonApplicationResources resources;
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
 
     @UiField
     FlowPanel groupPanel;
@@ -103,12 +103,8 @@ public class NumaSupportPopupView extends AbstractModelBoundPopupView<NumaSuppor
 
     @Inject
     public NumaSupportPopupView(EventBus eventBus, ClientStorage clientStorage, VNumaTitleTemplate vNumaTitleTemplate,
-            NumaTitleTemplate numaTitleTemplate, CommonApplicationMessages messages,
-            CommonApplicationConstants constants, CommonApplicationResources resources) {
-        super(eventBus, resources);
-        this.constants = constants;
-        this.messages = messages;
-        this.resources = resources;
+            NumaTitleTemplate numaTitleTemplate) {
+        super(eventBus);
         this.numaTitleTemplate = numaTitleTemplate;
         this.vNumaTitleTemplate = vNumaTitleTemplate;
         horizontalSplitLayoutPanel = new SplitLayoutPanel(SPLITTER_THICKNESS);

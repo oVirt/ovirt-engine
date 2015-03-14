@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolVmListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.PoolSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -25,6 +26,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabPoolVmPresenter extends AbstractSubTabPresenter<VmPool, PoolListModel, PoolVmListModel, SubTabPoolVmPresenter.ViewDef, SubTabPoolVmPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.poolVmSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabPoolVmPresenter> {
@@ -34,9 +37,9 @@ public class SubTabPoolVmPresenter extends AbstractSubTabPresenter<VmPool, PoolL
     }
 
     @TabInfo(container = PoolSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<VM, PoolListModel, PoolVmListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.poolVmSubTabLabel(), 1, modelProvider);
+        return new ModelBoundTabData(constants.poolVmSubTabLabel(), 1, modelProvider);
     }
 
     @Inject

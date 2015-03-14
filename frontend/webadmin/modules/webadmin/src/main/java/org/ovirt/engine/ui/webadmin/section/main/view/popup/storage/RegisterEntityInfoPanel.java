@@ -5,10 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.view.client.NoSelectionModel;
-
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -17,32 +13,32 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.table.column.DiskImageStatusColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSumUpColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.DiskImageStatusColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterEntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
-
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
-
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.CustomSelectionCell;
+
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.view.client.NoSelectionModel;
 
 public abstract class RegisterEntityInfoPanel<T> extends TabLayoutPanel {
 
-    protected static final ApplicationConstants constants = GWT.create(ApplicationConstants.class);
-    protected static final ApplicationTemplates templates = GWT.create(ApplicationTemplates.class);
-    protected static final ApplicationResources resources = GWT.create(ApplicationResources.class);
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     protected EntityModelCellTable<ListModel> disksTable;
     protected EntityModelCellTable<ListModel> nicsTable;
@@ -51,7 +47,7 @@ public abstract class RegisterEntityInfoPanel<T> extends TabLayoutPanel {
     protected RegisterEntityModel<T> registerEntityModel;
 
     public RegisterEntityInfoPanel(RegisterEntityModel<T> registerEntityModel) {
-        super(templates.TAB_BAR_HEIGHT, Style.Unit.PX);
+        super(ApplicationTemplates.TAB_BAR_HEIGHT, Style.Unit.PX);
         this.registerEntityModel = registerEntityModel;
 
         init();

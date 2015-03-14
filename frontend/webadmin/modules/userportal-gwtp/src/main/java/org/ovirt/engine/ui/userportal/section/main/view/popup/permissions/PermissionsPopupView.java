@@ -3,8 +3,6 @@ package org.ovirt.engine.ui.userportal.section.main.view.popup.permissions;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.permissions.AbstractPermissionsPopupView;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserPortalAdElementListModel;
-import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.permissions.PermissionsPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -24,8 +22,8 @@ public class PermissionsPopupView extends AbstractPermissionsPopupView<UserPorta
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
-    public PermissionsPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources, constants);
+    public PermissionsPopupView(EventBus eventBus) {
+        super(eventBus);
         driver.initialize(this);
     }
 

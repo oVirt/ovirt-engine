@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskStorageListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.table.column.StorageDomainSharedStatusColumn;
@@ -28,11 +29,12 @@ public class SubTabDiskStorageView extends AbstractSubTabTableView<Disk, Storage
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabDiskStorageView(SearchableDetailModelProvider<StorageDomain, DiskListModel, DiskStorageListModel> modelProvider,
-            ApplicationConstants constants) {
+    public SubTabDiskStorageView(SearchableDetailModelProvider<StorageDomain, DiskListModel, DiskStorageListModel> modelProvider) {
         super(modelProvider);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
@@ -41,7 +43,7 @@ public class SubTabDiskStorageView extends AbstractSubTabTableView<Disk, Storage
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initTable(ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         getTable().addColumn(new StorageDomainSharedStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$

@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.configure.instancetypes.InstanceTypeGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.instancetypes.InstanceTypeListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.InstanceTypeModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
@@ -47,9 +48,10 @@ public class InstanceTypesView extends Composite {
 
     private final ClientStorage clientStorage;
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public InstanceTypesView(ApplicationConstants constants,
-            InstanceTypeModelProvider instanceTypeModelProvider,
+    public InstanceTypesView(InstanceTypeModelProvider instanceTypeModelProvider,
             EventBus eventBus, ClientStorage clientStorage,
             DetailTabModelProvider<InstanceTypeListModel, InstanceTypeGeneralModel> instanceTypeGeneralModelProvider) {
         this.instanceTypeModelProvider = instanceTypeModelProvider;
@@ -60,8 +62,8 @@ public class InstanceTypesView extends Composite {
 
         initSplitLayoutPanel();
 
-        initMainTable(constants);
-        initSubtabTable(constants);
+        initMainTable();
+        initSubtabTable();
     }
 
     private void initSplitLayoutPanel() {
@@ -79,7 +81,7 @@ public class InstanceTypesView extends Composite {
         splitLayoutPanel.add(table);
     }
 
-    private void initMainTable(ApplicationConstants constants) {
+    private void initMainTable() {
         table = new SimpleActionTable<InstanceType>(instanceTypeModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
@@ -131,8 +133,8 @@ public class InstanceTypesView extends Composite {
 
     }
 
-    private void initSubtabTable(ApplicationConstants constants) {
-        detailTable = new InstanceTypeGeneralModelForm(instanceTypeGeneralModelProvider, constants);
+    private void initSubtabTable() {
+        detailTable = new InstanceTypeGeneralModelForm(instanceTypeGeneralModelProvider);
     }
 
     protected Resources getTableHeaderlessResources() {

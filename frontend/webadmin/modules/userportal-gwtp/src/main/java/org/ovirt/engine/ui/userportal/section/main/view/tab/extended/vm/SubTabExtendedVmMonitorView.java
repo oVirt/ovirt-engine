@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmMonitorModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmMonitorPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmMonitorModelProvider;
 import org.ovirt.engine.ui.userportal.widget.PercentageProgressBar;
@@ -50,11 +51,13 @@ public class SubTabExtendedVmMonitorView extends AbstractSubTabFormView<UserPort
     @WithElementId("networkUsage")
     PercentageProgressBar networkUsageProgressBar;
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabExtendedVmMonitorView(VmMonitorModelProvider modelProvider, ApplicationConstants constants) {
+    public SubTabExtendedVmMonitorView(VmMonitorModelProvider modelProvider) {
         super(modelProvider);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
+        localize();
     }
 
     @Override
@@ -62,7 +65,7 @@ public class SubTabExtendedVmMonitorView extends AbstractSubTabFormView<UserPort
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void localize(ApplicationConstants constants) {
+    void localize() {
         cpuUsageLabel.setText(constants.vmMonitorCpuUsageLabel());
         memoryUsageLabel.setText(constants.vmMonitorMemoryUsageLabel());
         networkUsageLabel.setText(constants.vmMonitorNetworkUsageLabel());

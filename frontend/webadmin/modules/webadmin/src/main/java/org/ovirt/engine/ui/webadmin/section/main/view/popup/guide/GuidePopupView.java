@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -83,23 +84,19 @@ public class GuidePopupView extends AbstractModelBoundPopupView<GuideModel> impl
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final ApplicationResources resources;
-    private final ApplicationConstants constants;
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public GuidePopupView(EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationConstants constants) {
-        super(eventBus, resources);
-        this.resources = resources;
-        this.constants = constants;
+    public GuidePopupView(EventBus eventBus) {
+        super(eventBus);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants);
+        localize();
         driver.initialize(this);
     }
 
-    void localize(ApplicationConstants constants) {
+    void localize() {
         datacenterCreated = constants.guidePopupDataCenterCreatedLabel();
         clusterCreated = constants.guidePopupClusterCreatedLabel();
         vmCreated = constants.guidePopupVMCreatedLabel();

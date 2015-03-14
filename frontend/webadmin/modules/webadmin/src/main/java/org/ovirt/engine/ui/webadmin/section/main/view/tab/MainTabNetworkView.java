@@ -5,12 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.searchbackend.NetworkConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -22,11 +16,19 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkRoleColumnHelper;
+
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.inject.Inject;
 
 public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<NetworkView, NetworkListModel> implements MainTabNetworkPresenter.ViewDef {
 
@@ -34,19 +36,17 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final ApplicationConstants constants;
-
     private final SafeHtml vmImage;
     private final SafeHtml emptyImage;
 
     private AbstractLinkColumn<NetworkView> providerColumn;
 
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public MainTabNetworkView(MainModelProvider<NetworkView, NetworkListModel> modelProvider,
-            ApplicationConstants constants,
-            ApplicationResources resources) {
+    public MainTabNetworkView(MainModelProvider<NetworkView, NetworkListModel> modelProvider) {
         super(modelProvider);
-        this.constants = constants;
         ViewIdHandler.idHandler.generateAndSetIds(this);
         vmImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkVm()).getHTML());
         emptyImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkEmpty()).getHTML());

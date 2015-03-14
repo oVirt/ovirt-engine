@@ -3,14 +3,19 @@ package org.ovirt.engine.ui.webadmin.widget.table.column;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.resources.client.ImageResource;
 
 /**
  * Image column that corresponds to XAML {@code HistorySeverityTemplate}.
  */
-public class TaskStatusColumn extends AbstractWebAdminImageResourceColumn<EntityModel> {
+public class TaskStatusColumn extends AbstractImageResourceColumn<EntityModel> {
+
+    private final static ApplicationResources resources = AssetProvider.getResources();
 
     @Override
     public ImageResource getValue(EntityModel jobOrStep) {
@@ -26,15 +31,15 @@ public class TaskStatusColumn extends AbstractWebAdminImageResourceColumn<Entity
         setEnumTitle(jobExecutionStatus);
         switch (jobExecutionStatus) {
         case STARTED:
-            return getApplicationResources().waitImage();
+            return resources.waitImage();
         case FINISHED:
-            return getApplicationResources().logNormalImage();
+            return resources.logNormalImage();
         case FAILED:
-            return getApplicationResources().logErrorImage();
+            return resources.logErrorImage();
         case ABORTED:
-            return getApplicationResources().alertImage();
+            return resources.alertImage();
         case UNKNOWN:
-            return getApplicationResources().questionMarkImage();
+            return resources.questionMarkImage();
         default:
             return null;
         }

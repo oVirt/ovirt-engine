@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.CpuProfileListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.ClusterSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -26,6 +27,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabClusterCpuProfilePresenter extends
         AbstractSubTabPresenter<VDSGroup, ClusterListModel<Void>, CpuProfileListModel, SubTabClusterCpuProfilePresenter.ViewDef, SubTabClusterCpuProfilePresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.clusterCpuProfileSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabClusterCpuProfilePresenter> {
@@ -37,9 +40,9 @@ public class SubTabClusterCpuProfilePresenter extends
     }
 
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<CpuProfile, ClusterListModel<Void>, CpuProfileListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.cpuProfilesSubTabLabel(), 7,
+        return new ModelBoundTabData(constants.cpuProfilesSubTabLabel(), 7,
                 modelProvider);
     }
 

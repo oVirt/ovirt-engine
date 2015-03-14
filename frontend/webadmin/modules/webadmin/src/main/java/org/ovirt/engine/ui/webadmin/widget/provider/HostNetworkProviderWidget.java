@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -43,8 +44,8 @@ public class HostNetworkProviderWidget extends AbstractModelBoundPopupWidget<Hos
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private static ApplicationConstants constants = GWT.create(ApplicationConstants.class);
-    private static ApplicationTemplates templates = GWT.create(ApplicationTemplates.class);
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @UiField(provided = true)
     @WithElementId("networkProvider")

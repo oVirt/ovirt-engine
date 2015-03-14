@@ -14,14 +14,14 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlWithSafeHtmlTooltipColumn;
-import org.ovirt.engine.ui.common.widget.table.column.SimpleStatusColumnComparator;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.SimpleStatusColumnComparator;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -34,7 +34,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.inject.Inject;
 
-
 public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkView, PairQueryable<VDSGroup, NetworkCluster>, NetworkListModel, NetworkClusterListModel>
         implements SubTabNetworkClusterPresenter.ViewDef {
 
@@ -42,19 +41,17 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final ApplicationConstants constants;
-    private final ApplicationTemplates templates;
-
     private final SafeHtml displayImage;
     private final SafeHtml migrationImage;
     private final SafeHtml emptyImage;
     private final SafeHtml managementImage;
 
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabNetworkClusterView(SearchableDetailModelProvider<PairQueryable<VDSGroup, NetworkCluster>, NetworkListModel, NetworkClusterListModel> modelProvider, ApplicationConstants constants, ApplicationTemplates templates, ApplicationResources resources) {
+    public SubTabNetworkClusterView(SearchableDetailModelProvider<PairQueryable<VDSGroup, NetworkCluster>, NetworkListModel, NetworkClusterListModel> modelProvider) {
         super(modelProvider);
-        this.constants = constants;
-        this.templates = templates;
         displayImage =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkMonitor()).getHTML());
         migrationImage =

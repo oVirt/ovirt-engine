@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicListItemPresenterWidget;
 import org.ovirt.engine.ui.userportal.widget.basic.MainTabBasicListItemActionButton;
 import org.ovirt.engine.ui.userportal.widget.basic.MainTabBasicListItemMessagesTranslator;
@@ -114,8 +115,6 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     @UiField
     Style style;
 
-    private final ApplicationResources resources;
-    private final ApplicationConstants constants;
     private final ErrorPopupManager errorPopupManager;
 
     private MainTabBasicListItemActionButton runButton;
@@ -123,15 +122,12 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     private MainTabBasicListItemActionButton suspendButton;
     private MainTabBasicListItemActionButton rebootButton;
 
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public MainTabBasicListItemView(
-            ApplicationResources applicationResources,
-            ApplicationResources resources,
-            ApplicationConstants constants,
-            ErrorPopupManager errorPopupManager,
+    public MainTabBasicListItemView(ErrorPopupManager errorPopupManager,
             final MainTabBasicListItemMessagesTranslator translator) {
-        this.resources = resources;
-        this.constants = constants;
         this.errorPopupManager = errorPopupManager;
 
         final String consoleInUse = constants.consoleInUse();

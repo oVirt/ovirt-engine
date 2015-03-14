@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.ViewRadioGroup;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractNullableNumberColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlWithSafeHtmlTooltipColumn;
@@ -25,11 +26,11 @@ import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.host.InterfaceStatusImage;
-import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractWebAdminImageResourceColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
 
 import com.google.gwt.core.client.GWT;
@@ -49,19 +50,16 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
     }
 
     private final ViewRadioGroup<NetworkHostFilter> viewRadioGroup;
-    private final ApplicationConstants constants;
-    private final ApplicationTemplates templates;
 
     private final SafeHtml labelImage;
 
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabNetworkHostView(SearchableDetailModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel> modelProvider,
-            ApplicationConstants constants,
-            ApplicationTemplates templates,
-            ApplicationResources resources) {
+    public SubTabNetworkHostView(SearchableDetailModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel> modelProvider) {
         super(modelProvider);
-        this.constants = constants;
-        this.templates = templates;
         viewRadioGroup = new ViewRadioGroup<NetworkHostFilter>(Arrays.asList(NetworkHostFilter.values()));
         viewRadioGroup.setSelectedValue(NetworkHostFilter.attached);
         viewRadioGroup.addStyleName("stnhv_radioGroup_pfly_fix"); //$NON-NLS-1$
@@ -113,7 +111,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         }
     };
 
-    AbstractWebAdminImageResourceColumn<PairQueryable<VdsNetworkInterface, VDS>> nicStatusColumn = new AbstractWebAdminImageResourceColumn<PairQueryable<VdsNetworkInterface, VDS>>(){
+    AbstractImageResourceColumn<PairQueryable<VdsNetworkInterface, VDS>> nicStatusColumn = new AbstractImageResourceColumn<PairQueryable<VdsNetworkInterface, VDS>>(){
 
         @Override
         public ImageResource getValue(PairQueryable<VdsNetworkInterface, VDS> object) {

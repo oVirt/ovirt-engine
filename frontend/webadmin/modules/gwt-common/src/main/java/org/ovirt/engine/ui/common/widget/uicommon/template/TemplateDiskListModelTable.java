@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
@@ -21,14 +22,16 @@ import com.google.gwt.event.shared.EventBus;
 
 public class TemplateDiskListModelTable<T extends TemplateDiskListModel> extends AbstractModelBoundTableWidget<DiskImage, T> {
 
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+
     public TemplateDiskListModelTable(
             SearchableTableModelProvider<DiskImage, T> modelProvider,
-            EventBus eventBus, ClientStorage clientStorage, CommonApplicationConstants constants) {
+            EventBus eventBus, ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, false);
     }
 
     @Override
-    public void initTable(CommonApplicationConstants constants) {
+    public void initTable() {
         getTable().enableColumnResizing();
 
         AbstractTextColumn<DiskImage> aliasColumn = new AbstractTextColumn<DiskImage>() {

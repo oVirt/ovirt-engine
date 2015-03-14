@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 
 import com.google.inject.Inject;
 
@@ -11,8 +12,10 @@ public class MainTabBasicListItemMessagesTranslator {
 
     private Map<String, String> dictionary = new HashMap<String, String>();
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public MainTabBasicListItemMessagesTranslator(ApplicationConstants constants) {
+    public MainTabBasicListItemMessagesTranslator() {
         dictionary.put("WaitForLaunch", constants.WaitForLaunch()); //$NON-NLS-1$
         dictionary.put("PoweringUp", constants.PoweringUp()); //$NON-NLS-1$
         dictionary.put("RebootInProgress", constants.RebootInProgress()); //$NON-NLS-1$

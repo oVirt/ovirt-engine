@@ -17,7 +17,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostDetailModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MultipleHostsModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.MultipleHostsPopupPresenterWidget;
 
 import com.google.gwt.cell.client.FieldUpdater;
@@ -80,14 +80,16 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public MultipleHostsPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
+    public MultipleHostsPopupView(EventBus eventBus) {
+        super(eventBus);
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants);
-        initTableColumns(constants);
+        localize();
+        initTableColumns();
         initButtons();
 
         driver.initialize(this);
@@ -100,7 +102,7 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
         configureFirewallEditor.setAccessible(true);
     }
 
-    private void initTableColumns(ApplicationConstants constants) {
+    private void initTableColumns() {
 
         Column<EntityModel, String> nameColumn = new Column<EntityModel, String>(new TextInputCell()) {
 
@@ -161,7 +163,7 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
         });
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         useCommonPasswordEditor.setLabel(constants.hostsPopupUseCommonPassword());
         commonPasswordEditor.setLabel(constants.hostsPopupRootPassword());
         applyPasswordButton.setLabel(constants.hostsPopupApply());

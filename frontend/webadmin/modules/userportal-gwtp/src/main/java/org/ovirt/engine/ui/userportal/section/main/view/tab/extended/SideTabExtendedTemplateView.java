@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.userportal.section.main.view.tab.extended;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
@@ -10,16 +9,17 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
+import org.ovirt.engine.ui.userportal.ApplicationMessages;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
 import org.ovirt.engine.ui.userportal.SideTabWithDetailsViewStyle;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedTemplatePresenter;
 import org.ovirt.engine.ui.userportal.section.main.view.AbstractSideTabWithDetailsView;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.UserPortalTemplateListProvider;
 import org.ovirt.engine.ui.userportal.widget.action.UserPortalButtonDefinition;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn;
 import org.ovirt.engine.ui.userportal.widget.table.column.VmImageColumn.OsTypeExtractor;
-
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
@@ -74,17 +74,18 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
         TEMPLATE_SIDE_TAB_WITH_DETAILS_VIEW_STYLE.templateSideTab().ensureInjected();
     }
 
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
+
     @Inject
     public SideTabExtendedTemplateView(
             UserPortalTemplateListProvider provider,
-            ApplicationTemplates templates,
-            ApplicationConstants constants,
-            CommonApplicationConstants commonConstants,
-            ApplicationResources applicationResources,
             ClientStorage clientStorage) {
-        super(provider, applicationResources, clientStorage);
+        super(provider, clientStorage);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(templates, constants, commonConstants);
+        initTable();
     }
 
     @Override
@@ -107,8 +108,7 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
         return SideTabExtendedTemplatePresenter.TYPE_SetSubTabPanelContent;
     }
 
-    private void initTable(final ApplicationTemplates templates, ApplicationConstants constants,
-                           CommonApplicationConstants commonConstants) {
+    private void initTable() {
         getTable().enableColumnResizing();
         final String elementIdPrefix = getTable().getContentTableElementId();
 
@@ -134,7 +134,7 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
                 return template;
             }
         };
-        getTable().addColumn(nameColumn, commonConstants.templateName(), "350px"); //$NON-NLS-1$
+        getTable().addColumn(nameColumn, constants.templateName(), "350px"); //$NON-NLS-1$
 
         final TextCell subversionNumberCell = new TextCell(TextCell.UNLIMITED_LENGTH);
 
@@ -145,7 +145,7 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
                 return "(" + template.getTemplateVersionNumber() + ")"; //$NON-NLS-1$ //$NON-NLS-2$;
             }
         };
-        table.addColumn(subversionNumberColumn, commonConstants.templateVersion(), "140px"); //$NON-NLS-1$
+        table.addColumn(subversionNumberColumn, constants.templateVersion(), "140px"); //$NON-NLS-1$
 
         final TextCell subversionNameCell = new TextCell(TextCell.UNLIMITED_LENGTH);
 
@@ -158,7 +158,7 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
                         : ""; //$NON-NLS-1$
             }
         };
-        table.addColumn(subversionNameColumn, commonConstants.templateVersionName(), "350px"); //$NON-NLS-1$
+        table.addColumn(subversionNameColumn, constants.templateVersionName(), "350px"); //$NON-NLS-1$
 
         final TextCell descriptionCell = new TextCell(TextCell.UNLIMITED_LENGTH);
 
@@ -171,7 +171,7 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
                         : ""; //$NON-NLS-1$
             }
         };
-        table.addColumn(descriptionColumn, commonConstants.templateDescription());
+        table.addColumn(descriptionColumn, constants.templateDescription());
 
         getTable().addActionButton(new UserPortalButtonDefinition<VmTemplate>(constants.editTemplate()) {
             @Override

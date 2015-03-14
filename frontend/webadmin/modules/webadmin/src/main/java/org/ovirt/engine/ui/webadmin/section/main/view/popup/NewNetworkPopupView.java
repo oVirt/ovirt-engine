@@ -4,9 +4,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkClusterModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NewNetworkModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationMessages;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.NewNetworkPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -21,11 +19,11 @@ public class NewNetworkPopupView extends AbstractNetworkPopupView<NewNetworkMode
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public NewNetworkPopupView(EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationConstants constants, ApplicationTemplates templates, ApplicationMessages messages) {
-        super(eventBus, resources, constants, templates, messages);
+    public NewNetworkPopupView(EventBus eventBus) {
+        super(eventBus);
         driver.initialize(this);
     }
 
@@ -36,8 +34,8 @@ public class NewNetworkPopupView extends AbstractNetworkPopupView<NewNetworkMode
     }
 
     @Override
-    protected void localize(ApplicationConstants constants) {
-        super.localize(constants);
+    protected void localize() {
+        super.localize();
         mainLabel.setText(constants.dataCenterNewNetworkPopupLabel());
     }
 

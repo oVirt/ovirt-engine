@@ -9,8 +9,8 @@ import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
-import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ProviderPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.provider.NeutronAgentWidget;
 
@@ -45,8 +45,6 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     interface ViewIdHandler extends ElementIdHandler<ProviderPopupView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
-
-    private final ApplicationConstants constants;
 
     @UiField
     @Path(value = "name.entity")
@@ -123,29 +121,25 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     @UiField
     Style style;
 
-    private final ApplicationResources resources;
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Inject
-    public ProviderPopupView(EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationConstants constants,
-            ApplicationTemplates templates) {
-        super(eventBus, resources);
+    public ProviderPopupView(EventBus eventBus) {
+        super(eventBus);
 
         typeEditor = new ListModelListBoxEditor<ProviderType>(new EnumRenderer());
         requiresAuthenticationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
-        this.resources = resources;
-        this.constants = constants;
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants);
+        localize();
         addContentStyleName(style.contentStyle());
         driver.initialize(this);
     }
 
-    void localize(ApplicationConstants constants) {
+    void localize() {
         // General tab
         generalTab.setLabel(constants.providerPopupGeneralTabLabel());
         nameEditor.setLabel(constants.nameProvider());

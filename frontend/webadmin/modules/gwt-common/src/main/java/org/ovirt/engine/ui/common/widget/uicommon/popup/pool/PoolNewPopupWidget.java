@@ -5,10 +5,6 @@ import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetCon
 
 import java.text.ParseException;
 
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationMessages;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
-import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
@@ -27,12 +23,8 @@ public class PoolNewPopupWidget extends AbstractVmPopupWidget {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    public PoolNewPopupWidget(CommonApplicationConstants constants,
-            CommonApplicationResources resources,
-            CommonApplicationMessages messages,
-            CommonApplicationTemplates applicationTemplates,
-            EventBus eventBus) {
-        super(constants, resources, messages, applicationTemplates, eventBus);
+    public PoolNewPopupWidget(EventBus eventBus) {
+        super(eventBus);
     }
 
     @Override

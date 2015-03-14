@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralSoftwarePresenter;
 import org.ovirt.engine.ui.webadmin.widget.label.VersionTextBoxLabel;
 
@@ -39,7 +40,7 @@ public class SubTabHostGeneralSoftwareView extends AbstractSubTabFormView<VDS, H
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
-    private final ApplicationConstants constants = GWT.create(ApplicationConstants.class);
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     private final Driver driver = GWT.create(Driver.class);
 

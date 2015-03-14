@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.common.widget.uicommon.disks;
 
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Composite;
@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class DisksViewRadioGroup extends Composite {
 
-    CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     RadioButton allButton;
     RadioButton imagesButton;
@@ -40,7 +40,7 @@ public class DisksViewRadioGroup extends Composite {
         buttonsPanel.add(lunsButton);
 
         setDiskStorageType(null);
-        localize(constants);
+        localize();
 
         return buttonsPanel;
     }
@@ -51,7 +51,7 @@ public class DisksViewRadioGroup extends Composite {
         lunsButton.addClickHandler(clickHandler);
     }
 
-    void localize(CommonApplicationConstants constants) {
+    void localize() {
         allButton.setText(constants.allDisksLabel());
         imagesButton.setText(constants.imageDisksLabel());
         lunsButton.setText(constants.lunDisksLabel());

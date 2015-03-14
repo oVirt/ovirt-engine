@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.ClusterAffinityGroupListModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterAffinityGroupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.AbstractSubTabAffinityGroupsView;
 
@@ -22,9 +21,8 @@ public class SubTabClusterAffinityGroupView extends AbstractSubTabAffinityGroups
     }
 
     @Inject
-    public SubTabClusterAffinityGroupView(SearchableDetailModelProvider<AffinityGroup, ClusterListModel<Void>, ClusterAffinityGroupListModel> modelProvider,
-            ApplicationConstants constants) {
-        super(modelProvider, constants);
+    public SubTabClusterAffinityGroupView(SearchableDetailModelProvider<AffinityGroup, ClusterListModel<Void>, ClusterAffinityGroupListModel> modelProvider) {
+        super(modelProvider);
     }
 
     @Override

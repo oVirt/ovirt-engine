@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -12,8 +11,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.vm.VmInterfaceListModelTable;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationMessages;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineNetworkInterfacePresenter;
 
 import com.google.gwt.core.client.GWT;
@@ -26,18 +24,17 @@ public class SubTabVirtualMachineNetworkInterfaceView extends AbstractSubTabTabl
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
     public SubTabVirtualMachineNetworkInterfaceView(
             SearchableDetailModelProvider<VmNetworkInterface, VmListModel<Void>, VmInterfaceListModel> modelProvider,
             EventBus eventBus,
-            ClientStorage clientStorage,
-            ApplicationConstants constants,
-            ApplicationMessages messages,
-            ApplicationTemplates templates) {
-        super(new VmInterfaceListModelTable(modelProvider, eventBus, clientStorage, constants, messages, templates) {
+            ClientStorage clientStorage) {
+        super(new VmInterfaceListModelTable(modelProvider, eventBus, clientStorage) {
             @Override
-            public void initTable(final CommonApplicationConstants constants) {
-                super.initTable(constants);
+            public void initTable() {
+                super.initTable();
 
                 getTable().enableColumnResizing();
 
@@ -53,7 +50,7 @@ public class SubTabVirtualMachineNetworkInterfaceView extends AbstractSubTabTabl
             }
         });
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(constants);
+        initTable();
         initWidget(getModelBoundTableWidget());
     }
 

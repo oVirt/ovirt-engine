@@ -5,19 +5,20 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.ComboBox;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadChangeableListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.VncKeyMapRenderer;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.VncKeyMapRenderer;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
-import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadChangeableListBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.BootSequenceModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RunOnceModel;
@@ -284,21 +285,17 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final CommonApplicationResources resources;
-    private final CommonApplicationConstants constants;
-    private final CommonApplicationMessages messages;
-    private final CommonApplicationTemplates templates;
+    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
 
     @UiFactory
     protected DisclosurePanel createPanel(String label) {
         return new DisclosurePanel(resources.decreaseIcon(), resources.increaseIcon(), label);
     }
 
-    public VmRunOncePopupWidget(CommonApplicationConstants constants, CommonApplicationResources resources, CommonApplicationMessages messages, CommonApplicationTemplates templates) {
-        this.constants = constants;
-        this.resources = resources;
-        this.messages = messages;
-        this.templates = templates;
+    public VmRunOncePopupWidget() {
         initCheckBoxEditors();
         initRadioButtonEditors();
         initListBoxEditors();
@@ -363,7 +360,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     }
 
     void initListBoxEditors() {
-        vncKeyboardLayoutEditor = new ListModelListBoxEditor<>(new VncKeyMapRenderer(messages));
+        vncKeyboardLayoutEditor = new ListModelListBoxEditor<>(new VncKeyMapRenderer());
     }
 
     void initRadioButtonEditors() {

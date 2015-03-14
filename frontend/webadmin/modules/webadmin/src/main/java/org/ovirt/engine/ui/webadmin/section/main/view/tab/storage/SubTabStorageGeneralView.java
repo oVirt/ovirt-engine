@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.widget.label.PercentLabel;
 
@@ -79,9 +80,10 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabStorageGeneralView(DetailModelProvider<StorageListModel, StorageGeneralModel> modelProvider,
-            ApplicationConstants constants) {
+    public SubTabStorageGeneralView(DetailModelProvider<StorageListModel, StorageGeneralModel> modelProvider) {
         super(modelProvider);
 
         // Init formPanel

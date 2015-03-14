@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -68,32 +69,31 @@ public class RemoveBrickPopupView extends AbstractModelBoundPopupView<RemoveBric
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public RemoveBrickPopupView(EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationConstants constants,
-            ApplicationTemplates templates) {
-        super(eventBus, resources);
-        initEditors(constants, resources, templates);
+    public RemoveBrickPopupView(EventBus eventBus) {
+        super(eventBus);
+        initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants);
+        localize();
         addStyles();
         driver.initialize(this);
     }
 
-    private void initEditors(ApplicationConstants constants,
-            ApplicationResources resources,
-            ApplicationTemplates templates) {
+    private void initEditors() {
         migrateEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        migrateInfoIcon = new InfoIcon(templates.italicText(constants.removeBricksMigrateDataInfo()), resources);
+        migrateInfoIcon = new InfoIcon(templates.italicText(constants.removeBricksMigrateDataInfo()));
     }
 
     protected void addStyles() {
         migrateEditor.addContentWidgetContainerStyleName(style.migrateOption());
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         warningLabel.setText(constants.removeBricksWarning());
         migrateEditor.setLabel(constants.removeBricksMigrateData());
     }

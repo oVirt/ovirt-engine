@@ -4,7 +4,6 @@ import org.ovirt.engine.ui.common.view.AbstractPopupView;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DynamicUrlContentPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -29,8 +28,8 @@ public class DynamicUrlContentPopupView extends AbstractPopupView<SimpleDialogPa
     IFrameElement iframeElement;
 
     @Inject
-    public DynamicUrlContentPopupView(EventBus eventBus, ApplicationResources resources) {
-        super(eventBus, resources);
+    public DynamicUrlContentPopupView(EventBus eventBus) {
+        super(eventBus);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
     }
 

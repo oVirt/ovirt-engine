@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.vm;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
@@ -10,8 +11,8 @@ import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 
 public class VmSnapshotInfoGeneral extends GeneralFormPanel {
 
-    private final CommonApplicationConstants constants;
-    private final CommonApplicationMessages messages;
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
 
     private final FormBuilder formBuilder;
 
@@ -19,10 +20,7 @@ public class VmSnapshotInfoGeneral extends GeneralFormPanel {
     private TextBoxLabel minAllocatedMemory = new TextBoxLabel();
     private TextBoxLabel cpuInfo = new TextBoxLabel();
 
-    public VmSnapshotInfoGeneral(CommonApplicationConstants constants,
-            CommonApplicationMessages messages) {
-        this.constants = constants;
-        this.messages = messages;
+    public VmSnapshotInfoGeneral() {
 
         formBuilder = new FormBuilder(this, 1, 3);
 

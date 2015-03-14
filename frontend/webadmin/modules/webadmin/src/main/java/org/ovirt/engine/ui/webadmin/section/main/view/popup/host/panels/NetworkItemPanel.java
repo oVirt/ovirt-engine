@@ -12,9 +12,8 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkCommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperation;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperationFactory.OperationMap;
-import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
@@ -40,8 +39,9 @@ public abstract class NetworkItemPanel extends FocusPanel {
 
     public static final String SETUP_NETWORKS_DATA = "SetupNetworksData"; //$NON-NLS-1$
     public static final String SETUP_NETWORKS_TYPE = "SetupNetworksType"; //$NON-NLS-1$
-    final ApplicationResources resources = ClientGinjectorProvider.getApplicationResources();
-    final ApplicationMessages messages = ClientGinjectorProvider.getApplicationMessages();
+
+    private final static ApplicationResources resources = AssetProvider.getResources();
+
     final Image dragImage = new Image(resources.itemDraggable());
     final PushButton actionButton;
     final NetworkItemModel<?> item;

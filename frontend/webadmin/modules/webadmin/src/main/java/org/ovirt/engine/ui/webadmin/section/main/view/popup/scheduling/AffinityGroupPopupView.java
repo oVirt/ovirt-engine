@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.VmsSelectionModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.model.AffinityGroupModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.AffinityGroupPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -59,16 +59,16 @@ public class AffinityGroupPopupView extends AbstractModelBoundPopupView<Affinity
     @Ignore
     protected KeyValueWidget<VmsSelectionModel> addRemoveVmWidget;
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public AffinityGroupPopupView(EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationConstants constants) {
-        super(eventBus, resources);
+    public AffinityGroupPopupView(EventBus eventBus) {
+        super(eventBus);
         initCheckBoxEditors();
         initAddRemoveWidget();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants);
+        localize();
         driver.initialize(this);
     }
 
@@ -81,7 +81,7 @@ public class AffinityGroupPopupView extends AbstractModelBoundPopupView<Affinity
         enforcingEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         nameEditor.setLabel(constants.affinityGroupNameLabel());
         descriptionEditor.setLabel(constants.affinityDescriptionLabel());
         positiveEditor.setLabel(constants.affinityGroupPolarityLabel());

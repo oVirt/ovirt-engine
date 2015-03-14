@@ -20,7 +20,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeRebalanceStatusPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractHumanReadableTimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractRebalanceFileSizeColumn;
@@ -92,21 +92,18 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
     @WithElementId
     VerticalPanel stopTimePanel;
 
-    ApplicationMessages messages;
-
-    ApplicationConstants constants;
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
 
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
-    public VolumeRebalanceStatusPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, ApplicationMessages messages) {
-        super(eventBus, resources);
-        this.messages = messages;
-        this.constants = constants;
-        initEditors(constants);
+    public VolumeRebalanceStatusPopupView(EventBus eventBus) {
+        super(eventBus);
+        initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants);
+        localize();
         setVisibilities();
         driver.initialize(this);
     }
@@ -115,7 +112,7 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
         status.setVisible(false);
     }
 
-    private void localize(final ApplicationConstants constants) {
+    private void localize() {
         status.setText(constants.rebalanceComplete());
         startTimeEditor.setLabel(constants.rebalanceStartTime());
         volumeEditor.setLabel(constants.rebalanceVolumeName());
@@ -124,7 +121,7 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
         stopTimeEditor.setLabel(constants.rebalanceStopTime());
     }
 
-    void initEditors(ApplicationConstants constants) {
+    void initEditors() {
         rebalanceHostsTable = new EntityModelCellTable<ListModel>(false, true);
 
         statusTimeEditor = getInstanceOfDateEditor();
@@ -147,7 +144,7 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
             }
         }, getColumnHeaderForFilesMoved());
 
-        rebalanceHostsTable.addEntityModelColumn(new AbstractRebalanceFileSizeColumn<EntityModel>(messages) {
+        rebalanceHostsTable.addEntityModelColumn(new AbstractRebalanceFileSizeColumn<EntityModel>() {
 
             @Override
             protected Long getRawValue(EntityModel object) {

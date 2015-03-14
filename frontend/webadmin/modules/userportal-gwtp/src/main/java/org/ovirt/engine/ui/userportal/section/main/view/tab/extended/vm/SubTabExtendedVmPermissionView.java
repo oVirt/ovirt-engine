@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.common.widget.uicommon.permissions.PermissionListMode
 import org.ovirt.engine.ui.uicommonweb.models.configure.UserPortalPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
-import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmPermissionPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmPermissionListModelProvider;
 
@@ -26,11 +25,11 @@ public class SubTabExtendedVmPermissionView extends AbstractSubTabTableWidgetVie
 
     @Inject
     public SubTabExtendedVmPermissionView(VmPermissionListModelProvider modelProvider,
-            EventBus eventBus, ClientStorage clientStorage, ApplicationConstants constants) {
+            EventBus eventBus, ClientStorage clientStorage) {
         super(new PermissionListModelTable<UserPortalPermissionListModel<UserPortalListModel>>(modelProvider, eventBus,
                 clientStorage));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(constants);
+        initTable();
         initWidget(getModelBoundTableWidget());
     }
 

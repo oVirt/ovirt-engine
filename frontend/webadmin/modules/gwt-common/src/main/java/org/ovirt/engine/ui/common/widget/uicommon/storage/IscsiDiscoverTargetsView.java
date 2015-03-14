@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.FocusComposite;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
@@ -93,9 +94,9 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
     @Ignore
     Label messageLabel;
 
-    protected static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
-    protected static final CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
-    protected static final CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
+    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -103,8 +104,8 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
     public IscsiDiscoverTargetsView() {
         initCheckBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
-        addStyles(templates, constants, resources);
+        localize();
+        addStyles();
         driver.initialize(this);
 
         addFocusWidget(addressEditor.asValueBox());
@@ -118,8 +119,7 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
         useUserAuthEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
-    void addStyles(CommonApplicationTemplates templates,
-            CommonApplicationConstants constants, CommonApplicationResources resources) {
+    void addStyles() {
         useUserAuthEditor.addLabelStyleName(style.userAuthLabel());
         addressEditor.addContentWidgetContainerStyleName(style.textBox());
         portEditor.addContentWidgetContainerStyleName(style.textBox());
@@ -128,7 +128,7 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
         chapUserEditor.addLabelStyleName(style.chapLabel());
         chapPassEditor.addLabelStyleName(style.chapLabel());
 
-        discoverTargetsImageButton.setStylePrimaryName(style.discoverTargetsButton()); //$NON-NLS-1$
+        discoverTargetsImageButton.setStylePrimaryName(style.discoverTargetsButton());
 
         SafeHtml expanderImage = SafeHtmlUtils
                 .fromTrustedString(AbstractImagePrototype.create(
@@ -145,7 +145,7 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
                         constants.storageIscsiDiscoverTargetsLabel()));
     }
 
-    protected void localize(CommonApplicationConstants constants) {
+    protected void localize() {
         addressEditor.setLabel(constants.storageIscsiPopupAddressLabel());
         portEditor.setLabel(constants.storageIscsiPopupPortLabel());
         useUserAuthEditor.setLabel(constants.storageIscsiPopupUserAuthLabel());

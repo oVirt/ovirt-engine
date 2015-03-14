@@ -11,15 +11,16 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableTabModelProvider;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractImageButtonCell;
-import org.ovirt.engine.ui.common.widget.table.column.AuditLogSeverityColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AuditLogSeverityColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider.AlertCountChangeHandler;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
@@ -106,9 +107,10 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
     String buttonDownStretch;
     String buttonDownEnd;
 
-    private final ApplicationTemplates templates;
-    private final ApplicationResources resources;
-    private final ApplicationConstants constants;
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     private final SafeHtml alertImage;
 
     private final TaskModelProvider taskModelProvider;
@@ -116,14 +118,8 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
     public AlertsEventsFooterView(AlertModelProvider alertModelProvider,
             EventModelProvider eventModelProvider,
             TaskModelProvider taskModelProvider,
-            ApplicationResources resources,
-            ApplicationTemplates templates,
             EventBus eventBus,
-            ClientStorage clientStorage,
-            ApplicationConstants constants) {
-        this.resources = resources;
-        this.templates = templates;
-        this.constants = constants;
+            ClientStorage clientStorage) {
         this.taskModelProvider = taskModelProvider;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         initButtonHandlers();
@@ -146,7 +142,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         makeSingleRowTable(_eventsTable);
         initTable(_eventsTable);
 
-        tasksTree = new TasksTree(resources, constants, templates);
+        tasksTree = new TasksTree();
         tasksTree.updateTree(taskModelProvider.getModel());
 
         updateButtonResources();

@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.resources.ResourcesModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDataBoundModelProvider;
 
 import com.google.gwt.cell.client.CompositeCell;
@@ -38,6 +39,7 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SingleSelectionModel;
+
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 
@@ -61,22 +63,18 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
     @UiField
     Tree vmTree;
 
-    private final ApplicationResources resources;
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     private final VmSingleSelectionModel vmSelectionModel = new VmSingleSelectionModel();
-
-    private final ApplicationConstants constants;
 
     interface WidgetUiBinder extends UiBinder<Widget, VmTable> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
     public VmTable(UserPortalDataBoundModelProvider<VM, ResourcesModel> modelProvider,
-            SubTableResources headerResources,
-            ApplicationResources resources, ApplicationConstants constants) {
+            SubTableResources headerResources) {
         this.modelProvider = modelProvider;
-        this.resources = resources;
-        this.constants = constants;
         tableHeader = new ActionCellTable<VM>(modelProvider, headerResources);
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         initTable();

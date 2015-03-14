@@ -4,7 +4,6 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundWidgetPopupView;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmChangeCDPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.AttachCdModel;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -18,8 +17,8 @@ public class VmChangeCDPopupView extends AbstractModelBoundWidgetPopupView<Attac
     }
 
     @Inject
-    public VmChangeCDPopupView(EventBus eventBus, ApplicationResources resources) {
-        super(eventBus, resources, new VmChangeCDPopupWidget(), "400px", "170px"); //$NON-NLS-1$ //$NON-NLS-2$
+    public VmChangeCDPopupView(EventBus eventBus) {
+        super(eventBus, new VmChangeCDPopupWidget(), "400px", "170px"); //$NON-NLS-1$ //$NON-NLS-2$
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 

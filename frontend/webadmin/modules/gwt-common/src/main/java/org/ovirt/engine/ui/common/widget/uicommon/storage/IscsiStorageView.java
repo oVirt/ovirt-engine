@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
@@ -72,12 +73,12 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
 
     private final Driver driver = GWT.create(Driver.class);
 
-    protected static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public IscsiStorageView(boolean multiSelection) {
         this.multiSelection = multiSelection;
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
+        localize();
         addStyles();
         driver.initialize(this);
     }
@@ -103,7 +104,7 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
         targetsToLunTab.setTabLabelStyle(style.dialogTab());
     }
 
-    void localize(CommonApplicationConstants constants) {
+    void localize() {
         lunToTargetsTab.setLabel(constants.storageIscsiPopupLunToTargetsTabLabel());
         targetsToLunTab.setLabel(constants.storageIscsiPopupTargetsToLunTabLabel());
     }

@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.ExternalNetworkPanel;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels.ExternalNetworksPanel;
@@ -87,25 +88,20 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     private boolean rendered = false;
     private boolean keepStatusText;
 
-    private final ApplicationConstants constants;
-    private final ApplicationMessages applicationMessages;
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
-    public HostSetupNetworksPopupView(EventBus eventBus,
-                                      ApplicationResources resources,
-                                      ApplicationConstants constants,
-                                      ApplicationTemplates templates,
-                                      ApplicationMessages applicationMessages) {
-        super(eventBus, resources);
-
-        this.constants = constants;
-        this.applicationMessages = applicationMessages;
+    public HostSetupNetworksPopupView(EventBus eventBus) {
+        super(eventBus);
 
         checkConnectivity = new EntityModelCheckBoxEditor(Align.RIGHT);
         commitChanges = new EntityModelCheckBoxEditor(Align.RIGHT);
-        externalNetworksInfo = new InfoIcon(templates.italicText(constants.externalNetworksInfo()), resources);
-        checkConnInfo = new InfoIcon(templates.italicTwoLines(constants.checkConnectivityInfoPart1(), constants.checkConnectivityInfoPart2()), resources);
-        commitChangesInfo = new InfoIcon(templates.italicTwoLines(constants.commitChangesInfoPart1(), constants.commitChangesInfoPart2()), resources);
+        externalNetworksInfo = new InfoIcon(templates.italicText(constants.externalNetworksInfo()));
+        checkConnInfo = new InfoIcon(templates.italicTwoLines(constants.checkConnectivityInfoPart1(), constants.checkConnectivityInfoPart2()));
+        commitChangesInfo = new InfoIcon(templates.italicTwoLines(constants.commitChangesInfoPart1(), constants.commitChangesInfoPart2()));
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initStatusPanel();
@@ -164,7 +160,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
                         setErrorStatus(candidate.getMessage(op1, op2));
                     } else {
                         if (candidate.isDisplayNetworkAffected(op1, op2)) {
-                            setWarningStatus(applicationMessages.moveDisplayNetworkWarning(candidate.getMessage(op1,
+                            setWarningStatus(messages.moveDisplayNetworkWarning(candidate.getMessage(op1,
                                     op2)));
                         } else {
                             setValidStatus(candidate.getMessage(op1, op2));

@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.uicommonweb.models.resources.ResourcesModel;
 import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.AbstractModelActivationPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabExtendedPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDataBoundModelProvider;
@@ -25,6 +26,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SideTabExtendedResourcePresenter extends AbstractModelActivationPresenter<VM, ResourcesModel,
     SideTabExtendedResourcePresenter.ViewDef, SideTabExtendedResourcePresenter.ProxyDef> implements DataChangeListener<VM> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     private final UserPortalDataBoundModelProvider<VM, ResourcesModel> modelProvider;
 
     @ProxyCodeSplit
@@ -36,8 +39,8 @@ public class SideTabExtendedResourcePresenter extends AbstractModelActivationPre
     }
 
     @TabInfo(container = MainTabExtendedPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants) {
-        return new TabDataBasic(applicationConstants.extendedResourceSideTabLabel(), 2);
+    static TabData getTabData() {
+        return new TabDataBasic(constants.extendedResourceSideTabLabel(), 2);
     }
 
     @Inject

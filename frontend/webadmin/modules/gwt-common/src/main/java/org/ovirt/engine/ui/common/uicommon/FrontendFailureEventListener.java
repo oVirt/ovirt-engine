@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.uicommon;
 
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.frontend.FrontendFailureEventArgs;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -11,13 +12,11 @@ import com.google.inject.Inject;
 public class FrontendFailureEventListener implements IEventListener<FrontendFailureEventArgs> {
 
     private final ErrorPopupManager errorPopupManager;
-    private final CommonApplicationMessages messages;
+    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
-    public FrontendFailureEventListener(ErrorPopupManager errorPopupManager,
-            CommonApplicationMessages messages) {
+    public FrontendFailureEventListener(ErrorPopupManager errorPopupManager) {
         this.errorPopupManager = errorPopupManager;
-        this.messages = messages;
     }
 
     @Override

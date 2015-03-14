@@ -2,9 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine;
 
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationMessages;
-import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
@@ -29,15 +26,12 @@ public class SubTabVirtualMachineSnapshotView extends AbstractSubTabTableWidgetV
     @Inject
     public SubTabVirtualMachineSnapshotView(SearchableDetailModelProvider<Snapshot, VmListModel<Void>, VmSnapshotListModel> modelProvider,
             EventBus eventBus,
-            ClientStorage clientStorage,
-            CommonApplicationConstants constants,
-            CommonApplicationMessages messages,
-            CommonApplicationTemplates templates) {
+            ClientStorage clientStorage) {
         super(new VmSnapshotListModelTable<VmSnapshotListModel>(
                 (DataBoundTabModelProvider<Snapshot, VmSnapshotListModel>) modelProvider,
-                eventBus, clientStorage, constants, messages, templates));
+                eventBus, clientStorage));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(constants);
+        initTable();
         initWidget(getModelBoundTableWidget());
     }
 

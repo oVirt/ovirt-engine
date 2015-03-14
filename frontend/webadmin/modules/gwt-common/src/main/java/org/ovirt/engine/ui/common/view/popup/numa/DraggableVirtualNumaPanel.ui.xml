@@ -3,7 +3,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
     xmlns:onu="urn:import:org.ovirt.engine.ui.common.view.popup.numa">
 
-    <ui:with field="commonResources" type="org.ovirt.engine.ui.common.CommonApplicationResources" />
+    <ui:with field="resources" type="org.ovirt.engine.ui.common.CommonApplicationResources" />
 
     <ui:style type="org.ovirt.engine.ui.common.view.popup.numa.DraggableVirtualNumaPanel.Style">
         .panel {
@@ -26,7 +26,7 @@
 
     <g:FocusPanel ui:field="container" addStyleNames="{style.panel}">
         <onu:VirtualNumaPanel ui:field="numaPanel">
-            <g:Image ui:field="dragHandle" resource="{commonResources.dragHandleIcon}" addStyleNames="{style.imageStyle}" visible="false"/>
+            <g:Image ui:field="dragHandle" resource="{resources.dragHandleIcon}" addStyleNames="{style.imageStyle}" visible="false"/>
         </onu:VirtualNumaPanel>
     </g:FocusPanel>
 

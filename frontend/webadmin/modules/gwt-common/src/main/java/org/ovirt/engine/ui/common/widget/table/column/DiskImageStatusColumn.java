@@ -1,9 +1,14 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
-import com.google.gwt.resources.client.ImageResource;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
+
+import com.google.gwt.resources.client.ImageResource;
 
 public class DiskImageStatusColumn extends AbstractImageResourceColumn<DiskImage> {
+
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
 
     @Override
     public ImageResource getValue(DiskImage diskImage) {
@@ -11,11 +16,11 @@ public class DiskImageStatusColumn extends AbstractImageResourceColumn<DiskImage
 
         switch (diskImage.getImageStatus()) {
         case OK:
-            return getCommonResources().upImage();
+            return resources.upImage();
         case LOCKED:
-            return getCommonResources().waitImage();
+            return resources.waitImage();
         case ILLEGAL:
-            return getCommonResources().logErrorImage();
+            return resources.logErrorImage();
         default:
             return null;
         }

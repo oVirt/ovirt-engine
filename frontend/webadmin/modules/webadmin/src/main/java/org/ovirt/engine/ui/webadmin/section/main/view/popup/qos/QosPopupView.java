@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.QosModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.QosParametersModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -42,8 +42,6 @@ public abstract class QosPopupView<T extends QosBase, P extends QosParametersMod
     @WithElementId
     protected QosWidget<T, P> qosWidget;
 
-    protected final ApplicationConstants constants;
-
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, QosPopupView<?, ?>> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
@@ -54,9 +52,10 @@ public abstract class QosPopupView<T extends QosBase, P extends QosParametersMod
 
     private final SimpleBeanEditorDriver<QosModel<T, P>, QosPopupView<T, P>> driver;
 
-    public QosPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
-        this.constants = constants;
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
+    public QosPopupView(EventBus eventBus) {
+        super(eventBus);
 
         initListBoxEditors();
         createQosWidget();

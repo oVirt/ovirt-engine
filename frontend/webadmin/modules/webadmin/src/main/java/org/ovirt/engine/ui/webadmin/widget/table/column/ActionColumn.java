@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.cell.client.ActionCell;
 import com.google.gwt.cell.client.ActionCell.Delegate;
@@ -101,7 +101,7 @@ public class ActionColumn<T> extends IdentityColumn<T> {
      */
     private static class FloatingActionCell<C> extends ActionCell<C> {
         private final ActionCellDelegate<C> delegate;
-        private final ApplicationTemplates templates = ClientGinjectorProvider.getApplicationTemplates();
+        private final static ApplicationTemplates templates = AssetProvider.getTemplates();
 
         public FloatingActionCell(ActionCellDelegate<C> delegate) {
             super("", delegate); //$NON-NLS-1$

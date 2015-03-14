@@ -19,7 +19,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.RecoveryStoragePopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -72,16 +72,13 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final ApplicationConstants applicationConstants;
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public RecoveryStorageConfirmationPopupView(EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationConstants constants) {
-        super(eventBus, resources);
+    public RecoveryStorageConfirmationPopupView(EventBus eventBus) {
+        super(eventBus);
         storageDomainItems = new EntityModelCellTable<ListModel>(false);
         storageDomainItems.setHeight("30%"); //$NON-NLS-1$
-        this.applicationConstants = constants;
         latch = new EntityModelCheckBoxEditor(Align.RIGHT);
         latch.setLabel(constants.approveOperation());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -116,9 +113,9 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
 
                 // Message
-                messageLabel.setHTML(applicationConstants.dataCenterRecoveryStoragePopupMessageLabel());
+                messageLabel.setHTML(constants.dataCenterRecoveryStoragePopupMessageLabel());
 
-                selectNewDSDLabel.setText(applicationConstants.dataCenterRecoveryStoragePopupSelectNewDSDLabel());
+                selectNewDSDLabel.setText(constants.dataCenterRecoveryStoragePopupSelectNewDSDLabel());
             }
         });
     }
@@ -147,7 +144,7 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
         };
 
         storageDomainItems.setColumnWidth(nameColumn, "280px"); //$NON-NLS-1$
-        storageDomainItems.addEntityModelColumn(nameColumn, applicationConstants.nameStorage());
+        storageDomainItems.addEntityModelColumn(nameColumn, constants.nameStorage());
 
         AbstractEntityModelTextColumn<StorageDomain> freeSpaceColumn = new AbstractEntityModelTextColumn<StorageDomain>() {
             @Override
@@ -160,7 +157,7 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
         };
 
         storageDomainItems.setColumnWidth(freeSpaceColumn, "80px"); //$NON-NLS-1$
-        storageDomainItems.addEntityModelColumn(freeSpaceColumn, applicationConstants.freeSpaceStorage());
+        storageDomainItems.addEntityModelColumn(freeSpaceColumn, constants.freeSpaceStorage());
     }
 
 }

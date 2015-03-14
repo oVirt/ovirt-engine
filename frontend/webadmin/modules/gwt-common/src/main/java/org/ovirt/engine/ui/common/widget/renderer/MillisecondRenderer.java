@@ -1,18 +1,14 @@
 package org.ovirt.engine.ui.common.widget.renderer;
 
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.text.shared.AbstractRenderer;
 
 /**
  * Render the refresh panel 'seconds' indicator.
  */
 public class MillisecondRenderer extends AbstractRenderer<Integer> {
-    /**
-     * GWT CommonApplicationConstants to get sec label.
-     */
-    private static final CommonApplicationMessages MESSAGES = GWT.create(CommonApplicationMessages.class);
     /**
      * What to divide a number by to turn milli seconds into seconds.
      */
@@ -21,6 +17,8 @@ public class MillisecondRenderer extends AbstractRenderer<Integer> {
      * The object instance.
      */
     private static final MillisecondRenderer INSTANCE = new MillisecondRenderer();
+
+    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
 
     /**
      * Get the object instance.
@@ -32,7 +30,7 @@ public class MillisecondRenderer extends AbstractRenderer<Integer> {
 
     @Override
     public String render(final Integer milliSeconds) {
-        return MESSAGES.refreshRateSeconds(milliSeconds / MILLI_SECOND_DIVISION);
+        return messages.refreshRateSeconds(milliSeconds / MILLI_SECOND_DIVISION);
     }
 
 }

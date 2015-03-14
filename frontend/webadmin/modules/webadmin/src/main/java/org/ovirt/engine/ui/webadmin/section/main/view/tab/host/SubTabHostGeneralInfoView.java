@@ -25,6 +25,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralInfoPresenter;
 import org.ovirt.engine.ui.webadmin.widget.alert.InLineAlertWidget;
 import org.ovirt.engine.ui.webadmin.widget.label.DetailsTextBoxLabel;
@@ -51,9 +52,8 @@ public class SubTabHostGeneralInfoView extends AbstractSubTabFormView<VDS, HostL
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    // We need this in order to find the icon for alert messages:
-    private final ApplicationResources resources;
-    private final ApplicationConstants constants = GWT.create(ApplicationConstants.class);
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Path("IScsiInitiatorName")
     TextBoxLabel iScsiInitiatorName = new TextBoxLabel();
@@ -68,14 +68,14 @@ public class SubTabHostGeneralInfoView extends AbstractSubTabFormView<VDS, HostL
     TextBoxLabel kdumpStatus = new TextBoxLabel();
     TextBoxLabel selinuxEnforceMode = new TextBoxLabel();
 
-    MemorySizeTextBoxLabel<Integer> physicalMemory = new MemorySizeTextBoxLabel<Integer>(constants);
-    MemorySizeTextBoxLabel<Integer> usedMemory = new MemorySizeTextBoxLabel<Integer>(constants);
-    MemorySizeTextBoxLabel<Integer> freeMemory = new MemorySizeTextBoxLabel<Integer>(constants);
+    MemorySizeTextBoxLabel<Integer> physicalMemory = new MemorySizeTextBoxLabel<Integer>();
+    MemorySizeTextBoxLabel<Integer> usedMemory = new MemorySizeTextBoxLabel<Integer>();
+    MemorySizeTextBoxLabel<Integer> freeMemory = new MemorySizeTextBoxLabel<Integer>();
 
-    MemorySizeTextBoxLabel<Long> swapTotal = new MemorySizeTextBoxLabel<Long>(constants);
-    MemorySizeTextBoxLabel<Long> usedSwap = new MemorySizeTextBoxLabel<Long>(constants);
-    MemorySizeTextBoxLabel<Long> swapFree = new MemorySizeTextBoxLabel<Long>(constants);
-    MemorySizeTextBoxLabel<Float> maxSchedulingMemory = new MemorySizeTextBoxLabel<Float>(constants);
+    MemorySizeTextBoxLabel<Long> swapTotal = new MemorySizeTextBoxLabel<Long>();
+    MemorySizeTextBoxLabel<Long> usedSwap = new MemorySizeTextBoxLabel<Long>();
+    MemorySizeTextBoxLabel<Long> swapFree = new MemorySizeTextBoxLabel<Long>();
+    MemorySizeTextBoxLabel<Float> maxSchedulingMemory = new MemorySizeTextBoxLabel<Float>();
 
     BooleanTextBoxLabel liveSnapshotSupport = new BooleanTextBoxLabel(constants.active(), constants.inactive());
 
@@ -119,12 +119,8 @@ public class SubTabHostGeneralInfoView extends AbstractSubTabFormView<VDS, HostL
     }
 
     @Inject
-    public SubTabHostGeneralInfoView(DetailModelProvider<HostListModel<Void>, HostGeneralModel> modelProvider,
-            ApplicationResources resources) {
+    public SubTabHostGeneralInfoView(DetailModelProvider<HostListModel<Void>, HostGeneralModel> modelProvider) {
         super(modelProvider);
-
-        // Inject a reference to the resources:
-        this.resources = resources;
 
         // Init form panel:
         formPanel = new GeneralFormPanel();
@@ -200,7 +196,7 @@ public class SubTabHostGeneralInfoView extends AbstractSubTabFormView<VDS, HostL
     @Override
     public void addAlert(Widget alertWidget) {
         // Add the composite panel to the alerts panel:
-        alertsList.add(new InLineAlertWidget(resources, alertWidget));
+        alertsList.add(new InLineAlertWidget(alertWidget));
 
         // Make the panel visible if it wasn't:
         if (!alertsPanel.isVisible()) {

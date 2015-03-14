@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
-import com.google.gwt.core.client.GWT;
-import com.google.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.searchbackend.SessionConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -10,22 +8,22 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SessionListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabSessionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
+import com.google.gwt.core.client.GWT;
+import com.google.inject.Inject;
+
 public class MainTabSessionView extends AbstractMainTabWithDetailsTableView<EngineSession, SessionListModel>
         implements MainTabSessionPresenter.ViewDef {
 
-    private final ApplicationConstants constants;
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public MainTabSessionView(MainModelProvider<EngineSession, SessionListModel> modelProvider,
-            ApplicationConstants constants,
-            ApplicationResources resources) {
+    public MainTabSessionView(MainModelProvider<EngineSession, SessionListModel> modelProvider) {
         super(modelProvider);
-        this.constants = constants;
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
         initWidget(getTable());

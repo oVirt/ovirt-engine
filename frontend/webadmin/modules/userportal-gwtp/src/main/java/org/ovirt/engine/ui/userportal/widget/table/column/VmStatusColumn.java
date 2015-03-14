@@ -4,26 +4,23 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.widget.ImageWithDecorator;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDecoratedImageColumn;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
+import org.ovirt.engine.ui.userportal.ApplicationResources;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 
 import com.google.gwt.resources.client.ImageResource;
-
-import org.ovirt.engine.ui.userportal.ApplicationResources;
-import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
 
 public class VmStatusColumn extends AbstractDecoratedImageColumn<UserPortalItemModel> {
     private static final int DECORATOR_POSITION_LEFT = 16;
     private static final int DECORATOR_POSITION_TOP = -9;
 
-    protected ApplicationResources getApplicationResources() {
-        return ClientGinjectorProvider.getApplicationResources();
-    }
+    private final static ApplicationResources resources = AssetProvider.getResources();
 
     @Override
     public ImageWithDecorator getValue(UserPortalItemModel item) {
         VM vm = item.getVM();
         ImageResource changesImage = null;
         if (vm != null && vm.isNextRunConfigurationExists()) {
-            changesImage = getApplicationResources().vmDelta();
+            changesImage = resources.vmDelta();
         }
         return new ImageWithDecorator(getMainImage(item), changesImage, DECORATOR_POSITION_LEFT, DECORATOR_POSITION_TOP);
     }
@@ -33,44 +30,44 @@ public class VmStatusColumn extends AbstractDecoratedImageColumn<UserPortalItemM
         case Up:
             VM vm = item.getVM();
             if (vm == null) {
-                return getApplicationResources().vmStatusRunning();
+                return resources.vmStatusRunning();
             }
 
             if (vm.isRunOnce()) {
-                return getApplicationResources().runOnceUpImage();
+                return resources.runOnceUpImage();
             } else {
-                return getApplicationResources().vmStatusRunning();
+                return resources.vmStatusRunning();
             }
 
         case MigratingFrom:
         case MigratingTo:
-            return getApplicationResources().migrationImage();
+            return resources.migrationImage();
         case WaitForLaunch:
-            return getApplicationResources().waitforlaunch();
+            return resources.waitforlaunch();
         case ImageLocked:
         case SavingState:
-            return getApplicationResources().vmStatusWaiting();
+            return resources.vmStatusWaiting();
         case PoweringUp:
-            return getApplicationResources().vmStatusStarting();
+            return resources.vmStatusStarting();
         case RebootInProgress:
-            return getApplicationResources().rebooting();
+            return resources.rebooting();
         case RestoringState:
-            return getApplicationResources().vmStatusWaiting();
+            return resources.vmStatusWaiting();
         case Paused:
-            return getApplicationResources().vmStatusPaused();
+            return resources.vmStatusPaused();
         case Suspended:
-            return getApplicationResources().vmStatusSuspended();
+            return resources.vmStatusSuspended();
         case NotResponding:
         case Unassigned:
         case Unknown:
-            return getApplicationResources().vmStatusUnknown();
+            return resources.vmStatusUnknown();
         case ImageIllegal:
         case Down:
-            return getApplicationResources().vmStatusStopped();
+            return resources.vmStatusStopped();
         case PoweringDown:
-            return getApplicationResources().vmStatusStopping();
+            return resources.vmStatusStopping();
         default:
-            return getApplicationResources().vmStatusUnknown();
+            return resources.vmStatusUnknown();
         }
     }
 

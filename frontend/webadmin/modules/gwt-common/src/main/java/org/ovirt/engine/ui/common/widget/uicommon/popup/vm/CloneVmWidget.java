@@ -1,11 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.FlowPanel;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
@@ -14,11 +10,15 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.CloneVmModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
 public class CloneVmWidget extends AbstractModelBoundPopupWidget<CloneVmModel> {
-
-    private final CommonApplicationConstants constants;
 
     interface Driver extends SimpleBeanEditorDriver<CloneVmModel, CloneVmWidget> {
     }
@@ -42,9 +42,9 @@ public class CloneVmWidget extends AbstractModelBoundPopupWidget<CloneVmModel> {
     @WithElementId("Message")
     FlowPanel messagePanel;
 
-    public CloneVmWidget(CommonApplicationConstants constants) {
-        this.constants = constants;
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
+    public CloneVmWidget() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);

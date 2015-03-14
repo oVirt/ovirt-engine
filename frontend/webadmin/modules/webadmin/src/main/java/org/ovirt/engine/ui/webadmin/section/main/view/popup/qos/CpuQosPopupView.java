@@ -3,8 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.qos;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.CpuQosParametersModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.QosModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.CpuQosPopupPresenterWidget;
 
 import com.google.gwt.core.shared.GWT;
@@ -18,13 +16,13 @@ public class CpuQosPopupView extends QosPopupView<CpuQos, CpuQosParametersModel>
     }
 
     @Inject
-    public CpuQosPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources, constants);
+    public CpuQosPopupView(EventBus eventBus) {
+        super(eventBus);
     }
 
     @Override
     protected void createQosWidget() {
-        qosWidget = new CpuQosWidget(constants);
+        qosWidget = new CpuQosWidget();
     }
 
     @Override

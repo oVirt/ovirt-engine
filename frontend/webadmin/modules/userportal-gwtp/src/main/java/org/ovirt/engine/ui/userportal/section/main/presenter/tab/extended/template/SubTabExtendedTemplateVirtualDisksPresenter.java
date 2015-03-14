@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.UserPortalTemplateDiskLi
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
@@ -22,6 +23,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabExtendedTemplateVirtualDisksPresenter
         extends AbstractSubTabExtendedTemplatePresenter<UserPortalTemplateDiskListModel, SubTabExtendedTemplateVirtualDisksPresenter.ViewDef, SubTabExtendedTemplateVirtualDisksPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(UserPortalApplicationPlaces.extendedTempplateVirtualDisksSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabExtendedTemplateVirtualDisksPresenter> {
@@ -31,8 +34,8 @@ public class SubTabExtendedTemplateVirtualDisksPresenter
     }
 
     @TabInfo(container = ExtendedTemplateSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants) {
-        return new TabDataBasic(applicationConstants.extendedTemplateVirtualDisksSubTabLabel(), 2);
+    static TabData getTabData() {
+        return new TabDataBasic(constants.extendedTemplateVirtualDisksSubTabLabel(), 2);
     }
 
     @Inject

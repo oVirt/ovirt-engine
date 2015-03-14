@@ -2,15 +2,15 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.networkinterface;
 
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.profile.ProfileEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
@@ -115,22 +115,22 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     @Ignore
     Label macExample;
 
-    public final static CommonApplicationMessages messages = GWT.create(CommonApplicationMessages.class);
-    public final static CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
-    public final static CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
+    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private final Driver driver = GWT.create(Driver.class);
 
-    public NetworkInterfacePopupWidget(EventBus eventBus, CommonApplicationConstants constants) {
+    public NetworkInterfacePopupWidget(EventBus eventBus) {
         initManualWidgets();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
+        localize();
         applyStyles();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
     }
 
-    private void localize(CommonApplicationConstants constants) {
+    private void localize() {
         nameEditor.setLabel(constants.nameNetworkInterfacePopup());
         profileEditor.setLabel(constants.profileNetworkInterfacePopup());
         nicTypeEditor.setLabel(constants.typeNetworkInterfacePopup());

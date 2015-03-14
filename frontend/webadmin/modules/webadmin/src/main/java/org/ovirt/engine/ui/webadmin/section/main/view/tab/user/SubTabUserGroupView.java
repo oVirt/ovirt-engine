@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.users.UserGroup;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserGroupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 
@@ -23,10 +24,12 @@ public class SubTabUserGroupView extends AbstractSubTabTableView<DbUser, UserGro
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabUserGroupView(SearchableDetailModelProvider<UserGroup, UserListModel, UserGroupListModel> modelProvider, ApplicationConstants constants) {
+    public SubTabUserGroupView(SearchableDetailModelProvider<UserGroup, UserListModel, UserGroupListModel> modelProvider) {
         super(modelProvider);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
@@ -35,7 +38,7 @@ public class SubTabUserGroupView extends AbstractSubTabTableView<DbUser, UserGro
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initTable(ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
         AbstractTextColumn<UserGroup> nameColumn = new AbstractTextColumn<UserGroup>() {
             @Override

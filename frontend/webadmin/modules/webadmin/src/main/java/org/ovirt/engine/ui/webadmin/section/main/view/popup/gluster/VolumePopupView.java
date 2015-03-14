@@ -9,8 +9,8 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
@@ -22,7 +22,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumePopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -148,14 +148,16 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public VolumePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
+    public VolumePopupView(EventBus eventBus) {
+        super(eventBus);
         initListBoxEditors();
         initCheckboxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants);
+        localize();
         setVisibilities();
         initAddBricksButton();
         initBricksCountLabele();
@@ -193,7 +195,7 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
         bricksCountEditor.setText(ConstantsManager.getInstance().getMessages().noOfBricksSelected(0));
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         dataCenterEditor.setLabel(constants.dataCenterVolume());
         clusterEditor.setLabel(constants.volumeClusterVolume());
         nameEditor.setLabel(constants.clusterPopupNameLabel());

@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.CustomSelectionCell;
 
 import com.google.gwt.cell.client.FieldUpdater;
@@ -45,8 +45,6 @@ public abstract class RegisterEntityPopupView<E> extends AbstractModelBoundPopup
 
     private final SimpleBeanEditorDriver<RegisterEntityModel<E>, RegisterEntityPopupView<E>> driver;
 
-    protected final ApplicationConstants constants;
-
     protected RegisterEntityInfoPanel<E> registerEntityInfoPanel;
 
     private RegisterEntityModel<E> registerEntityModel;
@@ -61,11 +59,12 @@ public abstract class RegisterEntityPopupView<E> extends AbstractModelBoundPopup
     @Ignore
     EntityModelCellTable<ListModel<ImportEntityData<E>>> entityTable;
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public RegisterEntityPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants,
-                                   SimpleBeanEditorDriver<RegisterEntityModel<E>, RegisterEntityPopupView<E>> driver) {
-        super(eventBus, resources);
-        this.constants = constants;
+    public RegisterEntityPopupView(EventBus eventBus,
+            SimpleBeanEditorDriver<RegisterEntityModel<E>, RegisterEntityPopupView<E>> driver) {
+        super(eventBus);
         this.driver = driver;
 
         initTables();

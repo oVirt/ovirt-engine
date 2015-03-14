@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VolumeSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -26,6 +27,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabVolumeEventPresenter extends AbstractSubTabPresenter<GlusterVolumeEntity, VolumeListModel, VolumeEventListModel, SubTabVolumeEventPresenter.ViewDef, SubTabVolumeEventPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.volumeEventSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabVolumeEventPresenter> {
@@ -35,9 +38,9 @@ public class SubTabVolumeEventPresenter extends AbstractSubTabPresenter<GlusterV
     }
 
     @TabInfo(container = VolumeSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<AuditLog, VolumeListModel, VolumeEventListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.volumeEventSubTabLabel(), 4, modelProvider, Align.RIGHT);
+        return new ModelBoundTabData(constants.volumeEventSubTabLabel(), 4, modelProvider, Align.RIGHT);
     }
 
     @Inject

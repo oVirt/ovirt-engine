@@ -13,11 +13,12 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabTemplatePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractGeneralDateTimeColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
@@ -28,15 +29,17 @@ public class MainTabTemplateView extends AbstractMainTabWithDetailsTableView<VmT
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public MainTabTemplateView(MainModelProvider<VmTemplate, TemplateListModel> modelProvider, ApplicationConstants constants) {
+    public MainTabTemplateView(MainModelProvider<VmTemplate, TemplateListModel> modelProvider) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
-    void initTable(ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         AbstractTextColumn<VmTemplate> nameColumn = new AbstractTextColumn<VmTemplate>() {

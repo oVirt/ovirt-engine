@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHardwareGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralHardwarePresenter;
 import org.ovirt.engine.ui.webadmin.widget.label.NullableNumberTextBoxLabel;
 
@@ -42,7 +42,7 @@ public class SubTabHostGeneralHardwareView
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    ApplicationConstants constants = GWT.create(ApplicationConstants.class);
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     TextBoxLabel hardwareManufacturer = new TextBoxLabel();
     TextBoxLabel hardwareProductName = new TextBoxLabel();
@@ -71,10 +71,8 @@ public class SubTabHostGeneralHardwareView
     }
 
     @Inject
-    public SubTabHostGeneralHardwareView(DetailModelProvider<HostListModel<Void>, HostHardwareGeneralModel> modelProvider,
-            ApplicationResources resources, ApplicationConstants constants) {
+    public SubTabHostGeneralHardwareView(DetailModelProvider<HostListModel<Void>, HostHardwareGeneralModel> modelProvider) {
         super(modelProvider);
-        this.constants = constants;
 
         // Init form panel:
         formPanel = new GeneralFormPanel();

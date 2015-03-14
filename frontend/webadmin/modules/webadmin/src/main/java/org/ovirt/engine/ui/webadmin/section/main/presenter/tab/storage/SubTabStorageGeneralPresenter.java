@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.StorageGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.StorageSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -24,6 +25,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabStorageGeneralPresenter extends AbstractSubTabPresenter<StorageDomain, StorageListModel, StorageGeneralModel, SubTabStorageGeneralPresenter.ViewDef, SubTabStorageGeneralPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.storageGeneralSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabStorageGeneralPresenter> {
@@ -33,9 +36,9 @@ public class SubTabStorageGeneralPresenter extends AbstractSubTabPresenter<Stora
     }
 
     @TabInfo(container = StorageSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             DetailModelProvider<StorageListModel, StorageGeneralModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.storageGeneralSubTabLabel(), 0, modelProvider);
+        return new ModelBoundTabData(constants.storageGeneralSubTabLabel(), 0, modelProvider);
     }
 
     @Inject

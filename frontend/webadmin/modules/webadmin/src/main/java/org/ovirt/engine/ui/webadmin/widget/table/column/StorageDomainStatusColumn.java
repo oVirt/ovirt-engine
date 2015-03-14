@@ -2,10 +2,15 @@ package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.resources.client.ImageResource;
 
-public class StorageDomainStatusColumn extends AbstractWebAdminImageResourceColumn<StorageDomain> {
+public class StorageDomainStatusColumn extends AbstractImageResourceColumn<StorageDomain> {
+
+    private final static ApplicationResources resources = AssetProvider.getResources();
 
     @Override
     public ImageResource getValue(StorageDomain sp) {
@@ -13,25 +18,25 @@ public class StorageDomainStatusColumn extends AbstractWebAdminImageResourceColu
         switch (sp.getStatus()) {
         case Unattached:
             if (sp.getStorageType() == StorageType.GLANCE) {
-                return getApplicationResources().openstackImage();
+                return resources.openstackImage();
             } else {
-                return getApplicationResources().tornChainImage();
+                return resources.tornChainImage();
             }
         case Active:
-            return getApplicationResources().upImage();
+            return resources.upImage();
         case Inactive:
-            return getApplicationResources().downImage();
+            return resources.downImage();
         case Uninitialized:
-            return getApplicationResources().unconfiguredImage();
+            return resources.unconfiguredImage();
         case Activating:
         case Locked:
         case PreparingForMaintenance:
         case Detaching:
-            return getApplicationResources().lockImage();
+            return resources.lockImage();
         case Maintenance:
-            return getApplicationResources().maintenanceImage();
+            return resources.maintenanceImage();
         default:
-            return getApplicationResources().downImage();
+            return resources.downImage();
         }
     }
 

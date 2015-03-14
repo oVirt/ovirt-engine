@@ -7,19 +7,17 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.utils.SizeConverter;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.label.FullDateTimeLabel;
 
 import com.google.gwt.resources.client.ImageResource;
@@ -30,15 +28,11 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class VMsTree<M extends SearchableListModel> extends AbstractSubTabTree<M, VM, Disk> {
 
-    ApplicationResources resources;
-    ApplicationConstants constants;
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
-    public VMsTree(CommonApplicationResources resources,
-            CommonApplicationConstants constants,
-            ApplicationTemplates templates) {
-        super(resources, constants, templates);
-        this.resources = (ApplicationResources) resources;
-        this.constants = (ApplicationConstants) constants;
+    public VMsTree() {
+        super();
     }
 
     @Override

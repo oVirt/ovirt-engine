@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderNetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.ProviderSelectionChangeEvent;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
 
@@ -27,6 +28,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabProviderNetworkPresenter extends AbstractSubTabPresenter<Provider, ProviderListModel, ProviderNetworkListModel, SubTabProviderNetworkPresenter.ViewDef, SubTabProviderNetworkPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     private SystemTreeModelProvider systemTreeModelProvider;
 
     @ProxyCodeSplit
@@ -39,9 +42,9 @@ public class SubTabProviderNetworkPresenter extends AbstractSubTabPresenter<Prov
     }
 
     @TabInfo(container = ProviderSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<NetworkView, ProviderListModel, ProviderNetworkListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.providerNetworksSubTabLabel(), 1, modelProvider);
+        return new ModelBoundTabData(constants.providerNetworksSubTabLabel(), 1, modelProvider);
     }
 
     @Inject

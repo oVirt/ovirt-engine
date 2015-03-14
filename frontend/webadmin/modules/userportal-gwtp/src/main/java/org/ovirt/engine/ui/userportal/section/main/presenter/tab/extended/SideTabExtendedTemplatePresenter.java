@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.AbstractSideTabWithDetailsPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabExtendedPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.UserPortalTemplateListProvider;
@@ -28,6 +29,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SideTabExtendedTemplatePresenter extends AbstractSideTabWithDetailsPresenter<VmTemplate, UserPortalTemplateListModel, SideTabExtendedTemplatePresenter.ViewDef, SideTabExtendedTemplatePresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @GenEvent
     public class ExtendedTemplateSelectionChange {
 
@@ -44,8 +47,8 @@ public class SideTabExtendedTemplatePresenter extends AbstractSideTabWithDetails
     }
 
     @TabInfo(container = MainTabExtendedPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants) {
-        return new TabDataBasic(applicationConstants.extendedTemplateSideTabLabel(), 1);
+    static TabData getTabData() {
+        return new TabDataBasic(constants.extendedTemplateSideTabLabel(), 1);
     }
 
     @ContentSlot

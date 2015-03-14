@@ -5,6 +5,7 @@ import java.util.Iterator;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.VNodeModel;
 
 import com.google.gwt.core.client.GWT;
@@ -24,11 +25,6 @@ public class VirtualNumaPanel extends Composite implements HasWidgets {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    @UiField(provided=true)
-    final CommonApplicationResources commonResources;
-
-    protected final CommonApplicationMessages messages;
-
     @UiField
     FlowPanel container;
 
@@ -46,16 +42,18 @@ public class VirtualNumaPanel extends Composite implements HasWidgets {
     ImageResource pinnedVNumaIcon;
     ImageResource pinnedPartialVNumaIcon;
 
+    @UiField(provided=true)
+    final static CommonApplicationResources resources = AssetProvider.getResources();
+    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+
     @Inject
-    public VirtualNumaPanel(CommonApplicationResources commonResources, CommonApplicationMessages messages) {
-        this.commonResources = commonResources;
-        this.messages = messages;
-        initializeResouceIcons(commonResources);
+    public VirtualNumaPanel() {
+        initializeResouceIcons();
 
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
     }
 
-    private void initializeResouceIcons(CommonApplicationResources resources) {
+    private void initializeResouceIcons() {
         pinnedPartialVNumaIcon = resources.darkPinnedPartialVNumaIcon();
         pinnedVNumaIcon = resources.darkPinnedVNumaIcon();
         partialVNumaIcon = resources.darkPartialVNumaIcon();
@@ -75,12 +73,12 @@ public class VirtualNumaPanel extends Composite implements HasWidgets {
 
     protected void setStatusIcon(VNodeModel nodeModel) {
         if (VMStatus.Up.equals(nodeModel.getVm().getStatus())) {
-            virtualNodeStatus.setResource(commonResources.upImage());
+            virtualNodeStatus.setResource(resources.upImage());
         } else if (VMStatus.Down.equals(nodeModel.getVm().getStatus())) {
-            virtualNodeStatus.setResource(commonResources.downImage());
+            virtualNodeStatus.setResource(resources.downImage());
         } else {
             //Unknown status
-            virtualNodeStatus.setResource(commonResources.questionMarkImage());
+            virtualNodeStatus.setResource(resources.questionMarkImage());
         }
     }
 

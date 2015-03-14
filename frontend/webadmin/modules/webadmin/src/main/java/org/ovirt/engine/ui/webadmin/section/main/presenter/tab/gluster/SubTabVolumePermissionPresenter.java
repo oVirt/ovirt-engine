@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VolumeSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -27,11 +28,13 @@ public class SubTabVolumePermissionPresenter extends AbstractSubTabPresenter<Glu
     PermissionListModel<GlusterVolumeEntity>, SubTabVolumePermissionPresenter.ViewDef,
     SubTabVolumePermissionPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @TabInfo(container = VolumeSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<Permission, VolumeListModel,
             PermissionListModel<GlusterVolumeEntity>> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.volumePermissionSubTabLabel(), 3, modelProvider);
+        return new ModelBoundTabData(constants.volumePermissionSubTabLabel(), 3, modelProvider);
     }
 
     @Inject

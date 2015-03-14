@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.common.widget.action;
 
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -18,7 +18,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
  */
 public abstract class ImageUiCommandButtonDefinition<T> extends UiCommandButtonDefinition<T> {
 
-    private static final CommonApplicationTemplates TEMPLATES = GWT.create(CommonApplicationTemplates.class);
+    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
 
     private final SafeHtml enabledImage;
     private final SafeHtml disabledImage;
@@ -81,15 +81,15 @@ public abstract class ImageUiCommandButtonDefinition<T> extends UiCommandButtonD
     @Override
     public SafeHtml getEnabledHtml() {
         return !showTitle ? enabledImage
-                : (!imageAfterTitle ? TEMPLATES.imageTextButton(enabledImage, getTitle())
-                        : TEMPLATES.textImageButton(getTitle(), enabledImage));
+                : (!imageAfterTitle ? templates.imageTextButton(enabledImage, getTitle())
+                        : templates.textImageButton(getTitle(), enabledImage));
     }
 
     @Override
     public SafeHtml getDisabledHtml() {
         return !showTitle ? disabledImage
-                : (!imageAfterTitle ? TEMPLATES.imageTextButton(disabledImage, getTitle())
-                        : TEMPLATES.textImageButton(getTitle(), disabledImage));
+                : (!imageAfterTitle ? templates.imageTextButton(disabledImage, getTitle())
+                        : templates.textImageButton(getTitle(), disabledImage));
     }
 
 }

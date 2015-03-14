@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.dialog;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 
 import com.google.gwt.core.client.GWT;
@@ -25,14 +26,12 @@ public class AdvancedParametersExpander extends Composite implements FocusableCo
 
     private Element expanderContent;
 
+    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+
     private String titleExpended = constants.advancedParameters();
     private String titleCollapsed = constants.advancedParameters();
-
-    private static final CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
-
-    private static final CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
-
-    private static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
 
     interface ViewUiBinder extends UiBinder<ToggleButton, AdvancedParametersExpander> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);

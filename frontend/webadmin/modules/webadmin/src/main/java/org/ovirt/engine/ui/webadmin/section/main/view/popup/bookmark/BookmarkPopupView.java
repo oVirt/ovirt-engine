@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.bookmark.BookmarkPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -42,16 +42,18 @@ public class BookmarkPopupView extends AbstractModelBoundPopupView<BookmarkModel
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public BookmarkPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
+    public BookmarkPopupView(EventBus eventBus) {
+        super(eventBus);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
+        localize();
         driver.initialize(this);
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void localize(ApplicationConstants constants) {
+    void localize() {
         nameEditor.setLabel(constants.bookmarkPopupNameLabel());
         searchStringEditor.setLabel(constants.bookmarkPopupSearchStringLabel());
     }

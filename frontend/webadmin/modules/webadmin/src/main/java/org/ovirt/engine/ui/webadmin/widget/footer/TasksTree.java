@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
-import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.label.FullDateTimeLabel;
 
 import com.google.gwt.dom.client.Style.TextOverflow;
@@ -26,10 +26,11 @@ import com.google.gwt.user.client.ui.Widget;
 
 public class TasksTree extends AbstractSubTabTree<TaskListModel, Job, Step> {
 
-    public TasksTree(CommonApplicationResources resources,
-            CommonApplicationConstants constants,
-            CommonApplicationTemplates templates) {
-        super(resources, constants, templates);
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
+    public TasksTree() {
+        super();
     }
 
     @Override

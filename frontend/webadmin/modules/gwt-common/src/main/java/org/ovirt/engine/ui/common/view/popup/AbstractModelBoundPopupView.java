@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.common.view.popup;
 
-import org.ovirt.engine.ui.common.CommonApplicationResources;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
@@ -20,9 +22,6 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Base class for popup views bound to a UiCommon Window model.
@@ -52,8 +51,8 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
 
     private final List<FocusableComponentsContainer> focusableButtons = new ArrayList<FocusableComponentsContainer>();
 
-    public AbstractModelBoundPopupView(EventBus eventBus, CommonApplicationResources resources) {
-        super(eventBus, resources);
+    public AbstractModelBoundPopupView(EventBus eventBus) {
+        super(eventBus);
         this.progressContent = createProgressContentWidget();
     }
 

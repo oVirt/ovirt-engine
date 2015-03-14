@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -62,7 +62,7 @@ public class InterfaceEditor extends Composite implements HasEditorDriver<Networ
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private static final ApplicationConstants constants = ClientGinjectorProvider.getApplicationConstants();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     public InterfaceEditor() {
         protocolEditor = new ValueListBox<NetworkBootProtocol>(new EnumRenderer<NetworkBootProtocol>());

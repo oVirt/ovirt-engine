@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaStorageListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.QuotaSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -25,6 +26,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabQuotaStoragePresenter extends AbstractSubTabPresenter<Quota, QuotaListModel, QuotaStorageListModel, SubTabQuotaStoragePresenter.ViewDef, SubTabQuotaStoragePresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.quotaStorageSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabQuotaStoragePresenter> {
@@ -34,9 +37,9 @@ public class SubTabQuotaStoragePresenter extends AbstractSubTabPresenter<Quota, 
     }
 
     @TabInfo(container = QuotaSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<QuotaStorage, QuotaListModel, QuotaStorageListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.quotaStorageSubTabLabel(), 1, modelProvider);
+        return new ModelBoundTabData(constants.quotaStorageSubTabLabel(), 1, modelProvider);
     }
 
     @Inject

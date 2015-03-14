@@ -2,13 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.network;
 
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.Editor;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.ValueLabel;
-import com.google.gwt.user.client.ui.Widget;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -24,9 +17,17 @@ import org.ovirt.engine.ui.common.widget.renderer.EmptyValueRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.widget.renderer.MtuRenderer;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.Editor;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.ValueLabel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView, NetworkListModel, NetworkGeneralModel> implements SubTabNetworkGeneralPresenter.ViewDef, Editor<NetworkGeneralModel> {
 
@@ -41,7 +42,7 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
     interface Driver extends SimpleBeanEditorDriver<NetworkGeneralModel, SubTabNetworkGeneralView> {
     }
 
-    private final ApplicationConstants constants = ClientGinjectorProvider.getApplicationConstants();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     TextBoxLabel name = new TextBoxLabel();
     GuidLabel id = new GuidLabel();

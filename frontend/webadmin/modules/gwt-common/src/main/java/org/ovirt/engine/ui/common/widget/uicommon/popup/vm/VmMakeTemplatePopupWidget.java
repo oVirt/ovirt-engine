@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -126,16 +127,15 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final CommonApplicationTemplates applicationTemplates;
+    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
-    public VmMakeTemplatePopupWidget(CommonApplicationConstants constants,
-            CommonApplicationTemplates applicationTemplates) {
-        this.applicationTemplates = applicationTemplates;
+    public VmMakeTemplatePopupWidget() {
         initListBoxEditors();
         initCheckBoxEditors();
-        disksAllocationView = new DisksAllocationView(constants);
+        disksAllocationView = new DisksAllocationView();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
+        localize();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
         addStyle();
@@ -166,7 +166,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
                         // description takes priority
                         String dcString = !StringHelper.isNullOrEmpty(dcDescription) ? dcDescription : dcName;
 
-                        return applicationTemplates.typeAheadNameDescription(clusterName == null ? "" : clusterName,
+                        return templates.typeAheadNameDescription(clusterName == null ? "" : clusterName,
                                 dcString == null ? "" : dcName).asString();
                     }
 
@@ -195,7 +195,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     }
 
     private String typeAheadNameDescriptionTemplateNullSafe(String name, String description) {
-        return applicationTemplates.typeAheadNameDescription(
+        return templates.typeAheadNameDescription(
                 name != null ? name : "",
                 description != null ? description : "")
                 .asString();
@@ -207,7 +207,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
         isSubTemplateEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
-    void localize(CommonApplicationConstants constants) {
+    void localize() {
         nameEditor.setLabel(constants.makeTemplatePopupNameLabel());
         descriptionEditor.setLabel(constants.makeTemplatePopupDescriptionLabel());
         commentEditor.setLabel(constants.commentLabel());

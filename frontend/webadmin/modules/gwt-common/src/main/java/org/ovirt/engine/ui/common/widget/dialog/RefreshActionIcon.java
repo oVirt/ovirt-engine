@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.dialog;
 
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -14,15 +15,17 @@ public class RefreshActionIcon extends FocusPanel {
     private final DecoratedPopupPanel refreshPanel = new DecoratedPopupPanel(true);
     private ClickHandler refreshIconClickListener;
 
-    public RefreshActionIcon(SafeHtml text, CommonApplicationResources resources) {
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
+
+    public RefreshActionIcon(SafeHtml text) {
         super();
-        initInfoImages(resources);
+        initInfoImages();
         setWidget(refreshImage);
         refreshPanel.setWidget(new HTML(text));
         refreshPanel.getElement().getStyle().setZIndex(1);
     }
 
-    private void initInfoImages(CommonApplicationResources resources) {
+    private void initInfoImages() {
         setRefreshImage(new Image(resources.refreshButtonImage()));
     }
 

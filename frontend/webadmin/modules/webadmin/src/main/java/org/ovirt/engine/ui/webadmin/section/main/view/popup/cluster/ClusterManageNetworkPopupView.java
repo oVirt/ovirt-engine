@@ -3,17 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import com.google.gwt.cell.client.Cell.Context;
-import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.inject.Inject;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -29,8 +18,21 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkRoleColumnHelper;
+
+import com.google.gwt.cell.client.Cell.Context;
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.inject.Inject;
 
 public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<ClusterNetworkManageModel>
         implements ClusterManageNetworkPopupPresenterWidget.ViewDef {
@@ -42,21 +44,17 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
     @UiField(provided = true)
     EntityModelCellTable<ClusterNetworkManageModel> networks;
 
-    private final ApplicationConstants constants;
-    private final ApplicationTemplates templates;
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     private final SafeHtml vmImage;
     private final SafeHtml emptyImage;
 
     @Inject
-    public ClusterManageNetworkPopupView(
-            EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationConstants constants,
-            ApplicationTemplates templates) {
-        super(eventBus, resources);
+    public ClusterManageNetworkPopupView(EventBus eventBus) {
+        super(eventBus);
 
-        this.constants = constants;
-        this.templates = templates;
         this.networks = new EntityModelCellTable<>(SelectionMode.NONE, true);
         vmImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkVm()).getHTML());
         emptyImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkEmpty()).getHTML());
@@ -72,7 +70,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         networks.asEditor().edit(networks.asEditor().flush());
     }
 
-    void initEntityModelCellTable(final ApplicationConstants constants, final ApplicationTemplates templates) {
+    void initEntityModelCellTable() {
         networks.enableColumnResizing();
         boolean multiCluster = networks.asEditor().flush().isMultiCluster();
 
@@ -87,7 +85,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
                 new RequiredAllCheckboxHeader(templates.textForCheckBoxHeader(constants.requiredAll())), "110px"); //$NON-NLS-1$
 
         networks.addColumn(
-                new VmNetworkImageSafeHtmlWithSafeHtmlTooltipColumn(constants),
+                new VmNetworkImageSafeHtmlWithSafeHtmlTooltipColumn(),
                 constants.vmNetwork(), "80px"); //$NON-NLS-1$
 
         networks.addColumn(
@@ -111,7 +109,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
     @Override
     public void edit(ClusterNetworkManageModel clusterNetworkManageModel) {
         networks.asEditor().edit(clusterNetworkManageModel);
-        initEntityModelCellTable(constants, templates);
+        initEntityModelCellTable();
     }
 
     @Override
@@ -152,11 +150,10 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
     private final class VmNetworkImageSafeHtmlWithSafeHtmlTooltipColumn
             extends AbstractSafeHtmlWithSafeHtmlTooltipColumn<ClusterNetworkModel> {
-        private final ApplicationConstants constants;
+        private final ApplicationConstants constants = AssetProvider.getConstants();
 
-        private VmNetworkImageSafeHtmlWithSafeHtmlTooltipColumn(ApplicationConstants constants) {
-            this.constants = constants;
-        }
+        private VmNetworkImageSafeHtmlWithSafeHtmlTooltipColumn() {
+            }
 
         @Override
         public SafeHtml getValue(ClusterNetworkModel clusterNetworkModel) {

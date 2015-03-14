@@ -1,12 +1,11 @@
 package org.ovirt.engine.ui.userportal;
 
 import org.ovirt.engine.ui.common.utils.DynamicMessages;
-
-import com.google.gwt.core.client.GWT;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 
 public class ApplicationDynamicMessages extends DynamicMessages {
 
-    private static final ApplicationConstants constants = GWT.create(ApplicationConstants.class);
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     public ApplicationDynamicMessages() {
         super();

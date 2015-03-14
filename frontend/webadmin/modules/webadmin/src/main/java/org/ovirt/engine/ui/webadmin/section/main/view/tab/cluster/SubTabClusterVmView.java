@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterVmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractUptimeColumn;
@@ -28,10 +29,12 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabClusterVmView(SearchableDetailModelProvider<VM, ClusterListModel<Void>, ClusterVmListModel> modelProvider, ApplicationConstants constants) {
+    public SubTabClusterVmView(SearchableDetailModelProvider<VM, ClusterListModel<Void>, ClusterVmListModel> modelProvider) {
         super(modelProvider);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
@@ -40,7 +43,7 @@ public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, C
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initTable(ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         VmStatusColumn<VM> statusIconColumn = new VmStatusColumn<VM>();

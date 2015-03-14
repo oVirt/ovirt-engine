@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBricksListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostBrickPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.table.column.BrickStatusColumn;
@@ -23,10 +24,12 @@ public class SubTabHostBrickView extends AbstractSubTabTableView<VDS, GlusterBri
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabHostBrickView(SearchableDetailModelProvider<GlusterBrickEntity, HostListModel<Void>, HostBricksListModel> modelProvider, ApplicationConstants constants) {
+    public SubTabHostBrickView(SearchableDetailModelProvider<GlusterBrickEntity, HostListModel<Void>, HostBricksListModel> modelProvider) {
         super(modelProvider);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
@@ -35,7 +38,7 @@ public class SubTabHostBrickView extends AbstractSubTabTableView<VDS, GlusterBri
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initTable(ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         BrickStatusColumn brickStatusColumn = new BrickStatusColumn();
@@ -49,7 +52,7 @@ public class SubTabHostBrickView extends AbstractSubTabTableView<VDS, GlusterBri
             }
         };
         volNameColumn.makeSortable();
-        getTable().addColumn(volNameColumn, constants.volumeName()); //$NON-NLS-1$
+        getTable().addColumn(volNameColumn, constants.volumeName());
 
         AbstractTextColumn<GlusterBrickEntity> brickDirColumn = new AbstractTextColumn<GlusterBrickEntity>() {
             @Override

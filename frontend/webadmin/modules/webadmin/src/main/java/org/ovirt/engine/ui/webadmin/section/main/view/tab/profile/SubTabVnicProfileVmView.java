@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileVmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.profile.SubTabVnicProfileVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 
@@ -22,13 +23,11 @@ public class SubTabVnicProfileVmView extends AbstractSubTabTableView<VnicProfile
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final ApplicationConstants constants;
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public SubTabVnicProfileVmView(SearchableDetailModelProvider<VM, VnicProfileListModel, VnicProfileVmListModel> modelProvider,
-            ApplicationConstants constants) {
+    public SubTabVnicProfileVmView(SearchableDetailModelProvider<VM, VnicProfileListModel, VnicProfileVmListModel> modelProvider) {
         super(modelProvider);
-        this.constants = constants;
         initTable();
         initWidget(getTable());
     }

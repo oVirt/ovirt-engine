@@ -4,12 +4,12 @@ import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -19,8 +19,9 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class VmStatusCell extends AbstractCell<VM> {
 
-    ApplicationResources resources = ClientGinjectorProvider.getApplicationResources();
-    CommonApplicationConstants constants = ClientGinjectorProvider.getApplicationConstants();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
 
     @Override
     public void render(Context context, VM vm, SafeHtmlBuilder sb, String id) {
@@ -107,13 +108,11 @@ public class VmStatusCell extends AbstractCell<VM> {
         // Find the image corresponding to the alert
         SafeHtml alertImageHtml = getResourceImage(vm);
 
-        ApplicationTemplates applicationTemplates = ClientGinjectorProvider.getApplicationTemplates();
-
         if (alertImageHtml != null) {
             // this already has the tooltip set
-            sb.append(applicationTemplates.statusWithAlertTemplate(statusImageHtml, alertImageHtml, id));
+            sb.append(templates.statusWithAlertTemplate(statusImageHtml, alertImageHtml, id));
         } else {
-            sb.append(applicationTemplates.statusTemplate(statusImageHtml, tooltip, id));
+            sb.append(templates.statusTemplate(statusImageHtml, tooltip, id));
         }
 
     }

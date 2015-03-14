@@ -5,13 +5,14 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.cell.RadioboxCell;
@@ -85,28 +86,19 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
     private PreviewSnapshotModel previewSnapshotModel;
     private VmSnapshotInfoPanel vmSnapshotInfoPanel;
 
-    private final CommonApplicationResources resources;
-    private final CommonApplicationConstants constants;
-    private final CommonApplicationMessages messages;
-    private final CommonApplicationTemplates templates;
+    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
 
     private final Driver driver = GWT.create(Driver.class);
 
-    public VmSnapshotCustomPreviewPopupWidget(CommonApplicationResources resources, CommonApplicationConstants constants,
-                                              CommonApplicationMessages messages, CommonApplicationTemplates templates) {
-        this.resources = resources;
-        this.constants = constants;
-        this.messages = messages;
-        this.templates = templates;
-        initEditors();
+    public VmSnapshotCustomPreviewPopupWidget() {
         initTables();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
-    }
-
-    private void initEditors() {
     }
 
     private void initTables() {
@@ -115,7 +107,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
         previewTable.enableColumnResizing();
 
         // Create Snapshot information tab panel
-        vmSnapshotInfoPanel = new VmSnapshotInfoPanel(constants, messages, templates);
+        vmSnapshotInfoPanel = new VmSnapshotInfoPanel();
 
         // Create split layout panel
         splitLayoutPanel = new SplitLayoutPanel(4);

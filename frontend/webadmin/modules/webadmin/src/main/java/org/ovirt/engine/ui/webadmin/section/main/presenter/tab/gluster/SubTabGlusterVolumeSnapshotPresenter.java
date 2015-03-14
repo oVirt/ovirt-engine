@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeSnapshotListM
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VolumeSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -24,10 +25,13 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public class SubTabGlusterVolumeSnapshotPresenter extends AbstractSubTabPresenter<GlusterVolumeEntity, VolumeListModel, GlusterVolumeSnapshotListModel, SubTabGlusterVolumeSnapshotPresenter.ViewDef, SubTabGlusterVolumeSnapshotPresenter.ProxyDef> {
+
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @TabInfo(container = VolumeSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<GlusterVolumeSnapshotEntity, VolumeListModel, GlusterVolumeSnapshotListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.volumeSnapshotSubTabLabel(), 5, modelProvider);
+        return new ModelBoundTabData(constants.volumeSnapshotSubTabLabel(), 5, modelProvider);
     }
 
     @Inject

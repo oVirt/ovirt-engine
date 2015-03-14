@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedVirtualMachinePresenter;
 import org.ovirt.engine.ui.userportal.section.main.view.AbstractSideTabWithDetailsView;
@@ -62,8 +63,8 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
     protected abstract class AbstractVmButtonsImageButtonCell extends ImageButtonCell<UserPortalItemModel> {
 
         public AbstractVmButtonsImageButtonCell(ImageResource enabledImage, ImageResource disabledImage) {
-            super(enabledImage, applicationResources.sideTabExtendedVmStyle().vmButtonEnabled(),
-                    disabledImage, applicationResources.sideTabExtendedVmStyle().vmButtonDisabled());
+            super(enabledImage, resources.sideTabExtendedVmStyle().vmButtonEnabled(),
+                    disabledImage, resources.sideTabExtendedVmStyle().vmButtonDisabled());
         }
     }
 
@@ -78,27 +79,24 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
 
     private static final VmTableResources vmTableResources = GWT.create(VmTableResources.class);
 
-    private final ApplicationResources applicationResources;
     private final MainTabBasicListItemMessagesTranslator statusTranslator;
-    private final ApplicationConstants constants;
     private final ErrorPopupManager errorPopupManager;
+
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SideTabExtendedVirtualMachineView(UserPortalListProvider modelProvider,
-            ApplicationTemplates templates,
-            ApplicationResources applicationResources,
             ErrorPopupManager errorPopupManager,
             MainTabBasicListItemMessagesTranslator translator,
-            ApplicationConstants constants,
             ClientStorage clientStorage) {
-        super(modelProvider, applicationResources, clientStorage);
-        this.applicationResources = applicationResources;
+        super(modelProvider, clientStorage);
         this.statusTranslator = translator;
-        this.constants = constants;
         this.errorPopupManager = errorPopupManager;
-        applicationResources.sideTabExtendedVmStyle().ensureInjected();
+        resources.sideTabExtendedVmStyle().ensureInjected();
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(templates);
+        initTable();
     }
 
     @Override
@@ -122,7 +120,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         return SideTabExtendedVirtualMachinePresenter.TYPE_SetSubTabPanelContent;
     }
 
-    void initTable(final ApplicationTemplates templates) {
+    void initTable() {
         final String elementIdPrefix = getTable().getContentTableElementId();
 
         VmImageColumn<UserPortalItemModel> vmImageColumn =
@@ -135,7 +133,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
 
         ImageMaskCell<UserPortalItemModel> vmImageColumnWithMask = new ImageMaskCell<UserPortalItemModel>(
                 vmImageColumn,
-                applicationResources.disabledSmallMask(),
+                resources.disabledSmallMask(),
                 new ShowMask<UserPortalItemModel>() {
                     @Override
                     public boolean showMask(UserPortalItemModel value) {
@@ -197,8 +195,8 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         }, constants.empty(), "154px"); //$NON-NLS-1$
 
         ConsoleButtonCell openConsoleCell = new ConsoleButtonCell(
-                applicationResources.sideTabExtendedVmStyle().enabledConsoleButton(),
-                applicationResources.sideTabExtendedVmStyle().disabledConsoleButton(),
+                resources.sideTabExtendedVmStyle().enabledConsoleButton(),
+                resources.sideTabExtendedVmStyle().disabledConsoleButton(),
                 constants.openConsoleLabel(),
                 new AbstractConsoleButtonCell.ConsoleButtonCommand() {
                     @Override
@@ -218,8 +216,8 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         getTable().addColumn(new UserPortalItemSimpleColumn(openConsoleCell), constants.empty(), "100px"); //$NON-NLS-1$
 
         ConsoleEditButtonCell consoleEditCell = new ConsoleEditButtonCell(
-                applicationResources.sideTabExtendedVmStyle().enabledEditConsoleButton(),
-                applicationResources.sideTabExtendedVmStyle().disabledEditConsoleButton(),
+                resources.sideTabExtendedVmStyle().enabledEditConsoleButton(),
+                resources.sideTabExtendedVmStyle().disabledEditConsoleButton(),
                 constants.editConsoleLabel(),
                 new AbstractConsoleButtonCell.ConsoleButtonCommand() {
                     @Override
@@ -288,8 +286,8 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
                 }
 
                 return row.isVmUp() ?
-                        applicationResources.sideTabExtendedVmStyle().vmUpRow() :
-                            applicationResources.sideTabExtendedVmStyle().vmDownRow();
+                        resources.sideTabExtendedVmStyle().vmUpRow() :
+                            resources.sideTabExtendedVmStyle().vmDownRow();
             }
 
             protected boolean isSelectedRow(UserPortalItemModel row) {
@@ -321,7 +319,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
 
     protected CompositeCell<UserPortalItemModel> createActionsCompositeCell(String elementIdPrefix) {
         ImageButtonCell<UserPortalItemModel> runCell = new AbstractVmButtonsImageButtonCell(
-                applicationResources.playIcon(), applicationResources.playDisabledIcon()) {
+                resources.playIcon(), resources.playDisabledIcon()) {
             @Override
             protected String getTitle(UserPortalItemModel value) {
                 return value.isPool() ? constants.takeVmLabel() : constants.runVmLabel();
@@ -336,7 +334,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         runCell.setColumnId("runButton"); //$NON-NLS-1$
 
         ImageButtonCell<UserPortalItemModel> shutdownCell = new AbstractVmButtonsImageButtonCell(
-                applicationResources.stopIcon(), applicationResources.stopDisabledIcon()) {
+                resources.stopIcon(), resources.stopDisabledIcon()) {
             @Override
             protected String getTitle(UserPortalItemModel value) {
                 return value.isPool() ? constants.returnVmLabel() : constants.shutDownVm();
@@ -351,7 +349,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         shutdownCell.setColumnId("shutdownButton"); //$NON-NLS-1$
 
         ImageButtonCell<UserPortalItemModel> suspendCell = new AbstractVmButtonsImageButtonCell(
-                applicationResources.suspendIcon(), applicationResources.suspendDisabledIcon()) {
+                resources.suspendIcon(), resources.suspendDisabledIcon()) {
             @Override
             protected String getTitle(UserPortalItemModel value) {
                 return constants.suspendVmLabel();
@@ -366,7 +364,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         suspendCell.setColumnId("suspendButton"); //$NON-NLS-1$
 
         ImageButtonCell<UserPortalItemModel> stopCell = new AbstractVmButtonsImageButtonCell(
-                applicationResources.powerIcon(), applicationResources.powerDisabledIcon()) {
+                resources.powerIcon(), resources.powerDisabledIcon()) {
             @Override
             protected String getTitle(UserPortalItemModel value) {
                 return constants.powerOffVm();
@@ -381,7 +379,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         stopCell.setColumnId("stopButton"); //$NON-NLS-1$
 
         ImageButtonCell<UserPortalItemModel> rebootCell = new AbstractVmButtonsImageButtonCell(
-                applicationResources.rebootIcon(), applicationResources.rebootDisabledIcon()) {
+                resources.rebootIcon(), resources.rebootDisabledIcon()) {
 
             @Override
             protected String getTitle(UserPortalItemModel value) {

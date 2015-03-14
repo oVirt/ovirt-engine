@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractNullableNumberColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
@@ -30,25 +31,19 @@ import com.google.gwt.view.client.NoSelectionModel;
 
 public class VmInterfaceInfoPanel extends TabLayoutPanel {
 
-    private final CommonApplicationConstants constants;
-    private final CommonApplicationTemplates templates;
-    private final CommonApplicationMessages messages;
-
     private final VmInterfaceListModel vmInterfaceListModel;
 
     private EntityModelCellTable<ListModel> statisticsTable;
     private EntityModelCellTable<ListModel> guestAgentDataTable;
 
-    public VmInterfaceInfoPanel(VmInterfaceListModel vmInterfaceListModel,
-            CommonApplicationConstants constants,
-            CommonApplicationMessages messages,
-            CommonApplicationTemplates templates) {
+    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+
+    public VmInterfaceInfoPanel(VmInterfaceListModel vmInterfaceListModel) {
         super(CommonApplicationTemplates.TAB_BAR_HEIGHT, Unit.PX);
 
         this.vmInterfaceListModel = vmInterfaceListModel;
-        this.constants = constants;
-        this.messages = messages;
-        this.templates = templates;
 
         initPanel();
         addStyle();

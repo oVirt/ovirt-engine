@@ -1,18 +1,18 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.table.cell.StorageDomainsCell;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.cellview.client.Column;
 
 public class StorageDomainsColumn extends Column<Disk, String> implements ColumnWithElementId {
 
-    private static final CommonApplicationConstants CONSTANTS = GWT.create(CommonApplicationConstants.class);
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public StorageDomainsColumn() {
         super(new StorageDomainsCell());
@@ -21,7 +21,7 @@ public class StorageDomainsColumn extends Column<Disk, String> implements Column
     @Override
     public String getValue(Disk object) {
         if (object.getDiskStorageType() != DiskStorageType.IMAGE) {
-            return CONSTANTS.empty();
+            return constants.empty();
         }
 
         DiskImage diskImage = (DiskImage) object;
@@ -30,13 +30,13 @@ public class StorageDomainsColumn extends Column<Disk, String> implements Column
         int numOfStorageDomains = diskImage.getStoragesNames() != null ?
                 diskImage.getStoragesNames().size() : 0;
         if (numOfStorageDomains == 0) {
-            return CONSTANTS.empty();
+            return constants.empty();
         }
         else if (numOfStorageDomains == 1) {
             return diskImage.getStoragesNames().get(0);
         }
         else {
-            return numOfStorageDomains + CONSTANTS.space() + CONSTANTS.storageDomainsLabelDisk();
+            return numOfStorageDomains + constants.space() + constants.storageDomainsLabelDisk();
         }
     }
 

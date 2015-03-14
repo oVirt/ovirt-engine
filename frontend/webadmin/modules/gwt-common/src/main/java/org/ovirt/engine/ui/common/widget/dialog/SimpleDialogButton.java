@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.common.widget.dialog;
 
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
 public class SimpleDialogButton extends AbstractDialogButton {
@@ -11,8 +11,8 @@ public class SimpleDialogButton extends AbstractDialogButton {
     private static final String BUTTON_STYLE = "dialog-button-text"; //$NON-NLS-1$
     private static final String BUTTON_STYLE_DISABLED = "dialog-button-text-disabled"; //$NON-NLS-1$
 
-    private static final CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
-    private static final CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
+    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
 
     public SimpleDialogButton() {
         super(""); //$NON-NLS-1$

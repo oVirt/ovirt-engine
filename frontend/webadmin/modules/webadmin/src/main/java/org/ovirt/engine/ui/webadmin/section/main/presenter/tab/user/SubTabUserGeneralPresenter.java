@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.users.UserGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.UserSelectionChangeEvent;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.user.SubTabUserGeneralView;
 
@@ -25,6 +26,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabUserGeneralPresenter extends AbstractSubTabPresenter<DbUser, UserListModel, UserGeneralModel, SubTabUserGeneralView, SubTabUserGeneralPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.userGeneralSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabUserGeneralPresenter> {
@@ -34,9 +37,9 @@ public class SubTabUserGeneralPresenter extends AbstractSubTabPresenter<DbUser, 
     }
 
     @TabInfo(container = UserSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             DetailModelProvider<UserListModel, UserGeneralModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.userGeneralSubTabLabel(), 0, modelProvider);
+        return new ModelBoundTabData(constants.userGeneralSubTabLabel(), 0, modelProvider);
     }
 
     @Inject

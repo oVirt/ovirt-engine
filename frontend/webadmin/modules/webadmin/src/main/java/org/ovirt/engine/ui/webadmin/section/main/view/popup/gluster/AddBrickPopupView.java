@@ -24,7 +24,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.AddBrickPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -129,19 +129,18 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final ApplicationConstants constants;
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public AddBrickPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
-        this.constants = constants;
+    public AddBrickPopupView(EventBus eventBus) {
+        super(eventBus);
         bricksTable = new EntityModelCellTable<ListModel>(true);
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants);
+        localize();
         addStyles();
-        initTableColumns(constants);
+        initTableColumns();
         initButtons();
         driver.initialize(this);
     }
@@ -165,7 +164,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
         forceEditor.addContentWidgetContainerStyleName(style.forceEditorWidget());
     }
 
-    protected void initTableColumns(ApplicationConstants constants){
+    protected void initTableColumns(){
         // Table Entity Columns
         bricksTable.addEntityModelColumn(new AbstractEntityModelTextColumn<GlusterBrickEntity>() {
             @Override
@@ -239,7 +238,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
         }
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         volumeTypeEditor.setLabel(constants.volumeTypeVolume());
         replicaCountEditor.setLabel(constants.replicaCountVolume());
         stripeCountEditor.setLabel(constants.stripeCountVolume());

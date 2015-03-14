@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VolumeSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -24,10 +25,12 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabVolumeGeneralPresenter extends AbstractSubTabPresenter<GlusterVolumeEntity, VolumeListModel, VolumeGeneralModel, SubTabVolumeGeneralPresenter.ViewDef, SubTabVolumeGeneralPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @TabInfo(container = VolumeSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             DetailModelProvider<VolumeListModel, VolumeGeneralModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.volumeGeneralSubTabLabel(), 0, modelProvider);
+        return new ModelBoundTabData(constants.volumeGeneralSubTabLabel(), 0, modelProvider);
     }
 
     @Inject

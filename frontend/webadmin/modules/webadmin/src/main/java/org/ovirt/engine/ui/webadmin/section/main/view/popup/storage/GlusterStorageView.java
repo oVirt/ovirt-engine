@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.GlusterStorageModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
@@ -34,6 +34,8 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
     interface ViewIdHandler extends ElementIdHandler<GlusterStorageView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
+
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @UiField
     WidgetStyle style;
@@ -76,7 +78,7 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
 
     public GlusterStorageView() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(ClientGinjectorProvider.getApplicationConstants());
+        localize();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         addStyles();
         Driver.driver.initialize(this);
@@ -86,8 +88,7 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
         pathEditor.addContentWidgetContainerStyleName(style.pathEditorContent());
     }
 
-    void localize(ApplicationConstants constants) {
-
+    void localize() {
         pathLabel.setText(constants.storagePopupPosixPathLabel());
         pathHintLabel.setText(constants.storagePopupGlusterPathHintLabel());
         vfsTypeLabel.setText(constants.storagePopupVfsTypeLabel());

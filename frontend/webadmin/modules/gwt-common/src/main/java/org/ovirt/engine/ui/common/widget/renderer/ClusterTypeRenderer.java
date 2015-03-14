@@ -1,17 +1,14 @@
 package org.ovirt.engine.ui.common.widget.renderer;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel;
 
 import com.google.gwt.text.shared.AbstractRenderer;
 
 public class ClusterTypeRenderer extends AbstractRenderer<ClusterGeneralModel.ClusterType> {
 
-    private CommonApplicationConstants constants;
-
-    public ClusterTypeRenderer(CommonApplicationConstants constants) {
-        this.constants = constants;
-    }
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @Override
     public String render(ClusterGeneralModel.ClusterType object) {

@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.provider.SubTabProviderGeneralPresenter;
 
 import com.google.gwt.core.client.GWT;
@@ -40,7 +40,6 @@ public class SubTabProviderGeneralView extends AbstractSubTabFormView<Provider, 
     interface Driver extends SimpleBeanEditorDriver<ProviderGeneralModel, SubTabProviderGeneralView> { }
 
     private final Driver driver = GWT.create(Driver.class);
-    private final ApplicationConstants constants = ClientGinjectorProvider.getApplicationConstants();
 
     TextBoxLabel name = new TextBoxLabel();
     ValueLabel<ProviderType> type = new ValueLabel<ProviderType>(new EnumRenderer<ProviderType>());
@@ -52,6 +51,8 @@ public class SubTabProviderGeneralView extends AbstractSubTabFormView<Provider, 
     GeneralFormPanel formPanel;
 
     FormBuilder formBuilder;
+
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SubTabProviderGeneralView(DetailModelProvider<ProviderListModel, ProviderGeneralModel> modelProvider) {

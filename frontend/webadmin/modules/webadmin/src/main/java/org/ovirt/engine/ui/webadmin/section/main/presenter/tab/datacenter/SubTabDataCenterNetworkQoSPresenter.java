@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkQoSListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DataCenterSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -27,6 +28,8 @@ public class SubTabDataCenterNetworkQoSPresenter extends AbstractSubTabPresenter
         DataCenterNetworkQoSListModel, SubTabDataCenterNetworkQoSPresenter.ViewDef,
         SubTabDataCenterNetworkQoSPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.dataCenterNetworkQoSSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabDataCenterNetworkQoSPresenter> {
@@ -36,9 +39,9 @@ public class SubTabDataCenterNetworkQoSPresenter extends AbstractSubTabPresenter
     }
 
     @TabInfo(container = DataCenterQosSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<NetworkQoS, DataCenterListModel, DataCenterNetworkQoSListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.dataCenterNetworkQoSSubTabLabel(), 1, modelProvider);
+        return new ModelBoundTabData(constants.dataCenterNetworkQoSSubTabLabel(), 1, modelProvider);
     }
 
     @Inject

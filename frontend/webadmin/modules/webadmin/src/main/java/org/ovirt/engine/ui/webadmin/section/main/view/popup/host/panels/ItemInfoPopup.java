@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -27,10 +27,12 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
 
     private final FlexTable contents = new FlexTable();
     private static final EnumRenderer<NetworkBootProtocol> RENDERER = new EnumRenderer<NetworkBootProtocol>();
-    private final ApplicationConstants constants = ClientGinjectorProvider.getApplicationConstants();
-    private final ApplicationTemplates templates = ClientGinjectorProvider.getApplicationTemplates();
-    private final ApplicationResources resources = ClientGinjectorProvider.getApplicationResources();
-    private final ApplicationMessages messages = ClientGinjectorProvider.getApplicationMessages();
+
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
+
     SafeHtml mgmtNetworkImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.mgmtNetwork())
             .getHTML());
     SafeHtml vmImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkVm()).getHTML());

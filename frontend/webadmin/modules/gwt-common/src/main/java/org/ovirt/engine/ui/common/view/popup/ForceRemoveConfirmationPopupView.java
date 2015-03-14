@@ -1,8 +1,7 @@
 package org.ovirt.engine.ui.common.view.popup;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationMessages;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.presenter.popup.ForceRemoveConfirmationPopupPresenterWidget;
@@ -55,18 +54,11 @@ public abstract class ForceRemoveConfirmationPopupView extends AbstractModelBoun
 
     private final Driver driver = GWT.create(Driver.class);
 
-    protected final CommonApplicationConstants constants;
-    protected final CommonApplicationMessages messages;
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public ForceRemoveConfirmationPopupView(EventBus eventBus,
-            CommonApplicationResources resources,
-            CommonApplicationConstants constants,
-            CommonApplicationMessages messages) {
-        super(eventBus, resources);
-
-        this.constants = constants;
-        this.messages = messages;
+    public ForceRemoveConfirmationPopupView(EventBus eventBus) {
+        super(eventBus);
 
         latch = new EntityModelCheckBoxEditor(Align.RIGHT);
         latch.setLabel(constants.approveOperation());

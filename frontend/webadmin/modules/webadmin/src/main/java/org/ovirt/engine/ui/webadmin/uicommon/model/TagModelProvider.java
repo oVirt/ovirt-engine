@@ -17,8 +17,6 @@ import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.tag.TagPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.tags.TagItemCell;
 
@@ -47,10 +45,9 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
     public TagModelProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             Provider<TagPopupPresenterWidget> tagPopupPresenterWidgetProvider,
-            Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
-            ApplicationResources applicationResources, ApplicationTemplates applicationTemplates) {
+            Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         super(eventBus, defaultConfirmPopupProvider);
-        this.cell = new TagItemCell(applicationResources, applicationTemplates);
+        this.cell = new TagItemCell();
         this.popupProvider = tagPopupPresenterWidgetProvider;
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
 

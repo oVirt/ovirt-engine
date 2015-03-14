@@ -5,10 +5,6 @@ import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetCon
 import java.util.Arrays;
 import java.util.List;
 
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationMessages;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
-import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
@@ -23,12 +19,8 @@ public class TemplateEditPopupWidget extends AbstractVmPopupWidget {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    public TemplateEditPopupWidget(CommonApplicationConstants constants,
-                                   CommonApplicationResources resources,
-                                   CommonApplicationMessages messages,
-                                   CommonApplicationTemplates applicationTemplates,
-                                   EventBus eventBus) {
-        super(constants, resources, messages, applicationTemplates, eventBus);
+    public TemplateEditPopupWidget(EventBus eventBus) {
+        super(eventBus);
     }
 
     @Override

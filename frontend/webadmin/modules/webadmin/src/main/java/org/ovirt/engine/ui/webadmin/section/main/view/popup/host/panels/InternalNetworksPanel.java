@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class InternalNetworksPanel extends UnassignedNetworksPanel {
+
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     private final VerticalPanel requiredPanel = new VerticalPanel();
     private final VerticalPanel nonRequiredPanel = new VerticalPanel();

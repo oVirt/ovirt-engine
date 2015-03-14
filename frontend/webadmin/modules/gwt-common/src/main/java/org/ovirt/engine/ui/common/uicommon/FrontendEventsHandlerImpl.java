@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.frontend.IFrontendEventsHandler;
 import org.ovirt.engine.ui.frontend.Message;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
@@ -21,12 +22,11 @@ import com.google.inject.Inject;
 public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
 
     private final ErrorPopupManager errorPopupManager;
-    private final CommonApplicationMessages messages;
+    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
-    public FrontendEventsHandlerImpl(ErrorPopupManager errorPopupManager, CommonApplicationMessages messages) {
+    public FrontendEventsHandlerImpl(ErrorPopupManager errorPopupManager) {
         this.errorPopupManager = errorPopupManager;
-        this.messages = messages;
     }
 
     @Override

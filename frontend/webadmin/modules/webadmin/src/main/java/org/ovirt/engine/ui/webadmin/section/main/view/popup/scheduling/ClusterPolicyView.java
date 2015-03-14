@@ -6,14 +6,15 @@ import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ClusterPolicyClusterModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ClusterPolicyModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractWebAdminImageResourceColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -46,15 +47,14 @@ public class ClusterPolicyView extends Composite {
 
     private final EventBus eventBus;
     private final ClientStorage clientStorage;
-    private final ApplicationResources applicationResources;
+
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public ClusterPolicyView(ApplicationConstants constants,
-            ApplicationResources applicationResources,
-            ClusterPolicyModelProvider clusterPolicyModelProvider,
+    public ClusterPolicyView(ClusterPolicyModelProvider clusterPolicyModelProvider,
             ClusterPolicyClusterModelProvider clusterPolicyClusterModelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
-        this.applicationResources = applicationResources;
         this.clusterPolicyModelProvider = clusterPolicyModelProvider;
         this.clusterPolicyClusterModelProvider = clusterPolicyClusterModelProvider;
         this.eventBus = eventBus;
@@ -64,8 +64,8 @@ public class ClusterPolicyView extends Composite {
 
         initSplitLayoutPanel();
 
-        initClusterPolicyTable(constants);
-        initClustersTable(constants);
+        initClusterPolicyTable();
+        initClustersTable();
     }
 
     private void initSplitLayoutPanel() {
@@ -83,15 +83,15 @@ public class ClusterPolicyView extends Composite {
         splitLayoutPanel.add(table);
     }
 
-    private void initClusterPolicyTable(ApplicationConstants constants) {
+    private void initClusterPolicyTable() {
         table = new SimpleActionTable<ClusterPolicy>(clusterPolicyModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
-        table.addColumn(new AbstractWebAdminImageResourceColumn<ClusterPolicy>() {
+        table.addColumn(new AbstractImageResourceColumn<ClusterPolicy>() {
             @Override
             public ImageResource getValue(ClusterPolicy object) {
                 if (object.isLocked()) {
-                    return applicationResources.lockImage();
+                    return resources.lockImage();
                 }
                 return null;
             }
@@ -166,7 +166,7 @@ public class ClusterPolicyView extends Composite {
 
     }
 
-    private void initClustersTable(ApplicationConstants constants) {
+    private void initClustersTable() {
         clusterTable = new SimpleActionTable<VDSGroup>(clusterPolicyClusterModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 

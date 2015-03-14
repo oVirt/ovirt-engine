@@ -10,6 +10,7 @@ import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
+
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
@@ -20,10 +21,13 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterIscsiBondLis
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DataCenterSelectionChangeEvent;
 
 public class SubTabDataCenterIscsiBondPresenter extends AbstractSubTabPresenter<StoragePool, DataCenterListModel,
         DataCenterIscsiBondListModel, SubTabDataCenterIscsiBondPresenter.ViewDef, SubTabDataCenterIscsiBondPresenter.ProxyDef> {
+
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.dataCenterIscsiBondSubTabPlace)
@@ -34,9 +38,9 @@ public class SubTabDataCenterIscsiBondPresenter extends AbstractSubTabPresenter<
     }
 
     @TabInfo(container = DataCenterSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
                               SearchableDetailModelProvider<IscsiBond, DataCenterListModel, DataCenterIscsiBondListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.dataCenterIscsiMultipathingSubTabLabel(), 1, modelProvider);
+        return new ModelBoundTabData(constants.dataCenterIscsiMultipathingSubTabLabel(), 1, modelProvider);
     }
 
     @Inject

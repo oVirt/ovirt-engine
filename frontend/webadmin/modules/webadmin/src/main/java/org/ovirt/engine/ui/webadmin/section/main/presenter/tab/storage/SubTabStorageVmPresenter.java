@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageVmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.StorageSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -25,6 +26,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabStorageVmPresenter extends AbstractSubTabPresenter<StorageDomain, StorageListModel, StorageVmListModel, SubTabStorageVmPresenter.ViewDef, SubTabStorageVmPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.storageVmSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabStorageVmPresenter> {
@@ -34,9 +37,9 @@ public class SubTabStorageVmPresenter extends AbstractSubTabPresenter<StorageDom
     }
 
     @TabInfo(container = StorageSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<VM, StorageListModel, StorageVmListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.storageVmSubTabLabel(), 4, modelProvider);
+        return new ModelBoundTabData(constants.storageVmSubTabLabel(), 4, modelProvider);
     }
 
     @Inject

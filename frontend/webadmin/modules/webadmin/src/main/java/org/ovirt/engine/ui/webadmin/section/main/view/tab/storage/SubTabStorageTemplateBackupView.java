@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.TemplateBackupModel;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageTemplateBackupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -30,10 +31,12 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
 
     private static final UIConstants messageConstants = GWT.create(UIConstants.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabStorageTemplateBackupView(SearchableDetailModelProvider<VmTemplate, StorageListModel, TemplateBackupModel> modelProvider, ApplicationConstants constants) {
+    public SubTabStorageTemplateBackupView(SearchableDetailModelProvider<VmTemplate, StorageListModel, TemplateBackupModel> modelProvider) {
         super(modelProvider);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
@@ -42,7 +45,7 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initTable(final ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         AbstractTextColumn<VmTemplate> nameColumn =

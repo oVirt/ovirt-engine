@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.userportal.place.UserPortalPlaceManager;
 import org.ovirt.engine.ui.userportal.section.DefaultMainSectionExtendedPlace;
 
 import com.google.inject.Singleton;
+
 import org.ovirt.engine.ui.userportal.system.ApplicationInit;
 
 /**
@@ -28,6 +29,7 @@ public class SystemModule extends BaseSystemModule {
     @Override
     protected void configure() {
         requestStaticInjection(ClientGinjectorProvider.class);
+        requestStaticInjection(AssetProvider.class);
         bindInfrastructure();
         bindConfiguration();
     }

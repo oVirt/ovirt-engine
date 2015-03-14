@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListMode
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.AbstractModelActivationPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic.MainTabBasicDetailsPresenterWidget;
@@ -31,6 +32,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class MainTabBasicPresenter extends AbstractModelActivationPresenter<UserPortalItemModel, UserPortalBasicListModel, MainTabBasicPresenter.ViewDef, MainTabBasicPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(UserPortalApplicationPlaces.basicMainTabPlace)
     @UseGatekeeper(LoggedInGatekeeper.class)
@@ -44,8 +47,8 @@ public class MainTabBasicPresenter extends AbstractModelActivationPresenter<User
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants) {
-        return new TabDataBasic(applicationConstants.basicMainTabLabel(), 0);
+    static TabData getTabData() {
+        return new TabDataBasic(constants.basicMainTabLabel(), 0);
     }
 
     @ContentSlot

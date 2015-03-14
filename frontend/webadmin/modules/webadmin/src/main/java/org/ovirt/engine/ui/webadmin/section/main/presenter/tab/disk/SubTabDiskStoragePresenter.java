@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskStorageListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DiskSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -25,6 +26,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabDiskStoragePresenter extends AbstractSubTabPresenter<Disk, DiskListModel, DiskStorageListModel, SubTabDiskStoragePresenter.ViewDef, SubTabDiskStoragePresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.diskStorageSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabDiskStoragePresenter> {
@@ -34,9 +37,9 @@ public class SubTabDiskStoragePresenter extends AbstractSubTabPresenter<Disk, Di
     }
 
     @TabInfo(container = DiskSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<StorageDomain, DiskListModel, DiskStorageListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.diskStorageSubTabLabel(), 3, modelProvider);
+        return new ModelBoundTabData(constants.diskStorageSubTabLabel(), 3, modelProvider);
     }
 
     @Inject

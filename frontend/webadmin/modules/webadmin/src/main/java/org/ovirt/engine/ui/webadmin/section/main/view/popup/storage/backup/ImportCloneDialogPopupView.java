@@ -13,8 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportCloneDialogPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -34,11 +33,8 @@ public class ImportCloneDialogPopupView extends AbstractModelBoundPopupView<Impo
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
-    private ApplicationConstants constants;
-
-    private ApplicationMessages messages;
-
-    private ApplicationTemplates templates;
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
 
     @UiField
     @Path(value = "name.entity")
@@ -70,18 +66,11 @@ public class ImportCloneDialogPopupView extends AbstractModelBoundPopupView<Impo
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
-    public ImportCloneDialogPopupView(EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationConstants constants,
-            ApplicationMessages messages,
-            ApplicationTemplates templates) {
-        super(eventBus, resources);
-        this.constants = constants;
-        this.messages = messages;
-        this.templates = templates;
+    public ImportCloneDialogPopupView(EventBus eventBus) {
+        super(eventBus);
         initSelectWidgets();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
+        localize();
         driver.initialize(this);
     }
 
@@ -91,7 +80,7 @@ public class ImportCloneDialogPopupView extends AbstractModelBoundPopupView<Impo
         noCloneEditor = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         nameEditor.setLabel(constants.import_newName());
         selectLabelEditor.setText(constants.cloneSelect());
         applyToAllEditor.setLabel(constants.cloneApplyToAll());

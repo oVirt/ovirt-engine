@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
 
@@ -24,6 +25,8 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class MainTabQuotaPresenter extends AbstractMainTabWithDetailsPresenter<Quota, QuotaListModel, MainTabQuotaPresenter.ViewDef, MainTabQuotaPresenter.ProxyDef> {
+
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @GenEvent
     public class QuotaSelectionChange {
@@ -41,9 +44,9 @@ public class MainTabQuotaPresenter extends AbstractMainTabWithDetailsPresenter<Q
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             MainModelProvider<Quota, QuotaListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.quotaMainTabLabel(), 10, modelProvider);
+        return new ModelBoundTabData(constants.quotaMainTabLabel(), 10, modelProvider);
     }
 
     @Inject

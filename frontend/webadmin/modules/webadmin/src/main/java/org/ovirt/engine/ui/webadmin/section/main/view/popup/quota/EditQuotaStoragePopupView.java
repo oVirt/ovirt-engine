@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEd
 import org.ovirt.engine.ui.common.widget.editor.generic.LongEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.quota.EditQuotaStorageModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.EditQuotaStoragePopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -57,13 +57,15 @@ public class EditQuotaStoragePopupView extends AbstractModelBoundPopupView<EditQ
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public EditQuotaStoragePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
+    public EditQuotaStoragePopupView(EventBus eventBus) {
+        super(eventBus);
         initRadioButtonEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants);
+        localize();
         addStyles();
         driver.initialize(this);
     }
@@ -80,7 +82,7 @@ public class EditQuotaStoragePopupView extends AbstractModelBoundPopupView<EditQ
         specificStorageRadioButtonEditor = new EntityModelRadioButtonEditor("5"); //$NON-NLS-1$
     }
 
-    void localize(ApplicationConstants constants) {
+    void localize() {
         unlimitedStorageRadioButtonEditor.setLabel(constants.ultQuotaPopup());
         specificStorageRadioButtonEditor.setLabel(constants.useQuotaPopup());
         storageLabel.setText(constants.storageQuotaQuotaPopup());

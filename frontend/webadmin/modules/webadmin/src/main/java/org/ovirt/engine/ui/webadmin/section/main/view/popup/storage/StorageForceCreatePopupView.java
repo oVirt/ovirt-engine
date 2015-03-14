@@ -13,7 +13,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageForceCreatePopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -53,20 +53,20 @@ public class StorageForceCreatePopupView extends AbstractConfirmationPopupView
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public StorageForceCreatePopupView(EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationConstants constants) {
-        super(eventBus, resources);
+    public StorageForceCreatePopupView(EventBus eventBus) {
+        super(eventBus);
         latch = new EntityModelCheckBoxEditor(Align.RIGHT);
         latch.setLabel(constants.approveOperation());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants);
+        localize();
         driver.initialize(this);
     }
 
-    void localize(ApplicationConstants constants) {
+    void localize() {
         warningLabel.setText(constants.storageForceCreatePopupWarningLabel());
     }
 

@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterVmListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.ClusterSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -25,6 +26,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabClusterVmPresenter extends AbstractSubTabPresenter<VDSGroup, ClusterListModel<Void>, ClusterVmListModel, SubTabClusterVmPresenter.ViewDef, SubTabClusterVmPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.clusterVmSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabClusterVmPresenter> {
@@ -34,9 +37,9 @@ public class SubTabClusterVmPresenter extends AbstractSubTabPresenter<VDSGroup, 
     }
 
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<VM, ClusterListModel<Void>, ClusterVmListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.clusterVmSubTabLabel(), 3, modelProvider);
+        return new ModelBoundTabData(constants.clusterVmSubTabLabel(), 3, modelProvider);
     }
 
     @Inject

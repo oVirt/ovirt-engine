@@ -5,8 +5,8 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractSafeHtmlColumn;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -33,9 +33,10 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
  * </pre>
  */
 public class VmCountColumn extends AbstractSafeHtmlColumn<VDS> {
-    private static ApplicationTemplates templates = GWT.create(ApplicationTemplates.class);
-    private static final ApplicationMessages messages = GWT.create(ApplicationMessages.class);
-    private static final ApplicationResources resources = GWT.create(ApplicationResources.class);
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
+
     private static SafeHtml rightArrowImageHtml =
             SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.rightArrowImage()).getHTML());
     private static SafeHtml doubleArrowImageHtml =

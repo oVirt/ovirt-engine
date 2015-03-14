@@ -3,14 +3,12 @@ package org.ovirt.engine.ui.webadmin.section.main.view;
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainSectionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabBarOffsetUiHandlers;
 import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider;
@@ -88,6 +86,8 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
     @WithElementId
     Label tagsHeader;
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
     public MainSectionView(SystemTreeModelProvider treeModelProvider,
             BookmarkModelProvider bookmarkModelProvider,
@@ -95,30 +95,24 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
             AlertModelProvider alertModelProvider,
             EventModelProvider eventModelProvider,
             TaskModelProvider taskModelProvider,
-            ApplicationConstants constants,
-            ApplicationResources resources,
-            ApplicationTemplates templates,
             EventBus eventBus,
-            ClientStorage clientStorage, CommonApplicationConstants commonConstants) {
+            ClientStorage clientStorage) {
         westStackPanel = createWestStackPanel(treeModelProvider, bookmarkModelProvider, tagModelProvider);
 
         verticalSplitLayoutPanel = new SplitLayoutPanel(SPLITTER_THICKNESS);
         horizontalSplitLayoutPanel = new TabbedSplitLayoutPanel(SPLITTER_THICKNESS, clientStorage);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        initHeaders(constants);
+        initHeaders();
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
-        addContentToWestPanel(treeModelProvider, bookmarkModelProvider, tagModelProvider, westStackPanel, constants);
+        addContentToWestPanel(treeModelProvider, bookmarkModelProvider, tagModelProvider, westStackPanel);
 
         initAlertEventFooterPanel(alertModelProvider,
                 eventModelProvider,
                 taskModelProvider,
-                resources,
-                templates,
                 eventBus,
-                clientStorage,
-                constants);
+                clientStorage);
         headerPanel.getElement().getParentElement().getStyle().setOverflow(Overflow.VISIBLE);
         //Enable double clicking to collapse/expand the stack panel (with the treeview).
         horizontalSplitLayoutPanel.setWidgetToggleDisplayAllowed(westStackPanel, true);
@@ -133,7 +127,7 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
         });
     }
 
-    private void initHeaders(ApplicationConstants constants) {
+    private void initHeaders() {
         treeHeader = new Label(constants.systemMainSection());
         bookmarksHeader = new Label(constants.bookmarksMainSection());
         tagsHeader = new Label(constants.tagsMainSection());
@@ -186,21 +180,19 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
     private void addContentToWestPanel(SystemTreeModelProvider treeModelProvider,
             BookmarkModelProvider bookmarkModelProvider,
             TagModelProvider tagModelProvider,
-            final StackLayoutPanel panel, ApplicationConstants constants) {
-        panel.insert(new SystemTree(treeModelProvider, constants), treeHeader, SECTION_HEADER_HEIGHT, panel.getWidgetCount());
-        panel.insert(new BookmarkList(bookmarkModelProvider, constants), bookmarksHeader, SECTION_HEADER_HEIGHT, panel.getWidgetCount());
-        panel.insert(new TagList(tagModelProvider, constants), tagsHeader, SECTION_HEADER_HEIGHT, panel.getWidgetCount());
+            final StackLayoutPanel panel) {
+        panel.insert(new SystemTree(treeModelProvider), treeHeader, SECTION_HEADER_HEIGHT, panel.getWidgetCount());
+        panel.insert(new BookmarkList(bookmarkModelProvider), bookmarksHeader, SECTION_HEADER_HEIGHT, panel.getWidgetCount());
+        panel.insert(new TagList(tagModelProvider), tagsHeader, SECTION_HEADER_HEIGHT, panel.getWidgetCount());
     }
 
     void initAlertEventFooterPanel(AlertModelProvider alertModelProvider,
             EventModelProvider eventModelProvider,
             TaskModelProvider taskModelProvider,
-            ApplicationResources resources,
-            ApplicationTemplates templates,
             EventBus eventBus,
-            ClientStorage clientStorage, ApplicationConstants constants) {
+            ClientStorage clientStorage) {
         alertEventFooterPanel.add(new AlertsEventsFooterView(alertModelProvider, eventModelProvider, taskModelProvider,
-                resources, templates, eventBus, clientStorage, constants));
+                eventBus, clientStorage));
     }
 
     @Override

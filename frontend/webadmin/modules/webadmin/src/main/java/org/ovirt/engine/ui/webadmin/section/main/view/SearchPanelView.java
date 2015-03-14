@@ -4,8 +4,6 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.autocomplete.SearchSuggestBox;
 import org.ovirt.engine.ui.webadmin.widget.autocomplete.SearchSuggestOracle;
@@ -82,7 +80,7 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
     private final SearchSuggestOracle oracle;
 
     @Inject
-    public SearchPanelView(ApplicationConstants constants, final ApplicationResources applicationResources) {
+    public SearchPanelView() {
         // Define the oracle that finds suggestions
         oracle = new SearchSuggestOracle();
 

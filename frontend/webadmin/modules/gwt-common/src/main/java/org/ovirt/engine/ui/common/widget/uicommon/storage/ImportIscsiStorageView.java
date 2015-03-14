@@ -3,10 +3,9 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.view.client.MultiSelectionModel;
-import com.google.gwt.view.client.SelectionModel;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
@@ -17,18 +16,21 @@ import org.ovirt.engine.ui.common.widget.table.header.SelectAllCheckBoxHeader;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ImportIscsiStorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import com.google.gwt.view.client.MultiSelectionModel;
+import com.google.gwt.view.client.SelectionModel;
 
 public class ImportIscsiStorageView extends AbstractStorageView<ImportIscsiStorageModel> implements HasValidation {
 
@@ -61,6 +63,8 @@ public class ImportIscsiStorageView extends AbstractStorageView<ImportIscsiStora
 
     @UiField
     ValidatedPanelWidget storageDomainsPanel;
+
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public ImportIscsiStorageView() {
         initViews();

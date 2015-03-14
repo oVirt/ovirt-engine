@@ -13,7 +13,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.user.ManageEventsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundTreePopupView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ModelListTreeViewModel;
@@ -80,18 +80,20 @@ public class ManageEventsPopupView extends AbstractModelBoundTreePopupView<Event
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public ManageEventsPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
+    public ManageEventsPopupView(EventBus eventBus) {
+        super(eventBus);
         initTree();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initExpandButtons();
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants);
+        localize();
         driver.initialize(this);
     }
 
-    void localize(ApplicationConstants constants) {
+    void localize() {
         emailEditor.setLabel(constants.manageEventsPopupEmailLabel());
         titleLabel.setText(constants.manageEventsPopupTitleLabel());
         expandAllButton.setText(constants.treeExpandAll());

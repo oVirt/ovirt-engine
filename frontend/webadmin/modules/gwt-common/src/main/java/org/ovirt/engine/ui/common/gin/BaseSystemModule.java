@@ -68,6 +68,7 @@ public abstract class BaseSystemModule extends AbstractGinModule {
         bind(ClientStorage.class).to(ClientStorageImpl.class).in(Singleton.class);
         bind(ApplicationFocusManager.class).asEagerSingleton();
         bind(LockInteractionManager.class).asEagerSingleton();
+        requestStaticInjection(AssetProvider.class);
     }
 
     private void bindEventBus() {

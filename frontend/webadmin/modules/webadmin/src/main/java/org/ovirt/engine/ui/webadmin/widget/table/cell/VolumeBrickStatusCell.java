@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.resources.client.ImageResource;
@@ -15,9 +15,8 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class VolumeBrickStatusCell extends AbstractCell<GlusterVolumeEntity> {
 
-    ApplicationResources resources = ClientGinjectorProvider.getApplicationResources();
-
-    ApplicationTemplates applicationTemplates = ClientGinjectorProvider.getApplicationTemplates();
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
 
     @Override
     public void render(Context context, GlusterVolumeEntity volume, SafeHtmlBuilder sb) {
@@ -43,6 +42,6 @@ public class VolumeBrickStatusCell extends AbstractCell<GlusterVolumeEntity> {
         // Generate the HTML for the images
         SafeHtml upImageHtml = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(upImage).getHTML());
         SafeHtml downImageHtml = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(downImage).getHTML());
-        sb.append(applicationTemplates.volumeBrickStatusTemplate(upImageHtml, upBricks, downImageHtml, downBricks));
+        sb.append(templates.volumeBrickStatusTemplate(upImageHtml, upBricks, downImageHtml, downBricks));
     }
 }

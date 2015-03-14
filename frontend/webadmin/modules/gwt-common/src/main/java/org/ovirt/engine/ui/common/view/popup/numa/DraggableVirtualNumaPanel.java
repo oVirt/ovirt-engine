@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.presenter.popup.numa.NumaVmSelectedEvent;
 import org.ovirt.engine.ui.common.presenter.popup.numa.UpdatedVnumaEvent;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.MenuBar;
 import org.ovirt.engine.ui.common.widget.PopupPanel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.VNodeModel;
@@ -64,24 +65,21 @@ public class DraggableVirtualNumaPanel extends Composite implements HasHandlers 
 
     private final EventBus eventBus;
 
-    private final CommonApplicationConstants commonConstants;
-    private final CommonApplicationMessages commonMessages;
-
     private HandlerRegistration contextMenuHandlerRegistration;
     private MenuBar menuBar;
 
     private boolean dragEnabled;
 
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+
     @Inject
-    public DraggableVirtualNumaPanel(EventBus gwtEventBus, CommonApplicationResources commonResources,
-            CommonApplicationMessages messages, CommonApplicationConstants commonConstants,
-            VirtualNumaPanel virtualNumaPanel) {
+    public DraggableVirtualNumaPanel(EventBus gwtEventBus, VirtualNumaPanel virtualNumaPanel) {
         numaPanel = virtualNumaPanel;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        initializeResouceIcons(commonResources);
+        initializeResouceIcons();
         this.eventBus = gwtEventBus;
-        this.commonConstants = commonConstants;
-        this.commonMessages = messages;
         enableDrag(true);
     }
 
@@ -111,7 +109,7 @@ public class DraggableVirtualNumaPanel extends Composite implements HasHandlers 
         contextMenuHandlerRegistration.removeHandler();
     }
 
-    private void initializeResouceIcons(CommonApplicationResources resources) {
+    private void initializeResouceIcons() {
         numaPanel.setPinnedPartialVNumaIcon(resources.pinnedPartialVNumaIcon());
         numaPanel.setPinnedVNumaIcon(resources.pinnedVNumaIcon());
         numaPanel.setPartialVNumaIcon(resources.partialVNumaIcon());
@@ -196,7 +194,7 @@ public class DraggableVirtualNumaPanel extends Composite implements HasHandlers 
         menuBar = new MenuBar(true);
         for (final VdsNumaNode numaNode : numaNodeList) {
             final int nodeIndex = numaNode.getIndex();
-            menuBar.addItem(commonMessages.numaNode(nodeIndex), new Command() {
+            menuBar.addItem(messages.numaNode(nodeIndex), new Command() {
 
                 @Override
                 public void execute() {
@@ -208,7 +206,7 @@ public class DraggableVirtualNumaPanel extends Composite implements HasHandlers 
         }
         if (nodeModel.isPinned()) {
             menuBar.addSeparator();
-            menuBar.addItem(commonConstants.unPinNode(), new Command() {
+            menuBar.addItem(constants.unPinNode(), new Command() {
 
                 @Override
                 public void execute() {

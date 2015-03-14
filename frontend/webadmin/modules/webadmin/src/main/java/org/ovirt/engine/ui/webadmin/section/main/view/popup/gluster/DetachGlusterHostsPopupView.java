@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextCol
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.DetachGlusterHostsModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.DetachGlusterHostsPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -51,19 +51,21 @@ public class DetachGlusterHostsPopupView extends AbstractModelBoundPopupView<Det
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public DetachGlusterHostsPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
+    public DetachGlusterHostsPopupView(EventBus eventBus) {
+        super(eventBus);
         hostsTable = new EntityModelCellTable<ListModel>(true, false, true);
         forceEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants);
-        initTableColumns(constants);
+        localize();
+        initTableColumns();
         driver.initialize(this);
     }
 
-    protected void initTableColumns(ApplicationConstants constants){
+    protected void initTableColumns(){
         // Table Entity Columns
         hostsTable.addEntityModelColumn(new AbstractEntityModelTextColumn<String>() {
             @Override
@@ -73,7 +75,7 @@ public class DetachGlusterHostsPopupView extends AbstractModelBoundPopupView<Det
         }, constants.detachGlusterHostsHostAddress());
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         forceEditor.setLabel(constants.detachGlusterHostsForcefully());
     }
 

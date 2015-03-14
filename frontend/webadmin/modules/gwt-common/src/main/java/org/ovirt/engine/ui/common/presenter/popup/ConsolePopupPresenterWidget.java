@@ -1,10 +1,7 @@
 package org.ovirt.engine.ui.common.presenter.popup;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.HasClickHandlers;
-import com.google.gwt.user.client.Window;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.utils.DynamicMessages;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
@@ -22,10 +19,14 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.gwtplatform.dispatch.annotation.GenEvent;
 
@@ -118,21 +119,20 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
     private IEventListener<EventArgs> viewUpdatingListener;
     private boolean wanOptionsAvailable = false;
     private ConsolePopupModel model;
-    private final CommonApplicationConstants constants;
     private final DynamicMessages dynamicMessages;
     private final ConsoleOptionsFrontendPersister consoleOptionsPersister;
     private boolean spiceProxyUserPreference;
     private boolean spiceProxyDefinedOnCluster;
 
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
     public ConsolePopupPresenterWidget(EventBus eventBus, ViewDef view,
             ConsoleUtils consoleUtils,
-            CommonApplicationConstants constants,
             final DynamicMessages dynamicMessages,
             ConsoleOptionsFrontendPersister consoleOptionsPersister) {
         super(eventBus, view);
         this.consoleUtils = consoleUtils;
-        this.constants = constants;
         this.consoleOptionsPersister = consoleOptionsPersister;
         this.dynamicMessages = dynamicMessages;
     }

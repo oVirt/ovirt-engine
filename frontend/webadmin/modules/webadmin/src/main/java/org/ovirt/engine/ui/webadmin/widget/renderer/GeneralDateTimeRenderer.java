@@ -2,22 +2,23 @@ package org.ovirt.engine.ui.webadmin.widget.renderer;
 
 import java.util.Date;
 
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.widget.renderer.FullDateTimeRenderer;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.text.shared.AbstractRenderer;
 
 /**
  * Renderer for Date values using {@code GeneralDateTimeFormat}.
  */
 public class GeneralDateTimeRenderer extends AbstractRenderer<Date> {
-    private static final CommonApplicationConstants CONSTANTS = GWT.create(CommonApplicationConstants.class);
+
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Override
     public String render(Date object) {
         if (object == null) {
-            return CONSTANTS.notAvailableLabel();
+            return constants.notAvailableLabel();
         }
         return FullDateTimeRenderer.getLocalizedDateTimeFormat().format(object);
     }

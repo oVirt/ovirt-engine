@@ -8,9 +8,8 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationMessages;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostManagementConfirmationPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -49,17 +48,16 @@ public class HostManagementConfirmationPopupView extends AbstractModelBoundPopup
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public HostManagementConfirmationPopupView(EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationMessages messages,
-            ApplicationConstants constants,
-            ApplicationTemplates templates) {
-        super(eventBus, resources);
+    public HostManagementConfirmationPopupView(EventBus eventBus) {
+        super(eventBus);
         latch = new EntityModelCheckBoxEditor(Align.RIGHT);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants, templates);
+        localize();
         driver.initialize(this);
     }
 
@@ -68,7 +66,7 @@ public class HostManagementConfirmationPopupView extends AbstractModelBoundPopup
         driver.edit(object);
     }
 
-    protected void localize(ApplicationConstants constants, ApplicationTemplates templates) {
+    protected void localize() {
         latch.setLabel(constants.checkConnectivityManageConfirmPopup());
         messageLabel.setHTML(templates.blackRedBold(constants.youAreAboutManageConfirmPopup(), constants.thisMightCauseManageConfirmPopup()));
         noteLabel.setHTML(templates.middleBold(constants.itIsManageConfirmPopup(), constants.highlyRecommendedManageConfirmPopup(), constants.toProceeedWithConnectivityCheckManageConfirmPopup()));

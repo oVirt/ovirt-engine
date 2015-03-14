@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterModel;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.MacPoolModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.DataCenterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool.MacPoolWidget;
 
@@ -91,18 +91,20 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public DataCenterPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
-        initListBoxEditors(constants);
+    public DataCenterPopupView(EventBus eventBus) {
+        super(eventBus);
+        initListBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants);
+        localize();
         addContentStyleName(style.contentStyle());
         driver.initialize(this);
     }
 
-    void initListBoxEditors(ApplicationConstants constants) {
+    void initListBoxEditors() {
         storagePoolTypeEditor = new ListModelListBoxEditor<Boolean>(new BooleanRenderer(constants.storageTypeLocal(), constants.storageTypeShared()));
 
         versionEditor = new ListModelListBoxEditor<Version>(new NullSafeRenderer<Version>() {
@@ -117,7 +119,7 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
         macPoolListEditor = new ListModelListBoxEditor<>(new NameRenderer<MacPool>());
     }
 
-    void localize(ApplicationConstants constants) {
+    void localize() {
         nameEditor.setLabel(constants.nameLabel());
         descriptionEditor.setLabel(constants.descriptionLabel());
         commentEditor.setLabel(constants.commentLabel());

@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.common.widget.editor;
 
-import com.google.gwt.core.client.GWT;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 
@@ -80,11 +80,11 @@ public class ListModelTypeAheadListBoxEditor<T> extends AbstractValidatedWidgetW
 
     public static abstract class NullSafeSuggestBoxRenderer<T> implements SuggestBoxRenderer<T> {
 
-        private static final CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
+        private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
 
         @Override
         public String getReplacementString(T data) {
-            return emptyOr(data == null ? "" : getReplacementStringNullSafe(data));
+            return emptyOr(data == null ? "" : getReplacementStringNullSafe(data)); //$NON-NLS-1$
         }
 
         @Override
@@ -93,7 +93,7 @@ public class ListModelTypeAheadListBoxEditor<T> extends AbstractValidatedWidgetW
         }
 
         private String emptyOr(String string) {
-            return string == null ? "" : string;
+            return string == null ? "" : string; //$NON-NLS-1$
         }
 
         public abstract String getReplacementStringNullSafe(T data);

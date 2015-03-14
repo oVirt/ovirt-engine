@@ -8,8 +8,6 @@ import org.ovirt.engine.ui.common.widget.uicommon.vm.VmDiskListModelTable;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
-import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmVirtualDiskPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmDiskListModelProvider;
 
@@ -26,11 +24,10 @@ public class SubTabExtendedVmVirtualDiskView extends AbstractSubTabTableWidgetVi
 
     @Inject
     public SubTabExtendedVmVirtualDiskView(VmDiskListModelProvider modelProvider,
-            EventBus eventBus, ClientStorage clientStorage, ApplicationResources resources,
-            ApplicationConstants constants) {
-        super(new VmDiskListModelTable(modelProvider, eventBus, clientStorage, resources, false));
+            EventBus eventBus, ClientStorage clientStorage) {
+        super(new VmDiskListModelTable(modelProvider, eventBus, clientStorage, false));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(constants);
+        initTable();
         initWidget(getModelBoundTableWidget());
     }
 

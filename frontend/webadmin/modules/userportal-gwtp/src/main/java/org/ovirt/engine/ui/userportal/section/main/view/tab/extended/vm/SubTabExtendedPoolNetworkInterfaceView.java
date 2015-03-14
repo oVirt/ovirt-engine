@@ -8,8 +8,6 @@ import org.ovirt.engine.ui.common.widget.uicommon.vm.PoolInterfaceListModelTable
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
-import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.ApplicationTemplates;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedPoolNetworkInterfacePresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailModelProvider;
 
@@ -27,10 +25,10 @@ public class SubTabExtendedPoolNetworkInterfaceView extends AbstractSubTabTableW
     @Inject
     public SubTabExtendedPoolNetworkInterfaceView(
             UserPortalSearchableDetailModelProvider<VmNetworkInterface, UserPortalListModel, PoolInterfaceListModel> modelProvider,
-            EventBus eventBus, ClientStorage clientStorage, ApplicationConstants constants, ApplicationTemplates templates) {
-        super(new PoolInterfaceListModelTable(modelProvider, eventBus, clientStorage, templates));
+            EventBus eventBus, ClientStorage clientStorage) {
+        super(new PoolInterfaceListModelTable(modelProvider, eventBus, clientStorage));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(constants);
+        initTable();
         initWidget(getModelBoundTableWidget());
     }
 

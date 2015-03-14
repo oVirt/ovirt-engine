@@ -19,7 +19,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextCol
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.BrickAdvancedDetailsModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.BrickAdvancedDetailsPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -179,15 +179,17 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public BrickAdvancedDetailsPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
+    public BrickAdvancedDetailsPopupView(EventBus eventBus) {
+        super(eventBus);
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         addStyles();
-        initTableColumns(constants);
-        localize(constants);
+        initTableColumns();
+        localize();
         driver.initialize(this);
     }
 
@@ -232,7 +234,7 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
         releasableFreeSpaceEditor.addContentWidgetContainerStyleName(style.memStatValue());
     }
 
-    private void initTableColumns(ApplicationConstants constants) {
+    private void initTableColumns() {
         clientsTable.addEntityModelColumn(new AbstractEntityModelTextColumn<GlusterClientInfo>() {
             @Override
             public String getText(GlusterClientInfo entity) {
@@ -318,7 +320,7 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
         }, constants.maxStdAllocatedBrickAdvancedLabel());
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         generalTab.setLabel(constants.generalBrickAdvancedPopupLabel());
         brickEditor.setLabel(constants.brickAdvancedLabel());
         statusEditor.setLabel(constants.statusBrickAdvancedLabel());

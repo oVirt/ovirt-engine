@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -16,27 +16,28 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
-import org.ovirt.engine.ui.common.widget.table.column.DiskContainersColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.DiskStatusColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
-import org.ovirt.engine.ui.common.widget.table.column.StorageDomainsColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.DiskContainersColumn;
+import org.ovirt.engine.ui.common.widget.table.column.DiskStatusColumn;
+import org.ovirt.engine.ui.common.widget.table.column.StorageDomainsColumn;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.resources.client.ImageResource;
 
 public class DisksViewColumns {
-    private static final CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
-    private static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
-    private static final CommonApplicationMessages messages = GWT.create(CommonApplicationMessages.class);
+
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
 
     public static AbstractTextColumn<Disk> getAliasColumn(String sortBy) {
         AbstractTextColumn<Disk> column = new AbstractTextColumn<Disk>() {

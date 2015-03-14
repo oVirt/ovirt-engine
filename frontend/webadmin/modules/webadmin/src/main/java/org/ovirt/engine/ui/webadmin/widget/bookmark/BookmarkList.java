@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.common.widget.action.AbstractActionStackPanelItem;
 import org.ovirt.engine.ui.common.widget.action.SimpleActionPanel;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -41,11 +41,10 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
     @UiField
     ScrollPanel scrollPanel;
 
-    private final ApplicationConstants constants;
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
-    public BookmarkList(BookmarkModelProvider modelProvider, ApplicationConstants constants) {
+    public BookmarkList(BookmarkModelProvider modelProvider) {
         super(modelProvider);
-        this.constants = constants;
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         WidgetIdHandler.idHandler.generateAndSetIds(this);
         addActionButtons(modelProvider);
@@ -55,9 +54,7 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
 
     @Override
     protected CellList<Bookmark> createDataDisplayWidget(BookmarkModelProvider modelProvider) {
-        ApplicationTemplates templates = ClientGinjectorProvider.getApplicationTemplates();
-
-        final CellList<Bookmark> display = new CellList<Bookmark>(new BookmarkListItemCell(templates));
+        final CellList<Bookmark> display = new CellList<Bookmark>(new BookmarkListItemCell());
 
         display.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED);
         display.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);

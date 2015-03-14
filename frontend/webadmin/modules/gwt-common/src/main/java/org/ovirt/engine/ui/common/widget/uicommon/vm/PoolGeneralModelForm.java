@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
@@ -32,13 +33,12 @@ public class PoolGeneralModelForm extends AbstractModelBoundFormWidget<PoolGener
     @Ignore
     TextBoxLabel monitorCount = new TextBoxLabel();
 
-    private final CommonApplicationConstants constants;
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private final Driver driver = GWT.create(Driver.class);
 
-    public PoolGeneralModelForm(ModelProvider<PoolGeneralModel> modelProvider, CommonApplicationConstants constants) {
+    public PoolGeneralModelForm(ModelProvider<PoolGeneralModel> modelProvider) {
         super(modelProvider, 3, 6);
-        this.constants = constants;
     }
 
     /**

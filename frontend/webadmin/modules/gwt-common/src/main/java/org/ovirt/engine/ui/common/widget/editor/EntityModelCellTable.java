@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.PopupTableResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.IsEditorDriver;
 import org.ovirt.engine.ui.common.widget.table.ElementIdCellTable;
@@ -64,7 +65,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
     private static final int DEFAULT_PAGESIZE = 1000;
     private static final int CHECK_COLUMN_WIDTH = 27;
 
-    private static CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private final CellTableValidation style;
     private final HasDataListModelEditorAdapter<M, EntityModel> editorAdapter;

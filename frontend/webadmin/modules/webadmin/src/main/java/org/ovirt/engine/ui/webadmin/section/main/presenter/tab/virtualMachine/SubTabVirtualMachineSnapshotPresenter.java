@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VirtualMachineSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -25,6 +26,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabVirtualMachineSnapshotPresenter extends AbstractSubTabPresenter<VM, VmListModel<Void>, VmSnapshotListModel, SubTabVirtualMachineSnapshotPresenter.ViewDef, SubTabVirtualMachineSnapshotPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.virtualMachineSnapshotSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabVirtualMachineSnapshotPresenter> {
@@ -37,9 +40,9 @@ public class SubTabVirtualMachineSnapshotPresenter extends AbstractSubTabPresent
     }
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<Snapshot, VmListModel<Void>, VmSnapshotListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.virtualMachineSnapshotSubTabLabel(), 4, modelProvider);
+        return new ModelBoundTabData(constants.virtualMachineSnapshotSubTabLabel(), 4, modelProvider);
     }
 
     @Inject

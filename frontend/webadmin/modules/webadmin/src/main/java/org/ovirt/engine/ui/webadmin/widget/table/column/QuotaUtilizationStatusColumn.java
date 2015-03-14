@@ -2,15 +2,17 @@ package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.resources.client.ImageResource;
 
-public class QuotaUtilizationStatusColumn<IVdcQueryable> extends AbstractWebAdminImageResourceColumn<IVdcQueryable> {
+public class QuotaUtilizationStatusColumn<IVdcQueryable> extends AbstractImageResourceColumn<IVdcQueryable> {
 
-    private static final ApplicationConstants applicationConstants = ClientGinjectorProvider.getApplicationConstants();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Override
     public ImageResource getValue(IVdcQueryable quota) {
@@ -24,10 +26,10 @@ public class QuotaUtilizationStatusColumn<IVdcQueryable> extends AbstractWebAdmi
         }
 
         if (quotaExceeded) {
-            setTitle(applicationConstants.quotaExceeded());
+            setTitle(constants.quotaExceeded());
         }
 
-        return quotaExceeded ? getResources().alertImage() : null;
+        return quotaExceeded ? resources.alertImage() : null;
     }
 
     private boolean getQuotaExceeded(QuotaStorage quota) {
@@ -45,8 +47,4 @@ public class QuotaUtilizationStatusColumn<IVdcQueryable> extends AbstractWebAdmi
                 && quota.getVirtualCpu() < quota.getVirtualCpuUsage());
     }
 
-    private ApplicationResources getResources() {
-        // Get a reference to the application resources:
-        return ClientGinjectorProvider.getApplicationResources();
-    }
 }

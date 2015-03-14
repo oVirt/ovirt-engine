@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
@@ -17,12 +18,11 @@ public class BookmarkListItemCell extends AbstractCell<Bookmark> implements HasE
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final ApplicationTemplates templates;
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
 
     private String elementId = DOM.createUniqueId();
 
-    public BookmarkListItemCell(ApplicationTemplates templates) {
-        this.templates = templates;
+    public BookmarkListItemCell() {
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 

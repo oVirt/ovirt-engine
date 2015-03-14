@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.permissions;
 
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractObjectNameColumn;
@@ -12,6 +13,8 @@ import com.google.gwt.event.shared.EventBus;
 
 public class PermissionWithInheritedPermissionListModelTable<P extends PermissionListModel<?>> extends PermissionListModelTable<P> {
 
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+
     public PermissionWithInheritedPermissionListModelTable(
             SearchableTableModelProvider<Permission, P> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
@@ -19,8 +22,8 @@ public class PermissionWithInheritedPermissionListModelTable<P extends Permissio
     }
 
     @Override
-    public void initTable(CommonApplicationConstants constants) {
-        super.initTable(constants);
+    public void initTable() {
+        super.initTable();
 
         AbstractTextColumn<Permission> permissionColumn = new AbstractObjectNameColumn<Permission>() {
             @Override

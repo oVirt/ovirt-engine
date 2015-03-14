@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
@@ -37,6 +37,8 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
     interface ViewIdHandler extends ElementIdHandler<PosixStorageView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
+
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @UiField
     WidgetStyle style;
@@ -83,7 +85,7 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
     @Inject
     public PosixStorageView() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(ClientGinjectorProvider.getApplicationConstants());
+        localize();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         addStyles();
         driver.initialize(this);
@@ -93,8 +95,7 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
         pathEditor.addContentWidgetContainerStyleName(style.pathEditorContent());
     }
 
-    void localize(ApplicationConstants constants) {
-
+    void localize() {
         pathLabel.setText(constants.storagePopupPosixPathLabel());
         pathHintLabel.setText(constants.storagePopupPosixPathHintLabel());
         vfsTypeLabel.setText(constants.storagePopupVfsTypeLabel());

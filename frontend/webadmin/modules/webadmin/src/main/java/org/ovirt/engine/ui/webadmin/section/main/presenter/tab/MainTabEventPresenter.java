@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
 
@@ -25,6 +26,8 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class MainTabEventPresenter extends AbstractMainTabWithDetailsPresenter<AuditLog, EventListModel, MainTabEventPresenter.ViewDef, MainTabEventPresenter.ProxyDef> {
+
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @GenEvent
     public class EventSelectionChange {
@@ -42,9 +45,9 @@ public class MainTabEventPresenter extends AbstractMainTabWithDetailsPresenter<A
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             MainModelProvider<AuditLog, EventListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.eventMainTabLabel(), 14, modelProvider, Align.RIGHT);
+        return new ModelBoundTabData(constants.eventMainTabLabel(), 14, modelProvider, Align.RIGHT);
     }
 
     @Inject

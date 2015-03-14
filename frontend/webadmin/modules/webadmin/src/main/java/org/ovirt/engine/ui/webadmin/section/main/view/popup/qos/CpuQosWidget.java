@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.CpuQosParametersModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -31,7 +32,9 @@ public class CpuQosWidget extends QosWidget<CpuQos, CpuQosParametersModel> {
     @WithElementId
     IntegerEntityModelTextBoxEditor cpuLimitEditor;
 
-    public CpuQosWidget(ApplicationConstants constants) {
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
+    public CpuQosWidget() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
 

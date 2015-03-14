@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ExportVmModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -42,12 +42,14 @@ public class VmExportPopupView extends AbstractModelBoundPopupView<ExportVmModel
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public VmExportPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
+    public VmExportPopupView(EventBus eventBus) {
+        super(eventBus);
         initCheckBoxes();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
+        localize();
         driver.initialize(this);
     }
 
@@ -56,7 +58,7 @@ public class VmExportPopupView extends AbstractModelBoundPopupView<ExportVmModel
         collapseSnapshots = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
-    void localize(ApplicationConstants constants) {
+    void localize() {
         forceOverride.setLabel(constants.vmExportPopupForceOverrideLabel());
         collapseSnapshots.setLabel(constants.vmExportPopupCollapseSnapshotsLabel());
     }

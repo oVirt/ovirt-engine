@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.HostSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -26,6 +27,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabHostPermissionPresenter extends AbstractSubTabPresenter<VDS, HostListModel<Void>,
     PermissionListModel<VDS>, SubTabHostPermissionPresenter.ViewDef, SubTabHostPermissionPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.hostPermissionSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabHostPermissionPresenter> {
@@ -35,10 +38,10 @@ public class SubTabHostPermissionPresenter extends AbstractSubTabPresenter<VDS, 
     }
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<Permission, HostListModel<Void>,
             PermissionListModel<VDS>> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.hostPermissionSubTabLabel(), 5, modelProvider);
+        return new ModelBoundTabData(constants.hostPermissionSubTabLabel(), 5, modelProvider);
     }
 
     @Inject

@@ -4,15 +4,16 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractBooleanColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.NicActivateStatusColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSumUpColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.NicActivateStatusColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
@@ -20,17 +21,17 @@ import com.google.gwt.event.shared.EventBus;
 
 public class PoolInterfaceListModelTable<T extends SearchableListModel> extends AbstractModelBoundTableWidget<VmNetworkInterface, T> {
 
-    private final CommonApplicationTemplates templates;
+    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public PoolInterfaceListModelTable(
             SearchableTableModelProvider<VmNetworkInterface, T> modelProvider,
-            EventBus eventBus, ClientStorage clientStorage, CommonApplicationTemplates templates) {
+            EventBus eventBus, ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, false);
-        this.templates = templates;
     }
 
     @Override
-    public void initTable(final CommonApplicationConstants constants) {
+    public void initTable() {
         getTable().addColumn(new NicActivateStatusColumn<VmNetworkInterface>(), constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<VmNetworkInterface> nameColumn = new AbstractTextColumn<VmNetworkInterface>() {

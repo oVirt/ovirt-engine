@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.view.popup.numa;
 
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -20,7 +21,7 @@ public class VmTitlePanel extends Composite {
     }
 
     @UiField(provided=true)
-    final CommonApplicationResources commonResources;
+    final CommonApplicationResources resources = AssetProvider.getResources();
 
     @UiField
     Image vmStatus;
@@ -32,8 +33,7 @@ public class VmTitlePanel extends Composite {
     Label nodeCountLabel;
 
     @Inject
-    public VmTitlePanel(CommonApplicationResources commonResources) {
-        this.commonResources = commonResources;
+    public VmTitlePanel() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
     }
 
@@ -45,12 +45,12 @@ public class VmTitlePanel extends Composite {
 
     private void setStatusIcon(VMStatus status) {
         if (VMStatus.Up.equals(status)) {
-            vmStatus.setResource(commonResources.upImage());
+            vmStatus.setResource(resources.upImage());
         } else if (VMStatus.Down.equals(status)) {
-            vmStatus.setResource(commonResources.downImage());
+            vmStatus.setResource(resources.downImage());
         } else {
             //Unknown status
-            vmStatus.setResource(commonResources.questionMarkImage());
+            vmStatus.setResource(resources.questionMarkImage());
         }
     }
 }

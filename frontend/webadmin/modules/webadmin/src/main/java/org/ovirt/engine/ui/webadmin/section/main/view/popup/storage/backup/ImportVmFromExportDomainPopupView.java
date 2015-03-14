@@ -42,11 +42,11 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmFromExportDomainPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.CustomSelectionCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.IsProblematicImportVmColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
-import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractWebAdminImageResourceColumn;
 
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
@@ -140,22 +140,17 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
 
     private final Driver driver = GWT.create(Driver.class);
 
-    protected final ApplicationConstants constants;
-
-    protected final ApplicationResources resources;
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public ImportVmFromExportDomainPopupView(EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationConstants constants) {
-        super(eventBus, resources);
-        this.constants = constants;
-        this.resources = resources;
+    public ImportVmFromExportDomainPopupView(EventBus eventBus) {
+        super(eventBus);
 
         initListBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
-        localize(constants);
+        localize();
         driver.initialize(this);
         initTables();
     }
@@ -208,7 +203,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
                     public void onSubTabDeselected() {
                     }
                 };
-        generalView = new ImportVmGeneralSubTabView(modelProvider, constants);
+        generalView = new ImportVmGeneralSubTabView(modelProvider);
         generalPanel.add(generalView);
         subTabLayoutPanel.add(generalPanel, constants.importVmGeneralSubTabLabel());
     }
@@ -306,7 +301,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         table.addColumn(originColumn, constants.originVm(), "100px"); //$NON-NLS-1$
 
         table.addColumn(
-                new AbstractWebAdminImageResourceColumn<Object>() {
+                new AbstractImageResourceColumn<Object>() {
                     @Override
                     public com.google.gwt.resources.client.ImageResource getValue(Object object) {
                         return new VmTypeColumn().getValue(((ImportVmData) object).getVm());
@@ -348,7 +343,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         isObjectInSystemColumn = new AbstractImageResourceColumn<Object>() {
             @Override
             public ImageResource getValue(Object object) {
-                return ((ImportVmData) object).isExistsInSystem() ? getCommonResources().logNormalImage() : null;
+                return ((ImportVmData) object).isExistsInSystem() ? resources.logNormalImage() : null;
             }
         };
         table.addColumn(isObjectInSystemColumn, constants.vmInSetup(), "60px"); //$NON-NLS-1$
@@ -625,7 +620,7 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
         cpuProfileEditor = new ListModelListBoxEditor<>(new NameRenderer<CpuProfile>());
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         destClusterEditor.setLabel(constants.importVm_destCluster());
         destClusterQuotaEditor.setLabel(constants.importVm_destClusterQuota());
         destStorageEditor.setLabel(constants.defaultStorage());

@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDataCenterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.ReportActionsHelper;
@@ -38,16 +39,18 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public MainTabDataCenterView(MainModelProvider<StoragePool, DataCenterListModel> modelProvider,
-            ApplicationResources resources, ApplicationConstants constants) {
+    public MainTabDataCenterView(MainModelProvider<StoragePool, DataCenterListModel> modelProvider) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(resources, constants);
+        initTable();
         initWidget(getTable());
     }
 
-    void initTable(final ApplicationResources resources, final ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         getTable().addColumn(new DcStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
@@ -128,12 +131,12 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         });
 
         if (ReportInit.getInstance().isReportsEnabled()) {
-            updateReportsAvailability(constants);
+            updateReportsAvailability();
         } else {
             getMainModel().getReportsAvailabilityEvent().addListener(new IEventListener<EventArgs>() {
                 @Override
                 public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                    updateReportsAvailability(constants);
+                    updateReportsAvailability();
                 }
             });
         }
@@ -154,7 +157,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         });
     }
 
-    private void updateReportsAvailability(ApplicationConstants constants) {
+    private void updateReportsAvailability() {
         if (ReportInit.getInstance().isReportsEnabled()) {
             List<ActionButtonDefinition<StoragePool>> resourceSubActions =
                     ReportActionsHelper.getInstance().getResourceSubActions("DataCenter", getModelProvider()); //$NON-NLS-1$

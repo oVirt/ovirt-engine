@@ -11,8 +11,6 @@ import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ModelListTreeViewModel;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SimpleSelectionTreeNodeModel;
@@ -52,16 +50,16 @@ public class AssignTagsPopupView extends AbstractModelBoundTreePopupView<TagList
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
-    public AssignTagsPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
+    public AssignTagsPopupView(EventBus eventBus) {
+        super(eventBus);
         initTree();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants);
+        localize();
         driver.initialize(this);
     }
 
-    void localize(ApplicationConstants constants) {
+    void localize() {
     }
 
     private void initTree() {

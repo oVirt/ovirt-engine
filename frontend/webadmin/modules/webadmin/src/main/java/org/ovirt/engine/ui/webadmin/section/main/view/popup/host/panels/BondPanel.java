@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.BondNetworkInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceModel;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
@@ -14,6 +16,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class BondPanel extends NicPanel {
+
+    private final static ApplicationResources resources = AssetProvider.getResources();
 
     public BondPanel(BondNetworkInterfaceModel item, NetworkPanelsStyle style) {
         super(item, style, true);

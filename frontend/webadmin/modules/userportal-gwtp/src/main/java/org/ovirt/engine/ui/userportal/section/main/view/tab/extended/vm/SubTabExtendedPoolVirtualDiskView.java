@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.common.widget.uicommon.vm.PoolDiskListModelTable;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
-import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedPoolVirtualDiskPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailModelProvider;
 
@@ -26,10 +25,10 @@ public class SubTabExtendedPoolVirtualDiskView extends AbstractSubTabTableWidget
     @Inject
     public SubTabExtendedPoolVirtualDiskView(
             UserPortalSearchableDetailModelProvider<Disk, UserPortalListModel, PoolDiskListModel> modelProvider,
-            EventBus eventBus, ClientStorage clientStorage, ApplicationConstants constants) {
+            EventBus eventBus, ClientStorage clientStorage) {
         super(new PoolDiskListModelTable(modelProvider, eventBus, clientStorage));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(constants);
+        initTable();
         initWidget(getModelBoundTableWidget());
     }
 

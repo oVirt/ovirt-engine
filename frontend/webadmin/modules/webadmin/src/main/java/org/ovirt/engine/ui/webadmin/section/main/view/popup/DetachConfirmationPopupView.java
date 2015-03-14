@@ -7,8 +7,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEdito
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationMessages;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmationPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -52,9 +51,11 @@ public class DetachConfirmationPopupView extends AbstractModelBoundPopupView<Hos
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public DetachConfirmationPopupView(EventBus eventBus, ApplicationResources resources, ApplicationMessages messages, ApplicationConstants constants) {
-        super(eventBus, resources);
+    public DetachConfirmationPopupView(EventBus eventBus) {
+        super(eventBus);
         commitChanges = new EntityModelCheckBoxEditor(Align.RIGHT);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 

@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDiskPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -45,7 +46,6 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
     @UiField
     SimplePanel tablePanel;
 
-    private final ApplicationConstants constants;
     private DisksViewRadioGroup disksViewRadioGroup;
     private boolean isQuotaVisible;
 
@@ -65,11 +65,12 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
     @Inject
     Provider<CommonModel> commonModelProvider;
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public MainTabDiskView(MainModelProvider<Disk, DiskListModel> modelProvider, ApplicationConstants constants) {
+    public MainTabDiskView(MainModelProvider<Disk, DiskListModel> modelProvider) {
         super(modelProvider);
 
-        this.constants = constants;
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTableColumns();
         initTableButtons();

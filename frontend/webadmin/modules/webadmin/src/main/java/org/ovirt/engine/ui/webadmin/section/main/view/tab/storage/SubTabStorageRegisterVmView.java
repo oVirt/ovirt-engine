@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageRegisterVmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageRegisterVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -28,11 +29,12 @@ public class SubTabStorageRegisterVmView extends AbstractSubTabTableView<Storage
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabStorageRegisterVmView(SearchableDetailModelProvider<VM, StorageListModel, StorageRegisterVmListModel> modelProvider,
-            ApplicationConstants constants) {
+    public SubTabStorageRegisterVmView(SearchableDetailModelProvider<VM, StorageListModel, StorageRegisterVmListModel> modelProvider) {
         super(modelProvider);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
@@ -41,7 +43,7 @@ public class SubTabStorageRegisterVmView extends AbstractSubTabTableView<Storage
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initTable(ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         AbstractTextColumn<VM> nameColumn = new AbstractTextColumn<VM>() {

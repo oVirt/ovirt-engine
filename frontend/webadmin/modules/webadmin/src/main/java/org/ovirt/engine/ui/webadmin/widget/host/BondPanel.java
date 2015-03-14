@@ -3,7 +3,8 @@ package org.ovirt.engine.ui.webadmin.widget.host;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.ui.common.widget.TogglePanel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;
@@ -12,6 +13,8 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 
 public class BondPanel extends TogglePanel {
+
+    private final static ApplicationResources resources = AssetProvider.getResources();
 
     public BondPanel(HostInterfaceLineModel lineModel, boolean isSelectionEnabled) {
         super(lineModel);
@@ -32,9 +35,9 @@ public class BondPanel extends TogglePanel {
             // Bond icon
             Image bondIcon;
             if (InterfaceStatus.UP.equals(lineModel.getInterface().getStatistics().getStatus())) {
-                bondIcon = new Image(ClientGinjectorProvider.getApplicationResources().splitUpImage());
+                bondIcon = new Image(resources.splitUpImage());
             } else {
-                bondIcon = new Image(ClientGinjectorProvider.getApplicationResources().splitDownImage());
+                bondIcon = new Image(resources.splitDownImage());
             }
 
             add(bondIcon);

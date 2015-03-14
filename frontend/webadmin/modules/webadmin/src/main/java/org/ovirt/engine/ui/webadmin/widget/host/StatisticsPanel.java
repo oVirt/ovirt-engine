@@ -7,7 +7,8 @@ import org.ovirt.engine.ui.common.widget.label.LabelWithTextTruncation;
 import org.ovirt.engine.ui.common.widget.renderer.RxTxRateRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.SumUpRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterface;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.label.NullableNumberLabel;
 
 import com.google.gwt.dom.client.Style;
@@ -27,6 +28,8 @@ public class StatisticsPanel extends VerticalPanel {
 }
 
 class StatisticsElementPanel extends TogglePanel {
+
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     private final NullableNumberLabel<Long> rxTotalLabel;
     private final NullableNumberLabel<Long> txTotalLabel;
@@ -67,7 +70,7 @@ class StatisticsElementPanel extends TogglePanel {
                 if (hostInterface.getSpeed() != null) {
                     setText(String.valueOf(hostInterface.getSpeed()));
                 } else {
-                    setText(ClientGinjectorProvider.getApplicationConstants().unAvailablePropertyLabel());
+                    setText(constants.unAvailablePropertyLabel());
                 }
             }
         });

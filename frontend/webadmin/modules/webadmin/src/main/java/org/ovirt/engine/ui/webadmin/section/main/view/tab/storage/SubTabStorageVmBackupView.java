@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageVmBackupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -61,11 +62,13 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
 
     ActionCellTable<String> applicationsTable;
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabStorageVmBackupView(SearchableDetailModelProvider<VM, StorageListModel, VmBackupModel> modelProvider, ApplicationConstants constants) {
+    public SubTabStorageVmBackupView(SearchableDetailModelProvider<VM, StorageListModel, VmBackupModel> modelProvider) {
         super(modelProvider);
-        initVmTable(constants);
-        initApplicationsTable(constants);
+        initVmTable();
+        initApplicationsTable();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         vmTableContainer.add(getTable());
@@ -80,7 +83,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initVmTable(ApplicationConstants constants) {
+    void initVmTable() {
         getTable().enableColumnResizing();
 
         AbstractTextColumn<VM> nameColumn = new AbstractTextColumn<VM>() {
@@ -181,7 +184,7 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         getTable().showRefreshButton();
     }
 
-    private void initApplicationsTable(ApplicationConstants constants) {
+    private void initApplicationsTable() {
         applicationsTable = new ActionCellTable<String>(new AbstractDataProvider<String>() {
             @Override
             protected void onRangeChanged(HasData<String> display) {

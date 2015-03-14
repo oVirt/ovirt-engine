@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DiskSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -26,6 +27,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabDiskPermissionPresenter extends AbstractSubTabPresenter<Disk, DiskListModel,
     PermissionListModel<Disk>, SubTabDiskPermissionPresenter.ViewDef, SubTabDiskPermissionPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.diskPermissionSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabDiskPermissionPresenter> {
@@ -35,10 +38,10 @@ public class SubTabDiskPermissionPresenter extends AbstractSubTabPresenter<Disk,
     }
 
     @TabInfo(container = DiskSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<Permission, DiskListModel,
             PermissionListModel<Disk>> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.diskPermissionSubTabLabel(), 4, modelProvider);
+        return new ModelBoundTabData(constants.diskPermissionSubTabLabel(), 4, modelProvider);
     }
 
     @Inject

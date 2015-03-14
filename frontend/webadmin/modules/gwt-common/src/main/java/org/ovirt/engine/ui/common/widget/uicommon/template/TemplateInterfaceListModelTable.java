@@ -3,14 +3,15 @@ package org.ovirt.engine.ui.common.widget.uicommon.template;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.UiCommandButtonDefinition;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractBooleanColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.NicActivateStatusColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.NicActivateStatusColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateInterfaceListModel;
@@ -19,6 +20,8 @@ import com.google.gwt.event.shared.EventBus;
 
 public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidget<VmNetworkInterface, TemplateInterfaceListModel> {
 
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+
     public TemplateInterfaceListModelTable(
             SearchableTableModelProvider<VmNetworkInterface, TemplateInterfaceListModel> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
@@ -26,7 +29,7 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
     }
 
     @Override
-    public void initTable(CommonApplicationConstants constants) {
+    public void initTable() {
         getTable().addColumn(new NicActivateStatusColumn<VmNetworkInterface>(), constants.empty(), "30px"); //$NON-NLS-1$
 
         AbstractTextColumn<VmNetworkInterface> nameColumn = new AbstractTextColumn<VmNetworkInterface>() {

@@ -10,6 +10,8 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportTemplateGeneralSubTabView;
 
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -22,6 +24,8 @@ public class RegisterTemplateInfoPanel extends RegisterEntityInfoPanel<VmTemplat
     public RegisterTemplateInfoPanel(RegisterEntityModel<VmTemplate> model) {
         super(model);
     }
+
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Override
     protected void init() {
@@ -63,7 +67,7 @@ public class RegisterTemplateInfoPanel extends RegisterEntityInfoPanel<VmTemplat
                 public void onSubTabDeselected() {
                 }
             };
-        generalView = new ImportTemplateGeneralSubTabView(modelProvider, constants);
+        generalView = new ImportTemplateGeneralSubTabView(modelProvider);
     }
 
     public TemplateGeneralModel getTemplateGeneralModel() {

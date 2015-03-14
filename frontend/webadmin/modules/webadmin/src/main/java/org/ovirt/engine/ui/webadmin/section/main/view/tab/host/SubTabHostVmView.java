@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -33,11 +34,13 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabHostVmView(SearchableDetailModelProvider<VM, HostListModel<Void>, HostVmListModel> modelProvider,
-        ApplicationResources resources, ApplicationConstants constants) {
+    public SubTabHostVmView(SearchableDetailModelProvider<VM, HostListModel<Void>, HostVmListModel> modelProvider) {
         super(modelProvider);
-        initTable(resources, constants);
+        initTable();
         initWidget(getTable());
     }
 
@@ -46,7 +49,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initTable(ApplicationResources resources, ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         getTable().addColumn(new VmStatusColumn<VM>(), constants.empty(), "30px"); //$NON-NLS-1$

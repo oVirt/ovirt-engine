@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterClusterListM
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DataCenterSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -25,6 +26,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabDataCenterClusterPresenter extends AbstractSubTabPresenter<StoragePool, DataCenterListModel, DataCenterClusterListModel, SubTabDataCenterClusterPresenter.ViewDef, SubTabDataCenterClusterPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.dataCenterClusterSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabDataCenterClusterPresenter> {
@@ -34,9 +37,9 @@ public class SubTabDataCenterClusterPresenter extends AbstractSubTabPresenter<St
     }
 
     @TabInfo(container = DataCenterSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<VDSGroup, DataCenterListModel, DataCenterClusterListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.dataCenterClusterSubTabLabel(), 3, modelProvider);
+        return new ModelBoundTabData(constants.dataCenterClusterSubTabLabel(), 3, modelProvider);
     }
 
     @Inject

@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.common.widget.uicommon.vm.PoolGeneralModelForm;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
-import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedPoolGeneralPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDetailModelProvider;
 
@@ -35,10 +34,9 @@ public class SubTabExtendedPoolGeneralView extends
 
     @Inject
     public SubTabExtendedPoolGeneralView(
-            UserPortalDetailModelProvider<UserPortalListModel, PoolGeneralModel> modelProvider,
-            ApplicationConstants constants) {
+            UserPortalDetailModelProvider<UserPortalListModel, PoolGeneralModel> modelProvider) {
         super(modelProvider);
-        form = new PoolGeneralModelForm(modelProvider, constants);
+        form = new PoolGeneralModelForm(modelProvider);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         generateIds();

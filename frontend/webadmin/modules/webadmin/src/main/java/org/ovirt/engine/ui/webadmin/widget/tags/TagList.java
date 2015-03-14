@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -33,11 +34,13 @@ public class TagList extends AbstractActionStackPanelItem<TagModelProvider, TagL
 
     private static final TagTreeResources res = GWT.create(TagTreeResources.class);
 
-    public TagList(TagModelProvider modelProvider, ApplicationConstants constants) {
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
+    public TagList(TagModelProvider modelProvider) {
         super(modelProvider);
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         WidgetIdHandler.idHandler.generateAndSetIds(this);
-        addActionButtons(modelProvider, constants);
+        addActionButtons(modelProvider);
         addModelListeners(modelProvider);
     }
 
@@ -56,7 +59,7 @@ public class TagList extends AbstractActionStackPanelItem<TagModelProvider, TagL
                 ClientGinjectorProvider.getEventBus());
     }
 
-    private void addActionButtons(final TagModelProvider modelProvider, final ApplicationConstants constants) {
+    private void addActionButtons(final TagModelProvider modelProvider) {
         actionPanel.addActionButton(new WebAdminButtonDefinition<TagListModel>(constants.newTag()) {
             @Override
             protected UICommand resolveCommand() {

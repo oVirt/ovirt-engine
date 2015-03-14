@@ -3,8 +3,6 @@ package org.ovirt.engine.ui.userportal.section.main.view.popup.vm;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundWidgetPopupView;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceModel;
-import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmNetworkInterfacePopupWidget;
 
@@ -19,10 +17,9 @@ public class VmInterfacePopupView extends AbstractModelBoundWidgetPopupView<VmIn
     }
 
     @Inject
-    public VmInterfacePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
+    public VmInterfacePopupView(EventBus eventBus) {
         super(eventBus,
-                resources,
-                new VmNetworkInterfacePopupWidget(eventBus, constants), "510px", //$NON-NLS-1$
+                new VmNetworkInterfacePopupWidget(eventBus), "510px", //$NON-NLS-1$
                 "320px"); //$NON-NLS-1$
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }

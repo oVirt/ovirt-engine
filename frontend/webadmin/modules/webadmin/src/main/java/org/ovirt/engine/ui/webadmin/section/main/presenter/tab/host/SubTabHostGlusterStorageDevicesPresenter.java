@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterStorageDevicesL
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.HostSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -26,6 +27,8 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public class SubTabHostGlusterStorageDevicesPresenter extends AbstractSubTabPresenter<VDS, HostListModel<Void>, HostGlusterStorageDevicesListModel, SubTabHostGlusterStorageDevicesPresenter.ViewDef, SubTabHostGlusterStorageDevicesPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.hostGlusterStorageDevicesSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabHostGlusterStorageDevicesPresenter> {
@@ -35,9 +38,9 @@ public class SubTabHostGlusterStorageDevicesPresenter extends AbstractSubTabPres
     }
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             DetailModelProvider<HostListModel<Void>, HostGlusterStorageDevicesListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.storageDevices(), 4, modelProvider);
+        return new ModelBoundTabData(constants.storageDevices(), 4, modelProvider);
     }
 
     @Inject

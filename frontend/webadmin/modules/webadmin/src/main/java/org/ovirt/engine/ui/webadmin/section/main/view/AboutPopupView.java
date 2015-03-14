@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AboutPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -38,18 +38,17 @@ public class AboutPopupView extends AbstractPopupView<SimpleDialogPanel> impleme
 
     private final ApplicationDynamicMessages dynamicMessages;
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public AboutPopupView(EventBus eventBus, ApplicationResources resources,
-            ApplicationConstants constants,
-            ApplicationDynamicMessages dynamicMessages) {
-        super(eventBus, resources);
+    public AboutPopupView(EventBus eventBus, ApplicationDynamicMessages dynamicMessages) {
+        super(eventBus);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         this.dynamicMessages = dynamicMessages;
-        localize(constants, dynamicMessages);
+        localize();
     }
 
-    void localize(ApplicationConstants constants,
-            ApplicationDynamicMessages dynamicMessages) {
+    void localize() {
         closeButton.setText(constants.closeButtonLabel());
         titleLabel.setText(constants.aboutPopupCaption());
         copyrightNotice.setText(dynamicMessages.copyRightNotice());

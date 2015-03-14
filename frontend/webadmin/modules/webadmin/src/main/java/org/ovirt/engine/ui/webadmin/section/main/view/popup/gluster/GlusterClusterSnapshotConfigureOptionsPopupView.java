@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterClusterSnapshotConfigModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterClusterSnapshotConfigureOptionsPopupPresenterWidget;
 
 import com.google.gwt.cell.client.FieldUpdater;
@@ -55,16 +55,13 @@ public class GlusterClusterSnapshotConfigureOptionsPopupView extends AbstractMod
     @WithElementId
     EntityModelCellTable<ListModel<EntityModel<GlusterVolumeSnapshotConfig>>> configsTable;
 
-    private final ApplicationConstants constants;
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
-    public GlusterClusterSnapshotConfigureOptionsPopupView(EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationConstants constants) {
-        super(eventBus, resources);
-        this.constants = constants;
+    public GlusterClusterSnapshotConfigureOptionsPopupView(EventBus eventBus) {
+        super(eventBus);
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);

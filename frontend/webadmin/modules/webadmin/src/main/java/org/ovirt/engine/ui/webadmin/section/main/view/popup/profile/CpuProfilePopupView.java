@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.CpuProfileBaseModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.CpuProfilePopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -55,18 +55,20 @@ public class CpuProfilePopupView extends AbstractModelBoundPopupView<CpuProfileB
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public CpuProfilePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
+    public CpuProfilePopupView(EventBus eventBus) {
+        super(eventBus);
         clusterEditor = new ListModelListBoxEditor<>(new NameRenderer<VDSGroup>());
         qosEditor = new ListModelListBoxEditor<>(new NameRenderer<CpuQos>());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
+        localize();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         nameEditor.setLabel(constants.profileNameLabel());
         descriptionEditor.setLabel(constants.profileDescriptionLabel());
         clusterEditor.setLabel(constants.cpuProfileClusterLabel());

@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterHostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -30,10 +31,12 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabClusterHostView(SearchableDetailModelProvider<VDS, ClusterListModel<Void>, ClusterHostListModel> modelProvider, ApplicationConstants constants) {
+    public SubTabClusterHostView(SearchableDetailModelProvider<VDS, ClusterListModel<Void>, ClusterHostListModel> modelProvider) {
         super(modelProvider);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
@@ -42,7 +45,7 @@ public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initTable(final ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         getTable().addColumn(new HostStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$

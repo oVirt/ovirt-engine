@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserGeneralPresenter;
 
 import com.google.gwt.core.client.GWT;
@@ -48,8 +49,10 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabUserGeneralView(DetailModelProvider<UserListModel, UserGeneralModel> modelProvider, ApplicationConstants constants) {
+    public SubTabUserGeneralView(DetailModelProvider<UserListModel, UserGeneralModel> modelProvider) {
         super(modelProvider);
 
         // Init formPanel

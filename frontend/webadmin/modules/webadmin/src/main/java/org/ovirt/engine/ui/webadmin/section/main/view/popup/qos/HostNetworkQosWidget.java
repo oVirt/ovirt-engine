@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.HostNetworkQosParametersModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.core.shared.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -49,7 +50,9 @@ public class HostNetworkQosWidget extends QosWidget<HostNetworkQos, HostNetworkQ
     @UiField
     Style style;
 
-    public HostNetworkQosWidget(ApplicationConstants constants) {
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
+    public HostNetworkQosWidget() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         WidgetIdHandler.idHandler.generateAndSetIds(this);
 

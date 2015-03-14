@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -46,11 +47,12 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
     private final SafeHtml emptyImage;
     private final SafeHtml managementImage;
 
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabClusterNetworkView(SearchableDetailModelProvider<Network, ClusterListModel<Void>, ClusterNetworkListModel> modelProvider,
-            ApplicationConstants constants,
-            ApplicationTemplates templates,
-            ApplicationResources resources) {
+    public SubTabClusterNetworkView(SearchableDetailModelProvider<Network, ClusterListModel<Void>, ClusterNetworkListModel> modelProvider) {
         super(modelProvider);
         displayImage =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkMonitor()).getHTML());
@@ -58,7 +60,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.migrationNetwork()).getHTML());
         emptyImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkEmpty()).getHTML());
         managementImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.mgmtNetwork()).getHTML());
-        initTable(constants, templates);
+        initTable();
         initWidget(getTable());
     }
 
@@ -67,7 +69,7 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initTable(final ApplicationConstants constants, final ApplicationTemplates templates) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         getTable().addColumn(new NetworkStatusColumn(), "", "20px"); //$NON-NLS-1$ //$NON-NLS-2$

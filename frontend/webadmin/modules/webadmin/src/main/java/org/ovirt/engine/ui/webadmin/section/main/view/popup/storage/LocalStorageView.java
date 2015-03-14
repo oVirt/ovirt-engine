@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LocalStorageModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -30,6 +30,8 @@ public class LocalStorageView extends AbstractStorageView<LocalStorageModel> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @UiField
     WidgetStyle style;
 
@@ -46,7 +48,7 @@ public class LocalStorageView extends AbstractStorageView<LocalStorageModel> {
     @Inject
     public LocalStorageView() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(ClientGinjectorProvider.getApplicationConstants());
+        localize();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         addStyles();
         driver.initialize(this);
@@ -56,7 +58,7 @@ public class LocalStorageView extends AbstractStorageView<LocalStorageModel> {
         localPathEditor.addContentWidgetContainerStyleName(style.localPathContentWidget());
     }
 
-    void localize(ApplicationConstants constants) {
+    void localize() {
         localPathEditor.setLabel(constants.storagePopupLocalPathLabel());
     }
 

@@ -3,10 +3,15 @@ package org.ovirt.engine.ui.webadmin.widget.table.column;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.resources.client.ImageResource;
 
-public class StorageDomainSharedStatusColumn extends AbstractWebAdminImageResourceColumn<StorageDomain> {
+public class StorageDomainSharedStatusColumn extends AbstractImageResourceColumn<StorageDomain> {
+
+    private final static ApplicationResources resources = AssetProvider.getResources();
 
     @Override
     public ImageResource getValue(StorageDomain sp) {
@@ -15,20 +20,20 @@ public class StorageDomainSharedStatusColumn extends AbstractWebAdminImageResour
             switch (sp.getStorageDomainSharedStatus()) {
                 case Unattached:
                     if (sp.getStorageType() == StorageType.GLANCE) {
-                        return getApplicationResources().openstackImage();
+                        return resources.openstackImage();
                     } else {
-                        return getApplicationResources().tornChainImage();
+                        return resources.tornChainImage();
                     }
                 case Active:
-                    return getApplicationResources().upImage();
+                    return resources.upImage();
                 case Inactive:
-                    return getApplicationResources().downImage();
+                    return resources.downImage();
                 case Mixed:
-                    return getApplicationResources().upalertImage();
+                    return resources.upalertImage();
                 case Locked:
-                    return getApplicationResources().lockImage();
+                    return resources.lockImage();
                 default:
-                    return getApplicationResources().downImage();
+                    return resources.downImage();
             }
         }
         else {

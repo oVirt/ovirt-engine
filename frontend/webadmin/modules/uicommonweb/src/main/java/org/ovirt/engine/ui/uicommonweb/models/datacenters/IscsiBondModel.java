@@ -36,7 +36,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class IscsiBondModel extends Model {
 
-    private static final UIConstants CONSTANTS = ConstantsManager.getInstance().getConstants();
+    private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private EntityModel<String> name;
     private EntityModel<String> description;
@@ -119,7 +119,7 @@ public class IscsiBondModel extends Model {
 
     private void createSaveButon() {
         UICommand onSaveCommand = new UICommand("OnSave", this); //$NON-NLS-1$
-        onSaveCommand.setTitle(CONSTANTS.ok());
+        onSaveCommand.setTitle(constants.ok());
         onSaveCommand.setIsDefault(true);
         getCommands().add(onSaveCommand);
     }
@@ -196,7 +196,7 @@ public class IscsiBondModel extends Model {
         getDescription().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation(), new LengthValidation(4000) });
 
         if (getNetworks().getSelectedItems() == null || getNetworks().getSelectedItems().isEmpty()) {
-            getInvalidityReasons().add(CONSTANTS.noNetworksSelected());
+            getInvalidityReasons().add(constants.noNetworksSelected());
             setIsValid(false);
         } else {
             setIsValid(true);

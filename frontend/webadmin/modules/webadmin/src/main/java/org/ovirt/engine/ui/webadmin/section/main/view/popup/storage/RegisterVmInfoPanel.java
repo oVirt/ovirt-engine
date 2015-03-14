@@ -11,6 +11,8 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportVmGeneralSubTabView;
 
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -19,6 +21,8 @@ public class RegisterVmInfoPanel extends RegisterEntityInfoPanel<VM> {
 
     private ImportVmGeneralSubTabView generalView;
     private VmGeneralModel vmGeneralModel;
+
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     public RegisterVmInfoPanel(RegisterEntityModel<VM> model) {
         super(model);
@@ -68,7 +72,7 @@ public class RegisterVmInfoPanel extends RegisterEntityInfoPanel<VM> {
                 public void onSubTabDeselected() {
                 }
             };
-        generalView = new ImportVmGeneralSubTabView(modelProvider, constants);
+        generalView = new ImportVmGeneralSubTabView(modelProvider);
     }
 
     public VmGeneralModel getVmGeneralModel() {

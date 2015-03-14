@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkVmFilter;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkVmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -38,15 +39,14 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private final ApplicationConstants constants;
-    private final ApplicationTemplates templates;
     private final ViewRadioGroup<NetworkVmFilter> viewRadioGroup;
 
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabNetworkVmView(SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VM>, NetworkListModel, NetworkVmListModel> modelProvider, ApplicationConstants constants, ApplicationTemplates templates) {
+    public SubTabNetworkVmView(SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VM>, NetworkListModel, NetworkVmListModel> modelProvider) {
         super(modelProvider);
-        this.constants = constants;
-        this.templates = templates;
         viewRadioGroup = new ViewRadioGroup<NetworkVmFilter>(Arrays.asList(NetworkVmFilter.values()));
         viewRadioGroup.setSelectedValue(NetworkVmFilter.running);
         viewRadioGroup.addStyleName("stnvmv_radioGroup_pfly_fix"); //$NON-NLS-1$

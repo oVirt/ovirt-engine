@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.StorageSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -25,6 +26,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabStorageSnapshotPresenter extends AbstractSubTabPresenter<StorageDomain, StorageListModel, StorageSnapshotListModel, SubTabStorageSnapshotPresenter.ViewDef, SubTabStorageSnapshotPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.storageSnapshotSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabStorageSnapshotPresenter> {
@@ -34,9 +37,9 @@ public class SubTabStorageSnapshotPresenter extends AbstractSubTabPresenter<Stor
     }
 
     @TabInfo(container = StorageSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<Disk, StorageListModel, StorageSnapshotListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.snapshotsLabel(), 8, modelProvider);
+        return new ModelBoundTabData(constants.snapshotsLabel(), 8, modelProvider);
     }
 
     @Inject

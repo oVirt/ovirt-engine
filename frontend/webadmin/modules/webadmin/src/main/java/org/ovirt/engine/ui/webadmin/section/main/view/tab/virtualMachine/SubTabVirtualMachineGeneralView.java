@@ -10,9 +10,8 @@ import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.VmGeneralModelForm;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineGeneralPresenter;
 
 import com.google.gwt.core.client.GWT;
@@ -34,8 +33,7 @@ public class SubTabVirtualMachineGeneralView extends AbstractSubTabFormView<VM, 
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    // We need this in order to find the icon for alert messages:
-    private final ApplicationResources resources;
+    private final static ApplicationResources resources = AssetProvider.getResources();
 
     @UiField(provided = true)
     @WithElementId
@@ -54,12 +52,9 @@ public class SubTabVirtualMachineGeneralView extends AbstractSubTabFormView<VM, 
     FlowPanel alertsList;
 
     @Inject
-    public SubTabVirtualMachineGeneralView(DetailModelProvider<VmListModel<Void>, VmGeneralModel> modelProvider, ApplicationConstants constants) {
+    public SubTabVirtualMachineGeneralView(DetailModelProvider<VmListModel<Void>, VmGeneralModel> modelProvider) {
         super(modelProvider);
-        this.form = new VmGeneralModelForm(modelProvider, constants);
-
-        // Inject a reference to the resources:
-        resources = ClientGinjectorProvider.getApplicationResources();
+        this.form = new VmGeneralModelForm(modelProvider);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         clearAlerts();

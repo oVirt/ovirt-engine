@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaStorageListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 
@@ -31,11 +32,13 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
+
     @Inject
-    public SubTabQuotaStorageView(SearchableDetailModelProvider<QuotaStorage, QuotaListModel, QuotaStorageListModel> modelProvider,
-            ApplicationConstants constants, ApplicationMessages messages) {
+    public SubTabQuotaStorageView(SearchableDetailModelProvider<QuotaStorage, QuotaListModel, QuotaStorageListModel> modelProvider) {
         super(modelProvider);
-        initTable(constants, messages);
+        initTable();
         initWidget(getTable());
     }
 
@@ -44,7 +47,7 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    private void initTable(final ApplicationConstants constants, final ApplicationMessages messages) {
+    private void initTable() {
         getTable().enableColumnResizing();
 
         AbstractTextColumn<QuotaStorage> nameColumn = new AbstractTextColumn<QuotaStorage>() {

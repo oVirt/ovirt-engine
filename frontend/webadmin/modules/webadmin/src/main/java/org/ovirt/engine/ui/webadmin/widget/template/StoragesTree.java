@@ -21,7 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateStorageListModel
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.user.client.ui.DateLabel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -30,13 +30,11 @@ import com.google.gwt.user.client.ui.TreeItem;
 
 public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, StorageDomainModel, DiskModel> {
 
-    ApplicationResources resources;
-    ApplicationConstants constants;
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
-    public StoragesTree(ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates) {
-        super(resources, constants, templates);
-        this.resources = resources;
-        this.constants = constants;
+    public StoragesTree() {
+        super();
 
         setNodeSelectionEnabled(true);
     }

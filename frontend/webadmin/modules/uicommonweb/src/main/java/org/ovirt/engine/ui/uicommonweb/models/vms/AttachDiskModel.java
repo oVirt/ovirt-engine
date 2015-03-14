@@ -24,7 +24,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class AttachDiskModel extends NewDiskModel {
-    protected static final UIConstants CONSTANTS = ConstantsManager.getInstance().getConstants();
+    protected static final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private Map<DiskStorageType, ListModel<EntityModel<DiskModel>>> attachableDisksMap;
 
@@ -100,7 +100,7 @@ public class AttachDiskModel extends NewDiskModel {
     @Override
     public boolean validate() {
         if (isNoSelection()) {
-            getInvalidityReasons().add(CONSTANTS.noDisksSelected());
+            getInvalidityReasons().add(constants.noDisksSelected());
             setIsValid(false);
             return false;
         }

@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.common.widget.refresh.RefreshPanel;
 import org.ovirt.engine.ui.common.widget.refresh.SimpleRefreshManager;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabBasicPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.basic.UserPortalBasicListProvider;
 import org.ovirt.engine.ui.userportal.widget.basic.BasicViewSplitLayoutPanel;
@@ -40,19 +41,20 @@ public class MainTabBasicView extends AbstractView implements MainTabBasicPresen
 
     private SimpleRefreshManager refreshManager;
 
+    private final static ApplicationResources resources = AssetProvider.getResources();
+
     @Inject
     public MainTabBasicView(
             UserPortalBasicListProvider modelProvider,
             EventBus eventBus,
-            ClientStorage clientStorage,
-            ApplicationResources applicationResources) {
+            ClientStorage clientStorage) {
         this.refreshManager = new UserPortalRefreshManager(
                 modelProvider, eventBus, clientStorage);
         this.refreshPanel = refreshManager.getRefreshPanel();
 
         splitLayoutPanel = new BasicViewSplitLayoutPanel(
-                applicationResources.basicViewSplitterTop(),
-                applicationResources.basicViewSplitterSnap());
+                resources.basicViewSplitterTop(),
+                resources.basicViewSplitterSnap());
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 

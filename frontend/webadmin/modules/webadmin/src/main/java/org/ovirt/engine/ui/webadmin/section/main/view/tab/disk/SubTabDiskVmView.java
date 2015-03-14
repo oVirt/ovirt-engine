@@ -13,6 +13,8 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskVmListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.table.column.AbstractPercentColumn;
@@ -29,10 +31,13 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabDiskVmView(SearchableDetailModelProvider<VM, DiskListModel, DiskVmListModel> modelProvider, ApplicationConstants constants) {
+    public SubTabDiskVmView(SearchableDetailModelProvider<VM, DiskListModel, DiskVmListModel> modelProvider) {
         super(modelProvider);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
@@ -41,7 +46,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initTable(final ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         AbstractImageResourceColumn<VM> pluggedColumn = new AbstractImageResourceColumn<VM>() {
@@ -49,7 +54,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
             public ImageResource getValue(VM object) {
                 boolean isDiskPlugged = getDetailModel().isDiskPluggedToVm(object);
                 setTitle(isDiskPlugged ? constants.active() : constants.inactive());
-                return isDiskPlugged ? getCommonResources().upImage() : getCommonResources().downImage();
+                return isDiskPlugged ? resources.upImage() : resources.downImage();
             }
         };
         getTable().addColumn(pluggedColumn, constants.empty(), "30px"); //$NON-NLS-1$

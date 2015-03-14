@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -53,11 +54,13 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
         WidgetIdHandler idHandler = GWT.create(WidgetIdHandler.class);
     }
 
-    public SystemTree(SystemTreeModelProvider modelProvider, ApplicationConstants constants) {
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
+    public SystemTree(SystemTreeModelProvider modelProvider) {
         super(modelProvider);
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         WidgetIdHandler.idHandler.generateAndSetIds(this);
-        addActionButtons(modelProvider, constants);
+        addActionButtons(modelProvider);
         addModelListeners(modelProvider);
     }
 
@@ -68,7 +71,7 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
                 ClientGinjectorProvider.getEventBus());
     }
 
-    private void addActionButtons(final SystemTreeModelProvider modelProvider, final ApplicationConstants constants) {
+    private void addActionButtons(final SystemTreeModelProvider modelProvider) {
         actionPanel.addActionButton(new WebAdminButtonDefinition<SystemTreeModel>(constants.treeExpandAll()) {
             @Override
             protected UICommand resolveCommand() {

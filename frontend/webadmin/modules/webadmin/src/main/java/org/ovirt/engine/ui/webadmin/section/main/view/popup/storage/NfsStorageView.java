@@ -1,17 +1,14 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
-import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelTextBoxOnlyEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.ShortEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
@@ -21,7 +18,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
@@ -129,15 +126,13 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
 
     private final Driver driver = GWT.create(Driver.class);
 
-    protected static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
-    protected static final CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
-    protected static final CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public NfsStorageView() {
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(ClientGinjectorProvider.getApplicationConstants());
+        localize();
         initExpander();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         addStyles();
@@ -167,8 +162,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
         overrideEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new VisibilityRenderer.SimpleVisibilityRenderer(), true);
     }
 
-    void localize(ApplicationConstants constants) {
-
+    void localize() {
         pathLabel.setText(constants.storagePopupNfsPathLabel());
         pathHintLabel.setText(constants.storagePopupNfsPathHintLabel());
         warningLabel.setText(constants.advancedOptionsLabel());

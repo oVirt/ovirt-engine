@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.ReportActionsHelper;
@@ -39,16 +40,17 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public MainTabStorageView(MainModelProvider<StorageDomain, StorageListModel> modelProvider,
-            ApplicationConstants constants) {
+    public MainTabStorageView(MainModelProvider<StorageDomain, StorageListModel> modelProvider) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
-    void initTable(final ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         getTable().addColumn(new StorageDomainSharedStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
@@ -164,18 +166,18 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
             }
         });
         if (ReportInit.getInstance().isReportsEnabled()) {
-            updateReportsAvailability(constants);
+            updateReportsAvailability();
         } else {
             getMainModel().getReportsAvailabilityEvent().addListener(new IEventListener<EventArgs>() {
                 @Override
                 public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                    updateReportsAvailability(constants);
+                    updateReportsAvailability();
                 }
             });
         }
     }
 
-    private void updateReportsAvailability(ApplicationConstants constants) {
+    private void updateReportsAvailability() {
         if (ReportInit.getInstance().isReportsEnabled()) {
             List<ActionButtonDefinition<StorageDomain>> resourceSubActions =
                     ReportActionsHelper.getInstance().getResourceSubActions("Storage", getModelProvider()); //$NON-NLS-1$

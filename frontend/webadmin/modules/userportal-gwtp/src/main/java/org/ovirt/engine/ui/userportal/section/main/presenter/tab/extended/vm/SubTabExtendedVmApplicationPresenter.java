@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
@@ -22,6 +23,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SubTabExtendedVmApplicationPresenter
         extends AbstractSubTabExtendedVmPresenter<VmAppListModel<VM>, SubTabExtendedVmApplicationPresenter.ViewDef, SubTabExtendedVmApplicationPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(UserPortalApplicationPlaces.extendedVirtualMachineApplicationSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabExtendedVmApplicationPresenter> {
@@ -31,8 +34,8 @@ public class SubTabExtendedVmApplicationPresenter
     }
 
     @TabInfo(container = ExtendedVmSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants) {
-        return new TabDataBasic(applicationConstants.extendedVirtualMachineApplicationSubTabLabel(),
+    static TabData getTabData() {
+        return new TabDataBasic(constants.extendedVirtualMachineApplicationSubTabLabel(),
                 9);
     }
 

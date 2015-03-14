@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.AbstractUiCommandButton;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.HasValidation;
@@ -24,14 +23,12 @@ public abstract class AbstractVmPopupView extends AbstractModelBoundWidgetPopupV
     AbstractVmBasedPopupPresenterWidget.ViewDef {
 
     @Inject
-    public AbstractVmPopupView(EventBus eventBus, CommonApplicationResources resources,
-            AbstractVmPopupWidget popupWidget) {
-        this(eventBus, resources, popupWidget, "760px", "580px"); //$NON-NLS-1$ //$NON-NLS-2$
+    public AbstractVmPopupView(EventBus eventBus, AbstractVmPopupWidget popupWidget) {
+        this(eventBus, popupWidget, "760px", "580px"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    public AbstractVmPopupView(EventBus eventBus, CommonApplicationResources resources,
-            AbstractVmPopupWidget popupWidget, String width, String height) {
-        super(eventBus, resources, popupWidget, width, height);
+    public AbstractVmPopupView(EventBus eventBus, AbstractVmPopupWidget popupWidget, String width, String height) {
+        super(eventBus, popupWidget, width, height);
     }
 
     @Override

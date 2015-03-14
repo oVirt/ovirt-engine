@@ -12,10 +12,10 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.Slider;
 import org.ovirt.engine.ui.common.widget.form.Slider.SliderValueChange;
@@ -31,7 +31,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.QuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.NullableButtonCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.QuotaUtilizationStatusColumn;
@@ -181,20 +181,22 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
+
     @Inject
-    public QuotaPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants,
-                          ApplicationMessages messages) {
-        super(eventBus, resources);
+    public QuotaPopupView(EventBus eventBus) {
+        super(eventBus);
         initListBoxEditors();
         initRadioButtonEditors();
         initCheckBoxes();
         initSliders();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants);
+        localize();
         addStyles();
         driver.initialize(this);
-        initTables(constants, messages);
+        initTables();
     }
 
     private void initCheckBoxes() {
@@ -217,12 +219,12 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         storageGraceSlider.setSliderValueChange(GRACE_STORAGE, this);
     }
 
-    private void initTables(ApplicationConstants constants, ApplicationMessages messages) {
-        initQuotaClusterTable(constants, messages);
-        initQuotaStorageTable(constants, messages);
+    private void initTables() {
+        initQuotaClusterTable();
+        initQuotaStorageTable();
     }
 
-    private void initQuotaStorageTable(final ApplicationConstants constants, final ApplicationMessages messages) {
+    private void initQuotaStorageTable() {
         quotaStorageTable = new ListModelObjectCellTable<>();
         storageQuotaTableContainer.add(quotaStorageTable);
 
@@ -309,7 +311,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         });
     }
 
-    private void initQuotaClusterTable(final ApplicationConstants constants, final ApplicationMessages messages) {
+    private void initQuotaClusterTable() {
         quotaClusterTable = new ListModelObjectCellTable<>();
         clusterQuotaTableContainer.add(quotaClusterTable);
 
@@ -418,7 +420,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         dataCenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
     }
 
-    void localize(ApplicationConstants constants) {
+    void localize() {
         nameEditor.setLabel(constants.nameQuotaPopup());
         descriptionEditor.setLabel(constants.descriptionQuotaPopup());
         dataCenterEditor.setLabel(constants.dataCenterQuotaPopup());

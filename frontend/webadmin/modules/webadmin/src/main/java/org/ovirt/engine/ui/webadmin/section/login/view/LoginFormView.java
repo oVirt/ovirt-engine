@@ -5,7 +5,7 @@ import org.ovirt.engine.ui.common.view.AbstractLoginFormView;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.login.presenter.LoginFormPresenterWidget;
 import org.ovirt.engine.ui.webadmin.system.InternalConfiguration;
 
@@ -31,16 +31,16 @@ public class LoginFormView extends AbstractLoginFormView implements LoginFormPre
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
     public LoginFormView(EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationConstants constants,
             ApplicationDynamicMessages dynamicMessages,
             InternalConfiguration intConf) {
-        super(eventBus, resources);
+        super(eventBus);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants, dynamicMessages);
+        localize();
         setStyles();
         driver.initialize(this);
         ViewIdHandler.idHandler.generateAndSetIds(this);
@@ -52,8 +52,7 @@ public class LoginFormView extends AbstractLoginFormView implements LoginFormPre
         }
     }
 
-    private void localize(ApplicationConstants constants,
-            ApplicationDynamicMessages dynamicMessages) {
+    private void localize() {
         userNameEditor.setLabel(constants.loginFormUserNameLabel());
         passwordEditor.setLabel(constants.loginFormPasswordLabel());
         profileEditor.setLabel(constants.loginFormProfileLabel());

@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskGeneralPresenter;
 
 import com.google.gwt.core.client.GWT;
@@ -53,7 +53,7 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private static final ApplicationConstants constants = ClientGinjectorProvider.getApplicationConstants();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
     public SubTabDiskGeneralView(DetailModelProvider<DiskListModel, DiskGeneralModel> modelProvider) {

@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VirtualMachineSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -26,6 +27,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabVirtualMachineEventPresenter extends AbstractSubTabPresenter<VM, VmListModel<Void>, VmEventListModel, SubTabVirtualMachineEventPresenter.ViewDef, SubTabVirtualMachineEventPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.virtualMachineEventSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabVirtualMachineEventPresenter> {
@@ -35,9 +38,9 @@ public class SubTabVirtualMachineEventPresenter extends AbstractSubTabPresenter<
     }
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<AuditLog, VmListModel<Void>, VmEventListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.virtualMachineEventSubTabLabel(), 8, modelProvider, Align.RIGHT);
+        return new ModelBoundTabData(constants.virtualMachineEventSubTabLabel(), 8, modelProvider, Align.RIGHT);
     }
 
     @Inject

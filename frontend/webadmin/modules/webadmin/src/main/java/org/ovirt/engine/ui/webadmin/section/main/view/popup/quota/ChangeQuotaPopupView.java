@@ -4,8 +4,6 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.quota.ChangeQuotaView;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -25,10 +23,10 @@ public class ChangeQuotaPopupView extends AbstractModelBoundPopupView<ChangeQuot
     ChangeQuotaView changeQuotaView;
 
     @Inject
-    public ChangeQuotaPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
+    public ChangeQuotaPopupView(EventBus eventBus) {
+        super(eventBus);
 
-        changeQuotaView = new ChangeQuotaView(constants);
+        changeQuotaView = new ChangeQuotaView();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
     }
 

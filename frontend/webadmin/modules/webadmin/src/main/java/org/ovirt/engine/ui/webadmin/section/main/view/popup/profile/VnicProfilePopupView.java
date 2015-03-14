@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.VnicProfilePopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -84,21 +84,23 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public VnicProfilePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
+    public VnicProfilePopupView(EventBus eventBus) {
+        super(eventBus);
         publicUseEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         customPropertiesSheetEditor = new KeyValueWidget<KeyValueModel>("380px"); //$NON-NLS-1$
         networkEditor = new ListModelListBoxEditor<>(new NameRenderer<Network>());
         networkQoSEditor = new ListModelListBoxEditor<>(new NameRenderer<NetworkQoS>());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
+        localize();
         applyStyles();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         networkEditor.setLabel(constants.networkVnicProfile());
         nameEditor.setLabel(constants.nameVnicProfile());
         descriptionEditor.setLabel(constants.descriptionVnicProfile());

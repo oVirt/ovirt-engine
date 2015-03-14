@@ -5,11 +5,12 @@ import java.util.Date;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.searchbackend.AuditLogConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.AuditLogSeverityColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AuditLogSeverityColumn;
 import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 
@@ -23,6 +24,8 @@ import com.google.gwt.event.shared.EventBus;
  */
 public class EventListModelTable<T extends EventListModel> extends AbstractModelBoundTableWidget<AuditLog, T> {
 
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+
     public EventListModelTable(
             SearchableTableModelProvider<AuditLog, T> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
@@ -30,7 +33,7 @@ public class EventListModelTable<T extends EventListModel> extends AbstractModel
     }
 
     @Override
-    public void initTable(CommonApplicationConstants constants) {
+    public void initTable() {
         getTable().enableColumnResizing();
 
         getTable().addColumn(new AuditLogSeverityColumn(), constants.empty(), "20px"); //$NON-NLS-1$

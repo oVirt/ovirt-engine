@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget;
 
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.dialog.ShapedButton;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -15,7 +16,7 @@ public class VerticalSplitTable<T> extends SplitTable<T> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    private static CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
 
     public VerticalSplitTable(EntityModelCellTable<ListModel<T>> excludedTable,
             EntityModelCellTable<ListModel<T>> includedTable,

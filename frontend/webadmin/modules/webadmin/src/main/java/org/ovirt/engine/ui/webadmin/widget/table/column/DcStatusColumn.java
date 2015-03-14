@@ -1,25 +1,30 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.resources.client.ImageResource;
 
-public class DcStatusColumn extends AbstractWebAdminImageResourceColumn<StoragePool> {
+public class DcStatusColumn extends AbstractImageResourceColumn<StoragePool> {
+
+    private final static ApplicationResources resources = AssetProvider.getResources();
 
     @Override
     public ImageResource getValue(StoragePool dc) {
         setEnumTitle(dc.getStatus());
         switch (dc.getStatus()) {
         case Contend:
-            return getApplicationResources().waitImage();
+            return resources.waitImage();
         case Maintenance:
-            return getApplicationResources().maintenanceImage();
+            return resources.maintenanceImage();
         case NotOperational:
         case NonResponsive:
         case Uninitialized:
-            return getApplicationResources().downImage();
+            return resources.downImage();
         case Up:
-            return getApplicationResources().upImage();
+            return resources.upImage();
 
         default:
             break;

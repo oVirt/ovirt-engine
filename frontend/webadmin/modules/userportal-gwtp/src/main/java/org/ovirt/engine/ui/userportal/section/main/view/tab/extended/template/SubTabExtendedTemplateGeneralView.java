@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.uicommon.template.TemplateGeneralModelForm;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
-import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplateGeneralPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDetailModelProvider;
 
@@ -34,10 +33,9 @@ public class SubTabExtendedTemplateGeneralView extends AbstractSubTabFormView<Vm
 
     @Inject
     public SubTabExtendedTemplateGeneralView(
-            UserPortalDetailModelProvider<UserPortalTemplateListModel, TemplateGeneralModel> modelProvider,
-            ApplicationConstants constants) {
+            UserPortalDetailModelProvider<UserPortalTemplateListModel, TemplateGeneralModel> modelProvider) {
         super(modelProvider);
-        form = new TemplateGeneralModelForm(modelProvider, constants);
+        form = new TemplateGeneralModelForm(modelProvider);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         generateIds();

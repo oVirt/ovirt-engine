@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkExternalSubnetList
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.NetworkSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -25,6 +26,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabNetworkExternalSubnetPresenter extends AbstractSubTabPresenter<NetworkView, NetworkListModel, NetworkExternalSubnetListModel, SubTabNetworkExternalSubnetPresenter.ViewDef, SubTabNetworkExternalSubnetPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.networkExternalSubnetSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabNetworkExternalSubnetPresenter> {
@@ -34,9 +37,9 @@ public class SubTabNetworkExternalSubnetPresenter extends AbstractSubTabPresente
     }
 
     @TabInfo(container = NetworkSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<ExternalSubnet, NetworkListModel, NetworkExternalSubnetListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.networkExternalSubnetSubTabLabel(), 2,
+        return new ModelBoundTabData(constants.networkExternalSubnetSubTabLabel(), 2,
                 modelProvider);
     }
 

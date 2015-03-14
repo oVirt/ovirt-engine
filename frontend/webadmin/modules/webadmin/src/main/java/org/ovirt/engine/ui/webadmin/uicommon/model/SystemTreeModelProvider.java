@@ -13,8 +13,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.widget.tree.SystemTreeItemCell;
 
 import com.google.gwt.core.client.Scheduler;
@@ -51,10 +49,9 @@ public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTre
 
     @Inject
     public SystemTreeModelProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            ApplicationResources applicationResources, ApplicationTemplates applicationTemplates) {
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
         super(eventBus, defaultConfirmPopupProvider);
-        this.cell = new SystemTreeItemCell(applicationResources, applicationTemplates);
+        this.cell = new SystemTreeItemCell();
 
         // Create selection model
         selectionModel = new SingleSelectionModel<SystemTreeItemModel>();

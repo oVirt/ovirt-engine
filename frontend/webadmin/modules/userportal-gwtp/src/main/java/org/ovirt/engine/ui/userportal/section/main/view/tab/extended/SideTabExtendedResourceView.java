@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.ApplicationResources;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedResourcePresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDataBoundModelProvider;
 import org.ovirt.engine.ui.userportal.widget.QuotaCPUProgressBar;
@@ -61,7 +61,7 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private static final ApplicationConstants constants = GWT.create(ApplicationConstants.class);
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     interface Style extends CssResource {
         String quotaNameText();
@@ -161,9 +161,8 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
     @Inject
     public SideTabExtendedResourceView(UserPortalDataBoundModelProvider<VM, ResourcesModel> modelProvider,
             EventBus eventBus, ClientStorage clientStorage,
-            SubTableResources headerResources, ApplicationResources resources,
-            ApplicationConstants constants) {
-        vmTable = new VmTable(modelProvider, headerResources, resources, constants);
+            SubTableResources headerResources) {
+        vmTable = new VmTable(modelProvider, headerResources);
 
         SimpleRefreshManager refreshManager = new SimpleRefreshManager(modelProvider, eventBus, clientStorage);
         refreshPanel = refreshManager.getRefreshPanel();

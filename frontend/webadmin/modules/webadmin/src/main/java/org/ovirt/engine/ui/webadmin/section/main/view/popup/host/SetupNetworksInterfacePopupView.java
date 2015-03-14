@@ -1,9 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksInterfacePopupPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
@@ -13,12 +10,9 @@ public class SetupNetworksInterfacePopupView extends HostInterfacePopupView
         implements SetupNetworksInterfacePopupPresenterWidget.ViewDef {
 
     @Inject
-    public SetupNetworksInterfacePopupView(EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationConstants constants,
-            ApplicationTemplates templates) {
+    public SetupNetworksInterfacePopupView(EventBus eventBus) {
 
-        super(eventBus, resources, constants, templates);
+        super(eventBus);
     }
 
     @Override

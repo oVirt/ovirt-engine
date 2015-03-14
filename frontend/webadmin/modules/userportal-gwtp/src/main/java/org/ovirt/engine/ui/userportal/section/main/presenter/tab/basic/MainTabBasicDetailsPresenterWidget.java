@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.presenter.popup.ConsoleModelChangedEvent;
 import org.ovirt.engine.ui.common.presenter.popup.ConsoleModelChangedEvent.ConsoleModelChangedHandler;
 import org.ovirt.engine.ui.common.utils.DynamicMessages;
@@ -17,7 +17,9 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationMessages;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent.UserPortalModelInitHandler;
 import org.ovirt.engine.ui.userportal.uicommon.model.basic.UserPortalBasicListProvider;
@@ -54,25 +56,24 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
         void displayVmOsImages(boolean dispaly);
     }
 
-    private final ApplicationMessages messages;
     private final DynamicMessages dynamicMessages;
     private final ErrorPopupManager errorPopupManager;
     private final Map<ConsoleProtocol, String> consoleTypeToName = new HashMap<ConsoleProtocol, String>();
+
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
     public MainTabBasicDetailsPresenterWidget(EventBus eventBus,
             ViewDef view,
             final UserPortalBasicListProvider modelProvider,
-            final ApplicationMessages messages,
             final DynamicMessages dynamicMessages,
-            final ErrorPopupManager errorPopupManager,
-            final CommonApplicationConstants constants) {
+            final ErrorPopupManager errorPopupManager) {
         super(eventBus, view);
-        this.messages = messages;
         this.dynamicMessages = dynamicMessages;
         this.errorPopupManager = errorPopupManager;
 
-        initConsoleTypeToNameMap(constants);
+        initConsoleTypeToNameMap();
 
         listenOnSelectedItemEvent(modelProvider);
 
@@ -120,7 +121,7 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
         }));
     }
 
-    private void initConsoleTypeToNameMap(CommonApplicationConstants constants) {
+    private void initConsoleTypeToNameMap() {
         consoleTypeToName.put(ConsoleProtocol.SPICE, constants.spice());
         consoleTypeToName.put(ConsoleProtocol.RDP, constants.remoteDesktop());
         consoleTypeToName.put(ConsoleProtocol.VNC, constants.vnc());

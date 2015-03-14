@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm;
 
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.VmSessionsModelForm;
@@ -33,11 +32,10 @@ public class SubTabExtendedVmSessionsView
 
     @Inject
     public SubTabExtendedVmSessionsView(
-            UserPortalDetailModelProvider<UserPortalListModel, VmSessionsModel> modelProvider,
-            CommonApplicationConstants constants) {
+            UserPortalDetailModelProvider<UserPortalListModel, VmSessionsModel> modelProvider) {
         super(modelProvider);
 
-        form = new VmSessionsModelForm(modelProvider, constants);
+        form = new VmSessionsModelForm(modelProvider);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
     }
 

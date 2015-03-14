@@ -3,7 +3,9 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.dom.client.Style;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
@@ -19,6 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.dom.client.Style.TableLayout;
 import com.google.gwt.dom.client.Style.Unit;
@@ -38,6 +41,9 @@ import com.google.gwt.view.client.SingleSelectionModel;
 public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetModel, ListModel> {
 
     protected int treeScrollPosition;
+
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public SanStorageTargetToLunList(SanStorageModelBase model) {
         super(model);

@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractLunSelectionColumn;
@@ -30,6 +32,8 @@ import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, ListModel> {
+
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public SanStorageLunToTargetList(SanStorageModelBase model) {
         super(model);

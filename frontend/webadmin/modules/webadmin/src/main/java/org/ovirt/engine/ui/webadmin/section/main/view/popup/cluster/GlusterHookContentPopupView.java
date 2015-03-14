@@ -5,8 +5,6 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.GlusterHookContentModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.GlusterHookContentPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -45,8 +43,8 @@ public class GlusterHookContentPopupView extends AbstractModelBoundPopupView<Glu
     Label messageLabel;
 
     @Inject
-    public GlusterHookContentPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
+    public GlusterHookContentPopupView(EventBus eventBus) {
+        super(eventBus);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         applyStyles();

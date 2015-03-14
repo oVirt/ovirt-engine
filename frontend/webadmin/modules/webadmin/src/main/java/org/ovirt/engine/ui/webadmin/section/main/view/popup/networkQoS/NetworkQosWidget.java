@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -87,14 +88,16 @@ public class NetworkQosWidget extends AbstractModelBoundPopupWidget<BaseNetworkQ
     private BaseNetworkQosModel model;
     private final IEventListener<PropertyChangedEventArgs> availabilityListener;
 
-    public NetworkQosWidget(ApplicationConstants constants) {
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
+    public NetworkQosWidget() {
         inboundEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);
         outboundEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
         setStyle();
-        localize(constants);
+        localize();
         driver.initialize(this);
 
         availabilityListener = new IEventListener<PropertyChangedEventArgs>() {
@@ -117,7 +120,7 @@ public class NetworkQosWidget extends AbstractModelBoundPopupWidget<BaseNetworkQ
         outboundBurstEditor.setContentWidgetContainerStyleName(style.valueWidth());
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         inboundEnabled.setLabel(constants.inboundLabelQoSPopup());
         outboundEnabled.setLabel(constants.outboundLabelQoSPopup());
         inboundAverageEditor.setTitle(constants.averageNetworkQoSPopup() + constants.inMegabitsNetworkQoSPopup());

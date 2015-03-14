@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.common.view.popup;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.presenter.popup.ErrorPopupPresenterWidget;
 import org.ovirt.engine.ui.common.view.AbstractPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
@@ -32,15 +32,16 @@ public class ErrorPopupView extends AbstractPopupView<SimpleDialogPanel> impleme
     @UiField
     PushButton closeButton;
 
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public ErrorPopupView(EventBus eventBus, CommonApplicationResources resources,
-            CommonApplicationConstants constants) {
-        super(eventBus, resources);
+    public ErrorPopupView(EventBus eventBus) {
+        super(eventBus);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
+        localize();
     }
 
-    void localize(CommonApplicationConstants constants) {
+    void localize() {
         titleLabel.setText(constants.errorPopupCaption());
         closeButton.setText(constants.closeButtonLabel());
     }

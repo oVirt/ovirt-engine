@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_grou
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VirtualMachineSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -25,6 +26,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabVirtualMachineAffinityGroupPresenter extends AbstractSubTabPresenter<VM, VmListModel<Void>, VmAffinityGroupListModel, SubTabVirtualMachineAffinityGroupPresenter.ViewDef, SubTabVirtualMachineAffinityGroupPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.virtualMachineAffinityGroupsSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabVirtualMachineAffinityGroupPresenter> {
@@ -34,9 +37,9 @@ public class SubTabVirtualMachineAffinityGroupPresenter extends AbstractSubTabPr
     }
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<AffinityGroup, VmListModel<Void>, VmAffinityGroupListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.affinityGroupSubTabLabel(), 6, modelProvider);
+        return new ModelBoundTabData(constants.affinityGroupSubTabLabel(), 6, modelProvider);
     }
 
     @Inject

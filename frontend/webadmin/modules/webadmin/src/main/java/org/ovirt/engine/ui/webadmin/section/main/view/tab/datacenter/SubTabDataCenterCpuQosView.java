@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterCpuQosListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterCpuQosPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -25,12 +26,13 @@ public class SubTabDataCenterCpuQosView extends AbstractSubTabTableView<StorageP
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
     public SubTabDataCenterCpuQosView(SearchableDetailModelProvider<CpuQos,
-            DataCenterListModel, DataCenterCpuQosListModel> modelProvider,
-            ApplicationConstants constants) {
+            DataCenterListModel, DataCenterCpuQosListModel> modelProvider) {
         super(modelProvider);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
@@ -39,7 +41,7 @@ public class SubTabDataCenterCpuQosView extends AbstractSubTabTableView<StorageP
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initTable(final ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         AbstractTextColumn<CpuQos> nameColumn = new AbstractTextColumn<CpuQos>() {

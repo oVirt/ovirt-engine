@@ -5,8 +5,8 @@ import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.table.cell.ImageResourceCell2;
 import org.ovirt.engine.ui.common.widget.table.cell.TooltipCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTooltipColumn;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -19,7 +19,7 @@ import com.google.gwt.safehtml.shared.SafeHtmlUtils;
  */
 public class CommentColumn2<T extends Commented> extends AbstractTooltipColumn<T, ImageResource> {
 
-    private static final CommonApplicationResources RESOURCES = GWT.create(CommonApplicationResources.class);
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
 
     public CommentColumn2() {
         super(new ImageResourceCell2());
@@ -37,7 +37,7 @@ public class CommentColumn2<T extends Commented> extends AbstractTooltipColumn<T
     @Override
     public ImageResource getValue(T value) {
         if (value.getComment() != null && !value.getComment().isEmpty()) {
-            return RESOURCES.commentImage();
+            return resources.commentImage();
         }
         return null;
     }

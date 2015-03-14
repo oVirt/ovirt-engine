@@ -8,17 +8,17 @@ import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class NicActivateStatusColumn<T> extends AbstractSafeHtmlWithSafeHtmlTooltipColumn<T> {
-    CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
-    CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
-    CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
 
     private ImageResource getImage(T object) {
         VmNetworkInterface vnic = null;

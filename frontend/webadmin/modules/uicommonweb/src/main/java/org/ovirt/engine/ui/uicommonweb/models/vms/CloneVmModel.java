@@ -29,11 +29,11 @@ public class CloneVmModel extends Model {
 
     private EntityModel<String> cloneName;
 
-    private UIConstants constants;
+    private UIConstants uiConstants;
 
-    public CloneVmModel(VM vm, UIConstants constants) {
+    public CloneVmModel(VM vm, UIConstants uiConstants) {
         this.vm = vm;
-        this.constants = constants;
+        this.uiConstants = uiConstants;
 
         cloneName = new EntityModel<String>();
     }
@@ -81,7 +81,7 @@ public class CloneVmModel extends Model {
                     stopProgress();
                     getCloneName()
                             .getInvalidityReasons()
-                            .add(constants.nameMustBeUniqueInvalidReason());
+                            .add(uiConstants.nameMustBeUniqueInvalidReason());
                     getCloneName().setIsValid(false);
                 }
             }

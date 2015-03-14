@@ -1,17 +1,18 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
 
 public class MigrationProgressColumn extends AbstractOneColorPercentColumn<VM> {
 
     private EnumRenderer<VMStatus> renderer = new EnumRenderer<>();
 
-    public final static CommonApplicationMessages messages = GWT.create(CommonApplicationMessages.class);
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
 
     public MigrationProgressColumn() {
         super(AbstractProgressBarColumn.ProgressBarColors.GREEN);

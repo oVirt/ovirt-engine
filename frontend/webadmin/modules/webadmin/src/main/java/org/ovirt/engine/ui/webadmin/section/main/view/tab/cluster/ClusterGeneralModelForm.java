@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundFormWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.label.PercentLabel;
 
 import com.google.gwt.core.client.GWT;
@@ -37,14 +38,12 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
     TextBoxLabel emulatedMachine = new TextBoxLabel();
     TextBoxLabel numberOfVms = new TextBoxLabel();
 
-    private final ApplicationConstants constants;
-
     private final Driver driver = GWT.create(Driver.class);
 
-    public ClusterGeneralModelForm(ModelProvider<ClusterGeneralModel> modelProvider,
-            final ApplicationConstants constants) {
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
+    public ClusterGeneralModelForm(ModelProvider<ClusterGeneralModel> modelProvider) {
         super(modelProvider, 3, 6);
-        this.constants = constants;
     }
 
     /**
@@ -54,8 +53,8 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
     public void initialize() {
         cpuThreads = new BooleanLabel(constants.yes(), constants.no());
         memoryOverCommit = new PercentLabel<Integer>();
-        resiliencePolicy = new ResiliencePolicyLabel(constants);
-        clusterType = new ClusterTypeLabel(constants);
+        resiliencePolicy = new ResiliencePolicyLabel();
+        clusterType = new ClusterTypeLabel();
 
         driver.initialize(this);
 

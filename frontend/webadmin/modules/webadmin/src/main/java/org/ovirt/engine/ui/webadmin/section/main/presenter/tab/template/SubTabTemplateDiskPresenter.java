@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.TemplateSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -25,6 +26,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabTemplateDiskPresenter extends AbstractSubTabPresenter<VmTemplate, TemplateListModel, TemplateDiskListModel, SubTabTemplateDiskPresenter.ViewDef, SubTabTemplateDiskPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.templateDiskSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabTemplateDiskPresenter> {
@@ -34,9 +37,9 @@ public class SubTabTemplateDiskPresenter extends AbstractSubTabPresenter<VmTempl
     }
 
     @TabInfo(container = TemplateSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<DiskModel, TemplateListModel, TemplateDiskListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.templateDiskSubTabLabel(), 3, modelProvider);
+        return new ModelBoundTabData(constants.templateDiskSubTabLabel(), 3, modelProvider);
     }
 
     @Inject

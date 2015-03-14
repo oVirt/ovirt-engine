@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.RolePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.AbstractModelBoundTreePopupView;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ModelListTreeViewModel;
@@ -99,14 +99,16 @@ public class RolePopupView extends AbstractModelBoundTreePopupView<RoleModel> im
 
     private RoleModel roleModel;
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public RolePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
+    public RolePopupView(EventBus eventBus) {
+        super(eventBus);
         initTree();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
-        localize(constants);
+        localize();
         initExpandButtons();
         initRadioButtons();
     }
@@ -154,7 +156,7 @@ public class RolePopupView extends AbstractModelBoundTreePopupView<RoleModel> im
         return tree.getTreeViewModel();
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         nameEditor.setLabel(constants.RoleNameLabel());
         descriptionEditor.setLabel(constants.RoleDescriptionLabel());
         accountTypeLabel.setText(constants.RoleAccount_TypeLabel());

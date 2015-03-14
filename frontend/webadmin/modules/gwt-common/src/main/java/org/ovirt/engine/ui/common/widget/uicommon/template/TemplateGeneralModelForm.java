@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.template;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.FormItem.DefaultValueCondition;
@@ -40,14 +41,12 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
     @Ignore
     TextBoxLabel isStateless = new TextBoxLabel();
 
-    private final CommonApplicationConstants constants;
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     private final Driver driver = GWT.create(Driver.class);
 
-    public TemplateGeneralModelForm(ModelProvider<TemplateGeneralModel> modelProvider,
-            CommonApplicationConstants constants) {
+    public TemplateGeneralModelForm(ModelProvider<TemplateGeneralModel> modelProvider) {
         super(modelProvider, 3, 6);
-        this.constants = constants;
     }
 
     /**

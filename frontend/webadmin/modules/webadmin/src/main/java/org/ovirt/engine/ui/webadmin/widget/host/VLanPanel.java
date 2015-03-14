@@ -4,7 +4,8 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.widget.TogglePanel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVLan;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.renderer.HostVLanNameRenderer;
 
 import com.google.gwt.dom.client.Style;
@@ -45,6 +46,8 @@ public class VLanPanel extends VerticalPanel {
 
 class VLanElementPanel extends TogglePanel {
 
+    private final static ApplicationResources resources = AssetProvider.getResources();
+
     private boolean isSelectionAvailable = false;
 
     public VLanElementPanel(HostVLan hostVLan, boolean isSelectionEnabled) {
@@ -79,7 +82,7 @@ class VLanElementPanel extends TogglePanel {
         if (isSelectionAvailable) {
             chekboxPanel.add(getCheckBox());
         }
-        chekboxPanel.add(new Image(ClientGinjectorProvider.getApplicationResources().splitRotateImage()));
+        chekboxPanel.add(new Image(resources.splitRotateImage()));
         chekboxPanel.add(new Label(new HostVLanNameRenderer().render(hostVLan)));
 
         row.setWidget(0, 0, chekboxPanel);

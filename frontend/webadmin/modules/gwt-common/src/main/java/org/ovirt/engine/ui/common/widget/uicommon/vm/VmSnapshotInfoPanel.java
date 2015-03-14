@@ -1,54 +1,50 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
-import com.google.gwt.dom.client.Style.Position;
-import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.TabLayoutPanel;
-import com.google.gwt.view.client.NoSelectionModel;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.table.column.DiskImageStatusColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractRxTxRateColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractSumUpColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.DiskImageStatusColumn;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.google.gwt.dom.client.Style.Position;
+import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.TabLayoutPanel;
+import com.google.gwt.view.client.NoSelectionModel;
 
 public class VmSnapshotInfoPanel extends TabLayoutPanel {
 
-    private final CommonApplicationConstants constants;
-    private final CommonApplicationMessages messages;
-    private final CommonApplicationTemplates templates;
+    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
 
     private VmSnapshotInfoGeneral generalForm;
     private EntityModelCellTable<ListModel> disksTable;
     private EntityModelCellTable<ListModel> nicsTable;
     private EntityModelCellTable<ListModel> appsTable;
 
-    public VmSnapshotInfoPanel(CommonApplicationConstants constants,
-            CommonApplicationMessages messages,
-            CommonApplicationTemplates templates) {
+    public VmSnapshotInfoPanel() {
         super(CommonApplicationTemplates.TAB_BAR_HEIGHT, Unit.PX);
-
-        this.constants = constants;
-        this.messages = messages;
-        this.templates = templates;
 
         initPanel();
         addStyle();
@@ -91,7 +87,7 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
     }
 
     private void initGeneralForm() {
-        generalForm = new VmSnapshotInfoGeneral(constants, messages);
+        generalForm = new VmSnapshotInfoGeneral();
     }
 
     private void initDisksTable() {

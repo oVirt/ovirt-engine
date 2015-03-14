@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.HostSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -25,6 +26,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabHostVmPresenter extends AbstractSubTabPresenter<VDS, HostListModel<Void>, HostVmListModel, SubTabHostVmPresenter.ViewDef, SubTabHostVmPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.hostVmSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabHostVmPresenter> {
@@ -34,9 +37,9 @@ public class SubTabHostVmPresenter extends AbstractSubTabPresenter<VDS, HostList
     }
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<VM, HostListModel<Void>, HostVmListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.hostVmSubTabLabel(), 1, modelProvider);
+        return new ModelBoundTabData(constants.hostVmSubTabLabel(), 1, modelProvider);
     }
 
     @Inject

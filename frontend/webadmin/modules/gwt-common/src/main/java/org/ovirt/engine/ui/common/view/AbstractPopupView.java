@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.view;
 
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.presenter.AbstractPopupPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
@@ -18,11 +19,10 @@ import com.gwtplatform.mvp.client.PopupViewImpl;
  */
 public abstract class AbstractPopupView<T extends PopupPanel> extends PopupViewImpl implements AbstractPopupPresenterWidget.ViewDef {
 
-    private final CommonApplicationResources resources;
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
 
-    public AbstractPopupView(EventBus eventBus, CommonApplicationResources resources) {
+    public AbstractPopupView(EventBus eventBus) {
         super(eventBus);
-        this.resources = resources;
         resources.dialogBoxStyle().ensureInjected();
     }
 

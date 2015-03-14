@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmPermissionListModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
@@ -22,6 +23,8 @@ public class SubTabExtendedVmPermissionPresenter
         extends AbstractSubTabExtendedVmPresenter<UserPortalPermissionListModel<UserPortalListModel>,
         SubTabExtendedVmPermissionPresenter.ViewDef, SubTabExtendedVmPermissionPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(UserPortalApplicationPlaces.extendedVirtualMachinePermissionSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabExtendedVmPermissionPresenter> {
@@ -31,8 +34,8 @@ public class SubTabExtendedVmPermissionPresenter
     }
 
     @TabInfo(container = ExtendedVmSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants) {
-        return new TabDataBasic(applicationConstants.extendedVirtualMachinePermissionSubTabLabel(),
+    static TabData getTabData() {
+        return new TabDataBasic(constants.extendedVirtualMachinePermissionSubTabLabel(),
                 7);
     }
 

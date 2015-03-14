@@ -7,12 +7,13 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractObjectNameColumn;
-import org.ovirt.engine.ui.common.widget.table.column.PermissionTypeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.PermissionTypeColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaUserListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuotaUserPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -26,10 +27,12 @@ public class SubTabQuotaUserView extends AbstractSubTabTableView<Quota, Permissi
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabQuotaUserView(SearchableDetailModelProvider<Permission, QuotaListModel, QuotaUserListModel> modelProvider, ApplicationConstants constants) {
+    public SubTabQuotaUserView(SearchableDetailModelProvider<Permission, QuotaListModel, QuotaUserListModel> modelProvider) {
         super(modelProvider);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
@@ -38,7 +41,7 @@ public class SubTabQuotaUserView extends AbstractSubTabTableView<Quota, Permissi
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    private void initTable(ApplicationConstants constants) {
+    private void initTable() {
         getTable().enableColumnResizing();
 
         getTable().addColumn(new PermissionTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$

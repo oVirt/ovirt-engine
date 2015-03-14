@@ -4,7 +4,7 @@ import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.MenuPanelPopup;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ValueUpdater;
@@ -24,9 +24,8 @@ import com.google.gwt.user.client.ui.MenuItem;
 
 public class MenuCell<T> extends AbstractCell<T> {
 
-    private ApplicationTemplates templates = ClientGinjectorProvider.getApplicationTemplates();
-
-    private ApplicationResources resources = ClientGinjectorProvider.getApplicationResources();
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
 
     private MenuPanelPopup menuPanelPopup;
 

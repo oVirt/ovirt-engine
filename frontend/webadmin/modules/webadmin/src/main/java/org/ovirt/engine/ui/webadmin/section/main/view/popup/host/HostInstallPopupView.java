@@ -9,8 +9,8 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
-import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
@@ -22,7 +22,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.provider.HostNetworkProviderWidget;
 
@@ -126,12 +126,14 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public HostInstallPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
+    public HostInstallPopupView(EventBus eventBus) {
+        super(eventBus);
         initListBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
+        localize();
         addStyles();
         driver.initialize(this);
         applyModeCustomizations();
@@ -157,7 +159,7 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
         publicKeyEditor = new StringEntityModelTextAreaLabelEditor();
     }
 
-    void localize(ApplicationConstants constants) {
+    void localize() {
         hostVersionEditor.setLabel(constants.hostInstallHostVersionLabel());
         isoEditor.setLabel(constants.hostInstallIsoLabel());
         overrideIpTablesEditor.setLabel(constants.hostInstallOverrideIpTablesLabel());

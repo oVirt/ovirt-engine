@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
@@ -26,6 +27,8 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class MainTabNetworkPresenter extends AbstractMainTabWithDetailsPresenter<NetworkView, NetworkListModel, MainTabNetworkPresenter.ViewDef, MainTabNetworkPresenter.ProxyDef> {
+
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     private SystemTreeModelProvider systemTreeModelProvider;
 
@@ -46,9 +49,9 @@ public class MainTabNetworkPresenter extends AbstractMainTabWithDetailsPresenter
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             MainModelProvider<NetworkView, NetworkListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.networkMainTabLabel(), 3, modelProvider);
+        return new ModelBoundTabData(constants.networkMainTabLabel(), 3, modelProvider);
     }
 
     @Inject

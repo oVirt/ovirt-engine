@@ -20,7 +20,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.GlusterSwiftServiceModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ManageGlusterSwiftModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ManageGlusterSwiftPopupPresenterWidget;
 
 import com.google.gwt.cell.client.Cell.Context;
@@ -82,18 +82,20 @@ public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<Man
     @Ignore
     Label messageLabel;
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public ManageGlusterSwiftPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
-        initEditors(constants);
+    public ManageGlusterSwiftPopupView(EventBus eventBus) {
+        super(eventBus);
+        initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants);
+        localize();
         applyStyles();
         driver.initialize(this);
     }
 
-    private void initEditors(ApplicationConstants constants) {
+    private void initEditors() {
         swiftStatusEditor = new EntityModelLabelEditor<GlusterServiceStatus>(new EnumRenderer<GlusterServiceStatus>());
         startSwift = new EntityModelRadioButtonEditor("swift_action", Align.RIGHT); //$NON-NLS-1$
         stopSwift = new EntityModelRadioButtonEditor("swift_action", Align.RIGHT); //$NON-NLS-1$
@@ -214,7 +216,7 @@ public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<Man
         hostServicesTable.addEntityModelColumn(restartSwiftColumn, constants.restartGlusterSwift());
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         swiftStatusEditor.setLabel(constants.clusterGlusterSwiftLabel());
         startSwift.setLabel(constants.startGlusterSwift());
         stopSwift.setLabel(constants.stopGlusterSwift());

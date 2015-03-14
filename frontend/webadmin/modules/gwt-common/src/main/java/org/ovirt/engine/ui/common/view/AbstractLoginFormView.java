@@ -7,7 +7,6 @@ import org.gwtbootstrap3.client.ui.ListBox;
 import org.gwtbootstrap3.client.ui.Well;
 import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.gwtbootstrap3.client.ui.constants.Styles;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.utils.VisibleLocalesInfoData;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
@@ -89,8 +88,7 @@ public abstract class AbstractLoginFormView extends AbstractView {
     @Ignore
     public Panel informationMessagePanel;
 
-    public AbstractLoginFormView(EventBus eventBus,
-            CommonApplicationResources resources) {
+    public AbstractLoginFormView(EventBus eventBus) {
         initLocalizationEditor();
 
         // We need this code because resetAndFocus is called when userNameEditor is Disabled

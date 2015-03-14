@@ -1,13 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
@@ -18,15 +10,23 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.inject.Inject;
 
 public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksAllocationModel> implements DisksAllocationPopupPresenterWidget.ViewDef {
@@ -38,10 +38,7 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
     interface Driver extends SimpleBeanEditorDriver<DisksAllocationModel, DisksAllocationPopupView> {
     }
 
-    final CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
-
     final Driver driver = GWT.create(Driver.class);
-
 
     @UiField
     WidgetStyle style;
@@ -64,14 +61,17 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
 
     DisksAllocationModel disksAllocationModel;
 
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+
     @Inject
-    public DisksAllocationPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
+    public DisksAllocationPopupView(EventBus eventBus) {
+        super(eventBus);
 
         warningImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(
                 resources.logWarningImage()).getHTML());
 
-        disksAllocationView = new DisksAllocationView(constants);
+        disksAllocationView = new DisksAllocationView();
         dynamicWarningLabel = new StringEntityModelTextAreaLabelEditor();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));

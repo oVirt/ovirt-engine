@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeProfileStatisticsPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -127,18 +128,14 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
     @WithElementId
     Anchor nfsProfileAnchor;
 
-    private final ApplicationConstants constants;
-    private final ApplicationResources resources;
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
-    public VolumeProfileStatisticsPopupView(EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationConstants constants) {
-        super(eventBus, resources);
-        this.constants = constants;
-        this.resources = resources;
+    public VolumeProfileStatisticsPopupView(EventBus eventBus) {
+        super(eventBus);
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
@@ -158,8 +155,8 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
     }
 
     private void initEditors() {
-        nfsRefreshIcon = new RefreshActionIcon(SafeHtmlUtils.EMPTY_SAFE_HTML, resources);
-        brickRefreshIcon = new RefreshActionIcon(SafeHtmlUtils.EMPTY_SAFE_HTML, resources);
+        nfsRefreshIcon = new RefreshActionIcon(SafeHtmlUtils.EMPTY_SAFE_HTML);
+        brickRefreshIcon = new RefreshActionIcon(SafeHtmlUtils.EMPTY_SAFE_HTML);
         bricks = new ListModelListBoxEditor<>(new NameRenderer<BrickProfileDetails>());
         nfsServers = new ListModelListBoxEditor<>(new NameRenderer<GlusterVolumeProfileStats>());
         volumeProfileStats = new EntityModelCellTable<ListModel>(false, true);

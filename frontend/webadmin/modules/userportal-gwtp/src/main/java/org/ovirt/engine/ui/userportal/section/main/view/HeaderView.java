@@ -4,6 +4,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.AbstractHeaderView;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationDynamicMessages;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.HeaderPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -32,9 +33,10 @@ public class HeaderView extends AbstractHeaderView implements HeaderPresenterWid
     @UiField
     UListElement mainTabContainer;
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public HeaderView(ApplicationConstants constants,
-            ApplicationDynamicMessages dynamicMessages) {
+    public HeaderView(ApplicationDynamicMessages dynamicMessages) {
         this.logoutLink = new Anchor(constants.logoutLinkLabel());
         this.guideLink = new Anchor(dynamicMessages.guideLinkLabel());
         this.aboutLink = new Anchor(constants.aboutLinkLabel());

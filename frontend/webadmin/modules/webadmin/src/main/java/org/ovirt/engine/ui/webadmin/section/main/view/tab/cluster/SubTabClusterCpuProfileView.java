@@ -2,9 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationMessages;
-import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -29,17 +26,13 @@ public class SubTabClusterCpuProfileView extends AbstractSubTabTableWidgetView<V
     public SubTabClusterCpuProfileView(SearchableDetailModelProvider<CpuProfile, ClusterListModel<Void>, CpuProfileListModel> modelProvider,
             CpuProfilePermissionModelProvider permissionModelProvider,
             EventBus eventBus,
-            ClientStorage clientStorage,
-            CommonApplicationConstants constants,
-            CommonApplicationMessages messages,
-            CommonApplicationTemplates templates) {
+            ClientStorage clientStorage) {
         super(new CpuProfilesListModelTable(modelProvider,
                 permissionModelProvider,
                 eventBus,
-                clientStorage,
-                constants));
+                clientStorage));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initTable(constants);
+        initTable();
         initWidget(getModelBoundTableWidget());
     }
 

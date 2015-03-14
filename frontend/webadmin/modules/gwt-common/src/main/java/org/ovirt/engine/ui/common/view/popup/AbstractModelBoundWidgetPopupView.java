@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.view.popup;
 
-import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -20,9 +19,9 @@ public abstract class AbstractModelBoundWidgetPopupView<T extends Model> extends
 
     private final AbstractModelBoundPopupWidget<T> popupWidget;
 
-    public AbstractModelBoundWidgetPopupView(EventBus eventBus, CommonApplicationResources resources,
-            AbstractModelBoundPopupWidget<T> popupWidget, String dialogWidth, String dialogHeight) {
-        super(eventBus, resources);
+    public AbstractModelBoundWidgetPopupView(EventBus eventBus, AbstractModelBoundPopupWidget<T> popupWidget,
+            String dialogWidth, String dialogHeight) {
+        super(eventBus);
         this.popupWidget = popupWidget;
         initDialogPanel(dialogWidth, dialogHeight);
         initWidget(dialogPanel);

@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.storage;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
@@ -16,6 +15,8 @@ import org.ovirt.engine.ui.uicommonweb.models.profiles.DiskProfileListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DiskProfilePermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
@@ -50,11 +51,12 @@ public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<Di
 
     private final DiskProfilePermissionModelProvider diskProfilePermissionModelProvider;
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     public DiskProfilesListModelTable(SearchableTableModelProvider<DiskProfile, DiskProfileListModel> modelProvider,
             DiskProfilePermissionModelProvider diskProfilePermissionModelProvider,
             EventBus eventBus,
-            ClientStorage clientStorage,
-            CommonApplicationConstants constants) {
+            ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, false);
         this.diskProfilePermissionModelProvider = diskProfilePermissionModelProvider;
         // Create disk profile table
@@ -65,7 +67,7 @@ public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<Di
                 new PermissionWithInheritedPermissionListModelTable<>(diskProfilePermissionModelProvider,
                         eventBus,
                         clientStorage);
-        permissionListModelTable.initTable(constants);
+        permissionListModelTable.initTable();
         permissionContainer = new SimplePanel();
         permissionContainer.add(permissionListModelTable);
     }
@@ -76,7 +78,7 @@ public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<Di
     }
 
     @Override
-    public void initTable(final CommonApplicationConstants constants) {
+    public void initTable() {
         getTable().enableColumnResizing();
 
         AbstractTextColumn<DiskProfile> nameColumn =

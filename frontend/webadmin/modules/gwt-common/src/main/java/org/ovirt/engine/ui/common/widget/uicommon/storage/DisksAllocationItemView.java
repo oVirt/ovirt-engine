@@ -3,10 +3,9 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
-import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
@@ -89,8 +88,6 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final CommonApplicationConstants constants;
-
     @Override
     public int setTabIndexes(int nextTabIndex) {
         diskAliasEditor.setTabIndex(nextTabIndex++);
@@ -99,8 +96,7 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
         return nextTabIndex;
     }
 
-    public DisksAllocationItemView(CommonApplicationConstants constants) {
-        this.constants = constants;
+    public DisksAllocationItemView() {
 
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));

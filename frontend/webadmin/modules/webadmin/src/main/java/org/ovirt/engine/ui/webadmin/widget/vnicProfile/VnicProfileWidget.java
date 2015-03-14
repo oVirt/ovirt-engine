@@ -3,9 +3,10 @@ package org.ovirt.engine.ui.webadmin.widget.vnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
-import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
@@ -14,9 +15,8 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
-import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -64,13 +64,12 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final static ApplicationConstants constants = GWT.create(ApplicationConstants.class);
-    private final static ApplicationResources resources = GWT.create(ApplicationResources.class);
-    private final static ApplicationTemplates templates = GWT.create(ApplicationTemplates.class);
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     public VnicProfileWidget() {
         publicUseEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        publicInfo = new InfoIcon(templates.italicText(constants.profilePublicUseLabel()), resources);
+        publicInfo = new InfoIcon(templates.italicText(constants.profilePublicUseLabel()));
         networkQoSEditor = new ListModelListBoxEditor<>(new NameRenderer<NetworkQoS>());
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         publicUseEditor.setLabel(constants.profilePublicUseInstanceTypeLabel());

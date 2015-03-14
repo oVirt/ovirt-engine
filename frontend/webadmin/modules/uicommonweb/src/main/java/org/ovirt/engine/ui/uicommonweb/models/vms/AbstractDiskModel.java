@@ -59,7 +59,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public abstract class AbstractDiskModel extends DiskModel
 {
-    protected static final UIConstants CONSTANTS = ConstantsManager.getInstance().getConstants();
+    protected static final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private EntityModel<Boolean> isWipeAfterDelete;
     private EntityModel<Boolean> isBootable;
@@ -327,7 +327,7 @@ public abstract class AbstractDiskModel extends DiskModel
 
         // Create and set commands
         UICommand onSaveCommand = new UICommand("OnSave", this); //$NON-NLS-1$
-        onSaveCommand.setTitle(CONSTANTS.ok());
+        onSaveCommand.setTitle(constants.ok());
         onSaveCommand.setIsDefault(true);
         getCommands().add(onSaveCommand);
         getCommands().add(getCancelCommand());
@@ -354,7 +354,7 @@ public abstract class AbstractDiskModel extends DiskModel
                 diskModel.getStorageDomain().setItems(filteredStorageDomains);
                 diskModel.getStorageDomain().setSelectedItem(storage);
 
-                diskModel.setMessage(storage == null ? CONSTANTS.noActiveStorageDomainsInDC() : "");
+                diskModel.setMessage(storage == null ? constants.noActiveStorageDomainsInDC() : "");
             }
         }), datacenter.getId(), ActionGroup.CREATE_DISK);
     }
@@ -398,7 +398,7 @@ public abstract class AbstractDiskModel extends DiskModel
                     diskModel.getDataCenter().setItems(dataCenters, Linq.firstOrDefault(dataCenters));
 
                     if (dataCenters.isEmpty()) {
-                        diskModel.setMessage(CONSTANTS.relevantDCnotActive());
+                        diskModel.setMessage(constants.relevantDCnotActive());
                     }
                 }
             })), getVm().getStoragePoolId());
@@ -420,7 +420,7 @@ public abstract class AbstractDiskModel extends DiskModel
                     diskModel.getDataCenter().setItems(filteredDataCenters);
 
                     if (filteredDataCenters.isEmpty()) {
-                        diskModel.setMessage(CONSTANTS.noActiveDataCenters());
+                        diskModel.setMessage(constants.noActiveDataCenters());
                     }
                 }
             }));
@@ -445,7 +445,7 @@ public abstract class AbstractDiskModel extends DiskModel
                 if (disk.isBoot() && !disk.equals(getDisk())) {
                     getIsBootable().setEntity(false);
                     if (!disk.isDiskSnapshot()) {
-                        getIsBootable().setChangeProhibitionReason(CONSTANTS.onlyOneBootableDisk());
+                        getIsBootable().setChangeProhibitionReason(constants.onlyOneBootableDisk());
                         getIsBootable().setIsChangable(false);
                         break;
                     }
@@ -462,7 +462,7 @@ public abstract class AbstractDiskModel extends DiskModel
         boolean isShareableDiskEnabled = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
                 ConfigurationValues.ShareableDiskEnabled, datacenter.getCompatibilityVersion().getValue());
 
-        getIsShareable().setChangeProhibitionReason(CONSTANTS.shareableDiskNotSupported());
+        getIsShareable().setChangeProhibitionReason(constants.shareableDiskNotSupported());
         getIsShareable().setIsChangable(isShareableDiskEnabled && isEditEnabled());
     }
 
@@ -475,12 +475,12 @@ public abstract class AbstractDiskModel extends DiskModel
                 ConfigurationValues.DirectLUNDiskEnabled, datacenter.getCompatibilityVersion().getValue());
 
         getIsDirectLunDiskAvaialable().setEntity(isDirectLUNDiskkEnabled);
-        setMessage(!isDirectLUNDiskkEnabled ? CONSTANTS.directLUNDiskNotSupported() : ""); //$NON-NLS-1$
+        setMessage(!isDirectLUNDiskkEnabled ? constants.directLUNDiskNotSupported() : ""); //$NON-NLS-1$
     }
 
     private void updateShareable(VolumeType volumeType, StorageType storageType) {
         if (storageType.isBlockDomain() && volumeType == VolumeType.Sparse) {
-            getIsShareable().setChangeProhibitionReason(CONSTANTS.shareableDiskNotSupportedByConfiguration());
+            getIsShareable().setChangeProhibitionReason(constants.shareableDiskNotSupportedByConfiguration());
             getIsShareable().setIsChangable(false);
             getIsShareable().setEntity(false);
         }
@@ -672,14 +672,14 @@ public abstract class AbstractDiskModel extends DiskModel
 
     protected void updateScsiPassthroguhChangeability() {
         getIsScsiPassthrough().setIsChangable(!getIsReadOnly().getEntity() && isEditEnabled());
-        getIsScsiPassthrough().setChangeProhibitionReason(CONSTANTS.cannotEnableScsiPassthroughForLunReadOnlyDisk());
+        getIsScsiPassthrough().setChangeProhibitionReason(constants.cannotEnableScsiPassthroughForLunReadOnlyDisk());
 
         updateSgIoUnfilteredChangeability();
     }
 
     protected void updateSgIoUnfilteredChangeability() {
         if (!getIsScsiPassthrough().getEntity()) {
-            getIsSgIoUnfiltered().setChangeProhibitionReason(CONSTANTS.cannotEnableSgioWhenScsiPassthroughDisabled());
+            getIsSgIoUnfiltered().setChangeProhibitionReason(constants.cannotEnableSgioWhenScsiPassthroughDisabled());
             getIsSgIoUnfiltered().setIsChangable(false);
             getIsSgIoUnfiltered().setEntity(false);
             return;
@@ -691,7 +691,7 @@ public abstract class AbstractDiskModel extends DiskModel
         DiskInterface diskInterface = getDiskInterface().getSelectedItem();
 
         if (diskInterface == DiskInterface.IDE) {
-            getIsReadOnly().setChangeProhibitionReason(CONSTANTS.cannotEnableIdeInterfaceForReadOnlyDisk());
+            getIsReadOnly().setChangeProhibitionReason(constants.cannotEnableIdeInterfaceForReadOnlyDisk());
             getIsReadOnly().setIsChangable(false);
             getIsReadOnly().setEntity(false);
             return;
@@ -700,7 +700,7 @@ public abstract class AbstractDiskModel extends DiskModel
         boolean isDirectLUN = getDiskStorageType().getEntity() == DiskStorageType.LUN;
         boolean isScsiPassthrough = getIsScsiPassthrough().getEntity();
         if (diskInterface == DiskInterface.VirtIO_SCSI && isDirectLUN && isScsiPassthrough) {
-            getIsReadOnly().setChangeProhibitionReason(CONSTANTS.cannotEnableReadonlyWhenScsiPassthroughEnabled());
+            getIsReadOnly().setChangeProhibitionReason(constants.cannotEnableReadonlyWhenScsiPassthroughEnabled());
             getIsReadOnly().setIsChangable(false);
             getIsReadOnly().setEntity(false);
             return;
@@ -731,13 +731,13 @@ public abstract class AbstractDiskModel extends DiskModel
         boolean isVmRunning = getVm() != null && getVm().getStatus() != VMStatus.Down;
 
         if (DiskInterface.IDE.equals(diskInterface) && isVmRunning) {
-            getIsPlugged().setChangeProhibitionReason(CONSTANTS.cannotHotPlugDiskWithIdeInterface());
+            getIsPlugged().setChangeProhibitionReason(constants.cannotHotPlugDiskWithIdeInterface());
             getIsPlugged().setIsChangable(false);
             getIsPlugged().setEntity(false);
         }
         else {
             if (!canDiskBePlugged(getVm())) {
-                getIsPlugged().setChangeProhibitionReason(CONSTANTS.cannotPlugDiskIncorrectVmStatus());
+                getIsPlugged().setChangeProhibitionReason(constants.cannotPlugDiskIncorrectVmStatus());
                 getIsPlugged().setIsChangable(false);
                 getIsPlugged().setEntity(false);
             }
@@ -811,19 +811,19 @@ public abstract class AbstractDiskModel extends DiskModel
         ConfirmationModel confirmationModel = new ConfirmationModel();
         setConfirmWindow(confirmationModel);
 
-        confirmationModel.setTitle(CONSTANTS.forceStorageDomainCreation());
-        confirmationModel.setMessage(CONSTANTS.lunsAlreadyPartOfSD());
+        confirmationModel.setTitle(constants.forceStorageDomainCreation());
+        confirmationModel.setMessage(constants.lunsAlreadyPartOfSD());
         confirmationModel.setHelpTag(HelpTag.force_lun_disk_creation);
         confirmationModel.setHashName("force_lun_disk_creation"); //$NON-NLS-1$
         confirmationModel.setItems(usedLunsMessages);
 
         UICommand forceSaveCommand = new UICommand("OnForceSave", this); //$NON-NLS-1$
-        forceSaveCommand.setTitle(CONSTANTS.ok());
+        forceSaveCommand.setTitle(constants.ok());
         forceSaveCommand.setIsDefault(true);
         confirmationModel.getCommands().add(forceSaveCommand);
 
         UICommand cancelconfirmCommand = new UICommand("CancelConfirm", this); //$NON-NLS-1$
-        cancelconfirmCommand.setTitle(CONSTANTS.cancel());
+        cancelconfirmCommand.setTitle(constants.cancel());
         cancelconfirmCommand.setIsCancel(true);
         confirmationModel.getCommands().add(cancelconfirmCommand);
     }

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.dialog;
 
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
@@ -12,15 +13,18 @@ import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 
+
 public class InfoIcon extends FocusPanel {
     private Image infoImage;
     private Image infoImageHover;
     private final DecoratedPopupPanel infoPanel = new DecoratedPopupPanel(true);
 
-    public InfoIcon(SafeHtml text, CommonApplicationResources resources) {
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
+
+    public InfoIcon(SafeHtml text) {
         super();
 
-        initInfoImages(resources);
+        initInfoImages();
 
         setWidget(infoImage);
         infoPanel.setWidget(new HTML(text));
@@ -45,7 +49,7 @@ public class InfoIcon extends FocusPanel {
         });
     }
 
-    private void initInfoImages(CommonApplicationResources resources) {
+    private void initInfoImages() {
         infoImage = new Image(resources.dialogIconHelp());
         infoImageHover = new Image(resources.dialogIconHelpRollover());
     }

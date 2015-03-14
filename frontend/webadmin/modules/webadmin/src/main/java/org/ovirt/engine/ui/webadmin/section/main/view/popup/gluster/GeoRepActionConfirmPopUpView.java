@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
-import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -12,6 +11,8 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEd
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterVolumeGeoRepActionConfirmationModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -68,18 +69,15 @@ public class GeoRepActionConfirmPopUpView extends AbstractModelBoundPopupView<Gl
     @WithElementId
     Label errorMsg;
 
-    private ApplicationConstants constants;
-    private ApplicationResources resources;
-    private CommonApplicationTemplates templates;
-
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public GeoRepActionConfirmPopUpView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, CommonApplicationTemplates applicationTemplates) {
-        super(eventBus, resources);
-        this.constants = constants;
-        this.resources = resources;
-        this.templates = applicationTemplates;
+    public GeoRepActionConfirmPopUpView(EventBus eventBus) {
+        super(eventBus);
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
@@ -107,7 +105,7 @@ public class GeoRepActionConfirmPopUpView extends AbstractModelBoundPopupView<Gl
 
     private void initEditors() {
         forceEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        geoRepForceHelpIcon = new InfoIcon(templates.italicText(constants.notAvailableLabel()), resources);
+        geoRepForceHelpIcon = new InfoIcon(templates.italicText(constants.notAvailableLabel()));
     }
 
     @Override

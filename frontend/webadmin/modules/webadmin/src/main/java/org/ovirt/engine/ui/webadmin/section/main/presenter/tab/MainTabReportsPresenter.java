@@ -10,11 +10,12 @@ import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.common.widget.table.ActionTable;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 import org.ovirt.engine.ui.uicommonweb.models.reports.ReportsListModel;
+import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
 
@@ -26,10 +27,12 @@ import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public class MainTabReportsPresenter extends AbstractMainTabPresenter<Void, ReportsListModel, MainTabReportsPresenter.ViewDef, MainTabReportsPresenter.ProxyDef> {
+
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     private static boolean reportsWebappDeployed = false;
 
@@ -45,14 +48,14 @@ public class MainTabReportsPresenter extends AbstractMainTabPresenter<Void, Repo
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             MainModelProvider<Void, ReportsListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.reportsMainTabLabel(), 15, modelProvider, Align.RIGHT);
+        return new ModelBoundTabData(constants.reportsMainTabLabel(), 15, modelProvider, Align.RIGHT);
     }
 
     @Inject
     public MainTabReportsPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            ErrorPopupManager errorPopupManager, ApplicationConstants applicationConstants,
+            ErrorPopupManager errorPopupManager,
             PlaceManager placeManager, MainModelProvider<Void, ReportsListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
         getModel().getReportsAvailabilityEvent().addListener(new ReportsModelRefreshEvent());

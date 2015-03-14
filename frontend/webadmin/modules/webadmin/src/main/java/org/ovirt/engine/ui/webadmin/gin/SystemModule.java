@@ -24,6 +24,7 @@ public class SystemModule extends BaseSystemModule {
     @Override
     protected void configure() {
         requestStaticInjection(ClientGinjectorProvider.class);
+        requestStaticInjection(AssetProvider.class);
         bindInfrastructure();
         bindConfiguration();
     }

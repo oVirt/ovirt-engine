@@ -5,9 +5,9 @@ import org.ovirt.engine.ui.common.widget.MenuBar;
 import org.ovirt.engine.ui.common.widget.PopupPanel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.NewClusterPolicyModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.ClusterPolicyPopupView.WidgetStyle;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.FontWeight;
@@ -25,7 +25,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 
 public class PolicyUnitPanel extends FocusPanel {
     public static final String FILTER = "Filter"; //$NON-NLS-1$
-    private static final ApplicationConstants constants = GWT.create(ApplicationConstants.class);
     static final PopupPanel menuPopup = new PopupPanel(true);
     protected final PolicyUnit policyUnit;
     protected boolean used;
@@ -35,6 +34,8 @@ public class PolicyUnitPanel extends FocusPanel {
     WidgetStyle style;
 
     private static String lastDragData = ""; //$NON-NLS-1$
+
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     public PolicyUnitPanel(PolicyUnit policyUnit,
             NewClusterPolicyModel model,

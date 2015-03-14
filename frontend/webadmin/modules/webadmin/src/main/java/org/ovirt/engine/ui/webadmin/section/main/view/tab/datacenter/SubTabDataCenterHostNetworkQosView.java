@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterHostNetworkQosListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterHostNetworkQosPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -25,12 +26,13 @@ public class SubTabDataCenterHostNetworkQosView extends AbstractSubTabTableView<
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
     public SubTabDataCenterHostNetworkQosView(SearchableDetailModelProvider<HostNetworkQos,
-            DataCenterListModel, DataCenterHostNetworkQosListModel> modelProvider,
-            ApplicationConstants constants) {
+            DataCenterListModel, DataCenterHostNetworkQosListModel> modelProvider) {
         super(modelProvider);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
@@ -39,7 +41,7 @@ public class SubTabDataCenterHostNetworkQosView extends AbstractSubTabTableView<
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initTable(final ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         AbstractTextColumn<HostNetworkQos> nameColumn = new AbstractTextColumn<HostNetworkQos>() {

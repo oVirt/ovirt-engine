@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.VmSessionsModelForm;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineSessionsPresenter;
 
 import com.google.gwt.core.client.GWT;
@@ -32,11 +31,10 @@ public class SubTabVirtualMachineSessionsView
     VmSessionsModelForm form;
 
     @Inject
-    public SubTabVirtualMachineSessionsView(DetailModelProvider<VmListModel<Void>, VmSessionsModel> modelProvider,
-            ApplicationConstants constants) {
+    public SubTabVirtualMachineSessionsView(DetailModelProvider<VmListModel<Void>, VmSessionsModel> modelProvider) {
         super(modelProvider);
 
-        this.form = new VmSessionsModelForm(modelProvider, constants);
+        this.form = new VmSessionsModelForm(modelProvider);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
     }

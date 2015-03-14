@@ -6,6 +6,8 @@ import java.util.List;
 import org.ovirt.engine.ui.common.widget.label.LabelWithTextTruncation;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkLabelModel;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
@@ -14,6 +16,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class NetworkLabelPanel extends NetworkItemPanel {
+
+    private final static ApplicationResources resources = AssetProvider.getResources();
 
     public NetworkLabelPanel(NetworkLabelModel item, NetworkPanelsStyle style) {
         super(item, style, false);

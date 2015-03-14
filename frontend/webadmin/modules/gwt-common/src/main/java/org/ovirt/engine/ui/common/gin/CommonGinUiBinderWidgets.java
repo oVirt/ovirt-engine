@@ -1,7 +1,8 @@
 package org.ovirt.engine.ui.common.gin;
 
-import com.google.gwt.inject.client.Ginjector;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.SerialNumberPolicyWidget;
+
+import com.google.gwt.inject.client.Ginjector;
 
 /**
  * Ginjector extension containing views that make use of the GWTP GinUiBinder.
@@ -12,7 +13,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.SerialNumberPolicyWid
  *
  *     public class MyWidget {
  *         @Inject
- *         public MyWidget(ApplicationResources resources, MyOtherDependency dep) {
+ *         public MyWidget(MyOtherDependency dep) {
  *             // ...
  *         }
  *     }

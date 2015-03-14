@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.common.view.popup;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.presenter.AbstractTabbedModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -24,10 +23,9 @@ public abstract class AbstractTabbedModelBoundPopupView<T extends Model> extends
     /**
      * Constructor that calls populateTabMap.
      * @param eventBus The GWT event bus.
-     * @param resources {@code CommonApplicationResources}.
      */
-    public AbstractTabbedModelBoundPopupView(EventBus eventBus, CommonApplicationResources resources) {
-        super(eventBus, resources);
+    public AbstractTabbedModelBoundPopupView(EventBus eventBus) {
+        super(eventBus);
         //Have to populate deferred, so we can be sure that the DialogTabs have been initialized and are not null.
         Scheduler.get().scheduleDeferred(new ScheduledCommand() {
 

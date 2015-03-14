@@ -1,14 +1,13 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.vm;
 
-import com.google.gwt.user.client.ui.Panel;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.vms.MigrateModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -16,7 +15,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -25,6 +24,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.inject.Inject;
 
 public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel>
@@ -76,18 +76,18 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
+
     @Inject
-    public VmMigratePopupView(EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationConstants constants,
-            ApplicationMessages messages) {
-        super(eventBus, resources);
+    public VmMigratePopupView(EventBus eventBus) {
+        super(eventBus);
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         advancedOptionsExpander.initWithContent(advancedOptionsExpanderContent.getElement());
 
-        localize(constants, messages);
+        localize();
         driver.initialize(this);
     }
 
@@ -100,7 +100,7 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
         clustersEditor = new ListModelListBoxEditor<>(new NameRenderer<VDSGroup>());
     }
 
-    void localize(ApplicationConstants constants, ApplicationMessages messages) {
+    void localize() {
         selectHostAutomaticallyEditor.setLabel(constants.vmMigratePopupSelectHostAutomaticallyLabel());
         selectDestinationHostEditor.setLabel(constants.vmMigratePopupSelectDestinationHostLabel());
         hostsListEditor.setLabel(constants.vmMigratePopupHostsListLabel());

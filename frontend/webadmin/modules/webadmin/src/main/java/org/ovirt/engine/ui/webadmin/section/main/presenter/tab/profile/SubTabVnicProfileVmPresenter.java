@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileVmListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VnicProfileSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -25,6 +26,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabVnicProfileVmPresenter extends AbstractSubTabPresenter<VnicProfileView, VnicProfileListModel, VnicProfileVmListModel, SubTabVnicProfileVmPresenter.ViewDef, SubTabVnicProfileVmPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.vnicProfileVmSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabVnicProfileVmPresenter> {
@@ -34,9 +37,9 @@ public class SubTabVnicProfileVmPresenter extends AbstractSubTabPresenter<VnicPr
     }
 
     @TabInfo(container = VnicProfileSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<VM, VnicProfileListModel, VnicProfileVmListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.vnicProfileVmSubTabLabel(), 0,
+        return new ModelBoundTabData(constants.vnicProfileVmSubTabLabel(), 0,
                 modelProvider);
     }
 

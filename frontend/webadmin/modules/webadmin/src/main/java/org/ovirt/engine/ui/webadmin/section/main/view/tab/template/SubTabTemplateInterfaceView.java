@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;
 import org.ovirt.engine.ui.common.widget.uicommon.template.TemplateInterfaceListModelTable;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.template.SubTabTemplateInterfacePresenter;
 
 import com.google.gwt.core.client.GWT;
@@ -26,11 +25,11 @@ public class SubTabTemplateInterfaceView extends AbstractSubTabTableWidgetView<V
     @Inject
     public SubTabTemplateInterfaceView(SearchableDetailModelProvider<VmNetworkInterface, TemplateListModel, TemplateInterfaceListModel> modelProvider,
             EventBus eventBus,
-            ClientStorage clientStorage, ApplicationConstants constants) {
+            ClientStorage clientStorage) {
         super(new TemplateInterfaceListModelTable(modelProvider, eventBus, clientStorage));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         getTable().enableColumnResizing();
-        initTable(constants);
+        initTable();
         initWidget(getModelBoundTableWidget());
     }
 

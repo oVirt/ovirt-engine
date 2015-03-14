@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.section.main.presenter.AbstractSideTabWithDetailsPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabExtendedPresenter;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.UserPortalListProvider;
@@ -32,6 +33,8 @@ import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 public class SideTabExtendedVirtualMachinePresenter extends AbstractSideTabWithDetailsPresenter<UserPortalItemModel, UserPortalListModel, SideTabExtendedVirtualMachinePresenter.ViewDef, SideTabExtendedVirtualMachinePresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @GenEvent
     public class ExtendedVirtualMachineSelectionChange {
 
@@ -48,8 +51,8 @@ public class SideTabExtendedVirtualMachinePresenter extends AbstractSideTabWithD
     }
 
     @TabInfo(container = MainTabExtendedPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants) {
-        return new TabDataBasic(applicationConstants.extendedVirtualMachineSideTabLabel(), 0);
+    static TabData getTabData() {
+        return new TabDataBasic(constants.extendedVirtualMachineSideTabLabel(), 0);
     }
 
     @ContentSlot

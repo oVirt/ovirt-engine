@@ -23,6 +23,7 @@ import org.ovirt.engine.ui.uicommonweb.models.providers.ExternalNetwork;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ImportNetworksPopupPresenterWidget;
 
 import com.google.gwt.cell.client.Cell.Context;
@@ -72,10 +73,13 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
 
     private AbstractListModelListBoxColumn<ExternalNetwork, StoragePool> dcColumn;
 
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public ImportNetworksPopupView(EventBus eventBus, ApplicationResources resources,
-            ApplicationConstants constants, ApplicationTemplates templates) {
-        super(eventBus, resources);
+    public ImportNetworksPopupView(EventBus eventBus) {
+        super(eventBus);
         // Initialize Editors
         providersEditor = new ListModelListBoxEditor<>(new NameRenderer<Provider<?>>());
         providerNetworks = new EntityModelCellTable<ListModel<ExternalNetwork>>(true, false, true);
@@ -86,7 +90,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
                         constants.providerNetworks(),
                         constants.importedNetworks());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        initEntityModelCellTables(constants, templates, resources);
+        initEntityModelCellTables();
         providersEditor.setLabel(constants.networkProvider());
         providersEditor.addWrapperStyleName(style.providersStyle());
         driver.initialize(this);
@@ -102,9 +106,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
         importedNetworks.asEditor().edit(importedNetworks.asEditor().flush());
     }
 
-    void initEntityModelCellTables(final ApplicationConstants constants,
-            final ApplicationTemplates templates,
-            final ApplicationResources resources) {
+    void initEntityModelCellTables() {
 
         providerNetworks.addColumn(new AbstractTextColumn<ExternalNetwork>() {
             @Override

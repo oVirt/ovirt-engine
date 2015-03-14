@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.resources.client.ImageResource;
@@ -16,14 +17,12 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class SystemTreeItemCell extends AbstractCell<SystemTreeItemModel> {
 
-    private final ApplicationResources applicationResources;
-    private final ApplicationTemplates templates;
-
     private String elementIdPrefix = DOM.createUniqueId();
 
-    public SystemTreeItemCell(ApplicationResources applicationResources, ApplicationTemplates templates) {
-        this.applicationResources = applicationResources;
-        this.templates = templates;
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+
+    public SystemTreeItemCell() {
     }
 
     @Override
@@ -33,75 +32,75 @@ public class SystemTreeItemCell extends AbstractCell<SystemTreeItemModel> {
         // get the right image resource
         switch (value.getType()) {
         case Cluster:
-            imageResource = applicationResources.clusterImage();
+            imageResource = resources.clusterImage();
             break;
         case Clusters:
-            imageResource = applicationResources.clustersImage();
+            imageResource = resources.clustersImage();
             break;
         case DataCenter:
-            imageResource = applicationResources.dataCenterImage();
+            imageResource = resources.dataCenterImage();
             break;
         case DataCenters:
-            imageResource = applicationResources.dataCentersImage();
+            imageResource = resources.dataCentersImage();
             break;
         case Cluster_Gluster:
-            imageResource = applicationResources.glusterClusterImage();
+            imageResource = resources.glusterClusterImage();
             break;
         case Host:
-            imageResource = applicationResources.hostImage();
+            imageResource = resources.hostImage();
             break;
         case Hosts:
-            imageResource = applicationResources.hostsImage();
+            imageResource = resources.hostsImage();
             break;
         case Storage:
-            imageResource = applicationResources.storageImage();
+            imageResource = resources.storageImage();
             break;
         case Storages:
-            imageResource = applicationResources.storagesImage();
+            imageResource = resources.storagesImage();
             break;
         case System:
-            imageResource = applicationResources.systemImage();
+            imageResource = resources.systemImage();
             break;
         case Templates:
-            imageResource = applicationResources.templatesImage();
+            imageResource = resources.templatesImage();
             break;
         case VMs:
-            imageResource = applicationResources.vmsImage();
+            imageResource = resources.vmsImage();
             break;
         case Volume:
-            imageResource = applicationResources.volumeImage();
+            imageResource = resources.volumeImage();
             break;
         case Volumes:
-            imageResource = applicationResources.volumesImage();
+            imageResource = resources.volumesImage();
             break;
         case Network:
-            imageResource = applicationResources.networkTreeImage();
+            imageResource = resources.networkTreeImage();
             break;
         case Networks:
-            imageResource = applicationResources.networksTreeImage();
+            imageResource = resources.networksTreeImage();
             break;
         case Provider:
             switch (((Provider) value.getEntity()).getType()) {
             case OPENSTACK_NETWORK:
             case OPENSTACK_IMAGE:
-                imageResource = applicationResources.openstackImage();
+                imageResource = resources.openstackImage();
                 break;
             case FOREMAN:
-                imageResource = applicationResources.foremanImage();
+                imageResource = resources.foremanImage();
                 break;
             default:
-                imageResource = applicationResources.providersImage();
+                imageResource = resources.providersImage();
             }
             break;
         case Providers:
-            imageResource = applicationResources.providersImage();
+            imageResource = resources.providersImage();
             break;
         case Sessions:
-            imageResource = applicationResources.userImage();
+            imageResource = resources.userImage();
             break;
 
         default:
-            imageResource = applicationResources.questionMarkImage();
+            imageResource = resources.questionMarkImage();
         }
 
         // get the image HTML

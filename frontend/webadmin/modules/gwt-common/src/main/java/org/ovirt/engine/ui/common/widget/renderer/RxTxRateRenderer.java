@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.common.widget.renderer;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 
-import com.google.gwt.core.shared.GWT;
 import com.google.gwt.text.shared.AbstractRenderer;
 
 /**
@@ -10,7 +10,8 @@ import com.google.gwt.text.shared.AbstractRenderer;
  */
 public class RxTxRateRenderer extends AbstractRenderer<Double[]> {
 
-    private static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+
     private static final String NO_VALUE = constants.unAvailablePropertyLabel();
     private static final String ZERO_VALUE = "0"; //$NON-NLS-1$
     private static final String SMALL_VALUE = "< 1"; //$NON-NLS-1$

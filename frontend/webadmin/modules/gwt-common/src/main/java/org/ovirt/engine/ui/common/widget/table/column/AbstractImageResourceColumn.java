@@ -3,10 +3,10 @@ package org.ovirt.engine.ui.common.widget.table.column;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.table.cell.ImageResourceCell;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -19,9 +19,9 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
  */
 public abstract class AbstractImageResourceColumn<T> extends AbstractColumn<T, ImageResource> {
 
-    private static final CommonApplicationResources RESOURCES = GWT.create(CommonApplicationResources.class);
-    protected static final CommonApplicationConstants CONSTANTS = GWT.create(CommonApplicationConstants.class);
-    private static final CommonApplicationTemplates TEMPLATES = GWT.create(CommonApplicationTemplates.class);
+    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public AbstractImageResourceColumn() {
         super(new ImageResourceCell());
@@ -41,7 +41,7 @@ public abstract class AbstractImageResourceColumn<T> extends AbstractColumn<T, I
     }
 
     public String getDefaultTitle() {
-        return CONSTANTS.empty();
+        return constants.empty();
     }
 
     public ImageResource getDefaultImage() {
@@ -50,19 +50,11 @@ public abstract class AbstractImageResourceColumn<T> extends AbstractColumn<T, I
 
     public String getHeaderHtml() {
         if (getDefaultImage() == null) {
-            return CONSTANTS.empty();
+            return constants.empty();
         }
 
-        return TEMPLATES.imageWithTitle(SafeHtmlUtils.fromTrustedString(
+        return templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
                 AbstractImagePrototype.create(getDefaultImage()).getHTML()), getDefaultTitle()).asString();
-    }
-
-    protected CommonApplicationResources getCommonResources() {
-        return RESOURCES;
-    }
-
-    protected CommonApplicationConstants getCommonConstants() {
-        return CONSTANTS;
     }
 
 }

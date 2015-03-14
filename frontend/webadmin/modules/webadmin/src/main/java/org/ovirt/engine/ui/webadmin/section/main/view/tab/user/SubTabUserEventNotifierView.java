@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserEventNotifierListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.SubTabUserEventNotifierPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -29,10 +30,12 @@ public class SubTabUserEventNotifierView extends AbstractSubTabTableView<DbUser,
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SubTabUserEventNotifierView(SearchableDetailModelProvider<event_subscriber, UserListModel, UserEventNotifierListModel> modelProvider, ApplicationConstants constants) {
+    public SubTabUserEventNotifierView(SearchableDetailModelProvider<event_subscriber, UserListModel, UserEventNotifierListModel> modelProvider) {
         super(modelProvider);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
@@ -41,7 +44,7 @@ public class SubTabUserEventNotifierView extends AbstractSubTabTableView<DbUser,
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initTable(ApplicationConstants constants) {
+    void initTable() {
         AbstractTextColumn<event_subscriber> eventNameColumn = new AbstractEnumColumn<event_subscriber, AuditLogType>() {
             @Override
             protected AuditLogType getRawValue(event_subscriber object) {

@@ -1,12 +1,12 @@
 package org.ovirt.engine.ui.common.widget.renderer;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.text.shared.AbstractRenderer;
-
 import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
+
+import com.google.gwt.text.shared.AbstractRenderer;
 
 public class DiskSizeRenderer<T extends Number> extends AbstractRenderer<T> {
 
@@ -18,7 +18,7 @@ public class DiskSizeRenderer<T extends Number> extends AbstractRenderer<T> {
     private final SizeConverter.SizeUnit unit;
     public final Format format;
 
-    private static final CommonApplicationConstants CONSTANTS = GWT.create(CommonApplicationConstants.class);
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
     public DiskSizeRenderer(SizeConverter.SizeUnit unit) {
         this(unit, Format.GIGABYTE);
@@ -40,7 +40,7 @@ public class DiskSizeRenderer<T extends Number> extends AbstractRenderer<T> {
     @Override
     public String render(T size) {
         if (isUnavailable(size)) {
-            return CONSTANTS.unAvailablePropertyLabel();
+            return constants.unAvailablePropertyLabel();
         }
 
         switch (format) {

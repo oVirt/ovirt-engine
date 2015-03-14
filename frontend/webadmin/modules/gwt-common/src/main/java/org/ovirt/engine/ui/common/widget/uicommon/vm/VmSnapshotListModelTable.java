@@ -1,13 +1,9 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -15,7 +11,7 @@ import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
-import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
@@ -31,9 +27,15 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.LayoutPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends AbstractModelBoundTableWidget<Snapshot, L> {
 
@@ -47,8 +49,8 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
     @UiField
     SimplePanel snapshotInfoContainer;
 
-    private final CommonApplicationMessages messages;
-    private final CommonApplicationConstants constants;
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
 
     private final IEventListener<EventArgs> entityChangedEvent = new IEventListener<EventArgs>() {
         @Override
@@ -67,21 +69,15 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
     VmSnapshotInfoPanel vmSnapshotInfoPanel;
 
     public VmSnapshotListModelTable(DataBoundTabModelProvider<Snapshot, L> modelProvider,
-            EventBus eventBus, ClientStorage clientStorage,
-            CommonApplicationConstants constants,
-            CommonApplicationMessages messages,
-            CommonApplicationTemplates templates) {
+            EventBus eventBus, ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, false);
-
-        this.constants = constants;
-        this.messages = messages;
 
         // Create Snapshots table
         SimpleActionTable<Snapshot> table = getTable();
         snapshotsTableContainer.add(table);
 
         // Create Snapshot information tab panel
-        vmSnapshotInfoPanel = new VmSnapshotInfoPanel(constants, messages, templates);
+        vmSnapshotInfoPanel = new VmSnapshotInfoPanel();
         snapshotInfoContainer.add(vmSnapshotInfoPanel);
     }
 
@@ -91,11 +87,11 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
     }
 
     @Override
-    public void initTable(final CommonApplicationConstants constants) {
+    public void initTable() {
         getTable().enableColumnResizing();
         getTable().setMultiSelectionDisabled(true);
 
-        initActionButtons(constants);
+        initActionButtons();
 
         // Add event listeners
         addModelListeners();
@@ -154,7 +150,7 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
                 constants.descriptionSnapshot(), true, "300px"); //$NON-NLS-1$
     }
 
-    private void initActionButtons(final CommonApplicationConstants constants) {
+    private void initActionButtons() {
         getTable().addActionButton(new UiCommandButtonDefinition<Snapshot>(getEventBus(), constants.createSnapshot()) {
             @Override
             protected UICommand resolveCommand() {

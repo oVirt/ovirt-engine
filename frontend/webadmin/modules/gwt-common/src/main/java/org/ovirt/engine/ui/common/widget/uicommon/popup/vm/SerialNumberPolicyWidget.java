@@ -1,16 +1,9 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
@@ -20,6 +13,14 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEdito
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SerialNumberPolicyModel;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.inject.Inject;
 
 public class SerialNumberPolicyWidget extends AbstractModelBoundPopupWidget<SerialNumberPolicyModel> {
 
@@ -58,14 +59,14 @@ public class SerialNumberPolicyWidget extends AbstractModelBoundPopupWidget<Seri
     @Path("customSerialNumber.entity")
     public StringEntityModelTextBoxOnlyEditor customSerialNumber;
 
+    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
+
     @Inject
-    public SerialNumberPolicyWidget(
-            CommonApplicationTemplates applicationTemplates,
-            CommonApplicationMessages applicationMessages,
-            CommonApplicationResources applicationResources) {
+    public SerialNumberPolicyWidget() {
         overrideSerialNumberPolicy = new EntityModelCheckBoxEditor(Align.RIGHT);
         serialNumberPolicy = new EnumRadioEditor<>(SerialNumberPolicy.class);
-        serialNumberInfoIcon = new InfoIcon(applicationTemplates.italicText(applicationMessages.serialNumberInfo()), applicationResources);
+        serialNumberInfoIcon = new InfoIcon(templates.italicText(messages.serialNumberInfo()));
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         driver.initialize(this);

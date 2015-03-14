@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.ReplaceBrickModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.ReplaceBrickPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -45,13 +45,15 @@ public class ReplaceBrickPopupView extends AbstractModelBoundPopupView<ReplaceBr
 
     private final Driver driver = GWT.create(Driver.class);
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public ReplaceBrickPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources);
+    public ReplaceBrickPopupView(EventBus eventBus) {
+        super(eventBus);
         initListBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants);
+        localize();
         driver.initialize(this);
     }
 
@@ -65,7 +67,7 @@ public class ReplaceBrickPopupView extends AbstractModelBoundPopupView<ReplaceBr
 
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         serverEditor.setLabel(constants.serverBricks());
         brickDirEditor.setLabel(constants.brickDirectoryBricks());
     }

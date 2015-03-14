@@ -8,6 +8,7 @@ import java.util.ListIterator;
 
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -15,7 +16,6 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Clear;
 import com.google.gwt.dom.client.Style.Float;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -58,7 +58,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
     @UiField
     public WidgetStyle style;
 
-    private CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
+    private final static CommonApplicationResources resources = AssetProvider.getResources();
 
     private final List<Pair<T, V>> items;
     private final IEventListener<EventArgs> itemsChangedListener;

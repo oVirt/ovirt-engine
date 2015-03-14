@@ -3,8 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.qos;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.HostNetworkQosParametersModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.QosModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.HostNetworkQosPopupPresenterWidget;
 
 import com.google.gwt.core.shared.GWT;
@@ -18,13 +16,13 @@ public class HostNetworkQosPopupView extends QosPopupView<HostNetworkQos, HostNe
     }
 
     @Inject
-    public HostNetworkQosPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
-        super(eventBus, resources, constants);
+    public HostNetworkQosPopupView(EventBus eventBus) {
+        super(eventBus);
     }
 
     @Override
     protected void createQosWidget() {
-        qosWidget = new HostNetworkQosWidget(constants);
+        qosWidget = new HostNetworkQosWidget();
     }
 
     @Override

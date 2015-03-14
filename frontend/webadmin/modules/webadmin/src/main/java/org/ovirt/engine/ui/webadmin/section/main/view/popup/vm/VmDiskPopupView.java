@@ -4,9 +4,6 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundWidgetPopupView;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.VmDiskPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractDiskModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -20,8 +17,8 @@ public class VmDiskPopupView extends AbstractModelBoundWidgetPopupView<AbstractD
     }
 
     @Inject
-    public VmDiskPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates) {
-        super(eventBus, resources, new VmDiskPopupWidget(constants, resources, templates, true), "815px", "615px"); //$NON-NLS-1$ //$NON-NLS-2$
+    public VmDiskPopupView(EventBus eventBus) {
+        super(eventBus, new VmDiskPopupWidget(true), "815px", "615px"); //$NON-NLS-1$ //$NON-NLS-2$
         ViewIdHandler.idHandler.generateAndSetIds(this);
         asWidget().enableResizeSupport(true);
     }

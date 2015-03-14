@@ -18,8 +18,8 @@ import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.cell.StatusCompositeCellWithElementId;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -32,6 +32,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.uicommon.ReportActionsHelper;
@@ -56,14 +57,14 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
 
     int maxSpmPriority;
     int defaultSpmPriority;
-    ApplicationConstants constants;
+
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public MainTabHostView(MainModelProvider<VDS, HostListModel<Void>> modelProvider, ApplicationConstants constants) {
+    public MainTabHostView(MainModelProvider<VDS, HostListModel<Void>> modelProvider) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
-        this.constants = constants;
 
         InitSpmPriorities();
     }

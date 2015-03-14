@@ -10,7 +10,6 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.VmAffinityGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.SubTabVirtualMachineAffinityGroupPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.AbstractSubTabAffinityGroupsView;
 
@@ -24,9 +23,8 @@ public class SubTabVirtualMachineAffinityGroupView extends AbstractSubTabAffinit
     }
 
     @Inject
-    public SubTabVirtualMachineAffinityGroupView(SearchableDetailModelProvider<AffinityGroup, VmListModel<Void>, VmAffinityGroupListModel> modelProvider,
-            ApplicationConstants constants) {
-        super(modelProvider, constants);
+    public SubTabVirtualMachineAffinityGroupView(SearchableDetailModelProvider<AffinityGroup, VmListModel<Void>, VmAffinityGroupListModel> modelProvider) {
+        super(modelProvider);
     }
 
     @Override

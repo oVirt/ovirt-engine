@@ -1,9 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster;
 
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.NewClusterNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.NewNetworkPopupView;
 
@@ -12,16 +10,11 @@ import com.google.inject.Inject;
 
 public class NewClusterNetworkPopupView extends NewNetworkPopupView implements NewClusterNetworkPopupPresenterWidget.ViewDef {
 
-    private final ApplicationMessages messages;
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
-    public NewClusterNetworkPopupView(EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationConstants constants,
-            ApplicationTemplates templates,
-            ApplicationMessages messages) {
-        super(eventBus, resources, constants, templates, messages);
-        this.messages = messages;
+    public NewClusterNetworkPopupView(EventBus eventBus) {
+        super(eventBus);
     }
 
     @Override

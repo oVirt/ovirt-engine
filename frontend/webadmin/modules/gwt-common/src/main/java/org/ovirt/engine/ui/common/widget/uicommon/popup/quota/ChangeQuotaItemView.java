@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.quota;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
@@ -56,10 +55,7 @@ public class ChangeQuotaItemView extends Composite implements HasEditorDriver<Ch
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final CommonApplicationConstants constants;
-
-    public ChangeQuotaItemView(CommonApplicationConstants constants) {
-        this.constants = constants;
+    public ChangeQuotaItemView() {
 
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));

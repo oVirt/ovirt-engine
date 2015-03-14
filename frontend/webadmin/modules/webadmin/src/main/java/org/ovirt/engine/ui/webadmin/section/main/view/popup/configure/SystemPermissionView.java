@@ -5,10 +5,11 @@ import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
-import org.ovirt.engine.ui.common.widget.table.column.PermissionTypeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
+import org.ovirt.engine.ui.common.widget.table.column.PermissionTypeColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemPermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
@@ -41,9 +42,10 @@ public class SystemPermissionView extends Composite {
     private final EventBus eventBus;
     private final ClientStorage clientStorage;
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
-    public SystemPermissionView(ApplicationConstants constants,
-            SystemPermissionModelProvider modelProvider,
+    public SystemPermissionView(SystemPermissionModelProvider modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
         super();
         this.modelProvider = modelProvider;
@@ -51,20 +53,20 @@ public class SystemPermissionView extends Composite {
         this.clientStorage = clientStorage;
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants);
+        localize();
 
         content = new SplitLayoutPanel();
         content.setWidth("100%"); //$NON-NLS-1$
         content.setHeight("100%"); //$NON-NLS-1$
         tabContent.add(content);
 
-        initTable(constants);
+        initTable();
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
     }
 
-    private void initTable(ApplicationConstants constants) {
+    private void initTable() {
         table = new SimpleActionTable<Permission>(modelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 

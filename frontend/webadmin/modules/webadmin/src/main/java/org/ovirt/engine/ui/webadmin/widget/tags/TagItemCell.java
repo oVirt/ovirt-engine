@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModelType;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.CompositeCell;
@@ -25,12 +26,12 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class TagItemCell extends CompositeCell<TagModel> {
 
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+
     private static class TagItemTextCell extends Column<TagModel, SafeHtml> {
 
-        private final ApplicationResources resources;
-        private final ApplicationTemplates templates;
-
-        private TagItemTextCell(ApplicationResources resources, ApplicationTemplates templates) {
+        private TagItemTextCell() {
             super(new AbstractCell<SafeHtml>(BrowserEvents.CLICK, BrowserEvents.MOUSEOVER, BrowserEvents.MOUSEOUT) {
                 @Override
                 public void render(Context context, SafeHtml value, SafeHtmlBuilder sb) {
@@ -64,8 +65,6 @@ public class TagItemCell extends CompositeCell<TagModel> {
                     }
                 }
             });
-            this.resources = resources;
-            this.templates = templates;
         }
 
         @Override
@@ -89,7 +88,7 @@ public class TagItemCell extends CompositeCell<TagModel> {
 
     private static class TagItemButtonCell extends Column<TagModel, Boolean> {
 
-        private TagItemButtonCell(final ApplicationResources resources, final ApplicationTemplates templates) {
+        private TagItemButtonCell() {
             super(new AbstractCell<Boolean>(BrowserEvents.CLICK, BrowserEvents.MOUSEOVER, BrowserEvents.MOUSEOUT) {
                 @Override
                 public void render(Context context, Boolean value, SafeHtmlBuilder sb) {
@@ -164,10 +163,10 @@ public class TagItemCell extends CompositeCell<TagModel> {
     private static String elementIdPrefix = DOM.createUniqueId();
 
     @SuppressWarnings("unchecked")
-    public TagItemCell(ApplicationResources resources, ApplicationTemplates templates) {
+    public TagItemCell() {
         super(Arrays.<HasCell<TagModel, ?>> asList(
-                new TagItemTextCell(resources, templates),
-                new TagItemButtonCell(resources, templates)));
+                new TagItemTextCell(),
+                new TagItemButtonCell()));
     }
 
     public void setElementIdPrefix(String elementIdPrefix) {

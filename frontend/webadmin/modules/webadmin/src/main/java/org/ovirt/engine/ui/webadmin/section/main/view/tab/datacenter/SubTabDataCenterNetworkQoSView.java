@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkQoSListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterNetworkQoSPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -25,12 +26,13 @@ public class SubTabDataCenterNetworkQoSView extends AbstractSubTabTableView<Stor
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @Inject
     public SubTabDataCenterNetworkQoSView(SearchableDetailModelProvider<NetworkQoS,
-            DataCenterListModel, DataCenterNetworkQoSListModel> modelProvider,
-            ApplicationConstants constants) {
+            DataCenterListModel, DataCenterNetworkQoSListModel> modelProvider) {
         super(modelProvider);
-        initTable(constants);
+        initTable();
         initWidget(getTable());
     }
 
@@ -39,7 +41,7 @@ public class SubTabDataCenterNetworkQoSView extends AbstractSubTabTableView<Stor
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
-    void initTable(final ApplicationConstants constants) {
+    void initTable() {
         getTable().enableColumnResizing();
 
         AbstractTextColumn<NetworkQoS> nameColumn = new AbstractTextColumn<NetworkQoS>() {

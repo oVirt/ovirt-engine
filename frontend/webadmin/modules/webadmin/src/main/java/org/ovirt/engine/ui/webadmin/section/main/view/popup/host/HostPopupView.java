@@ -2,9 +2,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
 import java.util.List;
 
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.dom.client.KeyDownEvent;
-import com.google.gwt.event.dom.client.KeyDownHandler;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.ExternalEntityBase;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
@@ -13,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractTabbedModelBoundPopupView;
@@ -48,11 +44,15 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.provider.HostNetworkProviderWidget;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -63,6 +63,8 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -481,46 +483,35 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private final CommonApplicationTemplates applicationTemplates;
-
-    private final ApplicationResources resources;
-    private final ApplicationConstants constants;
-
-    private final ApplicationConstants appConstants;
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
-    public HostPopupView(EventBus eventBus,
-            ApplicationResources resources,
-            ApplicationConstants constants,
-            CommonApplicationTemplates applicationTemplates) {
-        super(eventBus, resources);
+    public HostPopupView(EventBus eventBus) {
+        super(eventBus);
 
-        // Inject a reference to the messages:
-        appConstants = constants;
-        this.resources = resources;
-        this.constants = constants;
-        this.applicationTemplates = applicationTemplates;
         initEditors();
-        initInfoIcon(constants);
+        initInfoIcon();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initExpander();
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants);
+        localize();
         addStyles();
         driver.initialize(this);
         applyModeCustomizations();
     }
 
-    private void initInfoIcon(ApplicationConstants constants) {
+    private void initInfoIcon() {
         consoleAddressInfoIcon =
-                new InfoIcon(applicationTemplates.italicText(constants.enableConsoleAddressOverrideHelpMessage()),
-                        resources);
+                new InfoIcon(templates.italicText(constants.enableConsoleAddressOverrideHelpMessage()));
         providerSearchInfoIcon =
-                new InfoIcon(applicationTemplates.italicText(constants.providerSearchInfo()), resources);
+                new InfoIcon(templates.italicText(constants.providerSearchInfo()));
         provisionedHostInfoIcon =
-                new InfoIcon(applicationTemplates.italicText(constants.provisionedHostInfo()), resources);
+                new InfoIcon(templates.italicText(constants.provisionedHostInfo()));
         discoveredHostInfoIcon =
-                new InfoIcon(applicationTemplates.italicText(constants.discoveredHostInfoIcon()), resources);
+                new InfoIcon(templates.italicText(constants.discoveredHostInfoIcon()));
     }
 
     private void addStyles() {
@@ -589,13 +580,13 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
     }
 
     private String typeAheadNameDescriptionTemplateNullSafe(String name, String description) {
-        return applicationTemplates.typeAheadNameDescription(
+        return templates.typeAheadNameDescription(
                 name != null ? name : constants.empty(),
                 description != null ? description : constants.empty())
                 .asString();
     }
 
-    void localize(ApplicationConstants constants) {
+    void localize() {
         // General tab
         generalTab.setLabel(constants.hostPopupGeneralTabLabel());
         dataCenterEditor.setLabel(constants.hostPopupDataCenterLabel());
@@ -904,7 +895,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         networkProviderTab.setVisible(object.showNetworkProviderTab());
         networkProviderWidget.edit(object.getNetworkProviderModel());
 
-        addTextAndLinkAlert(fetchPanel, appConstants.fetchingHostFingerprint(), object.getSSHFingerPrint());
+        addTextAndLinkAlert(fetchPanel, constants.fetchingHostFingerprint(), object.getSSHFingerPrint());
         nameEditor.setFocus(true);
     }
 

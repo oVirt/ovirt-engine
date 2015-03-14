@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DataCenterSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -27,6 +28,8 @@ public class SubTabDataCenterPermissionPresenter extends AbstractSubTabPresenter
     PermissionListModel<StoragePool>, SubTabDataCenterPermissionPresenter.ViewDef,
     SubTabDataCenterPermissionPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.dataCenterPermissionSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabDataCenterPermissionPresenter> {
@@ -36,10 +39,10 @@ public class SubTabDataCenterPermissionPresenter extends AbstractSubTabPresenter
     }
 
     @TabInfo(container = DataCenterSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<Permission, DataCenterListModel,
             PermissionListModel<StoragePool>> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.dataCenterPermissionSubTabLabel(), 5, modelProvider);
+        return new ModelBoundTabData(constants.dataCenterPermissionSubTabLabel(), 5, modelProvider);
     }
 
     @Inject

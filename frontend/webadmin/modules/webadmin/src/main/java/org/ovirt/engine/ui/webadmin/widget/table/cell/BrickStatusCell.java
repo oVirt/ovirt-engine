@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -16,11 +16,9 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class BrickStatusCell extends AbstractCell<GlusterBrickEntity> {
 
-    ApplicationResources resources = ClientGinjectorProvider.getApplicationResources();
-
-    ApplicationConstants constants = ClientGinjectorProvider.getApplicationConstants();
-
-    ApplicationTemplates applicationTemplates = ClientGinjectorProvider.getApplicationTemplates();
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Override
     public void render(Context context, GlusterBrickEntity brick, SafeHtmlBuilder sb, String id) {
@@ -55,7 +53,7 @@ public class BrickStatusCell extends AbstractCell<GlusterBrickEntity> {
         // Generate the HTML for the image:
         SafeHtml statusImageHtml =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(statusImage).getHTML());
-        sb.append(applicationTemplates.statusTemplate(statusImageHtml, tooltip, id));
+        sb.append(templates.statusTemplate(statusImageHtml, tooltip, id));
     }
 
 }

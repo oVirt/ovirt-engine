@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEd
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.StorageQosParametersModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -96,7 +97,9 @@ public class StorageQosWidget extends QosWidget<StorageQos, StorageQosParameters
     @WithElementId
     IntegerEntityModelTextBoxOnlyEditor iopsWriteEditor;
 
-    public StorageQosWidget(ApplicationConstants constants) {
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
+    public StorageQosWidget() {
         throughputTotalRadioButton = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
         throughputNoneRadioButton = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
         throughputReadWriteRadioButton = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
@@ -109,7 +112,7 @@ public class StorageQosWidget extends QosWidget<StorageQos, StorageQosParameters
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
         setStyle();
-        localize(constants);
+        localize();
 
         driver = GWT.create(Driver.class);
         driver.initialize(this);
@@ -124,7 +127,7 @@ public class StorageQosWidget extends QosWidget<StorageQos, StorageQosParameters
         iopsWriteEditor.setContentWidgetContainerStyleName(style.valueWidth());
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         throughputTotalEditor.setTitle(constants.totalStorageQosPopup() + constants.mbpsLabelStorageQosPopup());
         throughputReadEditor.setTitle(constants.readStorageQosPopup() + constants.mbpsLabelStorageQosPopup());
         throughputWriteEditor.setTitle(constants.writeStorageQosPopup() + constants.mbpsLabelStorageQosPopup());

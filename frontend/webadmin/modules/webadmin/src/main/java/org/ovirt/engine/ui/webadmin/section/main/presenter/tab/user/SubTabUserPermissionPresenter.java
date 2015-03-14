@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.UserSelectionChangeEvent;
 
 import com.google.gwt.event.shared.EventBus;
@@ -25,6 +26,8 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabUserPermissionPresenter extends AbstractSubTabPresenter<DbUser, UserListModel, UserPermissionListModel, SubTabUserPermissionPresenter.ViewDef, SubTabUserPermissionPresenter.ProxyDef> {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(WebAdminApplicationPlaces.userPermissionSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabUserPermissionPresenter> {
@@ -34,9 +37,9 @@ public class SubTabUserPermissionPresenter extends AbstractSubTabPresenter<DbUse
     }
 
     @TabInfo(container = UserSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             SearchableDetailModelProvider<Permission, UserListModel, UserPermissionListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.userPermissionSubTabLabel(), 1, modelProvider);
+        return new ModelBoundTabData(constants.userPermissionSubTabLabel(), 1, modelProvider);
     }
 
     @Inject

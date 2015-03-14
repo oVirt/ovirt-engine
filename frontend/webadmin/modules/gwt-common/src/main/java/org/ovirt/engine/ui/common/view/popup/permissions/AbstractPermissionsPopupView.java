@@ -6,7 +6,7 @@ import org.ovirt.engine.core.aaa.ProfileEntry;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.presenter.popup.permissions.AbstractPermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -111,22 +111,23 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
 
     private PopupNativeKeyPressHandler nativeKeyPressHandler;
 
-    public AbstractPermissionsPopupView(EventBus eventBus, CommonApplicationResources resources,
-            CommonApplicationConstants constants) {
-        super(eventBus, resources);
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+
+    public AbstractPermissionsPopupView(EventBus eventBus) {
+        super(eventBus);
         initListBoxEditors();
         searchItems = new EntityModelCellTable<ListModel>(true);
         searchItems.enableColumnResizing();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         generateIds();
         searchStringEditor.setStyleName("");
-        initTable(constants);
+        initTable();
         specificUserOrGroupRadio.setValue(true);
         everyoneRadio.setValue(false);
         //Have to add these classes to the searchStringEditor as the UiBinder seems to remove them
         searchStringEditor.addStyleName("form-control"); //$NON-NLS-1$
         searchStringEditor.addStyleName(style.alignBottomSearch());
-        localize(constants);
+        localize();
     }
 
     protected abstract void generateIds();
@@ -151,7 +152,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
         });
     }
 
-    private void initTable(CommonApplicationConstants constants) {
+    private void initTable() {
         // Table Entity Columns
         searchItems.addColumn(new AbstractEntityModelTextColumn<DbUser>() {
             @Override
@@ -175,7 +176,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
         }, constants.userNamePermissionsPopup(), MAX_COL_WIDTH);
     }
 
-    void localize(CommonApplicationConstants constants) {
+    void localize() {
         searchButton.setLabel(constants.goPermissionsPopup());
     }
 

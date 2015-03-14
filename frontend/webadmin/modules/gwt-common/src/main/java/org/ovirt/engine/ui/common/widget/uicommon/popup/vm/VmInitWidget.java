@@ -4,8 +4,8 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -44,9 +44,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitModel> implements IndexedPanel {
 
-    private static final CommonApplicationTemplates applicationTemplates = GWT.create(CommonApplicationTemplates.class);
-    private static final CommonApplicationResources applicationResources = GWT.create(CommonApplicationResources.class);
-
     interface Driver extends SimpleBeanEditorDriver<VmInitModel, VmInitWidget> {
     }
 
@@ -59,8 +56,6 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     }
 
     private final Driver driver = GWT.create(Driver.class);
-
-    private static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
 
     public static interface BasicStyle extends CssResource {
         String DEFAULT_CSS = "org/ovirt/engine/ui/common/css/BaseVmInitStyle.css"; //$NON-NLS-1$
@@ -353,13 +348,15 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @WithElementId
     StringEntityModelTextBoxEditor dnsSearchDomains;
 
+    private final static CommonApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+
     public VmInitWidget(BasicStyle style) {
         style.ensureInjected();
 
         this.customizableStyle = style;
 
-        customScriptInfoIcon =
-                new InfoIcon(applicationTemplates.italicText(constants.customScriptInfo()), applicationResources);
+        customScriptInfoIcon = new InfoIcon(templates.italicText(constants.customScriptInfo()));
 
         initCheckBoxEditors();
         initListBoxEditors();

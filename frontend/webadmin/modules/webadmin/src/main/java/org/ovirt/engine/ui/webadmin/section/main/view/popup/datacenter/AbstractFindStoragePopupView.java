@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelEnumCol
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -29,8 +29,10 @@ public class AbstractFindStoragePopupView extends AbstractModelBoundPopupView<Li
     @UiField
     Label messageLabel;
 
-    public AbstractFindStoragePopupView(EventBus eventBus, ApplicationResources resources, boolean multiSelection, ApplicationConstants constants) {
-        super(eventBus, resources);
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
+    public AbstractFindStoragePopupView(EventBus eventBus, boolean multiSelection) {
+        super(eventBus);
         table = new EntityModelCellTable<ListModel>(multiSelection);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 

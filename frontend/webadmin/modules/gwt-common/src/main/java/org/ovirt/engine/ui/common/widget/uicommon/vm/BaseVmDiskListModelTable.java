@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractDiskSizeColumn;
@@ -21,7 +22,7 @@ import com.google.gwt.user.client.ui.RadioButton;
 
 public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends AbstractModelBoundTableWidget<Disk, T> {
 
-    private CommonApplicationConstants constants;
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
     private DisksViewRadioGroup disksViewRadioGroup;
 
     private static AbstractTextColumn<Disk> aliasColumn;
@@ -63,8 +64,7 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
     }
 
     @Override
-    public void initTable(CommonApplicationConstants constants) {
-        this.constants = constants;
+    public void initTable() {
 
         initTableColumns();
         initTableOverhead();

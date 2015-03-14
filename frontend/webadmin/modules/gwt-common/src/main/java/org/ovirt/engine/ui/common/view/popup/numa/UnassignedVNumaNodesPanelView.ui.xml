@@ -3,7 +3,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
     xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
-    <ui:with field="commonConstants" type="org.ovirt.engine.ui.common.CommonApplicationConstants" />
+    <ui:with field="constants" type="org.ovirt.engine.ui.common.CommonApplicationConstants" />
 
     <ui:style type="org.ovirt.engine.ui.common.view.popup.numa.UnassignedVNumaNodesPanelView.Style">
         .unassignedPanelContainer {
@@ -55,8 +55,8 @@
 
     <g:FlowPanel addStyleNames="{style.unassignedPanelContainer}">
         <g:FlowPanel addStyleNames="{style.labelContainer}">
-            <g:Label ui:field="unassignedHeaderLabel" addStyleNames="{style.headerLabel}" text="{commonConstants.numaUnassignedInstructions}" />
-            <g:Label ui:field="instructionsLabel" addStyleNames="{style.instructionLabel}" text="{commonConstants.unassignedVNumaNodesLabel}"/>
+            <g:Label ui:field="unassignedHeaderLabel" addStyleNames="{style.headerLabel}" text="{constants.numaUnassignedInstructions}" />
+            <g:Label ui:field="instructionsLabel" addStyleNames="{style.instructionLabel}" text="{constants.unassignedVNumaNodesLabel}"/>
         </g:FlowPanel>
         <g:FlowPanel ui:field="unassignedNodesPanel" addStyleNames="{style.unassignedNodesPanel}"/>
         <g:FlowPanel ui:field="nodeDetailPanel" />

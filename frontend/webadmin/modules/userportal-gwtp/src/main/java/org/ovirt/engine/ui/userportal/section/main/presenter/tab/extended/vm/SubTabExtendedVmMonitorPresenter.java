@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmMonitorModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmMonitorModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmMonitorValueChangeEvent;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmMonitorValueChangeEvent.VmMonitorValueChangeHandler;
@@ -23,6 +24,8 @@ public class SubTabExtendedVmMonitorPresenter
         extends AbstractSubTabExtendedVmPresenter<VmMonitorModel, SubTabExtendedVmMonitorPresenter.ViewDef, SubTabExtendedVmMonitorPresenter.ProxyDef>
         implements VmMonitorValueChangeHandler {
 
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+
     @ProxyCodeSplit
     @NameToken(UserPortalApplicationPlaces.extendedVirtualMachineMonitorSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabExtendedVmMonitorPresenter> {
@@ -35,9 +38,9 @@ public class SubTabExtendedVmMonitorPresenter
     }
 
     @TabInfo(container = ExtendedVmSubTabPanelPresenter.class)
-    static TabData getTabData(ApplicationConstants applicationConstants,
+    static TabData getTabData(
             VmMonitorModelProvider modelProvider) {
-        return new ModelBoundTabData(applicationConstants.extendedVirtualMachineMonitorSubTabLabel(), 10, modelProvider);
+        return new ModelBoundTabData(constants.extendedVirtualMachineMonitorSubTabLabel(), 10, modelProvider);
     }
 
     @Inject

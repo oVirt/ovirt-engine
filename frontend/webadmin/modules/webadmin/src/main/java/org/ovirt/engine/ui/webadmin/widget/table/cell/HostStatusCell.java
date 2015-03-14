@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -14,15 +14,14 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class HostStatusCell extends AbstractCell<VDS> {
 
+    private final static ApplicationResources resources = AssetProvider.getResources();
+
     @Override
     public void render(Context context, VDS vds, SafeHtmlBuilder sb, String id) {
         // Nothing to render if no host is provided:
         if (vds == null) {
             return;
         }
-
-        // Get a reference to the application resources:
-        ApplicationResources resources = ClientGinjectorProvider.getApplicationResources();
 
         // Find the image corresponding to the status of the host:
         VDSStatus status = vds.getStatus();

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
@@ -21,7 +22,9 @@ public class VmSessionsModelForm extends AbstractModelBoundFormWidget<VmSessions
     TextBoxLabel consoleUserName = new TextBoxLabel();
     TextBoxLabel clientIp = new TextBoxLabel();
 
-    public VmSessionsModelForm(ModelProvider<VmSessionsModel> modelProvider, CommonApplicationConstants constants) {
+    private final static CommonApplicationConstants constants = AssetProvider.getConstants();
+
+    public VmSessionsModelForm(ModelProvider<VmSessionsModel> modelProvider) {
         super(modelProvider, 3, 1);
         driver.initialize(this);
 

@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
-import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostNicModel;
@@ -29,8 +28,8 @@ public class HostNicPopupView extends AbstractModelBoundPopupView<HostNicModel> 
     NicLabelWidget labelsWidget;
 
     @Inject
-    public HostNicPopupView(EventBus eventBus, CommonApplicationResources resources) {
-        super(eventBus, resources);
+    public HostNicPopupView(EventBus eventBus) {
+        super(eventBus);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         driver.initialize(this);
     }

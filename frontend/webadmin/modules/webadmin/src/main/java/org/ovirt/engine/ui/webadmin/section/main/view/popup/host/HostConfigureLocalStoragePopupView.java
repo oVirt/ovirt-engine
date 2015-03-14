@@ -24,6 +24,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ConfigureLocalStoragePopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -57,18 +58,6 @@ public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBound
     }
 
     private final Driver driver = GWT.create(Driver.class);
-
-    private final ApplicationConstants constants;
-
-    private ApplicationConstants getConstants() {
-        return constants;
-    }
-
-    private final ApplicationMessages messages;
-
-    private ApplicationMessages getMessages() {
-        return messages;
-    }
 
     @UiField
     DialogTabPanel tabPanel;
@@ -174,15 +163,16 @@ public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBound
     @WithElementId
     EntityModelCheckBoxEditor countThreadsAsCoresEditor;
 
+    private final static ApplicationTemplates templates = AssetProvider.getTemplates();
+    private final static ApplicationResources resources = AssetProvider.getResources();
+    private final static ApplicationConstants constants = AssetProvider.getConstants();
+    private final static ApplicationMessages messages = AssetProvider.getMessages();
+
     @Inject
-    public HostConfigureLocalStoragePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants,
-            ApplicationMessages messages, ApplicationTemplates templates) {
-        super(eventBus, resources);
+    public HostConfigureLocalStoragePopupView(EventBus eventBus) {
+        super(eventBus);
 
-        this.constants = constants;
-        this.messages = messages;
-
-        initialize(resources, templates);
+        initialize();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
@@ -200,7 +190,7 @@ public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBound
 
                 dataCenterPanel.setVisible(!dataCenterPanel.isVisible());
 
-                dataCenterButton.setText(dataCenterPanel.isVisible() ? getConstants().closeText() : getConstants().editText());
+                dataCenterButton.setText(dataCenterPanel.isVisible() ? constants.closeText() : constants.editText());
                 dataCenterNameEditor.setEnabled(dataCenterPanel.isVisible());
             }
         });
@@ -215,7 +205,7 @@ public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBound
 
                 clusterPanel.setVisible(!clusterPanel.isVisible());
 
-                clusterButton.setText(clusterPanel.isVisible() ? getConstants().closeText() : getConstants().editText());
+                clusterButton.setText(clusterPanel.isVisible() ? constants.closeText() : constants.editText());
                 clusterNameEditor.setEnabled(clusterPanel.isVisible());
             }
         });
@@ -228,12 +218,12 @@ public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBound
 
                 storageNameEditor.setEnabled(!storageNameEditor.isEnabled());
 
-                storageButton.setText(storageNameEditor.isEnabled() ? getConstants().closeText() : getConstants().editText());
+                storageButton.setText(storageNameEditor.isEnabled() ? constants.closeText() : constants.editText());
             }
         });
     }
 
-    private void initialize(ApplicationResources resources, ApplicationTemplates templates) {
+    private void initialize() {
 
         dataCenterVersionEditor = new ListModelListBoxEditor<Version>(new NullSafeRenderer<Version>() {
             @Override
@@ -260,8 +250,8 @@ public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBound
 
         countThreadsAsCoresEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
-        memoryOptimizationInfo = new InfoIcon(templates.italicFixedWidth("465px", getConstants().clusterPopupMemoryOptimizationInfo()), resources); //$NON-NLS-1$
-        cpuThreadsInfo = new InfoIcon(templates.italicFixedWidth("600px", getConstants().clusterPopupCpuThreadsInfo()), resources); //$NON-NLS-1$
+        memoryOptimizationInfo = new InfoIcon(templates.italicFixedWidth("465px", constants.clusterPopupMemoryOptimizationInfo())); //$NON-NLS-1$
+        cpuThreadsInfo = new InfoIcon(templates.italicFixedWidth("600px", constants.clusterPopupCpuThreadsInfo())); //$NON-NLS-1$
 
     }
 
@@ -276,30 +266,30 @@ public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBound
 
     void localize() {
 
-        generalTab.setLabel(getConstants().hostPopupGeneralTabLabel());
+        generalTab.setLabel(constants.hostPopupGeneralTabLabel());
 
-        dataCenterButton.setText(getConstants().editText());
-        dataCenterNameEditor.setLabel(getConstants().nameLabel());
-        dataCenterDescriptionEditor.setLabel(getConstants().descriptionLabel());
-        dataCenterVersionEditor.setLabel(getConstants().dataCenterPopupVersionLabel());
+        dataCenterButton.setText(constants.editText());
+        dataCenterNameEditor.setLabel(constants.nameLabel());
+        dataCenterDescriptionEditor.setLabel(constants.descriptionLabel());
+        dataCenterVersionEditor.setLabel(constants.dataCenterPopupVersionLabel());
 
-        clusterButton.setText(getConstants().editText());
-        clusterNameEditor.setLabel(getConstants().clusterPopupNameLabel());
-        clusterDescriptionEditor.setLabel(getConstants().clusterPopupDescriptionLabel());
-        clusterCpuTypeEditor.setLabel(getConstants().clusterPopupCPUTypeLabel());
+        clusterButton.setText(constants.editText());
+        clusterNameEditor.setLabel(constants.clusterPopupNameLabel());
+        clusterDescriptionEditor.setLabel(constants.clusterPopupDescriptionLabel());
+        clusterCpuTypeEditor.setLabel(constants.clusterPopupCPUTypeLabel());
 
-        storageButton.setText(getConstants().editText());
-        storageNameEditor.setLabel(getConstants().storagePopupNameLabel());
+        storageButton.setText(constants.editText());
+        storageNameEditor.setLabel(constants.storagePopupNameLabel());
 
-        pathEditor.setLabel(getConstants().configureLocalStoragePopupPathLabel());
+        pathEditor.setLabel(constants.configureLocalStoragePopupPathLabel());
 
-        optimizationTab.setLabel(getConstants().clusterPopupOptimizationTabLabel());
+        optimizationTab.setLabel(constants.clusterPopupOptimizationTabLabel());
 
-        memoryOptimizationPanelTitle.setText(getConstants().clusterPopupMemoryOptimizationPanelTitle());
-        optimizationNoneEditor.setLabel(getConstants().clusterPopupOptimizationNoneLabel());
+        memoryOptimizationPanelTitle.setText(constants.clusterPopupMemoryOptimizationPanelTitle());
+        optimizationNoneEditor.setLabel(constants.clusterPopupOptimizationNoneLabel());
 
-        cpuThreadsPanelTitle.setText(getConstants().clusterPopupCpuThreadsPanelTitle());
-        countThreadsAsCoresEditor.setLabel(getConstants().clusterPopupCountThreadsAsCoresLabel());
+        cpuThreadsPanelTitle.setText(constants.clusterPopupCpuThreadsPanelTitle());
+        countThreadsAsCoresEditor.setLabel(constants.clusterPopupCountThreadsAsCoresLabel());
     }
 
     @Override
@@ -349,7 +339,7 @@ public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBound
     private void optimizationForDesktopFormatter(ConfigureLocalStorageModel model) {
         if (model.getCluster() != null && model.getCluster().getOptimizationForDesktop() != null
                 && model.getCluster().getOptimizationForDesktop().getEntity() != null) {
-            optimizationForDesktopEditor.setLabel(getMessages().clusterPopupMemoryOptimizationForDesktopLabel(
+            optimizationForDesktopEditor.setLabel(messages.clusterPopupMemoryOptimizationForDesktopLabel(
                     model.getCluster().getOptimizationForDesktop().getEntity().toString()));
         }
     }
@@ -357,7 +347,7 @@ public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBound
     private void optimizationForServerFormatter(ConfigureLocalStorageModel model) {
         if (model.getCluster() != null && model.getCluster().getOptimizationForServer() != null
                 && model.getCluster().getOptimizationForServer().getEntity() != null) {
-            optimizationForServerEditor.setLabel(getMessages().clusterPopupMemoryOptimizationForServerLabel(
+            optimizationForServerEditor.setLabel(messages.clusterPopupMemoryOptimizationForServerLabel(
                     model.getCluster().getOptimizationForServer().getEntity().toString()));
         }
     }
@@ -366,7 +356,7 @@ public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBound
         if (model.getCluster() != null && model.getCluster().getOptimizationCustom() != null
                 && model.getCluster().getOptimizationCustom().getEntity() != null) {
             // Use current value because object.getOptimizationCustom.getEntity() can be null
-            optimizationCustomEditor.setLabel(getMessages().clusterPopupMemoryOptimizationCustomLabel(
+            optimizationCustomEditor.setLabel(messages.clusterPopupMemoryOptimizationCustomLabel(
                     String.valueOf(model.getCluster().getMemoryOverCommit())));
         }
     }

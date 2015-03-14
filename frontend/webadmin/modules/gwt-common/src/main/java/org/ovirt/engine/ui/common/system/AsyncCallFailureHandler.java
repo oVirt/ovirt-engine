@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.system;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
+import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 
 import com.google.gwt.event.shared.EventBus;
@@ -22,13 +23,11 @@ public class AsyncCallFailureHandler implements AsyncCallFailHandler {
     private static final Logger logger = Logger.getLogger(AsyncCallFailureHandler.class.getName());
 
     private final ErrorPopupManager errorPopupManager;
-    private final CommonApplicationMessages messages;
+    private final static CommonApplicationMessages messages = AssetProvider.getMessages();
 
     @Inject
-    public AsyncCallFailureHandler(EventBus eventBus, ErrorPopupManager errorPopupManager,
-            CommonApplicationMessages messages) {
+    public AsyncCallFailureHandler(EventBus eventBus, ErrorPopupManager errorPopupManager) {
         this.errorPopupManager = errorPopupManager;
-        this.messages = messages;
         eventBus.addHandler(AsyncCallFailEvent.getType(), this);
     }
 
