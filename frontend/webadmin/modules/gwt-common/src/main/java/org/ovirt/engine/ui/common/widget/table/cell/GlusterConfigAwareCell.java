@@ -13,6 +13,7 @@ import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.SelectElement;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.view.client.CellPreviewEvent;
 
@@ -37,17 +38,17 @@ public class GlusterConfigAwareCell extends AbstractCell<GlusterGeoRepSessionCon
     }
 
     @Override
-    public void onBrowserEvent(Context context, Element parent, final GlusterGeoRepSessionConfiguration configInRow, NativeEvent event, ValueUpdater<GlusterGeoRepSessionConfiguration> valueUpdater) {
-        List<String> allowedValuesList = configInRow.getAllowedValues();
+    public void onBrowserEvent(Context context, final Element parent, final GlusterGeoRepSessionConfiguration configInRow, NativeEvent event, ValueUpdater<GlusterGeoRepSessionConfiguration> valueUpdater) {
+        final List<String> allowedValuesList = configInRow.getAllowedValues();
         boolean isValuesConstrained =
                 isValueConstrained(allowedValuesList);
         if (isValuesConstrained) {
             delegate.onBrowserEvent(context, parent, configInRow.getValue(), event, new ValueUpdater<String>() {
                 @Override
                 public void update(String value) {
-                    if (value != null) {
-                        configInRow.setValue(value);
-                    }
+                    SelectElement select = parent.getFirstChild().cast();
+                    int selectedIndex = select.getSelectedIndex();
+                    configInRow.setValue(allowedValuesList.get(selectedIndex));
                 }
             });
         } else {
