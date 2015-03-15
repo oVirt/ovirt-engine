@@ -329,7 +329,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
 
     private boolean isStorageDomainAttachedToStoragePool(StorageDomain storageDomain) {
         List<StorageDomain> storageDomainList =
-                (List<StorageDomain>) getBackend().runInternalQuery(VdcQueryType.GetStorageDomainsWithAttachedStoragePoolGuid,
+                getBackend().runInternalQuery(VdcQueryType.GetStorageDomainsWithAttachedStoragePoolGuid,
                         new StorageDomainsAndStoragePoolIdQueryParameters(storageDomain,
                                 getStoragePoolId(),
                                 getVds().getId(),
