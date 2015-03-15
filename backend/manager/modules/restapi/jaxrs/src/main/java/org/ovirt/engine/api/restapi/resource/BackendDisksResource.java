@@ -21,18 +21,18 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendDisksResource extends AbstractBackendCollectionResource<Disk, org.ovirt.engine.core.common.businessentities.Disk> implements DisksResource{
+public class BackendDisksResource extends AbstractBackendCollectionResource<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> implements DisksResource{
 
     static final String[] SUB_COLLECTIONS = { "permissions", "statistics" };
     public BackendDisksResource() {
-        super(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class, SUB_COLLECTIONS);
+        super(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class, SUB_COLLECTIONS);
     }
 
     @Override
     public Response add(Disk disk) {
         validateDiskForCreation(disk);
         AddDiskParameters params = new AddDiskParameters();
-        params.setDiskInfo(getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class).map(disk, null));
+        params.setDiskInfo(getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class).map(disk, null));
         if (disk.isSetStorageDomains() && disk.getStorageDomains().isSetStorageDomains() && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
             params.setStorageDomainId(Guid.createGuidFromStringDefaultEmpty(disk.getStorageDomains().getStorageDomains().get(0).getId()));
         } else if (disk.isSetStorageDomains() && disk.getStorageDomains().getStorageDomains().get(0).isSetName()) {
@@ -103,16 +103,16 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
         return performAction(VdcActionType.RemoveDisk, new RemoveDiskParameters(asGuid(id)));
     }
 
-    protected Disks mapCollection(List<org.ovirt.engine.core.common.businessentities.Disk> entities) {
+    protected Disks mapCollection(List<org.ovirt.engine.core.common.businessentities.storage.Disk> entities) {
         Disks collection = new Disks();
-        for (org.ovirt.engine.core.common.businessentities.Disk disk : entities) {
+        for (org.ovirt.engine.core.common.businessentities.storage.Disk disk : entities) {
             collection.getDisks().add(addLinks(populate(map(disk), disk)));
         }
         return collection;
     }
 
     @Override
-    protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
+    protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
         return model;
     }
 }

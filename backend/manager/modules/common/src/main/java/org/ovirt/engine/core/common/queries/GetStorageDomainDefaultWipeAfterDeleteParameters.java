@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.queries;
 
-import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 
 public class GetStorageDomainDefaultWipeAfterDeleteParameters extends VdcQueryParametersBase {
 

@@ -22,11 +22,11 @@ import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -34,7 +34,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendTemplateDiskResourceTest
-        extends AbstractBackendSubResourceTest<Disk, org.ovirt.engine.core.common.businessentities.Disk, BackendTemplateDiskResource> {
+        extends AbstractBackendSubResourceTest<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk, BackendTemplateDiskResource> {
 
     public BackendTemplateDiskResourceTest() {
         super(new BackendTemplateDiskResource(GUIDS[1],
@@ -82,12 +82,12 @@ public class BackendTemplateDiskResourceTest
     }
 
     @Override
-    protected org.ovirt.engine.core.common.businessentities.Disk getEntity(int index) {
+    protected org.ovirt.engine.core.common.businessentities.storage.Disk getEntity(int index) {
         return setUpEntityExpectations(control.createMock(DiskImage.class), index);
     }
 
-    protected List<org.ovirt.engine.core.common.businessentities.Disk> getEntityList() {
-        List<org.ovirt.engine.core.common.businessentities.Disk> entities = new ArrayList<org.ovirt.engine.core.common.businessentities.Disk>();
+    protected List<org.ovirt.engine.core.common.businessentities.storage.Disk> getEntityList() {
+        List<org.ovirt.engine.core.common.businessentities.storage.Disk> entities = new ArrayList<org.ovirt.engine.core.common.businessentities.storage.Disk>();
         for (int i = 0; i < NAMES.length; i++) {
             entities.add(getEntity(i));
         }

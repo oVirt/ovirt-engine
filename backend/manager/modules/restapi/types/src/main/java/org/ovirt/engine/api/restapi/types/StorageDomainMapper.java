@@ -135,8 +135,8 @@ public class StorageDomainMapper {
         }
         model.setStorage(new Storage());
         model.getStorage().setType(map(entity.getStorageType(), null));
-        if (entity.getStorageType() == org.ovirt.engine.core.common.businessentities.StorageType.ISCSI ||
-                entity.getStorageType() == org.ovirt.engine.core.common.businessentities.StorageType.FCP) {
+        if (entity.getStorageType() == org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI ||
+                entity.getStorageType() == org.ovirt.engine.core.common.businessentities.storage.StorageType.FCP) {
             model.getStorage().setVolumeGroup(new VolumeGroup());
             model.getStorage().getVolumeGroup().setId(entity.getStorage());
         }
@@ -166,7 +166,7 @@ public class StorageDomainMapper {
         if (model.isSetId()) {
             entity.setid(model.getId());
         }
-        org.ovirt.engine.core.common.businessentities.StorageType storageType = null;
+        org.ovirt.engine.core.common.businessentities.storage.StorageType storageType = null;
         if (model.getType() != null) {
            storageType = map(StorageType.fromValue(model.getType()), null);
         }
@@ -267,7 +267,7 @@ public class StorageDomainMapper {
         StorageConnection model = template != null ? template : new StorageConnection();
         model.setId(entity.getid());
         model.setType(map(entity.getstorage_type(), null));
-        if (entity.getstorage_type() == org.ovirt.engine.core.common.businessentities.StorageType.ISCSI) {
+        if (entity.getstorage_type() == org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI) {
             model.setAddress(entity.getconnection());
             model.setPort(Integer.parseInt(entity.getport()));
             model.setUsername(entity.getuser_name());
@@ -276,7 +276,7 @@ public class StorageDomainMapper {
         if (entity.getstorage_type().isFileDomain()) {
             setPath(entity, model);
         }
-        if (entity.getstorage_type().equals(org.ovirt.engine.core.common.businessentities.StorageType.NFS)) {
+        if (entity.getstorage_type().equals(org.ovirt.engine.core.common.businessentities.storage.StorageType.NFS)) {
             if (entity.getNfsVersion() != null) {
                 model.setNfsVersion(entity.getNfsVersion().toString());
             }
@@ -290,7 +290,7 @@ public class StorageDomainMapper {
                 model.setMountOptions(entity.getMountOptions());
             }
         }
-        else if (entity.getstorage_type().equals(org.ovirt.engine.core.common.businessentities.StorageType.POSIXFS)) {
+        else if (entity.getstorage_type().equals(org.ovirt.engine.core.common.businessentities.storage.StorageType.POSIXFS)) {
             model.setMountOptions(entity.getMountOptions());
             model.setVfsType(entity.getVfsType());
         }
@@ -308,31 +308,31 @@ public class StorageDomainMapper {
         }
     }
 
-    @Mapping(from = StorageType.class, to = org.ovirt.engine.core.common.businessentities.StorageType.class)
-    public static org.ovirt.engine.core.common.businessentities.StorageType map(StorageType storageType,
-            org.ovirt.engine.core.common.businessentities.StorageType template) {
+    @Mapping(from = StorageType.class, to = org.ovirt.engine.core.common.businessentities.storage.StorageType.class)
+    public static org.ovirt.engine.core.common.businessentities.storage.StorageType map(StorageType storageType,
+            org.ovirt.engine.core.common.businessentities.storage.StorageType template) {
         switch (storageType) {
         case ISCSI:
-            return org.ovirt.engine.core.common.businessentities.StorageType.ISCSI;
+            return org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI;
         case FCP:
-            return org.ovirt.engine.core.common.businessentities.StorageType.FCP;
+            return org.ovirt.engine.core.common.businessentities.storage.StorageType.FCP;
         case NFS:
-            return org.ovirt.engine.core.common.businessentities.StorageType.NFS;
+            return org.ovirt.engine.core.common.businessentities.storage.StorageType.NFS;
         case LOCALFS:
-            return org.ovirt.engine.core.common.businessentities.StorageType.LOCALFS;
+            return org.ovirt.engine.core.common.businessentities.storage.StorageType.LOCALFS;
         case POSIXFS:
-            return org.ovirt.engine.core.common.businessentities.StorageType.POSIXFS;
+            return org.ovirt.engine.core.common.businessentities.storage.StorageType.POSIXFS;
         case GLUSTERFS:
-            return org.ovirt.engine.core.common.businessentities.StorageType.GLUSTERFS;
+            return org.ovirt.engine.core.common.businessentities.storage.StorageType.GLUSTERFS;
         case GLANCE:
-            return org.ovirt.engine.core.common.businessentities.StorageType.GLANCE;
+            return org.ovirt.engine.core.common.businessentities.storage.StorageType.GLANCE;
         default:
             return null;
         }
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.StorageType.class, to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.StorageType storageType, String template) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.storage.StorageType.class, to = String.class)
+    public static String map(org.ovirt.engine.core.common.businessentities.storage.StorageType storageType, String template) {
         switch (storageType) {
         case ISCSI:
             return StorageType.ISCSI.value();

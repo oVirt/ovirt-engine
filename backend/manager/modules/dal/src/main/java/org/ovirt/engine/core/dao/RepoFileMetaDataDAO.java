@@ -1,17 +1,18 @@
 package org.ovirt.engine.core.dao;
 
 import java.util.List;
-import org.ovirt.engine.core.common.businessentities.ImageFileType;
-import org.ovirt.engine.core.common.businessentities.RepoImage;
+
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
  * <code>RepoFileMetaDataDao</code> defines a type for performing CRUD operations on instances of
- * {@link org.ovirt.engine.core.common.businessentities.RepoImage}.
+ * {@link org.ovirt.engine.core.common.businessentities.storage.RepoImage}.
  *
  */
 public interface RepoFileMetaDataDAO extends DAO {

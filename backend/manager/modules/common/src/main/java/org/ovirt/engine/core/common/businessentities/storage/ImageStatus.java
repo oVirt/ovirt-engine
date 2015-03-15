@@ -1,7 +1,9 @@
-package org.ovirt.engine.core.common.businessentities;
+package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.ovirt.engine.core.common.businessentities.Identifiable;
 
 public enum ImageStatus implements Identifiable {
     Unassigned(0),

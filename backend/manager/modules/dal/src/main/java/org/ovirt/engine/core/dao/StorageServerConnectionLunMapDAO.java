@@ -2,8 +2,8 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map;
-import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map_id;
+import org.ovirt.engine.core.common.businessentities.storage.LUN_storage_server_connection_map;
+import org.ovirt.engine.core.common.businessentities.storage.LUN_storage_server_connection_map_id;
 
 /**
  * <code>StorageServerConnectionLunMapDAO</code> defines a type that performs CRUD operations on instances of

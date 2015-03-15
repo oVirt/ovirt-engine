@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.resource.StorageResource;
-import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -113,14 +113,14 @@ public class BackendHostStorageResourceTest
     protected LUNs getEntity(int index) {
         LUNs entity = new LUNs();
         entity.setLUN_id(GUIDS[index].toString());
-        entity.setLunType(org.ovirt.engine.core.common.businessentities.StorageType.ISCSI);
+        entity.setLunType(org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI);
         return entity;
     }
 
     protected org.ovirt.engine.core.common.businessentities.StorageDomain getVgEntity(int index) {
         org.ovirt.engine.core.common.businessentities.StorageDomain entity = new org.ovirt.engine.core.common.businessentities.StorageDomain();
         entity.setStorage(VG_ID_PREFIX + GUIDS[index].toString());
-        entity.setStorageType(org.ovirt.engine.core.common.businessentities.StorageType.ISCSI);
+        entity.setStorageType(org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI);
         return entity;
     }
 

@@ -5,7 +5,7 @@ import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.StorageDomainContentDiskResource;
 
 public class BackendExportDomainDiskResource
-        extends AbstractBackendSubResource<Disk, org.ovirt.engine.core.common.businessentities.Disk>
+        extends AbstractBackendSubResource<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk>
         implements StorageDomainContentDiskResource {
 
     private final BackendExportDomainDisksResource parent;
@@ -14,19 +14,19 @@ public class BackendExportDomainDiskResource
     public BackendExportDomainDiskResource(
             String diskId,
             BackendExportDomainDisksResource parent) {
-        super(diskId, Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class);
+        super(diskId, Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class);
         this.parent = parent;
         this.diskId = diskId;
     }
 
     @Override
-    protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
+    protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
         return model;
     }
 
     @Override
     public Disk get() {
-        org.ovirt.engine.core.common.businessentities.Disk disk = parent.getDisk(asGuid(diskId));
+        org.ovirt.engine.core.common.businessentities.storage.Disk disk = parent.getDisk(asGuid(diskId));
         if (disk == null) {
             return notFound();
         }

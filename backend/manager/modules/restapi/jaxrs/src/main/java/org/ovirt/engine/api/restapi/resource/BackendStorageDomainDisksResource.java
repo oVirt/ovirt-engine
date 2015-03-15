@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.RegisterDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDiskQueryParameters;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -58,14 +58,14 @@ public class BackendStorageDomainDisksResource extends BackendDisksResource {
             DiskImage unregisteredDisk =
                     getEntity(DiskImage.class, VdcQueryType.GetUnregisteredDisk, getDiskParams, disk.getId());
             unregisteredDisk =
-                    (DiskImage) getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class).map(disk,
+                    (DiskImage) getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class).map(disk,
                             unregisteredDisk);
             RegisterDiskParameters registerDiskParams = new RegisterDiskParameters(unregisteredDisk, storageDomainId);
             return performCreate(VdcActionType.RegisterDisk, registerDiskParams, ID_RESOLVER);
         } else {
             validateDiskForCreation(disk);
             AddDiskParameters params = new AddDiskParameters();
-            params.setDiskInfo(getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class).map(
+            params.setDiskInfo(getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class).map(
                     disk, null));
             params.setStorageDomainId(this.storageDomainId);
             return performCreate(VdcActionType.AddDisk, params, ID_RESOLVER);
@@ -85,7 +85,7 @@ public class BackendStorageDomainDisksResource extends BackendDisksResource {
     }
 
     @Override
-    protected Disk deprecatedPopulate(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
+    protected Disk deprecatedPopulate(Disk model, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
         Disk populatedDisk = super.doPopulate(model, entity);
 
         // this code generates back-link to the corresponding SD

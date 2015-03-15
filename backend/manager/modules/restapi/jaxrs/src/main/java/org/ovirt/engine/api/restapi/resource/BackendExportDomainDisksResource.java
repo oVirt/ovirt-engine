@@ -9,13 +9,13 @@ import org.ovirt.engine.api.resource.StorageDomainContentDisksResource;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendExportDomainDisksResource
-        extends AbstractBackendCollectionResource<Disk, org.ovirt.engine.core.common.businessentities.Disk>
+        extends AbstractBackendCollectionResource<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk>
         implements StorageDomainContentDisksResource {
 
     AbstractBackendStorageDomainContentResource parent;
 
     public BackendExportDomainDisksResource(AbstractBackendStorageDomainContentResource parent) {
-        super(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class);
+        super(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class);
         this.parent = parent;
     }
 
@@ -32,8 +32,8 @@ public class BackendExportDomainDisksResource
         return parent.getDiskMap().keySet();
     }
 
-    protected org.ovirt.engine.core.common.businessentities.Disk getDisk(Guid id) {
-        java.util.Map<Guid, org.ovirt.engine.core.common.businessentities.Disk> map = parent.getDiskMap();
+    protected org.ovirt.engine.core.common.businessentities.storage.Disk getDisk(Guid id) {
+        java.util.Map<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> map = parent.getDiskMap();
         return map.get(id);
     }
 
@@ -47,7 +47,7 @@ public class BackendExportDomainDisksResource
     }
 
     @Override
-    protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
+    protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
         return model;
     }
 

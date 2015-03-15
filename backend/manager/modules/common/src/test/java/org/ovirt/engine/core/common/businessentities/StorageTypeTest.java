@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import org.junit.Test;
 
 import org.junit.Assert;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 
 public class StorageTypeTest {
 

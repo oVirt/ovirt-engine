@@ -17,7 +17,7 @@ import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
@@ -105,7 +105,7 @@ public class BackendStorageDomainResourceTest
         expect(entity.getId()).andReturn(GUIDS[0]).anyTimes();
         expect(entity.getStorageName()).andReturn(NAMES[0]).anyTimes();
         expect(entity.getStorageDomainType()).andReturn(org.ovirt.engine.core.common.businessentities.StorageDomainType.Data).anyTimes();
-        expect(entity.getStorageType()).andReturn(org.ovirt.engine.core.common.businessentities.StorageType.FCP).anyTimes();
+        expect(entity.getStorageType()).andReturn(org.ovirt.engine.core.common.businessentities.storage.StorageType.FCP).anyTimes();
         expect(entity.getStorage()).andReturn(GUIDS[0].toString()).anyTimes();
         return entity;
     }

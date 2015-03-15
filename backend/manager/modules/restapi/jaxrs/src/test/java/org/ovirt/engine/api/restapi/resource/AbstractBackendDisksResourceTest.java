@@ -12,13 +12,13 @@ import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
-import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.PropagateErrors;
-import org.ovirt.engine.core.common.businessentities.VolumeFormat;
-import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.storage.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -26,8 +26,8 @@ import org.ovirt.engine.core.compat.Guid;
 import static org.easymock.EasyMock.expect;
 
 @Ignore
-public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyDevicesResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk>>
-        extends AbstractBackendCollectionResourceTest<Disk, org.ovirt.engine.core.common.businessentities.Disk, T> {
+public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyDevicesResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.storage.Disk>>
+        extends AbstractBackendCollectionResourceTest<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk, T> {
 
     protected final static Guid PARENT_ID = GUIDS[1];
 
@@ -80,8 +80,8 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
         }
     }
 
-    protected List<org.ovirt.engine.core.common.businessentities.Disk> getEntityList() {
-        List<org.ovirt.engine.core.common.businessentities.Disk> entities = new ArrayList<org.ovirt.engine.core.common.businessentities.Disk>();
+    protected List<org.ovirt.engine.core.common.businessentities.storage.Disk> getEntityList() {
+        List<org.ovirt.engine.core.common.businessentities.storage.Disk> entities = new ArrayList<org.ovirt.engine.core.common.businessentities.storage.Disk>();
         for (int i = 0; i < NAMES.length; i++) {
             entities.add(getEntity(i));
         }
@@ -89,11 +89,11 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
     }
 
     @Override
-    protected org.ovirt.engine.core.common.businessentities.Disk getEntity(int index) {
+    protected org.ovirt.engine.core.common.businessentities.storage.Disk getEntity(int index) {
         return setUpEntityExpectations(control.createMock(DiskImage.class), index);
     }
 
-    static org.ovirt.engine.core.common.businessentities.Disk setUpEntityExpectations(DiskImage entity, int index) {
+    static org.ovirt.engine.core.common.businessentities.storage.Disk setUpEntityExpectations(DiskImage entity, int index) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getVmSnapshotId()).andReturn(GUIDS[2]).anyTimes();
         expect(entity.getVolumeFormat()).andReturn(VolumeFormat.RAW).anyTimes();
@@ -112,7 +112,7 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
         return setUpStatisticalEntityExpectations(entity);
     }
 
-    static org.ovirt.engine.core.common.businessentities.Disk setUpStatisticalEntityExpectations(DiskImage entity) {
+    static org.ovirt.engine.core.common.businessentities.storage.Disk setUpStatisticalEntityExpectations(DiskImage entity) {
         expect(entity.getReadRate()).andReturn(1).anyTimes();
         expect(entity.getWriteRate()).andReturn(2).anyTimes();
         expect(entity.getReadLatency()).andReturn(3.0).anyTimes();

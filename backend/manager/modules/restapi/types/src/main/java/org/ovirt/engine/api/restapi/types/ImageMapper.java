@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.Image;
-import org.ovirt.engine.core.common.businessentities.RepoImage;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 
 public class ImageMapper {
     @Mapping(from = RepoImage.class, to = Image.class)

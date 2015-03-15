@@ -16,18 +16,18 @@ import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 public class BackendStorageServerConnectionsResourceTest extends AbstractBackendCollectionResourceTest<StorageConnection, StorageServerConnections, BackendStorageServerConnectionsResource> {
 
-    protected static final org.ovirt.engine.core.common.businessentities.StorageType STORAGE_TYPES_MAPPED[] = {
-            org.ovirt.engine.core.common.businessentities.StorageType.NFS,
-            org.ovirt.engine.core.common.businessentities.StorageType.LOCALFS,
-            org.ovirt.engine.core.common.businessentities.StorageType.POSIXFS,
-            org.ovirt.engine.core.common.businessentities.StorageType.ISCSI };
+    protected static final StorageType STORAGE_TYPES_MAPPED[] = {
+            StorageType.NFS,
+            StorageType.LOCALFS,
+            StorageType.POSIXFS,
+            StorageType.ISCSI };
 
     public BackendStorageServerConnectionsResourceTest() {
         super(new BackendStorageServerConnectionsResource(), null, "");

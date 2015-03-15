@@ -15,20 +15,20 @@ import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
-import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.LunDisk;
-import org.ovirt.engine.core.common.businessentities.PropagateErrors;
-import org.ovirt.engine.core.common.businessentities.VolumeFormat;
-import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.storage.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
+import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DiskMapper {
 
-    @Mapping(from = Disk.class, to = org.ovirt.engine.core.common.businessentities.Disk.class)
-    public static org.ovirt.engine.core.common.businessentities.Disk map(Disk disk, org.ovirt.engine.core.common.businessentities.Disk template) {
-        org.ovirt.engine.core.common.businessentities.Disk engineDisk = template;
+    @Mapping(from = Disk.class, to = org.ovirt.engine.core.common.businessentities.storage.Disk.class)
+    public static org.ovirt.engine.core.common.businessentities.storage.Disk map(Disk disk, org.ovirt.engine.core.common.businessentities.storage.Disk template) {
+        org.ovirt.engine.core.common.businessentities.storage.Disk engineDisk = template;
         if (engineDisk == null) {
             if (disk.isSetLunStorage()) {
                 engineDisk = new LunDisk();
@@ -145,8 +145,8 @@ public class DiskMapper {
         }
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.Disk.class, to = Disk.class)
-    public static Disk map(org.ovirt.engine.core.common.businessentities.Disk entity, Disk template) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.storage.Disk.class, to = Disk.class)
+    public static Disk map(org.ovirt.engine.core.common.businessentities.storage.Disk entity, Disk template) {
         Disk model = template != null ? template : new Disk();
         // name is depreciated, use alias instead.
         model.setName(entity.getDiskAlias());
@@ -243,26 +243,26 @@ public class DiskMapper {
         }
     }
 
-    @Mapping(from = DiskInterface.class, to = org.ovirt.engine.core.common.businessentities.DiskInterface.class)
-    public static org.ovirt.engine.core.common.businessentities.DiskInterface map(
+    @Mapping(from = DiskInterface.class, to = org.ovirt.engine.core.common.businessentities.storage.DiskInterface.class)
+    public static org.ovirt.engine.core.common.businessentities.storage.DiskInterface map(
             DiskInterface diskInterface,
-            org.ovirt.engine.core.common.businessentities.DiskInterface template) {
+            org.ovirt.engine.core.common.businessentities.storage.DiskInterface template) {
         switch (diskInterface) {
         case IDE:
-            return org.ovirt.engine.core.common.businessentities.DiskInterface.IDE;
+            return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.IDE;
         case VIRTIO:
-            return org.ovirt.engine.core.common.businessentities.DiskInterface.VirtIO;
+            return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.VirtIO;
         case VIRTIO_SCSI:
-            return org.ovirt.engine.core.common.businessentities.DiskInterface.VirtIO_SCSI;
+            return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.VirtIO_SCSI;
         case SPAPR_VSCSI:
-            return org.ovirt.engine.core.common.businessentities.DiskInterface.SPAPR_VSCSI;
+            return org.ovirt.engine.core.common.businessentities.storage.DiskInterface.SPAPR_VSCSI;
         default:
             return null;
         }
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.DiskInterface.class, to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.DiskInterface diskInterface, String template) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.storage.DiskInterface.class, to = String.class)
+    public static String map(org.ovirt.engine.core.common.businessentities.storage.DiskInterface diskInterface, String template) {
         switch (diskInterface) {
         case IDE:
             return DiskInterface.IDE.value();
@@ -277,22 +277,22 @@ public class DiskMapper {
         }
     }
 
-    @Mapping(from = ScsiGenericIO.class, to = org.ovirt.engine.core.common.businessentities.ScsiGenericIO.class)
-    public static org.ovirt.engine.core.common.businessentities.ScsiGenericIO map(
+    @Mapping(from = ScsiGenericIO.class, to = org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO.class)
+    public static org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO map(
             ScsiGenericIO scsiGenericIO,
-            org.ovirt.engine.core.common.businessentities.ScsiGenericIO template) {
+            org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO template) {
         switch (scsiGenericIO) {
         case FILTERED:
-            return org.ovirt.engine.core.common.businessentities.ScsiGenericIO.FILTERED;
+            return org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO.FILTERED;
         case UNFILTERED:
-            return org.ovirt.engine.core.common.businessentities.ScsiGenericIO.UNFILTERED;
+            return org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO.UNFILTERED;
         default:
             return null;
         }
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.ScsiGenericIO.class, to = String.class)
-    public static String map(org.ovirt.engine.core.common.businessentities.ScsiGenericIO scsiGenericIO, String template) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO.class, to = String.class)
+    public static String map(org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO scsiGenericIO, String template) {
         switch (scsiGenericIO) {
         case FILTERED:
             return ScsiGenericIO.FILTERED.value();

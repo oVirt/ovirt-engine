@@ -9,7 +9,7 @@ import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskStatus;
 import org.ovirt.engine.api.model.ScsiGenericIO;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 
 public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImage, DiskImage> {
 
@@ -55,10 +55,10 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
 
         Disk model = Disk.class.cast(populate(Disk.class));
         model = postPopulate(model);
-        Mapper<Disk, org.ovirt.engine.core.common.businessentities.Disk> out =
-                getMappingLocator().getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class);
-        Mapper<org.ovirt.engine.core.common.businessentities.Disk, Disk> back =
-                getMappingLocator().getMapper(org.ovirt.engine.core.common.businessentities.Disk.class, Disk.class);
+        Mapper<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> out =
+                getMappingLocator().getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class);
+        Mapper<org.ovirt.engine.core.common.businessentities.storage.Disk, Disk> back =
+                getMappingLocator().getMapper(org.ovirt.engine.core.common.businessentities.storage.Disk.class, Disk.class);
         DiskImage to = (DiskImage) out.map(model, null);
         DiskImage inverse = getInverse(to);
         Disk transform = back.map(inverse, null);
@@ -70,7 +70,7 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
         Disk model = new Disk();
         //only <size>
         model.setSize((long) 576576);
-        org.ovirt.engine.core.common.businessentities.Disk entity = DiskMapper.map(model, null);
+        org.ovirt.engine.core.common.businessentities.storage.Disk entity = DiskMapper.map(model, null);
         assertEquals(entity.getSize(), 576576);
         //<size> and <provisioned_size> - the latter should be dominant
         model.setProvisionedSize((long) 888888);
@@ -87,7 +87,7 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
         Disk model = new Disk();
         model.setReadOnly(true);
 
-        org.ovirt.engine.core.common.businessentities.Disk entity = DiskMapper.map(model, null);
+        org.ovirt.engine.core.common.businessentities.storage.Disk entity = DiskMapper.map(model, null);
         assertTrue(entity.getReadOnly());
 
         model.setReadOnly(false);

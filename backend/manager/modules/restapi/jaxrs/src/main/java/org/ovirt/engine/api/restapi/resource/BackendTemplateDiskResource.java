@@ -9,18 +9,18 @@ import org.ovirt.engine.api.resource.TemplateDiskResource;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.ImageOperation;
+import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendTemplateDiskResource extends BackendReadOnlyDeviceResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk>
+public class BackendTemplateDiskResource extends BackendReadOnlyDeviceResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.storage.Disk>
         implements TemplateDiskResource {
 
     public BackendTemplateDiskResource(Guid guid,
                                        BackendTemplateDisksResource collection,
                                        String... subCollections) {
-        super(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class, guid, collection, subCollections);
+        super(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class, guid, collection, subCollections);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class BackendTemplateDiskResource extends BackendReadOnlyDeviceResource<D
     }
 
     @Override
-    protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
+    protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
         return model;
     }
 

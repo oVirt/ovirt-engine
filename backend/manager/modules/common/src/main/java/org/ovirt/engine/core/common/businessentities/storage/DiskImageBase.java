@@ -1,8 +1,9 @@
-package org.ovirt.engine.core.common.businessentities;
+package org.ovirt.engine.core.common.businessentities.storage;
 
 import javax.validation.Valid;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DiskImageBase extends Disk {

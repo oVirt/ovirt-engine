@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
-import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 
 public class LOCALFSStorageHelper extends BaseFsStorageHelper {
 

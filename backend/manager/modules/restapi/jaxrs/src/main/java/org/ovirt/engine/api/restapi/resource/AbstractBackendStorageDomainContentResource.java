@@ -50,7 +50,7 @@ public abstract class AbstractBackendStorageDomainContentResource<C extends Base
 
     protected abstract R getFromDataDomain();
 
-    protected abstract java.util.Map<Guid, org.ovirt.engine.core.common.businessentities.Disk> getDiskMap();
+    protected abstract java.util.Map<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> getDiskMap();
 
     protected R getFromExportDomain() {
         for (R model : parent.getCollection(StorageDomainType.ImportExport)) {

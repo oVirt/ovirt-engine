@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.queries;
 
-import org.ovirt.engine.core.common.businessentities.ImageFileType;
+import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 
 /** A base class for parameters of queries that retrieve images lists */
 public abstract class GetImagesListParametersBase extends VdcQueryParametersBase {

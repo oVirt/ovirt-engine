@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.dao;
 
-import org.ovirt.engine.core.common.businessentities.Image;
-import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.Image;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 /**

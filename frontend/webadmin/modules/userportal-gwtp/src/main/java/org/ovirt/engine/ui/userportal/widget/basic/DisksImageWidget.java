@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.userportal.widget.basic;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 
@@ -9,6 +8,7 @@ import com.google.gwt.editor.client.adapters.TakesValueEditor;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.ui.FlowPanel;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 
 public class DisksImageWidget extends FlowPanel implements IsEditor<TakesValueEditor<Iterable<DiskImage>>>, TakesValue<Iterable<DiskImage>>, HasElementId {
 

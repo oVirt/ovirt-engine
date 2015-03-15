@@ -25,18 +25,18 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
-import org.ovirt.engine.core.common.businessentities.ImageOperation;
+import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendDiskResource extends AbstractBackendActionableResource<Disk, org.ovirt.engine.core.common.businessentities.Disk>
+public class BackendDiskResource extends AbstractBackendActionableResource<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk>
         implements MovableCopyableDiskResource {
 
     protected BackendDiskResource(String id) {
-        super(id, Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class);
+        super(id, Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class BackendDiskResource extends AbstractBackendActionableResource<Disk,
     public StatisticsResource getStatisticsResource() {
         QueryIdResolver<Guid> resolver = new QueryIdResolver<Guid>(VdcQueryType.GetDiskByDiskId, IdQueryParameters.class);
         DiskStatisticalQuery query = new DiskStatisticalQuery(resolver, newModel(id));
-        return inject(new BackendStatisticsResource<Disk, org.ovirt.engine.core.common.businessentities.Disk>(entityType, guid, query));
+        return inject(new BackendStatisticsResource<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk>(entityType, guid, query));
     }
 
     @Override
@@ -112,7 +112,7 @@ public class BackendDiskResource extends AbstractBackendActionableResource<Disk,
     }
 
     @Override
-    protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
+    protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
         // Populate the references to the VMs that are using this disk:
         List<org.ovirt.engine.core.common.businessentities.VM> vms = new ArrayList<>(1);
         VdcQueryReturnValue result = runQuery(VdcQueryType.GetVmsByDiskGuid, new IdQueryParameters(entity.getId()));

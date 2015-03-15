@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import java.util.Set;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class MergeParameters extends StorageDomainParametersBase {

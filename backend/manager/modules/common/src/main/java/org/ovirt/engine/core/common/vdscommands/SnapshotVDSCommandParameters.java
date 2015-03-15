@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class SnapshotVDSCommandParameters extends VdsAndVmIDVDSParametersBase {

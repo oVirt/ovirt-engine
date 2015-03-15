@@ -3,8 +3,8 @@ package org.ovirt.engine.core.common.action;
 import java.io.Serializable;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RestoreAllSnapshotsParameters extends VmOperationParameterBase implements Serializable {

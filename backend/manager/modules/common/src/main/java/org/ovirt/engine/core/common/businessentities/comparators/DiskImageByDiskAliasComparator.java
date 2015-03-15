@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.businessentities.comparators;
 import java.io.Serializable;
 import java.util.Comparator;
 
-import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 
 
 public class DiskImageByDiskAliasComparator implements Comparator<Disk>, Serializable {

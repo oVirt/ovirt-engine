@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;

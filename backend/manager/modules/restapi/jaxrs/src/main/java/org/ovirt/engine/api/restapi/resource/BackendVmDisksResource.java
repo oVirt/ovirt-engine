@@ -33,7 +33,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmDisksResource
-        extends AbstractBackendDevicesResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk>
+        extends AbstractBackendDevicesResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.storage.Disk>
         implements VmDisksResource {
 
     static final String[] SUB_COLLECTIONS = {"permissions", "statistics"};
@@ -43,7 +43,7 @@ public class BackendVmDisksResource
                                   VdcQueryParametersBase queryParams) {
         super(Disk.class,
               Disks.class,
-              org.ovirt.engine.core.common.businessentities.Disk.class,
+              org.ovirt.engine.core.common.businessentities.storage.Disk.class,
               parentId,
               queryType,
               queryParams,
@@ -92,12 +92,12 @@ public class BackendVmDisksResource
     }
 
     @Override
-    protected <T> boolean matchEntity(org.ovirt.engine.core.common.businessentities.Disk entity, T id) {
+    protected <T> boolean matchEntity(org.ovirt.engine.core.common.businessentities.storage.Disk entity, T id) {
         return id != null && (id.equals(entity.getId()));
     }
 
     @Override
-    protected boolean matchEntity(org.ovirt.engine.core.common.businessentities.Disk entity, String name) {
+    protected boolean matchEntity(org.ovirt.engine.core.common.businessentities.storage.Disk entity, String name) {
         return false;
     }
 
@@ -134,7 +134,7 @@ public class BackendVmDisksResource
     }
 
     @Override
-    protected VdcActionParametersBase getAddParameters(org.ovirt.engine.core.common.businessentities.Disk entity, Disk disk) {
+    protected VdcActionParametersBase getAddParameters(org.ovirt.engine.core.common.businessentities.storage.Disk entity, Disk disk) {
         AddDiskParameters parameters = new AddDiskParameters(parentId, entity);
         if (disk.isSetStorageDomains() && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
             parameters.setStorageDomainId(asGuid(disk.getStorageDomains().getStorageDomains().get(0).getId()));
@@ -174,24 +174,24 @@ public class BackendVmDisksResource
     }
 
     @Override
-    protected ParametersProvider<Disk, org.ovirt.engine.core.common.businessentities.Disk> getUpdateParametersProvider() {
+    protected ParametersProvider<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> getUpdateParametersProvider() {
         return new UpdateParametersProvider();
     }
 
-    protected class UpdateParametersProvider implements ParametersProvider<Disk, org.ovirt.engine.core.common.businessentities.Disk> {
+    protected class UpdateParametersProvider implements ParametersProvider<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> {
         @Override
-        public VdcActionParametersBase getParameters(Disk incoming, org.ovirt.engine.core.common.businessentities.Disk entity) {
+        public VdcActionParametersBase getParameters(Disk incoming, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
             return new UpdateVmDiskParameters(parentId, entity.getId(), map(incoming, entity));
         }
     }
 
     @Override
-    protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
+    protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
         return model;
     }
 
     @Override
-    protected Disk deprecatedPopulate(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
+    protected Disk deprecatedPopulate(Disk model, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
         Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
         if (details.contains("statistics")) {
             addStatistics(model, entity);
@@ -199,7 +199,7 @@ public class BackendVmDisksResource
         return model;
     }
 
-    private void addStatistics(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
+    private void addStatistics(Disk model, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
         model.setStatistics(new Statistics());
         DiskStatisticalQuery query = new DiskStatisticalQuery(newModel(model.getId()));
         List<Statistic> statistics = query.getStatistics(entity);

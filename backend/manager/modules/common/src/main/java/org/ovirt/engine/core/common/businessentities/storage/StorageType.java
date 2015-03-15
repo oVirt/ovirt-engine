@@ -1,6 +1,8 @@
-package org.ovirt.engine.core.common.businessentities;
+package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.util.HashMap;
+
+import org.ovirt.engine.core.common.businessentities.Identifiable;
 
 public enum StorageType implements Identifiable {
 

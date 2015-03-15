@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.vdscommands;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StorageServerConnectionManagementVDSParameters extends GetStorageConnectionsListVDSCommandParameters {

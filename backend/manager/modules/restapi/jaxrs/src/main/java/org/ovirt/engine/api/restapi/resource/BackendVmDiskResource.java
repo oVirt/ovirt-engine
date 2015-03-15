@@ -24,15 +24,15 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 
-public class BackendVmDiskResource extends BackendDeviceResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk> implements VmDiskResource {
+public class BackendVmDiskResource extends BackendDeviceResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.storage.Disk> implements VmDiskResource {
     protected BackendVmDiskResource(String id,
-                                  AbstractBackendReadOnlyDevicesResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk> collection,
+                                  AbstractBackendReadOnlyDevicesResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.storage.Disk> collection,
                                   VdcActionType updateType,
-                                  ParametersProvider<Disk, org.ovirt.engine.core.common.businessentities.Disk> updateParametersProvider,
+                                  ParametersProvider<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> updateParametersProvider,
                                   String[] requiredUpdateFields,
                                   String... subCollections) {
         super(Disk.class,
-              org.ovirt.engine.core.common.businessentities.Disk.class,
+              org.ovirt.engine.core.common.businessentities.storage.Disk.class,
               collection.asGuidOr404(id),
               collection,
               updateType,
@@ -46,22 +46,22 @@ public class BackendVmDiskResource extends BackendDeviceResource<Disk, Disks, or
         EntityIdResolver<Guid> resolver = new EntityIdResolver<Guid>() {
 
             @Override
-            public org.ovirt.engine.core.common.businessentities.Disk lookupEntity(
+            public org.ovirt.engine.core.common.businessentities.storage.Disk lookupEntity(
                     Guid guid) throws BackendFailureException {
                 return collection.lookupEntity(guid);
             }
         };
         DiskStatisticalQuery query = new DiskStatisticalQuery(resolver, newModel(id));
-        return inject(new BackendStatisticsResource<Disk, org.ovirt.engine.core.common.businessentities.Disk>(entityType, guid, query));
+        return inject(new BackendStatisticsResource<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk>(entityType, guid, query));
     }
 
     @Override
-    protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
+    protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
         return ((BackendVmDisksResource) collection).doPopulate(model, entity);
     }
 
     @Override
-    protected Disk deprecatedPopulate(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
+    protected Disk deprecatedPopulate(Disk model, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
         return ((BackendVmDisksResource) collection).deprecatedPopulate(model, entity);
     }
 

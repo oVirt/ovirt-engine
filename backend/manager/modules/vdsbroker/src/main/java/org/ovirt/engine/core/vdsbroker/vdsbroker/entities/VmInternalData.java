@@ -3,10 +3,10 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker.entities;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
+import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 
 /**
  * This class represents the internal data of a VM, including {@link VmDynamic}, {@link VmStatistics} and

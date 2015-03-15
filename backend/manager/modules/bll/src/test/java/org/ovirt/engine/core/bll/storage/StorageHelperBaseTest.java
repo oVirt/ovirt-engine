@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.LUNs;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.storage.LUNs;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 
 public class StorageHelperBaseTest {
 

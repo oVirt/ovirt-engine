@@ -22,11 +22,11 @@ import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
@@ -60,11 +60,11 @@ public class BackendStorageDomainsResourceTest
             org.ovirt.engine.core.common.businessentities.StorageDomainType.ISO,
             org.ovirt.engine.core.common.businessentities.StorageDomainType.ImportExport };
 
-    protected static final org.ovirt.engine.core.common.businessentities.StorageType STORAGE_TYPES_MAPPED[] = {
-            org.ovirt.engine.core.common.businessentities.StorageType.NFS,
-            org.ovirt.engine.core.common.businessentities.StorageType.NFS,
-            org.ovirt.engine.core.common.businessentities.StorageType.LOCALFS,
-            org.ovirt.engine.core.common.businessentities.StorageType.POSIXFS };
+    protected static final org.ovirt.engine.core.common.businessentities.storage.StorageType STORAGE_TYPES_MAPPED[] = {
+            org.ovirt.engine.core.common.businessentities.storage.StorageType.NFS,
+            org.ovirt.engine.core.common.businessentities.storage.StorageType.NFS,
+            org.ovirt.engine.core.common.businessentities.storage.StorageType.LOCALFS,
+            org.ovirt.engine.core.common.businessentities.storage.StorageType.POSIXFS };
 
     public BackendStorageDomainsResourceTest() {
         super(new BackendStorageDomainsResource(), SearchType.StorageDomain, "Storage : ");
@@ -472,7 +472,7 @@ public class BackendStorageDomainsResourceTest
         setUpGetEntityExpectations(VdcQueryType.GetDeviceList,
                 GetDeviceListQueryParameters.class,
                 new String[] { "VdsId", "StorageType" },
-                new Object[] { GUIDS[0], org.ovirt.engine.core.common.businessentities.StorageType.ISCSI },
+                new Object[] { GUIDS[0], org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI },
                 "this return value isn't used");
 
         setUpGetEntityExpectations(VdcQueryType.GetLunsByVgId,
@@ -515,7 +515,7 @@ public class BackendStorageDomainsResourceTest
         setUpGetEntityExpectations(VdcQueryType.GetDeviceList,
                 GetDeviceListQueryParameters.class,
                 new String[] { "VdsId", "StorageType" },
-                new Object[] { GUIDS[0], org.ovirt.engine.core.common.businessentities.StorageType.ISCSI },
+                new Object[] { GUIDS[0], org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI },
                 "this return value isn't used");
 
         List<LUNs> luns = setUpLuns();
@@ -780,7 +780,7 @@ public class BackendStorageDomainsResourceTest
         expect(entity.getId()).andReturn(GUIDS[0]).anyTimes();
         expect(entity.getStorageName()).andReturn(NAMES[0]).anyTimes();
         expect(entity.getStorageDomainType()).andReturn(TYPES_MAPPED[0]).anyTimes();
-        expect(entity.getStorageType()).andReturn(org.ovirt.engine.core.common.businessentities.StorageType.ISCSI)
+        expect(entity.getStorageType()).andReturn(org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI)
                 .anyTimes();
         expect(entity.getStorage()).andReturn(GUIDS[GUIDS.length - 1].toString()).anyTimes();
         return entity;

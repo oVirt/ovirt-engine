@@ -14,18 +14,18 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.PropagateErrors;
-import org.ovirt.engine.core.common.businessentities.VolumeFormat;
-import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.PropagateErrors;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 
-public class BackendStorageDomainDiskResourceTest extends AbstractBackendSubResourceTest<Disk, org.ovirt.engine.core.common.businessentities.Disk, BackendDiskResource> {
+public class BackendStorageDomainDiskResourceTest extends AbstractBackendSubResourceTest<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk, BackendDiskResource> {
 
     protected static final Guid DISK_ID = GUIDS[1];
     protected static final Guid STORAGE_DOMAIN_ID = GUIDS[0];
@@ -123,11 +123,11 @@ public class BackendStorageDomainDiskResourceTest extends AbstractBackendSubReso
     }
 
     @Override
-    protected org.ovirt.engine.core.common.businessentities.Disk getEntity(int index) {
+    protected org.ovirt.engine.core.common.businessentities.storage.Disk getEntity(int index) {
         return getEntity(index, false);
     }
 
-    protected org.ovirt.engine.core.common.businessentities.Disk getEntity(int index, boolean noSD) {
+    protected org.ovirt.engine.core.common.businessentities.storage.Disk getEntity(int index, boolean noSD) {
         DiskImage entity = new DiskImage();
         entity.setId(GUIDS[index]);
         entity.setvolumeFormat(VolumeFormat.RAW);
@@ -146,7 +146,7 @@ public class BackendStorageDomainDiskResourceTest extends AbstractBackendSubReso
         entity.setStorageIds(storages);
         return setUpStatisticalEntityExpectations(entity);
     }
-    static org.ovirt.engine.core.common.businessentities.Disk setUpStatisticalEntityExpectations(DiskImage entity) {
+    static org.ovirt.engine.core.common.businessentities.storage.Disk setUpStatisticalEntityExpectations(DiskImage entity) {
         entity.setReadRate(1);
         entity.setWriteRate(2);
         entity.setReadLatency(3.0);

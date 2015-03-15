@@ -26,7 +26,7 @@ import org.ovirt.engine.api.resource.openstack.OpenStackImageResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendActionableResource;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.RepoImage;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImageByIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -79,7 +79,7 @@ public class BackendOpenStackImageResource
         }
         EntityResolver resolver = new SimpleIdResolver(
                 Disk.class,
-                org.ovirt.engine.core.common.businessentities.Disk.class,
+                org.ovirt.engine.core.common.businessentities.storage.Disk.class,
                 VdcQueryType.GetDiskByDiskId,
                 IdQueryParameters.class
         );

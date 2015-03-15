@@ -6,8 +6,8 @@ import java.util.List;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.DiskSnapshot;
-import org.ovirt.engine.core.common.businessentities.Disk;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -46,7 +46,7 @@ public class BackendStorageDomainDiskSnapshotsResourceTest extends
     public void testList() throws Exception {
         collection.setUriInfo(setUpBasicUriExpectations());
 
-        List<Disk> entities = new ArrayList<org.ovirt.engine.core.common.businessentities.Disk>();
+        List<Disk> entities = new ArrayList<Disk>();
         for (int i = 0; i < NAMES.length; i++) {
             entities.add(getEntity(i));
         }

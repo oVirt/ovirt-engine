@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.disks;
 
-import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.Disk.DiskStorageType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 
 import com.google.gwt.core.client.GWT;

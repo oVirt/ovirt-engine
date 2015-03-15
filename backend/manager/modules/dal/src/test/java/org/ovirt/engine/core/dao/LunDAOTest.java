@@ -9,7 +9,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 
 public class LunDAOTest extends BaseDAOTestCase {
     private static final String STORAGE_SERVER_CONNECTION_ID = "0cc146e8-e5ed-482c-8814-270bc48c297e";

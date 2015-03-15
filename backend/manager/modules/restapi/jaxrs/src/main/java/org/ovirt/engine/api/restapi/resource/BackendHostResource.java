@@ -55,7 +55,7 @@ import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSType;
@@ -267,7 +267,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         IscsiDetails iscsiDetails = action.getIscsi();
         cnx.setconnection(iscsiDetails.getAddress());
         cnx.setiqn(iscsiDetails.getTarget());
-        cnx.setstorage_type(org.ovirt.engine.core.common.businessentities.StorageType.ISCSI);
+        cnx.setstorage_type(StorageType.ISCSI);
         if (iscsiDetails.isSetPort()) {
             cnx.setport(iscsiDetails.getPort().toString());
         } else {
@@ -366,7 +366,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         StorageServerConnections connectionDetails = new StorageServerConnections();
         IscsiDetails iscsiDetails = action.getIscsi();
         connectionDetails.setconnection(iscsiDetails.getAddress());
-        connectionDetails.setstorage_type(org.ovirt.engine.core.common.businessentities.StorageType.ISCSI);
+        connectionDetails.setstorage_type(StorageType.ISCSI);
         if (iscsiDetails.isSetPort()) {
             connectionDetails.setport(iscsiDetails.getPort().toString());
         } else {

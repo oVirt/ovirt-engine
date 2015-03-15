@@ -4,6 +4,8 @@ import java.io.Serializable;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+
 public class StorageServerConnections implements Serializable {
     private static final long serialVersionUID = 5444293590307760809L;
 

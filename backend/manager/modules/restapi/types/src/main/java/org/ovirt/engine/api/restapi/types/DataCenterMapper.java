@@ -32,7 +32,7 @@ public class DataCenterMapper {
         if (model.isSetStorageType()) {
             StorageType storageType = StorageType.fromValue(model.getStorageType());
             if (storageType != null) {
-                entity.setIsLocal(StorageDomainMapper.map(storageType, null) == org.ovirt.engine.core.common.businessentities.StorageType.LOCALFS);
+                entity.setIsLocal(StorageDomainMapper.map(storageType, null) == org.ovirt.engine.core.common.businessentities.storage.StorageType.LOCALFS);
             }
         }
         if (model.isSetLocal()) {

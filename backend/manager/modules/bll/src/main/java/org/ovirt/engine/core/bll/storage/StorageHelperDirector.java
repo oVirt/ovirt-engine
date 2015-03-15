@@ -4,7 +4,7 @@ import java.lang.reflect.Constructor;
 import java.util.EnumMap;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

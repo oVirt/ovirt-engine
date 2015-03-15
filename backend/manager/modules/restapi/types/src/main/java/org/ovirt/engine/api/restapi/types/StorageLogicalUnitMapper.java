@@ -7,7 +7,7 @@ import org.ovirt.engine.api.model.LunStatus;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 
 public class StorageLogicalUnitMapper {
@@ -112,8 +112,8 @@ public class StorageLogicalUnitMapper {
         return entity;
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.LunStatus.class, to = LunStatus.class)
-    public static LunStatus map(org.ovirt.engine.core.common.businessentities.LunStatus status, LunStatus template) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.storage.LunStatus.class, to = LunStatus.class)
+    public static LunStatus map(org.ovirt.engine.core.common.businessentities.storage.LunStatus status, LunStatus template) {
         switch (status) {
         case Free:
             return LunStatus.Free;

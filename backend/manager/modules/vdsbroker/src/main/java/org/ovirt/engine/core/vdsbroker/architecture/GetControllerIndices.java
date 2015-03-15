@@ -3,7 +3,7 @@ package org.ovirt.engine.core.vdsbroker.architecture;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.businessentities.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.utils.archstrategy.ArchCommand;
 
 public class GetControllerIndices implements ArchCommand {

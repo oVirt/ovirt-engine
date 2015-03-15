@@ -2,7 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.util.Collection;
 
-import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 

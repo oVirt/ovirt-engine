@@ -6,12 +6,12 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.StatisticUnit;
 import org.ovirt.engine.api.model.VM;
-import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
 
-public class DiskStatisticalQuery extends AbstractStatisticalQuery<Disk, org.ovirt.engine.core.common.businessentities.Disk> {
+public class DiskStatisticalQuery extends AbstractStatisticalQuery<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> {
 
     static final Statistic DATA_READ  = create("data.current.read",  "Read data rate",  GAUGE, BYTES_PER_SECOND, DECIMAL);
     static final Statistic DATA_WRITE = create("data.current.write", "Write data rate", GAUGE, BYTES_PER_SECOND, DECIMAL);
@@ -24,11 +24,11 @@ public class DiskStatisticalQuery extends AbstractStatisticalQuery<Disk, org.ovi
         this(null, parent);
     }
 
-    protected DiskStatisticalQuery(AbstractBackendResource<Disk, org.ovirt.engine.core.common.businessentities.Disk>.EntityIdResolver<Guid> resolver, Disk parent) {
+    protected DiskStatisticalQuery(AbstractBackendResource<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk>.EntityIdResolver<Guid> resolver, Disk parent) {
         super(Disk.class, parent, resolver);
     }
 
-    public List<Statistic> getStatistics(org.ovirt.engine.core.common.businessentities.Disk i) {
+    public List<Statistic> getStatistics(org.ovirt.engine.core.common.businessentities.storage.Disk i) {
         if (i.getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage disk = (DiskImage) i;
             return asList(setDatum(clone(DATA_READ), disk.getReadRate()),

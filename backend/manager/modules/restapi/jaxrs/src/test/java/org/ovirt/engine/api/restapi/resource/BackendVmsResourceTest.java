@@ -42,8 +42,8 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.ConfigurationType;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
@@ -528,7 +528,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
 
         org.ovirt.engine.core.common.businessentities.VM vmConfiguration = getEntity(0);
-        Map<Guid, org.ovirt.engine.core.common.businessentities.Disk> diskImageMap = new HashMap<Guid, org.ovirt.engine.core.common.businessentities.Disk>();
+        Map<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> diskImageMap = new HashMap<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk>();
         diskImageMap.put(Guid.newGuid(), new DiskImage());
         vmConfiguration.setDiskMap(diskImageMap);
         setUriInfo(setUpBasicUriExpectations());
@@ -1491,7 +1491,7 @@ public class BackendVmsResourceTest
     }
 
     private Disk map(DiskImage entity, Disk template) {
-        return getMapper(org.ovirt.engine.core.common.businessentities.Disk.class, Disk.class).map(entity, template);
+        return getMapper(org.ovirt.engine.core.common.businessentities.storage.Disk.class, Disk.class).map(entity, template);
     }
 
     private Snapshot map(org.ovirt.engine.core.common.businessentities.Snapshot entity, Snapshot template) {

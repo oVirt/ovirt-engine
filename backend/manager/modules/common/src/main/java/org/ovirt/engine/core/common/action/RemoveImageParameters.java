@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.ImageDbOperationScope;
+
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RemoveImageParameters extends ImagesContainterParametersBase implements Serializable {

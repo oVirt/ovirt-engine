@@ -3,8 +3,8 @@ package org.ovirt.engine.core.dao;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.DiskLunMap;
-import org.ovirt.engine.core.common.businessentities.DiskLunMapId;
+import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
+import org.ovirt.engine.core.common.businessentities.storage.DiskLunMapId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.RandomUtils;
 

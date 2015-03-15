@@ -9,7 +9,7 @@ import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskStatus;
 import org.ovirt.engine.api.model.Storage;
-import org.ovirt.engine.core.common.businessentities.LunDisk;
+import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 
 public class LunDiskMapperTest extends AbstractInvertibleMappingTest<Disk, LunDisk, LunDisk> {
 
@@ -45,10 +45,10 @@ public class LunDiskMapperTest extends AbstractInvertibleMappingTest<Disk, LunDi
 
         Disk model = Disk.class.cast(populate(Disk.class));
         model = postPopulate(model);
-        Mapper<Disk, org.ovirt.engine.core.common.businessentities.Disk> out =
-                getMappingLocator().getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class);
-        Mapper<org.ovirt.engine.core.common.businessentities.Disk, Disk> back =
-                getMappingLocator().getMapper(org.ovirt.engine.core.common.businessentities.Disk.class, Disk.class);
+        Mapper<Disk, org.ovirt.engine.core.common.businessentities.storage.Disk> out =
+                getMappingLocator().getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class);
+        Mapper<org.ovirt.engine.core.common.businessentities.storage.Disk, Disk> back =
+                getMappingLocator().getMapper(org.ovirt.engine.core.common.businessentities.storage.Disk.class, Disk.class);
         LunDisk to = (LunDisk) out.map(model, null);
         LunDisk inverse = getInverse(to);
         Disk transform = back.map(inverse, null);

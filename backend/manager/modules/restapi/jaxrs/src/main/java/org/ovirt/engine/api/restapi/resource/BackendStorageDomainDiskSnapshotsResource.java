@@ -9,6 +9,7 @@ import org.ovirt.engine.api.resource.DiskSnapshotResource;
 import org.ovirt.engine.api.resource.DiskSnapshotsResource;
 import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -16,13 +17,13 @@ import org.ovirt.engine.core.compat.Guid;
 import java.util.List;
 
 public class BackendStorageDomainDiskSnapshotsResource
-        extends AbstractBackendCollectionResource<DiskSnapshot, org.ovirt.engine.core.common.businessentities.Disk>
+        extends AbstractBackendCollectionResource<DiskSnapshot, Disk>
         implements DiskSnapshotsResource {
 
     Guid storageDomainId;
 
     public BackendStorageDomainDiskSnapshotsResource(Guid storageDomainId, String... subCollections) {
-        super(DiskSnapshot.class, org.ovirt.engine.core.common.businessentities.Disk.class);
+        super(DiskSnapshot.class, Disk.class);
         this.storageDomainId = storageDomainId;
     }
 
@@ -32,11 +33,11 @@ public class BackendStorageDomainDiskSnapshotsResource
                     new IdQueryParameters(this.storageDomainId)));
     }
 
-    protected DiskSnapshots mapCollection(List<org.ovirt.engine.core.common.businessentities.Disk> entities) {
+    protected DiskSnapshots mapCollection(List<Disk> entities) {
         DiskSnapshots collection = new DiskSnapshots();
-        for (org.ovirt.engine.core.common.businessentities.Disk disk : entities) {
+        for (Disk disk : entities) {
             DiskSnapshot diskSnapshot =
-                getMapper(org.ovirt.engine.core.common.businessentities.Disk.class, DiskSnapshot.class).map(disk, null);
+                getMapper(Disk.class, DiskSnapshot.class).map(disk, null);
 
             // this code generates back-link to the corresponding SD
             diskSnapshot.setStorageDomain(new StorageDomain());
@@ -58,7 +59,7 @@ public class BackendStorageDomainDiskSnapshotsResource
     }
 
     @Override
-    protected DiskSnapshot doPopulate(DiskSnapshot model, org.ovirt.engine.core.common.businessentities.Disk entity) {
+    protected DiskSnapshot doPopulate(DiskSnapshot model, Disk entity) {
         return model;
     }
 

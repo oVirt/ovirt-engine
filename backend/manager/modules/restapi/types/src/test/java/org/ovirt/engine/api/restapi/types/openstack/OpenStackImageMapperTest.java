@@ -18,7 +18,7 @@ package org.ovirt.engine.api.restapi.types.openstack;
 
 import org.ovirt.engine.api.model.OpenStackImage;
 import org.ovirt.engine.api.restapi.types.AbstractInvertibleMappingTest;
-import org.ovirt.engine.core.common.businessentities.RepoImage;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 
 public class OpenStackImageMapperTest
         extends AbstractInvertibleMappingTest<OpenStackImage, RepoImage, RepoImage> {

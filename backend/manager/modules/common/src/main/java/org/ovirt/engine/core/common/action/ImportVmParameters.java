@@ -2,11 +2,10 @@ package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
 import java.util.Map;
-
 import javax.validation.Valid;
 
-import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ImportVmParameters extends VmOperationParameterBase implements Serializable {

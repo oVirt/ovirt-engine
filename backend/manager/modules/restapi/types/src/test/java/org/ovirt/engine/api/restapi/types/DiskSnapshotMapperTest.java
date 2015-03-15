@@ -9,7 +9,8 @@ import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskSnapshot;
 import org.ovirt.engine.api.model.DiskStatus;
 import org.ovirt.engine.api.model.ScsiGenericIO;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 
 public class DiskSnapshotMapperTest extends AbstractInvertibleMappingTest<DiskSnapshot, DiskImage, DiskImage> {
 
@@ -53,10 +54,10 @@ public class DiskSnapshotMapperTest extends AbstractInvertibleMappingTest<DiskSn
 
         DiskSnapshot model = DiskSnapshot.class.cast(populate(DiskSnapshot.class));
         model = postPopulate(model);
-        Mapper<DiskSnapshot, org.ovirt.engine.core.common.businessentities.Disk> out =
-                getMappingLocator().getMapper(DiskSnapshot.class, org.ovirt.engine.core.common.businessentities.Disk.class);
-        Mapper<org.ovirt.engine.core.common.businessentities.Disk, DiskSnapshot> back =
-                getMappingLocator().getMapper(org.ovirt.engine.core.common.businessentities.Disk.class, DiskSnapshot.class);
+        Mapper<DiskSnapshot, Disk> out =
+                getMappingLocator().getMapper(DiskSnapshot.class, Disk.class);
+        Mapper<Disk, DiskSnapshot> back =
+                getMappingLocator().getMapper(Disk.class, DiskSnapshot.class);
         DiskImage to = (DiskImage) out.map(model, null);
         DiskImage inverse = getInverse(to);
         DiskSnapshot transform = back.map(inverse, null);

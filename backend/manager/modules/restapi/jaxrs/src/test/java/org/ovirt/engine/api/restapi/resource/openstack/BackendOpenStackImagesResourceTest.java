@@ -24,8 +24,8 @@ import java.util.List;
 
 import org.ovirt.engine.api.model.OpenStackImage;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResourceTest;
-import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;

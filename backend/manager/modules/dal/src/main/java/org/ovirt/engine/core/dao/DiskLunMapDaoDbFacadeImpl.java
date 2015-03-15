@@ -3,8 +3,8 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.ovirt.engine.core.common.businessentities.DiskLunMap;
-import org.ovirt.engine.core.common.businessentities.DiskLunMapId;
+import org.ovirt.engine.core.common.businessentities.storage.DiskLunMap;
+import org.ovirt.engine.core.common.businessentities.storage.DiskLunMapId;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 

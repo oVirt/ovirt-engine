@@ -7,9 +7,9 @@ import static org.junit.Assert.assertNotNull;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map;
-import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map_id;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.storage.LUN_storage_server_connection_map;
+import org.ovirt.engine.core.common.businessentities.storage.LUN_storage_server_connection_map_id;
 
 public class StorageServerConnectionLunMapDAOTest extends BaseDAOTestCase {
     private static final String FREE_LUN_ID = "1IET_00180002";

@@ -50,7 +50,7 @@ public class BackendStorageDomainDiskResource extends BackendDiskResource {
     }
 
     @Override
-    protected Disk deprecatedPopulate(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
+    protected Disk deprecatedPopulate(Disk model, org.ovirt.engine.core.common.businessentities.storage.Disk entity) {
         Disk populatedDisk = super.doPopulate(model, entity);
 
         // this code generates back-link to the corresponding SD

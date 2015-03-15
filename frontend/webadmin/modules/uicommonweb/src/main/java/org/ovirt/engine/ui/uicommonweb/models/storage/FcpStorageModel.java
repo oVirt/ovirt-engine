@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
-import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 
 @SuppressWarnings("unused")
 public class FcpStorageModel extends SanStorageModel

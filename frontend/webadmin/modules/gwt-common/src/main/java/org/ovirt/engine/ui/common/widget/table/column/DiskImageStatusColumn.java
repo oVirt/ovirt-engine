@@ -1,8 +1,7 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
-
 import com.google.gwt.resources.client.ImageResource;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 
 public class DiskImageStatusColumn extends AbstractImageResourceColumn<DiskImage> {
 

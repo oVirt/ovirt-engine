@@ -9,7 +9,7 @@ import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.ImageResource;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.RepoImage;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImageByIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -17,13 +17,13 @@ import org.ovirt.engine.core.compat.Guid;
 
 
 public class BackendStorageDomainImageResource
-        extends AbstractBackendActionableResource<Image, org.ovirt.engine.core.common.businessentities.RepoImage>
+        extends AbstractBackendActionableResource<Image, RepoImage>
         implements ImageResource {
 
     final private BackendStorageDomainImagesResource parent;
 
     protected BackendStorageDomainImageResource(String id, BackendStorageDomainImagesResource parent) {
-        super(id, Image.class, org.ovirt.engine.core.common.businessentities.RepoImage.class);
+        super(id, Image.class, RepoImage.class);
         this.parent = parent;
     }
 
@@ -66,7 +66,7 @@ public class BackendStorageDomainImageResource
 
         EntityResolver resolver = new SimpleIdResolver(
                 Disk.class,
-                org.ovirt.engine.core.common.businessentities.Disk.class,
+                org.ovirt.engine.core.common.businessentities.storage.Disk.class,
                 VdcQueryType.GetDiskByDiskId,
                 IdQueryParameters.class
         );

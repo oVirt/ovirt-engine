@@ -5,8 +5,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map;
-import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map_id;
+import org.ovirt.engine.core.common.businessentities.storage.LUN_storage_server_connection_map;
+import org.ovirt.engine.core.common.businessentities.storage.LUN_storage_server_connection_map_id;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.springframework.jdbc.core.RowMapper;

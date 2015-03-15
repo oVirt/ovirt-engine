@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
-import org.ovirt.engine.core.common.businessentities.ImageDbOperationScope;
-import org.ovirt.engine.core.common.businessentities.ImageOperation;
-import org.ovirt.engine.core.common.businessentities.VolumeFormat;
-import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
+import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
+import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBase {

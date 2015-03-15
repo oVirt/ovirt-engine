@@ -105,7 +105,7 @@ public class StorageDomainMapperTest extends
         connection.setid(connId.toString());
         connection.setiqn("iqn.my.target1");
         connection.setport("3260");
-        connection.setstorage_type(org.ovirt.engine.core.common.businessentities.StorageType.ISCSI);
+        connection.setstorage_type(org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI);
         connection.setconnection("1.2.135.255");
         connection.setuser_name("myuser1");
         connection.setpassword("123");
@@ -134,7 +134,7 @@ public class StorageDomainMapperTest extends
         StorageServerConnections connection = new StorageServerConnections();
         Guid connId = Guid.newGuid();
         connection.setid(connId.toString());
-        connection.setstorage_type(org.ovirt.engine.core.common.businessentities.StorageType.NFS);
+        connection.setstorage_type(org.ovirt.engine.core.common.businessentities.storage.StorageType.NFS);
         connection.setconnection("1.2.135.255:/myshare/data");
         connection.setNfsRetrans((short) 200);
         connection.setNfsTimeo((short) 400);
@@ -167,7 +167,7 @@ public class StorageDomainMapperTest extends
         StorageServerConnections connection = new StorageServerConnections();
         Guid connId = Guid.newGuid();
         connection.setid(connId.toString());
-        connection.setstorage_type(org.ovirt.engine.core.common.businessentities.StorageType.POSIXFS);
+        connection.setstorage_type(org.ovirt.engine.core.common.businessentities.storage.StorageType.POSIXFS);
         connection.setconnection("1.2.135.255:/myshare/data");
         connection.setVfsType("nfs");
         connection.setMountOptions("timeo=30");
@@ -194,7 +194,7 @@ public class StorageDomainMapperTest extends
         StorageServerConnections connection = new StorageServerConnections();
         Guid connId = Guid.newGuid();
         connection.setid(connId.toString());
-        connection.setstorage_type(org.ovirt.engine.core.common.businessentities.StorageType.POSIXFS);
+        connection.setstorage_type(org.ovirt.engine.core.common.businessentities.storage.StorageType.POSIXFS);
         connection.setconnection("1.2.135.255:/myshare/data");
         connection.setVfsType("nfs");
         connection.setMountOptions("timeo=30");
@@ -220,7 +220,7 @@ public class StorageDomainMapperTest extends
         StorageServerConnections connection = new StorageServerConnections();
         Guid connId = Guid.newGuid();
         connection.setid(connId.toString());
-        connection.setstorage_type(org.ovirt.engine.core.common.businessentities.StorageType.NFS);
+        connection.setstorage_type(org.ovirt.engine.core.common.businessentities.storage.StorageType.NFS);
         connection.setconnection("1.2.135.255:/myshare/data");
         connection.setNfsRetrans((short) 200);
         connection.setNfsTimeo((short) 400);
@@ -254,7 +254,7 @@ public class StorageDomainMapperTest extends
         connection.setid(connId.toString());
         connection.setiqn("iqn.my.target1");
         connection.setport("3260");
-        connection.setstorage_type(org.ovirt.engine.core.common.businessentities.StorageType.ISCSI);
+        connection.setstorage_type(org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI);
         connection.setconnection("1.2.135.255");
         connection.setuser_name("myuser1");
         connection.setpassword("123");

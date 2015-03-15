@@ -7,7 +7,8 @@ import org.ovirt.engine.api.model.Images;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.resource.ImageResource;
 import org.ovirt.engine.api.resource.ImagesResource;
-import org.ovirt.engine.core.common.businessentities.ImageFileType;
+import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -16,13 +17,13 @@ import java.util.List;
 
 
 public class BackendStorageDomainImagesResource
-        extends AbstractBackendCollectionResource<Image, org.ovirt.engine.core.common.businessentities.RepoImage>
+        extends AbstractBackendCollectionResource<Image, RepoImage>
         implements ImagesResource {
 
     Guid storageDomainId;
 
     public BackendStorageDomainImagesResource(Guid storageDomainId, String... subCollections) {
-        super(Image.class, org.ovirt.engine.core.common.businessentities.RepoImage.class);
+        super(Image.class, RepoImage.class);
         this.storageDomainId = storageDomainId;
     }
 
@@ -49,13 +50,13 @@ public class BackendStorageDomainImagesResource
     }
 
     @Override
-    protected Image doPopulate(Image model, org.ovirt.engine.core.common.businessentities.RepoImage entity) {
+    protected Image doPopulate(Image model, RepoImage entity) {
         return model;
     }
 
-    protected Images mapCollection(List<org.ovirt.engine.core.common.businessentities.RepoImage> entities) {
+    protected Images mapCollection(List<RepoImage> entities) {
         Images collection = new Images();
-        for (org.ovirt.engine.core.common.businessentities.RepoImage image : entities) {
+        for (RepoImage image : entities) {
             collection.getImages().add(addLinks(populate(map(image), image)));
         }
         return collection;

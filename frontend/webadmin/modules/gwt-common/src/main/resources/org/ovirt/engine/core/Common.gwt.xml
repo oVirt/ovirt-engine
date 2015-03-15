@@ -27,17 +27,7 @@
 		<include name="aaa/Managed.java" />
 		<include name="common/businessentities/AuditLog.java" />
 		<include name="common/businessentities/Bookmark.java" />
-		<include name="common/businessentities/BaseDisk.java" />
 		<include name="common/businessentities/CommandEntity.java" />
-		<include name="common/businessentities/DiskLunMap.java" />
-		<include name="common/businessentities/DiskLunMapId.java" />
-		<include name="common/businessentities/Disk.java" />
-		<include name="common/businessentities/LunDisk.java" />
-		<include name="common/businessentities/Image.java" />
-		<include name="common/businessentities/DiskImage.java" />
-		<include name="common/businessentities/DiskImageBase.java" />
-		<include name="common/businessentities/DiskImageDynamic.java" />
-		<include name="common/businessentities/DiskInterface.java" />
 		<include name="common/businessentities/DiskType.java" />
 		<include name="common/businessentities/DisplayType.java" />
         <include name="common/businessentities/GraphicsDevice.java" />
@@ -47,17 +37,14 @@
 		<include name="common/businessentities/event_subscriber_id.java" />
 		<include name="common/businessentities/BootSequence.java" />
 		<include name="common/businessentities/IImage.java" />
-		<include name="common/businessentities/ImageStatus.java" />
 		<include name="common/businessentities/InitializationType.java" />
 		<include name="common/businessentities/Nameable.java" />
 		<include name="common/businessentities/Provider.java" />
 		<include name="common/businessentities/CertificateInfo.java" />
 		<include name="common/businessentities/ProviderType.java" />
-		<include name="common/businessentities/ScsiGenericIO.java" />
 		<include name="common/businessentities/TenantProviderProperties.java" />
 		<include name="common/businessentities/OpenstackNetworkProviderProperties.java" />
 		<include name="common/businessentities/OpenstackNetworkPluginType.java" />
-		<include name="common/businessentities/DiskAlignment.java" />
 		<include name="common/businessentities/OpenStackImageProviderProperties.java" />
         <include name="common/businessentities/VmBalloonInfo.java" />
 		<include name="common/businessentities/ArchitectureType.java" />
@@ -98,13 +85,10 @@
 		<include name="common/businessentities/Reasoned.java" />
 		<include name="common/businessentities/IVdcQueryable.java" />
 		<include name="common/businessentities/FenceAgentOrder.java" />
-		<include name="common/businessentities/LUNs.java" />
-		<include name="common/businessentities/LunStatus.java" />
 		<include name="common/businessentities/NfsVersion.java" />
 		<include name="common/businessentities/OriginType.java" />
 		<include name="common/businessentities/VmEntityType.java" />
 		<include name="common/businessentities/Permissions.java" />
-		<include name="common/businessentities/PropagateErrors.java" />
 		<include name="common/businessentities/RecoveryMode.java" />
 		<include name="common/businessentities/Role.java" />
 		<include name="common/businessentities/SELinuxMode.java" />
@@ -124,7 +108,6 @@
 		<include name="common/businessentities/StorageDomainStatus.java" />
 		<include name="common/businessentities/StorageDomainType.java" />
 		<include name="common/businessentities/StoragePoolStatus.java" />
-		<include name="common/businessentities/StorageType.java" />
 		<include name="common/businessentities/StorageFormatType.java" />
 		<include name="common/businessentities/TagsVmMap.java" />
 		<include name="common/businessentities/Tags.java" />
@@ -174,8 +157,6 @@
 		<include name="common/businessentities/VmTemplate.java" />
 		<include name="common/businessentities/VmTemplateStatus.java" />
 		<include name="common/businessentities/VmType.java" />
-		<include name="common/businessentities/VolumeFormat.java" />
-		<include name="common/businessentities/VolumeType.java" />
 		<include name="common/businessentities/RoleType.java" />
 		<include name="common/businessentities/VDSNiceType.java" />
 		<include name="common/businessentities/DateEnumForSearch.java" />
@@ -188,8 +169,6 @@
 		<include name="common/businessentities/NonOperationalReason.java" />
 		<include name="common/businessentities/MigrateOnErrorOptions.java" />
 		<include name="common/businessentities/TagsVmMapId.java" />
-		<include name="common/businessentities/RepoImage.java" />
-		<include name="common/businessentities/ImageFileType.java" />
 		<include name="common/businessentities/comparators/BusinessEntityGuidComparator.java" />
 		<include name="common/businessentities/comparators/BusinessEntityComparator.java" />
 		<include name="common/businessentities/comparators/LexoNumericComparator.java" />
@@ -229,7 +208,34 @@
 		<include name="common/businessentities/qos/StorageQos.java"/>
 		<include name="common/businessentities/qos/CpuQos.java"/>
 
-		<!-- Misc -->
+        <!-- Storage -->
+        <include name="common/businessentities/storage/BaseDisk.java" />
+        <include name="common/businessentities/storage/CopyVolumeType.java" />
+        <include name="common/businessentities/storage/Disk.java" />
+        <include name="common/businessentities/storage/DiskAlignment.java" />
+        <include name="common/businessentities/storage/DiskImage.java" />
+        <include name="common/businessentities/storage/DiskImageBase.java" />
+        <include name="common/businessentities/storage/DiskImageDynamic.java" />
+        <include name="common/businessentities/storage/DiskInterface.java" />
+        <include name="common/businessentities/storage/DiskLunMap.java" />
+        <include name="common/businessentities/storage/DiskLunMapId.java" />
+        <include name="common/businessentities/storage/Image.java" />
+        <include name="common/businessentities/storage/ImageFileType.java" />
+        <include name="common/businessentities/storage/ImageOperation.java" />
+        <include name="common/businessentities/storage/ImageDbOperationScope.java" />
+        <include name="common/businessentities/storage/ImageStatus.java" />
+        <include name="common/businessentities/storage/LUNs.java" />
+        <include name="common/businessentities/storage/LUNsstorage.java" />
+        <include name="common/businessentities/storage/LunDisk.java" />
+        <include name="common/businessentities/storage/LunStatus.java" />
+        <include name="common/businessentities/storage/PropagateErrors.java" />
+        <include name="common/businessentities/storage/RepoImage.java" />
+        <include name="common/businessentities/storage/ScsiGenericIO.java" />
+        <include name="common/businessentities/storage/StorageType.java" />
+        <include name="common/businessentities/storage/VolumeFormat.java" />
+        <include name="common/businessentities/storage/VolumeType.java" />
+
+        <!-- Misc -->
 		<include name="common/AuditLogType.java" />
 		<include name="common/AuditLogTimeInterval.java" />
 		<include name="common/AuditLogSeverity.java" />
@@ -267,10 +273,7 @@
 		<include name="common/businessentities/VdcRole.java" />
 
 		<include name="common/businessentities/pm/FenceActionType.java" />
-		<include name="common/businessentities/CopyVolumeType.java" />
 		<include name="common/businessentities/ConfigurationType.java" />
-		<include name="common/businessentities/ImageOperation.java" />
-		<include name="common/businessentities/ImageDbOperationScope.java" />
 		<include name="common/businessentities/VdcOption.java" />
 		<include name="common/errors/VdcFault.java" />
 		<include name="common/errors/VdcBllErrors.java" />		

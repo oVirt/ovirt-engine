@@ -1,7 +1,8 @@
-package org.ovirt.engine.core.common.businessentities;
+package org.ovirt.engine.core.common.businessentities.storage;
 
 import java.io.Serializable;
 
+import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 
 public class LUN_storage_server_connection_map implements Serializable, BusinessEntity<LUN_storage_server_connection_map_id> {

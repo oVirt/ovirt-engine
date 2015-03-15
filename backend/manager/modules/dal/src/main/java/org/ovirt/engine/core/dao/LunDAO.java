@@ -2,7 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 
 /**
  * <code>LunDAO</code> defines a type for performing CRUD operations on instances of {@link LUNs}.

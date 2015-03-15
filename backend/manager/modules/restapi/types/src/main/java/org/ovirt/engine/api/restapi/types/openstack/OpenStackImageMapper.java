@@ -18,7 +18,7 @@ package org.ovirt.engine.api.restapi.types.openstack;
 
 import org.ovirt.engine.api.model.OpenStackImage;
 import org.ovirt.engine.api.restapi.types.Mapping;
-import org.ovirt.engine.core.common.businessentities.RepoImage;
+import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 
 public class OpenStackImageMapper {
     @Mapping(from = RepoImage.class, to = OpenStackImage.class)

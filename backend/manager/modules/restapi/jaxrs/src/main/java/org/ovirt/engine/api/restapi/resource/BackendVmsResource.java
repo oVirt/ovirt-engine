@@ -45,7 +45,7 @@ import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -271,15 +271,15 @@ public class BackendVmsResource extends
         if (disks.getDisks() != null) {
             for (Disk disk : disks.getDisks()) {
                 DiskImage diskImageFromConfig = imagesFromConfiguration.get(asGuid(disk.getImageId()));
-                DiskImage diskImage = (DiskImage)getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class).map(disk, diskImageFromConfig);
+                DiskImage diskImage = (DiskImage)getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class).map(disk, diskImageFromConfig);
                 imagesFromConfiguration.put(diskImage.getId(), diskImage);
             }
         }
     }
 
-    private HashMap<Guid, DiskImage> getDiskImagesByIdMap(Collection<org.ovirt.engine.core.common.businessentities.Disk> values) {
+    private HashMap<Guid, DiskImage> getDiskImagesByIdMap(Collection<org.ovirt.engine.core.common.businessentities.storage.Disk> values) {
         HashMap<Guid, DiskImage> result = new HashMap<Guid, DiskImage>();
-        for (org.ovirt.engine.core.common.businessentities.Disk diskImage : values) {
+        for (org.ovirt.engine.core.common.businessentities.storage.Disk diskImage : values) {
             result.put(((DiskImage) diskImage).getId(), (DiskImage) diskImage);
         }
         return result;
@@ -459,7 +459,7 @@ public class BackendVmsResource extends
     }
 
     private DiskImage map(Disk entity, DiskImage template) {
-        return (DiskImage)getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class).map(entity, template);
+        return (DiskImage)getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class).map(entity, template);
     }
 
     protected Response addVm(VmStatic staticVm, VM vm, Guid storageDomainId, VmTemplate template, InstanceType instanceType, VDSGroup cluster) {

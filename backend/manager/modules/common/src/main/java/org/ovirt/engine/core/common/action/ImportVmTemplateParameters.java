@@ -3,11 +3,10 @@ package org.ovirt.engine.core.common.action;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
-
 import javax.validation.Valid;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ImportVmTemplateParameters extends MoveOrCopyParameters implements Serializable {
