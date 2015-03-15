@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.storage.LUN_storage_server_connection_map;
+import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.VdcFault;
@@ -216,9 +216,9 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                                     DbFacade.getInstance()
                                             .getStorageServerConnectionLunMapDao()
                                             .getAll(lun.getLUN_id()),
-                                    new Function<LUN_storage_server_connection_map, String>() {
+                                    new Function<LUNStorageServerConnectionMap, String>() {
                                         @Override
-                                        public String eval(LUN_storage_server_connection_map a) {
+                                        public String eval(LUNStorageServerConnectionMap a) {
                                             return a.getstorage_server_connection();
                                         }
                                     });

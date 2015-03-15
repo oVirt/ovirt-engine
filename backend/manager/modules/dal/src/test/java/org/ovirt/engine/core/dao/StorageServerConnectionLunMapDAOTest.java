@@ -8,8 +8,8 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.storage.LUN_storage_server_connection_map;
-import org.ovirt.engine.core.common.businessentities.storage.LUN_storage_server_connection_map_id;
+import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
+import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMapId;
 
 public class StorageServerConnectionLunMapDAOTest extends BaseDAOTestCase {
     private static final String FREE_LUN_ID = "1IET_00180002";
@@ -19,8 +19,8 @@ public class StorageServerConnectionLunMapDAOTest extends BaseDAOTestCase {
     private StorageServerConnectionDAO storageServerConnectionDao;
     private StorageServerConnections newServerConnection;
     private StorageServerConnections existingConnection;
-    private LUN_storage_server_connection_map existingLUNStorageMap;
-    private LUN_storage_server_connection_map newLUNStorageMap;
+    private LUNStorageServerConnectionMap existingLUNStorageMap;
+    private LUNStorageServerConnectionMap newLUNStorageMap;
 
     @Override
     public void setUp() throws Exception {
@@ -36,13 +36,13 @@ public class StorageServerConnectionLunMapDAOTest extends BaseDAOTestCase {
         newServerConnection.setconnection(EXISTING_DOMAIN_STORAGE_NAME);
 
         existingLUNStorageMap =
-                dao.get(new LUN_storage_server_connection_map_id("1IET_00180001", existingConnection.getid()));
-        newLUNStorageMap = new LUN_storage_server_connection_map(FREE_LUN_ID, existingConnection.getid());
+                dao.get(new LUNStorageServerConnectionMapId("1IET_00180001", existingConnection.getid()));
+        newLUNStorageMap = new LUNStorageServerConnectionMap(FREE_LUN_ID, existingConnection.getid());
     }
 
     @Test
     public void testGet() {
-        LUN_storage_server_connection_map result = dao.get(existingLUNStorageMap.getId());
+        LUNStorageServerConnectionMap result = dao.get(existingLUNStorageMap.getId());
 
         assertNotNull(result);
         assertEquals(existingLUNStorageMap, result);
@@ -52,7 +52,7 @@ public class StorageServerConnectionLunMapDAOTest extends BaseDAOTestCase {
     public void testSave() {
         dao.save(newLUNStorageMap);
 
-        LUN_storage_server_connection_map result = dao.get(newLUNStorageMap.getId());
+        LUNStorageServerConnectionMap result = dao.get(newLUNStorageMap.getId());
 
         assertNotNull(result);
         assertEquals(newLUNStorageMap, result);
@@ -60,12 +60,12 @@ public class StorageServerConnectionLunMapDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetAll() {
-        List<LUN_storage_server_connection_map> result =
+        List<LUNStorageServerConnectionMap> result =
                 dao.getAll(existingLUNStorageMap.getId().lunId);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        for (LUN_storage_server_connection_map mapping : result) {
+        for (LUNStorageServerConnectionMap mapping : result) {
             assertEquals(existingLUNStorageMap.getId().lunId, mapping.getId().lunId);
         }
     }

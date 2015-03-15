@@ -10,8 +10,8 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMapId;
-import org.ovirt.engine.core.common.businessentities.storage.image_storage_domain_map;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
@@ -98,7 +98,7 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
                                     (new ImageStorageDomainMapId(di.getImageId(),
                                             sourceStorageDomainId));
                             getImageStorageDomainMapDao().save
-                                    (new image_storage_domain_map(di.getImageId(),
+                                    (new ImageStorageDomainMap(di.getImageId(),
                                             targetStorageDomainId,
                                             targetQuota,
                                             targetDiskProfile));

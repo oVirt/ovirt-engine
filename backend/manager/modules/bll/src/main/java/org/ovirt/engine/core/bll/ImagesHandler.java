@@ -37,12 +37,12 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskLunMapId;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage.image_storage_domain_map;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -218,7 +218,7 @@ public final class ImagesHandler {
      * @param imageStorageDomainMap
      *            storage domain map entry to map between the image and its storage domain
      */
-    public static void addDiskImage(DiskImage image, boolean active, image_storage_domain_map imageStorageDomainMap, Guid vmId) {
+    public static void addDiskImage(DiskImage image, boolean active, ImageStorageDomainMap imageStorageDomainMap, Guid vmId) {
         try {
             addImage(image, active, imageStorageDomainMap);
             addDiskToVmIfNotExists(image, vmId);
@@ -276,7 +276,7 @@ public final class ImagesHandler {
      */
     public static void addDiskImageWithNoVmDevice(DiskImage image,
             boolean active,
-            image_storage_domain_map imageStorageDomainMap) {
+            ImageStorageDomainMap imageStorageDomainMap) {
         try {
             addImage(image, active, imageStorageDomainMap);
             addDisk(image);
@@ -297,7 +297,7 @@ public final class ImagesHandler {
     public static void addDiskImageWithNoVmDevice(DiskImage image) {
         addDiskImageWithNoVmDevice(image,
                 image.getActive(),
-                new image_storage_domain_map(image.getImageId(),
+                new ImageStorageDomainMap(image.getImageId(),
                         image.getStorageIds().get(0),
                         image.getQuotaId(),
                         image.getDiskProfileId()));
@@ -323,7 +323,7 @@ public final class ImagesHandler {
      *            DiskImage to add
      */
     public static void addDiskImage(DiskImage image, Guid vmId) {
-        addDiskImage(image, image.getActive(), new image_storage_domain_map(image.getImageId(), image.getStorageIds()
+        addDiskImage(image, image.getActive(), new ImageStorageDomainMap(image.getImageId(), image.getStorageIds()
                 .get(0), image.getQuotaId(), image.getDiskProfileId()), vmId);
     }
 
@@ -337,7 +337,7 @@ public final class ImagesHandler {
      * @param imageStorageDomainMap
      *            entry of mapping between the storage domain and the image
      */
-    public static void addImage(DiskImage image, boolean active, image_storage_domain_map imageStorageDomainMap) {
+    public static void addImage(DiskImage image, boolean active, ImageStorageDomainMap imageStorageDomainMap) {
         image.setActive(active);
         DbFacade.getInstance().getImageDao().save(image.getImage());
         DiskImageDynamic diskDynamic = new DiskImageDynamic();

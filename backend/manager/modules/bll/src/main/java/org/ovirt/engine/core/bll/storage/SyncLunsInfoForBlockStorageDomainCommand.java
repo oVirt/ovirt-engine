@@ -11,7 +11,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.storage.LUN_storage_server_connection_map;
+import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -80,7 +80,7 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
                     continue;
                 }
 
-                LUN_storage_server_connection_map lunConnection = new LUN_storage_server_connection_map(
+                LUNStorageServerConnectionMap lunConnection = new LUNStorageServerConnectionMap(
                         lunFromVgInfo.getLUN_id(), connectionFromDb.getid());
                 if (getStorageServerConnectionLunMapDao().get(lunConnection.getId()) == null) {
                     getStorageServerConnectionLunMapDao().save(lunConnection);

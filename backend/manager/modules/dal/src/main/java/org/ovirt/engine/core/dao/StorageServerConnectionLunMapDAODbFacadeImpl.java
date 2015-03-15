@@ -5,15 +5,15 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.ovirt.engine.core.common.businessentities.storage.LUN_storage_server_connection_map;
-import org.ovirt.engine.core.common.businessentities.storage.LUN_storage_server_connection_map_id;
+import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
+import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMapId;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
- * <code>StorageServerConnectionLunMapDAODbFacadeImpl</code> provides an implementation of {@link LUN_storage_server_connection_map}
+ * <code>StorageServerConnectionLunMapDAODbFacadeImpl</code> provides an implementation of {@link org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap}
  * based on code from {@link DbFacade}.
  *
  *
@@ -22,13 +22,13 @@ public class StorageServerConnectionLunMapDAODbFacadeImpl extends BaseDAODbFacad
         StorageServerConnectionLunMapDAO {
 
     private static final class StorageServerConnectionLunMapRowMapper
-            implements RowMapper<LUN_storage_server_connection_map> {
+            implements RowMapper<LUNStorageServerConnectionMap> {
         public static final StorageServerConnectionLunMapRowMapper instance =
                 new StorageServerConnectionLunMapRowMapper();
 
         @Override
-        public LUN_storage_server_connection_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-            LUN_storage_server_connection_map entity = new LUN_storage_server_connection_map();
+        public LUNStorageServerConnectionMap mapRow(ResultSet rs, int rowNum) throws SQLException {
+            LUNStorageServerConnectionMap entity = new LUNStorageServerConnectionMap();
             entity.setLunId(rs.getString("lun_id"));
             entity.setstorage_server_connection(rs.getString("storage_server_connection"));
             return entity;
@@ -36,7 +36,7 @@ public class StorageServerConnectionLunMapDAODbFacadeImpl extends BaseDAODbFacad
     }
 
     @Override
-    public LUN_storage_server_connection_map get(LUN_storage_server_connection_map_id id) {
+    public LUNStorageServerConnectionMap get(LUNStorageServerConnectionMapId id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("lun_id", id.lunId).addValue(
                 "storage_server_connection", id.storageServerConnection);
 
@@ -46,7 +46,7 @@ public class StorageServerConnectionLunMapDAODbFacadeImpl extends BaseDAODbFacad
     }
 
     @Override
-    public void save(LUN_storage_server_connection_map map) {
+    public void save(LUNStorageServerConnectionMap map) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("lun_id", map.getLunId())
                 .addValue("storage_server_connection", map.getstorage_server_connection());
 
@@ -54,17 +54,17 @@ public class StorageServerConnectionLunMapDAODbFacadeImpl extends BaseDAODbFacad
     }
 
     @Override
-    public List<LUN_storage_server_connection_map> getAll(final String lunId) {
+    public List<LUNStorageServerConnectionMap> getAll(final String lunId) {
         return LinqUtils.filter(getAllLUNStorageServerConnection(),
-                new Predicate<LUN_storage_server_connection_map>() {
+                new Predicate<LUNStorageServerConnectionMap>() {
                     @Override
-                    public boolean eval(LUN_storage_server_connection_map a) {
+                    public boolean eval(LUNStorageServerConnectionMap a) {
                         return a.getLunId().equals(lunId);
                     }
                 });
     }
 
-    private List<LUN_storage_server_connection_map> getAllLUNStorageServerConnection() {
+    private List<LUNStorageServerConnectionMap> getAllLUNStorageServerConnection() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
 
         return getCallsHandler().executeReadList("GetAllFromLUN_storage_server_connection_map",
@@ -73,17 +73,17 @@ public class StorageServerConnectionLunMapDAODbFacadeImpl extends BaseDAODbFacad
     }
 
     @Override
-    public List<LUN_storage_server_connection_map> getAll() {
+    public List<LUNStorageServerConnectionMap> getAll() {
         throw new NotImplementedException();
     }
 
     @Override
-    public void update(LUN_storage_server_connection_map entity) {
+    public void update(LUNStorageServerConnectionMap entity) {
         throw new NotImplementedException();
     }
 
     @Override
-    public void remove(LUN_storage_server_connection_map_id id) {
+    public void remove(LUNStorageServerConnectionMapId id) {
         throw new NotImplementedException();
     }
 }

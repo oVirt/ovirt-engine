@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.storage.LUN_storage_server_connection_map;
+import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -210,9 +210,9 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
                 CollectionUtils.isEqualCollection(domainConnections, result));
     }
 
-    private Set<String> getLunConnections(List<LUN_storage_server_connection_map> lunConns) {
+    private Set<String> getLunConnections(List<LUNStorageServerConnectionMap> lunConns) {
         Set<String> conns = new HashSet<>();
-        for (LUN_storage_server_connection_map lun_storage_server_connection_map1 : lunConns) {
+        for (LUNStorageServerConnectionMap lun_storage_server_connection_map1 : lunConns) {
             conns.add(lun_storage_server_connection_map1.getstorage_server_connection());
         }
         return conns;

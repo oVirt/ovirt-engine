@@ -16,10 +16,10 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMapId;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage.image_storage_domain_map;
 import org.ovirt.engine.core.common.vdscommands.CopyImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.MoveImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -114,7 +114,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
             // Add storage domain in db only if there is new entity in DB.
             if (!shouldUpdateStorageDisk() && getParameters().getAddImageDomainMapping()) {
                 getImageStorageDomainMapDao().save
-                        (new image_storage_domain_map(getParameters().getImageId(),
+                        (new ImageStorageDomainMap(getParameters().getImageId(),
                                 getParameters().getStorageDomainId(),
                                 getParameters().getQuotaId(),
                                 getParameters().getDiskProfileId()));
@@ -179,7 +179,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
                         (new ImageStorageDomainMapId(snapshot.getImageId(),
                                 snapshot.getStorageIds().get(0)));
                 getImageStorageDomainMapDao().save
-                        (new image_storage_domain_map(snapshot.getImageId(),
+                        (new ImageStorageDomainMap(snapshot.getImageId(),
                                 getParameters().getStorageDomainId(),
                                 getParameters().getQuotaId(),
                                 getParameters().getDiskProfileId()));

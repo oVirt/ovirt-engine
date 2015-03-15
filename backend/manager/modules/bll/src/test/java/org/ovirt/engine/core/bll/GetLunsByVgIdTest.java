@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.storage.LUN_storage_server_connection_map;
+import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
@@ -127,8 +127,8 @@ public class GetLunsByVgIdTest extends AbstractQueryTest<GetLunsByVgIdParameters
     }
 
     protected void expectGetLunsMap(StorageServerConnectionLunMapDAO dao, String lunId, String cnxId) {
-        List<LUN_storage_server_connection_map> ret = new ArrayList<LUN_storage_server_connection_map>();
-        LUN_storage_server_connection_map map = new LUN_storage_server_connection_map();
+        List<LUNStorageServerConnectionMap> ret = new ArrayList<LUNStorageServerConnectionMap>();
+        LUNStorageServerConnectionMap map = new LUNStorageServerConnectionMap();
         map.setLunId(lunId);
         map.setstorage_server_connection(cnxId);
         ret.add(map);

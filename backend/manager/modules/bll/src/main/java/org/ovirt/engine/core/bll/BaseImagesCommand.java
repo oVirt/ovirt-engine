@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.storage.image_storage_domain_map;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -265,14 +265,14 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         diskDynamic.setId(image.getImageId());
         diskDynamic.setactual_size(image.getActualSizeInBytes());
         getDiskImageDynamicDAO().save(diskDynamic);
-        image_storage_domain_map image_storage_domain_map = new image_storage_domain_map(image.getImageId(),
+        ImageStorageDomainMap imageStorageDomainMap = new ImageStorageDomainMap(image.getImageId(),
                 image.getStorageIds().get(0), image.getQuotaId(), image.getDiskProfileId());
-        getImageStorageDomainMapDao().save(image_storage_domain_map);
+        getImageStorageDomainMapDao().save(imageStorageDomainMap);
         boolean isDiskAdded = saveDiskIfNotExists(image);
         if (compensationContext != null) {
             compensationContext.snapshotNewEntity(image.getImage());
             compensationContext.snapshotNewEntity(diskDynamic);
-            compensationContext.snapshotNewEntity(image_storage_domain_map);
+            compensationContext.snapshotNewEntity(imageStorageDomainMap);
             if (isDiskAdded) {
                 compensationContext.snapshotNewEntity(image);
             }
@@ -401,15 +401,15 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      * mapping.
      * @param diskImage
      */
-    static public image_storage_domain_map saveImage(DiskImage diskImage) {
+    static public ImageStorageDomainMap saveImage(DiskImage diskImage) {
         DbFacade.getInstance().getImageDao().save(diskImage.getImage());
-        image_storage_domain_map image_storage_domain_map = new image_storage_domain_map(diskImage.getImageId(),
+        ImageStorageDomainMap imageStorageDomainMap = new ImageStorageDomainMap(diskImage.getImageId(),
                 diskImage.getStorageIds()
                         .get(0), diskImage.getQuotaId(), diskImage.getDiskProfileId());
         DbFacade.getInstance()
                 .getImageStorageDomainMapDao()
-                .save(image_storage_domain_map);
-        return image_storage_domain_map;
+                .save(imageStorageDomainMap);
+        return imageStorageDomainMap;
     }
 
     protected void lockVmSnapshotsWithWait(VM vm) {

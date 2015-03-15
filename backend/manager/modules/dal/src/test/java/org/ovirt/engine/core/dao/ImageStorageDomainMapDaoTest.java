@@ -12,7 +12,7 @@ import static org.junit.Assert.fail;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.storage.image_storage_domain_map;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMapId;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -32,47 +32,47 @@ public class ImageStorageDomainMapDaoTest extends BaseDAOTestCase {
 
     @Test
     public void testGetAllByImageId() {
-        List<image_storage_domain_map> result =
+        List<ImageStorageDomainMap> result =
                 dao.getAllByImageId(EXISTING_IMAGE_ID);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        for (image_storage_domain_map mapping : result) {
+        for (ImageStorageDomainMap mapping : result) {
             assertEquals(EXISTING_IMAGE_ID, mapping.getimage_id());
         }
     }
 
     @Test
     public void testGetAllByStorageDomainId() {
-        List<image_storage_domain_map> result =
+        List<ImageStorageDomainMap> result =
                 dao.getAllByStorageDomainId(EXISTING_DOMAIN_ID);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        for (image_storage_domain_map mapping : result) {
+        for (ImageStorageDomainMap mapping : result) {
             assertEquals(EXISTING_DOMAIN_ID, mapping.getstorage_domain_id());
         }
     }
 
     @Test
     public void testSave() {
-        image_storage_domain_map entry =
-                new image_storage_domain_map(EXISTING_IMAGE_ID_WITH_NO_MAP_ENTRY,
+        ImageStorageDomainMap entry =
+                new ImageStorageDomainMap(EXISTING_IMAGE_ID_WITH_NO_MAP_ENTRY,
                         EXISTING_DOMAIN_ID,
                         FixturesTool.DEFAULT_QUOTA_GENERAL,
                         FixturesTool.DISK_PROFILE_1);
         dao.save(entry);
-        List<image_storage_domain_map> entries = dao.getAllByImageId(EXISTING_IMAGE_ID_WITH_NO_MAP_ENTRY);
+        List<ImageStorageDomainMap> entries = dao.getAllByImageId(EXISTING_IMAGE_ID_WITH_NO_MAP_ENTRY);
         assertNotNull(entries);
         assertTrue(entries.size() == 1);
-        image_storage_domain_map entryFromDb = entries.get(0);
+        ImageStorageDomainMap entryFromDb = entries.get(0);
         assertEquals(entry, entryFromDb);
     }
 
     @Test
     public void testRemoveByImageId() {
         dao.remove(EXISTING_IMAGE_ID);
-        List<image_storage_domain_map> entries = dao.getAllByStorageDomainId(EXISTING_IMAGE_ID);
+        List<ImageStorageDomainMap> entries = dao.getAllByStorageDomainId(EXISTING_IMAGE_ID);
         assertNotNull(entries);
         assertTrue(entries.isEmpty());
     }
@@ -80,8 +80,8 @@ public class ImageStorageDomainMapDaoTest extends BaseDAOTestCase {
     @Test
     public void testRemoveById() {
         dao.remove(new ImageStorageDomainMapId(EXISTING_IMAGE_ID, EXISTING_DOMAIN_ID));
-        List<image_storage_domain_map> entries = dao.getAllByStorageDomainId(EXISTING_IMAGE_ID);
-        for (image_storage_domain_map entry : entries) {
+        List<ImageStorageDomainMap> entries = dao.getAllByStorageDomainId(EXISTING_IMAGE_ID);
+        for (ImageStorageDomainMap entry : entries) {
             assertFalse(entry.getstorage_domain_id().equals(EXISTING_DOMAIN_ID));
         }
         assertNotNull(entries);
@@ -91,8 +91,8 @@ public class ImageStorageDomainMapDaoTest extends BaseDAOTestCase {
     @Test
     public void testChangeQuotaForDisk() {
         // fetch image
-        image_storage_domain_map image_storage_domain_map = dao.getAllByImageId(EXISTING_IMAGE_ID).get(0);
-        Guid quotaId = image_storage_domain_map.getQuotaId();
+        ImageStorageDomainMap imageStorageDomainMap = dao.getAllByImageId(EXISTING_IMAGE_ID).get(0);
+        Guid quotaId = imageStorageDomainMap.getQuotaId();
         // test that the current quota doesn't equal with the new quota
         if (quotaId.equals(FixturesTool.DEFAULT_QUOTA_GENERAL)) {
             fail("Same source and dest quota id, cannot perform test");
@@ -100,8 +100,8 @@ public class ImageStorageDomainMapDaoTest extends BaseDAOTestCase {
         // change quota to the new quota 91
         dao.updateQuotaForImageAndSnapshots(EXISTING_DISK_ID, EXISTING_DOMAIN_ID, FixturesTool.DEFAULT_QUOTA_GENERAL);
         // fetch the image again
-        image_storage_domain_map = dao.getAllByImageId(EXISTING_IMAGE_ID).get(0);
-        quotaId = image_storage_domain_map.getQuotaId();
+        imageStorageDomainMap = dao.getAllByImageId(EXISTING_IMAGE_ID).get(0);
+        quotaId = imageStorageDomainMap.getQuotaId();
         // check that the new quota is the inserted one
         assertEquals("quota wasn't changed", quotaId, FixturesTool.DEFAULT_QUOTA_GENERAL);
     }
@@ -109,17 +109,17 @@ public class ImageStorageDomainMapDaoTest extends BaseDAOTestCase {
     @Test
     public void testChangeDiskProfileForDisk() {
         // fetch image
-        image_storage_domain_map image_storage_domain_map = dao.getAllByImageId(EXISTING_IMAGE_ID).get(0);
+        ImageStorageDomainMap imageStorageDomainMap = dao.getAllByImageId(EXISTING_IMAGE_ID).get(0);
         // test that the current disk profile doesn't equal with the new disk profile
         assertThat("Same source and dest disk profile id, cannot perform test",
-                image_storage_domain_map.getDiskProfileId(), not(equalTo(FixturesTool.DISK_PROFILE_2)));
+                imageStorageDomainMap.getDiskProfileId(), not(equalTo(FixturesTool.DISK_PROFILE_2)));
         // change to newDiskProfileId
         dao.updateDiskProfileByImageGroupIdAndStorageDomainId(EXISTING_DISK_ID, EXISTING_DOMAIN_ID, FixturesTool.DISK_PROFILE_2);
         // fetch the image again
-        image_storage_domain_map = dao.getAllByImageId(EXISTING_IMAGE_ID).get(0);
+        imageStorageDomainMap = dao.getAllByImageId(EXISTING_IMAGE_ID).get(0);
         // check that the new disk profile is the inserted one
         assertEquals("disk profile wasn't changed",
-                image_storage_domain_map.getDiskProfileId(),
+                imageStorageDomainMap.getDiskProfileId(),
                 FixturesTool.DISK_PROFILE_2);
     }
 }

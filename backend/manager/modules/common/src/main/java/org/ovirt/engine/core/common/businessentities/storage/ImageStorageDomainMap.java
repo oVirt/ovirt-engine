@@ -4,18 +4,18 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
-public class image_storage_domain_map implements BusinessEntity<ImageStorageDomainMapId> {
+public class ImageStorageDomainMap implements BusinessEntity<ImageStorageDomainMapId> {
     private static final long serialVersionUID = 8459502119344718863L;
 
     private ImageStorageDomainMapId id;
     private Guid quotaId;
     private Guid diskProfileId;
 
-    public image_storage_domain_map() {
+    public ImageStorageDomainMap() {
         id = new ImageStorageDomainMapId();
     }
 
-    public image_storage_domain_map(Guid image_id, Guid storage_domain_id, Guid quotaId, Guid diskProfileId) {
+    public ImageStorageDomainMap(Guid image_id, Guid storage_domain_id, Guid quotaId, Guid diskProfileId) {
         this();
         this.id.setImageId(image_id);
         this.id.setStorageDomainId(storage_domain_id);
@@ -73,10 +73,10 @@ public class image_storage_domain_map implements BusinessEntity<ImageStorageDoma
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof image_storage_domain_map)) {
+        if (!(obj instanceof ImageStorageDomainMap)) {
             return false;
         }
-        image_storage_domain_map other = (image_storage_domain_map) obj;
+        ImageStorageDomainMap other = (ImageStorageDomainMap) obj;
         return (ObjectUtils.objectsEqual(id, other.id)
                 && ObjectUtils.objectsEqual(quotaId, other.quotaId)
                 && ObjectUtils.objectsEqual(diskProfileId, other.diskProfileId));

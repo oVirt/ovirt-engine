@@ -57,7 +57,7 @@ import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.Image;
-import org.ovirt.engine.core.common.businessentities.storage.image_storage_domain_map;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
@@ -205,7 +205,7 @@ public class DbFacade {
             put(Provider.class, ProviderDao.class);
             put(Snapshot.class, SnapshotDao.class);
             put(VmDevice.class, VmDeviceDAO.class);
-            put(image_storage_domain_map.class, ImageStorageDomainMapDao.class);
+            put(ImageStorageDomainMap.class, ImageStorageDomainMapDao.class);
             put(Permissions.class, PermissionDAO.class);
             put(Image.class, ImageDao.class);
             put(Job.class, JobDao.class);

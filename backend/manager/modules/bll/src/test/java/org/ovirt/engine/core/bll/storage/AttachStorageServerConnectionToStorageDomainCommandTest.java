@@ -16,8 +16,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.storage.LUN_storage_server_connection_map;
-import org.ovirt.engine.core.common.businessentities.storage.LUN_storage_server_connection_map_id;
+import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
+import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMapId;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -120,11 +120,11 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest {
        connection.setconnection("123.345.266.255");
        connectionsForDomain.add(connection);
        when(connectionDAO.getAllForDomain(domain.getId())).thenReturn(connectionsForDomain);
-       LUN_storage_server_connection_map_id map_id = new LUN_storage_server_connection_map_id(dummyLun.getLUN_id(), connection.getid());
+       LUNStorageServerConnectionMapId map_id = new LUNStorageServerConnectionMapId(dummyLun.getLUN_id(), connection.getid());
        when(lunMapDAO.get(map_id)).thenReturn(null);
        //dummy lun already exists, thus no need to save
        verify(lunDao, never()).save(dummyLun);
-       verify(lunMapDAO, never()).save(new LUN_storage_server_connection_map());
+       verify(lunMapDAO, never()).save(new LUNStorageServerConnectionMap());
        command.executeCommand();
        CommandAssertUtils.checkSucceeded(command, true);
     }
@@ -143,9 +143,9 @@ public class AttachStorageServerConnectionToStorageDomainCommandTest {
        connection.setconnection("123.345.266.255");
        connectionsForDomain.add(connection);
        when(connectionDAO.getAllForDomain(domain.getId())).thenReturn(connectionsForDomain);
-       LUN_storage_server_connection_map_id map_id = new LUN_storage_server_connection_map_id(dummyLun.getLUN_id(), connection.getid());
+       LUNStorageServerConnectionMapId map_id = new LUNStorageServerConnectionMapId(dummyLun.getLUN_id(), connection.getid());
        when(lunMapDAO.get(map_id)).thenReturn(null);
-       LUN_storage_server_connection_map map = new LUN_storage_server_connection_map();
+       LUNStorageServerConnectionMap map = new LUNStorageServerConnectionMap();
        doNothing().when(lunMapDAO).save(map);
        command.executeCommand();
        CommandAssertUtils.checkSucceeded(command, true);

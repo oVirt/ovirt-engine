@@ -37,10 +37,10 @@ import org.ovirt.engine.core.common.businessentities.storage.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
-import org.ovirt.engine.core.common.businessentities.storage.image_storage_domain_map;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -412,7 +412,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         int count = 1;
         for (DiskImage image : getImages()) {
             image.setActive(true);
-            image_storage_domain_map map = BaseImagesCommand.saveImage(image);
+            ImageStorageDomainMap map = BaseImagesCommand.saveImage(image);
             getCompensationContext().snapshotNewEntity(image.getImage());
             getCompensationContext().snapshotNewEntity(map);
             if (!DbFacade.getInstance().getBaseDiskDao().exists(image.getId())) {

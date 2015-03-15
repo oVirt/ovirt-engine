@@ -23,8 +23,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.storage.LUN_storage_server_connection_map;
-import org.ovirt.engine.core.common.businessentities.storage.LUN_storage_server_connection_map_id;
+import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
+import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMapId;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.config.Config;
@@ -287,10 +287,10 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             }
             if (DbFacade.getInstance()
                     .getStorageServerConnectionLunMapDao()
-                    .get(new LUN_storage_server_connection_map_id(lun.getLUN_id(),
+                    .get(new LUNStorageServerConnectionMapId(lun.getLUN_id(),
                             connection.getid())) == null) {
                 DbFacade.getInstance().getStorageServerConnectionLunMapDao().save(
-                        new LUN_storage_server_connection_map(lun.getLUN_id(), connection.getid()));
+                        new LUNStorageServerConnectionMap(lun.getLUN_id(), connection.getid()));
             }
         }
     }

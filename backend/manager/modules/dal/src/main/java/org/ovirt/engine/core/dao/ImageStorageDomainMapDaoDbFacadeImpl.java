@@ -5,8 +5,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMapId;
-import org.ovirt.engine.core.common.businessentities.storage.image_storage_domain_map;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -14,7 +14,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 public class ImageStorageDomainMapDaoDbFacadeImpl extends BaseDAODbFacade implements ImageStorageDomainMapDao {
 
     @Override
-    public void save(image_storage_domain_map entity) {
+    public void save(ImageStorageDomainMap entity) {
         getCallsHandler().executeModification("Insertimage_storage_domain_map",
                 getCustomMapSqlParameterSource().addValue("image_id",
                         entity.getimage_id()).addValue("storage_domain_id",
@@ -24,7 +24,7 @@ public class ImageStorageDomainMapDaoDbFacadeImpl extends BaseDAODbFacade implem
     }
 
     @Override
-    public void update(image_storage_domain_map entity) {
+    public void update(ImageStorageDomainMap entity) {
         throw new NotImplementedException();
     }
 
@@ -44,7 +44,7 @@ public class ImageStorageDomainMapDaoDbFacadeImpl extends BaseDAODbFacade implem
     }
 
     @Override
-    public List<image_storage_domain_map> getAllByStorageDomainId(Guid storageDomainId) {
+    public List<ImageStorageDomainMap> getAllByStorageDomainId(Guid storageDomainId) {
         return getCallsHandler().executeReadList("Getimage_storage_domain_mapBystorage_domain_id",
                 IMAGE_STORAGE_DOMAIN_MAP_MAPPER,
                 getCustomMapSqlParameterSource().addValue("storage_domain_id",
@@ -52,7 +52,7 @@ public class ImageStorageDomainMapDaoDbFacadeImpl extends BaseDAODbFacade implem
     }
 
     @Override
-    public List<image_storage_domain_map> getAllByImageId(Guid imageId) {
+    public List<ImageStorageDomainMap> getAllByImageId(Guid imageId) {
         return getCallsHandler().executeReadList("Getimage_storage_domain_mapByimage_id",
                 IMAGE_STORAGE_DOMAIN_MAP_MAPPER,
                 getCustomMapSqlParameterSource().addValue("image_id",
@@ -60,12 +60,12 @@ public class ImageStorageDomainMapDaoDbFacadeImpl extends BaseDAODbFacade implem
     }
 
     @Override
-    public image_storage_domain_map get(ImageStorageDomainMapId id) {
+    public ImageStorageDomainMap get(ImageStorageDomainMapId id) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public List<image_storage_domain_map> getAll() {
+    public List<ImageStorageDomainMap> getAll() {
         throw new UnsupportedOperationException();
     }
 
@@ -87,12 +87,12 @@ public class ImageStorageDomainMapDaoDbFacadeImpl extends BaseDAODbFacade implem
         getCallsHandler().executeModification("UpdateDiskProfileByImageGroupId", parameterSource);
     }
 
-    private static final RowMapper<image_storage_domain_map> IMAGE_STORAGE_DOMAIN_MAP_MAPPER =
-            new RowMapper<image_storage_domain_map>() {
+    private static final RowMapper<ImageStorageDomainMap> IMAGE_STORAGE_DOMAIN_MAP_MAPPER =
+            new RowMapper<ImageStorageDomainMap>() {
 
                 @Override
-                public image_storage_domain_map mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    image_storage_domain_map entity = new image_storage_domain_map();
+                public ImageStorageDomainMap mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    ImageStorageDomainMap entity = new ImageStorageDomainMap();
                     entity.setimage_id(getGuidDefaultEmpty(rs, "image_id"));
                     entity.setstorage_domain_id(getGuidDefaultEmpty(rs, "storage_domain_id"));
                     entity.setQuotaId(getGuid(rs, "quota_id"));

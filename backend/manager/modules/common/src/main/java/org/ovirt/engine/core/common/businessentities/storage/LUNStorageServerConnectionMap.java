@@ -5,28 +5,28 @@ import java.io.Serializable;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 
-public class LUN_storage_server_connection_map implements Serializable, BusinessEntity<LUN_storage_server_connection_map_id> {
+public class LUNStorageServerConnectionMap implements Serializable, BusinessEntity<LUNStorageServerConnectionMapId> {
     private static final long serialVersionUID = -4203034156149786569L;
 
-    public LUN_storage_server_connection_map() {
-        id = new LUN_storage_server_connection_map_id();
+    public LUNStorageServerConnectionMap() {
+        id = new LUNStorageServerConnectionMapId();
     }
 
-    public LUN_storage_server_connection_map(String lUN_id, String storage_server_connection) {
+    public LUNStorageServerConnectionMap(String lUN_id, String storage_server_connection) {
         this();
         this.id.lunId = lUN_id;
         this.id.storageServerConnection = storage_server_connection;
     }
 
-    private LUN_storage_server_connection_map_id id;
+    private LUNStorageServerConnectionMapId id;
 
     @Override
-    public LUN_storage_server_connection_map_id getId() {
+    public LUNStorageServerConnectionMapId getId() {
         return this.id;
     }
 
     @Override
-    public void setId(LUN_storage_server_connection_map_id value) {
+    public void setId(LUNStorageServerConnectionMapId value) {
         this.id = value;
     }
 
@@ -67,7 +67,7 @@ public class LUN_storage_server_connection_map implements Serializable, Business
         if (getClass() != obj.getClass()) {
             return false;
         }
-        LUN_storage_server_connection_map other = (LUN_storage_server_connection_map) obj;
+        LUNStorageServerConnectionMap other = (LUNStorageServerConnectionMap) obj;
         return (ObjectUtils.objectsEqual(id.lunId, other.id.lunId)
                 && ObjectUtils.objectsEqual(id.storageServerConnection, other.id.storageServerConnection));
     }

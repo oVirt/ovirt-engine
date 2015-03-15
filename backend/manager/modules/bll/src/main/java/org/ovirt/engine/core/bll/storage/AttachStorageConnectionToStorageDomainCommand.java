@@ -9,7 +9,7 @@ import org.ovirt.engine.core.bll.validator.storage.StorageConnectionValidator;
 import org.ovirt.engine.core.common.action.AttachDetachStorageConnectionParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.storage.LUN_storage_server_connection_map;
+import org.ovirt.engine.core.common.businessentities.storage.LUNStorageServerConnectionMap;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -51,8 +51,8 @@ public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetac
         LUNs dummyLun = createDummyLun();
 
         // Create storage server connection mapping
-        LUN_storage_server_connection_map connectionMapRecord =
-                new LUN_storage_server_connection_map(dummyLun.getLUN_id(), getParameters().getStorageConnectionId());
+        LUNStorageServerConnectionMap connectionMapRecord =
+                new LUNStorageServerConnectionMap(dummyLun.getLUN_id(), getParameters().getStorageConnectionId());
 
         List<StorageServerConnections> connectionsForDomain;
 
@@ -62,7 +62,7 @@ public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetac
             // Save connection maps when creating the dummy lun for the first time
             connectionsForDomain = getStorageServerConnectionDAO().getAllForDomain(getStorageDomainId());
             for (StorageServerConnections connection : connectionsForDomain) {
-                saveConnection(new LUN_storage_server_connection_map(dummyLun.getLUN_id(), connection.getid()));
+                saveConnection(new LUNStorageServerConnectionMap(dummyLun.getLUN_id(), connection.getid()));
             }
         }
 
@@ -72,7 +72,7 @@ public class AttachStorageConnectionToStorageDomainCommand<T extends AttachDetac
         setSucceeded(true);
     }
 
-    private void saveConnection(LUN_storage_server_connection_map connectionMapRecord) {
+    private void saveConnection(LUNStorageServerConnectionMap connectionMapRecord) {
         if (getStorageServerConnectionLunMapDao().get(connectionMapRecord.getId()) == null) {
             getStorageServerConnectionLunMapDao().save(connectionMapRecord);
         }

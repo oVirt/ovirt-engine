@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
-import org.ovirt.engine.core.common.businessentities.storage.image_storage_domain_map;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -118,7 +118,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
     private void findAndSaveDiskCopies() {
         List<OvfEntityData> ovfEntityDataList =
                 getUnregisteredOVFDataDao().getByEntityIdAndStorageDomain(ovfEntityData.getEntityId(), null);
-        List<image_storage_domain_map> copiedTemplateDisks = new LinkedList<>();
+        List<ImageStorageDomainMap> copiedTemplateDisks = new LinkedList<>();
         for (OvfEntityData ovfEntityDataFetched : ovfEntityDataList) {
             populateDisksCopies(copiedTemplateDisks,
                     getImages(),
@@ -127,7 +127,7 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         saveImageStorageDomainMapList(copiedTemplateDisks);
     }
 
-    private void populateDisksCopies(List<image_storage_domain_map> copiedTemplateDisks,
+    private void populateDisksCopies(List<ImageStorageDomainMap> copiedTemplateDisks,
             List<DiskImage> originalTemplateImages,
             Guid storageDomainId) {
         List<Guid> imagesContainedInStorageDomain = getImagesGuidFromStorage(storageDomainId, getStoragePoolId());
@@ -140,8 +140,8 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                 log.info("Found a copied image of '{}' on Storage Domain id '{}'",
                         templateDiskImage.getId(),
                         storageDomainId);
-                image_storage_domain_map imageStorageDomainMap =
-                        new image_storage_domain_map(templateDiskImage.getImageId(),
+                ImageStorageDomainMap imageStorageDomainMap =
+                        new ImageStorageDomainMap(templateDiskImage.getImageId(),
                                 storageDomainId,
                                 templateDiskImage.getQuotaId(),
                                 templateDiskImage.getDiskProfileId());
@@ -169,12 +169,12 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
         return imagesList;
     }
 
-    private void saveImageStorageDomainMapList(final List<image_storage_domain_map> copiedTemplateDisks) {
+    private void saveImageStorageDomainMapList(final List<ImageStorageDomainMap> copiedTemplateDisks) {
         if (!copiedTemplateDisks.isEmpty()) {
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
                 @Override
                 public Void runInTransaction() {
-                    for (image_storage_domain_map imageStorageDomainMap : copiedTemplateDisks) {
+                    for (ImageStorageDomainMap imageStorageDomainMap : copiedTemplateDisks) {
                         getImageStorageDomainMapDao().save(imageStorageDomainMap);
                     }
                     return null;

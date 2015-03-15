@@ -34,7 +34,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.storage.image_storage_domain_map;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainMap;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -666,7 +666,7 @@ public class SnapshotsManager {
                     diskImage.setVmSnapshotId(activeSnapshotId);
 
                     ImagesHandler.addImage(diskImage, true, (diskImage.getStorageIds() == null) ? null :
-                            new image_storage_domain_map(diskImage.getImageId(),
+                            new ImageStorageDomainMap(diskImage.getImageId(),
                                     diskImage.getStorageIds().get(0),
                                     diskImage.getQuotaId(),
                                     diskImage.getDiskProfileId()));
