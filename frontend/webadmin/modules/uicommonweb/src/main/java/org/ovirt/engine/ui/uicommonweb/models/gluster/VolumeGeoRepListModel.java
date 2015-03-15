@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -303,7 +302,7 @@ public class VolumeGeoRepListModel extends SearchableListModel{
     private void updateConfig() {
         ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
-        IFrontendActionAsyncCallback[] callbacks;
+        List<IFrontendActionAsyncCallback> callbacks;
 
         final GlusterVolumeGeoReplicationSessionConfigModel geoRepConfigModel =
                 (GlusterVolumeGeoReplicationSessionConfigModel) getWindow();
@@ -330,17 +329,17 @@ public class VolumeGeoRepListModel extends SearchableListModel{
             closeWindow();
             return;
         }
-        callbacks = new IFrontendActionAsyncCallback[numberOfConfigUpdates];
-        callbacks[numberOfConfigUpdates - 1] = new IFrontendActionAsyncCallback() {
+        callbacks = new ArrayList<IFrontendActionAsyncCallback>(Collections.nCopies(numberOfConfigUpdates, (IFrontendActionAsyncCallback)null));
+        callbacks.set(numberOfConfigUpdates - 1, new IFrontendActionAsyncCallback() {
             @Override
             public void executed(FrontendActionAsyncResult result) {
                 geoRepConfigModel.stopProgress();
                 closeWindow();
             }
-        };
+        });
         Frontend.getInstance().runMultipleActions(actionTypes,
                 parameters,
-                Arrays.asList(callbacks),
+                callbacks,
                 new IFrontendActionAsyncCallback() {
             // Failure call back. Update the config list just to reflect any new changes and default error msg
             // dialog is thrown.
