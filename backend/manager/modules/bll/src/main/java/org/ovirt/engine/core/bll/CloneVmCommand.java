@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -196,7 +197,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         List<Disk> loadedImages = vdcReturnValue.getReturnValue() != null ? (List<Disk>) vdcReturnValue.getReturnValue() : new ArrayList<Disk>();
 
         for (Disk disk : loadedImages) {
-            if (disk.getDiskStorageType() == Disk.DiskStorageType.LUN || disk.isShareable()) {
+            if (disk.getDiskStorageType() == DiskStorageType.LUN || disk.isShareable()) {
                 attachDetachDisk(disk, actionType);
             }
         }

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -14,27 +15,27 @@ public class InstanceImagesAttachDiskModel extends AttachDiskModel {
     public void loadAttachableDisks(int os, Version compatibilityVersion, final Disk prevSelectedDisk) {
         // Get internal attachable disks
         AsyncDataProvider.getInstance().getFilteredAttachableDisks(
-                new AsyncQuery(this, new InstanceImageGetDisksCallback(Disk.DiskStorageType.IMAGE, prevSelectedDisk)
+                new AsyncQuery(this, new InstanceImageGetDisksCallback(DiskStorageType.IMAGE, prevSelectedDisk)
                 ), getVm().getStoragePoolId(), getVm().getId(), os, compatibilityVersion);
 
         // Get external attachable disks
         AsyncDataProvider.getInstance().getFilteredAttachableDisks(
-                new AsyncQuery(this, new InstanceImageGetDisksCallback(Disk.DiskStorageType.LUN, prevSelectedDisk)
+                new AsyncQuery(this, new InstanceImageGetDisksCallback(DiskStorageType.LUN, prevSelectedDisk)
                 ), null, getVm().getId(), os, compatibilityVersion);
     }
 
     public void loadAttachableDisks(Disk prevSelected) {
-        doLoadAttachableDisks(new InstanceImageGetDisksCallback(Disk.DiskStorageType.IMAGE, prevSelected),
-                new InstanceImageGetDisksCallback(Disk.DiskStorageType.LUN, prevSelected));
+        doLoadAttachableDisks(new InstanceImageGetDisksCallback(DiskStorageType.IMAGE, prevSelected),
+                new InstanceImageGetDisksCallback(DiskStorageType.LUN, prevSelected));
     }
 
     class InstanceImageGetDisksCallback extends GetDisksCallback {
 
-        private Disk.DiskStorageType diskStorageType;
+        private DiskStorageType diskStorageType;
 
         private final Disk prevSelectedDisk;
 
-        InstanceImageGetDisksCallback(Disk.DiskStorageType diskStorageType, Disk prevSelectedDisk) {
+        InstanceImageGetDisksCallback(DiskStorageType diskStorageType, Disk prevSelectedDisk) {
             super(diskStorageType);
             this.diskStorageType = diskStorageType;
             this.prevSelectedDisk = prevSelectedDisk;

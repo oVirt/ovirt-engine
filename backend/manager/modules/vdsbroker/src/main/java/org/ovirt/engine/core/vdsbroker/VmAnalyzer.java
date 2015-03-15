@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.config.Config;
@@ -825,7 +826,7 @@ public class VmAnalyzer {
 
             List<Disk> vmDisks = getDbFacade().getDiskDao().getAllForVm(vdsmVm.getVmDynamic().getId(), true);
             for (Disk disk : vmDisks) {
-                if (disk.getDiskStorageType() != Disk.DiskStorageType.LUN) {
+                if (disk.getDiskStorageType() != DiskStorageType.LUN) {
                     continue;
                 }
 

@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -471,7 +472,7 @@ public class VmSnapshotListModel extends SearchableListModel<VM, Snapshot>
                 ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
                 getVmDisks().clear();
                 for (Disk disk : disks) {
-                    if (disk.getDiskStorageType() == Disk.DiskStorageType.LUN) {
+                    if (disk.getDiskStorageType() == DiskStorageType.LUN) {
                         continue;
                     }
 

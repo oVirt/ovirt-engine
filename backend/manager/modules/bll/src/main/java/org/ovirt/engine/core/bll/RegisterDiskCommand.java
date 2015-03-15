@@ -14,7 +14,7 @@ import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RegisterDiskParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
-import org.ovirt.engine.core.common.businessentities.storage.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;

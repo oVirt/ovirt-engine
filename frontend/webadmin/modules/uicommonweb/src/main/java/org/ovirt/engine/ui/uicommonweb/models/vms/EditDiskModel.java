@@ -6,8 +6,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -43,9 +43,9 @@ public class EditDiskModel extends AbstractDiskModel
         getIsSgIoUnfiltered().setEntity(getDisk().getSgio() == ScsiGenericIO.UNFILTERED);
         getIsReadOnly().setEntity(getDisk().getReadOnly());
 
-        if (getDisk().getDiskStorageType() == Disk.DiskStorageType.IMAGE) {
+        if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage diskImage = (DiskImage) getDisk();
-            getDiskStorageType().setEntity(Disk.DiskStorageType.IMAGE);
+            getDiskStorageType().setEntity(DiskStorageType.IMAGE);
             getSize().setEntity((int) diskImage.getSizeInGigabytes());
             getVolumeType().setSelectedItem(diskImage.getVolumeType());
             setVolumeFormat(diskImage.getVolumeFormat());
@@ -55,7 +55,7 @@ public class EditDiskModel extends AbstractDiskModel
             getSizeExtend().setIsChangable(isExtendImageSizeEnabled);
         } else {
             LunDisk lunDisk = (LunDisk) getDisk();
-            getDiskStorageType().setEntity(Disk.DiskStorageType.LUN);
+            getDiskStorageType().setEntity(DiskStorageType.LUN);
             getSize().setEntity(lunDisk.getLun().getDeviceSize());
             getSizeExtend().setIsAvailable(false);
         }
@@ -68,7 +68,7 @@ public class EditDiskModel extends AbstractDiskModel
     protected void datacenter_SelectedItemChanged() {
         super.datacenter_SelectedItemChanged();
         // this needs to be executed after the data center is loaded because the update quota needs both values
-        if (getDisk().getDiskStorageType() == Disk.DiskStorageType.IMAGE) {
+        if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
             Guid storageDomainId = ((DiskImage) getDisk()).getStorageIds().get(0);
             AsyncDataProvider.getInstance().getStorageDomainById(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override

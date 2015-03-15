@@ -219,6 +219,7 @@
         <include name="common/businessentities/storage/DiskInterface.java" />
         <include name="common/businessentities/storage/DiskLunMap.java" />
         <include name="common/businessentities/storage/DiskLunMapId.java" />
+        <include name="common/businessentities/storage/DiskStorageType.java" />
         <include name="common/businessentities/storage/Image.java" />
         <include name="common/businessentities/storage/ImageFileType.java" />
         <include name="common/businessentities/storage/ImageOperation.java" />

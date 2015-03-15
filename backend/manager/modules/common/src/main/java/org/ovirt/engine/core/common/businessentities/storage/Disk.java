@@ -3,7 +3,6 @@ package org.ovirt.engine.core.common.businessentities.storage;
 import java.util.ArrayList;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.ovirt.engine.core.common.businessentities.Identifiable;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 
@@ -140,24 +139,5 @@ public abstract class Disk extends BaseDisk {
 
     public void setOvfStore(boolean ovfStore) {
         this.ovfStore = ovfStore;
-    }
-
-    /**
-     * Enum of the disk's type, which defines which underlying storage details will be contained in the {@link Disk}
-     * object instance.
-     */
-    public enum DiskStorageType implements Identifiable {
-        // FIXME add ids and remove the ordinal impl of getValue
-        IMAGE,
-        LUN;
-
-        @Override
-        public int getValue() {
-            return this.ordinal();
-        }
-
-        public static DiskStorageType forValue(int value) {
-            return values()[value];
-        }
     }
 }

@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.action.CloneVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -44,7 +45,7 @@ public class CloneVmModel extends Model {
             public void onSuccess(Object target, Object returnValue) {
                 ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
 
-                if (!Linq.filterDisksByStorageType(disks, Disk.DiskStorageType.LUN).isEmpty()) {
+                if (!Linq.filterDisksByStorageType(disks, DiskStorageType.LUN).isEmpty()) {
                     setMessage(ConstantsManager.getInstance().getConstants().cloneVmLunsWontBeCloned());
                 }
             }

@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -154,7 +155,7 @@ public class VmHandlerTest {
                     false,
                     "",
                     null,
-                    disk.getDiskStorageType() == Disk.DiskStorageType.IMAGE ? ((DiskImage)disk).getSnapshotId() : null,
+                    disk.getDiskStorageType() == DiskStorageType.IMAGE ? ((DiskImage)disk).getSnapshotId() : null,
                     null);
             vm.getManagedVmDeviceMap().put(disk.getId(), device);
         }

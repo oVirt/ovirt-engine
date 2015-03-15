@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetVmByVmNameForDataCenterParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
@@ -177,7 +178,7 @@ public class BackendTemplatesResource
     }
 
     private boolean isDiskImage(org.ovirt.engine.core.common.businessentities.storage.Disk disk) {
-        return disk.getDiskStorageType() == org.ovirt.engine.core.common.businessentities.storage.Disk.DiskStorageType.IMAGE;
+        return disk.getDiskStorageType() == DiskStorageType.IMAGE;
     }
 
     private Map<Guid, org.ovirt.engine.core.common.businessentities.storage.Disk> queryVmDisksMap(VM vm) {

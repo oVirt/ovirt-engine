@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -29,7 +29,7 @@ public class AttachDiskModel extends NewDiskModel {
     private Map<DiskStorageType, ListModel<EntityModel<DiskModel>>> attachableDisksMap;
 
     public AttachDiskModel() {
-        attachableDisksMap = new HashMap<Disk.DiskStorageType, ListModel<EntityModel<DiskModel>>>();
+        attachableDisksMap = new HashMap<DiskStorageType, ListModel<EntityModel<DiskModel>>>();
         attachableDisksMap.put(DiskStorageType.IMAGE, new ListModel<EntityModel<DiskModel>>());
         attachableDisksMap.put(DiskStorageType.LUN, new ListModel<EntityModel<DiskModel>>());
     }

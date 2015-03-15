@@ -6,7 +6,7 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.StatisticUnit;
 import org.ovirt.engine.api.model.VM;
-import org.ovirt.engine.core.common.businessentities.storage.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 

@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
-import org.ovirt.engine.core.common.businessentities.storage.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.compat.Guid;
@@ -113,7 +113,7 @@ public class DiskDaoDbFacadeImpl extends BaseDAODbFacade implements DiskDao {
         @Override
         public Disk mapRow(ResultSet rs, int rowNum) throws SQLException {
             Disk disk = null;
-            DiskStorageType diskStorageType = Disk.DiskStorageType.forValue(rs.getInt("disk_storage_type"));
+            DiskStorageType diskStorageType = DiskStorageType.forValue(rs.getInt("disk_storage_type"));
 
             switch (diskStorageType) {
             case IMAGE:

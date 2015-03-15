@@ -40,6 +40,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -228,7 +229,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     private Disk getDiskImageByDiskId(Guid diskId) {
         Disk disk = getDiskDao().get(diskId);
-        if (disk != null && disk.getDiskStorageType() == Disk.DiskStorageType.IMAGE) {
+        if (disk != null && disk.getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage diskImage = (DiskImage)disk;
             if (!diskImagesMap.containsKey(diskImage.getImageId())) {
                 diskImagesMap.put(diskImage.getImageId(), (DiskImage)disk);

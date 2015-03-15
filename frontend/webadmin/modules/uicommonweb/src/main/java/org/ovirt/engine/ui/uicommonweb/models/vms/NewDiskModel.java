@@ -7,9 +7,9 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
@@ -140,7 +140,7 @@ public class NewDiskModel extends AbstractDiskModel
     @Override
     public void flush() {
         super.flush();
-        if (getDiskStorageType().getEntity() == Disk.DiskStorageType.IMAGE) {
+        if (getDiskStorageType().getEntity() == DiskStorageType.IMAGE) {
             DiskImage diskImage = (DiskImage) getDisk();
             diskImage.setSizeInGigabytes(getSize().getEntity());
             diskImage.setVolumeType(getVolumeType().getSelectedItem());
@@ -164,7 +164,7 @@ public class NewDiskModel extends AbstractDiskModel
 
         AddDiskParameters parameters = new AddDiskParameters(getVmId(), getDisk());
         parameters.setPlugDiskToVm(getIsPlugged().getEntity());
-        if (getDiskStorageType().getEntity() == Disk.DiskStorageType.IMAGE) {
+        if (getDiskStorageType().getEntity() == DiskStorageType.IMAGE) {
             StorageDomain storageDomain = getStorageDomain().getSelectedItem();
             parameters.setStorageDomainId(storageDomain.getId());
         }
@@ -188,7 +188,7 @@ public class NewDiskModel extends AbstractDiskModel
 
     @Override
     public boolean validate() {
-        if (getDiskStorageType().getEntity() == Disk.DiskStorageType.LUN && getSanStorageModel() != null) {
+        if (getDiskStorageType().getEntity() == DiskStorageType.LUN && getSanStorageModel() != null) {
             getSanStorageModel().validate();
             if (!getSanStorageModel().getIsValid()) {
                 return false;

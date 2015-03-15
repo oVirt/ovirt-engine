@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -73,7 +74,7 @@ public class InstanceImageLineModel extends EntityModel {
         String diskName = disk.getDiskAlias();
         String size = Long.toString(disk.getSize());
 
-        if (disk.getDiskStorageType() == Disk.DiskStorageType.IMAGE) {
+        if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
             size = Long.toString(((DiskImage) disk).getSizeInGigabytes());
         }
 
@@ -342,13 +343,13 @@ public class InstanceImageLineModel extends EntityModel {
             return diskModel.getDisk();
         }
 
-        Disk.DiskStorageType diskStorageType = diskModel.getDiskStorageType().getEntity();
+        DiskStorageType diskStorageType = diskModel.getDiskStorageType().getEntity();
 
-        if (diskStorageType == Disk.DiskStorageType.IMAGE) {
+        if (diskStorageType == DiskStorageType.IMAGE) {
             return diskModel.getDiskImage();
         }
 
-        if (diskStorageType == Disk.DiskStorageType.LUN) {
+        if (diskStorageType == DiskStorageType.LUN) {
             return diskModel.getLunDisk();
         }
 
