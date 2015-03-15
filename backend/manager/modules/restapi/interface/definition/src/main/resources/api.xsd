@@ -3484,6 +3484,7 @@
           <xs:element name="size" type="xs:int" minOccurs="0"/>
           <xs:element ref="cluster" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="template" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="vm" minOccurs="0" maxOccurs="1"/>
           <xs:element name="prestarted_vms" type="xs:int" minOccurs="0"/>
           <xs:element name="max_user_vms" type="xs:int" minOccurs="0"/>
           <xs:element ref="display" minOccurs="0" maxOccurs="1"/>

@@ -115,6 +115,7 @@ public class BackendVmPoolsResource
             VM vm = getVM(model);
             model.setTemplate(new Template());
             model.getTemplate().setId(vm.getVmtGuid().toString());
+            model = getMapper(VM.class, VmPool.class).map(vm, model);
         }
         return model;
     }
@@ -136,7 +137,7 @@ public class BackendVmPoolsResource
         // apply template
         VmStatic vmStatic = getMapper(VmTemplate.class, VmStatic.class).map(template, null);
         // override with client-provided data
-        VM vm = getMapper(VmPool.class, VM.class).map(model, new VM(vmStatic, new VmDynamic(), new VmStatistics()));
+        VM vm = new VM(getMapper(VmPool.class, VmStatic.class).map(model, vmStatic), new VmDynamic(), new VmStatistics());
 
         return vm;
     }

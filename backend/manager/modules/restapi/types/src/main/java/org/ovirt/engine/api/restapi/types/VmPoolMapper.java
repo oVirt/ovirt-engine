@@ -6,6 +6,7 @@ import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 
 public class VmPoolMapper {
 
@@ -51,14 +52,24 @@ public class VmPoolMapper {
     @Mapping(from = VmPool.class, to = VM.class)
     public static VM map(VmPool model, VM template) {
         VM entity = template != null ? template : new VM();
+        entity.setStaticData(map(model, entity.getStaticData()));
+        return entity;
+    }
+
+    @Mapping(from = VmPool.class, to = VmStatic.class)
+    public static VmStatic map(VmPool model, VmStatic template) {
+        VmStatic entity = template != null ? template : new VmStatic();
+        if (model.getVm() != null) {
+            entity = VmMapper.map(model.getVm(), entity);
+        }
         entity.setName(model.getName());
-        entity.setVmDescription(model.getDescription());
+        entity.setDescription(model.getDescription());
         if (model.isSetTemplate() &&
-            model.getTemplate().isSetId()) {
+                model.getTemplate().isSetId()) {
             entity.setVmtGuid(GuidUtils.asGuid(model.getTemplate().getId()));
         }
         if (model.isSetCluster() &&
-            model.getCluster().isSetId()) {
+                model.getCluster().isSetId()) {
             entity.setVdsGroupId(GuidUtils.asGuid(model.getCluster().getId()));
         }
         return entity;
@@ -85,6 +96,17 @@ public class VmPoolMapper {
             model.setDisplay(display);
         }
 
+        return model;
+    }
+
+    @Mapping(from = VM.class, to = VmPool.class)
+    public static VmPool map(VM vm, VmPool template) {
+        VmPool model = template != null ? template : new VmPool();
+        org.ovirt.engine.api.model.VM vmModel = VmMapper.map(vm, (org.ovirt.engine.api.model.VM) null);
+        vmModel.setCluster(null);
+        vmModel.setTemplate(null);
+        vmModel.setVmPool(null);
+        model.setVm(vmModel);
         return model;
     }
 }

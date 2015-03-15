@@ -147,7 +147,7 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
             boolean block,
             Class<? extends BaseResource> suggestedParentType) {
 
-        // create (overidable)
+        // create (overridable)
         VdcReturnValueBase createResult = doCreateEntity(task, taskParams);
 
         // fetch + map
