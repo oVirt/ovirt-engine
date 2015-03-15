@@ -14,10 +14,12 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RetrieveImageDataParameters;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainToPoolRelationValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.RegisterDiskParameters;
@@ -463,5 +465,15 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN);
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ATTACH);
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        List<PermissionSubject> permissionList = new ArrayList<>();
+        permissionList.addAll(super.getPermissionCheckSubjects());
+        permissionList.add(new PermissionSubject(getStoragePoolId(),
+                VdcObjectType.StoragePool,
+                getActionType().getActionGroup()));
+        return permissionList;
     }
 }
