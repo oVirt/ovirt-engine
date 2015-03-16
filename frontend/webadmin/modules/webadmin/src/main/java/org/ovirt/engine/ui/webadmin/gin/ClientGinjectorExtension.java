@@ -5,7 +5,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
@@ -235,7 +235,7 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     SearchableDetailModelProvider<CpuQos, DataCenterListModel, DataCenterCpuQosListModel> getSubTabDataCenterCpuQosModelProvider();
 
-    SearchableDetailModelProvider<Permissions, DataCenterListModel, PermissionListModel<StoragePool>> getSubTabDataCenterPermissionModelProvider();
+    SearchableDetailModelProvider<Permission, DataCenterListModel, PermissionListModel<StoragePool>> getSubTabDataCenterPermissionModelProvider();
 
     SearchableDetailModelProvider<AuditLog, DataCenterListModel, DataCenterEventListModel> getSubTabDataCenterEventModelProvider();
 
@@ -263,7 +263,7 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     SearchableDetailModelProvider<Disk, StorageListModel, StorageSnapshotListModel> getSubTabStorageSnapshotModelProvider();
 
-    SearchableDetailModelProvider<Permissions, StorageListModel, PermissionListModel<StorageDomain>> getSubTabStoragePermissionModelProvider();
+    SearchableDetailModelProvider<Permission, StorageListModel, PermissionListModel<StorageDomain>> getSubTabStoragePermissionModelProvider();
 
     SearchableDetailModelProvider<AuditLog, StorageListModel, StorageEventListModel> getSubTabStorageEventModelProvider();
 
@@ -285,7 +285,7 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     SearchableDetailModelProvider<GlusterHookEntity, ClusterListModel<Void>, ClusterGlusterHookListModel> getSubTabClusterGlusterHookModelProvider();
 
-    SearchableDetailModelProvider<Permissions, ClusterListModel<Void>, PermissionListModel<VDSGroup>> getSubTabClusterPermissionModelProvider();
+    SearchableDetailModelProvider<Permission, ClusterListModel<Void>, PermissionListModel<VDSGroup>> getSubTabClusterPermissionModelProvider();
 
     SearchableDetailModelProvider<CpuProfile, ClusterListModel<Void>, CpuProfileListModel> getSubTabClusterCpuProfileModelProvider();
 
@@ -303,7 +303,7 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     SearchableDetailModelProvider<AffinityGroup, VmListModel<Void>, VmAffinityGroupListModel> getSubTabVirtualMachineAffinityGroupModelProvider();
 
-    SearchableDetailModelProvider<Permissions, VmListModel<Void>, PermissionListModel<VM>> getSubTabVirtualMachinePermissionModelProvider();
+    SearchableDetailModelProvider<Permission, VmListModel<Void>, PermissionListModel<VM>> getSubTabVirtualMachinePermissionModelProvider();
 
     DetailModelProvider<VmListModel<Void>, VmSessionsModel> getSubTabVirtualMachineSessionsModelProvider();
 
@@ -323,7 +323,7 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     SearchableDetailModelProvider<GlusterServerService, HostListModel<Void>, HostGlusterSwiftListModel> getSubTabHostGlusterSwiftModelProvider();
 
-    SearchableDetailModelProvider<Permissions, HostListModel<Void>, PermissionListModel<VDS>> getSubTabHostPermissionModelProvider();
+    SearchableDetailModelProvider<Permission, HostListModel<Void>, PermissionListModel<VDS>> getSubTabHostPermissionModelProvider();
 
     SearchableDetailModelProvider<AuditLog, HostListModel<Void>, HostEventListModel> getSubTabHostEventModelProvider();
 
@@ -337,7 +337,7 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     SearchableDetailModelProvider<VM, PoolListModel, PoolVmListModel> getSubTabPoolVmModelProvider();
 
-    SearchableDetailModelProvider<Permissions, PoolListModel, PermissionListModel<VmPool>> getSubTabPoolPermissionModelProvider();
+    SearchableDetailModelProvider<Permission, PoolListModel, PermissionListModel<VmPool>> getSubTabPoolPermissionModelProvider();
 
     // Template
 
@@ -351,7 +351,7 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     SearchableDetailModelProvider<StorageDomain, TemplateListModel, TemplateStorageListModel> getSubTabTemplateStorageModelProvider();
 
-    SearchableDetailModelProvider<Permissions, TemplateListModel, PermissionListModel<VmTemplate>> getSubTabTemplatePermissionModelProvider();
+    SearchableDetailModelProvider<Permission, TemplateListModel, PermissionListModel<VmTemplate>> getSubTabTemplatePermissionModelProvider();
 
     SearchableDetailModelProvider<AuditLog, TemplateListModel, TemplateEventListModel> getSubTabTemplateEventModelProvider();
 
@@ -359,7 +359,7 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     DetailModelProvider<UserListModel, UserGeneralModel> getSubTabUserGeneralModelProvider();
 
-    SearchableDetailModelProvider<Permissions, UserListModel, UserPermissionListModel> getSubTabUserPermissionlModelProvider();
+    SearchableDetailModelProvider<Permission, UserListModel, UserPermissionListModel> getSubTabUserPermissionlModelProvider();
 
     SearchableDetailModelProvider<event_subscriber, UserListModel, UserEventNotifierListModel> getSubTabUserEventNotifierModelProvider();
 
@@ -375,9 +375,9 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     SearchableDetailModelProvider<QuotaStorage, QuotaListModel, QuotaStorageListModel> getSubTabQuotaStorageModelProvider();
 
-    SearchableDetailModelProvider<Permissions, QuotaListModel, QuotaUserListModel> getSubTabQuotaUserModelProvider();
+    SearchableDetailModelProvider<Permission, QuotaListModel, QuotaUserListModel> getSubTabQuotaUserModelProvider();
 
-    SearchableDetailModelProvider<Permissions, QuotaListModel, QuotaPermissionListModel> getSubTabQuotaPermissionModelProvider();
+    SearchableDetailModelProvider<Permission, QuotaListModel, QuotaPermissionListModel> getSubTabQuotaPermissionModelProvider();
 
     SearchableDetailModelProvider<AuditLog, QuotaListModel, QuotaEventListModel> getSubTabQuotaEventModelProvider();
 
@@ -393,7 +393,7 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     SearchableDetailModelProvider<GlusterVolumeOptionEntity, VolumeListModel, VolumeParameterListModel> getSubTabVolumeParameterModelProvider();
 
-    SearchableDetailModelProvider<Permissions, VolumeListModel, PermissionListModel<GlusterVolumeEntity>> getSubTabVolumePermissionModelProvider();
+    SearchableDetailModelProvider<Permission, VolumeListModel, PermissionListModel<GlusterVolumeEntity>> getSubTabVolumePermissionModelProvider();
 
     SearchableDetailModelProvider<AuditLog, VolumeListModel, VolumeEventListModel> getSubTabVolumeEventModelProvider();
 
@@ -411,7 +411,7 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     SearchableDetailModelProvider<StorageDomain, DiskListModel, DiskStorageListModel> getSubTabDiskStorageModelProvider();
 
-    SearchableDetailModelProvider<Permissions, DiskListModel, PermissionListModel<Disk>> getSubTabDiskPermissionModelProvider();
+    SearchableDetailModelProvider<Permission, DiskListModel, PermissionListModel<Disk>> getSubTabDiskPermissionModelProvider();
 
     // Network
 
@@ -429,7 +429,7 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VmTemplate>, NetworkListModel, NetworkTemplateListModel> getSubTabNetworkTemplateModelProvider();
 
-    SearchableDetailModelProvider<Permissions, NetworkListModel, PermissionListModel<NetworkView>> getSubTabNetworkPermissionModelProvider();
+    SearchableDetailModelProvider<Permission, NetworkListModel, PermissionListModel<NetworkView>> getSubTabNetworkPermissionModelProvider();
 
     // Provider
 
@@ -442,6 +442,6 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     SearchableDetailModelProvider<VmTemplate, VnicProfileListModel, VnicProfileTemplateListModel> getSubTabVnicProfileTemplateModelProvider();
 
-    SearchableDetailModelProvider<Permissions, VnicProfileListModel, PermissionListModel<VnicProfileView>> getSubTabVnicProfilePermissionModelProvider();
+    SearchableDetailModelProvider<Permission, VnicProfileListModel, PermissionListModel<VnicProfileView>> getSubTabVnicProfilePermissionModelProvider();
 
 }

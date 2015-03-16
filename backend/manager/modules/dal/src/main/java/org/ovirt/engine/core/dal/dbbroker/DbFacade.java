@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.HostDevice;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.MacPool;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -206,7 +206,7 @@ public class DbFacade {
             put(Snapshot.class, SnapshotDao.class);
             put(VmDevice.class, VmDeviceDAO.class);
             put(ImageStorageDomainMap.class, ImageStorageDomainMapDao.class);
-            put(Permissions.class, PermissionDAO.class);
+            put(Permission.class, PermissionDAO.class);
             put(Image.class, ImageDao.class);
             put(Job.class, JobDao.class);
             put(Step.class, StepDao.class);

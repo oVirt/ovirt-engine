@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.uicommon.model;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RolePermissionsRemoveConfirmationPopupPresenterWidget;
@@ -16,7 +16,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class PermissionModelProvider<E, M extends ListWithDetailsModel> extends SearchableDetailTabModelProvider<Permissions, M, PermissionListModel<E>> {
+public class PermissionModelProvider<E, M extends ListWithDetailsModel> extends SearchableDetailTabModelProvider<Permission, M, PermissionListModel<E>> {
 
     private final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
     private final Provider<PermissionsPopupPresenterWidget> permissionPopupProvider;

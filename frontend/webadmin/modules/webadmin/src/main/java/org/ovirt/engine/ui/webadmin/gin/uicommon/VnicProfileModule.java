@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
@@ -90,7 +90,7 @@ public class VnicProfileModule extends AbstractGinModule {
             .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, VnicProfileListModel, VnicProfileVmListModel>>(){})
             .in(Singleton.class);
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, VnicProfileListModel, PermissionListModel<VnicProfileView>>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, VnicProfileListModel, PermissionListModel<VnicProfileView>>>(){})
            .to(new TypeLiteral<PermissionModelProvider<VnicProfileView, VnicProfileListModel>>(){}).in(Singleton.class);
     }
 

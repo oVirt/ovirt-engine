@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -14,7 +14,7 @@ public class GetSystemPermissionsQuery<P extends VdcQueryParametersBase> extends
 
     @Override
     protected void executeQueryCommand() {
-        List<Permissions> perms = DbFacade.getInstance().getPermissionDao().getAllForEntity(
+        List<Permission> perms = DbFacade.getInstance().getPermissionDao().getAllForEntity(
                 MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID);
         getQueryReturnValue().setReturnValue(perms);
     }

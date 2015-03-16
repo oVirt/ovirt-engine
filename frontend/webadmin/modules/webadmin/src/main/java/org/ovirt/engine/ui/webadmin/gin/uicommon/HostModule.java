@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -329,7 +329,7 @@ public class HostModule extends AbstractGinModule {
             .in(Singleton.class);
 
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, HostListModel<Void>, PermissionListModel<VDS>>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, HostListModel<Void>, PermissionListModel<VDS>>>(){})
             .to(new TypeLiteral<PermissionModelProvider<VDS, HostListModel<Void>>>() {
             }).in(Singleton.class);
     }

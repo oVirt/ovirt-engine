@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
@@ -111,7 +111,7 @@ public class PoolModule extends AbstractGinModule {
         bind(new TypeLiteral<DetailModelProvider<PoolListModel, PoolGeneralModel>>(){})
             .to(new TypeLiteral<DetailTabModelProvider<PoolListModel, PoolGeneralModel>>(){}).in(Singleton.class);
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, PoolListModel, PermissionListModel<VmPool>>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, PoolListModel, PermissionListModel<VmPool>>>(){})
            .to(new TypeLiteral<PermissionModelProvider<VmPool, PoolListModel>>(){}).in(Singleton.class);
 
     }

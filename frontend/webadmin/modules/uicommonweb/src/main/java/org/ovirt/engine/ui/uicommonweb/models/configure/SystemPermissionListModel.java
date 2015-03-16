@@ -6,7 +6,7 @@ import java.util.Collection;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -159,7 +159,7 @@ public class SystemPermissionListModel extends SearchableListModel
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (DbUser user : items)
         {
-            Permissions perm = new Permissions(user.getId(), role.getId(), null, null);
+            Permission perm = new Permission(user.getId(), role.getId(), null, null);
             // set id to Guid.Empty as GWT cannot generate new random UUID, AddPermissionCommand will replace
             // Guid.Empty with correct Guid
             perm.setId(Guid.Empty);
@@ -245,7 +245,7 @@ public class SystemPermissionListModel extends SearchableListModel
             for (Object perm : getSelectedItems())
             {
                 PermissionsOperationsParameters tempVar = new PermissionsOperationsParameters();
-                tempVar.setPermission((Permissions) perm);
+                tempVar.setPermission((Permission) perm);
                 list.add(tempVar);
             }
 

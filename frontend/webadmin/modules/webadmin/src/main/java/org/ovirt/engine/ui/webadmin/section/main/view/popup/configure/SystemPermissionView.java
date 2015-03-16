@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.configure;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -34,7 +34,7 @@ public class SystemPermissionView extends Composite {
 
     SplitLayoutPanel content;
 
-    private SimpleActionTable<Permissions> table;
+    private SimpleActionTable<Permission> table;
 
     private final SystemPermissionModelProvider modelProvider;
 
@@ -65,7 +65,7 @@ public class SystemPermissionView extends Composite {
     }
 
     private void initTable(ApplicationConstants constants) {
-        table = new SimpleActionTable<Permissions>(modelProvider,
+        table = new SimpleActionTable<Permission>(modelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
         content.add(table);
@@ -73,46 +73,46 @@ public class SystemPermissionView extends Composite {
 
         table.addColumn(new PermissionTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumn<Permissions> userColumn = new AbstractTextColumn<Permissions>() {
+        AbstractTextColumn<Permission> userColumn = new AbstractTextColumn<Permission>() {
             @Override
-            public String getValue(Permissions object) {
+            public String getValue(Permission object) {
                 return object.getOwnerName();
             }
         };
         table.addColumn(userColumn, constants.userPermission(), "300px"); //$NON-NLS-1$
 
-        AbstractTextColumn<Permissions> authzColumn = new AbstractTextColumn<Permissions>() {
+        AbstractTextColumn<Permission> authzColumn = new AbstractTextColumn<Permission>() {
             @Override
-            public String getValue(Permissions object) {
+            public String getValue(Permission object) {
                 return object.getAuthz();
             }
         };
         table.addColumn(authzColumn, constants.authz(), "200px"); //$NON-NLS-1$
 
-        AbstractTextColumn<Permissions> namespaceColumn = new AbstractTextColumn<Permissions>() {
+        AbstractTextColumn<Permission> namespaceColumn = new AbstractTextColumn<Permission>() {
             @Override
-            public String getValue(Permissions object) {
+            public String getValue(Permission object) {
                 return object.getNamespace();
             }
         };
         table.addColumn(namespaceColumn, constants.namespace(), "200px"); //$NON-NLS-1$
 
-        AbstractTextColumn<Permissions> roleColumn = new AbstractTextColumn<Permissions>() {
+        AbstractTextColumn<Permission> roleColumn = new AbstractTextColumn<Permission>() {
             @Override
-            public String getValue(Permissions object) {
+            public String getValue(Permission object) {
                 return object.getRoleName();
             }
         };
         table.addColumn(roleColumn, constants.rolePermission());
 
-        table.addActionButton(new WebAdminButtonDefinition<Permissions>(constants.addPermission()) {
+        table.addActionButton(new WebAdminButtonDefinition<Permission>(constants.addPermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getAddCommand();
             }
         });
 
-        table.addActionButton(new WebAdminButtonDefinition<Permissions>(constants.removePermission()) {
+        table.addActionButton(new WebAdminButtonDefinition<Permission>(constants.removePermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return modelProvider.getModel().getRemoveCommand();

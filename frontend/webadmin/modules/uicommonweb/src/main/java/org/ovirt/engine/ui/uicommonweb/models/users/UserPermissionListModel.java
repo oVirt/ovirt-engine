@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -24,7 +24,7 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
-public class UserPermissionListModel extends SearchableListModel<DbUser, Permissions>
+public class UserPermissionListModel extends SearchableListModel<DbUser, Permission>
 {
 
     private UICommand privateRemoveCommand;
@@ -81,9 +81,9 @@ public class UserPermissionListModel extends SearchableListModel<DbUser, Permiss
             @Override
             public void onSuccess(Object model, Object ReturnValue)
             {
-                ArrayList<Permissions> list = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                ArrayList<Permissions> newList = new ArrayList<Permissions>();
-                for (Permissions permission : list) {
+                ArrayList<Permission> list = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                ArrayList<Permission> newList = new ArrayList<Permission>();
+                for (Permission permission : list) {
                     if (!permission.getRoleId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
                         newList.add(permission);
                     }
@@ -112,7 +112,7 @@ public class UserPermissionListModel extends SearchableListModel<DbUser, Permiss
         model.setTitle(ConstantsManager.getInstance().getConstants().removePermissionTitle());
         model.setHelpTag(HelpTag.remove_permission);
         model.setHashName("remove_permission"); //$NON-NLS-1$
-        model.setItems(Linq.<Permissions> cast(getSelectedItems()));
+        model.setItems(Linq.<Permission> cast(getSelectedItems()));
 
         UICommand tempVar = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
@@ -135,7 +135,7 @@ public class UserPermissionListModel extends SearchableListModel<DbUser, Permiss
             for (Object perm : getSelectedItems())
             {
                 PermissionsOperationsParameters tempVar = new PermissionsOperationsParameters();
-                tempVar.setPermission((Permissions) perm);
+                tempVar.setPermission((Permission) perm);
                 list.add(tempVar);
             }
 
@@ -182,7 +182,7 @@ public class UserPermissionListModel extends SearchableListModel<DbUser, Permiss
     {
         boolean isInherited = false;
 
-        Permissions p = getSelectedItem();
+        Permission p = getSelectedItem();
         if (p != null && getEntity() != null) {
             isInherited = !p.getAdElementId().equals(getEntity().getId());
         }

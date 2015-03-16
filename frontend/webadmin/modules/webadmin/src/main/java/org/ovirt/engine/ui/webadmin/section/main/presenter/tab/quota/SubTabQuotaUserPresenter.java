@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
@@ -35,14 +35,14 @@ public class SubTabQuotaUserPresenter extends AbstractSubTabPresenter<Quota, Quo
 
     @TabInfo(container = QuotaSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<Permissions, QuotaListModel, QuotaUserListModel> modelProvider) {
+            SearchableDetailModelProvider<Permission, QuotaListModel, QuotaUserListModel> modelProvider) {
         return new ModelBoundTabData(applicationConstants.quotaUserSubTabLabel(), 4, modelProvider);
     }
 
     @Inject
     public SubTabQuotaUserPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<Permissions, QuotaListModel, QuotaUserListModel> modelProvider) {
+            SearchableDetailModelProvider<Permission, QuotaListModel, QuotaUserListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 QuotaSubTabPanelPresenter.TYPE_SetTabContent);
     }

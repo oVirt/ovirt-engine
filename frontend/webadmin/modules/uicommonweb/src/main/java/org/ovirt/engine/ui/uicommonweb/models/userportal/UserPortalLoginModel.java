@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -193,9 +193,9 @@ public class UserPortalLoginModel extends LoginModel
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
 
-                        ArrayList<Permissions> permissions = (ArrayList<Permissions>) returnValue;
+                        ArrayList<Permission> permissions = (ArrayList<Permission>) returnValue;
                         ArrayList<Guid> roleIdList = new ArrayList<Guid>();
-                        for (Permissions permission : permissions) {
+                        for (Permission permission : permissions) {
 
                             // ignore:
                             // ALL Everyone/UserPoralBasedVM permissions and
@@ -225,19 +225,19 @@ public class UserPortalLoginModel extends LoginModel
 
                     }
 
-                    private boolean isEveryoneVnicProfileUserPermission(Permissions permission) {
+                    private boolean isEveryoneVnicProfileUserPermission(Permission permission) {
                         return permission.getAdElementId().equals(ApplicationGuids.everyone.asGuid()) &&
                                 permission.getRoleId().equals(ApplicationGuids.vnicProfileUser.asGuid());
                     }
 
-                    private boolean isEveryoneUserPortalBasedVmPermission(Permissions permission) {
+                    private boolean isEveryoneUserPortalBasedVmPermission(Permission permission) {
                         return permission.getAdElementId().equals(ApplicationGuids.everyone.asGuid())
                                 &&
                                 permission.getRoleId()
                                         .equals(ApplicationGuids.userTemplateBasedVM.asGuid());
                     }
 
-                    private boolean isEveryoneQuotaConsumerPermission(Permissions permission) {
+                    private boolean isEveryoneQuotaConsumerPermission(Permission permission) {
                         return permission.getAdElementId().equals(ApplicationGuids.everyone.asGuid()) &&
                                 permission.getRoleId().equals(ApplicationGuids.quotaConsumer.asGuid());
                     }

@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 public class BackendPermissionResourceTest
         extends AbstractBackendSubResourceTest<
                         Permission,
-                        org.ovirt.engine.core.common.businessentities.Permissions,
+                        org.ovirt.engine.core.common.businessentities.Permission,
                         BackendPermissionResource> {
 
     public BackendPermissionResourceTest() {
@@ -92,9 +92,9 @@ public class BackendPermissionResourceTest
     }
 
     @Override
-    protected org.ovirt.engine.core.common.businessentities.Permissions getEntity(int index) {
-        org.ovirt.engine.core.common.businessentities.Permissions permission =
-                new org.ovirt.engine.core.common.businessentities.Permissions();
+    protected org.ovirt.engine.core.common.businessentities.Permission getEntity(int index) {
+        org.ovirt.engine.core.common.businessentities.Permission permission =
+                new org.ovirt.engine.core.common.businessentities.Permission();
         permission.setId(GUIDS[0]);
         permission.setAdElementId(GUIDS[1]);
         permission.setRoleId(GUIDS[2]);

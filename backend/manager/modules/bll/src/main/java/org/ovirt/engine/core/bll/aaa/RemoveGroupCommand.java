@@ -5,7 +5,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -31,7 +31,7 @@ public class RemoveGroupCommand<T extends IdParameters> extends AdGroupsHandling
 
         // Remove the permissions of the group:
         // TODO: This should be done without invoking the command to avoid the overhead.
-        for (Permissions permission : getPermissionDAO().getAllDirectPermissionsForAdElement(id)) {
+        for (Permission permission : getPermissionDAO().getAllDirectPermissionsForAdElement(id)) {
             PermissionsOperationsParameters param = new PermissionsOperationsParameters(permission);
             param.setSessionId(getParameters().getSessionId());
             runInternalActionWithTasksContext(VdcActionType.RemovePermission, param);

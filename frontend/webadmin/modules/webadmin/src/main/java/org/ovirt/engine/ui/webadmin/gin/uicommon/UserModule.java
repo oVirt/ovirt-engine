@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -112,14 +112,14 @@ public class UserModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<Permissions, UserListModel, UserPermissionListModel> getPermissionListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<Permission, UserListModel, UserPermissionListModel> getPermissionListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<UserListModel> mainModelProvider,
             final Provider<UserPermissionListModel> modelProvider) {
-        SearchableDetailTabModelProvider<Permissions, UserListModel, UserPermissionListModel> result =
-                new SearchableDetailTabModelProvider<Permissions, UserListModel, UserPermissionListModel>(
+        SearchableDetailTabModelProvider<Permission, UserListModel, UserPermissionListModel> result =
+                new SearchableDetailTabModelProvider<Permission, UserListModel, UserPermissionListModel>(
                         eventBus, defaultConfirmPopupProvider) {
                     @Override
                     public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(UserPermissionListModel source,

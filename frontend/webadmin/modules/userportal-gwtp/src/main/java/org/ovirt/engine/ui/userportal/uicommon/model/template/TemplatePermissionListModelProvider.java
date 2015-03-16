@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.userportal.uicommon.model.template;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
@@ -19,7 +19,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 public class TemplatePermissionListModelProvider
-        extends UserPortalSearchableDetailModelProvider<Permissions, UserPortalTemplateListModel,
+        extends UserPortalSearchableDetailModelProvider<Permission, UserPortalTemplateListModel,
         UserPortalPermissionListModel<VmTemplate>> {
 
     private final Provider<PermissionsPopupPresenterWidget> permissionPopupProvider;

@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabTableWidgetView;
@@ -12,11 +12,11 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public abstract class AbstractSubTabPermissionsView<I, M extends ListWithDetailsModel> extends AbstractSubTabTableWidgetView<I, Permissions, M, PermissionListModel<I>> {
+public abstract class AbstractSubTabPermissionsView<I, M extends ListWithDetailsModel> extends AbstractSubTabTableWidgetView<I, Permission, M, PermissionListModel<I>> {
 
     @Inject
     public AbstractSubTabPermissionsView(
-            SearchableDetailModelProvider<Permissions, M, PermissionListModel<I>> modelProvider,
+            SearchableDetailModelProvider<Permission, M, PermissionListModel<I>> modelProvider,
             EventBus eventBus, ClientStorage clientStorage, ApplicationConstants constants) {
         super(new PermissionWithInheritedPermissionListModelTable<>(
                 modelProvider, eventBus, clientStorage));

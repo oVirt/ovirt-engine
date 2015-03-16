@@ -2,20 +2,20 @@ package org.ovirt.engine.ui.common.widget.table.column;
 
 import java.util.Comparator;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 
 import com.google.gwt.resources.client.ImageResource;
 
 /**
  * Image column that corresponds to XAML {@code PermissionTypeDataTemplate}.
  */
-public class PermissionTypeColumn extends AbstractImageResourceColumn<Permissions> {
+public class PermissionTypeColumn extends AbstractImageResourceColumn<Permission> {
 
     public PermissionTypeColumn() {
-        makeSortable(new Comparator<Permissions>() {
+        makeSortable(new Comparator<Permission>() {
 
             @Override
-            public int compare(Permissions o1, Permissions o2) {
+            public int compare(Permission o1, Permission o2) {
                 if (getValue(o1).equals(getValue(o2))) {
                     return 0;
                 } else {
@@ -26,7 +26,7 @@ public class PermissionTypeColumn extends AbstractImageResourceColumn<Permission
     }
 
     @Override
-    public ImageResource getValue(Permissions user) {
+    public ImageResource getValue(Permission user) {
         switch (user.getRoleType()) {
         case ADMIN:
             return getCommonResources().adminImage();

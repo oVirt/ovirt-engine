@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.userportal.section.main.view.tab.extended.template;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -16,7 +16,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabExtendedTemplatePermissionsView extends AbstractSubTabTableWidgetView<VmTemplate, Permissions,
+public class SubTabExtendedTemplatePermissionsView extends AbstractSubTabTableWidgetView<VmTemplate, Permission,
     UserPortalTemplateListModel, UserPortalPermissionListModel<VmTemplate>>
         implements SubTabExtendedTemplatePermissionsPresenter.ViewDef {
 

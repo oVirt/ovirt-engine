@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.PermissionDAO;
@@ -17,7 +17,7 @@ public class GetPermissionsForObjectQuery<P extends GetPermissionsForObjectParam
     protected void executeQueryCommand() {
         Guid objectId = getParameters().getObjectId();
         PermissionDAO dao = getDbFacade().getPermissionDao();
-        List<Permissions> perms;
+        List<Permission> perms;
         if (getParameters().getDirectOnly()) {
             perms = dao.getAllForEntity(objectId, getEngineSessionSeqId(), getParameters().isFiltered(), getParameters().getAllUsersWithPermission());
         } else {

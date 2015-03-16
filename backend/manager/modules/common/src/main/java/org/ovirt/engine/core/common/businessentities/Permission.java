@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
-public class Permissions extends IVdcQueryable implements BusinessEntity<Guid> {
+public class Permission extends IVdcQueryable implements BusinessEntity<Guid> {
     private static final long serialVersionUID = 7249605272394212576L;
 
     private Guid adElementId;
@@ -24,7 +24,7 @@ public class Permissions extends IVdcQueryable implements BusinessEntity<Guid> {
      * WARNING: When this constructor is invoked inside GWT compiled code, please set {@code id} to
      * {@code Guid.Empty} before sending this instance to backend, otherwise nasty NPE will be raised.
      */
-    public Permissions() {
+    public Permission() {
         this (Guid.Empty, Guid.Empty, null, null);
     }
 
@@ -32,7 +32,7 @@ public class Permissions extends IVdcQueryable implements BusinessEntity<Guid> {
      * WARNING: When this constructor is invoked inside GWT compiled code, please set {@code id} to
      * {@code Guid.Empty} before sending this instance to backend, otherwise nasty NPE will be raised.
      */
-    public Permissions(Guid adElementId, Guid roleId, Guid objectId, VdcObjectType objectType) {
+    public Permission(Guid adElementId, Guid roleId, Guid objectId, VdcObjectType objectType) {
         this.id = Guid.newGuid();
         this.adElementId = adElementId;
         this.roleId = roleId;
@@ -159,10 +159,10 @@ public class Permissions extends IVdcQueryable implements BusinessEntity<Guid> {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof Permissions)) {
+        if (!(obj instanceof Permission)) {
             return false;
         }
-        Permissions other = (Permissions) obj;
+        Permission other = (Permission) obj;
         return (ObjectUtils.objectsEqual(id, other.id)
                 && ObjectUtils.objectsEqual(adElementId, other.adElementId)
                 && ObjectUtils.objectsEqual(objectId, other.objectId)

@@ -24,7 +24,7 @@ import org.ovirt.engine.core.compat.Guid;
 public abstract class AbstractBackendAssignedPermissionsResourceTest
         extends AbstractBackendCollectionResourceTest<
                         Permission,
-                        org.ovirt.engine.core.common.businessentities.Permissions,
+                        org.ovirt.engine.core.common.businessentities.Permission,
                         BackendAssignedPermissionsResource> {
 
     private Guid targetId;
@@ -206,7 +206,7 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
     protected void setUpQueryExpectations(String query, Object failure) throws Exception {
         assertEquals("", query);
 
-        List<org.ovirt.engine.core.common.businessentities.Permissions> perms = setUpPermissions();
+        List<org.ovirt.engine.core.common.businessentities.Permission> perms = setUpPermissions();
         setUpEntityQueryExpectations(queryType,
                                      queryParams.getClass(),
                                      new String[] { queryParameterName },
@@ -233,7 +233,7 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
     protected void setUpGetEntityExpectations(
             int times,
             Guid entityId,
-            org.ovirt.engine.core.common.businessentities.Permissions permission) throws Exception {
+            org.ovirt.engine.core.common.businessentities.Permission permission) throws Exception {
         while (times-->0) {
             setUpGetEntityExpectations(VdcQueryType.GetPermissionById,
                                        IdQueryParameters.class,
@@ -244,9 +244,9 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
     }
 
     @Override
-    protected org.ovirt.engine.core.common.businessentities.Permissions getEntity(int index) {
-        org.ovirt.engine.core.common.businessentities.Permissions permission =
-                new org.ovirt.engine.core.common.businessentities.Permissions();
+    protected org.ovirt.engine.core.common.businessentities.Permission getEntity(int index) {
+        org.ovirt.engine.core.common.businessentities.Permission permission =
+                new org.ovirt.engine.core.common.businessentities.Permission();
         permission.setId(GUIDS[index]);
         permission.setAdElementId(GUIDS[1]);
         permission.setObjectId(GUIDS[2]);
@@ -255,19 +255,19 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
         return permission;
     }
 
-    protected List<org.ovirt.engine.core.common.businessentities.Permissions> setUpPermissions() {
-        List<org.ovirt.engine.core.common.businessentities.Permissions> perms = new ArrayList<>();
+    protected List<org.ovirt.engine.core.common.businessentities.Permission> setUpPermissions() {
+        List<org.ovirt.engine.core.common.businessentities.Permission> perms = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
             perms.add(getEntity(i));
         }
         return perms;
     }
 
-    protected List<org.ovirt.engine.core.common.businessentities.Permissions> setUpPermissionsWithAdElementId(
+    protected List<org.ovirt.engine.core.common.businessentities.Permission> setUpPermissionsWithAdElementId(
             Guid adElementId) {
-        List<org.ovirt.engine.core.common.businessentities.Permissions> perms = new ArrayList<>();
+        List<org.ovirt.engine.core.common.businessentities.Permission> perms = new ArrayList<>();
         for (int i = 0; i < NAMES.length; i++) {
-            org.ovirt.engine.core.common.businessentities.Permissions entity = getEntity(i);
+            org.ovirt.engine.core.common.businessentities.Permission entity = getEntity(i);
             entity.setAdElementId(adElementId);
             perms.add(entity);
         }

@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -477,10 +477,10 @@ public class StorageModule extends AbstractGinModule {
            .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, StorageListModel, StorageVmListModel>>(){})
            .in(Singleton.class);
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, StorageListModel, PermissionListModel<StorageDomain>>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, StorageListModel, PermissionListModel<StorageDomain>>>(){})
            .to(new TypeLiteral<PermissionModelProvider<StorageDomain, StorageListModel>>(){}).in(Singleton.class);
         // Permission Disk Profiles
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, DiskProfileListModel, PermissionListModel<DiskProfile>>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, DiskProfileListModel, PermissionListModel<DiskProfile>>>(){})
            .to(new TypeLiteral<PermissionModelProvider<DiskProfile, DiskProfileListModel>>(){}).in(Singleton.class);
     }
 

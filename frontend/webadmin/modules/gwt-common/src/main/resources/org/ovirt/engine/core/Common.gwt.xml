@@ -88,7 +88,7 @@
 		<include name="common/businessentities/NfsVersion.java" />
 		<include name="common/businessentities/OriginType.java" />
 		<include name="common/businessentities/VmEntityType.java" />
-		<include name="common/businessentities/Permissions.java" />
+		<include name="common/businessentities/Permission.java" />
 		<include name="common/businessentities/RecoveryMode.java" />
 		<include name="common/businessentities/Role.java" />
 		<include name="common/businessentities/SELinuxMode.java" />

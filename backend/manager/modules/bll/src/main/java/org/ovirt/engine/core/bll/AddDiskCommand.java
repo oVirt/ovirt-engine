@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
@@ -473,8 +473,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     private void addDiskPermissions(Disk disk) {
         if (getCurrentUser() != null) {
-            Permissions perms =
-                    new Permissions(getCurrentUser().getId(),
+            Permission perms =
+                    new Permission(getCurrentUser().getId(),
                             PredefinedRoles.DISK_OPERATOR.getId(),
                             disk.getId(),
                             VdcObjectType.Disk);

@@ -16,7 +16,7 @@ import javax.sql.DataSource;
 import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.Bookmark;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
@@ -154,7 +154,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
         assertFalse(nonAdminUser.isAdmin());
 
-        Permissions perms = new Permissions();
+        Permission perms = new Permission();
         perms.setRoleType(RoleType.ADMIN);
 
         // An available role from the fixtures

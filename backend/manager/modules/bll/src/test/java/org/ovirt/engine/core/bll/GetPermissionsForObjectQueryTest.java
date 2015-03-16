@@ -10,7 +10,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.PermissionDAO;
@@ -21,7 +21,7 @@ public class GetPermissionsForObjectQueryTest extends AbstractUserQueryTest<GetP
     private Guid objectID;
 
     /** The mocked permissions the DAO should return */
-    private List<Permissions> mockedPermissions;
+    private List<Permission> mockedPermissions;
 
     @Before
     @Override
@@ -30,7 +30,7 @@ public class GetPermissionsForObjectQueryTest extends AbstractUserQueryTest<GetP
 
         objectID = Guid.newGuid();
 
-        Permissions permission = new Permissions();
+        Permission permission = new Permission();
         permission.setObjectId(objectID);
         mockedPermissions = Collections.singletonList(permission);
     }
@@ -67,7 +67,7 @@ public class GetPermissionsForObjectQueryTest extends AbstractUserQueryTest<GetP
         getQuery().executeQueryCommand();
 
         @SuppressWarnings("unchecked")
-        List<Permissions> result = (List<Permissions>) getQuery().getQueryReturnValue().getReturnValue();
+        List<Permission> result = (List<Permission>) getQuery().getQueryReturnValue().getReturnValue();
 
         assertEquals("Wrong permissions returned from the query", mockedPermissions, result);
     }

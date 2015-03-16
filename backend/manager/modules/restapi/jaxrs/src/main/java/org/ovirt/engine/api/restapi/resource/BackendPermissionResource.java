@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendPermissionResource
-        extends AbstractBackendSubResource<Permission, org.ovirt.engine.core.common.businessentities.Permissions>
+        extends AbstractBackendSubResource<Permission, org.ovirt.engine.core.common.businessentities.Permission>
         implements PermissionResource {
 
     protected BackendAssignedPermissionsResource parent;
@@ -21,7 +21,7 @@ public class BackendPermissionResource
     protected BackendPermissionResource(String id,
                                         BackendAssignedPermissionsResource parent,
                                         Class<? extends BaseResource> suggestedParentType) {
-        super(id, Permission.class, org.ovirt.engine.core.common.businessentities.Permissions.class);
+        super(id, Permission.class, org.ovirt.engine.core.common.businessentities.Permission.class);
         this.parent = parent;
         this.suggestedParentType = suggestedParentType;
     }
@@ -39,7 +39,7 @@ public class BackendPermissionResource
     }
 
     @Override
-    protected Permission map(org.ovirt.engine.core.common.businessentities.Permissions entity, Permission template) {
+    protected Permission map(org.ovirt.engine.core.common.businessentities.Permission entity, Permission template) {
         Map<Guid, DbUser> users = parent.getUsers();
         return parent.map(entity, users.containsKey(entity.getAdElementId()) ? users.get(entity.getAdElementId()) : null);
     }
@@ -50,7 +50,7 @@ public class BackendPermissionResource
     }
 
     @Override
-    protected Permission doPopulate(Permission model, org.ovirt.engine.core.common.businessentities.Permissions entity) {
+    protected Permission doPopulate(Permission model, org.ovirt.engine.core.common.businessentities.Permission entity) {
         return model;
     }
 }

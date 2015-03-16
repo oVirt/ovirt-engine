@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -314,10 +314,10 @@ public class ClusterModule extends AbstractGinModule {
             .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, ClusterListModel<Void>, ClusterVmListModel>>(){})
             .in(Singleton.class);
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, ClusterListModel<Void>, PermissionListModel<VDSGroup>>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, ClusterListModel<Void>, PermissionListModel<VDSGroup>>>(){})
             .to(new TypeLiteral<PermissionModelProvider<VDSGroup, ClusterListModel<Void>>>(){}).in(Singleton.class);
         // Cpu Profile permission list model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, CpuProfileListModel, PermissionListModel<CpuProfile>>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, CpuProfileListModel, PermissionListModel<CpuProfile>>>(){})
             .to(new TypeLiteral<PermissionModelProvider<CpuProfile, CpuProfileListModel>>(){}).in(Singleton.class);
 
     }

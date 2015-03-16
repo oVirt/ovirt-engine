@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.permissions;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
@@ -13,7 +13,7 @@ import com.google.gwt.event.shared.EventBus;
 public class PermissionWithInheritedPermissionListModelTable<P extends PermissionListModel<?>> extends PermissionListModelTable<P> {
 
     public PermissionWithInheritedPermissionListModelTable(
-            SearchableTableModelProvider<Permissions, P> modelProvider,
+            SearchableTableModelProvider<Permission, P> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage);
     }
@@ -22,9 +22,9 @@ public class PermissionWithInheritedPermissionListModelTable<P extends Permissio
     public void initTable(CommonApplicationConstants constants) {
         super.initTable(constants);
 
-        AbstractTextColumn<Permissions> permissionColumn = new AbstractObjectNameColumn<Permissions>() {
+        AbstractTextColumn<Permission> permissionColumn = new AbstractObjectNameColumn<Permission>() {
             @Override
-            protected Object[] getRawValue(Permissions object) {
+            protected Object[] getRawValue(Permission object) {
                 return new Object[] { object.getObjectType(), object.getObjectName(), getModel().getEntity(),
                         object.getObjectId()
                 };

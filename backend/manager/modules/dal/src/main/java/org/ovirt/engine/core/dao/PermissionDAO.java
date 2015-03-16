@@ -4,15 +4,15 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>PermissionsDAO</code> defines a type for performing CRUD operations on instances of {@link org.ovirt.engine.core.common.businessentities.Permissions}.
+ * <code>PermissionsDAO</code> defines a type for performing CRUD operations on instances of {@link org.ovirt.engine.core.common.businessentities.Permission}.
  *
  *
  */
-public interface PermissionDAO extends GenericDao<Permissions, Guid> {
+public interface PermissionDAO extends GenericDao<Permission, Guid> {
     /**
      * Retrieves the permission for the specified role, element and object.
      *
@@ -24,7 +24,7 @@ public interface PermissionDAO extends GenericDao<Permissions, Guid> {
      *            the object
      * @return the permission
      */
-    Permissions getForRoleAndAdElementAndObject(Guid roleid, Guid elementid,
+    Permission getForRoleAndAdElementAndObject(Guid roleid, Guid elementid,
             Guid objectid);
 
     /**
@@ -39,7 +39,7 @@ public interface PermissionDAO extends GenericDao<Permissions, Guid> {
      *            the object
      * @return the permission
      */
-    Permissions getForRoleAndAdElementAndObjectWithGroupCheck(Guid roleid, Guid elementid,
+    Permission getForRoleAndAdElementAndObjectWithGroupCheck(Guid roleid, Guid elementid,
             Guid objectid);
 
     /**
@@ -49,7 +49,7 @@ public interface PermissionDAO extends GenericDao<Permissions, Guid> {
      *            The quota Id to consume from.
      * @return All Permissions to consume from quota Id
      */
-    List<Permissions> getConsumedPermissionsForQuotaId(Guid quotaId);
+    List<Permission> getConsumedPermissionsForQuotaId(Guid quotaId);
 
     /**
      * Gets all permissions for the specified AD element, including permissions of groups that it is in.
@@ -57,7 +57,7 @@ public interface PermissionDAO extends GenericDao<Permissions, Guid> {
      *            the AD element
      * @return the list of permissions
      */
-    List<Permissions> getAllForAdElement(Guid id);
+    List<Permission> getAllForAdElement(Guid id);
 
     /**
      * Gets all permissions for the specified AD element, including permissions of groups that it is in,
@@ -71,7 +71,7 @@ public interface PermissionDAO extends GenericDao<Permissions, Guid> {
      *            Whether the results should be filtered according to the user's permissions
      * @return the list of permissions
      */
-    List<Permissions> getAllForAdElement(Guid id, long engineSessionSeqId, boolean isFiltered);
+    List<Permission> getAllForAdElement(Guid id, long engineSessionSeqId, boolean isFiltered);
 
     /**
      * Gets all permissions for the specified AD element only, excluding permissions of groups that it is in.
@@ -79,7 +79,7 @@ public interface PermissionDAO extends GenericDao<Permissions, Guid> {
      *            the AD element
      * @return the list of permissions
      */
-    List<Permissions> getAllDirectPermissionsForAdElement(Guid id);
+    List<Permission> getAllDirectPermissionsForAdElement(Guid id);
 
     /**
      * Gets all permissions for the specified role.
@@ -88,7 +88,7 @@ public interface PermissionDAO extends GenericDao<Permissions, Guid> {
      *            the role
      * @return the list of permissions
      */
-    List<Permissions> getAllForRole(Guid id);
+    List<Permission> getAllForRole(Guid id);
 
     /**
      * Retrieves all permissions for the specified role and element.
@@ -99,7 +99,7 @@ public interface PermissionDAO extends GenericDao<Permissions, Guid> {
      *            the element
      * @return the list of permissions
      */
-    List<Permissions> getAllForRoleAndAdElement(Guid roleid, Guid elementid);
+    List<Permission> getAllForRoleAndAdElement(Guid roleid, Guid elementid);
 
     /**
      * Retrieves all permissions for the specified role and object.
@@ -110,7 +110,7 @@ public interface PermissionDAO extends GenericDao<Permissions, Guid> {
      *            the object
      * @return the list of permissions
      */
-    List<Permissions> getAllForRoleAndObject(Guid roleid, Guid objectid);
+    List<Permission> getAllForRoleAndObject(Guid roleid, Guid objectid);
 
     /**
      * Retrieves all permissions for the specified entity.
@@ -119,7 +119,7 @@ public interface PermissionDAO extends GenericDao<Permissions, Guid> {
      *            the entity
      * @return the list of permissions
      */
-    List<Permissions> getAllForEntity(Guid id);
+    List<Permission> getAllForEntity(Guid id);
 
     /**
      * Retrieves all permissions for the specified entity,
@@ -133,18 +133,18 @@ public interface PermissionDAO extends GenericDao<Permissions, Guid> {
      *            Whether the results should be filtered according to the user's permissions
      * @return the list of permissions
      */
-    List<Permissions> getAllForEntity(Guid id, long sessionSeqId, boolean isFiltered);
+    List<Permission> getAllForEntity(Guid id, long sessionSeqId, boolean isFiltered);
 
 
-    public List<Permissions> getAllForEntity(Guid id, long engineSessionSeqId, boolean isFiltered, boolean allUsersWithPermission);
+    public List<Permission> getAllForEntity(Guid id, long engineSessionSeqId, boolean isFiltered, boolean allUsersWithPermission);
 
-    List<Permissions> getAllForEntity(Guid id, long engineSessionSeqId, boolean isFiltered, boolean allUsersWithPermission, int appMode);
+    List<Permission> getAllForEntity(Guid id, long engineSessionSeqId, boolean isFiltered, boolean allUsersWithPermission, int appMode);
 
-    List<Permissions> getTreeForEntity(Guid id, VdcObjectType type);
+    List<Permission> getTreeForEntity(Guid id, VdcObjectType type);
 
-    List<Permissions> getTreeForEntity(Guid id, VdcObjectType type, long engineSessionSeqId, boolean isFiltered);
+    List<Permission> getTreeForEntity(Guid id, VdcObjectType type, long engineSessionSeqId, boolean isFiltered);
 
-    List<Permissions> getTreeForEntity(Guid id, VdcObjectType type, long engineSessionSeqId, boolean isFiltered, int appMode);
+    List<Permission> getTreeForEntity(Guid id, VdcObjectType type, long engineSessionSeqId, boolean isFiltered, int appMode);
 
     Guid getEntityPermissions(Guid adElementId, ActionGroup actionGroup, Guid objectId, VdcObjectType vdcObjectType);
 

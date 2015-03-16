@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.quota;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -43,9 +43,9 @@ public class QuotaPermissionListModel extends PermissionListModel<Quota> {
             @Override
             public void onSuccess(Object model, Object ReturnValue)
             {
-                ArrayList<Permissions> list = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                ArrayList<Permissions> newList = new ArrayList<Permissions>();
-                for (Permissions permission : list) {
+                ArrayList<Permission> list = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                ArrayList<Permission> newList = new ArrayList<Permission>();
+                for (Permission permission : list) {
                     if (!permission.getRoleId().equals(ApplicationGuids.quotaConsumer.asGuid())) {
                         newList.add(permission);
                     }

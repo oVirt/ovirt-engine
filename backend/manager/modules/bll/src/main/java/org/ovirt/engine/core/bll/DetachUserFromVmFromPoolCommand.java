@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.action.VmPoolSimpleUserParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
@@ -39,7 +39,7 @@ public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameter
         VM vm = DbFacade.getInstance().getVmDao().get(getParameters().getVmId());
 
         if (vm != null && getVmPoolId().equals(vm.getVmPoolId())) {
-            Permissions perm = DbFacade
+            Permission perm = DbFacade
                     .getInstance()
                     .getPermissionDao()
                     .getForRoleAndAdElementAndObject(

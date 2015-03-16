@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.profile;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -23,7 +23,7 @@ public class SubTabVnicProfilePermissionView extends AbstractSubTabPermissionsVi
     }
 
     @Inject
-    public SubTabVnicProfilePermissionView(SearchableDetailModelProvider<Permissions, VnicProfileListModel,
+    public SubTabVnicProfilePermissionView(SearchableDetailModelProvider<Permission, VnicProfileListModel,
             PermissionListModel<VnicProfileView>> modelProvider, EventBus eventBus,
             ClientStorage clientStorage, ApplicationConstants constants) {
         super(modelProvider, eventBus, clientStorage, constants);

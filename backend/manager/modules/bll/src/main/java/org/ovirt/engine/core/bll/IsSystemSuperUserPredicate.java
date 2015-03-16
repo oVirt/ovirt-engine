@@ -6,7 +6,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -26,7 +26,7 @@ final class IsSystemSuperUserPredicate implements Predicate<Guid> {
 
     @Override
     public boolean eval(Guid userId) {
-        Permissions superUserPermission = getPermissionDao()
+        Permission superUserPermission = getPermissionDao()
                         .getForRoleAndAdElementAndObjectWithGroupCheck(
                                 PredefinedRoles.SUPER_USER.getId(),
                                 userId,

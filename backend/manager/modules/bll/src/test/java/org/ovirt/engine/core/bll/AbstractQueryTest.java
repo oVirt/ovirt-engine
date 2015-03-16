@@ -19,7 +19,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.common.businessentities.EngineSession;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -76,7 +76,7 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
         when(dbFacadeMock.getEngineSessionDao()).thenReturn(engineSessionDAOMock);
 
         PermissionDAO permissionsDAOMock = mock(PermissionDAO.class);
-        when(permissionsDAOMock.getAllForEntity(any(Guid.class), any(Long.class), any(Boolean.class))).thenReturn(new ArrayList<Permissions>());
+        when(permissionsDAOMock.getAllForEntity(any(Guid.class), any(Long.class), any(Boolean.class))).thenReturn(new ArrayList<Permission>());
         when(dbFacadeMock.getPermissionDao()).thenReturn(permissionsDAOMock);
 
         SessionDataContainer.getInstance().setDbFacade(dbFacadeMock);

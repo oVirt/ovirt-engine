@@ -9,7 +9,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.DiskProfileParameters;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dao.profiles.ProfilesDao;
@@ -56,7 +56,7 @@ public class AddDiskProfileCommand extends AddProfileCommandBase<DiskProfilePara
     }
 
     private void addPermission() {
-        MultiLevelAdministrationHandler.addPermission(new Permissions(MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID,
+        MultiLevelAdministrationHandler.addPermission(new Permission(MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID,
                 PredefinedRoles.DISK_PROFILE_USER.getId(),
                 getProfileId(),
                 VdcObjectType.DiskProfile));

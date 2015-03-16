@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -342,7 +342,7 @@ public class NetworkModule extends AbstractGinModule {
         bind(new TypeLiteral<PermissionListModel<NetworkView>>(){}).in(Singleton.class);
 
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, NetworkListModel, PermissionListModel<NetworkView>>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, NetworkListModel, PermissionListModel<NetworkView>>>(){})
            .to(new TypeLiteral<PermissionModelProvider<NetworkView, NetworkListModel>>(){}).in(Singleton.class);
 
     }

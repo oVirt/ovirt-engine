@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
@@ -37,7 +37,7 @@ public class SubTabNetworkPermissionPresenter extends AbstractSubTabPresenter<Ne
 
     @TabInfo(container = NetworkSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<Permissions, NetworkListModel,
+            SearchableDetailModelProvider<Permission, NetworkListModel,
             PermissionListModel<NetworkView>> modelProvider) {
         return new ModelBoundTabData(applicationConstants.networkPermissionSubTabLabel(), 7, modelProvider);
     }
@@ -45,7 +45,7 @@ public class SubTabNetworkPermissionPresenter extends AbstractSubTabPresenter<Ne
     @Inject
     public SubTabNetworkPermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<Permissions, NetworkListModel,
+            SearchableDetailModelProvider<Permission, NetworkListModel,
             PermissionListModel<NetworkView>> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 NetworkSubTabPanelPresenter.TYPE_SetTabContent);

@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -186,7 +186,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
             if (!Guid.Empty.equals(vmToAttach)) {
                 getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, vmToAttach));
                 setVmId(vmToAttach);
-                Permissions perm = new Permissions(getAdUserId(), PredefinedRoles.ENGINE_USER.getId(), vmToAttach,
+                Permission perm = new Permission(getAdUserId(), PredefinedRoles.ENGINE_USER.getId(), vmToAttach,
                         VdcObjectType.VM);
                 PermissionsOperationsParameters permParams = new PermissionsOperationsParameters(perm);
                 permParams.setShouldBeLogged(false);
@@ -306,7 +306,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
     protected void detachUserFromVmFromPool() {
         // Detach user from vm from pool:
         if (!Guid.Empty.equals(getAdUserId())) {
-            Permissions perm = DbFacade
+            Permission perm = DbFacade
                     .getInstance()
                     .getPermissionDao()
                     .getForRoleAndAdElementAndObject(

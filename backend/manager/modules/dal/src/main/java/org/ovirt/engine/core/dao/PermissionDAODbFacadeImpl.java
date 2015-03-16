@@ -7,7 +7,7 @@ import java.util.List;
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -21,7 +21,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements PermissionDAO {
     @Override
-    public Permissions get(Guid id) {
+    public Permission get(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("id", id);
 
@@ -29,7 +29,7 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
     }
 
     @Override
-    public List<Permissions> getConsumedPermissionsForQuotaId(Guid quotaId) {
+    public List<Permission> getConsumedPermissionsForQuotaId(Guid quotaId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("quota_id", quotaId);
 
@@ -39,7 +39,7 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
     }
 
     @Override
-    public Permissions getForRoleAndAdElementAndObject(Guid roleid,
+    public Permission getForRoleAndAdElementAndObject(Guid roleid,
             Guid elementid, Guid objectid) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("role_id", roleid)
@@ -52,7 +52,7 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
     }
 
     @Override
-    public Permissions getForRoleAndAdElementAndObjectWithGroupCheck(Guid roleid,
+    public Permission getForRoleAndAdElementAndObjectWithGroupCheck(Guid roleid,
             Guid elementid, Guid objectid) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("role_id", roleid)
@@ -65,12 +65,12 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
     }
 
     @Override
-    public List<Permissions> getAllForAdElement(Guid id) {
+    public List<Permission> getAllForAdElement(Guid id) {
         return getAllForAdElement(id, -1, false);
     }
 
     @Override
-    public List<Permissions> getAllForAdElement(Guid id, long engineSessionSeqId, boolean isFiltered) {
+    public List<Permission> getAllForAdElement(Guid id, long engineSessionSeqId, boolean isFiltered) {
         int appMode = Config.<Integer> getValue(ConfigValues.ApplicationMode);
 
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -85,7 +85,7 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
     }
 
     @Override
-    public List<Permissions> getAllDirectPermissionsForAdElement(Guid id) {
+    public List<Permission> getAllDirectPermissionsForAdElement(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("ad_element_id", id);
 
@@ -95,7 +95,7 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
     }
 
     @Override
-    public List<Permissions> getAllForRole(Guid id) {
+    public List<Permission> getAllForRole(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("role_id", id);
 
@@ -105,7 +105,7 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
     }
 
     @Override
-    public List<Permissions> getAllForRoleAndAdElement(Guid roleid,
+    public List<Permission> getAllForRoleAndAdElement(Guid roleid,
             Guid elementid) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("role_id", roleid).addValue("ad_element_id",
@@ -117,7 +117,7 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
     }
 
     @Override
-    public List<Permissions> getAllForRoleAndObject(Guid roleid, Guid objectid) {
+    public List<Permission> getAllForRoleAndObject(Guid roleid, Guid objectid) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("role_id", roleid).addValue("object_id", objectid);
 
@@ -127,23 +127,23 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
     }
 
     @Override
-    public List<Permissions> getAllForEntity(Guid id) {
+    public List<Permission> getAllForEntity(Guid id) {
         return getAllForEntity(id, -1, false);
     }
 
     @Override
-    public List<Permissions> getAllForEntity(Guid id, long engineSessionId, boolean isFiltered) {
+    public List<Permission> getAllForEntity(Guid id, long engineSessionId, boolean isFiltered) {
         return getAllForEntity(id, engineSessionId, isFiltered, false);
     }
 
     @Override
-    public List<Permissions> getAllForEntity(Guid id, long engineSessionId, boolean isFiltered, boolean allUsersWithPermission) {
+    public List<Permission> getAllForEntity(Guid id, long engineSessionId, boolean isFiltered, boolean allUsersWithPermission) {
         int appMode = Config.<Integer> getValue(ConfigValues.ApplicationMode);
         return getAllForEntity(id, engineSessionId, isFiltered, allUsersWithPermission, appMode);
     }
 
     @Override
-    public List<Permissions> getAllForEntity(Guid id, long engineSessionSeqId, boolean isFiltered, boolean allUsersWithPermission, int appMode) {
+    public List<Permission> getAllForEntity(Guid id, long engineSessionSeqId, boolean isFiltered, boolean allUsersWithPermission, int appMode) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("id", id)
                 .addValue("engine_session_seq_id", engineSessionSeqId)
@@ -159,18 +159,18 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
     }
 
     @Override
-    public List<Permissions> getTreeForEntity(Guid id, VdcObjectType type) {
+    public List<Permission> getTreeForEntity(Guid id, VdcObjectType type) {
         return getTreeForEntity(id, type, -1, false);
     }
 
     @Override
-    public List<Permissions> getTreeForEntity(Guid id, VdcObjectType type, long engineSessionSeqId, boolean isFiltered) {
+    public List<Permission> getTreeForEntity(Guid id, VdcObjectType type, long engineSessionSeqId, boolean isFiltered) {
         int appMode = Config.<Integer> getValue(ConfigValues.ApplicationMode);
         return getTreeForEntity(id, type, engineSessionSeqId, isFiltered, appMode);
     }
 
     @Override
-    public List<Permissions> getTreeForEntity(Guid id, VdcObjectType type, long engineSessionSeqId, boolean isFiltered, int appMode) {
+    public List<Permission> getTreeForEntity(Guid id, VdcObjectType type, long engineSessionSeqId, boolean isFiltered, int appMode) {
         MapSqlParameterSource parameterSource =
                 getCustomMapSqlParameterSource()
                         .addValue("id", id)
@@ -216,7 +216,7 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
     }
 
     @Override
-    public void save(Permissions permission) {
+    public void save(Permission permission) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("ad_element_id", permission.getAdElementId())
                 .addValue("id", permission.getId())
@@ -244,21 +244,21 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
     }
 
     @Override
-    public List<Permissions> getAll() {
+    public List<Permission> getAll() {
         throw new NotImplementedException();
     }
 
     @Override
-    public void update(Permissions entity) {
+    public void update(Permission entity) {
         throw new NotImplementedException();
     }
 
-    private static class PermissionRowMapper implements RowMapper<Permissions> {
+    private static class PermissionRowMapper implements RowMapper<Permission> {
         public static final PermissionRowMapper instance = new PermissionRowMapper();
 
         @Override
-        public Permissions mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Permissions entity = new Permissions();
+        public Permission mapRow(ResultSet rs, int rowNum) throws SQLException {
+            Permission entity = new Permission();
             entity.setAdElementId(getGuidDefaultEmpty(rs, "ad_element_id"));
             entity.setId(getGuidDefaultEmpty(rs, "id"));
             entity.setRoleId(getGuidDefaultEmpty(rs, "role_id"));

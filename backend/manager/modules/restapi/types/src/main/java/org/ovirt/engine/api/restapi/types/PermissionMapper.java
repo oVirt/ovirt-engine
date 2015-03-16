@@ -17,12 +17,12 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class PermissionMapper {
 
-    @Mapping(from = Permission.class, to = org.ovirt.engine.core.common.businessentities.Permissions.class)
-    public static org.ovirt.engine.core.common.businessentities.Permissions map(
+    @Mapping(from = Permission.class, to = org.ovirt.engine.core.common.businessentities.Permission.class)
+    public static org.ovirt.engine.core.common.businessentities.Permission map(
             Permission model,
-            org.ovirt.engine.core.common.businessentities.Permissions template) {
-        org.ovirt.engine.core.common.businessentities.Permissions entity =
-                template != null ? template : new org.ovirt.engine.core.common.businessentities.Permissions();
+            org.ovirt.engine.core.common.businessentities.Permission template) {
+        org.ovirt.engine.core.common.businessentities.Permission entity =
+                template != null ? template : new org.ovirt.engine.core.common.businessentities.Permission();
         if (model.isSetId()) {
             entity.setId(GuidUtils.asGuid(model.getId()));
         }
@@ -34,16 +34,16 @@ public class PermissionMapper {
         return entity;
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.Permissions.class, to = Role.class)
-    public static Role map(org.ovirt.engine.core.common.businessentities.Permissions entity, Role template) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.Permission.class, to = Role.class)
+    public static Role map(org.ovirt.engine.core.common.businessentities.Permission entity, Role template) {
         Role model = template != null ? template : new Role();
         model.setName(entity.getRoleName());
         model.setId(entity.getRoleId().toString());
         return model;
     }
 
-    @Mapping(from = org.ovirt.engine.core.common.businessentities.Permissions.class, to = Permission.class)
-    public static Permission map(org.ovirt.engine.core.common.businessentities.Permissions entity, Permission template) {
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.Permission.class, to = Permission.class)
+    public static Permission map(org.ovirt.engine.core.common.businessentities.Permission entity, Permission template) {
         Permission model = template != null ? template : new Permission();
         model.setId(entity.getId().toString());
         if (entity.getRoleId() != null) {
@@ -101,7 +101,7 @@ public class PermissionMapper {
     /**
      * @pre completeness of "{entityType}.id" already validated
      */
-    private static void setObjectId(Permission model, org.ovirt.engine.core.common.businessentities.Permissions entity) {
+    private static void setObjectId(Permission model, org.ovirt.engine.core.common.businessentities.Permission entity) {
         String id = entity.getObjectId().toString();
         switch (entity.getObjectType()) {
         case System:

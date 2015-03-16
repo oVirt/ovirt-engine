@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.MacPool;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -45,7 +45,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class PermissionListModel<E> extends SearchableListModel<E, Permissions> {
+public class PermissionListModel<E> extends SearchableListModel<E, Permission> {
 
     private UICommand privateAddCommand;
 
@@ -176,7 +176,7 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permissions> 
             for (Object perm : getSelectedItems())
             {
                 PermissionsOperationsParameters tempVar = new PermissionsOperationsParameters();
-                tempVar.setPermission((Permissions) perm);
+                tempVar.setPermission((Permission) perm);
                 list.add(tempVar);
             }
 
@@ -237,7 +237,7 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permissions> 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (DbUser user : items)
         {
-            Permissions perm = new Permissions(user.getId(), role.getId(), getEntityGuid(), getObjectType());
+            Permission perm = new Permission(user.getId(), role.getId(), getEntityGuid(), getObjectType());
             // set id to Guid.Empty as GWT cannot generate new random UUID, AddPermissionCommand will replace
             // Guid.Empty with correct Guid
             perm.setId(Guid.Empty);
@@ -318,7 +318,7 @@ public class PermissionListModel<E> extends SearchableListModel<E, Permissions> 
         Guid entityGuid = getEntityGuid();
         for (Object p : getSelectedItems())
         {
-            if (!entityGuid.equals(((Permissions) p).getObjectId()))
+            if (!entityGuid.equals(((Permission) p).getObjectId()))
             {
                 getRemoveCommand().setIsExecutionAllowed(false);
                 return;

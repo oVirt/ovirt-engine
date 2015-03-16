@@ -36,7 +36,7 @@ import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -1790,8 +1790,8 @@ public class AsyncDataProvider {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? (ArrayList<Permissions>) source
-                        : new ArrayList<Permissions>();
+                return source != null ? (ArrayList<Permission>) source
+                        : new ArrayList<Permission>();
             }
         };
         Frontend.getInstance().runQuery(VdcQueryType.GetPermissionsByAdElementId,

@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.PermissionDAO;
@@ -26,7 +26,7 @@ public class GetPermissionsByAdElementIdQueryTest extends AbstractUserQueryTest<
         when(getQueryParameters().getId()).thenReturn(adElementGuid);
 
         // Create expected result
-        Permissions expected = new Permissions();
+        Permission expected = new Permission();
         expected.setAdElementId(adElementGuid);
 
         // Mock the DAOs
@@ -40,7 +40,7 @@ public class GetPermissionsByAdElementIdQueryTest extends AbstractUserQueryTest<
 
         // Assert the query's results
         @SuppressWarnings("unchecked")
-        List<Permissions> actual = (List<Permissions>) getQuery().getQueryReturnValue().getReturnValue();
+        List<Permission> actual = (List<Permission>) getQuery().getQueryReturnValue().getReturnValue();
 
         assertEquals("Wrong number of returned permissions", 1, actual.size());
         assertEquals("Wrong returned permissions", expected, actual.get(0));

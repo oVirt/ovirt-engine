@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
@@ -36,7 +36,7 @@ public class SubTabPoolPermissionPresenter extends AbstractSubTabPresenter<VmPoo
 
     @TabInfo(container = PoolSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<Permissions, PoolListModel,
+            SearchableDetailModelProvider<Permission, PoolListModel,
             PermissionListModel<VmPool>> modelProvider) {
         return new ModelBoundTabData(applicationConstants.poolPermissionSubTabLabel(), 2, modelProvider);
     }
@@ -44,7 +44,7 @@ public class SubTabPoolPermissionPresenter extends AbstractSubTabPresenter<VmPoo
     @Inject
     public SubTabPoolPermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<Permissions, PoolListModel,
+            SearchableDetailModelProvider<Permission, PoolListModel,
             PermissionListModel<VmPool>> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 PoolSubTabPanelPresenter.TYPE_SetTabContent);

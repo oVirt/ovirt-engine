@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
@@ -37,7 +37,7 @@ public class SubTabStoragePermissionPresenter extends AbstractSubTabPresenter<St
 
     @TabInfo(container = StorageSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<Permissions, StorageListModel,
+            SearchableDetailModelProvider<Permission, StorageListModel,
             PermissionListModel<StorageDomain>> modelProvider) {
         return new ModelBoundTabData(applicationConstants.storagePermissionSubTabLabel(), 10, modelProvider);
     }
@@ -45,7 +45,7 @@ public class SubTabStoragePermissionPresenter extends AbstractSubTabPresenter<St
     @Inject
     public SubTabStoragePermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<Permissions, StorageListModel,
+            SearchableDetailModelProvider<Permission, StorageListModel,
             PermissionListModel<StorageDomain>> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 StorageSubTabPanelPresenter.TYPE_SetTabContent);

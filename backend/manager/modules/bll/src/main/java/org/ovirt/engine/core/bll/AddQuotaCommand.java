@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
@@ -115,17 +115,17 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
 
     private void copyQuotaPermissions() {
         UniquePermissionsSet permissionsToAdd = new UniquePermissionsSet();
-        List<Permissions> vmPermissions =
+        List<Permission> vmPermissions =
                 getDbFacade().getPermissionDao().getAllForEntity(getParameters().getQuotaId(),
                         getEngineSessionSeqId(),
                         false);
-        for (Permissions vmPermission : vmPermissions) {
+        for (Permission vmPermission : vmPermissions) {
             permissionsToAdd.addPermission(vmPermission.getAdElementId(), vmPermission.getRoleId(),
                     getQuotaId(), vmPermission.getObjectType());
         }
         if (!permissionsToAdd.isEmpty()) {
-            List<Permissions> permissionsList = permissionsToAdd.asPermissionList();
-            MultiLevelAdministrationHandler.addPermission(permissionsList.toArray(new Permissions[permissionsList.size()]));
+            List<Permission> permissionsList = permissionsToAdd.asPermissionList();
+            MultiLevelAdministrationHandler.addPermission(permissionsList.toArray(new Permission[permissionsList.size()]));
         }
     }
 }

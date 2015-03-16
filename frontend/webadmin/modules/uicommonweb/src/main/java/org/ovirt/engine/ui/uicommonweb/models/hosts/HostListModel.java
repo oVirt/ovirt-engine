@@ -31,9 +31,9 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions
 import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
-import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -2140,9 +2140,9 @@ public class HostListModel<E> extends ListWithDetailsAndReportsModel<E, VDS> imp
                                 hasAdminSystemPermission = false;
                                 updateConfigureLocalStorageCommandAvailability1();
                             } else {
-                                ArrayList<Permissions> permissions =
+                                ArrayList<Permission> permissions =
                                         response.getReturnValue();
-                                for (Permissions permission : permissions) {
+                                for (Permission permission : permissions) {
 
                                     if (permission.getObjectType() == VdcObjectType.System
                                             && permission.getRoleType() == RoleType.ADMIN) {

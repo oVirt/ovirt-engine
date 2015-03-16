@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.view.popup;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
@@ -34,7 +34,7 @@ public class RolePermissionsRemoveConfirmationPopupView extends RemoveConfirmati
     @Override
     protected void addItemText(Object item) {
         // We assume that the objects passed in are of type permissions.
-        Permissions permissions = (Permissions) item;
+        Permission permissions = (Permission) item;
         addItemLabel(messages.roleOnUser(permissions.getRoleName(), permissions.getOwnerName()));
     }
 }

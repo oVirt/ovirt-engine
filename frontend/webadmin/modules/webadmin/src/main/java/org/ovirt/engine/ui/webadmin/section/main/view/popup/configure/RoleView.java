@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.configure;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
@@ -51,7 +51,7 @@ public class RoleView extends Composite {
     Label showLabel;
 
     private SimpleActionTable<Role> table;
-    private SimpleActionTable<Permissions> permissionTable;
+    private SimpleActionTable<Permission> permissionTable;
     private SplitLayoutPanel splitLayoutPanel;
 
     private final RoleModelProvider roleModelProvider;
@@ -215,26 +215,26 @@ public class RoleView extends Composite {
     }
 
     private void initPermissionTable(ApplicationConstants constants) {
-        permissionTable = new SimpleActionTable<Permissions>(permissionModelProvider,
+        permissionTable = new SimpleActionTable<Permission>(permissionModelProvider,
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
-        AbstractTextColumn<Permissions> userColumn = new AbstractTextColumn<Permissions>() {
+        AbstractTextColumn<Permission> userColumn = new AbstractTextColumn<Permission>() {
             @Override
-            public String getValue(Permissions object) {
+            public String getValue(Permission object) {
                 return object.getOwnerName();
             }
         };
         permissionTable.addColumn(userColumn, constants.userPermission());
 
-        AbstractTextColumn<Permissions> permissionColumn = new AbstractObjectNameColumn<Permissions>() {
+        AbstractTextColumn<Permission> permissionColumn = new AbstractObjectNameColumn<Permission>() {
             @Override
-            protected Object[] getRawValue(Permissions object) {
+            protected Object[] getRawValue(Permission object) {
                 return new Object[] { object.getObjectType(), object.getObjectName() };
             }
         };
         permissionTable.addColumn(permissionColumn, constants.objectPermission());
 
-        permissionTable.addActionButton(new WebAdminButtonDefinition<Permissions>(constants.removePermission()) {
+        permissionTable.addActionButton(new WebAdminButtonDefinition<Permission>(constants.removePermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return permissionModelProvider.getModel().getRemoveCommand();

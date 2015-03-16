@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.Config;
@@ -62,8 +62,8 @@ public class MultiLevelAdministrationHandler {
         return false;
     }
 
-    public static void addPermission(Permissions... permissions) {
-        for (Permissions perms : permissions) {
+    public static void addPermission(Permission... permissions) {
+        for (Permission perms : permissions) {
             getPermissionDAO().save(perms);
         }
     }
@@ -95,7 +95,7 @@ public class MultiLevelAdministrationHandler {
         boolean retValue=false;
         if (PredefinedRoles.SUPER_USER.getId().equals(roleId)) {
             // check that there is at least one super-user left in the system
-            List<Permissions> permissions = getPermissionDAO().getAllForRole(
+            List<Permission> permissions = getPermissionDAO().getAllForRole(
                     PredefinedRoles.SUPER_USER.getId());
             if (permissions.size() <= 1) {
                 retValue = true;
@@ -114,12 +114,12 @@ public class MultiLevelAdministrationHandler {
     public static boolean isLastSuperUserGroup(Guid groupId) {
         boolean retValue=false;
         // check that there is at least one super-user left in the system
-        List<Permissions> permissions = getPermissionDAO().getAllForRole(
+        List<Permission> permissions = getPermissionDAO().getAllForRole(
                 PredefinedRoles.SUPER_USER.getId());
         if (permissions.size() <= 1) {
             // get group role
             permissions = getPermissionDAO().getAllForAdElement(groupId);
-            for (Permissions permission : permissions){
+            for (Permission permission : permissions){
                 if (permission.getRoleId().equals(PredefinedRoles.SUPER_USER.getId())){
                     retValue = true;
                     break;
@@ -134,7 +134,7 @@ public class MultiLevelAdministrationHandler {
     }
 
     public static void addPermission(Guid userId, Guid entityId, PredefinedRoles role, VdcObjectType objectType) {
-        Permissions perms = new Permissions();
+        Permission perms = new Permission();
         perms.setAdElementId(userId);
         perms.setObjectType(objectType);
         perms.setObjectId(entityId);

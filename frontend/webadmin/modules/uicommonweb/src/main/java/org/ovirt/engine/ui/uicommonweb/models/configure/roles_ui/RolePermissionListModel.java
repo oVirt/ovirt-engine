@@ -6,8 +6,8 @@ import java.util.Collection;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Role;
-import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -23,7 +23,7 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 @SuppressWarnings("unused")
-public class RolePermissionListModel extends SearchableListModel<Role, Permissions>
+public class RolePermissionListModel extends SearchableListModel<Role, Permission>
 {
 
     private UICommand privateRemoveCommand;
@@ -137,7 +137,7 @@ public class RolePermissionListModel extends SearchableListModel<Role, Permissio
             for (Object perm : getSelectedItems())
             {
                 PermissionsOperationsParameters tempVar = new PermissionsOperationsParameters();
-                tempVar.setPermission((Permissions) perm);
+                tempVar.setPermission((Permission) perm);
                 list.add(tempVar);
             }
 

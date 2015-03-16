@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -21,8 +21,8 @@ public class UniquePermissionsSet extends HashSet<PermissionWithUniqueKeyEquals>
      * Converts to instances of permissions class - the rest of the code expects the getClass() to be permissions
      * and not it's child
      */
-    public List<Permissions> asPermissionList() {
-        List<Permissions> res = new ArrayList<Permissions>();
+    public List<Permission> asPermissionList() {
+        List<Permission> res = new ArrayList<Permission>();
 
         for (PermissionWithUniqueKeyEquals permission : this) {
             res.add(permission.asPermission());
@@ -36,14 +36,14 @@ public class UniquePermissionsSet extends HashSet<PermissionWithUniqueKeyEquals>
 /**
  * Permission which offers the same equals as the unique key constraint on the permissions table
  */
-class PermissionWithUniqueKeyEquals extends Permissions {
+class PermissionWithUniqueKeyEquals extends Permission {
 
     public PermissionWithUniqueKeyEquals(Guid adElementId, Guid roleId, Guid objectId, VdcObjectType objectType) {
         super(adElementId, roleId, objectId, objectType);
     }
 
-    public Permissions asPermission() {
-        return new Permissions(getAdElementId(), getRoleId(), getObjectId(), getObjectType());
+    public Permission asPermission() {
+        return new Permission(getAdElementId(), getRoleId(), getObjectId(), getObjectType());
     }
 
     @Override
@@ -67,7 +67,7 @@ class PermissionWithUniqueKeyEquals extends Permissions {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        Permissions other = (Permissions) obj;
+        Permission other = (Permission) obj;
         return Objects.equals(getAdElementId(), other.getAdElementId())
                 && Objects.equals(getRoleId(), other.getRoleId())
                 && Objects.equals(getObjectId(), other.getObjectId());

@@ -5,14 +5,14 @@ import org.ovirt.engine.api.model.Permission;
 public class PermissionMapperTest
         extends AbstractInvertibleMappingTest<
                         Permission,
-                        org.ovirt.engine.core.common.businessentities.Permissions,
-                        org.ovirt.engine.core.common.businessentities.Permissions> {
+                        org.ovirt.engine.core.common.businessentities.Permission,
+                        org.ovirt.engine.core.common.businessentities.Permission> {
 
     public PermissionMapperTest() {
         super(
                 Permission.class,
-                org.ovirt.engine.core.common.businessentities.Permissions.class,
-                org.ovirt.engine.core.common.businessentities.Permissions.class);
+                org.ovirt.engine.core.common.businessentities.Permission.class,
+                org.ovirt.engine.core.common.businessentities.Permission.class);
     }
 
     @Override

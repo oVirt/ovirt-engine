@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.EngineSession;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -49,7 +49,7 @@ public abstract class AbstractGetEntitiesWithPermittedActionParametersQueryTest<
         when(dbFacadeMock.getEngineSessionDao()).thenReturn(engineSessionDAOMock);
 
         PermissionDAO permissionsDAOMock = mock(PermissionDAO.class);
-        when(permissionsDAOMock.getAllForEntity(any(Guid.class), any(Long.class), any(Boolean.class))).thenReturn(new ArrayList<Permissions>());
+        when(permissionsDAOMock.getAllForEntity(any(Guid.class), any(Long.class), any(Boolean.class))).thenReturn(new ArrayList<Permission>());
         when(dbFacadeMock.getPermissionDao()).thenReturn(permissionsDAOMock);
 
         SessionDataContainer.getInstance().setDbFacade(dbFacadeMock);

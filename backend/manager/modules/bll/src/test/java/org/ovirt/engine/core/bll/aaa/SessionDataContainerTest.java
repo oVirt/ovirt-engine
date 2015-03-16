@@ -15,7 +15,7 @@ import org.apache.commons.lang.time.DateUtils;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -51,7 +51,7 @@ public class SessionDataContainerTest {
         when(dbFacadeMock.getEngineSessionDao()).thenReturn(engineSessionDAOMock);
 
         PermissionDAO permissionsDAOMock = mock(PermissionDAO.class);
-        when(permissionsDAOMock.getAllForEntity(any(Guid.class), any(Long.class), any(Boolean.class))).thenReturn(new ArrayList<Permissions>());
+        when(permissionsDAOMock.getAllForEntity(any(Guid.class), any(Long.class), any(Boolean.class))).thenReturn(new ArrayList<Permission>());
         when(dbFacadeMock.getPermissionDao()).thenReturn(permissionsDAOMock);
 
         DbUser user = mock(DbUser.class);

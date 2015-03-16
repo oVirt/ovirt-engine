@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolSimpleUserParameters;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -40,7 +40,7 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
     @Override
     protected boolean canDoAction() {
         boolean returnValue = true;
-        Permissions p = getPermissionDAO().get(getParameters().getPermission().getId());
+        Permission p = getPermissionDAO().get(getParameters().getPermission().getId());
         if (p.getAdElementId().equals(PredefinedUsers.ADMIN_USER.getId()) &&
                 (p.getRoleId().equals(PredefinedRoles.SUPER_USER.getId()))) {
             addCanDoActionMessage(VdcBllMessages.USER_CANNOT_REMOVE_ADMIN_USER);
@@ -58,7 +58,7 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
 
     @Override
     protected void executeCommand() {
-        Permissions perms = getParameters().getPermission();
+        Permission perms = getParameters().getPermission();
         Guid userId = perms.getAdElementId();
 
         // if removing engine user permission from vm,

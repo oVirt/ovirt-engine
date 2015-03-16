@@ -11,7 +11,7 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.resource.AssignedRolesResource;
 import org.ovirt.engine.api.resource.RoleResource;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -20,13 +20,13 @@ import org.ovirt.engine.core.compat.Guid;
  * Role assignments to an individual user are mapped to system permissions.
  */
 public class BackendAssignedRolesResource
-        extends AbstractBackendCollectionResource<Role, Permissions>
+        extends AbstractBackendCollectionResource<Role, Permission>
         implements AssignedRolesResource {
 
     private Guid principalId;
 
     public BackendAssignedRolesResource(Guid principalId) {
-        super(Role.class, Permissions.class);
+        super(Role.class, Permission.class);
         this.principalId = principalId;
     }
 
@@ -47,9 +47,9 @@ public class BackendAssignedRolesResource
         throw new NotImplementedException();
     }
 
-    protected Roles mapCollection(List<Permissions> entities) {
+    protected Roles mapCollection(List<Permission> entities) {
         Roles collection = new Roles();
-        for (Permissions entity : entities) {
+        for (Permission entity : entities) {
             if (entity.getObjectType() == VdcObjectType.System) {
                 collection.getRoles().add(addLinks(map(entity)));
             }
@@ -65,7 +65,7 @@ public class BackendAssignedRolesResource
     }
 
     @Override
-    protected Role doPopulate(Role model, Permissions entity) {
+    protected Role doPopulate(Role model, Permission entity) {
         return model;
     }
 }

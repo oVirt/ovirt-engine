@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.permissions;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
@@ -13,10 +13,10 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 
 import com.google.gwt.event.shared.EventBus;
 
-public class PermissionListModelTable<P extends PermissionListModel<?>> extends AbstractModelBoundTableWidget<Permissions, P> {
+public class PermissionListModelTable<P extends PermissionListModel<?>> extends AbstractModelBoundTableWidget<Permission, P> {
 
     public PermissionListModelTable(
-            SearchableTableModelProvider<Permissions, P> modelProvider,
+            SearchableTableModelProvider<Permission, P> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
         super(modelProvider, eventBus, clientStorage, false);
     }
@@ -27,9 +27,9 @@ public class PermissionListModelTable<P extends PermissionListModel<?>> extends 
 
         getTable().addColumn(new PermissionTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
-        AbstractTextColumn<Permissions> userColumn = new AbstractTextColumn<Permissions>() {
+        AbstractTextColumn<Permission> userColumn = new AbstractTextColumn<Permission>() {
             @Override
-            public String getValue(Permissions object) {
+            public String getValue(Permission object) {
                 return object.getOwnerName();
             }
         };
@@ -37,40 +37,40 @@ public class PermissionListModelTable<P extends PermissionListModel<?>> extends 
         getTable().addColumn(userColumn, constants.userPermission(), "300px"); //$NON-NLS-1$
 
 
-        AbstractTextColumn<Permissions> authzColumn = new AbstractTextColumn<Permissions>() {
+        AbstractTextColumn<Permission> authzColumn = new AbstractTextColumn<Permission>() {
             @Override
-            public String getValue(Permissions object) {
+            public String getValue(Permission object) {
                 return object.getAuthz();
             }
         };
         authzColumn.makeSortable();
         getTable().addColumn(authzColumn, constants.authz(), "300px"); //$NON-NLS-1$
 
-        AbstractTextColumn<Permissions> namespaceColumn = new AbstractTextColumn<Permissions>() {
+        AbstractTextColumn<Permission> namespaceColumn = new AbstractTextColumn<Permission>() {
             @Override
-            public String getValue(Permissions object) {
+            public String getValue(Permission object) {
                 return object.getNamespace();
             }
         };
         namespaceColumn.makeSortable();
         getTable().addColumn(namespaceColumn, constants.namespace(), "300px"); //$NON-NLS-1$
 
-        AbstractTextColumn<Permissions> roleColumn = new AbstractTextColumn<Permissions>() {
+        AbstractTextColumn<Permission> roleColumn = new AbstractTextColumn<Permission>() {
             @Override
-            public String getValue(Permissions object) {
+            public String getValue(Permission object) {
                 return object.getRoleName();
             }
         };
         roleColumn.makeSortable();
         getTable().addColumn(roleColumn, constants.rolePermission(), "300px"); //$NON-NLS-1$
 
-        getTable().addActionButton(new UiCommandButtonDefinition<Permissions>(getEventBus(), constants.addPermission()) {
+        getTable().addActionButton(new UiCommandButtonDefinition<Permission>(getEventBus(), constants.addPermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getAddCommand();
             }
         });
-        getTable().addActionButton(new UiCommandButtonDefinition<Permissions>(getEventBus(), constants.removePermission()) {
+        getTable().addActionButton(new UiCommandButtonDefinition<Permission>(getEventBus(), constants.removePermission()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();

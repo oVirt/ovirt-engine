@@ -44,7 +44,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -834,8 +834,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         copyVmPermissions(permissionsToAdd);
 
         if (!permissionsToAdd.isEmpty()) {
-            List<Permissions> permissionsList = permissionsToAdd.asPermissionList();
-            MultiLevelAdministrationHandler.addPermission(permissionsList.toArray(new Permissions[permissionsList.size()]));
+            List<Permission> permissionsList = permissionsToAdd.asPermissionList();
+            MultiLevelAdministrationHandler.addPermission(permissionsList.toArray(new Permission[permissionsList.size()]));
         }
     }
 
@@ -846,9 +846,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         PermissionDAO dao = getDbFacade().getPermissionDao();
 
-        List<Permissions> vmPermissions = dao.getAllForEntity(getVmId(), getEngineSessionSeqId(), false);
+        List<Permission> vmPermissions = dao.getAllForEntity(getVmId(), getEngineSessionSeqId(), false);
 
-        for (Permissions vmPermission : vmPermissions) {
+        for (Permission vmPermission : vmPermissions) {
             permissionsToAdd.addPermission(vmPermission.getAdElementId(), vmPermission.getRoleId(),
                     getParameters().getVmTemplateId(), VdcObjectType.VmTemplate);
         }

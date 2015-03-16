@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.disk;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -23,7 +23,7 @@ public class SubTabDiskPermissionView extends AbstractSubTabPermissionsView<Disk
     }
 
     @Inject
-    public SubTabDiskPermissionView(SearchableDetailModelProvider<Permissions, DiskListModel,
+    public SubTabDiskPermissionView(SearchableDetailModelProvider<Permission, DiskListModel,
             PermissionListModel<Disk>> modelProvider, EventBus eventBus,
             ClientStorage clientStorage, ApplicationConstants constants) {
         super(modelProvider, eventBus, clientStorage, constants);

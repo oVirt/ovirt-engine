@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
@@ -45,7 +45,7 @@ public class RemoveUserCommand<T extends IdParameters> extends UserCommandBase<T
 
         // Delete all the permissions of the user:
         // TODO: This should be done without invoking the command to avoid the overhead.
-        for (Permissions permission : DbFacade.getInstance()
+        for (Permission permission : DbFacade.getInstance()
                 .getPermissionDao()
                 .getAllDirectPermissionsForAdElement(id)) {
             PermissionsOperationsParameters tempVar = new PermissionsOperationsParameters(permission);

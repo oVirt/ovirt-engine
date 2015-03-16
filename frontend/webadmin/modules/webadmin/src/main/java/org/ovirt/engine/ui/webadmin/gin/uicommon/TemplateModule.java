@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -248,7 +248,7 @@ public class TemplateModule extends AbstractGinModule {
            .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, TemplateListModel, TemplateVmListModel>>(){})
            .in(Singleton.class);
         // Permission Detail Model
-        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, TemplateListModel, PermissionListModel<VmTemplate>>>(){})
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permission, TemplateListModel, PermissionListModel<VmTemplate>>>(){})
            .to(new TypeLiteral<PermissionModelProvider<VmTemplate, TemplateListModel>>(){}).in(Singleton.class);
     }
 

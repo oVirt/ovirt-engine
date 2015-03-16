@@ -9,7 +9,7 @@ import javax.inject.Named;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -58,7 +58,7 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
      * @return Object name.
      */
     public String getVdcObjectName() {
-        Permissions perms = getParameters().getPermission();
+        Permission perms = getParameters().getPermission();
         return getDbFacade().getEntityNameByIdAndType(perms.getObjectId(), perms.getObjectType());
     }
 
@@ -105,7 +105,7 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
-        Permissions permission = getParameters().getPermission();
+        Permission permission = getParameters().getPermission();
         permissionList.add(new PermissionSubject(permission.getObjectId(),
                 permission.getObjectType(),
                 getActionType().getActionGroup()));

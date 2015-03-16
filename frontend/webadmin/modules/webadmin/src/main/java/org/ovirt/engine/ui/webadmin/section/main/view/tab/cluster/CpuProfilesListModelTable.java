@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -178,7 +178,7 @@ public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<Cpu
 
     @Override
     public void addModelListeners() {
-        final SimpleActionTable<Permissions> table = permissionListModelTable.getTable();
+        final SimpleActionTable<Permission> table = permissionListModelTable.getTable();
         table.getSelectionModel().addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {

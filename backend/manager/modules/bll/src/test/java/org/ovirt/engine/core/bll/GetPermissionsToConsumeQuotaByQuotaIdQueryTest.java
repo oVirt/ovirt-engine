@@ -11,7 +11,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.PermissionDAO;
@@ -25,7 +25,7 @@ public class GetPermissionsToConsumeQuotaByQuotaIdQueryTest extends AbstractQuer
     PermissionDAO permissionDAO;
 
     Guid quotaId = Guid.newGuid();
-    List<Permissions> returnedPermissions;
+    List<Permission> returnedPermissions;
 
     @Test
     public void testExecuteQuery() {
@@ -42,8 +42,8 @@ public class GetPermissionsToConsumeQuotaByQuotaIdQueryTest extends AbstractQuer
     private void mockDAOForQuery() {
         when(getDbFacadeMockInstance().getPermissionDao()).thenReturn(permissionDAO);
 
-        returnedPermissions = new ArrayList<Permissions>();
-        Permissions permissions = new Permissions();
+        returnedPermissions = new ArrayList<Permission>();
+        Permission permissions = new Permission();
         returnedPermissions.add(permissions);
         when(getQueryParameters().getId()).thenReturn(quotaId);
         Mockito.when(permissionDAO.getConsumedPermissionsForQuotaId(quotaId)).thenReturn(returnedPermissions);
