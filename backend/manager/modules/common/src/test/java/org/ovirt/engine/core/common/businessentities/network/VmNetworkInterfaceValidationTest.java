@@ -211,7 +211,6 @@ public class VmNetworkInterfaceValidationTest {
 
     private class TestParams extends VdcActionParametersBase {
 
-        @SuppressWarnings("unused")
         @Valid
         private NetworkInterface<?> nic;
 
