@@ -96,6 +96,6 @@ public class ListUtilsTest {
 
         Assert.assertEquals("one", ListUtils.firstMatch(source, "one", "two"));
         Assert.assertEquals("one", ListUtils.firstMatch(source, "two", "one"));
-        Assert.assertEquals(null, ListUtils.firstMatch(source, null));
+        Assert.assertEquals(null, ListUtils.firstMatch(source, (String[]) null));
     }
 }
