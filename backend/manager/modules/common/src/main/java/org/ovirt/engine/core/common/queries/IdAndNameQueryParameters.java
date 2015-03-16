@@ -4,8 +4,11 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class IdAndNameQueryParameters extends IdQueryParameters {
 
+    private static final long serialVersionUID = -8358667691631277124L;
+
     private String name;
 
+    @SuppressWarnings("unused")
     private IdAndNameQueryParameters() {
     }
 
