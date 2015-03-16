@@ -133,14 +133,6 @@ public class AsyncTask implements Serializable {
         this.stepId = stepId;
     }
 
-    private VdcActionType getEndActionType() {
-        VdcActionType commandType = getTaskParameters().getCommandType();
-        if (!VdcActionType.Unknown.equals(commandType)) {
-            return commandType;
-        }
-        return getActionType();
-    }
-
     public CommandStatus getCommandStatus() {
         return childCmdEntity.getCommandStatus();
     }
