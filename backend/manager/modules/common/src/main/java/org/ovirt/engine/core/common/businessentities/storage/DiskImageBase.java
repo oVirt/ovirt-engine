@@ -14,12 +14,6 @@ public class DiskImageBase extends Disk {
     private Image image;
 
     /** Transient field for GUI presentation purposes. */
-    private String quotaName;
-
-    /** Transient field for GUI presentation purposes. */
-    private boolean isQuotaDefault;
-
-    /** Transient field for GUI presentation purposes. */
     private QuotaEnforcementTypeEnum quotaEnforcementType;
 
     public DiskImageBase() {
