@@ -51,7 +51,6 @@ public class LunDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<LUNs, S
         return getCallsHandler().executeRead("GetLUNByLUNId", MAPPER, parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<LUNs> getAllForStorageServerConnection(String id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -60,7 +59,6 @@ public class LunDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<LUNs, S
         return getCallsHandler().executeReadList("GetLUNsBystorage_server_connection", MAPPER, parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<LUNs> getAllForVolumeGroup(String id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -69,7 +67,6 @@ public class LunDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<LUNs, S
         return getCallsHandler().executeReadList("GetLUNsByVolumeGroupId", MAPPER, parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<LUNs> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
