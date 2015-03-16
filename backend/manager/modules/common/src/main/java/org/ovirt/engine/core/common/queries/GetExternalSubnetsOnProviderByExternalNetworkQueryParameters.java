@@ -4,6 +4,8 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class GetExternalSubnetsOnProviderByExternalNetworkQueryParameters
         extends GetEntitiesWithPermittedActionParameters {
+
+    private static final long serialVersionUID = 3354488201485043334L;
     private Guid providerId;
     private String networkId;
 
