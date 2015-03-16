@@ -9,20 +9,20 @@ public class ProviderQueryParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = 308877238121233739L;
 
     @Valid
-    private Provider provider;
+    private Provider<?> provider;
 
     public ProviderQueryParameters() {
     }
 
-    public ProviderQueryParameters(Provider provider) {
+    public ProviderQueryParameters(Provider<?> provider) {
         this.provider = provider;
     }
 
-    public Provider getProvider() {
+    public Provider<?> getProvider() {
         return provider;
     }
 
-    public void setProvider(Provider provider) {
+    public void setProvider(Provider<?> provider) {
         this.provider = provider;
     }
 
