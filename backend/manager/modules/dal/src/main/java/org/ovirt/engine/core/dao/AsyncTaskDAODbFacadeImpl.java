@@ -1,13 +1,11 @@
 package org.ovirt.engine.core.dao;
 
-import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskEntity;
@@ -18,8 +16,6 @@ import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
 import org.ovirt.engine.core.dal.dbbroker.DbEngineDialect;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
-import org.ovirt.engine.core.utils.ReflectionUtils;
-import org.ovirt.engine.core.utils.SerializationFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
@@ -75,16 +71,6 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             entity.setStoragePoolId(getGuidDefaultEmpty(rs, "storage_pool_id"));
             return entity;
         }
-
-        @SuppressWarnings("unchecked")
-        private static VdcActionParametersBase deserializeParameters(String payload, String className) {
-            if (className == null) {
-                return null;
-            }
-            Class<Serializable> actionParamsClass = (Class<Serializable>) ReflectionUtils.getClassFor(className);
-            return (VdcActionParametersBase) SerializationFactory.getDeserializer().deserialize(payload,
-                    actionParamsClass);
-        }
     }
 
     private static class AsyncTaskParameterSource extends CustomMapSqlParameterSource {
@@ -100,10 +86,6 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             addValue("step_id", task.getStepId());
             addValue("command_id", task.getCommandId());
             addValue("root_command_id", task.getRootCommandId());
-        }
-
-        private static String serializeParameters(VdcActionParametersBase params) {
-            return SerializationFactory.getSerializer().serialize(params);
         }
     }
 
