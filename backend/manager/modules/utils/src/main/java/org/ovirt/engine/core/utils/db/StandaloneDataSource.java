@@ -112,7 +112,6 @@ public class StandaloneDataSource implements DataSource {
      * @throws SQLException  if a database access error occurs
      * or this method is called on a closed connection.
      */
-    @SuppressWarnings("resource")
     private void checkConnection() throws SQLException {
         Statement statement = null;
         ResultSet rs = null;
