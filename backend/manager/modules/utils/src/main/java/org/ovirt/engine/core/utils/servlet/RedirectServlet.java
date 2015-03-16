@@ -39,7 +39,7 @@ public class RedirectServlet extends HttpServlet {
     private static final String LOCALHOST_PLACEHOLDER = "@__LOCALHOST__@";
     private static final String TARGET_URL = "targetUrl";
     private static final String URL404 = "url404";
-    private static final Set localHostNames = new HashSet(Arrays.asList(
+    private static final Set<String> localHostNames = new HashSet<>(Arrays.asList(
         "localhost",
         "localhost.localdomain",
         "localhost4",
