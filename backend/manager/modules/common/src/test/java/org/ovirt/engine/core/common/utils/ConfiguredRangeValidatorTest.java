@@ -107,7 +107,6 @@ public class ConfiguredRangeValidatorTest {
     }
 
     private class ConfiguredRangeContainer {
-        @SuppressWarnings("unused")
         @ConfiguredRange(min = TEST_MIN_RANGE, maxConfigValue = ConfigValues.vdsTimeout)
         private int value;
 
@@ -117,7 +116,6 @@ public class ConfiguredRangeValidatorTest {
     }
 
     private class ConfiguredRangeContainerDefaultMin {
-        @SuppressWarnings("unused")
         @ConfiguredRange(maxConfigValue = ConfigValues.vdsTimeout)
         private int value;
 
@@ -127,7 +125,6 @@ public class ConfiguredRangeValidatorTest {
     }
 
     private class ConfiguredRangeContainerWithConfMin {
-        @SuppressWarnings("unused")
         @ConfiguredRange(minConfigValue = ConfigValues.ConnectToServerTimeoutInSeconds,
                 maxConfigValue = ConfigValues.vdsTimeout)
         private int value;
@@ -138,7 +135,6 @@ public class ConfiguredRangeValidatorTest {
     }
 
     private class ConfiguredRangeContainerWithBothMinAttributes {
-        @SuppressWarnings("unused")
         @ConfiguredRange(min = TEST_MIN_RANGE + 2, minConfigValue = ConfigValues.ConnectToServerTimeoutInSeconds,
                 maxConfigValue = ConfigValues.vdsTimeout)
         private int value;
