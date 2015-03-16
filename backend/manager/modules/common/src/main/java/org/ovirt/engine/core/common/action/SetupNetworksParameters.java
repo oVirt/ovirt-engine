@@ -13,6 +13,8 @@ import org.ovirt.engine.core.common.validation.annotation.NoRepetitiveStaticIpIn
 
 public class SetupNetworksParameters extends VdsActionParameters {
 
+    private static final long serialVersionUID = 7275844490628744535L;
+
     @Valid
     @NoRepetitiveStaticIpInList(message = "VALIDATION.REPETITIVE.IP.IN.VDS")
     private List<VdsNetworkInterface> interfaces;
