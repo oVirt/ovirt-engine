@@ -10,8 +10,6 @@ import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
 import org.ovirt.engine.core.dal.dbbroker.DbEngineDialect;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -20,7 +18,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * {@code DbFacade}.
  */
 public class EngineSessionDAODbFacadeImpl extends BaseDAODbFacade implements EngineSessionDAO {
-    private static final Logger log = LoggerFactory.getLogger(EngineSessionDAODbFacadeImpl.class);
 
     private static class EngineSessionRowMapper implements RowMapper<EngineSession> {
         public static final EngineSessionRowMapper instance = new EngineSessionRowMapper();
