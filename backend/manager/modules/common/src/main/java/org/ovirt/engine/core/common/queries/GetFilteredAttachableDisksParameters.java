@@ -5,6 +5,8 @@ import org.ovirt.engine.core.compat.Version;
 
 public class GetFilteredAttachableDisksParameters extends GetAllAttachableDisksForVmQueryParameters {
 
+    private static final long serialVersionUID = 4092810692277463140L;
+
     private int os;
 
     private Version vdsGroupCompatibilityVersion;
