@@ -68,7 +68,6 @@ public class BookmarkDAODbFacadeImpl extends BaseDAODbFacade implements Bookmark
         return getCallsHandler().executeRead("GetBookmarkBybookmark_name", BookmarkRowMapper.instance, parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<Bookmark> getAll() {
         MapSqlParameterSource parameterSource = new BookmarkSqlParameterSource();
