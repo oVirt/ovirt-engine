@@ -29,7 +29,6 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
         setProcedureNameForGet("GetVmDynamicByVmGuid");
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<VmDynamic> getAllRunningForVds(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
