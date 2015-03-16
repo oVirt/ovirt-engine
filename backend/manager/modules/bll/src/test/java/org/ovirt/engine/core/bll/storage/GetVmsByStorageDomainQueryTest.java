@@ -33,9 +33,8 @@ public class GetVmsByStorageDomainQueryTest extends AbstractQueryTest<IdQueryPar
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testExecuteQueryCommandNoDisks() {
-        List<VM> vmsOfDomain = new ArrayList();
+        List<VM> vmsOfDomain = new ArrayList<>();
         VM vm1 = mock(VM.class);
         VM vm2 = mock(VM.class);
         vmsOfDomain.add(vm1);
@@ -56,9 +55,8 @@ public class GetVmsByStorageDomainQueryTest extends AbstractQueryTest<IdQueryPar
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testExecuteQueryCommandNoVms() {
-        List<VM> vmsOfDomain = new ArrayList();
+        List<VM> vmsOfDomain = new ArrayList<>();
 
         when(vmDao.getAllForStorageDomain(domainId)).thenReturn(vmsOfDomain);
 
@@ -75,9 +73,8 @@ public class GetVmsByStorageDomainQueryTest extends AbstractQueryTest<IdQueryPar
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testExecuteQueryCommandSharedDisks() {
-        List<VM> vmsOfDomain = new ArrayList();
+        List<VM> vmsOfDomain = new ArrayList<>();
         VM vm1 = new VM();
         vm1.setName("vm1");
         VM vm2 = new VM();
@@ -93,7 +90,7 @@ public class GetVmsByStorageDomainQueryTest extends AbstractQueryTest<IdQueryPar
         List<DiskImage> diskImages = new ArrayList<>();
         DiskImage d1 = mock(DiskImage.class);
         when(d1.isShareable()).thenReturn(true);
-        ArrayList<String> vmNames = new ArrayList();
+        ArrayList<String> vmNames = new ArrayList<>();
         vmNames.add("vm1");
         vmNames.add("vm2");
         when(d1.getVmNames()).thenReturn(vmNames);
