@@ -4,6 +4,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class ReconcileVolumeChainVDSCommandParameters extends AllStorageAndImageIdVDSCommandParametersBase {
 
+    @SuppressWarnings("unused")
     private ReconcileVolumeChainVDSCommandParameters() { }
 
     public ReconcileVolumeChainVDSCommandParameters(
