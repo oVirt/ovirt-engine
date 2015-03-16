@@ -64,8 +64,7 @@ public class RemoveDiskModel extends ConfirmationModel {
 
         UICommand tempVar = UICommand.createDefaultOkUiCommand(ON_REMOVE, target);
         getCommands().add(tempVar);
-        cancelCommand = UICommand.createCancelUiCommand(CANCEL_REMOVE, this);
-        cancelCommand = new UICommand(CANCEL_REMOVE, target);
+        cancelCommand = UICommand.createCancelUiCommand(CANCEL_REMOVE, target);
         getCommands().add(cancelCommand);
     }
 
