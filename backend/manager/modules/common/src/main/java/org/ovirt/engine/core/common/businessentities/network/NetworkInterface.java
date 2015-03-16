@@ -185,7 +185,7 @@ public abstract class NetworkInterface<T extends NetworkStatistics> extends IVdc
         if (!(obj instanceof NetworkInterface)) {
             return false;
         }
-        NetworkInterface other = (NetworkInterface) obj;
+        NetworkInterface<?> other = (NetworkInterface<?>) obj;
         if (id == null) {
             if (other.id != null) {
                 return false;
