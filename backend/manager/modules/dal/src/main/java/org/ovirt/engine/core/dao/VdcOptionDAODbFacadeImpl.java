@@ -10,9 +10,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
  * <code>VdcOptionDAODbFacadeImpl</code> provides a concrete implementation of {@link VdcOptionDAO} using code
- * refactored from {@link DbFacade}.
- *
- *
+ * refactored from {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
  */
 public class VdcOptionDAODbFacadeImpl extends BaseDAODbFacade implements VdcOptionDAO {
 
@@ -47,7 +45,6 @@ public class VdcOptionDAODbFacadeImpl extends BaseDAODbFacade implements VdcOpti
         return getCallsHandler().executeRead("GetVdcOptionByName", VdcOptionRowMapper.instance, parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<VdcOption> getAll() {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
