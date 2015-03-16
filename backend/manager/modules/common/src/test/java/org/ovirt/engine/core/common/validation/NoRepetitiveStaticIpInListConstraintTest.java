@@ -73,7 +73,6 @@ public class NoRepetitiveStaticIpInListConstraintTest {
     }
 
     private class NoRepetitiveStaticIpInListContainer {
-        @SuppressWarnings("unused")
         @NoRepetitiveStaticIpInList
         private List<VdsNetworkInterface> value;
 
