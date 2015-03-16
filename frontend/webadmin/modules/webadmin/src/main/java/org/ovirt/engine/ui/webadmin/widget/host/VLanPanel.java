@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class VLanPanel extends VerticalPanel {
 
@@ -62,72 +63,54 @@ class VLanElementPanel extends TogglePanel {
     }
 
     Grid createRow(final HostVLan hostVLan) {
-        Grid row = new Grid(1, 3);
-        row.getColumnFormatter().setWidth(0, VLanPanel.CHECK_BOX_COLUMN_WIDTH);
-        row.getColumnFormatter().setWidth(1, VLanPanel.NETWORK_NAME_COLUMN_WIDTH);
-        row.getColumnFormatter().setWidth(2, VLanPanel.ADDRESS_COLUMN_WIDTH);
+        // Check box, icon and name
+        HorizontalPanel checkboxPanel = new HorizontalPanel();
+        checkboxPanel.setWidth("100%"); //$NON-NLS-1$
 
-        row.setWidth("100%"); //$NON-NLS-1$
-        row.setHeight("100%"); //$NON-NLS-1$
+        if (isSelectionAvailable) {
+            checkboxPanel.add(getCheckBox());
+        }
+        checkboxPanel.add(new Image(resources.splitRotateImage()));
+        checkboxPanel.add(new Label(new HostVLanNameRenderer().render(hostVLan)));
+
+        Grid row = createBaseVlanRow(checkboxPanel,
+                hostVLan.getInterface().getIsManagement(),
+                hostVLan.getNetworkName(),
+                hostVLan.getAddress());
 
         Style gridStyle = row.getElement().getStyle();
         gridStyle.setBorderColor("white"); //$NON-NLS-1$
         gridStyle.setBorderWidth(1, Unit.PX);
         gridStyle.setBorderStyle(BorderStyle.SOLID);
 
-        // Check box, icon and name
-        HorizontalPanel chekboxPanel = new HorizontalPanel();
-        chekboxPanel.setWidth("100%"); //$NON-NLS-1$
-
-        if (isSelectionAvailable) {
-            chekboxPanel.add(getCheckBox());
-        }
-        chekboxPanel.add(new Image(resources.splitRotateImage()));
-        chekboxPanel.add(new Label(new HostVLanNameRenderer().render(hostVLan)));
-
-        row.setWidget(0, 0, chekboxPanel);
-
-        // Network name
-        Label networkName = new Label(hostVLan.getNetworkName());
-
-        if (hostVLan.getInterface().getIsManagement()) {
-            networkName.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-            networkName.setText("* " + hostVLan.getNetworkName()); //$NON-NLS-1$
-        }
-
-        row.setWidget(0, 1, networkName);
-
-        // Address
-        row.setWidget(0, 2, new Label(hostVLan.getAddress()));
-
         return row;
     }
 
     Grid createBlankRow(final HostInterfaceLineModel lineModel) {
+        return createBaseVlanRow(new Label(),
+                lineModel.getIsManagement(),
+                lineModel.getNetworkName(),
+                lineModel.getAddress());
+    }
+
+    private Grid createBaseVlanRow(Widget checkBoxWidget,
+            boolean networkManagementFlag,
+            String networkName,
+            String address) {
         Grid row = new Grid(1, 3);
         row.getColumnFormatter().setWidth(0, VLanPanel.CHECK_BOX_COLUMN_WIDTH);
         row.getColumnFormatter().setWidth(1, VLanPanel.NETWORK_NAME_COLUMN_WIDTH);
         row.getColumnFormatter().setWidth(2, VLanPanel.ADDRESS_COLUMN_WIDTH);
-
         row.setWidth("100%"); //$NON-NLS-1$
         row.setHeight("100%"); //$NON-NLS-1$
-
-        // Empty name
-        row.setWidget(0, 0, new Label());
-
-        // Network name
-        Label networkName = new Label(lineModel.getNetworkName());
-
-        if (lineModel.getIsManagement()) {
-            networkName.getElement().getStyle().setFontWeight(FontWeight.BOLD);
-            networkName.setText("* " + lineModel.getNetworkName()); //$NON-NLS-1$
+        row.setWidget(0, 0, checkBoxWidget);
+        Label networkNameLabel = new Label(networkName);
+        if (networkManagementFlag) {
+            networkNameLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+            networkNameLabel.setText("* " + networkName); //$NON-NLS-1$
         }
-
-        row.setWidget(0, 1, networkName);
-
-        // Address
-        row.setWidget(0, 2, new Label(lineModel.getAddress()));
-
+        row.setWidget(0, 1, networkNameLabel);
+        row.setWidget(0, 2, new Label(address));
         return row;
     }
 
