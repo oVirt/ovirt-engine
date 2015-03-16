@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.ovirt.engine.core.common.EventNotificationMethod;
-import org.ovirt.engine.core.common.businessentities.EventMap;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
@@ -13,7 +12,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
  * <code>EventSubscriberDAODbFacadeImpl</code> provides an implementation of {@link EventSubscriberDAO} that uses the
- * refactored {@link DbFacade} code.
+ * refactored {@link org.ovirt.engine.core.dal.dbbroker.DbFacade} code.
  */
 public class EventDAODbFacadeImpl extends BaseDAODbFacade implements EventDAO {
 
@@ -33,19 +32,6 @@ public class EventDAODbFacadeImpl extends BaseDAODbFacade implements EventDAO {
         }
     }
 
-    private static final class EventMapRowMapper implements RowMapper<EventMap> {
-        public static final EventMapRowMapper instance = new EventMapRowMapper();
-
-        @Override
-        public EventMap mapRow(ResultSet rs, int rowNum) throws SQLException {
-            EventMap entity = new EventMap();
-            entity.setEventUpName(rs.getString("event_up_name"));
-            entity.setEventDownName(rs.getString("event_down_name"));
-            return entity;
-        }
-    }
-
-    @SuppressWarnings("unchecked")
     @Override
     public List<event_subscriber> getAllForSubscriber(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
