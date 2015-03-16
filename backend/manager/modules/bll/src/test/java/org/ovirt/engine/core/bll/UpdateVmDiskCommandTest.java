@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doNothing;
@@ -396,7 +396,7 @@ public class UpdateVmDiskCommandTest {
         // creating old disk with interface different than interface of disk from parameters
         // have to return original disk on each request to dao,
         // since the command updates retrieved instance of disk
-        when(diskDao.get(diskImageGuid)).thenAnswer(new Answer() {
+        when(diskDao.get(diskImageGuid)).thenAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
                 final DiskImage oldDisk = createDiskImage();
@@ -441,7 +441,7 @@ public class UpdateVmDiskCommandTest {
     public void testUpdateDiskInterfaceUnsupported() {
         final UpdateVmDiskParameters parameters = createParameters();
         parameters.getDiskInfo().setDiskInterface(DiskInterface.IDE);
-        when(diskDao.get(diskImageGuid)).thenAnswer(new Answer() {
+        when(diskDao.get(diskImageGuid)).thenAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
             final DiskImage oldDisk = createDiskImage();
@@ -452,7 +452,7 @@ public class UpdateVmDiskCommandTest {
         });
 
         initializeCommand(parameters);
-        doReturn(true).when(command).validatePciAndIdeLimit(anyList());
+        doReturn(true).when(command).validatePciAndIdeLimit(anyListOf(VM.class));
         mockVdsCommandSetVolumeDescription();
 
         when(diskValidator.isReadOnlyPropertyCompatibleWithInterface()).thenReturn(ValidationResult.VALID);
