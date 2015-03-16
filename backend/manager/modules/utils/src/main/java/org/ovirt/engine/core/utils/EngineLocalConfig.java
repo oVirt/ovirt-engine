@@ -9,10 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.ovirt.engine.core.uutils.config.ShellLikeConfd;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class stores the local configuration (understanding local as the
@@ -21,8 +18,6 @@ import org.slf4j.LoggerFactory;
  * <code>ENGINE_VARS</code> environment variable.
  */
 public class EngineLocalConfig extends ShellLikeConfd {
-    // The log:
-    private static final Logger log = LoggerFactory.getLogger(EngineLocalConfig.class);
 
     // Default files for defaults and overridden values:
     private static final String DEFAULTS_PATH = "/usr/share/ovirt-engine/conf/engine.conf.defaults";
