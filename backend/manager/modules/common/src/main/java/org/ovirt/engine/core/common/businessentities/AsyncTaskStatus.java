@@ -7,6 +7,11 @@ import org.ovirt.engine.core.compat.StringHelper;
 public class AsyncTaskStatus implements Serializable {
     private static final long serialVersionUID = -7569773307084259828L;
 
+    private AsyncTaskStatusEnum status;
+    private AsyncTaskResultEnum result;
+    private RuntimeException exception;
+    private String message;
+
     public AsyncTaskStatus() {
         this(AsyncTaskStatusEnum.unknown);
     }
@@ -17,50 +22,42 @@ public class AsyncTaskStatus implements Serializable {
         setMessage("");
     }
 
-    private AsyncTaskStatusEnum privateStatus;
-
     public AsyncTaskStatusEnum getStatus() {
-        return privateStatus;
+        return status;
     }
 
-    public void setStatus(AsyncTaskStatusEnum value) {
-        privateStatus = value;
+    public void setStatus(AsyncTaskStatusEnum status) {
+        this.status = status;
     }
-
-    private AsyncTaskResultEnum privateResult;
 
     public AsyncTaskResultEnum getResult() {
-        return privateResult;
+        return result;
     }
 
-    public void setResult(AsyncTaskResultEnum value) {
-        privateResult = value;
+    public void setResult(AsyncTaskResultEnum result) {
+        this.result = result;
     }
-
-    private RuntimeException privateException;
 
     public RuntimeException getException() {
-        return privateException;
+        return exception;
     }
 
     public void setException(RuntimeException value) {
-        privateException = value;
+        this.exception = value;
     }
-
-    private String _message;
 
     public String getMessage() {
         if (getTaskIsRunning() || getTaskEndedSuccessfully()) {
             // No message is relevant:
             return "";
         }
-        return (!StringHelper.isNullOrEmpty(_message)) ? (_message) : ((getException() != null && !StringHelper
-                .isNullOrEmpty(getException().getMessage())) ? (getException().getMessage())
+        return (!StringHelper.isNullOrEmpty(message)) ? (message) : ((getException() != null
+                && !StringHelper.isNullOrEmpty(getException().getMessage())) ? (getException().getMessage())
                 : ("Asynchronous Task unknown error"));
     }
 
-    public void setMessage(String value) {
-        _message = value;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public boolean getTaskIsRunning() {
@@ -78,6 +75,7 @@ public class AsyncTaskStatus implements Serializable {
 
     @Override
     public String toString() {
-        return "(status = " + getStatus() + ", result = " + getResult() + ", exception = " + getException() + ", msg = " +getMessage() + ")";
+        return "(status = " + getStatus() + ", result = " + getResult() + ", exception = " + getException()
+                + ", message = " + getMessage() + ")";
     }
 }
