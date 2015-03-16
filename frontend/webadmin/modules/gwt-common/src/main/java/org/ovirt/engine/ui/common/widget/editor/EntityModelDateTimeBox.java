@@ -68,8 +68,10 @@ public class EntityModelDateTimeBox extends GwtBootstrapDateTimePicker implement
 
     @Override
     public void setAcceptableValues(Collection<Date> values) {
-        List<Date> allowedDates = (List<Date>) values;
-        Collections.sort(allowedDates);
-        setDateRange(allowedDates.get(0), allowedDates.get(allowedDates.size() - 1));
+        if (values instanceof List<?>) {
+            List<Date> allowedDates = (List<Date>) values;
+            Collections.sort(allowedDates);
+            setDateRange(allowedDates.get(0), allowedDates.get(allowedDates.size() - 1));
+        }
     }
 }
