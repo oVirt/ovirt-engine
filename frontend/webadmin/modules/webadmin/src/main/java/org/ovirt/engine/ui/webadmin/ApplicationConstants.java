@@ -4057,6 +4057,57 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String geoRepSlaveVolume();
 
     // Volume snapshots
+    @DefaultStringValue("New")
+    String newVolumeSnapshot();
+
+    @DefaultStringValue("Edit Schedule")
+    String editVolumeSnapshotSchedule();
+
+    @DefaultStringValue("Schedule")
+    String scheduleLabel();
+
+    @DefaultStringValue("Recurrence")
+    String recurrenceLabel();
+
+    @DefaultStringValue("Interval (mins)")
+    String intervalLabel();
+
+    @DefaultStringValue("End By")
+    String endByLabel();
+
+    @DefaultStringValue("End By Date")
+    String endByDateLabel();
+
+    @DefaultStringValue("Time Zone")
+    String timeZoneLabel();
+
+    @DefaultStringValue("Days Of month")
+    String daysOfMonthLabel();
+
+    @DefaultStringValue("Days Of Week")
+    String daysOfWeekLabel();
+
+    @DefaultStringValue("Start At")
+    String startAtLabel();
+
+    @DefaultStringValue("Execution Time")
+    String executionTimeLabel();
+
+    @DefaultStringValue("No End Date")
+    String noEndDateOption();
+
+    @DefaultStringValue("Date")
+    String endDateOption();
+
+    @DefaultStringValue("Snapshot Name Prefix")
+    String volumeSnapshotNamePrefixLabel();
+
+    @DefaultStringValue("Snapshot name would be formed in the format <prefix><timestamp>")
+    String snapshotNameInfo();
+
+    @DefaultStringValue("Description")
+    String volumeSnapshotDescriptionLabel();
+
     @DefaultStringValue("Name")
     String volumeSnapshotName();
 
@@ -4077,6 +4128,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Snapshot")
     String volumeSnapshotMainTabTitle();
+
+    @DefaultStringValue("Snapshot Scheduled")
+    String snapshotScheduledLabel();
 
     @DefaultStringValue("Options - Cluster")
     String configureClusterSnapshotOptions();
@@ -4125,4 +4179,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Reset")
     String resetGeoRepSessionConfig();
+
+    @DefaultStringValue("Frequent creation of snapshots would overload the cluster")
+    String criticalSnapshotIntervalNote();
 }

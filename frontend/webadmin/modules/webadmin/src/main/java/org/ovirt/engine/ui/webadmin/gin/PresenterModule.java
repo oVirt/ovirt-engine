@@ -48,6 +48,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.Gluster
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeGeoReplicationSessionConfigPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeSnapshotConfigureOptionsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeSnapshotCreatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickStatusPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.ReplaceBrickPopupPresenterWidget;
@@ -297,6 +298,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.GeoRepAction
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.GlusterClusterSnapshotConfigureOptionsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.GlusterVolumeGeoReplicationSessionConfigPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.GlusterVolumeSnapshotConfigureOptionsPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.GlusterVolumeSnapshotCreatePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.RemoveBrickPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.RemoveBrickStatusPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.ReplaceBrickPopupView;
@@ -812,6 +814,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(GlusterClusterSnapshotConfigureOptionsPopupPresenterWidget.class,
                 GlusterClusterSnapshotConfigureOptionsPopupPresenterWidget.ViewDef.class,
                 GlusterClusterSnapshotConfigureOptionsPopupView.class);
+        bindPresenterWidget(GlusterVolumeSnapshotCreatePopupPresenterWidget.class,
+                GlusterVolumeSnapshotCreatePopupPresenterWidget.ViewDef.class,
+                GlusterVolumeSnapshotCreatePopupView.class);
 
         // Host
         bindPresenter(HostSubTabPanelPresenter.class,

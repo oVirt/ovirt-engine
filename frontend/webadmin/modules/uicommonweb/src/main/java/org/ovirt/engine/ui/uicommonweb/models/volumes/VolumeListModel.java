@@ -115,6 +115,8 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
     private UICommand stopVolumeProfilingCommand;
     private UICommand configureClusterSnapshotOptionsCommand;
     private UICommand configureVolumeSnapshotOptionsCommand;
+    private UICommand createSnapshotCommand;
+    private UICommand editSnapshotScheduleCommand;
 
     public UICommand getStartRebalanceCommand() {
         return startRebalanceCommand;
@@ -223,6 +225,22 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         this.configureVolumeSnapshotOptionsCommand = command;
     }
 
+    public UICommand getCreateSnapshotCommand() {
+        return this.createSnapshotCommand;
+    }
+
+    public void setCreateSnapshotCommand(UICommand command) {
+        this.createSnapshotCommand = command;
+    }
+
+    public UICommand getEditSnapshotScheduleCommand() {
+        return this.editSnapshotScheduleCommand;
+    }
+
+    public void setEditSnapshotScheduleCommand(UICommand command) {
+        this.editSnapshotScheduleCommand = command;
+    }
+
     @Inject
     public VolumeListModel(final VolumeBrickListModel volumeBrickListModel, final VolumeGeneralModel volumeGeneralModel,
             final VolumeParameterListModel volumeParameterListModel,
@@ -255,6 +273,8 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         setOptimizeForVirtStoreCommand(new UICommand("OptimizeForVirtStore", this)); //$NON-NLS-1$
         setConfigureClusterSnapshotOptionsCommand(new UICommand("configureClusterSnapshotOptions", this)); //$NON-NLS-1$
         setConfigureVolumeSnapshotOptionsCommand(new UICommand("configureVolumeSnapshotOptions", this)); //$NON-NLS-1$
+        setCreateSnapshotCommand(new UICommand("createSnapshot", this)); //$NON-NLS-1$
+        setEditSnapshotScheduleCommand(new UICommand("editSnapshotSchedule", this)); //$NON-NLS-1$
 
         getRemoveVolumeCommand().setIsExecutionAllowed(false);
         getStartCommand().setIsExecutionAllowed(false);
@@ -471,6 +491,8 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         boolean allowProfileStatisticsDetails = false;
         boolean allowConfigureClusterSnapshotOptions = true;
         boolean allowConfigureVolumeSnapshotOptions = false;
+        boolean allowCreateSnapshot = false;
+        boolean allowEditSnapshotSchedule = false;
 
         if (getSelectedItems() == null || getSelectedItems().size() == 0) {
             allowStart = false;
@@ -518,6 +540,8 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             }
             allowStatusRebalance = getRebalanceStatusAvailability(getSelectedItems());
             allowProfileStatisticsDetails = getProfileStatisticsAvailability(list);
+            allowCreateSnapshot = isCreateSnapshotAvailable(list);
+            allowEditSnapshotSchedule = isEditSnapshotScheduleAvailable(list);
         }
         getStartCommand().setIsExecutionAllowed(allowStart);
         getStopCommand().setIsExecutionAllowed(allowStop);
@@ -528,6 +552,8 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         getOptimizeForVirtStoreCommand().setIsExecutionAllowed(allowOptimize);
         getConfigureClusterSnapshotOptionsCommand().setIsExecutionAllowed(allowConfigureClusterSnapshotOptions);
         getConfigureVolumeSnapshotOptionsCommand().setIsExecutionAllowed(allowConfigureVolumeSnapshotOptions);
+        getCreateSnapshotCommand().setIsExecutionAllowed(allowCreateSnapshot);
+        getEditSnapshotScheduleCommand().setIsExecutionAllowed(allowEditSnapshotSchedule);
 
         // System tree dependent actions.
         boolean isAvailable =
@@ -538,6 +564,15 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
         getStartVolumeProfilingCommand().setIsExecutionAllowed(allowStartProfiling);
         getStopVolumeProfilingCommand().setIsExecutionAllowed(allowStopProfiling);
         getShowVolumeProfileDetailsCommand().setIsExecutionAllowed(allowProfileStatisticsDetails);
+    }
+
+    private boolean isCreateSnapshotAvailable(List<GlusterVolumeEntity> list) {
+        return ((list.size() == 1) && (list.get(0).getStatus() == GlusterStatus.UP));
+    }
+
+    private boolean isEditSnapshotScheduleAvailable(List<GlusterVolumeEntity> list) {
+        return ((list.size() == 1) && (list.get(0).getStatus() == GlusterStatus.UP) && list.get(0)
+                .getSnapshotScheduled());
     }
 
     private boolean isStopProfileAvailable(List<GlusterVolumeEntity> list) {
@@ -664,6 +699,10 @@ public class VolumeListModel extends ListWithSimpleDetailsModel<Void, GlusterVol
             confirmConfigureVolumeSnapshotOptions();
         } else if (command.getName().equalsIgnoreCase("onConfigureVolumeSnapshotOptions")) {//$NON-NLS-1$
             onConfigureVolumeSnapshotOptions();
+        } else if (command.equals(getCreateSnapshotCommand())) {
+            getSnapshotListModel().getCreateSnapshotCommand().execute();
+        } else if (command.equals(getEditSnapshotScheduleCommand())) {
+            getSnapshotListModel().getEditSnapshotScheduleCommand().execute();
         }
     }
 

@@ -21,6 +21,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterServerServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotConfigDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotDao;
+import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotScheduleDao;
 
 public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
     protected GlusterQueriesCommandBase(P parameters) {
@@ -70,6 +71,10 @@ public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase
 
     protected GlusterVolumeSnapshotConfigDao getGlusterVolumeSnapshotConfigDao() {
         return DbFacade.getInstance().getGlusterVolumeSnapshotConfigDao();
+    }
+
+    protected GlusterVolumeSnapshotScheduleDao getGlusterVolumeSnapshotScheduleDao() {
+        return DbFacade.getInstance().getGlusterVolumeSnapshotScheduleDao();
     }
 
     protected Guid getUpServerId(Guid clusterId) {

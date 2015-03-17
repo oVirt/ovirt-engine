@@ -2570,6 +2570,18 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     String geoRepForceHelp();
 
     // Gluster Volume Snapshots
+    @DefaultStringValue("Create/Schedule Snapshot")
+    String createScheduleVolumeSnapshotTitle();
+
+    @DefaultStringValue("Edit Snapshot Schedule")
+    String editVolumeSnapshotScheduleTitle();
+
+    @DefaultStringValue("Date")
+    String endDateOptionText();
+
+    @DefaultStringValue("No End Date")
+    String noEndDateOptionText();
+
     @DefaultStringValue("Volume Snapshot - Cluster Options")
     String configureClusterSnapshotOptionsTitle();
 
@@ -2637,4 +2649,19 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Last Day")
     String lastDay();
+
+    @DefaultStringValue("No week days selected")
+    String noWeekDaysSelectedMessage();
+
+    @DefaultStringValue("No month days selected")
+    String noMonthDaysSelectedMessage();
+
+    @DefaultStringValue("Last day of month cannot be selected with other month days")
+    String lastDayMonthCanBeSelectedAlone();
+
+    @DefaultStringValue("End by date cannot be before start date")
+    String endDateBeforeStartDate();
+
+    @DefaultStringValue("Unable to fetch gluster volume snapshot schedule")
+    String unableToFetchVolumeSnapshotSchedule();
 }
