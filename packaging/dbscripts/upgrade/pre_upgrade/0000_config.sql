@@ -330,7 +330,11 @@ select fn_db_add_config_value('IPTablesConfigForGluster',
 -A INPUT -p tcp -m tcp --dport 445   -j ACCEPT
 
 # Ports for gluster volume bricks (default 100 ports)
+# Needed for gluster < 3.4.0 that may be still handled by the engine
 -A INPUT -p tcp -m tcp --dport 24009:24108 -j ACCEPT
+
+# Ports for gluster volume bricks in Hyper Converged setup(default 100 ports)
+-A INPUT -p tcp -m tcp --dport 49217:49316 -j ACCEPT
 ','general');
 select fn_db_add_config_value('IPTablesConfigForVirt',
 '
@@ -761,8 +765,16 @@ select fn_db_update_config_value('IPTablesConfigForGluster',
 -A INPUT -p tcp -m tcp --dport 445   -j ACCEPT
 
 # Ports for gluster volume bricks (default 100 ports)
+# Needed for Gluster < 3.4.0 compatibility
 -A INPUT -p tcp -m tcp --dport 24009:24108 -j ACCEPT
+
+# Ports required for GlusterFS brick processes have changed in
+# glusterfs 3.4.0 from 24009 onwards to 49152 onwards.
 -A INPUT -p tcp -m tcp --dport 49152:49251 -j ACCEPT
+
+# Ports for gluster volume bricks in Hyper Converged setup(default 100 ports)
+-A INPUT -p tcp -m tcp --dport 49217:49316 -j ACCEPT
+
 ','general');
 select fn_db_update_config_value('IPTablesConfigForVirt',
 '
