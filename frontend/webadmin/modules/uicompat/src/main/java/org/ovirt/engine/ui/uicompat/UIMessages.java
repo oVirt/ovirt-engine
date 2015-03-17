@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.uicompat;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotScheduleRecurrence;
+
 public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("One of the parameters isn''t supported (available parameter(s): {0})")
@@ -439,4 +441,15 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Below snapshots would be removed. Do you want to continue?\n\n {0}")
     String confirmVolumeSnapshotDeleteMessage(String snapshotNames);
+
+    @DefaultMessage("Incorrect enum")
+    @AlternateMessage({
+        "UNKNOWN", "None",
+        "INTERVAL", "Minutely",
+        "HOURLY", "Hourly",
+        "DAILY", "Daily",
+        "WEEKLY", "Weekly",
+        "MONTHLY", "Monthly"
+    })
+    String recurrenceType(@Select GlusterVolumeSnapshotScheduleRecurrence recurrence);
 }

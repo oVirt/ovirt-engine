@@ -165,6 +165,16 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         snapshotCountColumn.makeSortable();
         getTable().addColumn(snapshotCountColumn, constants.noOfSnapshotsLabel(), "100px"); //$NON-NLS-1$
 
+        TextColumnWithTooltip<GlusterVolumeEntity> snapshotScheduledColumn =
+                new TextColumnWithTooltip<GlusterVolumeEntity>() {
+            @Override
+            public String getValue(GlusterVolumeEntity object) {
+                return object.getSnapshotScheduled().toString();
+            }
+        };
+        snapshotScheduledColumn.makeSortable();
+        getTable().addColumn(snapshotScheduledColumn, constants.snapshotScheduledLabel(), "100px"); //$NON-NLS-1$
+
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.newVolume()) {
             @Override
             protected UICommand resolveCommand() {
@@ -232,7 +242,25 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
     }
 
     private List<ActionButtonDefinition<GlusterVolumeEntity>> getVolumeSnapshotMenu(ApplicationConstants constants) {
-        List<ActionButtonDefinition<GlusterVolumeEntity>> snapshotMenu = new ArrayList<ActionButtonDefinition<GlusterVolumeEntity>>();
+        List<ActionButtonDefinition<GlusterVolumeEntity>> snapshotMenu =
+                new ArrayList<ActionButtonDefinition<GlusterVolumeEntity>>();
+
+        WebAdminButtonDefinition<GlusterVolumeEntity> newSnapshotButton =
+                new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.newVolumeSnapshot()) {
+                    @Override
+                    protected UICommand resolveCommand() {
+                        return getMainModel().getCreateSnapshotCommand();
+                    }
+                };
+        snapshotMenu.add(newSnapshotButton);
+        WebAdminButtonDefinition<GlusterVolumeEntity> editSnapshotScheduleButton =
+                new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.editVolumeSnapshotSchedule()) {
+                    @Override
+                    protected UICommand resolveCommand() {
+                        return getMainModel().getEditSnapshotScheduleCommand();
+                    }
+                };
+        snapshotMenu.add(editSnapshotScheduleButton);
 
         WebAdminButtonDefinition<GlusterVolumeEntity> configureClusterSnapshotOptionsButton = new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.configureClusterSnapshotOptions()) {
             @Override
@@ -249,6 +277,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
 
         snapshotMenu.add(configureClusterSnapshotOptionsButton);
         snapshotMenu.add(configureVolumeSnapshotOptionsButton);
+
         return snapshotMenu;
     }
 

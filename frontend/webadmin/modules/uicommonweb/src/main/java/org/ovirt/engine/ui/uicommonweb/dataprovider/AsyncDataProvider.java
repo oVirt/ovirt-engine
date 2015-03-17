@@ -1592,6 +1592,18 @@ public final class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeGeoRepSessions, new IdQueryParameters(masterVolumeId), aQuery);
     }
 
+    public static void getVolumeSnapshotSchedule(AsyncQuery aQuery, Guid volumeId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery asyncQuery) {
+                return source;
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeSnapshotScheduleByVolumeId,
+                new IdQueryParameters(volumeId),
+                aQuery);
+     }
+
     public static void getGlusterHook(AsyncQuery aQuery, Guid hookId, boolean includeServerHooks) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

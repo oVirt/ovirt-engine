@@ -32,8 +32,11 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.AddBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.BrickAdvancedDetailsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterClusterSnapshotConfigureOptionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeGeoReplicationSessionConfigPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeSnapshotConfigureOptionsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeSnapshotCreatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickStatusPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.ReplaceBrickPopupPresenterWidget;
@@ -59,7 +62,9 @@ public class VolumeModule extends AbstractGinModule {
             final Provider<VolumePopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<VolumeRebalanceStatusPopupPresenterWidget> rebalanceStatusPopupProvider,
-            final Provider<VolumeProfileStatisticsPopupPresenterWidget> volumeProfileStatsPopupProvider) {
+            final Provider<VolumeProfileStatisticsPopupPresenterWidget> volumeProfileStatsPopupProvider,
+            final Provider<GlusterVolumeSnapshotConfigureOptionsPopupPresenterWidget> volumeSnapshotConfigOptionsPopupProvider,
+            final Provider<GlusterClusterSnapshotConfigureOptionsPopupPresenterWidget> clusterSnapshotConfigOptionsPopupProvider) {
         return new MainTabModelProvider<GlusterVolumeEntity, VolumeListModel>(eventBus, defaultConfirmPopupProvider, VolumeListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeListModel source,
@@ -72,6 +77,12 @@ public class VolumeModule extends AbstractGinModule {
                 }
                 else if(lastExecutedCommand == getModel().getShowVolumeProfileDetailsCommand() || lastExecutedCommand.getName().equals("showProfileDetails")) {//$NON-NLS-1$
                     return volumeProfileStatsPopupProvider.get();
+                }
+                else if (lastExecutedCommand == getModel().getConfigureVolumeSnapshotOptionsCommand()) {
+                    return volumeSnapshotConfigOptionsPopupProvider.get();
+                }
+                else if (lastExecutedCommand == getModel().getConfigureClusterSnapshotOptionsCommand()) {
+                    return clusterSnapshotConfigOptionsPopupProvider.get();
                 }
                 else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);
@@ -170,7 +181,8 @@ public class VolumeModule extends AbstractGinModule {
     @Provides
     @Singleton
     public SearchableDetailModelProvider<GlusterVolumeSnapshotEntity, VolumeListModel, GlusterVolumeSnapshotListModel> getVolumeSnapshotListProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<GlusterVolumeSnapshotCreatePopupPresenterWidget> snapshotPopupProvider) {
         return new SearchableDetailTabModelProvider<GlusterVolumeSnapshotEntity, VolumeListModel, GlusterVolumeSnapshotListModel>(eventBus,
                 defaultConfirmPopupProvider,
                 VolumeListModel.class,
@@ -179,6 +191,11 @@ public class VolumeModule extends AbstractGinModule {
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(GlusterVolumeSnapshotListModel source,
                             UICommand lastExecutedCommand,
                             Model windowModel) {
+                        if (lastExecutedCommand == getModel().getCreateSnapshotCommand()) {
+                            return snapshotPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getEditSnapshotScheduleCommand()) {
+                            return snapshotPopupProvider.get();
+                        }
                         return super.getModelPopup(source, lastExecutedCommand, windowModel);
                     }
 
@@ -273,5 +290,4 @@ public class VolumeModule extends AbstractGinModule {
     @Override
     protected void configure() {
     }
-
 }

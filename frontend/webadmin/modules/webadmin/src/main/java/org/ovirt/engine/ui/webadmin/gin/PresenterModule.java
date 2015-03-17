@@ -42,8 +42,11 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.AddBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.BrickAdvancedDetailsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.DetachGlusterHostsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterClusterSnapshotConfigureOptionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeGeoReplicationSessionConfigPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeSnapshotConfigureOptionsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeSnapshotCreatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickStatusPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.ReplaceBrickPopupPresenterWidget;
@@ -282,7 +285,10 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.AddBrickPopu
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.BrickAdvancedDetailsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.DetachGlusterHostsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.GeoRepActionConfirmPopUpView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.GlusterClusterSnapshotConfigureOptionsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.GlusterVolumeGeoReplicationSessionConfigPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.GlusterVolumeSnapshotConfigureOptionsPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.GlusterVolumeSnapshotCreatePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.RemoveBrickPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.RemoveBrickStatusPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.ReplaceBrickPopupView;
@@ -773,6 +779,15 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabClusterCpuProfilePresenter.ViewDef.class,
                 SubTabClusterCpuProfileView.class,
                 SubTabClusterCpuProfilePresenter.ProxyDef.class);
+        bindPresenterWidget(GlusterVolumeSnapshotConfigureOptionsPopupPresenterWidget.class,
+                GlusterVolumeSnapshotConfigureOptionsPopupPresenterWidget.ViewDef.class,
+                GlusterVolumeSnapshotConfigureOptionsPopupView.class);
+        bindPresenterWidget(GlusterClusterSnapshotConfigureOptionsPopupPresenterWidget.class,
+                GlusterClusterSnapshotConfigureOptionsPopupPresenterWidget.ViewDef.class,
+                GlusterClusterSnapshotConfigureOptionsPopupView.class);
+        bindPresenterWidget(GlusterVolumeSnapshotCreatePopupPresenterWidget.class,
+                GlusterVolumeSnapshotCreatePopupPresenterWidget.ViewDef.class,
+                GlusterVolumeSnapshotCreatePopupView.class);
 
         // Host
         bindPresenter(HostSubTabPanelPresenter.class,
