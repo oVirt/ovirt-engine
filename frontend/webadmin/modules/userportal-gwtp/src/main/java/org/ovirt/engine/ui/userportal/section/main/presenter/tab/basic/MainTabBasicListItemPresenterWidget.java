@@ -201,6 +201,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
 
         if (sameEntity(listModel.getSelectedItem(), model)) {
             setSelectedItem();
+            setVmStyle();
         }
     }
 
@@ -214,15 +215,11 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
     @Override
     public void onMouseOut(MouseOutEvent event) {
         setVmStyle();
-        getView().hideDoubleClickBanner();
     }
 
     @Override
     public void onMouseOver(MouseOverEvent event) {
         setVmStyleMouseOver();
-        if (!model.isPool() && model.getVmConsoles().canConnectToConsole()) {
-            getView().showDoubleClickBanner();
-        }
     }
 
     @Override
@@ -240,13 +237,13 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
     public void onClick(ClickEvent event) {
         if (!isSelected()) {
             setSelectedItem();
+            setVmStyleMouseOver();
         }
     }
 
     void setSelectedItem() {
         listModel.setSelectedItem(model);
         listModelProvider.setSelectedItems(Arrays.asList(model));
-        setVmStyle();
     }
 
     /**
@@ -285,6 +282,11 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
                     getView().setItemNotRunningOrConsoleTakenStyle();
                 }
             }
+        }
+        if (mouseOver && !model.isPool() && model.getVmConsoles().canConnectToConsole()) {
+            getView().showDoubleClickBanner();
+        } else {
+            getView().hideDoubleClickBanner();
         }
     }
 
