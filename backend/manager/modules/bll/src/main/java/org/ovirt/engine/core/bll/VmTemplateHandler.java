@@ -25,7 +25,7 @@ public class VmTemplateHandler {
     private static final Logger log = LoggerFactory.getLogger(VmTemplateHandler.class);
 
     protected final static Guid BLANK_VM_TEMPLATE_ID = Guid.Empty;
-    protected final static String BLANK_VM_TEMPLATE_NAME = "Blank";
+    protected final static String BLANK_VM_TEMPLATE_NAME = "Default";
     private static ObjectIdentityChecker mUpdateVmTemplate;
 
     /**
