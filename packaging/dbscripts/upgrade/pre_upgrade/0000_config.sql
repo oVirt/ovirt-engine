@@ -524,7 +524,6 @@ select fn_db_add_config_value('TimeToReduceFailedRunOnVdsInMinutes','30','genera
 select fn_db_add_config_value('UnknownTaskPrePollingLapse','60000','general');
 select fn_db_add_config_value('UserSessionHardLimit','600','general');
 select fn_db_add_config_value_for_versions_up_to('UserDefinedVMProperties', '','3.6');
-select fn_db_add_config_value('UserRefreshRate','3600','general');
 select fn_db_add_config_value('UserSessionTimeOutInterval','30','general');
 select fn_db_add_config_value('UtilizationThresholdInPercent','80','general');
 select fn_db_add_config_value('ValidNumOfMonitors','1,2,4','general');
@@ -1044,6 +1043,7 @@ select fn_db_delete_config_value('SysPrepWindows7x64Path','general');
 select fn_db_delete_config_value('SysPrepWindows8Path','general');
 select fn_db_delete_config_value('SysPrepWindows8x64Path','general');
 select fn_db_delete_config_value('SysPrepWindows2012x64Path','general');
+select fn_db_delete_config_value('UserRefreshRate','general');
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once

@@ -132,9 +132,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3000")
     AsyncTaskZombieTaskLifeInMinutes,
-    @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("3600")
-    UserRefreshRate,
     @TypeConverterAttribute(Date.class)
     @DefaultValueAttribute("03:35:35")
     AuditLogCleanupTime,
