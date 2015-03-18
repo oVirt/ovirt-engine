@@ -497,4 +497,12 @@ public class FeatureSupported {
     public static boolean reportWhetherDomainMonitoringResultIsActual(Version version) {
         return supportedInConfig(ConfigValues.ReportWhetherDomainMonitoringResultIsActual, version);
     }
+
+    /**
+     * @param version - compatibility version to check for
+     * @return <code>true</code> if the Cinder provider is supported for the specified datacenter
+     */
+    public static boolean cinderProviderSupported(Version version) {
+        return supportedInConfig(ConfigValues.CinderProviderSupported, version);
+    }
 }
