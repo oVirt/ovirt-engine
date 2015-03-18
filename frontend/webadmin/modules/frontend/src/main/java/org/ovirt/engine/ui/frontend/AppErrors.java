@@ -3664,4 +3664,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Graphics device ID or VM/Template ID is null.")
     String ACTION_TYPE_REMOVE_GRAPHICS_DEV_INVALID_PARAMS();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The current type ${providerType} is not supported.")
+    String ACTION_TYPE_FAILED_PROVIDER_NOT_SUPPORTED();
 }
