@@ -37,6 +37,7 @@ public abstract class BaseProviderProxy implements ProviderProxy {
 
     private URL url;
     private Provider<?> hostProvider;
+    private ProviderValidator providerValidator;
 
     protected static enum HttpMethodType {
         GET,
@@ -194,5 +195,12 @@ public abstract class BaseProviderProxy implements ProviderProxy {
         return result;
     }
 
+    @Override
+    public ProviderValidator getProviderValidator() {
+        if (providerValidator == null) {
+            providerValidator = new ProviderValidator(hostProvider);
+        }
+        return providerValidator;
+    }
 
 }

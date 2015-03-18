@@ -4,7 +4,7 @@ import java.security.cert.Certificate;
 import java.util.List;
 
 
-public interface ProviderProxy {
+public interface ProviderProxy<T extends ProviderValidator> {
 
     /**
      * Test the connection to the provider.<br>
@@ -36,5 +36,11 @@ public interface ProviderProxy {
      * Useful to add provider-specific operations when the provider is removed.
      */
     void onRemoval();
+
+    /**
+     * Gets a specific validator for the provider
+     * @return
+     */
+    T getProviderValidator();
 
 }

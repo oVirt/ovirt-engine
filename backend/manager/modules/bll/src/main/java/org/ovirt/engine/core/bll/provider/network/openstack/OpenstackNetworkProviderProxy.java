@@ -12,6 +12,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.ovirt.engine.core.bll.provider.ProviderValidator;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -55,6 +56,8 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
     private Provider<OpenstackNetworkProviderProperties> provider;
 
     private Quantum client;
+
+    private ProviderValidator providerValidator;
 
     public OpenstackNetworkProviderProxy(Provider<OpenstackNetworkProviderProperties> provider) {
         this.provider = provider;
@@ -338,5 +341,13 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
     @JsonIgnoreProperties(ignoreUnknown = true)
     private static class ApiRootResponse {
         // No implementation since we don't care what's inside the response, just that it succeeded.
+    }
+
+    @Override
+    public ProviderValidator getProviderValidator() {
+        if (providerValidator == null) {
+            providerValidator = new ProviderValidator(provider);
+        }
+        return providerValidator;
     }
 }

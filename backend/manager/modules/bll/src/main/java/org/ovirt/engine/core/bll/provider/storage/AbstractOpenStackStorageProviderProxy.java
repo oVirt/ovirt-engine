@@ -7,6 +7,7 @@ import com.woorea.openstack.base.client.OpenStackTokenProvider;
 import com.woorea.openstack.keystone.model.Access;
 import com.woorea.openstack.keystone.utils.KeystoneTokenProvider;
 import org.ovirt.engine.core.bll.provider.ProviderProxy;
+import org.ovirt.engine.core.bll.provider.ProviderValidator;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
@@ -23,7 +24,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import java.security.cert.Certificate;
 import java.util.List;
 
-public abstract class AbstractOpenStackStorageProviderProxy<C extends OpenStackClient, T extends TenantProviderProperties> implements ProviderProxy {
+public abstract class AbstractOpenStackStorageProviderProxy<C extends OpenStackClient, T extends TenantProviderProperties, V extends ProviderValidator> implements ProviderProxy<V> {
 
     protected C client;
 
@@ -34,6 +35,8 @@ public abstract class AbstractOpenStackStorageProviderProxy<C extends OpenStackC
     protected KeystoneTokenProvider keystoneTokenProvider;
 
     protected StorageDomain storageDomain;
+
+    protected V providerValidator;
 
     @Override
     public void testConnection() {
