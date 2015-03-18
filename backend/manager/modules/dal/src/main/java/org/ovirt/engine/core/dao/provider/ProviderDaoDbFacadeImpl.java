@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderPro
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Provider.AdditionalProperties;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
+import org.ovirt.engine.core.common.businessentities.storage.OpenStackVolumeProviderProperties;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
@@ -45,6 +46,11 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider<
                 OpenStackImageProviderProperties imageProperties =
                         (OpenStackImageProviderProperties) entity.getAdditionalProperties();
                 tenantName = imageProperties.getTenantName();
+                break;
+            case OPENSTACK_VOLUME:
+                OpenStackVolumeProviderProperties volumeProperties =
+                        (OpenStackVolumeProviderProperties) entity.getAdditionalProperties();
+                tenantName = volumeProperties.getTenantName();
                 break;
             default:
                 break;
@@ -129,6 +135,10 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider<
                 OpenStackImageProviderProperties imageProperties = new OpenStackImageProviderProperties();
                 imageProperties.setTenantName(rs.getString("tenant_name"));
                 return imageProperties;
+            case OPENSTACK_VOLUME:
+                OpenStackVolumeProviderProperties volumeProperties = new OpenStackVolumeProviderProperties();
+                volumeProperties.setTenantName(rs.getString("tenant_name"));
+                return volumeProperties;
             default:
                 return null;
             }
