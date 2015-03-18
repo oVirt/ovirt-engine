@@ -227,9 +227,7 @@ public class GlusterVolumeSnapshotCreatePopupView extends
 
         intervalEditor.setVisible(recurrenceOption == GlusterVolumeSnapshotScheduleRecurrence.INTERVAL);
         endByOptionsEditor.setVisible(recurrenceOption != GlusterVolumeSnapshotScheduleRecurrence.UNKNOWN);
-        timeZoneEditor.setVisible(recurrenceOption == GlusterVolumeSnapshotScheduleRecurrence.DAILY
-                || recurrenceOption == GlusterVolumeSnapshotScheduleRecurrence.WEEKLY
-                || recurrenceOption == GlusterVolumeSnapshotScheduleRecurrence.MONTHLY);
+        timeZoneEditor.setVisible(recurrenceOption != GlusterVolumeSnapshotScheduleRecurrence.UNKNOWN);
         daysOfWeekEditor.setVisible(recurrenceOption == GlusterVolumeSnapshotScheduleRecurrence.WEEKLY);
         daysOfMonthEditor.setVisible(recurrenceOption == GlusterVolumeSnapshotScheduleRecurrence.MONTHLY);
         startAtEditor.setVisible(recurrenceOption != GlusterVolumeSnapshotScheduleRecurrence.UNKNOWN);
