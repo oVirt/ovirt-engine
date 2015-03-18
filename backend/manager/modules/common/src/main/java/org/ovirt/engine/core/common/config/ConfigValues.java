@@ -2069,6 +2069,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     ReportWhetherDomainMonitoringResultIsActual,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    CinderProviderSupported,
+
     Invalid
 
 }

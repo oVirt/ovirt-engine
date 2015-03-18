@@ -634,6 +634,9 @@ select fn_db_add_config_value('DisconnectDwh', '0', 'general');
 select fn_db_add_config_value('GlanceImageListSize','20','general');
 select fn_db_add_config_value('GlanceImageTotalListSize','500','general');
 
+-- OpenStack Cinder
+select fn_db_add_config_value_for_versions_up_to('CinderProviderSupported', 'false', '3.5');
+
 -- Cluster HA Reservation
 select fn_db_add_config_value('OverUtilizationForHaReservation','200','general');
 select fn_db_add_config_value('ScaleDownForHaReservation','1','general');

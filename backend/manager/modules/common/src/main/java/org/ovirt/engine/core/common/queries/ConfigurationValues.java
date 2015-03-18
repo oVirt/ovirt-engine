@@ -157,7 +157,8 @@ public enum ConfigurationValues {
     DefaultAutoConvergence,
     DefaultMigrationCompression,
     CORSSupport,
-    CORSAllowedOrigins;
+    CORSAllowedOrigins,
+    CinderProviderSupported;
 
     public static enum ConfigAuthType {
         Admin,
