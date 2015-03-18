@@ -25,9 +25,12 @@ import org.ovirt.engine.core.compat.Guid;
         type = PolicyUnitType.WEIGHT
 )
 public class VmAffinityWeightPolicyUnit extends PolicyUnitImpl {
+    private static final int DEFAULT_SCORE = 1;
+
     public VmAffinityWeightPolicyUnit(PolicyUnit policyUnit,
             PendingResourceManager pendingResourceManager) {
         super(policyUnit, pendingResourceManager);
+
     }
 
     @Override
@@ -49,7 +52,7 @@ public class VmAffinityWeightPolicyUnit extends PolicyUnitImpl {
         List<Pair<Guid, Integer>> retList = new ArrayList<>();
         int score;
         for (VDS host : hosts) {
-            score = 1;
+            score = DEFAULT_SCORE;
             if (!acceptableHostsMap.containsKey(host.getId())) {
                 score = MaxSchedulerWeight;
             }
