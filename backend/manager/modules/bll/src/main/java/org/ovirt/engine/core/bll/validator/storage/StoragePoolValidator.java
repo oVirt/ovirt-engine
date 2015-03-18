@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.validator.storage;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.ValidationResult;
@@ -69,6 +70,14 @@ public class StoragePoolValidator {
             }
         }
 
+        return ValidationResult.VALID;
+    }
+
+    public ValidationResult checkStoragePoolNotInStatus(StoragePoolStatus... statuses) {
+        List<StoragePoolStatus> statusList = Arrays.asList(statuses);
+        if (!statusList.contains(storagePool.getStatus())) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
+        }
         return ValidationResult.VALID;
     }
 }
