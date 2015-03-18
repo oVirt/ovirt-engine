@@ -13,9 +13,10 @@ public enum StorageType implements Identifiable {
     LOCALFS(4, Subtype.FILE),
     POSIXFS(6, Subtype.FILE),
     GLUSTERFS(7, Subtype.FILE),
-    GLANCE(8, Subtype.FILE);
+    GLANCE(8, Subtype.FILE),
+    CINDER(9, Subtype.OPENSTACK);
 
-    public enum Subtype { NONE, FILE, BLOCK }
+    public enum Subtype { NONE, FILE, BLOCK, OPENSTACK }
 
     private int value;
     private Subtype subtype;
@@ -60,5 +61,9 @@ public enum StorageType implements Identifiable {
 
     public boolean isLocal() {
         return this == LOCALFS;
+    }
+
+    public boolean isOpenStackDomain() {
+        return this == GLANCE || this == CINDER;
     }
 }
