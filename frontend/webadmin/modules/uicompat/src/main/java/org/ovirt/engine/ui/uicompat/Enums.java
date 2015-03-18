@@ -202,6 +202,8 @@ public interface Enums extends LocalizedEnums {
 
     String StorageDomainType___Image();
 
+    String StorageDomainType___Volume();
+
     String VmTemplateStatus___OK();
 
     String VmTemplateStatus___Locked();
