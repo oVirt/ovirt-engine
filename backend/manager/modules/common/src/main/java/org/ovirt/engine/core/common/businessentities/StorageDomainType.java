@@ -7,6 +7,7 @@ public enum StorageDomainType {
     ISO,
     ImportExport,
     Image,
+    Volume,
     Unknown;
 
     public int getValue() {
