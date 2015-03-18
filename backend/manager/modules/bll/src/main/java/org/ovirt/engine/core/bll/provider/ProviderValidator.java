@@ -27,4 +27,11 @@ public class ProviderValidator {
         return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST)
                 .when(provider == null);
     }
+
+    /**
+     * Specific validations that each sub-class can override and implement
+     */
+    public ValidationResult validateAddProvider() {
+        return ValidationResult.VALID;
+    }
 }
