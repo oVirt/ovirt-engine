@@ -65,6 +65,8 @@ public interface Enums extends LocalizedEnums {
 
     String StorageType___GLANCE();
 
+    String StorageType___CINDER();
+
     String StorageType___UNKNOWN();
 
     String StorageFormatType___V1();
