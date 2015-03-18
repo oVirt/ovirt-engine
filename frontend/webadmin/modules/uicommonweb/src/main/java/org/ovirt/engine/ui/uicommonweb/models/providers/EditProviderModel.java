@@ -8,14 +8,20 @@ import java.util.Set;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -125,4 +131,28 @@ public class EditProviderModel extends ProviderModel {
         }
     }
 
+    @Override
+    protected void updateDatacentersForVolumeProvider() {
+        getDataCenter().setIsChangable(false);
+        AsyncDataProvider.getInstance().getStorageDomainByName(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object target, Object returnValue) {
+                StorageDomainStatic storageDomainStatic = (StorageDomainStatic) returnValue;
+                AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(target, new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) returnValue;
+                        if (dataCenters != null && !dataCenters.isEmpty()) {
+                            getDataCenter().setSelectedItem(dataCenters.get(0));
+                        } else {
+                            StoragePool noneStoragePool = new StoragePool();
+                            noneStoragePool.setId(Guid.Empty);
+                            noneStoragePool.setName("(none)"); //$NON-NLS-1$
+                            getDataCenter().setSelectedItem(noneStoragePool);
+                        }
+                    }
+                }), storageDomainStatic.getId());
+            }
+        }), provider.getName());
+    }
 }

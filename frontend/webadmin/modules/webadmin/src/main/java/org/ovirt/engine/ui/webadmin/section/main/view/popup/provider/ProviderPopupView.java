@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.provider;
 
 import org.ovirt.engine.core.common.businessentities.ProviderType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -15,6 +16,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEdito
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
+import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -60,6 +62,11 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     @Path(value = "type.selectedItem")
     @WithElementId
     ListModelListBoxEditor<ProviderType> typeEditor;
+
+    @UiField(provided = true)
+    @Path(value = "dataCenter.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<StoragePool> datacenterEditor;
 
     @UiField
     @Path(value = "url.entity")
@@ -130,6 +137,12 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         super(eventBus);
 
         typeEditor = new ListModelListBoxEditor<ProviderType>(new EnumRenderer());
+        datacenterEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<StoragePool>() {
+            @Override
+            public String renderNullSafe(StoragePool storagePool) {
+                return storagePool.getName();
+            }
+        });
         requiresAuthenticationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -152,6 +165,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         passwordEditor.setLabel(constants.passwordProvider());
         tenantNameEditor.setLabel(constants.tenantName());
         pluginTypeEditor.setLabel(constants.pluginType());
+        datacenterEditor.setLabel(constants.dataCenter());
         authUrlEditor.setLabel(constants.authUrlProvider());
 
         // Agent configuration tab

@@ -13,7 +13,9 @@ import org.ovirt.engine.core.common.businessentities.CertificateInfo;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.TenantProviderProperties;
+import org.ovirt.engine.core.common.businessentities.storage.OpenStackVolumeProviderProperties;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -62,6 +64,7 @@ public class ProviderModel extends Model {
     private UICommand testCommand;
     private EntityModel<String> testResult = new EntityModel<String>();
     private EntityModel<String> authUrl = new EntityModel<String>();
+    private ListModel<StoragePool> dataCenter;
 
     private NeutronAgentModel neutronAgentModel = new NeutronAgentModel();
     private String certificate;
@@ -130,9 +133,22 @@ public class ProviderModel extends Model {
         return getType().getSelectedItem() == ProviderType.OPENSTACK_IMAGE;
     }
 
+    private boolean isTypeOpenStackVolume() {
+        return getType().getSelectedItem() == ProviderType.OPENSTACK_VOLUME;
+    }
+
+    public ListModel<StoragePool> getDataCenter() {
+        return dataCenter;
+    }
+
+    public void setDataCenter(ListModel<StoragePool> dataCenter) {
+        this.dataCenter = dataCenter;
+    }
+
     private boolean isTypeTenantOrAuthUrlAware() {
         ProviderType type = getType().getSelectedItem();
-        return type == ProviderType.OPENSTACK_NETWORK || type == ProviderType.OPENSTACK_IMAGE;
+        return type == ProviderType.OPENSTACK_NETWORK || type == ProviderType.OPENSTACK_IMAGE ||
+                type == ProviderType.OPENSTACK_VOLUME;
     }
 
     public EntityModel<String> getAuthUrl() {
@@ -152,6 +168,8 @@ public class ProviderModel extends Model {
                 return "http://localhost:9696"; //$NON-NLS-1$
             case OPENSTACK_IMAGE:
                 return "http://localhost:9292"; //$NON-NLS-1$
+            case OPENSTACK_VOLUME:
+                return "http://localhost:8776"; //$NON-NLS-1$
             case FOREMAN:
             default:
                 return "http://localhost"; //$NON-NLS-1$
@@ -204,6 +222,12 @@ public class ProviderModel extends Model {
                 boolean requiresAuth = isTypeRequiresAuthentication();
                 getRequiresAuthentication().setEntity(Boolean.valueOf(requiresAuth));
                 getRequiresAuthentication().setIsChangable(!requiresAuth);
+
+                boolean isCinder = isTypeOpenStackVolume();
+                getDataCenter().setIsAvailable(isCinder);
+                if (isCinder) {
+                    updateDatacentersForVolumeProvider();
+                }
             }
         });
 
@@ -219,6 +243,13 @@ public class ProviderModel extends Model {
         UICommand tempVar2 = UICommand.createCancelUiCommand(CMD_CANCEL, this); //$NON-NLS-1$
         getCommands().add(tempVar2);
         setTestCommand(new UICommand(CMD_TEST, this));
+
+        setDataCenter(new ListModel<StoragePool>());
+        getDataCenter().setIsAvailable(false);
+    }
+
+    protected void updateDatacentersForVolumeProvider() {
+        // implemented on sub-classes
     }
 
     private boolean validate() {
@@ -263,6 +294,8 @@ public class ProviderModel extends Model {
             getNeutronAgentModel().flush(provider);
         } else if (isTypeOpenStackImage()) {
             provider.setAdditionalProperties(new OpenStackImageProviderProperties());
+        } else if (isTypeOpenStackVolume()) {
+            provider.setAdditionalProperties(new OpenStackVolumeProviderProperties(getDataCenter().getSelectedItem().getId()));
         }
 
         boolean authenticationRequired = requiresAuthentication.getEntity();
@@ -308,7 +341,7 @@ public class ProviderModel extends Model {
                 sourceListModel.getSearchCommand().execute();
                 cancel();
             }
-        });
+        }, this);
     }
 
     private void onSave() {

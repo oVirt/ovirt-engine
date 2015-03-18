@@ -61,7 +61,8 @@
 										<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
 										<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
 										<e:ListModelListBoxEditor ui:field="typeEditor" />
-									</g:FlowPanel>
+                                        <e:ListModelListBoxEditor ui:field="datacenterEditor" />
+                                    </g:FlowPanel>
 									<g:FlowPanel>
 										<ge:ListModelSuggestBoxEditor ui:field="pluginTypeEditor" />
 										<ge:StringEntityModelTextBoxEditor ui:field="urlEditor" />
