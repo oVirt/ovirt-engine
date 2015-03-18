@@ -43,8 +43,16 @@ public class AddProviderCommand<P extends ProviderParameters> extends CommandBas
 
     @Override
     protected boolean canDoAction() {
-        ProviderValidator validator = new ProviderValidator(getProvider());
-        return validate(validator.nameAvailable());
+        if (getProvider() == null) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST);
+        }
+        ProviderProxy providerProxy = getProviderProxy();
+        if (providerProxy == null) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_NOT_SUPPORTED,
+                    String.format("$providerType %1$s", getProvider().getType()));
+        }
+        ProviderValidator validator = getProviderProxy().getProviderValidator();
+        return validate(validator.nameAvailable()) && validate(validator.validateAddProvider());
     }
 
     @Override
