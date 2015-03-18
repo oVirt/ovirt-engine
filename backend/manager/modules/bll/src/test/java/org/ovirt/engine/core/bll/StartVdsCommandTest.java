@@ -9,7 +9,6 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.stub;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -18,29 +17,30 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.pm.HostFenceActionExecutor;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
-import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
+import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
-import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
+import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
+import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSFenceReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -50,7 +50,6 @@ import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StartVdsCommandTest extends DbDependentTestBase {
@@ -59,12 +58,8 @@ public class StartVdsCommandTest extends DbDependentTestBase {
     private static final Guid FENCECD_HOST_ID = new Guid("11111111-1111-1111-1111-111111111111");
     private static final Guid FENCECD_HOST_CLUSTER_ID = new Guid("22222222-2222-2222-2222-222222222222");
 
-    @ClassRule
-    public static MockConfigRule configRule =
-            new MockConfigRule(MockConfigRule.mockConfig(ConfigValues.FenceStartStatusRetries, 2),
-                    MockConfigRule.mockConfig(ConfigValues.FenceStartStatusDelayBetweenRetriesInSec, 1));
     @Mock
-    private FenceExecutor executor;
+    private HostFenceActionExecutor executor;
     private FenceAgent agent1;
     private FenceAgent agent2;
     private DbFacade dbFacade;
@@ -152,10 +147,9 @@ public class StartVdsCommandTest extends DbDependentTestBase {
         FenceVdsActionParameters params = new FenceVdsActionParameters();
         params.setVdsId(FENCECD_HOST_ID);
         command = new StartVdsCommand<>(params);
-        command.setFenceExecutor(executor);
-        command = spy(command);
-        stub(command.getSleepBeforeFirstAttempt()).toReturn(0);
         command.setAuditLogDirector(auditLogDirector);
+        command = spy(command);
+        doReturn(executor).when(command).createHostFenceActionExecutor(any(VDS.class), any(FencingPolicy.class));
         command.setVdsGroupId(FENCECD_HOST_CLUSTER_ID);
     }
 
@@ -172,33 +166,14 @@ public class StartVdsCommandTest extends DbDependentTestBase {
         return vds;
     }
 
-    private void mockCheckStatus(String status) {
-        VDSFenceReturnValue retValue = new VDSFenceReturnValue();
-        retValue.setSucceeded(true);
-        FenceStatusReturnValue stat = new FenceStatusReturnValue(status, "");
-        retValue.setReturnValue(stat);
-        when(executor.checkHostStatus()).thenReturn(retValue);
-    }
-
-    private VDSFenceReturnValue createStatus(String value) {
-        VDSFenceReturnValue retValue = new VDSFenceReturnValue();
-        retValue.setSucceeded(true);
-        FenceStatusReturnValue stat = new FenceStatusReturnValue(value, "");
-        retValue.setReturnValue(stat);
-        return retValue;
-    }
-
-    private void mockVdsSingleAgent() {
-        VDS vds = createHost();
-        vds.getFenceAgents().remove(1); // remove the second agent
-        when(vdsDao.get(FENCECD_HOST_ID)).thenReturn(vds);
-    }
-
-    private void mockExecutor(FenceAgent agent, boolean success) {
-        VDSFenceReturnValue returnValue = new VDSFenceReturnValue();
-        returnValue.setSucceeded(success);
-        returnValue.setFenceAgentUsed(agent);
-        when(executor.fence(eq(FenceActionType.START), eq(agent))).thenReturn(returnValue);
+    private void mockExecutor(boolean success) {
+        FenceOperationResult result;
+        if (success) {
+            result = new FenceOperationResult(Status.SUCCESS, PowerStatus.ON);
+        } else {
+            result = new FenceOperationResult(Status.ERROR, PowerStatus.UNKNOWN);
+        }
+        doReturn(result).when(executor).fence(any(FenceActionType.class));
     }
 
     /**
@@ -208,6 +183,7 @@ public class StartVdsCommandTest extends DbDependentTestBase {
      */
     @Test()
     public void onFailureResetInitialStatus() {
+        mockExecutor(false);
         try {
             command.executeCommand();
         } catch (VdcBLLException exception) {
@@ -219,44 +195,19 @@ public class StartVdsCommandTest extends DbDependentTestBase {
     }
 
     /**
-     * This test verifies that when the fence operation is successful, it is not attempted again with the next agent
-     */
-    @Test
-    public void onSuccessDontTryNextAgent() {
-        mockExecutor(agent1, true);
-        mockCheckStatus("on");
-        // this won't happen, because second agent isn't reached.
-        when(executor.fence(eq(FenceActionType.START), eq(agent2))).thenThrow(new IllegalStateException());
-        command.executeCommand();
-    }
-
-    /**
-     * This test verifies that when the fence operation fails using the first agent, the second agent is used.
-     */
-    @Test
-    public void onFailureTryNextAgent() {
-        mockExecutor(agent1, false);
-        mockExecutor(agent2, true);
-        mockCheckStatus("on");
-        command.executeCommand();
-        assertTrue(command.getSucceeded());
-    }
-
-    /**
      * This test verifies that when the fence operation is successful, the return value contains all that is should:
      * succeeded=true, the agents used, and the object returned.
      */
     @Test
     public void onSuccessReturnValueOk() {
-        mockExecutor(agent1, true);
-        mockCheckStatus("on");
+        mockExecutor(true);
         command.executeCommand();
         assertTrue(command.getSucceeded());
         Object commandReturnValue = command.getActionReturnValue();
         assertNotNull(commandReturnValue);
-        assertTrue(commandReturnValue instanceof VDSFenceReturnValue);
-        VDSFenceReturnValue commandReturnValueCasted = (VDSFenceReturnValue)commandReturnValue;
-        assertEquals(commandReturnValueCasted.getFenceAgentUsed(), agent1);
+        assertTrue(commandReturnValue instanceof FenceOperationResult);
+        FenceOperationResult commandReturnValueCasted = (FenceOperationResult) commandReturnValue;
+        assertEquals(Status.SUCCESS, commandReturnValueCasted.getStatus());
     }
 
     /**
@@ -267,8 +218,7 @@ public class StartVdsCommandTest extends DbDependentTestBase {
      */
     @Test
     public void onSuccessAudit() {
-        mockExecutor(agent1, true);
-        mockCheckStatus("on");
+        mockExecutor(true);
         command.executeCommand();
         verify(auditLogDirector, times(2)).log(any(AuditLogableBase.class), any(AuditLogType.class));
 
@@ -281,30 +231,14 @@ public class StartVdsCommandTest extends DbDependentTestBase {
      * saved to the database. In case of success, there are 2 audit messages. In case of failure the second audit
      * message isn't reached, but because of the auditing of the alert, there *are still* 2 audit messages.
      */
-    @Test()
-    public void onFaliureAlertShown() {
-        mockVdsSingleAgent();
-        mockExecutor(agent1, false);
-        mockCheckStatus("on");
+    @Test
+    public void onFailureAlertShown() {
+        mockExecutor(false);
         try {
             command.executeCommand();
-        } catch (VdcBLLException exception) {
-            verify(auditLogDirector, times(2)).log(any(AuditLogableBase.class), any(AuditLogType.class));
-            return;
+            fail();
+        } catch (VdcBLLException ex) {
+            verify(auditLogDirector, times(3)).log(any(AuditLogableBase.class), any(AuditLogType.class));
         }
-        fail();
-    }
-
-    /**
-     * After fence-operation is performed, the command waits for the desired status to be reached. This test verifies
-     * that wait-for-status is retried according to the number of retries specified.
-     */
-    @Test
-    public void onFailureRetryWaitForStatus() {
-        mockVdsSingleAgent();
-        mockExecutor(agent1, true);
-        when(executor.checkHostStatus()).thenReturn(createStatus("off")).thenReturn(createStatus("on"));
-        command.executeCommand();
-        assertTrue(command.getSucceeded());
     }
 }

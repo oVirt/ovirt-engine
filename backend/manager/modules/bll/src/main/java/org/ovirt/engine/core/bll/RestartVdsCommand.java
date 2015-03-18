@@ -14,6 +14,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.pm.HostFenceActionExecutor;
 import org.ovirt.engine.core.bll.validator.FenceValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
@@ -23,14 +24,14 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
-import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
+import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSFenceReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -120,7 +121,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
         final String sessionId = getParameters().getSessionId();
 
         // do not try to stop Host if Host is reported as Down via PM
-        if (FenceExecutor.isStatusOff(new FenceExecutor(getVds()).checkHostStatus())) {
+        if (new HostFenceActionExecutor(getVds()).isHostPoweredOff()) {
             returnValue.setSucceeded(true);
         }
         else {
@@ -206,11 +207,9 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends VdsCo
      */
     protected boolean wasSkippedDueToPolicy(VdcReturnValueBase result) {
         boolean skipped = false;
-        if (result.getActionReturnValue() instanceof VDSFenceReturnValue) {
-            VDSFenceReturnValue fenceReturnValue = result.getActionReturnValue();
-            if (fenceReturnValue.getReturnValue() instanceof FenceStatusReturnValue) {
-                skipped = ((FenceStatusReturnValue) fenceReturnValue.getReturnValue()).getIsSkippedDueToPolicy();
-            }
+        if (result.getActionReturnValue() instanceof FenceOperationResult) {
+            FenceOperationResult fenceResult = result.getActionReturnValue();
+            skipped = fenceResult.getStatus() == Status.SKIPPED_DUE_TO_POLICY;
         }
         return skipped;
     }
