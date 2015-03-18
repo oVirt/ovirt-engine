@@ -83,6 +83,7 @@ public class SystemTreeItemCell extends AbstractCell<SystemTreeItemModel> {
             switch (((Provider) value.getEntity()).getType()) {
             case OPENSTACK_NETWORK:
             case OPENSTACK_IMAGE:
+            case OPENSTACK_VOLUME:
                 imageResource = resources.openstackImage();
                 break;
             case FOREMAN:
