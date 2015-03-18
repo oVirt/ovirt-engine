@@ -54,16 +54,7 @@ class Plugin(plugin.PluginBase):
             dbstatement,
         ):
             self._parent = parent
-            self._origTimeout = 0
             self._dbstatement = dbstatement
-
-        def _getCurrentTimeout(self):
-            return vdcoption.VdcOption(
-                statement=self._dbstatement,
-            ).getVdcOption(
-                name='AsyncTaskZombieTaskLifeInMinutes',
-                ownConnection=True,
-            )
 
         def _setEngineMode(self, maintenance, timeout=0):
             mode = (
@@ -84,10 +75,6 @@ class Plugin(plugin.PluginBase):
                         {
                             'name': 'EngineMode',
                             'value': mode,
-                        },
-                        {
-                            'name': 'AsyncTaskZombieTaskLifeInMinutes',
-                            'value': timeout,
                         },
                     ),
                     ownConnection=True,
@@ -110,11 +97,9 @@ class Plugin(plugin.PluginBase):
                 )
 
         def __enter__(self):
-            self._origTimeout = self._getCurrentTimeout()
             self._setEngineMode(
                 maintenance=True,
             )
-
             self._parent.services.state(
                 name=oenginecons.Const.ENGINE_SERVICE_NAME,
                 state=True,
@@ -127,7 +112,6 @@ class Plugin(plugin.PluginBase):
             )
             self._setEngineMode(
                 maintenance=False,
-                timeout=self._origTimeout,
             )
 
     def _clearZombies(self):
@@ -297,7 +281,7 @@ class Plugin(plugin.PluginBase):
             ]
         )
 
-    def _askUserToStopTasks(
+    def _askUserToWaitForTasks(
         self,
         runningTasks,
         runningCommands,
@@ -332,9 +316,9 @@ class Plugin(plugin.PluginBase):
         )
         if not dialog.queryBoolean(
             dialog=self.dialog,
-            name='OVESETUP_STOP_RUNNING_TASKS',
+            name='OVESETUP_WAIT_RUNNING_TASKS',
             note=_(
-                'Would you like to try to stop these tasks automatically?\n'
+                'Would you like to try to wait for that?\n'
                 '(Answering "no" will stop the upgrade (@VALUES@) '
             ),
             prompt=True,
@@ -464,7 +448,7 @@ class Plugin(plugin.PluginBase):
         ) = self._checkRunningTasks()
 
         if runningTasks or runningCommands or compensations:
-            self._askUserToStopTasks(
+            self._askUserToWaitForTasks(
                 runningTasks,
                 runningCommands,
                 compensations,
