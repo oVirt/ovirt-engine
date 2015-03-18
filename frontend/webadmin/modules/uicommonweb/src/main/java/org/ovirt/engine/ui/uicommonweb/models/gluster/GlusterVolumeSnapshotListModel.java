@@ -637,9 +637,7 @@ public class GlusterVolumeSnapshotListModel extends SearchableListModel {
                     snapshotModel.getEndDate().setEntity(schedule.getEndByDate());
                 }
 
-                if (schedule.getRecurrence() == GlusterVolumeSnapshotScheduleRecurrence.DAILY
-                        || schedule.getRecurrence() == GlusterVolumeSnapshotScheduleRecurrence.WEEKLY
-                        || schedule.getRecurrence() == GlusterVolumeSnapshotScheduleRecurrence.MONTHLY) {
+                if (schedule.getRecurrence() != GlusterVolumeSnapshotScheduleRecurrence.UNKNOWN) {
                     snapshotModel.getTimeZones().setSelectedItem(schedule.getTimeZone());
                 }
                 switch (schedule.getRecurrence()) {
