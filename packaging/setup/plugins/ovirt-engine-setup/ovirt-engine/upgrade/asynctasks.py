@@ -30,6 +30,7 @@ from async_tasks_map import ASYNC_TASKS_MAP
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import dialog
 from ovirt_engine_setup.engine import constants as oenginecons
+from ovirt_engine_setup.engine import vdcoption
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.engine_common import database
 
@@ -53,7 +54,15 @@ class Plugin(plugin.PluginBase):
             self._origTimeout = 0
             self._dbstatement = dbstatement
 
-        def _setEngineMode(self, maintenance):
+        def _getCurrentTimeout(self):
+            return vdcoption.VdcOption(
+                statement=self._dbstatement,
+            ).getVdcOption(
+                name='AsyncTaskZombieTaskLifeInMinutes',
+                ownConnection=True,
+            )
+
+        def _setEngineMode(self, maintenance, timeout=0):
             mode = (
                 'MAINTENANCE' if maintenance
                 else 'ACTIVE'
@@ -65,6 +74,21 @@ class Plugin(plugin.PluginBase):
                     )
                 )
 
+                vdcoption.VdcOption(
+                    statement=self._dbstatement,
+                ).updateVdcOptions(
+                    options=(
+                        {
+                            'name': 'EngineMode',
+                            'value': mode,
+                        },
+                        {
+                            'name': 'AsyncTaskZombieTaskLifeInMinutes',
+                            'value': timeout,
+                        },
+                    ),
+                    ownConnection=True,
+                )
             except Exception as e:
                 self._parent.logger.debug(
                     'Cannot set engine mode',
@@ -83,6 +107,7 @@ class Plugin(plugin.PluginBase):
                 )
 
         def __enter__(self):
+            self._origTimeout = self._getCurrentTimeout()
             self._setEngineMode(
                 maintenance=True,
             )
@@ -99,6 +124,7 @@ class Plugin(plugin.PluginBase):
             )
             self._setEngineMode(
                 maintenance=False,
+                timeout=self._origTimeout,
             )
 
     def _clearZombies(self):
