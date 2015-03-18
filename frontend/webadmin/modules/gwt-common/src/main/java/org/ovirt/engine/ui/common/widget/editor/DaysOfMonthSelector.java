@@ -59,15 +59,17 @@ public class DaysOfMonthSelector extends Composite implements TakesValue<String>
             @Override
             public void onClick(ClickEvent event) {
                 Cell cellClicked = daysOfMonth.getCellForEvent(event);
-                int cellColumn = cellClicked.getCellIndex();
-                int cellRow = cellClicked.getRowIndex();
-                int actualCellIndex = (cellRow - 1) * DAYS_IN_WEEK + cellColumn;
-                if (!clickedList.get(actualCellIndex)) {
-                    ValueChangeEvent.fire(DaysOfMonthSelector.this,
+                if (cellClicked != null) {
+                    int cellColumn = cellClicked.getCellIndex();
+                    int cellRow = cellClicked.getRowIndex();
+                    int actualCellIndex = (cellRow - 1) * DAYS_IN_WEEK + cellColumn;
+                    if (!clickedList.get(actualCellIndex)) {
+                        ValueChangeEvent.fire(DaysOfMonthSelector.this,
                             addSelectedDate(getValue(), getDateFromIndex(actualCellIndex)));
-                } else {
-                    ValueChangeEvent.fire(DaysOfMonthSelector.this,
+                    } else {
+                        ValueChangeEvent.fire(DaysOfMonthSelector.this,
                             removeSelectedDate(getValue(), getDateFromIndex(actualCellIndex)));
+                    }
                 }
             }
         });
