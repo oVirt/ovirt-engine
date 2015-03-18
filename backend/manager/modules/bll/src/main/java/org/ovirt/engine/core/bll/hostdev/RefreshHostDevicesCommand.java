@@ -40,6 +40,11 @@ public class RefreshHostDevicesCommand<T extends VdsActionParameters> extends Re
     @Override
     protected void executeCommand() {
         VDSReturnValue vdsReturnValue = resourceManager.runVdsCommand(VDSCommandType.HostDevListByCaps, new VdsIdAndVdsVDSCommandParametersBase(getVds()));
+
+        if (!vdsReturnValue.getSucceeded()) {
+            return;
+        }
+
         List<HostDevice> fetchedDevices = (List<HostDevice>) vdsReturnValue.getReturnValue();
         List<HostDevice> oldDevices = dbFacade.getHostDeviceDao().getHostDevicesByHostId(getVdsId());
 
