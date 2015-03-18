@@ -32,6 +32,15 @@ public class AddProviderCommand<P extends ProviderParameters> extends CommandBas
         return getProvider().getName();
     }
 
+    private ProviderProxy providerProxy;
+
+    public ProviderProxy getProviderProxy() {
+        if (providerProxy == null) {
+            providerProxy = ProviderProxyFactory.getInstance().create(getProvider());
+        }
+        return providerProxy;
+    }
+
     @Override
     protected boolean canDoAction() {
         ProviderValidator validator = new ProviderValidator(getProvider());
@@ -43,7 +52,7 @@ public class AddProviderCommand<P extends ProviderParameters> extends CommandBas
         getProvider().setId(Guid.newGuid());
         getDbFacade().getProviderDao().save(getProvider());
 
-        ProviderProxy providerProxy = ProviderProxyFactory.getInstance().create(getProvider());
+        ProviderProxy providerProxy = getProviderProxy();
         if (providerProxy != null) {
             providerProxy.onAddition();
         }
