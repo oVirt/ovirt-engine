@@ -308,6 +308,8 @@ public interface Enums extends LocalizedEnums {
 
     String ProviderType___OPENSTACK_IMAGE();
 
+    String ProviderType___OPENSTACK_VOLUME();
+
     // Gluster enums
     String GlusterVolumeType___DISTRIBUTE();
 
