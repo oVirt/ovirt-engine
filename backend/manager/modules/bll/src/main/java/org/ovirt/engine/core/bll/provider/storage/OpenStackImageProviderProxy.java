@@ -8,36 +8,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.provider.ProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.storage.RepoImage;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
-import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-import com.woorea.openstack.base.client.HttpMethod;
 import com.woorea.openstack.base.client.OpenStackRequest;
-import com.woorea.openstack.base.client.OpenStackTokenProvider;
 import com.woorea.openstack.glance.Glance;
 import com.woorea.openstack.glance.model.Image;
 import com.woorea.openstack.glance.model.ImageDownload;
 import com.woorea.openstack.glance.model.Images;
-import com.woorea.openstack.keystone.utils.KeystoneTokenProvider;
 
-
-public class OpenStackImageProviderProxy implements ProviderProxy {
+public class OpenStackImageProviderProxy extends AbstractOpenStackStorageProviderProxy<Glance, OpenStackImageProviderProperties> {
 
     enum GlanceImageFormat {
         RAW("raw"),
@@ -77,23 +66,8 @@ public class OpenStackImageProviderProxy implements ProviderProxy {
 
     private static final int QCOW2_SIZE_OFFSET = 24;
 
-    private Provider<OpenStackImageProviderProperties> provider;
-
-    private OpenStackTokenProvider tokenProvider;
-
-    private Glance client;
-
     public OpenStackImageProviderProxy(Provider<OpenStackImageProviderProperties> provider) {
         this.provider = provider;
-    }
-
-    @Override
-    public void testConnection() {
-        try {
-            getClient().execute(new OpenStackRequest<>(getClient(), HttpMethod.GET, "", null, null));
-        } catch (RuntimeException e) {
-            throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, e);
-        }
     }
 
     @Override
@@ -101,60 +75,9 @@ public class OpenStackImageProviderProxy implements ProviderProxy {
         return null;
     }
 
-    private static DbFacade getDbFacade() {
-        return DbFacade.getInstance();
-    }
-
     @Override
     public void onAddition() {
-        // Storage domain static
-        StorageDomainStatic domainStaticEntry = new StorageDomainStatic();
-        domainStaticEntry.setId(Guid.newGuid());
-        domainStaticEntry.setStorage(provider.getId().toString());
-        domainStaticEntry.setStorageName(provider.getName());
-        domainStaticEntry.setDescription(provider.getDescription());
-        domainStaticEntry.setStorageFormat(StorageFormatType.V1);
-        domainStaticEntry.setStorageType(StorageType.GLANCE);
-        domainStaticEntry.setStorageDomainType(StorageDomainType.Image);
-        domainStaticEntry.setWipeAfterDelete(false);
-        getDbFacade().getStorageDomainStaticDao().save(domainStaticEntry);
-        // Storage domain dynamic
-        StorageDomainDynamic domainDynamicEntry = new StorageDomainDynamic();
-        domainDynamicEntry.setId(domainStaticEntry.getId());
-        domainDynamicEntry.setAvailableDiskSize(0);
-        domainDynamicEntry.setUsedDiskSize(0);
-        getDbFacade().getStorageDomainDynamicDao().save(domainDynamicEntry);
-    }
-
-    @Override
-    public void onModification() {
-        List<StorageDomain> storageDomains =
-                getDbFacade().getStorageDomainDao().getAllByConnectionId(provider.getId());
-
-        // updating storage domain information
-        for (StorageDomain storageDomainEntry : storageDomains) {
-            StorageDomainStatic domainStaticEntry =
-                    getDbFacade().getStorageDomainStaticDao().get(storageDomainEntry.getId());
-            domainStaticEntry.setStorageName(provider.getName());
-            domainStaticEntry.setDescription(provider.getDescription());
-            getDbFacade().getStorageDomainStaticDao().update(domainStaticEntry);
-        }
-    }
-
-    @Override
-    public void onRemoval() {
-        List<StorageDomain> storageDomains = getDbFacade()
-                .getStorageDomainDao().getAllByConnectionId(provider.getId());
-
-        // removing the static and dynamic storage domain entries
-        for (StorageDomain storageDomainEntry : storageDomains) {
-            getDbFacade().getStorageDomainDynamicDao().remove(storageDomainEntry.getId());
-            getDbFacade().getStorageDomainStaticDao().remove(storageDomainEntry.getId());
-        }
-    }
-
-    private Provider<?> getProvider() {
-        return provider;
+        addStorageDomain(StorageType.GLANCE, StorageDomainType.Image);
     }
 
     public static OpenStackImageProviderProxy getFromStorageDomainId(Guid storageDomainId) {
@@ -166,16 +89,8 @@ public class OpenStackImageProviderProxy implements ProviderProxy {
         return null;
     }
 
-    private OpenStackTokenProvider getTokenProvider() {
-        if (tokenProvider == null && getProvider().isRequiringAuthentication()) {
-            String tenantName = provider.getAdditionalProperties().getTenantName();
-            tokenProvider = new KeystoneTokenProvider(getProvider().getAuthUrl(),
-                    getProvider().getUsername(), getProvider().getPassword()).getProviderByTenant(tenantName);
-        }
-        return tokenProvider;
-    }
-
-    private Glance getClient() {
+    @Override
+    protected Glance getClient() {
         if (client == null) {
             client = new Glance(getProvider().getUrl() + API_VERSION);
             client.setTokenProvider(getTokenProvider());
