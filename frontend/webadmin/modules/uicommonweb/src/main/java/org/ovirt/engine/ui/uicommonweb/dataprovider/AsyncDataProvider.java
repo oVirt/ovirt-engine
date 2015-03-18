@@ -1325,6 +1325,18 @@ public class AsyncDataProvider {
                 aQuery);
     }
 
+    public void getStorageDomainByName(AsyncQuery aQuery, String storageDomainName) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+                return source;
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainByName,
+                new NameQueryParameters(storageDomainName),
+                aQuery);
+    }
+
     public VolumeFormat getDiskVolumeFormat(VolumeType volumeType, StorageType storageType) {
         if (storageType.isFileDomain()) {
             return VolumeFormat.RAW;
