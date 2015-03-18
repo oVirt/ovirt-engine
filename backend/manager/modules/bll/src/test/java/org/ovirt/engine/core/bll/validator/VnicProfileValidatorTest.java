@@ -324,4 +324,74 @@ public class VnicProfileValidatorTest {
         when(vnicProfile.isPortMirroring()).thenReturn(portMirroring);
         assertThat(validator.portMirroringNotSetIfExternalNetwork(), matcher);
     }
+
+    @Test
+    public void passthroughChangedUsedByVms() {
+        passthroughNotChangedIfUsedByVmsTest(true, false, true);
+        assertThat(validator.passthroughNotChangedIfUsedByVms(), failsWithVnicProfileInUse());
+    }
+
+    @Test
+    public void passthroughChangedNotUsedByVms() {
+        passthroughNotChangedIfUsedByVmsTest(false, true, false);
+        assertThat(validator.passthroughNotChangedIfUsedByVms(), isValid());
+    }
+
+    @Test
+    public void passthroughNotChangedUsedByVms() {
+        passthroughNotChangedIfUsedByVmsTest(true, true, true);
+        assertThat(validator.passthroughNotChangedIfUsedByVms(), isValid());
+    }
+
+    @Test
+    public void passthroughNotChangedNotUsedByVms() {
+        passthroughNotChangedIfUsedByVmsTest(false, false, true);
+        assertThat(validator.passthroughNotChangedIfUsedByVms(), isValid());
+    }
+
+    private void passthroughNotChangedIfUsedByVmsTest(boolean passthoughOld,
+            boolean pasthroughNew,
+            boolean profileUsedByVms) {
+        VnicProfile updatedVnicProfile = mock(VnicProfile.class);
+        when(vnicProfile.isPassthrough()).thenReturn(passthoughOld);
+        when(updatedVnicProfile.isPassthrough()).thenReturn(pasthroughNew);
+        when(vnicProfileDao.get(any(Guid.class))).thenReturn(updatedVnicProfile);
+
+        mockVmsUsingVnicProfile(profileUsedByVms ? Collections.<VM> singletonList(mock(VM.class))
+                : Collections.<VM> emptyList());
+    }
+
+    @Test
+    public void passthroughProfileContainsPortMirroring() {
+        passthroughProfileContainsSupportedPropertiesTest(true, true, null);
+        assertThat(validator.passthroughProfileContainsSupportedProperties(),
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_PASSTHROUGH_PROFILE_CONTAINS_NOT_SUPPORTED_PROPERTIES));
+    }
+
+    @Test
+    public void passthroughProfileContainsQos() {
+        passthroughProfileContainsSupportedPropertiesTest(true, false, DEFAULT_GUID);
+        assertThat(validator.passthroughProfileContainsSupportedProperties(),
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_PASSTHROUGH_PROFILE_CONTAINS_NOT_SUPPORTED_PROPERTIES));
+    }
+
+    @Test
+    public void passthroughProfileValidProprerties() {
+        passthroughProfileContainsSupportedPropertiesTest(true, false, null);
+        assertThat(validator.passthroughProfileContainsSupportedProperties(), isValid());
+    }
+
+    @Test
+    public void nonPassthroughProfileContainsPortMirroringAndQos() {
+        passthroughProfileContainsSupportedPropertiesTest(false, true, DEFAULT_GUID);
+        assertThat(validator.passthroughProfileContainsSupportedProperties(), isValid());
+    }
+
+    private void passthroughProfileContainsSupportedPropertiesTest(boolean passthrough,
+            boolean portMirroring,
+            Guid qosId) {
+        when(vnicProfile.isPassthrough()).thenReturn(passthrough);
+        when(vnicProfile.isPortMirroring()).thenReturn(portMirroring);
+        when(vnicProfile.getNetworkQosId()).thenReturn(qosId);
+    }
 }

@@ -1798,6 +1798,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. External network cannot be used when port mirroring is set.")
     String ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_PORT_MIRRORED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. 'Port Mirroring' and 'Qos' are not supported on passthrough profiles.")
+    String ACTION_TYPE_FAILED_PASSTHROUGH_PROFILE_CONTAINS_NOT_SUPPORTED_PROPERTIES();
+
     @DefaultStringValue("Cannot ${action} ${type}. External network cannot be changed while the virtual machine is running")
     String ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_REWIRED();
 

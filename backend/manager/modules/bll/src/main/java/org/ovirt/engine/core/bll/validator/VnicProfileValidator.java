@@ -116,6 +116,20 @@ public class VnicProfileValidator {
         return vnicProfileNotUsedByVms();
     }
 
+    public ValidationResult passthroughNotChangedIfUsedByVms() {
+        if (vnicProfile.isPassthrough() == getOldVnicProfile().isPassthrough()) {
+            return ValidationResult.VALID;
+        }
+
+        return vnicProfileNotUsedByVms();
+    }
+
+    public ValidationResult passthroughProfileContainsSupportedProperties() {
+        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_PASSTHROUGH_PROFILE_CONTAINS_NOT_SUPPORTED_PROPERTIES)
+                .when(vnicProfile.isPassthrough() && (vnicProfile.isPortMirroring()
+                        || vnicProfile.getNetworkQosId() != null));
+    }
+
     public boolean validateCustomProperties(List<String> messages) {
         StoragePool dataCenter = getDbFacade().getStoragePoolDao().get(getNetwork().getDataCenterId());
         List<ValidationError> errors =

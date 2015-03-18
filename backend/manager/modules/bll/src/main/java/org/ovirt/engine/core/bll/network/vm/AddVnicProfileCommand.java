@@ -28,7 +28,8 @@ public class AddVnicProfileCommand<T extends VnicProfileParameters> extends Vnic
                 && validate(validator.vnicProfileForVmNetworkOnly())
                 && validate(validator.vnicProfileNameNotUsed())
                 && validate(validator.portMirroringNotSetIfExternalNetwork())
-                && validator.validateCustomProperties(getReturnValue().getCanDoActionMessages());
+                && validator.validateCustomProperties(getReturnValue().getCanDoActionMessages())
+                && validate(validator.passthroughProfileContainsSupportedProperties());
     }
 
     @Override
