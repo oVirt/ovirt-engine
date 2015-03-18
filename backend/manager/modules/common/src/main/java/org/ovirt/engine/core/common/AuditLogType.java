@@ -1162,7 +1162,10 @@ public enum AuditLogType {
     MAC_POOL_EDIT_SUCCESS(10702),
     MAC_POOL_EDIT_FAILED(10703, AuditLogSeverity.ERROR),
     MAC_POOL_REMOVE_SUCCESS(10704),
-    MAC_POOL_REMOVE_FAILED(10705, AuditLogSeverity.ERROR);
+    MAC_POOL_REMOVE_FAILED(10705, AuditLogSeverity.ERROR),
+
+    // Cinder
+    CINDER_PROVIDER_ERROR(10750, AuditLogSeverity.ERROR);
 
     private int intValue;
     // indicates time interval in seconds on which identical events from same instance are suppressed.
