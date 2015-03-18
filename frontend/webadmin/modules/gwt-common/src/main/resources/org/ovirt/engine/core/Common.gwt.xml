@@ -46,6 +46,7 @@
 		<include name="common/businessentities/OpenstackNetworkProviderProperties.java" />
 		<include name="common/businessentities/OpenstackNetworkPluginType.java" />
 		<include name="common/businessentities/OpenStackImageProviderProperties.java" />
+        <include name="common/businessentities/storage/OpenStackVolumeProviderProperties.java" />
         <include name="common/businessentities/VmBalloonInfo.java" />
 		<include name="common/businessentities/ArchitectureType.java" />
         <include name="common/businessentities/IscsiBond.java" />
