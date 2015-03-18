@@ -567,9 +567,11 @@ RETURNS SETOF GetStorageDomainIdsByStoragePoolIdAndStatus_rs STABLE
 BEGIN
    RETURN QUERY
    SELECT storage_id
-   FROM   storage_pool_iso_map
-   WHERE  storage_pool_id = v_storage_pool_id
-   AND    status = v_status;
+   FROM storage_pool_iso_map
+   INNER JOIN storage_domain_static on storage_pool_iso_map.storage_id = storage_domain_static.id
+   WHERE storage_pool_id = v_storage_pool_id
+   AND status = v_status
+   AND storage_domain_static.storage_type != 9; -- filter Cinder storage domains
 
 END; $procedure$
 LANGUAGE plpgsql;

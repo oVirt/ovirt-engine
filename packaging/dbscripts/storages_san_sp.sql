@@ -293,9 +293,11 @@ Create or replace FUNCTION Getstorage_pool_iso_mapsByBystorage_pool_id(v_storage
 	v_storage_pool_id UUID) RETURNS SETOF storage_pool_iso_map STABLE
    AS $procedure$
 BEGIN
-   RETURN QUERY SELECT *
+   RETURN QUERY SELECT storage_pool_iso_map.*
    FROM storage_pool_iso_map
-   WHERE storage_pool_id = v_storage_pool_id;
+   INNER JOIN storage_domain_static on storage_pool_iso_map.storage_id = storage_domain_static.id
+   WHERE storage_pool_id = v_storage_pool_id
+   AND storage_domain_static.storage_type != 9; -- filter Cinder storage domains
 
 END; $procedure$
 LANGUAGE plpgsql;
