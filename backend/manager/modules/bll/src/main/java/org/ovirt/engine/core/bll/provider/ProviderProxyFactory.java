@@ -3,9 +3,11 @@ package org.ovirt.engine.core.bll.provider;
 import org.ovirt.engine.core.bll.host.provider.foreman.ForemanHostProviderProxy;
 import org.ovirt.engine.core.bll.provider.network.openstack.OpenstackNetworkProviderProxy;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
+import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.storage.OpenStackVolumeProviderProperties;
 
 /**
  * The provider proxy factory can create a provider proxy according to the provider definition.
@@ -36,6 +38,9 @@ public class ProviderProxyFactory {
 
         case OPENSTACK_IMAGE:
             return (P) new OpenStackImageProviderProxy((Provider<OpenStackImageProviderProperties>) provider);
+
+        case OPENSTACK_VOLUME:
+            return (P) new OpenStackVolumeProviderProxy((Provider<OpenStackVolumeProviderProperties>) provider);
 
         default:
             return null;
