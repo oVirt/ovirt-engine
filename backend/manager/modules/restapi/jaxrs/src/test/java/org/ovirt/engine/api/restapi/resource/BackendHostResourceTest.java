@@ -13,7 +13,6 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -41,12 +40,13 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
-import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
-import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
+import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
+import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.queries.DiscoverSendTargetsQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -559,7 +559,7 @@ public class BackendHostResourceTest
     public void testFenceStatus() throws Exception {
         VDSReturnValue retVal = new VDSReturnValue();
         retVal.setSucceeded(true);
-        retVal.setReturnValue(new FenceStatusReturnValue("on", ""));
+        retVal.setReturnValue(new FenceOperationResult(FenceOperationResult.Status.SUCCESS, PowerStatus.ON));
         setUpEntityQueryExpectations(VdcQueryType.GetVdsFenceStatus,
                 VdsIdParametersBase.class,
                 new String[] { "VdsId" },
@@ -577,7 +577,11 @@ public class BackendHostResourceTest
     public void testFenceStatusFailure() throws Exception {
         VDSReturnValue retVal = new VDSReturnValue();
         retVal.setSucceeded(true);
-        retVal.setReturnValue(new FenceStatusReturnValue("unknown", "some_error"));
+        retVal.setReturnValue(
+                new FenceOperationResult(
+                        FenceOperationResult.Status.ERROR,
+                        PowerStatus.UNKNOWN,
+                        "some_error"));
         setUpEntityQueryExpectations(VdcQueryType.GetVdsFenceStatus,
                 VdsIdParametersBase.class,
                 new String[] { "VdsId" },
