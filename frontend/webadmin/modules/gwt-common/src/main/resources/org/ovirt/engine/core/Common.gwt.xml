@@ -18,6 +18,7 @@
 		<include name="common/businessentities/aaa/DbGroup.java" />
 		<include name="common/businessentities/aaa/DbUser.java" />
         <include name="common/businessentities/EngineSession.java" />
+        <include name="common/businessentities/UserSession.java" />
 		<include name="aaa/AuthType.java" />
 		<include name="aaa/DirectoryEntry.java" />
 		<include name="aaa/ProfileEntry.java" />

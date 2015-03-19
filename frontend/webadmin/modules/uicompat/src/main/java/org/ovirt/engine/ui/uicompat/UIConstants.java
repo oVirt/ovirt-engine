@@ -707,8 +707,8 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Sessions")
     String sessionsTitle();
 
-    @DefaultStringValue("Engine Sessions")
-    String engineSessionsTitle();
+    @DefaultStringValue("User Sessions")
+    String userSessionsTitle();
 
     @DefaultStringValue("RDP")
     String RDPTitle();
@@ -2613,12 +2613,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Storage Devices")
     String storageDevices();
-
-    @DefaultStringValue("Session DB Id")
-    String sessionDbId();
-
-    @DefaultStringValue("User Name")
-    String userName();
 
     @DefaultStringValue("Volume will be restored to the state of selected snapshot.\nDo you want to continue?")
     String confirmVolumeSnapshotRestoreMesage();

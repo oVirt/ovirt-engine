@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.UserSession;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -50,6 +51,8 @@ import org.ovirt.engine.core.searchbackend.SyntaxCheckerFactory;
 import org.ovirt.engine.core.searchbackend.SyntaxContainer;
 import org.ovirt.engine.core.searchbackend.SyntaxError;
 import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
+import org.ovirt.engine.core.utils.linq.Function;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<P> {
     private static final HashMap<String, QueryData> mQueriesCache = new HashMap<String, QueryData>();
@@ -313,8 +316,14 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         return genericSearch(getDbFacade().getProviderDao(), true);
     }
 
-    private List<EngineSession> searchSessions() {
-        return genericSearch(getDbFacade().getEngineSessionDao(), false);
+    private List<UserSession> searchSessions() {
+        final List<EngineSession> engineSessions = genericSearch(getDbFacade().getEngineSessionDao(), false);
+        return LinqUtils.transformToList(engineSessions, new Function<EngineSession, UserSession>() {
+            @Override
+            public UserSession eval(EngineSession engineSession) {
+                return new UserSession(engineSession);
+            }
+        });
     }
 
     private QueryData initQueryData(boolean useCache) {

@@ -12,8 +12,7 @@ import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
-
-import org.ovirt.engine.core.common.businessentities.EngineSession;
+import org.ovirt.engine.core.common.businessentities.UserSession;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
@@ -25,14 +24,14 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDe
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
 
 public class MainTabSessionPresenter
-        extends AbstractMainTabWithDetailsPresenter<EngineSession, SessionListModel, MainTabSessionPresenter.ViewDef, MainTabSessionPresenter.ProxyDef> {
+        extends AbstractMainTabWithDetailsPresenter<UserSession, SessionListModel, MainTabSessionPresenter.ViewDef, MainTabSessionPresenter.ProxyDef> {
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @GenEvent
     public class SessionSelectionChange {
 
-        List<EngineSession> selectedItems;
+        List<UserSession> selectedItems;
 
     }
 
@@ -41,13 +40,13 @@ public class MainTabSessionPresenter
             ViewDef view,
             ProxyDef proxy,
             PlaceManager placeManager,
-            MainModelProvider<EngineSession, SessionListModel> modelProvider) {
+            MainModelProvider<UserSession, SessionListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(
-            MainModelProvider<EngineSession, SessionListModel> modelProvider) {
+            MainModelProvider<UserSession, SessionListModel> modelProvider) {
         return new ModelBoundTabData(constants.sessionMainTabLabel(), 1, modelProvider);
     }
 
@@ -71,7 +70,7 @@ public class MainTabSessionPresenter
     public interface ProxyDef extends TabContentProxyPlace<MainTabSessionPresenter> {
     }
 
-    public interface ViewDef extends AbstractMainTabWithDetailsPresenter.ViewDef<EngineSession> {
+    public interface ViewDef extends AbstractMainTabWithDetailsPresenter.ViewDef<UserSession> {
     }
 }
 

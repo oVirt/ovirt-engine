@@ -6,8 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.TerminateSessionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.EngineSession;
-import org.ovirt.engine.core.compat.StringFormat;
+import org.ovirt.engine.core.common.businessentities.UserSession;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -21,9 +20,9 @@ public class TerminateSessionsModel extends ConfirmationModel {
     private static final String CMD_CANCEL = "Cancel"; //$NON-NLS-1$
 
     private final SearchableListModel sourceListModel;
-    private final List<EngineSession> sessions;
+    private final List<UserSession> sessions;
 
-    public TerminateSessionsModel(SearchableListModel<EngineSession, EngineSession> sourceListModel) {
+    public TerminateSessionsModel(SearchableListModel<UserSession, UserSession> sourceListModel) {
         this.sourceListModel = sourceListModel;
         this.sessions = sourceListModel.getSelectedItems();
 
@@ -46,12 +45,12 @@ public class TerminateSessionsModel extends ConfirmationModel {
 
     private void setSessionsDetails() {
         final List<String> sessionStrings = new ArrayList<>();
-        for (EngineSession session : sessions) {
-            sessionStrings.add(StringFormat.format("%s:%d, %s:%s", //$NON-NLS-1$
-                    ConstantsManager.getInstance().getConstants().sessionDbId(),
-                    session.getId(),
-                    ConstantsManager.getInstance().getConstants().userName(),
-                    session.getUserName()));
+        for (UserSession session : sessions) {
+            final long sessionId = session.getId();
+            final String sessionUserName = session.getUserName();
+            final String userSessionRow = ConstantsManager.getInstance().getMessages()
+                    .userSessionRow(sessionId, sessionUserName);
+            sessionStrings.add(userSessionRow);
         }
         setItems(sessionStrings);
     }
@@ -61,10 +60,10 @@ public class TerminateSessionsModel extends ConfirmationModel {
     }
 
     private void onTerminate() {
-        List<VdcActionParametersBase> parameterList = new ArrayList<>(sessions.size());
-        for (EngineSession session : sessions) {
-            final TerminateSessionParameters terminateSessionParameters =
-                    new TerminateSessionParameters(session.getId());
+        final List<VdcActionParametersBase> parameterList = new ArrayList<>(sessions.size());
+        for (UserSession session : sessions) {
+            final long sessionId = session.getId();
+            final TerminateSessionParameters terminateSessionParameters = new TerminateSessionParameters(sessionId);
             parameterList.add(terminateSessionParameters);
         }
 

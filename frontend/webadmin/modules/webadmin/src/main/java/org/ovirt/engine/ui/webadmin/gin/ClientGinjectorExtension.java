@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.gin;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -12,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.UserSession;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -211,7 +211,7 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     MainModelProvider<GlusterVolumeEntity, VolumeListModel> getMainTabVolumeModelProvider();
 
-    MainModelProvider<EngineSession, SessionListModel> getMainTabSessionModelProvider();
+    MainModelProvider<UserSession, SessionListModel> getMainTabSessionModelProvider();
 
     // UiCommon model providers: Sub tabs
 

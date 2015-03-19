@@ -461,4 +461,7 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
         "MONTHLY", "Monthly"
     })
     String recurrenceType(@Select GlusterVolumeSnapshotScheduleRecurrence recurrence);
+
+    @DefaultMessage("Session DB Id:{0}, User:{1}")
+    String userSessionRow(long sessionId, String UserName);
 }

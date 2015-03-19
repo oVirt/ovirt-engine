@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
-import org.ovirt.engine.core.common.businessentities.EngineSession;
+import org.ovirt.engine.core.common.businessentities.UserSession;
 import org.ovirt.engine.core.searchbackend.SessionConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
@@ -16,13 +16,13 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
-public class MainTabSessionView extends AbstractMainTabWithDetailsTableView<EngineSession, SessionListModel>
+public class MainTabSessionView extends AbstractMainTabWithDetailsTableView<UserSession, SessionListModel>
         implements MainTabSessionPresenter.ViewDef {
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @Inject
-    public MainTabSessionView(MainModelProvider<EngineSession, SessionListModel> modelProvider) {
+    public MainTabSessionView(MainModelProvider<UserSession, SessionListModel> modelProvider) {
         super(modelProvider);
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable();
@@ -32,35 +32,35 @@ public class MainTabSessionView extends AbstractMainTabWithDetailsTableView<Engi
     void initTable() {
         getTable().enableColumnResizing();
 
-        AbstractTextColumn<EngineSession> sessionDbIdColumn =
-                new AbstractTextColumn<EngineSession>() {
+        AbstractTextColumn<UserSession> sessionDbIdColumn =
+                new AbstractTextColumn<UserSession>() {
                     @Override
-                    public String getValue(EngineSession session) {
+                    public String getValue(UserSession session) {
                         return Long.toString(session.getId());
                     }
                 };
         getTable().addColumn(sessionDbIdColumn, constants.sessionDbId(), "100px"); //$NON-NLS-1$
 
-        AbstractTextColumn<EngineSession> userNameColumn =
-                new AbstractTextColumn<EngineSession>() {
+        AbstractTextColumn<UserSession> userNameColumn =
+                new AbstractTextColumn<UserSession>() {
                     @Override
-                    public String getValue(EngineSession session) {
+                    public String getValue(UserSession session) {
                         return session.getUserName();
                     }
                 };
         userNameColumn.makeSortable(SessionConditionFieldAutoCompleter.USER_NAME);
         getTable().addColumn(userNameColumn, constants.userNameUser(), "200px"); //$NON-NLS-1$
 
-        AbstractTextColumn<EngineSession> userIdColumn = new AbstractTextColumn<EngineSession>() {
+        AbstractTextColumn<UserSession> userIdColumn = new AbstractTextColumn<UserSession>() {
             @Override
-            public String getValue(EngineSession session) {
+            public String getValue(UserSession session) {
                 return session.getUserId().toString();
             }
         };
         userIdColumn.makeSortable(SessionConditionFieldAutoCompleter.USER_ID);
         getTable().addColumn(userIdColumn, constants.userId(), "200px"); //$NON-NLS-1$
 
-        getTable().addActionButton(new WebAdminButtonDefinition<EngineSession>(constants.terminateSession()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<UserSession>(constants.terminateSession()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getTerminateCommand();

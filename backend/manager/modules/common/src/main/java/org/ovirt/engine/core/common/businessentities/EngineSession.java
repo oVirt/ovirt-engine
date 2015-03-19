@@ -16,7 +16,7 @@ public class EngineSession extends IVdcQueryable implements Serializable {
 
     private long id;
 
-    private transient String engineSessionId;
+    private String engineSessionId;
 
     private Guid userId;
 

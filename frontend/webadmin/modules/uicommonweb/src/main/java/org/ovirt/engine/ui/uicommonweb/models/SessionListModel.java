@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.google.inject.Inject;
-import org.ovirt.engine.core.common.businessentities.EngineSession;
+import org.ovirt.engine.core.common.businessentities.UserSession;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class SessionListModel extends ListWithSimpleDetailsModel<EngineSession, EngineSession>
+public class SessionListModel extends ListWithSimpleDetailsModel<UserSession, UserSession>
         implements ISupportSystemTreeContext {
 
     private static final String CMD_TERMINATE = "Terminate"; //$NON-NLS-1$
@@ -27,7 +27,7 @@ public class SessionListModel extends ListWithSimpleDetailsModel<EngineSession, 
     @Inject
     public SessionListModel() {
 
-        setTitle(ConstantsManager.getInstance().getConstants().engineSessionsTitle());
+        setTitle(ConstantsManager.getInstance().getConstants().userSessionsTitle());
         setHelpTag(HelpTag.engine_sessions);
         setApplicationPlace(WebAdminApplicationPlaces.sessionMainTabPlace);
         setHashName("sessions"); //$NON-NLS-1$
@@ -88,10 +88,10 @@ public class SessionListModel extends ListWithSimpleDetailsModel<EngineSession, 
     }
 
     private void terminateActionAvailability() {
-        Collection<EngineSession> selectedSession = getSelectedItems();
-        Collection<EngineSession> selectedItems = (selectedSession != null) ? selectedSession : new ArrayList();
+        Collection<UserSession> selectedSession = getSelectedItems();
+        Collection<UserSession> selectedItems = (selectedSession != null) ? selectedSession : new ArrayList<UserSession>();
 
-        getTerminateCommand().setIsExecutionAllowed(selectedItems.size() > 0);
+        getTerminateCommand().setIsExecutionAllowed(!selectedItems.isEmpty());
     }
 
     @Override
