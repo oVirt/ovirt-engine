@@ -937,7 +937,9 @@ public class Frontend implements HasHandlers {
             result.setCanDoActionMessages((ArrayList<String>) translateError(result));
         } else if (!result.getSucceeded()) {
             VdcFault fault = result.getFault();
-            fault.setMessage(translateVdcFault(fault));
+            String message = result.getExecuteFailedMessages().size() > 1 ?
+                    translateExecuteFailedMessages(result.getExecuteFailedMessages()) : translateVdcFault(fault);
+            fault.setMessage(message);
             if (showErrorDialog && result.getIsSyncronious() && getEventsHandler() != null) {
                 getEventsHandler().runActionExecutionFailed(actionType, fault);
             }
@@ -987,6 +989,10 @@ public class Frontend implements HasHandlers {
     public String translateVdcFault(final VdcFault fault) {
         return getVdsmErrorsTranslator().translateErrorTextSingle(fault.getError() == null
                 ? fault.getMessage() : fault.getError().toString());
+    }
+
+    public String translateExecuteFailedMessages(ArrayList<String> executeFailedMessages) {
+        return getVdsmErrorsTranslator().translateErrorText(executeFailedMessages).get(0);
     }
 
     /**

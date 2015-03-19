@@ -14,6 +14,8 @@ public class VdcReturnValueBase_CustomFieldSerializer {
         instance.setCanDoAction(streamReader.readBoolean());
         java.util.ArrayList<String> canDoActionMessages = (java.util.ArrayList<String>) streamReader.readObject();
         instance.setCanDoActionMessages(canDoActionMessages);
+        java.util.ArrayList<String> executeFailedMessages = (java.util.ArrayList<String>) streamReader.readObject();
+        instance.setExecuteFailedMessages(executeFailedMessages);
         instance.setSucceeded(streamReader.readBoolean());
         instance.setIsSyncronious(streamReader.readBoolean());
         instance.setActionReturnValue(streamReader.readObject());
@@ -36,6 +38,7 @@ public class VdcReturnValueBase_CustomFieldSerializer {
             VdcReturnValueBase instance) throws SerializationException {
         streamWriter.writeBoolean(instance.getCanDoAction());
         streamWriter.writeObject(instance.getCanDoActionMessages());
+        streamWriter.writeObject(instance.getExecuteFailedMessages());
         streamWriter.writeBoolean(instance.getSucceeded());
         streamWriter.writeBoolean(instance.getIsSyncronious());
         streamWriter.writeObject(instance.getActionReturnValue());
