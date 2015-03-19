@@ -196,7 +196,7 @@ public class ResourceManager {
         }
     }
 
-    public void HandleVdsFinishedInit(Guid vdsId) {
+    public void handleVmsFinishedInitOnVds(Guid vdsId) {
         HashSet<Guid> vms = vdsAndVmsList.get(vdsId);
         if (vms != null) {
             getEventListener().processOnVmStop(vms);

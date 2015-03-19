@@ -129,6 +129,7 @@ public class VmsMonitoring {
             refreshExistingVmJobList();
             refreshVmStats();
             afterVMsRefreshTreatment();
+            vdsManager.vmsMonitoringInitFinished();
         } finally {
             unlockVmsManager();
         }

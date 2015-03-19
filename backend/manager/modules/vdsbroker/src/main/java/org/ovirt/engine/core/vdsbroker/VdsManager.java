@@ -200,13 +200,6 @@ public class VdsManager {
                             mUnrespondedAttempts.set(0);
                             setLastUpdate();
                         }
-                        if (!isInitialized() && cachedVds.getStatus() != VDSStatus.NonResponsive
-                                && cachedVds.getStatus() != VDSStatus.PendingApproval
-                                && cachedVds.getStatus() != VDSStatus.InstallingOS) {
-                            log.info("Initializing Host: '{}'", cachedVds.getName());
-                            ResourceManager.getInstance().HandleVdsFinishedInit(cachedVds.getId());
-                            setInitialized(true);
-                        }
                     } catch (VDSNetworkException e) {
                         logNetworkException(e);
                     } catch (VDSRecoveringException ex) {
@@ -952,5 +945,13 @@ public class VdsManager {
      */
     public void setLastVmsList(List<Pair<VM, VmInternalData>> lastVmsList) {
         this.lastVmsList = lastVmsList;
+    }
+
+    public void vmsMonitoringInitFinished() {
+        if (!isInitialized()) {
+            log.info("VMs initialization finished for Host: '{}:{}'", cachedVds.getName(), cachedVds.getId());
+            ResourceManager.getInstance().handleVmsFinishedInitOnVds(cachedVds.getId());
+            setInitialized(true);
+        }
     }
 }
