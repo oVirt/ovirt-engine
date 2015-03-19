@@ -112,8 +112,7 @@ public class FenceAgentDaoDbFacadeImpl extends BaseDAODbFacade implements FenceA
             entity.setPassword(DbFacadeUtils.decryptPassword(rs.getString("agent_password")));
             int port = rs.getInt("port");
             entity.setPort(port == 0 ? null : port);
-            final Boolean encryptOptions = rs.getBoolean("encrypt_options");
-            entity.setEncryptOptions(encryptOptions == null ? false : encryptOptions);
+            entity.setEncryptOptions(rs.getBoolean("encrypt_options"));
             final String options = rs.getString("options");
             if (entity.getEncryptOptions() && !options.isEmpty()) {
                 entity.setOptions(DbFacadeUtils.decryptPassword(options));
