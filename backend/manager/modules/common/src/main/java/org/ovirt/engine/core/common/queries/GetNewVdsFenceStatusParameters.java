@@ -101,4 +101,14 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
     public void setPmProxyPreferences(String pmProxyPreferences) {
         this.pmProxyPreferences = pmProxyPreferences;
     }
+
+    private Guid vdsGroupId;
+
+    public Guid getVdsGroupId() {
+        return vdsGroupId;
+    }
+
+    public void setVdsGroupId(Guid vdsGroupId) {
+        this.vdsGroupId = vdsGroupId;
+    }
 }

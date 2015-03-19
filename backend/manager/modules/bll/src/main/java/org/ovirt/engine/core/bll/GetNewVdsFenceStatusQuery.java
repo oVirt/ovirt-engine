@@ -23,6 +23,7 @@ public class GetNewVdsFenceStatusQuery<P extends GetNewVdsFenceStatusParameters>
         VDS tempVar = new VDS();
         tempVar.setId((Guid) ((id != null) ? id : Guid.Empty));
         tempVar.setStoragePoolId(getParameters().getStoragePoolId());
+        tempVar.setVdsGroupId(getParameters().getVdsGroupId());
         if (getParameters().getOrder() == FenceAgentOrder.Primary) {
         tempVar.setManagementIp(getParameters().getManagementIp());
         tempVar.setPmOptionsMap(getParameters().getFencingOptions());

@@ -1620,6 +1620,7 @@ public abstract class HostModel extends Model
         param.setStoragePoolId(cluster.getStoragePoolId() != null ? cluster.getStoragePoolId() : Guid.Empty);
         param.setFencingOptions(getPmOptionsMap());
         param.setPmProxyPreferences(getPmProxyPreferences());
+        param.setVdsGroupId(cluster.getId());
 
         Frontend.getInstance().runQuery(VdcQueryType.GetNewVdsFenceStatus, param, new AsyncQuery(this, new INewAsyncCallback() {
 

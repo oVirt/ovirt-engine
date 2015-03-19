@@ -23,11 +23,14 @@ public class VdsArchitectureHelper {
     public static ArchitectureType getArchitecture(VdsStatic host) {
         VDSGroup cluster = DbFacade.getInstance().getVdsGroupDao().get(host.getVdsGroupId());
         VdsDynamic vdsDynamic = DbFacade.getInstance().getVdsDynamicDao().get(host.getId());
-        ServerCpu cpu = CpuFlagsManagerHandler.FindMaxServerCpuByFlags(vdsDynamic.getcpu_flags(), cluster.getcompatibility_version());
-        if (cpu != null && cpu.getArchitecture() != null) {
-            return cpu.getArchitecture();
+        if (vdsDynamic != null) {
+            ServerCpu cpu = CpuFlagsManagerHandler.FindMaxServerCpuByFlags(vdsDynamic.getcpu_flags(),
+                    cluster.getcompatibility_version());
+            if (cpu != null && cpu.getArchitecture() != null) {
+                return cpu.getArchitecture();
+            }
         }
-        // take architecture from the cluster if it is null on the host level
+        // take architecture from the cluster if it is null on the host level or host is not yet saved in db
         log.info("Failed to get architecture type from host information for host '{}'. Using cluster '{}' architecture value instead.", host.getName(), cluster.getName());
         return cluster.getArchitecture();
     }
