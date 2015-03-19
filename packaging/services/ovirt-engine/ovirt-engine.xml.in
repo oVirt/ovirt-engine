@@ -365,7 +365,7 @@
 
   <interfaces>
     <interface name="loopback">
-      <loopback/>
+      <inet-address value="127.0.0.1"/>
     </interface>
     <interface name="public">
       <any-address/>

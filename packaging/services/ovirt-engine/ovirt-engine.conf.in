@@ -109,7 +109,6 @@ ENGINE_VERBOSE_GC=false
 #
 ENGINE_PROPERTIES=""
 ENGINE_PROPERTIES="${ENGINE_PROPERTIES} java.awt.headless=true"
-ENGINE_PROPERTIES="${ENGINE_PROPERTIES} java.net.preferIPv4Stack=true"
 ENGINE_PROPERTIES="${ENGINE_PROPERTIES} sun.rmi.dgc.client.gcInterval=3600000 sun.rmi.dgc.server.gcInterval=3600000"
 ENGINE_PROPERTIES="${ENGINE_PROPERTIES} jsse.enableSNIExtension=false"
 ENGINE_PROPERTIES="${ENGINE_PROPERTIES} \"java.security.krb5.conf=${ENGINE_ETC}/krb5.conf\""
