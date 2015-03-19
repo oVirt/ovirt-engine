@@ -314,10 +314,6 @@ class Daemon(service.Daemon):
             '-XX:MaxPermSize=%s' % self._config.get(
                 'ENGINE_PERM_MAX'
             ),
-            '-Djava.net.preferIPv4Stack=true',
-            '-Dsun.rmi.dgc.client.gcInterval=3600000',
-            '-Dsun.rmi.dgc.server.gcInterval=3600000',
-            '-Djava.awt.headless=true',
         ])
 
         # Add extra system properties provided in the configuration:
