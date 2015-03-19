@@ -29,7 +29,7 @@ public abstract class AbstractHeader<H> extends Header<H> implements ColumnWithE
 
     /**
      * This is copied from GWT's Header, but we also inject the tooltip content into the cell.
-     * TODO-GWT: make sure that this method is in sync with Header::onBroswerEvent.
+     * TODO-GWT: make sure that this method is in sync with Header::onBrowserEvent.
      */
     public void onBrowserEvent(Context context, Element elem, NativeEvent event) {
         getCell().onBrowserEvent(context, elem, getValue(), getTooltip(), event, updater);

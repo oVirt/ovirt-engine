@@ -42,7 +42,7 @@ public abstract class AbstractColumn<T, C> extends Column<T, C> implements Colum
 
     /**
      * This is copied from GWT's Column, but we also inject the tooltip content into the cell.
-     * TODO-GWT: make sure that this method is in sync with Column::onBroswerEvent.
+     * TODO-GWT: make sure that this method is in sync with Column::onBrowserEvent.
      */
     public void onBrowserEvent(Context context, Element elem, final T object, NativeEvent event) {
         final int index = context.getIndex();
