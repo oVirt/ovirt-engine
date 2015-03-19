@@ -401,17 +401,12 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
         rebootCell.setElementIdPrefix(elementIdPrefix);
         rebootCell.setColumnId("rebootColumn"); //$NON-NLS-1$
 
-        ArrayList<HasCell<UserPortalItemModel, ?>> list = new ArrayList<HasCell<UserPortalItemModel, ?>>();
+        List<HasCell<UserPortalItemModel, ?>> list = new ArrayList<HasCell<UserPortalItemModel, ?>>();
 
         list.add(new AbstractColumn(runCell) {
             @Override
             public Object getValue(Object object) {
                 return object;
-            }
-
-            @Override
-            public SafeHtml getTooltip(Object object) {
-                return null;
             }
         });
 
@@ -420,22 +415,12 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
             public Object getValue(Object object) {
                 return object;
             }
-
-            @Override
-            public SafeHtml getTooltip(Object object) {
-                return null;
-            }
         });
 
         list.add(new AbstractColumn(suspendCell) {
             @Override
             public Object getValue(Object object) {
                 return object;
-            }
-
-            @Override
-            public SafeHtml getTooltip(Object object) {
-                return null;
             }
         });
 
@@ -444,22 +429,12 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
             public Object getValue(Object object) {
                 return object;
             }
-
-            @Override
-            public SafeHtml getTooltip(Object object) {
-                return null;
-            }
         });
 
         list.add(new AbstractColumn(rebootCell) {
             @Override
             public Object getValue(Object object) {
                 return object;
-            }
-
-            @Override
-            public SafeHtml getTooltip(Object object) {
-                return null;
             }
         });
 
