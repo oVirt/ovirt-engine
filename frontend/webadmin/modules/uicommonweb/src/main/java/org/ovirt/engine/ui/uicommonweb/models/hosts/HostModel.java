@@ -1623,6 +1623,8 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         agent.setOptionsMap(isPrimary ? getPmOptionsMap() : getPmSecondaryOptionsMap());
 
         param.setAgent(agent);
+        param.setVdsGroupId(cluster.getId());
+
         Frontend.getInstance().runQuery(VdcQueryType.GetFenceAgentStatus, param, new AsyncQuery(this, new INewAsyncCallback() {
 
                     @Override

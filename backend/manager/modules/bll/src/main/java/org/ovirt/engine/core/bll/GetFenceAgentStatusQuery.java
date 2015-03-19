@@ -31,6 +31,7 @@ public class GetFenceAgentStatusQuery<P extends GetFenceAgentStatusParameters> e
         Guid id = getParameters().getVdsId();
         VDS vds = new VDS();
         vds.setId((Guid) ((id != null) ? id : Guid.Empty));
+        vds.setVdsGroupId(getParameters().getVdsGroupId());
         vds.setStoragePoolId(getParameters().getStoragePoolId());
         vds.setPmProxyPreferences(getParameters().getPmProxyPreferences());
         return vds;

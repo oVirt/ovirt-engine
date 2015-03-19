@@ -9,6 +9,7 @@ public class GetFenceAgentStatusParameters extends VdcQueryParametersBase {
     private Guid _vds_id;
     private FenceAgent agent;
     private String pmProxyPreferences;
+    private Guid vdsGroupId;
 
     public GetFenceAgentStatusParameters() {
         _storagePoolId = Guid.Empty;
@@ -38,6 +39,14 @@ public class GetFenceAgentStatusParameters extends VdcQueryParametersBase {
 
     public void setStoragePoolId(Guid value) {
         _storagePoolId = value;
+    }
+
+    public Guid getVdsGroupId() {
+        return vdsGroupId;
+    }
+
+    public void setVdsGroupId(Guid vdsGroupId) {
+        this.vdsGroupId = vdsGroupId;
     }
 
     public String getPmProxyPreferences() {
