@@ -61,6 +61,9 @@ public class OpenStackNetworkProviderMapper {
         if (model.isSetPassword()) {
             entity.setPassword(model.getPassword());
         }
+        if (model.isSetAuthenticationUrl()) {
+            entity.setAuthUrl(model.getAuthenticationUrl());
+        }
         if (model.isSetProperties()) {
             Map<String, String> map = new HashMap<>();
             for (Property property : model.getProperties().getProperties()) {
@@ -97,6 +100,9 @@ public class OpenStackNetworkProviderMapper {
         }
         if (entity.getUrl() != null) {
             model.setUrl(entity.getUrl());
+        }
+        if (entity.getAuthUrl() != null) {
+            model.setAuthenticationUrl(entity.getAuthUrl());
         }
         model.setRequiresAuthentication(entity.isRequiringAuthentication());
         if (entity.getUsername() != null) {

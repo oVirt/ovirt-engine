@@ -6370,6 +6370,7 @@ actions:
           external_host_provider.requires_authentication: xs:boolean
           external_host_provider.username: xs:string
           external_host_provider.password: xs:string
+          external_host_provider.authentication_url: xs:string
         description: update the specified external host provider in the system
     urlparams: {}
     headers:
@@ -6389,6 +6390,7 @@ actions:
           external_host_provider.requires_authentication: xs:boolean
           external_host_provider.username: xs:string
           external_host_provider.password: xs:string
+          external_host_provider.authentication_url: xs:string
         description: add a new external host provider to the system
     urlparams: {}
     headers:
