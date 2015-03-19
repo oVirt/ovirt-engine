@@ -10,8 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class VdsArchitectureHelper {
-
-    static final Logger log = LoggerFactory.getLogger(VdsArchitectureHelper.class);
+    private static final Logger log = LoggerFactory.getLogger(VdsArchitectureHelper.class);
 
     /**
      * Gets the architecture type of the given host using its cpu flags, if not found, return the cluster architecture
@@ -31,7 +30,11 @@ public class VdsArchitectureHelper {
             }
         }
         // take architecture from the cluster if it is null on the host level or host is not yet saved in db
-        log.info("Failed to get architecture type from host information for host '{}'. Using cluster '{}' architecture value instead.", host.getName(), cluster.getName());
+        log.info(
+                "Failed to get architecture type from host information for host '{}'. Using cluster '{}'"
+                        + " architecture value instead.",
+                host.getName(),
+                cluster.getName());
         return cluster.getArchitecture();
     }
 }

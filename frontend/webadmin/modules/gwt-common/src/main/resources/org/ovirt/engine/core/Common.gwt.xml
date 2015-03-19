@@ -266,6 +266,8 @@
         <!-- Required by frontend -->
 		<include name="common/interfaces/SearchType.java" />
 		<include name="common/businessentities/FenceStatusReturnValue.java" />
+		<include name="common/businessentities/pm/FenceOperationResult.java" />
+		<include name="common/businessentities/pm/PowerStatus.java" />
 		<include name="common/businessentities/AsyncTaskStatus.java" />
 		<include name="common/businessentities/AsyncTaskStatusEnum.java" />
 		<include name="common/businessentities/AsyncTaskResultEnum.java" />

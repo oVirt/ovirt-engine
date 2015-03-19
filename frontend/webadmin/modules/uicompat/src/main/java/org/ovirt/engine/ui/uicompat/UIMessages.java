@@ -477,4 +477,10 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
         "MASTER_VOLUME_SIZE_TO_BE_AVAILABLE", "Capacity information of the master volume is not available."
     })
     String geoRepEligibilityViolations(@Select GlusterGeoRepNonEligibilityReason reason);
+
+    @DefaultMessage("Test successful: {0}")
+    String testSuccessfulWithPowerStatus(String powerStatus);
+
+    @DefaultMessage("Test failed: {0}")
+    String testFailedWithErrorMsg(String errorMessage);
 }

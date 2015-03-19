@@ -1167,6 +1167,12 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Test Failed (unknown error).")
     String testFailedUnknownErrorMsg();
 
+    @DefaultStringValue("power on")
+    String powerOn();
+
+    @DefaultStringValue("power off")
+    String powerOff();
+
     @DefaultStringValue("Error while retrieving list of domains. Please consult your Storage Administrator.")
     String errorWhileRetrievingListOfDomains();
 

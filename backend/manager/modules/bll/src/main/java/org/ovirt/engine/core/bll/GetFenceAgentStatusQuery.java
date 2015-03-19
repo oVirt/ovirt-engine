@@ -1,51 +1,34 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
+import org.ovirt.engine.core.bll.pm.HostFenceActionExecutor;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
+import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
 import org.ovirt.engine.core.common.queries.GetFenceAgentStatusParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSFenceReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
 public class GetFenceAgentStatusQuery<P extends GetFenceAgentStatusParameters> extends FenceQueryBase<P> {
-
-    private static final String UNKNOWN = "unknown";
-
     public GetFenceAgentStatusQuery(P parameters) {
         super(parameters);
     }
 
     @Override
     protected void executeQueryCommand() {
-        FenceExecutor executor = new FenceExecutor(getHost());
-        VDSFenceReturnValue result = executor.checkAgentStatus(getParameters().getAgent());
-        if (result.getSucceeded()) {
-            getQueryReturnValue().setReturnValue(result.getReturnValue());
-        } else {
-            handleError(result);
-        }
+        HostFenceActionExecutor executor = new HostFenceActionExecutor(getHost());
+        FenceOperationResult result = executor.getFenceAgentStatus(getParameters().getAgent());
+        getQueryReturnValue().setSucceeded(result.getStatus() == Status.SUCCESS);
+        getQueryReturnValue().setReturnValue(result);
     }
 
     private VDS getHost() {
         Guid id = getParameters().getVdsId();
         VDS vds = new VDS();
-        vds.setId((Guid) ((id != null) ? id : Guid.Empty));
+        vds.setId(id != null ? id : Guid.Empty);
+        vds.setVdsName(getParameters().getVdsName());
+        vds.setHostName(getParameters().getHostName());
         vds.setVdsGroupId(getParameters().getVdsGroupId());
         vds.setStoragePoolId(getParameters().getStoragePoolId());
         vds.setPmProxyPreferences(getParameters().getPmProxyPreferences());
         return vds;
-    }
-
-    private void handleError(VDSFenceReturnValue result) {
-        if (!result.isProxyHostFound()) {
-            getQueryReturnValue().setSucceeded(false);
-            getQueryReturnValue().setReturnValue(new FenceStatusReturnValue(UNKNOWN,
-                    AuditLogDirector.getMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST)));
-        } else {
-            getQueryReturnValue().setSucceeded(false);
-            getQueryReturnValue().setReturnValue(new FenceStatusReturnValue(UNKNOWN,
-                    AuditLogDirector.getMessage(AuditLogType.VDS_ALERT_FENCE_STATUS_VERIFICATION_FAILED)));
-        }
     }
 }

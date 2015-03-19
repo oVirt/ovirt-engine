@@ -10,7 +10,6 @@ import java.util.Map;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.ExternalEntityBase;
-import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -19,6 +18,8 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
+import org.ovirt.engine.core.common.businessentities.pm.PowerStatus;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetFenceAgentStatusParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -1618,35 +1619,42 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         agent.setUser(isPrimary ? getPmUserName().getEntity() : getPmSecondaryUserName().getEntity());
         agent.setPassword(isPrimary ? getPmPassword().getEntity() : getPmSecondaryPassword().getEntity());
         agent.setPort(isPrimary ? getPmPrimaryPortAsInteger() : getPmSecondaryPortAsIngeter());
+        agent.setOptionsMap(isPrimary ? getPmOptionsMap() : getPmSecondaryOptionsMap());
+        param.setAgent(agent);
         param.setStoragePoolId(cluster.getStoragePoolId() != null ? cluster.getStoragePoolId() : Guid.Empty);
         param.setPmProxyPreferences(getPmProxyPreferences());
-        agent.setOptionsMap(isPrimary ? getPmOptionsMap() : getPmSecondaryOptionsMap());
-
-        param.setAgent(agent);
+        param.setVdsName(getName().getEntity());
+        param.setHostName(getHost().getEntity());
         param.setVdsGroupId(cluster.getId());
 
-        Frontend.getInstance().runQuery(VdcQueryType.GetFenceAgentStatus, param, new AsyncQuery(this, new INewAsyncCallback() {
-
-                    @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        String message;
-                        if (returnValue == null) {
-                            message = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
-                        } else {
-                            VdcQueryReturnValue response = (VdcQueryReturnValue) returnValue;
-                            if (response.getReturnValue() == null) {
-                                message = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
-                            } else {
-                                FenceStatusReturnValue fenceStatusReturnValue =
-                                        (FenceStatusReturnValue) response.getReturnValue();
-                                message = fenceStatusReturnValue.toString();
+        Frontend.getInstance().runQuery(
+                VdcQueryType.GetFenceAgentStatus,
+                param,
+                new AsyncQuery(
+                        this,
+                        new INewAsyncCallback() {
+                            @Override
+                            public void onSuccess(Object model, Object returnObj) {
+                                VdcQueryReturnValue returnValue = (VdcQueryReturnValue) returnObj;
+                                String msg;
+                                if (returnValue == null) {
+                                    msg = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
+                                } else {
+                                    FenceOperationResult result = returnValue.getReturnValue();
+                                    if (result.getStatus() == FenceOperationResult.Status.SUCCESS) {
+                                        msg = ConstantsManager.getInstance().getMessages().testSuccessfulWithPowerStatus(
+                                                result.getPowerStatus() == PowerStatus.ON
+                                                        ? ConstantsManager.getInstance().getConstants().powerOn()
+                                                        : ConstantsManager.getInstance().getConstants().powerOff());
+                                    } else {
+                                        msg = ConstantsManager.getInstance().getMessages().testFailedWithErrorMsg(
+                                                result.getMessage());
+                                    }
+                                }
+                                setMessage(msg);
+                                getTestCommand().setIsExecutionAllowed(true);
                             }
-                        }
-                        setMessage(message);
-                        getTestCommand().setIsExecutionAllowed(true);
-                    }
-                }
-                        ,
+                        },
                         true));
     }
 

@@ -6,13 +6,16 @@ import org.ovirt.engine.core.compat.Guid;
 public class GetFenceAgentStatusParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = -3663389765505476776L;
 
-    private Guid _vds_id;
+    private Guid vdsId;
+    private String vdsName;
+    private String hostName;
     private FenceAgent agent;
     private String pmProxyPreferences;
+    private Guid storagePoolId;
     private Guid vdsGroupId;
 
     public GetFenceAgentStatusParameters() {
-        _storagePoolId = Guid.Empty;
+        storagePoolId = Guid.Empty;
     }
 
     public FenceAgent getAgent() {
@@ -24,21 +27,35 @@ public class GetFenceAgentStatusParameters extends VdcQueryParametersBase {
     }
 
     public Guid getVdsId() {
-        return _vds_id;
+        return vdsId;
     }
 
     public void setVdsId(Guid value) {
-        _vds_id = value;
+        vdsId = value;
     }
 
-    private Guid _storagePoolId;
+    public String getVdsName() {
+        return vdsName;
+    }
+
+    public void setVdsName(String vdsName) {
+        this.vdsName = vdsName;
+    }
+
+    public String getHostName() {
+        return hostName;
+    }
+
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
+    }
 
     public Guid getStoragePoolId() {
-        return _storagePoolId;
+        return storagePoolId;
     }
 
     public void setStoragePoolId(Guid value) {
-        _storagePoolId = value;
+        storagePoolId = value;
     }
 
     public Guid getVdsGroupId() {
