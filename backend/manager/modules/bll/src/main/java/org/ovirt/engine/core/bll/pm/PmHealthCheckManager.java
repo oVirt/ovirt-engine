@@ -6,12 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.Backend;
-import org.ovirt.engine.core.bll.FenceExecutor;
 import org.ovirt.engine.core.bll.RestartVdsCommand;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.pm.PowerManagementHelper.AgentsIterator;
@@ -23,9 +21,9 @@ import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.vdscommands.VDSFenceReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
@@ -212,7 +210,7 @@ public class PmHealthCheckManager {
      * doesn't matter whether that answer is "on" or "off".
      */
     private boolean isHealthy(FenceAgent agent, VDS host) {
-        return new FenceExecutor(host).fence(FenceActionType.STATUS, agent).getSucceeded();
+        return new HostFenceActionExecutor(host).getFenceAgentStatus(agent).getStatus() == Status.SUCCESS;
     }
 
     private void waitUntilFencingAllowed() {
@@ -263,8 +261,7 @@ public class PmHealthCheckManager {
             RestartVdsCommand<FenceVdsActionParameters> restartVdsCommand =
                     new RestartVdsCommand<FenceVdsActionParameters>(new
                     FenceVdsActionParameters(host.getId(), FenceActionType.STATUS));
-            VDSFenceReturnValue returnValue = new FenceExecutor(host).checkHostStatus();
-            if (FenceExecutor.isStatusOff(returnValue)) {
+            if (new HostFenceActionExecutor(host).isHostPoweredOff()) {
                 VdcReturnValueBase retValue = Backend.getInstance().runInternalAction(VdcActionType.RestartVds, restartVdsCommand.getParameters());
                 if (retValue!= null && retValue.getSucceeded()) {
                     log.info("Host '{}' was started successfully by PM Health Check Manager",
