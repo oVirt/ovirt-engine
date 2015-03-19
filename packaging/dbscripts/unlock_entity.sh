@@ -20,7 +20,8 @@ Usage: $0 [options] [ENTITIES]
     -p PORT       - The database port for the database        (def. ${DBFUNC_DB_PORT})
     -u USER       - The username for the database             (def. ${DBFUNC_DB_USER})
     -d DATABASE   - The database name                         (def. ${DBFUNC_DB_DATABASE})
-    -t TYPE       - The object type {vm | template | disk | snapshot}
+    -t TYPE       - The object type {all | vm | template | disk | snapshot}
+                    If "all" is used then no ENTITIES are expected.
     -r            - Recursive, unlocks all disks under the selected vm/template.
     -q            - Query db and display a list of the locked entites.
     ENTITIES      - The list of object names in case of vm/template, UUIDs in case of a disk
@@ -52,6 +53,8 @@ entity_unlock() {
 		CMD="select fn_db_unlock_disk('${id}');"
 	elif [ "${object_type}" = "snapshot" ]; then
 		CMD="select fn_db_unlock_snapshot('${id}');"
+	elif [ "${object_type}" = "all" ]; then
+		CMD="select fn_db_unlock_all();"
 	else
 		printf "Error: $* "
 	fi
@@ -205,18 +208,24 @@ shift $(( $OPTIND - 1 ))
 IDS="$@"
 
 [ -n "${TYPE}" ] || die "Please specify type"
-[ -z "${IDS}" -a -z "${QUERY}" ] && die "Please specify ids or query"
-[ -n "${IDS}" -a -n "${QUERY}" ] && die "Please specify one ids or query"
+if [ "${TYPE}" != "all" ]; then
+    [ -z "${IDS}" -a -z "${QUERY}" ] && die "Please specify ids or query"
+    [ -n "${IDS}" -a -n "${QUERY}" ] && die "Please specify one ids or query"
+fi
 
-if [ -n "${IDS}" ]; then
-	echo "Caution, this operation may lead to data corruption and should be used with care. Please contact support prior to running this command"
-	echo "Are you sure you want to proceed? [y/n]"
-	read answer
-	[ "${answer}" = "y" ] || die "Please contact support for further assistance."
-
-	for ID in ${IDS} ; do
-		entity_unlock "${TYPE}" "${ID}" "$(whoami)" ${RECURSIVE}
-	done
-elif [ -n "${QUERY}" ]; then
+if [ -n "${QUERY}" ]; then
 	entity_query "${TYPE}"
+else
+        if [ "${TYPE}" = "all" ]; then
+            entity_unlock "${TYPE}" "" "$(whoami)" ${RECURSIVE}
+        else
+	    echo "Caution, this operation may lead to data corruption and should be used with care. Please contact support prior to running this command"
+	    echo "Are you sure you want to proceed? [y/n]"
+	    read answer
+	    [ "${answer}" = "y" ] || die "Please contact support for further assistance."
+
+	    for ID in ${IDS} ; do
+	    	entity_unlock "${TYPE}" "${ID}" "$(whoami)" ${RECURSIVE}
+	    done
+        fi
 fi
