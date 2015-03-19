@@ -9,6 +9,7 @@ import java.util.concurrent.Callable;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.attestationbroker.AttestThread;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.pm.HostFenceActionExecutor;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
@@ -21,7 +22,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.AttestationResultEnum;
 import org.ovirt.engine.core.common.businessentities.Entities;
-import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -37,6 +37,9 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
+import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult;
+import org.ovirt.engine.core.common.businessentities.pm.FenceOperationResult.Status;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VDSError;
@@ -51,7 +54,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.MomPolicyVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSFenceReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
@@ -79,11 +81,11 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 @NonTransactiveCommandAttribute
 public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePoolParametersBase> {
     private boolean fenceSucceeded = false;
+    private FenceOperationResult fenceStatusResult;
     private boolean vdsProxyFound;
     private List<StorageDomainStatic> problematicDomains;
     private boolean connectPoolSucceeded;
     private boolean glusterHostUuidFound, glusterPeerListSucceeded, glusterPeerProbeSucceeded;
-    private FenceStatusReturnValue fenceStatusReturnValue;
     private static Integer MAX_RETRIES_GLUSTER_PROBE_STATUS;
 
     public InitVdsOnUpCommand(HostStoragePoolParametersBase parameters) {
@@ -180,12 +182,11 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     }
 
     private void processFence() {
-        FenceExecutor executor = new FenceExecutor(getVds());
         vdsProxyFound = new FenceProxyLocator(getVds()).isProxyHostAvailable();
         if (getVds().isPmEnabled() && vdsProxyFound) {
-            VDSFenceReturnValue returnValue = executor.checkHostStatus();
-            fenceSucceeded = returnValue.getSucceeded();
-            fenceStatusReturnValue = (FenceStatusReturnValue) returnValue.getReturnValue();
+            HostFenceActionExecutor executor = new HostFenceActionExecutor(getVds());
+            fenceStatusResult = executor.fence(FenceActionType.STATUS);
+            fenceSucceeded = fenceStatusResult.getStatus() == Status.SUCCESS;
         }
     }
 
@@ -365,8 +366,8 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                     logable.addCustomValue("Reason",
                             auditLogDirector.getMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST));
                     AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, auditLogDirector);
-                } else if (!fenceStatusReturnValue.getIsSucceeded()) {
-                    logable.addCustomValue("Reason", fenceStatusReturnValue.getMessage());
+                } else if (!fenceSucceeded) {
+                    logable.addCustomValue("Reason", fenceStatusResult.getMessage());
                     AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, auditLogDirector);
                 }
             } else {
