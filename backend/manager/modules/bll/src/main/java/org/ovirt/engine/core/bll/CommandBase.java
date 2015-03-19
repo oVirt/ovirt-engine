@@ -17,6 +17,7 @@ import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 
+import com.woorea.openstack.base.client.OpenStackResponseException;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -1183,6 +1184,13 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                     e.getMessage());
             log.debug("Exception", e);
             processExceptionToClient(new VdcFault(e, e.getVdsError().getCode()));
+        } catch (OpenStackResponseException e) {
+            // Adding a message to executeFailedMessages is needed only when the list is empty
+            if (_returnValue.getExecuteFailedMessages().isEmpty()) {
+                processExceptionToClient(new VdcFault(e, VdcBllErrors.ENGINE));
+            }
+            log.error("Command '{}' failed: {}", getClass().getName(), e.getMessage());
+            log.error("Exception", e);
         } catch (RuntimeException e) {
             processExceptionToClient(new VdcFault(e, VdcBllErrors.ENGINE));
             log.error("Command '{}' failed: {}", getClass().getName(), e.getMessage());
