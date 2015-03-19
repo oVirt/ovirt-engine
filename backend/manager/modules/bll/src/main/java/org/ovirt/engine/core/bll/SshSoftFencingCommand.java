@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.pm.HostFenceActionExecutor;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -46,7 +47,7 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
             getReturnValue().setSucceeded(false);
             return;
         }
-        if (FenceExecutor.isStatusOff(new FenceExecutor(getVds()).checkHostStatus())) {
+        if (new HostFenceActionExecutor(getVds()).isHostPoweredOff()) {
             // do not try to soft-fence if Host is reported as Down via PM
             getReturnValue().setSucceeded(false);
         }
