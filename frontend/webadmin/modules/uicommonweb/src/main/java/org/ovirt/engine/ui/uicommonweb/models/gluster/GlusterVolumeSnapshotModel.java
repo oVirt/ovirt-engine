@@ -240,7 +240,8 @@ public class GlusterVolumeSnapshotModel extends Model {
             }
         }
 
-        if (getEndByOptions().getSelectedItem() == EndDateOptions.HasEndDate
+        if (getRecurrence().getSelectedItem() != GlusterVolumeSnapshotScheduleRecurrence.UNKNOWN
+                && getEndByOptions().getSelectedItem() == EndDateOptions.HasEndDate
                 && getEndDate().getEntity().compareTo(getStartAt().getEntity()) <= 0) {
                 setMessage(ConstantsManager.getInstance().getConstants().endDateBeforeStartDate());
                 validEndDate = false;
