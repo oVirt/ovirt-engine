@@ -109,7 +109,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
                             slaveVolumeSnapshot.setSnapshotId((Guid) snapCreationRetVal.getReturnValue());
                             slaveVolumeSnapshot.setSnapshotName(snapshot.getSnapshotName());
                             slaveVolumeSnapshot.setDescription(snapshot.getDescription());
-                            slaveVolumeSnapshot.setStatus(GlusterSnapshotStatus.ACTIVATED);
+                            slaveVolumeSnapshot.setStatus(GlusterSnapshotStatus.DEACTIVATED);
                             slaveVolumeSnapshot.setCreatedAt(new Date());
                             getDbFacade().getGlusterVolumeSnapshotDao().save(slaveVolumeSnapshot);
                         }
@@ -152,7 +152,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
         } else {
             GlusterVolumeSnapshotEntity createdSnapshot = getParameters().getSnapshot();
             createdSnapshot.setSnapshotId((Guid) retVal.getReturnValue());
-            createdSnapshot.setStatus(GlusterSnapshotStatus.ACTIVATED);
+            createdSnapshot.setStatus(GlusterSnapshotStatus.DEACTIVATED);
             createdSnapshot.setCreatedAt(new Date());
             getDbFacade().getGlusterVolumeSnapshotDao().save(createdSnapshot);
         }
