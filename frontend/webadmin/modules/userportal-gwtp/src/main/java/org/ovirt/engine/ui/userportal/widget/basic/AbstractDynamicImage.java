@@ -1,8 +1,10 @@
 package org.ovirt.engine.ui.userportal.widget.basic;
 
+import org.ovirt.engine.ui.userportal.ApplicationResourcesWithLookup;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
+
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.editor.client.adapters.TakesValueEditor;
-import com.google.gwt.resources.client.ClientBundleWithLookup;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.resources.client.ResourcePrototype;
 import com.google.gwt.user.client.TakesValue;
@@ -14,18 +16,12 @@ import com.google.gwt.user.client.ui.Image;
  *
  * @param <T>
  *            the object from which the specific image will be calculated
- * @param <R>
- *            the specific class of ClientBundleWithLookup where the resource will take place
  */
-public abstract class AbstractDynamicImage<T, R extends ClientBundleWithLookup> extends Image implements IsEditor<TakesValueEditor<T>>, TakesValue<T> {
+public abstract class AbstractDynamicImage<T> extends Image implements IsEditor<TakesValueEditor<T>>, TakesValue<T> {
 
-    private R bundle;
+    private final static ApplicationResourcesWithLookup resourcesWithLookup = AssetProvider.getResourcesWithLookup();
 
     private T value;
-
-    public AbstractDynamicImage(R bundle) {
-        this.bundle = bundle;
-    }
 
     @Override
     public TakesValueEditor<T> asEditor() {
@@ -44,9 +40,9 @@ public abstract class AbstractDynamicImage<T, R extends ClientBundleWithLookup> 
     }
 
     private ImageResource getImage(T value) {
-        ResourcePrototype resource = bundle.getResource(imageName(value));
+        ResourcePrototype resource = resourcesWithLookup.getResource(imageName(value));
         if (!(resource instanceof ImageResource)) {
-            return (ImageResource) bundle.getResource(defaultImageName(value));
+            return (ImageResource) resourcesWithLookup.getResource(defaultImageName(value));
         }
 
         return (ImageResource) resource;

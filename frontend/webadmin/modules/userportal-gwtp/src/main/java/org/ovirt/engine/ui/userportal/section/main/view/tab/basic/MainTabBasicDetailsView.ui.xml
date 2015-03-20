@@ -7,152 +7,149 @@
     xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label">
 
 
-	<ui:with field='resources'
-		type='org.ovirt.engine.ui.userportal.ApplicationResources' />
+    <ui:with field='resources'
+        type='org.ovirt.engine.ui.userportal.ApplicationResources' />
 
-	<ui:with field='constants'
-	type='org.ovirt.engine.ui.userportal.ApplicationConstants' />
+    <ui:with field='constants'
+       type='org.ovirt.engine.ui.userportal.ApplicationConstants' />
 
-	<ui:with field='itemResources'
-		type='org.ovirt.engine.ui.userportal.ApplicationResourcesWithLookup' />
-		
-	<ui:style
-		type="org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicDetailsView.Style">
+    <ui:style
+        type="org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicDetailsView.Style">
 
-		.detailsHeaderPanel {
-			margin-top: 10px;
-			margin-left: 10px;
-			margin-right: 10px;
-			border-radius: 9px;
-			border-style: solid;
-			border-width: 1px;
-			border-color: #b5c7d5;
-			background-color: #ffffff;
-		}
+        .detailsHeaderPanel {
+            margin-top: 10px;
+            margin-left: 10px;
+            margin-right: 10px;
+            border-radius: 9px;
+            border-style: solid;
+            border-width: 1px;
+            border-color: #b5c7d5;
+            background-color: #ffffff;
+        }
 
-		.mainPanel {
-			background-color: #e1e8f2;
-			overflow: auto;
-			border-top-width: 1px;
-			border-top-color: #97b7d6;
-			border-top-style: solid;
-			margin-right: 2px;
-			margin-bottom: 2px;
-		}
+        .mainPanel {
+            background-color: #e1e8f2;
+            overflow: auto;
+            border-top-width: 1px;
+            border-top-color: #97b7d6;
+            border-top-style: solid;
+            margin-right: 2px;
+            margin-bottom: 2px;
+        }
 
-		.osImage {
-			float: left;
-			padding: 10px;
-		}
+        .osImage {
+            float: left;
+            padding: 10px;
+        }
 
-		.vmImage {
-			position: relative;
-			top: 38px;
-			left: -17px;
-		}
+        .vmImage {
+            position: relative;
+            top: 38px;
+            left: -17px;
+        }
 
-		.basicInfoVmNameLabel {
-			font-family: Arial,sans-serif;
-			color: #3A5F7C;
-			font-size: 18px;
-			font-weight: bold;
-			position: relative;
-			top: -10px;
-			left: 7px;
-		}
+        .basicInfoVmNameLabel {
+            font-family: Arial,sans-serif;
+            color: #3A5F7C;
+            font-size: 18px;
+            font-weight: bold;
+            position: relative;
+            top: -10px;
+            left: 7px;
+        }
 
-		.basicInfoVmDescriptionLabel {
-			font-family: Arial,sans-serif;
-			color: #728FAD;
-			font-size: 15px;
-			position: relative;
-			top: -12px;
-			left: 7px;
-		}
+        .basicInfoVmDescriptionLabel {
+            font-family: Arial,sans-serif;
+            color: #728FAD;
+            font-size: 15px;
+            position: relative;
+            top: -12px;
+            left: 7px;
+        }
 
-		.rowIcon {
-			float: left;
-			padding-left: 20px;
-		}
+        .rowIcon {
+            float: left;
+            padding-left: 20px;
+        }
 
-		.rowLabel {
-			float: left;
-			font-family: Arial,sans-serif;
-			color: #3A5F7C;
-			font-size: 19px;
-			font-weight: bold;
-			text-align: left;
-			padding-left: 5px;
-			padding-top: 4px;
-		}
+        .rowLabel {
+            float: left;
+            font-family: Arial,sans-serif;
+            color: #3A5F7C;
+            font-size: 19px;
+            font-weight: bold;
+            text-align: left;
+            padding-left: 5px;
+            padding-top: 4px;
+        }
 
 
-		.rowValue {
-			float: right;
-			font-family: Arial,sans-serif;
-			color: #3A5F7C;
-			font-size: 15px;
-			text-align: right;
-			padding-right: 20px;
-			padding-top: 7px;
-		}
+        .rowValue {
+            float: right;
+            font-family: Arial,sans-serif;
+            color: #3A5F7C;
+            font-size: 15px;
+            text-align: right;
+            padding-right: 20px;
+            padding-top: 7px;
+        }
 
-		.detailsRow {
-			padding-left: 40px;
-			padding-top: 10px;
-		}
+        .detailsRow {
+            padding-left: 40px;
+            padding-top: 10px;
+        }
 
-		.horizontalLine {
-			float: left;
-			width: 100%;
-			height: 1px;
-			background-color: #B5C5D5;
-			margin-top: 20px;
-			margin-bottom: 20px;
-		}
+        .horizontalLine {
+            float: left;
+            width: 100%;
+            height: 1px;
+            background-color: #B5C5D5;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
 
-		.horizontalLineWrapper {
-			width: 100%;
-			float: left;
-		}
+        .horizontalLineWrapper {
+            width: 100%;
+            float: left;
+        }
 
-		.diskImageWidget {
-			float: left;
-			width: 100%;
-		}
+        .diskImageWidget {
+            float: left;
+            width: 100%;
+        }
 
-		.protocolWarning, .protocol {
-			float: right;
-			color: #3A5F7C;
-		    font-family: Arial,sans-serif;
-		    font-size: 19px;
-		    font-weight: bold;
-		    padding-left: 10px;
-		    white-space:nowrap;
-		    padding-top: 3px;
-		}
+        .protocolWarning, .protocol {
+            float: right;
+            color: #3A5F7C;
+            font-family: Arial,sans-serif;
+            font-size: 19px;
+            font-weight: bold;
+            padding-left: 10px;
+            white-space:nowrap;
+            padding-top: 3px;
+        }
 
-		.basicInfoDetailsLinkDisabled, .basicInfoDetailsLink {
-			font-family: Arial,sans-serif;
-			color: #3A5F7C;
-			font-size: 15px;
-			text-align: right;
-			float: right;
-			padding-right: 20px;
-		    padding-top: 5px;
-		    padding-left: 5px;
-		}
+        .basicInfoDetailsLinkDisabled, .basicInfoDetailsLink {
+            font-family: Arial,sans-serif;
+            color: #3A5F7C;
+            font-size: 15px;
+            text-align: right;
+            float: right;
+            padding-right: 20px;
+            padding-top: 5px;
+            padding-left: 5px;
+        }
 
-		.basicInfoDetailsLinkDisabled, .basicInfoDetailsLinkDisabled:hover {
- 		 	text-decoration: underline;
-			color: #AAAAAA;
-			cursor: default;
-		}
+        .basicInfoDetailsLinkDisabled, .basicInfoDetailsLinkDisabled:hover {
+              text-decoration: underline;
+            color: #AAAAAA;
+            cursor: default;
+        }
 
-		.basicInfoDetailsLink {
-			text-decoration: underline;
-			cursor: pointer;
-		}
+        .basicInfoDetailsLink {
+            text-decoration: underline;
+            cursor: pointer;
+        }
 
         .leftConsolePanel {
             float: left;
@@ -176,66 +173,66 @@
             clear: left;
             font-size: 15px;
         }
-	</ui:style>
+    </ui:style>
 
-	<g:DockLayoutPanel addStyleNames="{style.mainPanel}">
-		<g:north size='80'>
-			<g:SimpleLayoutPanel addStyleNames="{style.detailsHeaderPanel}">
-				<g:FlowPanel>
-					<e:OsTypeImage ui:field="osImage" addStyleNames="{style.osImage}" resources="{itemResources}" nameUniquePart="Small" />
-					<e:VmTypeImage ui:field="vmImage" addStyleNames="{style.vmImage}" resources="{itemResources}" />
-					
-					<g:FlowPanel>
-						<g:Label ui:field="vmName" addStyleNames="{style.basicInfoVmNameLabel}" />
-						<g:Label ui:field="vmDescription" addStyleNames="{style.basicInfoVmDescriptionLabel}" />
-					</g:FlowPanel>
-				</g:FlowPanel>
-			</g:SimpleLayoutPanel>
-		</g:north>
-		<g:center>
-			<g:LayoutPanel>
-				<g:layer>
-					<g:FlowPanel addStyleNames="{style.detailsRow}">
-						<g:Image resource='{resources.basicOsIcon}' addStyleNames="{style.rowIcon}" />
-						<g:Label text="{constants.osBasicDetails} : " addStyleNames="{style.rowLabel}" />
-						<g:ValueLabel ui:field="operatingSystem" addStyleNames="{style.rowValue}" />
-					</g:FlowPanel>
-				</g:layer>
+    <g:DockLayoutPanel addStyleNames="{style.mainPanel}">
+        <g:north size='80'>
+            <g:SimpleLayoutPanel addStyleNames="{style.detailsHeaderPanel}">
+                <g:FlowPanel>
+                    <e:OsTypeImage ui:field="osImage" addStyleNames="{style.osImage}" nameUniquePart="Small" />
+                    <e:VmTypeImage ui:field="vmImage" addStyleNames="{style.vmImage}"/>
 
-				<g:layer top='40px' height='60px'>
-					<g:FlowPanel addStyleNames="{style.detailsRow}">
-						<g:Image resource='{resources.basicMemoryIcon}' addStyleNames="{style.rowIcon}" />
-						<g:Label text="{constants.definedMemBasicDetails} : " addStyleNames="{style.rowLabel}" />
-						<r:ToStringEntityModelLabel ui:field="memory" addStyleNames="{style.rowValue}" />
-					</g:FlowPanel>
-				</g:layer>
+                    <g:FlowPanel>
+                        <g:Label ui:field="vmName" addStyleNames="{style.basicInfoVmNameLabel}" />
+                        <g:Label ui:field="vmDescription" addStyleNames="{style.basicInfoVmDescriptionLabel}" />
+                    </g:FlowPanel>
+                </g:FlowPanel>
+            </g:SimpleLayoutPanel>
+        </g:north>
+        <g:center>
+            <g:LayoutPanel>
+                <g:layer>
+                    <g:FlowPanel addStyleNames="{style.detailsRow}">
+                        <g:Image resource='{resources.basicOsIcon}' addStyleNames="{style.rowIcon}" />
+                        <g:Label text="{constants.osBasicDetails} : " addStyleNames="{style.rowLabel}" />
+                        <g:ValueLabel ui:field="operatingSystem" addStyleNames="{style.rowValue}" />
+                    </g:FlowPanel>
+                </g:layer>
 
-				<g:layer top='80px' height='60px'>
-					<g:FlowPanel addStyleNames="{style.detailsRow}">
-						<g:Image resource='{resources.basicCpuIcon}'
-							addStyleNames="{style.rowIcon}" />
-						<g:Label text="{constants.numOfCoresBasicDetails} : " addStyleNames="{style.rowLabel}" />
-						<r:ToStringEntityModelLabel ui:field="numberOfCores" addStyleNames="{style.rowValue}" />
-					</g:FlowPanel>
-				</g:layer>
-				<g:layer top='120px' height='100%'>
-					<g:FlowPanel>
-						<g:FlowPanel addStyleNames="{style.horizontalLineWrapper}" >
-							<g:FlowPanel addStyleNames="{style.horizontalLine}" />
-						</g:FlowPanel>
+                <g:layer top='40px' height='60px'>
+                    <g:FlowPanel addStyleNames="{style.detailsRow}">
+                        <g:Image resource='{resources.basicMemoryIcon}' addStyleNames="{style.rowIcon}" />
+                        <g:Label text="{constants.definedMemBasicDetails} : " addStyleNames="{style.rowLabel}" />
+                        <r:ToStringEntityModelLabel ui:field="memory" addStyleNames="{style.rowValue}" />
+                    </g:FlowPanel>
+                </g:layer>
 
-						<g:FlowPanel addStyleNames="{style.detailsRow}">
-							<g:Image resource='{resources.basicDriveIcon}'
-								addStyleNames="{style.rowIcon}" />
-							<g:Label text="{constants.drivesBasicDetails} : " addStyleNames="{style.rowLabel}" />
-							<e:DisksImageWidget ui:field="disks" addStyleNames="{style.diskImageWidget}" />
-						</g:FlowPanel>
+                <g:layer top='80px' height='60px'>
+                    <g:FlowPanel addStyleNames="{style.detailsRow}">
+                        <g:Image resource='{resources.basicCpuIcon}'
+                            addStyleNames="{style.rowIcon}" />
+                        <g:Label text="{constants.numOfCoresBasicDetails} : " addStyleNames="{style.rowLabel}" />
+                        <r:ToStringEntityModelLabel ui:field="numberOfCores" addStyleNames="{style.rowValue}" />
+                    </g:FlowPanel>
+                </g:layer>
+                <g:layer top='120px' height='100%'>
+                    <g:FlowPanel>
+                        <g:FlowPanel addStyleNames="{style.horizontalLineWrapper}" >
+                            <g:FlowPanel addStyleNames="{style.horizontalLine}" />
+                        </g:FlowPanel>
 
-						<g:FlowPanel addStyleNames="{style.horizontalLineWrapper}" >
-							<g:FlowPanel addStyleNames="{style.horizontalLine}" />
-						</g:FlowPanel>
-						<g:FlowPanel addStyleNames="{style.detailsRow}">
-							<g:Image resource='{resources.basicConsoleIcon}' addStyleNames="{style.rowIcon}" />
+                        <g:FlowPanel addStyleNames="{style.detailsRow}">
+                            <g:Image resource='{resources.basicDriveIcon}'
+                                addStyleNames="{style.rowIcon}" />
+                            <g:Label text="{constants.drivesBasicDetails} : " addStyleNames="{style.rowLabel}" />
+                            <e:DisksImageWidget ui:field="disks" addStyleNames="{style.diskImageWidget}" />
+                        </g:FlowPanel>
+
+                        <g:FlowPanel addStyleNames="{style.horizontalLineWrapper}" >
+                            <g:FlowPanel addStyleNames="{style.horizontalLine}" />
+                        </g:FlowPanel>
+                        <g:FlowPanel addStyleNames="{style.detailsRow}">
+                            <g:Image resource='{resources.basicConsoleIcon}' addStyleNames="{style.rowIcon}" />
                             <g:FlowPanel addStyleNames="{style.leftConsolePanel}">
                                 <g:Label text="{constants.consoleBasicDetails} : " addStyleNames="{style.consoleLabel}" />
                                 <g:Anchor ui:field="consoleConnectAnchor" text="{constants.connect}" addStyleNames="{style.consoleLabel}" />
@@ -243,11 +240,11 @@
                             </g:FlowPanel>
                             <g:Anchor ui:field="editProtocolLink" text="({constants.editBasicDetails})" addStyleNames="{style.basicInfoDetailsLinkDisabled}"/>
                             <g:Label ui:field="protocolMessage" />
-						</g:FlowPanel>
-					</g:FlowPanel>
-				</g:layer>
-			</g:LayoutPanel>
-		</g:center>
-	</g:DockLayoutPanel>
+                        </g:FlowPanel>
+                    </g:FlowPanel>
+                </g:layer>
+            </g:LayoutPanel>
+        </g:center>
+    </g:DockLayoutPanel>
 
 </ui:UiBinder>

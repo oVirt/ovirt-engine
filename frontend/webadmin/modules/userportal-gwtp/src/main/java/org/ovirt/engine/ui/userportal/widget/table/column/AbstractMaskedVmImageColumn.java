@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.userportal.widget.table.column;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.userportal.ApplicationResourcesWithLookup;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 
 import com.google.gwt.cell.client.Cell.Context;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.resources.client.ResourcePrototype;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public abstract class AbstractMaskedVmImageColumn<T> extends AbstractImageResourceColumn<T> {
 
-    private final ApplicationResourcesWithLookup resourcesWithLookup = GWT.create(ApplicationResourcesWithLookup.class);
+    private final static ApplicationResourcesWithLookup resourcesWithLookup = AssetProvider.getResourcesWithLookup();
 
     public interface ShowMask<T> {
         boolean showMask(T value);

@@ -7,9 +7,6 @@
     <ui:with field='resources'
         type='org.ovirt.engine.ui.userportal.ApplicationResources' />
 
-    <ui:with field='itemResources'
-        type='org.ovirt.engine.ui.userportal.ApplicationResourcesWithLookup' />
-
     <ui:with field='constants' type='org.ovirt.engine.ui.userportal.ApplicationConstants' />
 
     <ui:style
@@ -140,7 +137,7 @@
         <g:center>
             <g:LayoutPanel ui:field="mainContainer" addStyleNames="{style.basicVmViewBoxStyle}">
                 <g:layer>
-                    <i:OsTypeImage ui:field="osTypeImage" addStyleNames="{style.osTypeImage}" resources="{itemResources}" nameUniquePart="Large" />
+                    <i:OsTypeImage ui:field="osTypeImage" addStyleNames="{style.osTypeImage}" nameUniquePart="Large" />
                 </g:layer>
 
                 <g:layer top='5px' height='120px' left='5px' width='150px'>

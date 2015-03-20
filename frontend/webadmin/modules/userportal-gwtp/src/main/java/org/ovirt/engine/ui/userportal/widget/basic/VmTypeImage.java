@@ -1,20 +1,12 @@
 package org.ovirt.engine.ui.userportal.widget.basic;
 
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
-import org.ovirt.engine.ui.userportal.ApplicationResourcesWithLookup;
-
-import com.google.gwt.uibinder.client.UiConstructor;
 
 /**
  * The type of VM such as server, desktop, pool
  *
  */
-public class VmTypeImage extends AbstractDynamicImage<UserPortalItemModel, ApplicationResourcesWithLookup> {
-
-    @UiConstructor
-    public VmTypeImage(ApplicationResourcesWithLookup resources) {
-        super(resources);
-    }
+public class VmTypeImage extends AbstractDynamicImage<UserPortalItemModel> {
 
     @Override
     protected String imageName(UserPortalItemModel value) {

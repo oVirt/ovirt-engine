@@ -1,22 +1,20 @@
 package org.ovirt.engine.ui.userportal.widget.basic;
 
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.userportal.ApplicationResourcesWithLookup;
 
 import com.google.gwt.uibinder.client.UiConstructor;
 
 /**
  * OS Type such as Windows, Linux, RHEL etc...
  */
-public class OsTypeImage extends AbstractDynamicImage<Integer, ApplicationResourcesWithLookup> {
+public class OsTypeImage extends AbstractDynamicImage<Integer> {
 
     private String nameUniquePart;
 
     private static final String IMAGE = "Image"; //$NON-NLS-1$
 
     @UiConstructor
-    public OsTypeImage(ApplicationResourcesWithLookup resources, String nameUniquePart) {
-        super(resources);
+    public OsTypeImage(String nameUniquePart) {
         this.nameUniquePart = nameUniquePart;
     }
 
