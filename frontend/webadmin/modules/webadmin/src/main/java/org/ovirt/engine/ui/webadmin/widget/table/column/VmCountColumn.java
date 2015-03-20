@@ -47,7 +47,7 @@ public class VmCountColumn extends AbstractSafeHtmlColumn<VDS> {
         String vmCountStr = String.valueOf(object.getVmCount());
         int incomingMigrations = object.getIncomingMigrations();
         int outgoingMigrations = object.getOutgoingMigrations();
-        int totalMigrations = object.getVmMigrating();
+        int totalMigrations = object.getVmMigrating() != null ? object.getVmMigrating() : 0;
 
         if (incomingMigrations == 0 && outgoingMigrations == 0
                 || totalMigrations == 0) {
