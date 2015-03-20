@@ -69,7 +69,6 @@
 
         .rowIcon {
             float: left;
-            padding-left: 20px;
         }
 
         .rowLabel {
