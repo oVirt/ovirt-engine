@@ -106,8 +106,8 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
         deviceTable = new ListModelObjectCellTable<StorageDevice, ListModel<StorageDevice>>(true, false);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants);
-        initTableColumns(constants);
+        localize();
+        initTableColumns();
         driver.initialize(this);
     }
 
@@ -115,7 +115,7 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
         raidTypeEditor = new ListModelListBoxEditor<RaidType>(new EnumRenderer<RaidType>());
     }
 
-    protected void initTableColumns(ApplicationConstants constants) {
+    protected void initTableColumns() {
         // Table Entity Columns
         deviceTable.addColumn(new AbstractTextColumn<StorageDevice>() {
             @Override
@@ -140,7 +140,7 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
         }, constants.size(), "100px"); //$NON-NLS-1$
     }
 
-    private void localize(ApplicationConstants constants) {
+    private void localize() {
         lvNameEditor.setLabel(constants.logicalVolume());
         mountPointEditor.setLabel(constants.mountPoint());
         sizeEditor.setLabel(constants.lvSize());
