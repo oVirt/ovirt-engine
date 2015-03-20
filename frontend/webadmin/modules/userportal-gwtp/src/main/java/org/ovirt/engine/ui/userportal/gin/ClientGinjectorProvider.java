@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.userportal.gin;
 
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
-import org.ovirt.engine.ui.userportal.ApplicationResourcesWithLookup;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -22,13 +21,6 @@ public class ClientGinjectorProvider {
 
     public static EventBus getEventBus() {
         return eventBusProvider.get();
-    }
-
-    @Inject
-    static Provider<ApplicationResourcesWithLookup> applicationResourcesWithLookupProvider;
-
-    public static ApplicationResourcesWithLookup getApplicationResourcesWithLookup() {
-        return applicationResourcesWithLookupProvider.get();
     }
 
     @Inject

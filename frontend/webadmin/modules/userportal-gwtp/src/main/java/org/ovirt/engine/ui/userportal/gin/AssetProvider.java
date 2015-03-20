@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.userportal.gin;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationMessages;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
+import org.ovirt.engine.ui.userportal.ApplicationResourcesWithLookup;
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
 
 import com.google.inject.Inject;
@@ -39,6 +40,13 @@ public class AssetProvider {
 
     public static ApplicationResources getResources() {
         return applicationResourcesProvider;
+    }
+
+    @Inject
+    static ApplicationResourcesWithLookup applicationResourcesWithLookupProvider;
+
+    public static ApplicationResourcesWithLookup getResourcesWithLookup() {
+        return applicationResourcesWithLookupProvider;
     }
 
 }

@@ -3,14 +3,14 @@ package org.ovirt.engine.ui.userportal.widget.table.column;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.userportal.ApplicationResourcesWithLookup;
-import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
+import org.ovirt.engine.ui.userportal.gin.AssetProvider;
 
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.resources.client.ResourcePrototype;
 
 public class VmImageColumn<T> extends AbstractImageResourceColumn<T> {
 
-    private final ApplicationResourcesWithLookup resourcesWithLookup = ClientGinjectorProvider.getApplicationResourcesWithLookup();
+    private final static ApplicationResourcesWithLookup resourcesWithLookup = AssetProvider.getResourcesWithLookup();
 
     public interface OsTypeExtractor<T> {
         int extractOsType(T item);
