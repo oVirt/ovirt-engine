@@ -38,6 +38,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.restapi.HasForeignMenuData;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -54,6 +55,7 @@ public class SpiceConsoleModel extends ConsoleModel {
     public static EventDefinition spiceMenuItemSelectedEventDefinition;
 
     private SpiceMenu menu;
+
     private ISpice privatespice;
     private ClientConsoleMode consoleMode;
 
@@ -321,6 +323,9 @@ public class SpiceConsoleModel extends ConsoleModel {
 
                         try {
                             getspice().setOptions(options);
+                            if (getspice() instanceof HasForeignMenuData) {
+                                setForeignMenuData((HasForeignMenuData) getspice());
+                            }
                             getspice().invokeClient();
                         } catch (RuntimeException ex) {
                             getLogger().error("Exception on Spice connect", ex); //$NON-NLS-1$

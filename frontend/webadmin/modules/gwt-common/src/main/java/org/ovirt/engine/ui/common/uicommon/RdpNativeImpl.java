@@ -1,14 +1,14 @@
 package org.ovirt.engine.ui.common.uicommon;
 
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.IRdp;
+import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpNative;
 
 /**
  * Class for generating an RDP descriptor and invoking native RDP client.
  * This method of console invocation doesn't support automatic login.
  *
  */
-public class RdpNativeImpl extends AbstractRdp implements IRdp {
+public class RdpNativeImpl extends AbstractRdp implements IRdpNative {
 
     private static final String BASE_CONFIG_FILE =
         "session bpp:i:32\n" + //$NON-NLS-1$

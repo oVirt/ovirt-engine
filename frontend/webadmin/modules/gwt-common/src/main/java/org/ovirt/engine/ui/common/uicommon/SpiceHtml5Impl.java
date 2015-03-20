@@ -9,21 +9,23 @@ public class SpiceHtml5Impl extends AbstractSpice implements ISpiceHtml5 {
 
     private static final String CLIENT_PAGE = BaseContextPathData.getInstance().getRelativePath()
             + "services/spicehtml5-main.html"; //$NON-NLS-1$
-    private final WebsocketProxyConfig config;
 
-    public SpiceHtml5Impl() {
-        this.config = new WebsocketProxyConfig(
-                (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.WebSocketProxy),
-                getOptions().getHost());
-    }
+    private WebsocketProxyConfig config;
 
     @Override
     public void invokeClient() {
-        boolean sslTarget = consoleOptions.getSecurePort() == -1 ? false : true;
+        boolean sslTarget = consoleOptions.getSecurePort() != -1;
         int port = sslTarget ? consoleOptions.getSecurePort() : consoleOptions.getPort();
-        WebClientConsoleInvoker invoker =
-                new WebClientConsoleInvoker(CLIENT_PAGE, config, getOptions().getHost(), port, getOptions().getTicket(), sslTarget);
+        WebClientConsoleInvoker invoker = new WebClientConsoleInvoker(CLIENT_PAGE, getConfig(), getOptions().getHost(), port, getOptions().getTicket(), sslTarget);
         invoker.invokeClient();
     }
 
+    protected WebsocketProxyConfig getConfig() {
+        if (config == null) {
+            config = new WebsocketProxyConfig(
+                    (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.WebSocketProxy),
+                    getOptions().getHost());
+        }
+        return config;
+    }
 }

@@ -17,6 +17,7 @@ import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.restapi.HasForeignMenuData;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class VncConsoleModel extends ConsoleModel {
@@ -99,6 +100,9 @@ public class VncConsoleModel extends ConsoleModel {
             public void onSuccess(Object model, Object returnValue) {
                 vncImpl.setOptions((ConsoleOptions) ((VdcQueryReturnValue) returnValue).getReturnValue());
                 vncImpl.getOptions().setTitle(getClientTitle());
+                if (vncImpl instanceof HasForeignMenuData) {
+                    setForeignMenuData((HasForeignMenuData) vncImpl);
+                }
                 vncImpl.invokeClient();
             }
         });

@@ -16,9 +16,11 @@ public class SpiceNativeImpl extends AbstractSpice implements ISpiceNative {
         AsyncQuery callback = new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) { // todo avoid code duplication with vnc
+                StringBuilder configBuilder = new StringBuilder((String) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                writeOVirtSection(configBuilder);
                 ConsoleModel.makeConsoleConfigRequest("console.vv", //$NON-NLS-1$
                         "application/x-virt-viewer; charset=UTF-8", //$NON-NLS-1$
-                        (String) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                        configBuilder.toString());
             }
         });
 

@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.LoggedInGatekeeper;
+import org.ovirt.engine.ui.common.restapi.RestApiSessionManager;
 import org.ovirt.engine.ui.common.system.ApplicationFocusManager;
 import org.ovirt.engine.ui.common.system.AsyncCallFailureHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -84,6 +85,7 @@ public abstract class BaseSystemModule extends AbstractGinModule {
         bind(VdcOperationManager.class).in(Singleton.class);
         bind(OperationProcessor.class).in(Singleton.class);
         bind(CommunicationProvider.class).to(GWTRPCCommunicationProvider.class).in(Singleton.class);
+        bind(RestApiSessionManager.class).in(Singleton.class);
     }
 
     protected void bindResourceConfiguration(

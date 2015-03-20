@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.common.uicommon;
 import org.ovirt.engine.ui.frontend.Frontend;
 
 
-public class AbstractRdp {
+public abstract class AbstractRdp extends AbstractConsole {
     private String address;
     private String guestID;
 

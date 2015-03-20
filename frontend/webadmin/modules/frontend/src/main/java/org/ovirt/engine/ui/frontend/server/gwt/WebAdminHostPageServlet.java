@@ -15,9 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
-import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigCommon;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -37,7 +35,7 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
 
     protected static final String ATTR_APPLICATION_MODE = "applicationMode"; //$NON-NLS-1$
     protected static final String ATTR_PLUGIN_DEFS = "pluginDefinitions"; //$NON-NLS-1$
-    protected static final String ATTR_ENGINE_SESSION_TIMEOUT = "engineSessionTimeout"; //$NON-NLS-1$
+
     protected static final String ATTR_ENGINE_REPORTS_DASHBOARD_URL = "ENGINE_REPORTS_DASHBOARD_URL"; //$NON-NLS-1$
     protected static final String ATTR_ENGINE_REPORTS_RIGHTCLICK_URL = "ENGINE_REPORTS_RIGHTCLICK_URL"; //$NON-NLS-1$
     protected static final String ATTR_ENGINE_REPORTS_BASE_URL = "ENGINE_REPORTS_BASE_URL"; //$NON-NLS-1$
@@ -84,10 +82,6 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
         List<PluginData> pluginData = getPluginData();
         request.setAttribute(ATTR_PLUGIN_DEFS, getPluginDefinitionsArray(pluginData));
 
-        // Set attribute for engineSessionTimeout object
-        request.setAttribute(ATTR_ENGINE_SESSION_TIMEOUT, getEngineSessionTimeoutObject(getUserSessionTimeout(),
-                getUserSessionHardTimeout()));
-
         // Set attribute for engineReportsUrl object
         request.setAttribute(ATTR_ENGINE_REPORTS_BASE_URL,
                 getReportInit(reportRedirectUrl.substring(reportBaseUrl.length()),
@@ -119,9 +113,6 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
 
         // Update based on pluginDefinitions array
         digest.update(request.getAttribute(ATTR_PLUGIN_DEFS).toString().getBytes(StandardCharsets.UTF_8));
-
-        // Update based on engineSessionTimeout object
-        digest.update(request.getAttribute(ATTR_ENGINE_SESSION_TIMEOUT).toString().getBytes(StandardCharsets.UTF_8));
 
         // Update based on report URL parameters.
         digest.update(request.getAttribute(ATTR_ENGINE_REPORTS_BASE_URL).toString().getBytes());
@@ -158,21 +149,6 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
             arr.add(dataObj);
         }
         return arr;
-    }
-
-    protected Integer getUserSessionTimeout() {
-        return Config.<Integer> getValue(ConfigValues.UserSessionTimeOutInterval);
-    }
-
-    protected Integer getUserSessionHardTimeout() {
-        return Config.<Integer> getValue(ConfigValues.UserSessionHardLimit);
-    }
-
-    protected ObjectNode getEngineSessionTimeoutObject(Integer engineSessionTimeout, Integer userSessionHardLimit) {
-        ObjectNode obj = createObjectNode();
-        obj.put("sessionTimeout", String.valueOf(engineSessionTimeout)); //$NON-NLS-1$
-        obj.put("sessionHardLimit", String.valueOf(userSessionHardLimit)); //$NON-NLS-1$
-        return obj;
     }
 
 }

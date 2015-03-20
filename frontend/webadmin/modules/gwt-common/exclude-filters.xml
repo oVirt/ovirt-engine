@@ -123,6 +123,18 @@
      </Match>
 
      <!--
+      findbugs complain of unused field in class.
+      This is a GWT class and use to generate code
+
+      findbugs reason:
+      UuF: Unused field (UUF_UNUSED_FIELD)
+     -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.common.restapi.RestApiSessionAcquired" />
+       <Bug code="UuF"/>
+     </Match>
+
+     <!--
         findbugs complains that we don't use pathEditor in AbstractStorageView
         We do use that code in inherited classes such as GlusterStorageView
 

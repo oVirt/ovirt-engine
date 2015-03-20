@@ -5,11 +5,10 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.core.common.console.ConsoleOptions;
+import com.google.inject.Inject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
-import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
-import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpicePlugin;
 
 public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
@@ -18,8 +17,10 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
     protected String spiceBaseURL;
 
     private static final Logger logger = Logger.getLogger(SpicePluginImpl.class.getName());
-    private final Configurator configurator = (Configurator) TypeResolver.getInstance().resolve(Configurator.class);
-    private final ConsoleUtils cu = (ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class);
+
+    @Inject
+    private Configurator configurator;
+
     private final ClientAgentType cat = new ClientAgentType();
 
     @Override
@@ -28,7 +29,7 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
 
         if (configurator.isClientLinuxFirefox()) {
             connectNativelyViaXPI();
-        } else if (configurator.isClientWindowsExplorer() || cu.isIE11()) {
+        } else if (configurator.isClientWindowsExplorer() || consoleUtils.isIE11()) {
             connectNativelyViaActiveX();
         }
     }
@@ -233,7 +234,7 @@ public class SpicePluginImpl extends AbstractSpice implements ISpicePlugin {
     public boolean detectBrowserPlugin() {
         if (configurator.isClientLinuxFirefox()) {
             return detectXpiPlugin();
-        } else if (configurator.isClientWindowsExplorer() || cu.isIE11()) {
+        } else if (configurator.isClientWindowsExplorer() || consoleUtils.isIE11()) {
             return detectActiveXPlugin();
         }
 

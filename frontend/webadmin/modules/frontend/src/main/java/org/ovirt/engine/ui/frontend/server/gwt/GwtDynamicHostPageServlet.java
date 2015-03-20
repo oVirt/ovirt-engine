@@ -23,6 +23,8 @@ import org.codehaus.jackson.node.ObjectNode;
 import org.ovirt.engine.core.branding.BrandingFilter;
 import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -82,6 +84,8 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
     private static final String HOST_JSP = "/GwtHostPage.jsp"; //$NON-NLS-1$
     private static final String UTF_CONTENT_TYPE = "text/html; charset=UTF-8"; //$NON-NLS-1$
 
+    protected static final String ATTR_ENGINE_SESSION_TIMEOUT = "engineSessionTimeout"; //$NON-NLS-1$
+
     private BackendLocal backend;
 
     private ObjectMapper mapper;
@@ -129,6 +133,10 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
                 request.setAttribute(MD5Attributes.ATTR_SSO_TOKEN.getKey(), getValueObject(ssoToken));
             }
         }
+
+        // Set attribute for engineSessionTimeout object
+        request.setAttribute(ATTR_ENGINE_SESSION_TIMEOUT, getEngineSessionTimeoutObject(getUserSessionTimeout(),
+                getUserSessionHardTimeout()));
 
         try {
             // Calculate MD5 for use with If-None-Match request header
@@ -292,11 +300,30 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
                         toString().getBytes(StandardCharsets.UTF_8));
             }
         }
+
+        // Update based on engineSessionTimeout object
+        digest.update(request.getAttribute(ATTR_ENGINE_SESSION_TIMEOUT).toString().getBytes(StandardCharsets.UTF_8)); //$NON-NLS-1$
+
         return digest;
     }
 
     protected MessageDigest createMd5Digest() throws NoSuchAlgorithmException {
         return MessageDigest.getInstance("MD5"); //$NON-NLS-1$
+    }
+
+    protected Integer getUserSessionTimeout() {
+        return Config.<Integer> getValue(ConfigValues.UserSessionTimeOutInterval);
+    }
+
+    protected Integer getUserSessionHardTimeout() {
+        return Config.<Integer> getValue(ConfigValues.UserSessionHardLimit);
+    }
+
+    protected ObjectNode getEngineSessionTimeoutObject(Integer engineSessionTimeout, Integer userSessionHardLimit) {
+        ObjectNode obj = createObjectNode();
+        obj.put("sessionTimeout", String.valueOf(engineSessionTimeout)); //$NON-NLS-1$
+        obj.put("sessionHardLimit", String.valueOf(userSessionHardLimit)); //$NON-NLS-1$
+        return obj;
     }
 
 }

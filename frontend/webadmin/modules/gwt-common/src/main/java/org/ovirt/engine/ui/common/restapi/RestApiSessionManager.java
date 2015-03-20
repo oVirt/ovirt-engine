@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.plugin.restapi;
+package org.ovirt.engine.ui.common.restapi;
 
 import java.util.Date;
 import java.util.logging.Level;

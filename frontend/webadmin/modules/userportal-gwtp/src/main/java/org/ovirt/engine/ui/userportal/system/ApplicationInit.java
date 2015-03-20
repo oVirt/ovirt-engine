@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.userportal.system;
 
 import org.ovirt.engine.ui.common.auth.CurrentUser;
+import org.ovirt.engine.ui.common.restapi.RestApiSessionManager;
 import org.ovirt.engine.ui.common.system.BaseApplicationInit;
 import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
@@ -44,9 +45,10 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
             UserPortalCurrentUserRole userRole,
             ConnectAutomaticallyManager connectAutomaticallyManager,
             ClientAgentType clientAgentType,
-            ApplicationDynamicMessages dynamicMessages) {
+            ApplicationDynamicMessages dynamicMessages,
+            RestApiSessionManager restApiSessionManager) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener,
-                user, eventBus, loginModelProvider, lockInteractionManager, frontend, userRole, null);
+                user, eventBus, loginModelProvider, lockInteractionManager, frontend, userRole, null, restApiSessionManager);
         this.placeManager = placeManager;
         this.userRole = userRole;
         this.connectAutomaticallyManager = connectAutomaticallyManager;
@@ -98,6 +100,8 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
 
     @Override
     protected void onLogin(UserPortalLoginModel loginModel) {
+        super.onLogin(loginModel);
+
         // Instead of performing login now, request update for "IsENGINEUser" property
         loginModel.updateIsENGINEUser(loginModel.getLoggedUser());
     }

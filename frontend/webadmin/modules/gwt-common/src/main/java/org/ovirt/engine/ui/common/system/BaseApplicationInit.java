@@ -1,14 +1,20 @@
 package org.ovirt.engine.ui.common.system;
 
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.common.auth.AutoLoginData;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.CurrentUser.LogoutHandler;
 import org.ovirt.engine.ui.common.auth.SSOTokenData;
+import org.ovirt.engine.ui.common.restapi.EngineSessionTimeoutData;
+import org.ovirt.engine.ui.common.restapi.RestApiSessionManager;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.FrontendLoginHandler;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.frontend.communication.SSOTokenChangeEvent;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
@@ -35,6 +41,7 @@ import com.gwtplatform.mvp.client.Bootstrapper;
  */
 public abstract class BaseApplicationInit<T extends LoginModel> implements Bootstrapper, LogoutHandler {
 
+    private final RestApiSessionManager restApiSessionManager;
     private final ITypeResolver typeResolver;
     private final FrontendEventsHandlerImpl frontendEventsHandler;
     protected final FrontendFailureEventListener frontendFailureEventListener;
@@ -57,7 +64,8 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
             Provider<T> loginModelProvider,
             LockInteractionManager lockInteractionManager,
             Frontend frontend, CurrentUserRole currentUserRole,
-            Provider<CommonModel> commonModelProvider) {
+            Provider<CommonModel> commonModelProvider,
+            RestApiSessionManager restApiSessionManager) {
         this.commonModelProvider = commonModelProvider;
         this.typeResolver = typeResolver;
         this.frontendEventsHandler = frontendEventsHandler;
@@ -68,6 +76,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         this.lockInteractionManager = lockInteractionManager;
         this.frontend = frontend;
         this.currentUserRole = currentUserRole;
+        this.restApiSessionManager = restApiSessionManager;
     }
 
     @Override
@@ -84,6 +93,13 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         AutoLoginData autoLoginData = AutoLoginData.instance();
         if (autoLoginData != null) {
             handleAutoLogin(autoLoginData);
+        }
+
+        // Check for Engine user session timeout configuration
+        EngineSessionTimeoutData engineSessionTimeoutData = EngineSessionTimeoutData.instance();
+        if (engineSessionTimeoutData != null) {
+            restApiSessionManager.setSessionTimeout(engineSessionTimeoutData.getSessionTimeout());
+            restApiSessionManager.setHardLimit(engineSessionTimeoutData.getSessionHardLimit());
         }
     }
 
@@ -115,7 +131,9 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
     /**
      * Called right after the model fires its login event.
      */
-    protected abstract void onLogin(T loginModel);
+    protected  void onLogin(T loginModel) {
+        restApiSessionManager.recordLoggedInTime();
+    }
 
     @Override
     public void onLogout() {
@@ -175,6 +193,33 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         });
 
         frontend.setFilterQueries(filterFrontendQueries());
+
+        // Configure REST API integration for availability of engine session id
+        frontend.setLoginHandler(new FrontendLoginHandler() {
+            @Override
+            public void onLoginSuccess() {
+                Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+                    @Override
+                    public void execute() {
+                        frontend.runQuery(VdcQueryType.GetEngineSessionIdToken,
+                                new VdcQueryParametersBase(),
+                                new AsyncQuery(new INewAsyncCallback() {
+                                    @Override
+                                    public void onSuccess(Object model, Object returnValue) {
+                                        String engineAuthToken = ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                        restApiSessionManager.acquireSession(engineAuthToken);
+                                    }
+                                })
+                        );
+                    }
+                });
+            }
+
+            @Override
+            public void onLogout() {
+                restApiSessionManager.releaseSession();
+            }
+        });
     }
 
     /**
@@ -204,6 +249,14 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         SSOTokenChangeEvent.fire(eventBus, SSOTokenData.instance().getToken());
         // Indicate that the user should be logged in automatically
         user.setAutoLogin(true);
+
+        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+            @Override
+            public void execute() {
+                // Assume the REST API session has been acquired and is still active
+                restApiSessionManager.reuseSession();
+            }
+        });
     }
 
 }

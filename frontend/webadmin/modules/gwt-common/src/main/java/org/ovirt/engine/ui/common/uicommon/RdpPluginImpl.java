@@ -2,8 +2,6 @@ package org.ovirt.engine.ui.common.uicommon;
 
 import java.util.logging.Logger;
 
-import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
-import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ErrorCodeEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpPlugin;
@@ -23,13 +21,6 @@ public class RdpPluginImpl extends AbstractRdp implements IRdpPlugin, IEventList
     private static EventDefinition RdpDisconnectedEventDefinition = new EventDefinition("RdpDisconnected", RdpConsoleModel.class); //$NON-NLS-1$
     private final Event<ErrorCodeEventArgs> disconnectedEvent = new Event<ErrorCodeEventArgs>(RdpDisconnectedEventDefinition);
     private RdpConsoleModel parentModel;
-
-    private final ConsoleUtils consoleUtils;
-
-    public RdpPluginImpl() {
-        super();
-        this.consoleUtils = (ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class);
-    }
 
     @Override
     public void connect() {

@@ -82,6 +82,9 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
     @Mock
     private ObjectNode mockUserInfoObject;
 
+    @Mock
+    protected ObjectNode mockEngineSessionTimeoutObject;
+
     @Captor
     protected ArgumentCaptor<byte[]> byteArrayCaptor;
 
@@ -92,6 +95,7 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
         when(mockRequest.getAttribute(GwtDynamicHostPageServlet.
                 MD5Attributes.ATTR_SELECTOR_SCRIPT.getKey())).
                 thenReturn(SELECTOR_SCRIPT);
+        when(mockRequest.getAttribute(GwtDynamicHostPageServlet.ATTR_ENGINE_SESSION_TIMEOUT)).thenReturn(mockEngineSessionTimeoutObject);
         when(mockRequest.getSession()).thenReturn(mockSession);
         when(mockRequest.getSession().getServletContext()).thenReturn(mockServletContext);
         when(mockSession.getId()).thenReturn("sessionId"); //$NON-NLS-1$
@@ -228,6 +232,13 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
         verify(mockDigest, atLeast(2)).update(byteArrayCaptor.capture());
         assertArrayEquals(SELECTOR_SCRIPT.getBytes(), byteArrayCaptor.getAllValues().get(0));
         assertArrayEquals(userInfo.getBytes(), byteArrayCaptor.getAllValues().get(1));
+    }
+
+    @Test
+    public void testGetEngineSessionTimeoutObject() {
+        ObjectNode result = testServlet.getEngineSessionTimeoutObject(30, 60);
+        assertEquals(result.get("sessionTimeout").asInt(), 30); //$NON-NLS-1$
+        assertEquals(result.get("sessionHardLimit").asInt(), 60); //$NON-NLS-1$
     }
 
     void stubGetUserBySessionIdQuery() {

@@ -53,9 +53,6 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
     // Cannot use @Mock since ArrayNode is final
     private ArrayNode mockPluginDefinitionsArray;
 
-    @Mock
-    private ObjectNode mockEngineSessionTimeoutObject;
-
     @Before
     public void setUpMockRequest() {
         ObjectMapper mapper = new ObjectMapper();
@@ -66,7 +63,6 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
         when(mockApplicationModeObject.toString()).thenReturn(APPLICATION_MODE);
         when(mockRequest.getAttribute(WebAdminHostPageServlet.ATTR_APPLICATION_MODE)).thenReturn(mockApplicationModeObject);
         when(mockRequest.getAttribute(WebAdminHostPageServlet.ATTR_PLUGIN_DEFS)).thenReturn(mockPluginDefinitionsArray);
-        when(mockRequest.getAttribute(WebAdminHostPageServlet.ATTR_ENGINE_SESSION_TIMEOUT)).thenReturn(mockEngineSessionTimeoutObject);
         when(mockRequest.getAttribute(WebAdminHostPageServlet.ATTR_ENGINE_REPORTS_BASE_URL)).thenReturn("");
     }
 
@@ -111,10 +107,11 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
         UnsupportedEncodingException {
         MessageDigest result = testServlet.getMd5Digest(mockRequest);
         assertEquals(result, mockDigest);
-        verify(mockDigest, atLeast(3)).update(byteArrayCaptor.capture());
+        verify(mockDigest, atLeast(4)).update(byteArrayCaptor.capture());
         assertArrayEquals(SELECTOR_SCRIPT.getBytes(StandardCharsets.UTF_8), byteArrayCaptor.getAllValues().get(0));
-        assertArrayEquals(APPLICATION_MODE.getBytes(StandardCharsets.UTF_8), byteArrayCaptor.getAllValues().get(1));
-        assertArrayEquals(mockPluginDefinitionsArray.toString().getBytes(StandardCharsets.UTF_8), byteArrayCaptor.getAllValues().get(2));
+        assertArrayEquals(mockEngineSessionTimeoutObject.toString().getBytes(StandardCharsets.UTF_8), byteArrayCaptor.getAllValues().get(1));
+        assertArrayEquals(APPLICATION_MODE.getBytes(StandardCharsets.UTF_8), byteArrayCaptor.getAllValues().get(2));
+        assertArrayEquals(mockPluginDefinitionsArray.toString().getBytes(StandardCharsets.UTF_8), byteArrayCaptor.getAllValues().get(3));
     }
 
     @Test
@@ -144,13 +141,6 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
             assertTrue(item.get("config") instanceof ObjectNode); //$NON-NLS-1$
             assertEquals(item.get("enabled").asBoolean(), true); //$NON-NLS-1$
         }
-    }
-
-    @Test
-    public void testGetEngineSessionTimeoutObject() {
-        ObjectNode result = testServlet.getEngineSessionTimeoutObject(30, 60);
-        assertEquals(result.get("sessionTimeout").asInt(), 30); //$NON-NLS-1$
-        assertEquals(result.get("sessionHardLimit").asInt(), 60); //$NON-NLS-1$
     }
 
 }

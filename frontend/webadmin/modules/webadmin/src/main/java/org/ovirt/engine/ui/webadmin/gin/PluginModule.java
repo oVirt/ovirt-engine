@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.gin;
 import org.ovirt.engine.ui.webadmin.plugin.PluginEventHandler;
 import org.ovirt.engine.ui.webadmin.plugin.PluginManager;
 import org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions;
-import org.ovirt.engine.ui.webadmin.plugin.restapi.RestApiSessionManager;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.DynamicUrlContentTabPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.DynamicUrlContentTabProxyFactory;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DynamicUrlContentPopupPresenterWidget;
@@ -23,7 +22,6 @@ public class PluginModule extends AbstractPresenterModule {
         bind(PluginManager.class).asEagerSingleton();
         bind(PluginEventHandler.class).asEagerSingleton();
         bind(PluginUiFunctions.class).in(Singleton.class);
-        bind(RestApiSessionManager.class).in(Singleton.class);
 
         // Dynamic tab component
         bind(DynamicUrlContentTabPresenter.ViewDef.class).to(DynamicUrlContentTabView.class);

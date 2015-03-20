@@ -9,21 +9,23 @@ public class NoVncImpl extends AbstractVnc implements INoVnc {
 
     private static final String CLIENT_PAGE = BaseContextPathData.getInstance().getRelativePath()
             + "services/novnc-main.html"; //$NON-NLS-1$
-    private final WebsocketProxyConfig config;
 
-    public NoVncImpl() {
-        this.config = new WebsocketProxyConfig(
-                (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.WebSocketProxy),
-                getOptions().getHost());
-    }
+    private WebsocketProxyConfig config;
 
     @Override
     public void invokeClient() {
-        WebClientConsoleInvoker invoker =
-                new WebClientConsoleInvoker(CLIENT_PAGE, config,
-                        getOptions().getHost(), getOptions().getPort(),
-                        getOptions().getTicket(), false);
+            WebClientConsoleInvoker invoker =
+                    new WebClientConsoleInvoker(CLIENT_PAGE, getConfig(),
+                            getOptions().getHost(), getOptions().getPort(),
+                            getOptions().getTicket(), false);
         invoker.invokeClient();
     }
 
+    protected WebsocketProxyConfig getConfig() {
+        if (config != null) {
+            config = new WebsocketProxyConfig((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.WebSocketProxy),
+                    getOptions().getHost());
+        }
+        return config;
+    }
 }
