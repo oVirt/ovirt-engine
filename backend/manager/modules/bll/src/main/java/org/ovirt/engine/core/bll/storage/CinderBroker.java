@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll.storage;
 
 import com.woorea.openstack.base.client.OpenStackResponseException;
+import com.woorea.openstack.cinder.model.VolumeForCreate;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -29,6 +31,20 @@ public class CinderBroker extends AuditLogableBase {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String createDisk(final CinderDisk cinderDisk) {
+        return execute(new Callable<String>() {
+            @Override
+            public String call() {
+                VolumeForCreate cinderVolume = new VolumeForCreate();
+                cinderVolume.setName(cinderDisk.getDiskAlias());
+                cinderVolume.setDescription(cinderDisk.getDiskDescription());
+                cinderVolume.setSize((int) (cinderDisk.getSizeInGigabytes()));
+                cinderVolume.setVolumeType(cinderDisk.getCinderVolumeType());
+                return proxy.createVolume(cinderVolume);
+            }
+        });
     }
 
     private OpenStackVolumeProviderProxy getVolumeProviderProxy(Guid storageDomainId) {

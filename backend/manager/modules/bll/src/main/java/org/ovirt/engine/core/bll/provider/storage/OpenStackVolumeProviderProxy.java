@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.provider.storage;
 
 import com.woorea.openstack.cinder.Cinder;
+import com.woorea.openstack.cinder.model.Volume;
+import com.woorea.openstack.cinder.model.VolumeForCreate;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.storage.CINDERStorageHelper;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -52,6 +54,11 @@ public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProvid
             client.setTokenProvider(getTokenProvider());
         }
         return client;
+    }
+
+    public String createVolume(VolumeForCreate volumeForCreate) {
+        Volume retCinderVolume = getClient(getTenantId()).volumes().create(volumeForCreate).execute();
+        return retCinderVolume.getId();
     }
 
     @Override
