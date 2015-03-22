@@ -53,7 +53,7 @@ public class VnicProfileDaoTest extends BaseDAOTestCase {
 
         assertNotNull(result);
         assertEquals(FixturesTool.VM_NETWORK_INTERFACE_PROFILE, result.getId());
-        assertEquals(false, result.isPortMirroring());
+        assertFalse(result.isPortMirroring());
         assertFalse(result.isPassthrough());
     }
 
@@ -66,7 +66,7 @@ public class VnicProfileDaoTest extends BaseDAOTestCase {
 
         assertNotNull(result);
         assertEquals(FixturesTool.VM_NETWORK_INTERFACE_PM_PROFILE, result.getId());
-        assertEquals(true, result.isPortMirroring());
+        assertTrue(result.isPortMirroring());
     }
 
     /**
@@ -136,7 +136,7 @@ public class VnicProfileDaoTest extends BaseDAOTestCase {
         VnicProfile result = dao.get(vnicProfile.getId());
         assertNotNull(result);
         assertEquals(vnicProfile.getId(), result.getId());
-        assertEquals(false, result.isPortMirroring());
+        assertFalse(result.isPortMirroring());
         assertFalse(result.isPassthrough());
     }
 
@@ -152,7 +152,7 @@ public class VnicProfileDaoTest extends BaseDAOTestCase {
         VnicProfile result = dao.get(vnicProfile.getId());
         assertNotNull(result);
         assertEquals(vnicProfile.getId(), result.getId());
-        assertEquals(true, result.isPortMirroring());
+        assertTrue(result.isPortMirroring());
         assertTrue(result.isPassthrough());
     }
 
