@@ -298,6 +298,9 @@ public enum VdcQueryType implements Serializable {
     GetBlockStorageDomainsWithAttachedStoragePoolGuid,
     GetStorageDomainDefaultWipeAfterDelete,
 
+    // Cinder
+    GetCinderVolumeTypesByStorageDomainId(VdcQueryAuthType.User),
+
     // Event Notification
     GetEventSubscribersBySubscriberIdGrouped,
 

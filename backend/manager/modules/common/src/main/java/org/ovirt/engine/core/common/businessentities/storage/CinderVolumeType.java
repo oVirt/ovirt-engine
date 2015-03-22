@@ -11,6 +11,15 @@ public class CinderVolumeType implements Serializable {
 
     private Map<String, String> extraSpecs;
 
+    public CinderVolumeType() {
+    }
+
+    public CinderVolumeType(String id, String name, Map<String, String> extraSpecs) {
+        this.id = id;
+        this.name = name;
+        this.extraSpecs = extraSpecs;
+    }
+
     /**
      * @return the id
      */
