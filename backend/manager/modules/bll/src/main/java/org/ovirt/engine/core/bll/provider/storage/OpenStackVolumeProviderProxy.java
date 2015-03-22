@@ -70,9 +70,8 @@ public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProvid
         List<StorageDomain> storageDomains = getDbFacade().getStorageDomainDao().getAllByConnectionId(provider.getId());
 
         // Removing the static and dynamic storage domain entries
-        for (StorageDomain storageDomainEntry : storageDomains) {
-            getDbFacade().getStorageDomainDao().remove(storageDomainEntry.getId());
-        }
+        StorageDomain storageDomainEntry = storageDomains.get(0);
+        getDbFacade().getStorageDomainDao().remove(storageDomainEntry.getId());
     }
 
     public static OpenStackVolumeProviderProxy getFromStorageDomainId(Guid storageDomainId) {
