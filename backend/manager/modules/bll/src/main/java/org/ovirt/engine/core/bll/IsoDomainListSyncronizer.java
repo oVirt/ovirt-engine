@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -594,14 +593,18 @@ public class IsoDomainListSyncronizer {
         }
     }
 
-    private static long retrieveIsoFileSize(Map.Entry<String, Map<String, Object>> fileStats) {
+    private static Long retrieveIsoFileSize(Map.Entry<String, Map<String, Object>> fileStats) {
         try {
+            Object fileSize = fileStats.getValue().get(VdsProperties.size);
+            if (fileSize == null) {
+                return null;
+            }
             return Long.valueOf((String) fileStats.getValue().get(VdsProperties.size));
         } catch (RuntimeException e) {
             // Illegal number or null are treated as not available,
             // handling exception in UI will be much more complicated.
             log.errorFormat("File's '{0}' size is illegal number", fileStats.getKey(), e);
-            return StorageConstants.SIZE_IS_NOT_AVAILABLE;
+            return null;
         }
     }
 

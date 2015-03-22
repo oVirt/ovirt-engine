@@ -5850,7 +5850,7 @@
             <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
             <value>iso1.iso</value>
             <null />
-            <value>0</value>
+            <null />
             <value>1300701900174</value>
             <value>1</value>
         </row>
@@ -5858,7 +5858,7 @@
             <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
             <value>floppy.vfd</value>
             <null />
-            <value>0</value>
+            <null />
             <value>1300701900174</value>
             <value>2</value>
         </row>
@@ -5866,7 +5866,7 @@
             <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
             <value>floppy2.vfd</value>
             <null />
-            <value>0</value>
+            <null />
             <value>1300701900172</value>
             <value>2</value>
         </row>
@@ -5874,7 +5874,7 @@
             <value>d034f3b2-fb9c-414a-b1be-1e642cfe57ae</value>
             <value>unknown.unknown</value>
             <null />
-            <value>0</value>
+            <null />
             <value>1300701900171</value>
             <value>0</value>
         </row>

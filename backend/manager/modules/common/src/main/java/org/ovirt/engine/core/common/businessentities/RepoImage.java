@@ -14,7 +14,7 @@ public class RepoImage extends IVdcQueryable implements Serializable {
     private Guid repoDomainId;
     private String repoImageId;
     private String repoImageName;
-    private long size;
+    private Long size;
     private Date dateCreated;
     private long lastRefreshed;
     private ImageFileType fileType;
@@ -25,7 +25,6 @@ public class RepoImage extends IVdcQueryable implements Serializable {
     public RepoImage() {
         storagePoolId = Guid.Empty;
         repoDomainId = Guid.Empty;
-        size = 0;
         dateCreated = new Date();
     }
 
@@ -112,14 +111,14 @@ public class RepoImage extends IVdcQueryable implements Serializable {
      * @param size
      *            the size to set For future use.
      */
-    public void setSize(long size) {
+    public void setSize(Long size) {
         this.size = size;
     }
 
     /**
      * @return the size For future use.
      */
-    public long getSize() {
+    public Long getSize() {
         return size;
     }
 

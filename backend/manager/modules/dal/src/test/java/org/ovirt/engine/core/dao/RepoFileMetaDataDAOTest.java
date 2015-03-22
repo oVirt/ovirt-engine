@@ -301,7 +301,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
         newRepoFileMap.setFileType(ImageFileType.ISO);
         newRepoFileMap.setRepoImageId("isoDomain.iso");
         newRepoFileMap.setLastRefreshed(System.currentTimeMillis());
-        newRepoFileMap.setSize(0);
+        newRepoFileMap.setSize(null);
         newRepoFileMap.setDateCreated(null);
         newRepoFileMap.setRepoDomainId(FixturesTool.STORAGE_DOAMIN_NFS_ISO);
         return newRepoFileMap;

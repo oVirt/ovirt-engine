@@ -111,7 +111,7 @@ public class RepoFileMetaDataDAODbFacadeImpl extends BaseDAODbFacade implements 
             entity.setRepoDomainId(getGuidDefaultEmpty(rs, "repo_domain_id"));
             entity.setRepoImageId(rs.getString("repo_image_id"));
             entity.setRepoImageName(rs.getString("repo_image_name"));
-            entity.setSize(rs.getLong("size"));
+            entity.setSize((Long) rs.getObject("size"));
             entity.setDateCreated((Date) rs.getObject("date_created"));
             entity.setLastRefreshed(rs.getLong("last_refreshed"));
             entity.setFileType(ImageFileType.forValue(rs.getInt("file_type")));
