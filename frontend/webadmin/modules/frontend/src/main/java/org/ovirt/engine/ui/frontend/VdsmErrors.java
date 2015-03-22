@@ -923,4 +923,7 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Failed to run lvchange for the thin pool:")
     String GlusterHostStorageDeviceLVChangeFailedException();
+
+    @DefaultStringValue("An error occurred on Cinder - '${cinderException}'")
+    String CINDER_ERROR();
 }

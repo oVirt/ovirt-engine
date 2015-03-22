@@ -486,6 +486,9 @@ public enum VdcBllErrors {
     // SetupNetwork errors
     SETUP_NETWORKS_ROLLBACK(5300),
 
+    // Cinder errors
+    CINDER_ERROR(5400),
+
     // Gluster errors
     NO_UP_SERVER_FOUND(7000),
     // error to indicate backend does not recognize the session
