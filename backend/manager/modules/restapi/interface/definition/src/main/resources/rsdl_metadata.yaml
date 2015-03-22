@@ -6656,6 +6656,82 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 
+- name: /openstackvolumeproviders|rel=get
+  description: get the list of all OpenStack volume providers in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /openstackvolumeproviders/{openstackvolumeprovider:id}|rel=get
+  description: get the details of the specified OpenStack volume provider in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /openstackvolumeproviders/{openstackvolumeprovider:id}|rel=delete
+  description: delete the specified OpenStack volume provider in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /openstackvolumeproviders/{openstackvolumeprovider:id}|rel=update
+  description: update the specified OpenStack volume provider in the system
+  request:
+    body:
+      parameterType: OpenStackVolumeProvider
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments:
+          openstack_volume_provider.name: xs:string
+          openstack_volume_provider.description: xs:string
+          openstack_volume_provider.data_center.id|name: xs:string,
+          openstack_volume_provider.requires_authentication: xs:boolean
+          openstack_volume_provider.username: xs:string
+          openstack_volume_provider.password: xs:string
+          openstack_volume_provider.authentication_url: xs:string
+          openstack_volume_provider.properties.property--COLLECTION:
+            property.name: xs:string
+            property.value: xs:string
+        description: update the specified OpenStack volume provider in the system
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /openstackvolumeproviders|rel=add
+  description: add a new OpenStack volume provider to the system
+  request:
+    body:
+      parameterType: OpenStackVolumeProvider
+      signatures:
+      - mandatoryArguments:
+          openstack_volume_provider.name: xs:string
+          openstack_volume_provider.data_center.id|name: xs:string,
+        optionalArguments:
+          openstack_volume_provider.description: xs:string
+          openstack_volume_provider.url: xs:string
+          openstack_volume_provider.requires_authentication: xs:boolean
+          openstack_volume_provider.username: xs:string
+          openstack_volume_provider.password: xs:string
+          openstack_volume_provider.authentication_url: xs:string
+          openstack_volume_provider.properties.property--COLLECTION:
+            property.name: xs:string
+            property.value: xs:string
+        description: add a new OpenStack volume provider to the system
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+
 - name: /openstacknetworkproviders|rel=get
   description: get the list of all OpenStack network providers in the system
   request:

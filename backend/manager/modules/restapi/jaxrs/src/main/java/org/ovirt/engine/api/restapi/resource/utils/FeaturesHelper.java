@@ -98,6 +98,7 @@ public class FeaturesHelper {
             addErrataForHostsFeature(features);
             addCumulativeNetworkUsageFeature(features);
             addGuestMemoryBufferedCached(features);
+            addOpenStackVolumeProvidersFeature(features);
         }
         return features;
     }
@@ -558,6 +559,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Guest Memory Cached/Buffered");
         feature.setDescription("Report of used cached and buffered memory in the guest OS");
+        features.getFeature().add(feature);
+    }
+
+    private void addOpenStackVolumeProvidersFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("OpenStack Volume Providers");
+        feature.setDescription("Add/modify/remove OpenStack volume providers.");
         features.getFeature().add(feature);
     }
 }

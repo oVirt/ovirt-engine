@@ -5326,6 +5326,37 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <!-- OpenStack volume providers: -->
+  <xs:element name="openstack_volume_provider" type="OpenStackVolumeProvider"/>
+
+  <xs:complexType name="OpenStackVolumeProvider">
+    <xs:complexContent>
+      <xs:extension base="OpenStackProvider">
+        <xs:sequence>
+          <xs:element ref="data_center" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="openstack_volume_providers" type="OpenStackVolumeProviders"/>
+
+  <xs:complexType name="OpenStackVolumeProviders">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="openstack_volume_provider" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="OpenStackVolumeProviders"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <!-- OpenStack network providers: -->
   <xs:element name="openstack_network_provider" type="OpenStackNetworkProvider"/>
 

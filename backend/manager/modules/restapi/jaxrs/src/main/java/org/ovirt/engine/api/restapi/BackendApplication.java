@@ -61,6 +61,7 @@ import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendExtern
 import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendSystemKatelloErrataResource;
 import org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackImageProvidersResource;
 import org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackNetworkProvidersResource;
+import org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackVolumeProvidersResource;
 import org.ovirt.engine.api.restapi.resource.validation.IOExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.JsonExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.MalformedIdExceptionMapper;
@@ -155,6 +156,7 @@ public class BackendApplication extends Application {
         addResource(new BackendExternalHostProvidersResource());
         addResource(new BackendOpenStackImageProvidersResource());
         addResource(new BackendOpenStackNetworkProvidersResource());
+        addResource(new BackendOpenStackVolumeProvidersResource());
         addResource(new BackendSystemKatelloErrataResource());
 
         final SessionProcessor processor = new SessionProcessor();

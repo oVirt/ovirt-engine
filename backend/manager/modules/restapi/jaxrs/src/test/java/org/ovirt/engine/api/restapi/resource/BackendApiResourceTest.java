@@ -130,6 +130,7 @@ public class BackendApiResourceTest extends Assert {
         "operatingsystems",
         "externalhostproviders",
         "openstackimageproviders",
+        "openstackvolumeproviders",
         "openstacknetworkproviders",
         "katelloerrata"
     };
@@ -197,6 +198,7 @@ public class BackendApiResourceTest extends Assert {
         BASE_PATH + "/operatingsystems",
         BASE_PATH + "/externalhostproviders",
         BASE_PATH + "/openstackimageproviders",
+        BASE_PATH + "/openstackvolumeproviders",
         BASE_PATH + "/openstacknetworkproviders",
         BASE_PATH + "/katelloerrata"
     };
