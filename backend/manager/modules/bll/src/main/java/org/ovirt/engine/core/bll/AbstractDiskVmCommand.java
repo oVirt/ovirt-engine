@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.storage.CinderBroker;
 import org.ovirt.engine.core.bll.storage.IStorageHelper;
 import org.ovirt.engine.core.bll.storage.StorageHelperBase;
 import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
@@ -41,6 +42,8 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 
 public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBase> extends VmCommand<T> {
+
+    private CinderBroker cinderBroker;
 
     public AbstractDiskVmCommand(T parameters) {
         this(parameters, null);
@@ -306,5 +309,12 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         return
                 getVm() != null &&
                 validate(new VmValidator(getVm()).vmNotLocked());
+    }
+
+    public CinderBroker getCinderBroker() {
+        if (cinderBroker == null) {
+            cinderBroker = new CinderBroker(getStorageDomainId(), getReturnValue().getExecuteFailedMessages());
+        }
+        return cinderBroker;
     }
 }

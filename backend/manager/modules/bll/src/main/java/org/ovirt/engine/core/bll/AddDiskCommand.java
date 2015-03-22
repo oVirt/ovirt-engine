@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -12,8 +15,10 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
@@ -22,6 +27,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
@@ -35,6 +41,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -52,6 +59,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -125,6 +133,14 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
         if (DiskStorageType.LUN == getParameters().getDiskInfo().getDiskStorageType()) {
             return checkIfLunDiskCanBeAdded(diskValidator);
+        }
+
+        if (DiskStorageType.CINDER == getParameters().getDiskInfo().getDiskStorageType()) {
+            CinderDisk cinderDisk = (CinderDisk) getParameters().getDiskInfo();
+            cinderDisk.setStorageIds(new ArrayList<>(Arrays.asList(getStorageDomainId())));
+            StorageDomainValidator storageDomainValidator = createStorageDomainValidator();
+            CinderDisksValidator cinderDisksValidator = new CinderDisksValidator(cinderDisk);
+            return validate(storageDomainValidator.isDomainExistAndActive()) && validate(cinderDisksValidator.validateCinderDiskLimits());
         }
 
         return true;
@@ -288,6 +304,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         return DbFacade.getInstance().getDiskLunMapDao();
     }
 
+    protected DiskImageDynamicDAO getDiskImageDynamicDao() {
+        return getDbFacade().getDiskImageDynamicDao();
+    }
+
     /**
      * @return The id of the storage domain where the first encountered VM image disk reside, if the vm doesn't have no
      *         image disks then Guid.Empty will be returned.
@@ -366,10 +386,16 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         getParameters().getDiskInfo().setId(Guid.newGuid());
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.Disk, getParameters().getDiskInfo().getId()));
         ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
-        if (DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
-            createDiskBasedOnImage();
-        } else {
-            createDiskBasedOnLun();
+        switch (getParameters().getDiskInfo().getDiskStorageType()) {
+            case IMAGE:
+                createDiskBasedOnImage();
+                break;
+            case LUN:
+                createDiskBasedOnLun();
+                break;
+            case CINDER:
+                createDiskBasedOnCinder();
+                break;
         }
     }
 
@@ -398,7 +424,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         setSucceeded(true);
     }
 
-    private boolean shouldDiskBePlugged() {
+    protected boolean shouldDiskBePlugged() {
         return getVm().getStatus() == VMStatus.Down && !Boolean.FALSE.equals(getParameters().getPlugDiskToVm());
     }
 
@@ -461,6 +487,32 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         setSucceeded(tmpRetValue.getSucceeded());
     }
 
+    private void createDiskBasedOnCinder() {
+        // ToDo: upon using CoCo infra in this commnad, move this logic.
+        Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+                VdcActionType.AddCinderDisk,
+                buildAddCinderDiskParameters(),
+                cloneContextAndDetachFromParent());
+        try {
+            setReturnValue(future.get());
+            setSucceeded(getReturnValue().getSucceeded());
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Error creating Cinder disk '{}': {}",
+                    getParameters().getDiskInfo().getDiskAlias(),
+                    e.getMessage());
+            log.debug("Exception", e);
+        }
+    }
+
+    private VdcActionParametersBase buildAddCinderDiskParameters() {
+        AddDiskParameters parameters = new AddDiskParameters();
+        parameters.setDiskInfo(getParameters().getDiskInfo());
+        parameters.setPlugDiskToVm(getParameters().getPlugDiskToVm());
+        parameters.setVmId(getParameters().getVmId());
+        parameters.setStorageDomainId(getParameters().getStorageDomainId());
+        return parameters;
+    }
+
     /**
      * If disk is not allow to have snapshot no VM snapshot Id should be updated.
      * @param parameters
@@ -486,7 +538,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
         case EXECUTE:
-            if (getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE) {
+            if (isDiskStorageTypeRequiresExecuteState()) {
                 return getExecuteAuditLogTypeValue(getSucceeded());
             } else {
                 return getEndSuccessAuditLogTypeValue(getSucceeded());
@@ -497,6 +549,11 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         default:
             return AuditLogType.USER_ADD_DISK_FINISHED_FAILURE;
         }
+    }
+
+    private boolean isDiskStorageTypeRequiresExecuteState() {
+        return getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE ||
+                getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.CINDER;
     }
 
     private AuditLogType getExecuteAuditLogTypeValue(boolean successful) {
@@ -522,7 +579,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
     }
 
-    private AuditLogType getEndSuccessAuditLogTypeValue(boolean successful) {
+    protected AuditLogType getEndSuccessAuditLogTypeValue(boolean successful) {
         boolean isVmNameExist = StringUtils.isNotEmpty(getVmName());
         if (successful) {
             if (isVmNameExist) {
