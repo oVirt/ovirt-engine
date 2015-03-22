@@ -3675,4 +3675,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. The current type ${providerType} is not supported.")
     String ACTION_TYPE_FAILED_PROVIDER_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. An error occurred on Cinder - '${cinderException}'")
+    String ACTION_TYPE_FAILED_CINDER();
 }
