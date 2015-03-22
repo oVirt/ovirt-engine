@@ -95,6 +95,7 @@ SELECT
     disk_image_dynamic.flush_latency_seconds AS flush_latency_seconds,
     base_disks.alignment AS alignment,
     base_disks.disk_storage_type as disk_storage_type,
+    base_disks.cinder_volume_type as cinder_volume_type,
     base_disks.last_alignment_scan AS last_alignment_scan,
     EXISTS (
         SELECT
@@ -242,7 +243,8 @@ SELECT
     images_storage_domain_view.alignment AS alignment,
     images_storage_domain_view.last_alignment_scan AS last_alignment_scan,
     images_storage_domain_view.ovf_store AS ovf_store,
-    images_storage_domain_view.disk_storage_type as disk_storage_type
+    images_storage_domain_view.disk_storage_type as disk_storage_type,
+    images_storage_domain_view.cinder_volume_type as cinder_volume_type
 FROM
     images_storage_domain_view
 INNER JOIN disk_image_dynamic ON images_storage_domain_view.image_guid = disk_image_dynamic.image_id
@@ -265,7 +267,8 @@ SELECT
     bd.sgio,
     bd.alignment,
     bd.last_alignment_scan,
-    bd.disk_storage_type
+    bd.disk_storage_type,
+    bd.cinder_volume_type
 FROM (
         SELECT
             storage_for_image_view.storage_id AS storage_id,

@@ -1,0 +1,1 @@
+select fn_db_add_column('base_disks', 'cinder_volume_type', 'VARCHAR(255)');

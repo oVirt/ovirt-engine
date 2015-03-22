@@ -82,6 +82,8 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
 
     private Date lastAlignmentScan;
 
+    private String cinderVolumeType;
+
     public BaseDisk() {
         propagateErrors = PropagateErrors.Off;
         alignment = DiskAlignment.Unknown;
@@ -194,6 +196,14 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
         lastAlignmentScan = (value != null) ? (Date) value.clone() : null;
     }
 
+    public String getCinderVolumeType() {
+        return cinderVolumeType;
+    }
+
+    public void setCinderVolumeType(String cinderVolumeType) {
+        this.cinderVolumeType = cinderVolumeType;
+    }
+
     /**
      * @return The type of underlying storage implementation.
      */
@@ -215,6 +225,7 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
         result = prime * result + (isWipeAfterDelete() ? 1231 : 1237);
         result = prime * result + (boot ? 1231 : 1237);
         result = prime * result + ((sgio == null) ? 0 : sgio.hashCode());
+        result = prime * result + ((cinderVolumeType == null) ? 0 : cinderVolumeType.hashCode());
         return result;
     }
 
@@ -238,6 +249,7 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
                 && shareable == other.shareable
                 && isWipeAfterDelete() == other.isWipeAfterDelete()
                 && boot == other.boot)
-                && sgio == other.sgio;
+                && sgio == other.sgio
+                && ObjectUtils.objectsEqual(cinderVolumeType, other.cinderVolumeType);
     }
 }
