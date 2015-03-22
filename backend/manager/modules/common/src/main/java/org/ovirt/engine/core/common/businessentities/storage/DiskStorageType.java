@@ -9,7 +9,8 @@ import org.ovirt.engine.core.common.businessentities.Identifiable;
 public enum DiskStorageType implements Identifiable {
     // FIXME add ids and remove the ordinal impl of getValue
     IMAGE,
-    LUN;
+    LUN,
+    CINDER;
 
     @Override
     public int getValue() {
