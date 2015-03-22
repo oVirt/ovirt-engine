@@ -82,10 +82,23 @@ public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProvid
     public static OpenStackVolumeProviderProxy getFromStorageDomainId(Guid storageDomainId) {
         StorageDomainStatic storageDomainStatic = getDbFacade().getStorageDomainStaticDao().get(storageDomainId);
         if (storageDomainStatic != null) {
-            Provider provider = getDbFacade().getProviderDao().get(new Guid(storageDomainStatic.getStorage()));
+            return getProviderFromStorageDomainStatic(storageDomainStatic);
+        }
+        return null;
+    }
+
+    public static OpenStackVolumeProviderProxy getFromStorageDomainId(Guid storageDomainId, Guid userID, boolean isFiltered) {
+        StorageDomain storageDomain = getDbFacade().getStorageDomainDao().get(storageDomainId, userID, isFiltered);
+        if (storageDomain != null) {
+            Provider provider = getDbFacade().getProviderDao().get(new Guid(storageDomain.getStorage()));
             return ProviderProxyFactory.getInstance().create(provider);
         }
         return null;
+    }
+
+    private static OpenStackVolumeProviderProxy getProviderFromStorageDomainStatic(StorageDomainStatic storageDomainStatic) {
+        Provider provider = getDbFacade().getProviderDao().get(new Guid(storageDomainStatic.getStorage()));
+        return ProviderProxyFactory.getInstance().create(provider);
     }
 
     @Override
