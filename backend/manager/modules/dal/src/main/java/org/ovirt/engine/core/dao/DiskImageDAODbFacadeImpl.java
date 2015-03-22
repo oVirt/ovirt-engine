@@ -9,7 +9,9 @@ import java.util.List;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
@@ -151,8 +153,19 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
 
         @Override
         public DiskImage mapRow(ResultSet rs, int rowNum) throws SQLException {
-            DiskImage entity = super.mapRow(rs, rowNum);
-            mapEntity(rs, entity);
+            DiskImage entity = null;
+            DiskStorageType diskStorageType = DiskStorageType.forValue(rs.getInt("disk_storage_type"));
+
+            switch (diskStorageType) {
+                case IMAGE:
+                    entity = super.mapRow(rs, rowNum);
+                    mapEntity(rs, entity);
+                    break;
+                case CINDER:
+                    entity = CinderDiskRowMapper.instance.mapRow(rs, rowNum);
+                    break;
+            }
+
             return entity;
         }
 
@@ -255,6 +268,31 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
                 guidList.add(guidToAdd);
             }
             return guidList;
+        }
+    }
+
+    protected static class CinderDiskRowMapper extends AbstractDiskRowMapper<CinderDisk> {
+
+        public static final CinderDiskRowMapper instance = new CinderDiskRowMapper();
+
+        private CinderDiskRowMapper() {
+        }
+
+        @Override
+        public CinderDisk mapRow(ResultSet rs, int rowNum) throws SQLException {
+            CinderDisk cinderDisk = super.mapRow(rs, rowNum);
+            DiskImageRowMapper.instance.mapEntity(rs, cinderDisk);
+            mapEntity(rs, cinderDisk);
+            return cinderDisk;
+        }
+
+        private void mapEntity(ResultSet rs, CinderDisk entity) throws SQLException {
+            entity.setCinderVolumeType(rs.getString("cinder_volume_type"));
+        }
+
+        @Override
+        protected CinderDisk createDiskEntity() {
+            return new CinderDisk();
         }
     }
 }
