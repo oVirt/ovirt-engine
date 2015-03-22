@@ -36,8 +36,7 @@ public class HostDeviceDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<
                 .addValue("vendor_id", entity.getVendorId())
                 .addValue("physfn", entity.getParentPhysicalFunction())
                 .addValue("total_vfs", entity.getTotalVirtualFunctions())
-                .addValue("net_iface_name", entity.getNetworkInterfaceName())
-                .addValue("vm_id", entity.getVmId());
+                .addValue("net_iface_name", entity.getNetworkInterfaceName());
     }
 
     @Override

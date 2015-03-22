@@ -2067,11 +2067,6 @@ public class VdsBrokerObjectsBuilder {
                 device.setNetworkInterfaceName(params.get(VdsProperties.NET_INTERFACE_NAME).toString());
             }
 
-            // if the device is attached to running VM, the `vmId` property will be set
-            if (entry.getValue().containsKey(VdsProperties.VM_ID)) {
-                device.setVmId(new Guid(entry.getValue().get(VdsProperties.VM_ID).toString()));
-            }
-
             devices.add(device);
         }
 
