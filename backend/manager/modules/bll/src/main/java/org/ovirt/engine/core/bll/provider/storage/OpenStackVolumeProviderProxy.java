@@ -61,6 +61,10 @@ public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProvid
         return retCinderVolume.getId();
     }
 
+    public Volume getVolumeById(String id) {
+        return getClient(getTenantId()).volumes().show(id).execute();
+    }
+
     @Override
     public void onRemoval() {
         List<StorageDomain> storageDomains = getDbFacade().getStorageDomainDao().getAllByConnectionId(provider.getId());

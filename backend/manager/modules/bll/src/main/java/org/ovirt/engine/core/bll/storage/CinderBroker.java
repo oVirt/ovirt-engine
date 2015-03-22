@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.bll.storage;
 
 import com.woorea.openstack.base.client.OpenStackResponseException;
+import com.woorea.openstack.cinder.model.Volume;
 import com.woorea.openstack.cinder.model.VolumeForCreate;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
+import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeStatus;
+import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -45,6 +48,33 @@ public class CinderBroker extends AuditLogableBase {
                 return proxy.createVolume(cinderVolume);
             }
         });
+    }
+
+    public ImageStatus getDiskStatus(final Guid id) {
+        return execute(new Callable<ImageStatus>() {
+            @Override
+            public ImageStatus call() {
+                Volume volume = proxy.getVolumeById(id.toString());
+                CinderVolumeStatus cinderVolumeStatus = CinderVolumeStatus.forValue(volume.getStatus());
+                return mapCinderVolumeStatusToImageStatus(cinderVolumeStatus);
+            }
+        });
+    }
+
+    protected static ImageStatus mapCinderVolumeStatusToImageStatus(CinderVolumeStatus cinderVolumeStatus) {
+        switch (cinderVolumeStatus) {
+            case Available:
+                return ImageStatus.OK;
+            case Creating:
+            case Deleting:
+            case Extending:
+                return ImageStatus.LOCKED;
+            case Error:
+            case ErrorDeleting:
+                return ImageStatus.ILLEGAL;
+            default:
+                return null;
+        }
     }
 
     private OpenStackVolumeProviderProxy getVolumeProviderProxy(Guid storageDomainId) {
