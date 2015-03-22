@@ -3678,4 +3678,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. An error occurred on Cinder - '${cinderException}'")
     String ACTION_TYPE_FAILED_CINDER();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Maximum number of volumes allowed (${maxTotalVolumes}) exceeded - could not create Cinder disk ${diskAlias}.")
+    String CANNOT_ADD_CINDER_DISK_VOLUME_LIMIT_EXCEEDED();
 }

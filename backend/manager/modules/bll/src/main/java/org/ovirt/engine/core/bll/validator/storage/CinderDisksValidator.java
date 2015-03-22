@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.validator.storage;
 
 import com.woorea.openstack.base.client.OpenStackResponseException;
+import com.woorea.openstack.cinder.model.Limits;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -38,6 +39,26 @@ public class CinderDisksValidator {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public ValidationResult validateCinderDiskLimits() {
+        return validate(new Callable<ValidationResult>() {
+            @Override
+            public ValidationResult call() {
+                int diskIndex = 0;
+                for (CinderDisk disk : cinderDisks) {
+                    OpenStackVolumeProviderProxy proxy = diskProxyMap.get(disk.getId());
+                    Limits limits = proxy.getLimits();
+                    if (limits.getAbsolute().getTotalVolumesUsed() + diskIndex >= limits.getAbsolute().getMaxTotalVolumes()) {
+                        return new ValidationResult(VdcBllMessages.CANNOT_ADD_CINDER_DISK_VOLUME_LIMIT_EXCEEDED,
+                                String.format("$maxTotalVolumes %d", limits.getAbsolute().getMaxTotalVolumes()),
+                                String.format("$diskAlias %s", disk.getDiskAlias()));
+                    }
+                    diskIndex++;
+                }
+                return ValidationResult.VALID;
+            }
+        });
     }
 
     private Map<Guid, OpenStackVolumeProviderProxy> initializeVolumeProviderProxyMap() {

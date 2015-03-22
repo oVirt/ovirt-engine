@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.provider.storage;
 
 import com.woorea.openstack.cinder.Cinder;
+import com.woorea.openstack.cinder.model.Limits;
 import com.woorea.openstack.cinder.model.Volume;
 import com.woorea.openstack.cinder.model.VolumeForCreate;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
@@ -63,6 +64,10 @@ public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProvid
 
     public Volume getVolumeById(String id) {
         return getClient(getTenantId()).volumes().show(id).execute();
+    }
+
+    public Limits getLimits() {
+        return getClient(getTenantId()).limits().list().execute();
     }
 
     @Override
