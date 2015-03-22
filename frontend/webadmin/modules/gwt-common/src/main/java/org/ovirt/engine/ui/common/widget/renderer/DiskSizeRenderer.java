@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.widget.renderer;
 
-import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -34,7 +33,7 @@ public class DiskSizeRenderer<T extends Number> extends AbstractRenderer<T> {
     }
 
     protected boolean isUnavailable(T size) {
-        return size == null || size.longValue() == StorageConstants.SIZE_IS_NOT_AVAILABLE;
+        return size == null;
     }
 
     @Override

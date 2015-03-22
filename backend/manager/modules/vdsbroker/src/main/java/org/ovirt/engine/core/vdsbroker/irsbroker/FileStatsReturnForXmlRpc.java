@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-import org.ovirt.engine.core.common.constants.StorageConstants;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,11 +54,8 @@ public final class FileStatsReturnForXmlRpc extends StatusReturnForXmlRpc {
     }
 
     private void createDefaultFileStats(Object[] fileNames) {
-        Map<String, Object> defaultFileStats = new HashMap<>();
-        defaultFileStats.put(VdsProperties.size, String.valueOf(StorageConstants.SIZE_IS_NOT_AVAILABLE));
-
         for (int i = 0; i < fileNames.length; i++) {
-            fileStats.put((String) fileNames[i], defaultFileStats);
+            fileStats.put((String) fileNames[i], Collections.<String, Object> emptyMap());
         }
     }
 
