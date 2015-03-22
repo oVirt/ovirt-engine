@@ -18,7 +18,8 @@ Create or replace FUNCTION InsertBaseDisk(
     v_boot BOOLEAN,
     v_sgio INTEGER,
     v_alignment SMALLINT,
-    v_last_alignment_scan TIMESTAMP WITH TIME ZONE)
+    v_last_alignment_scan TIMESTAMP WITH TIME ZONE,
+    v_disk_storage_type SMALLINT)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -33,7 +34,8 @@ BEGIN
         boot,
         sgio,
         alignment,
-        last_alignment_scan)
+        last_alignment_scan,
+        disk_storage_type)
     VALUES(
         v_disk_id,
         v_disk_interface,
@@ -45,7 +47,8 @@ BEGIN
         v_boot,
         v_sgio,
         v_alignment,
-        v_last_alignment_scan);
+        v_last_alignment_scan,
+        v_disk_storage_type);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -64,7 +67,8 @@ Create or replace FUNCTION UpdateBaseDisk(
     v_boot BOOLEAN,
     v_sgio INTEGER,
     v_alignment SMALLINT,
-    v_last_alignment_scan TIMESTAMP WITH TIME ZONE)
+    v_last_alignment_scan TIMESTAMP WITH TIME ZONE,
+    v_disk_storage_type SMALLINT)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -78,7 +82,8 @@ BEGIN
            boot = v_boot,
            sgio = v_sgio,
            alignment = v_alignment,
-           last_alignment_scan = v_last_alignment_scan
+           last_alignment_scan = v_last_alignment_scan,
+           disk_storage_type = v_disk_storage_type
     WHERE  disk_id = v_disk_id;
 END; $procedure$
 LANGUAGE plpgsql;

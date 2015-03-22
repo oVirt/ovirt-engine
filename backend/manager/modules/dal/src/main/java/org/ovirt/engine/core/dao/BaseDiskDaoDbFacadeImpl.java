@@ -29,7 +29,8 @@ public class BaseDiskDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<BaseDisk,
                 .addValue("boot", entity.isBoot())
                 .addValue("sgio", entity.getSgio())
                 .addValue("alignment", entity.getAlignment())
-                .addValue("last_alignment_scan", entity.getLastAlignmentScan());
+                .addValue("last_alignment_scan", entity.getLastAlignmentScan())
+                .addValue("disk_storage_type", entity.getDiskStorageType());
     }
 
     @Override

@@ -40,11 +40,6 @@ public abstract class Disk extends BaseDisk {
      */
     public abstract boolean isAllowSnapshot();
 
-    /**
-     * @return The type of underlying storage implementation.
-     */
-    public abstract DiskStorageType getDiskStorageType();
-
     public VmEntityType getVmEntityType() {
         return vmEntityType;
     }

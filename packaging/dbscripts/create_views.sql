@@ -94,6 +94,7 @@ SELECT
     disk_image_dynamic.write_latency_seconds AS write_latency_seconds,
     disk_image_dynamic.flush_latency_seconds AS flush_latency_seconds,
     base_disks.alignment AS alignment,
+    base_disks.disk_storage_type as disk_storage_type,
     base_disks.last_alignment_scan AS last_alignment_scan,
     EXISTS (
         SELECT
@@ -240,7 +241,8 @@ SELECT
     images_storage_domain_view.shareable AS shareable,
     images_storage_domain_view.alignment AS alignment,
     images_storage_domain_view.last_alignment_scan AS last_alignment_scan,
-    images_storage_domain_view.ovf_store AS ovf_store
+    images_storage_domain_view.ovf_store AS ovf_store,
+    images_storage_domain_view.disk_storage_type as disk_storage_type
 FROM
     images_storage_domain_view
 INNER JOIN disk_image_dynamic ON images_storage_domain_view.image_guid = disk_image_dynamic.image_id
@@ -262,9 +264,10 @@ SELECT
     bd.boot,
     bd.sgio,
     bd.alignment,
-    bd.last_alignment_scan
+    bd.last_alignment_scan,
+    bd.disk_storage_type
 FROM (
-        SELECT 0 AS disk_storage_type,
+        SELECT
             storage_for_image_view.storage_id AS storage_id,
             -- Storage fields
             storage_for_image_view.storage_path AS storage_path,
@@ -356,7 +359,6 @@ FROM (
         UNION
             ALL
         SELECT
-            1 AS disk_storage_type,
             NULL AS storage_id,
             -- Storage domain fields
             NULL AS storage_path,

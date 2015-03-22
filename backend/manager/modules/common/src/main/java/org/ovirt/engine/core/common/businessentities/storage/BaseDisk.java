@@ -194,6 +194,14 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
         lastAlignmentScan = (value != null) ? (Date) value.clone() : null;
     }
 
+    /**
+     * @return The type of underlying storage implementation.
+     */
+    public DiskStorageType getDiskStorageType() {
+        // should be implemented in the sub-classes
+        return null;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
