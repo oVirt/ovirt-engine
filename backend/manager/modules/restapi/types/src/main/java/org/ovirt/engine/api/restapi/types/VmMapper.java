@@ -26,6 +26,8 @@ import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.ExternalHostProvider;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.model.Files;
+import org.ovirt.engine.api.model.GraphicsConsole;
+import org.ovirt.engine.api.model.GraphicsType;
 import org.ovirt.engine.api.model.GuestInfo;
 import org.ovirt.engine.api.model.GuestNicConfiguration;
 import org.ovirt.engine.api.model.GuestNicsConfiguration;
@@ -57,11 +59,11 @@ import org.ovirt.engine.api.model.VmStatus;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.api.restapi.utils.HexUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
-import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
@@ -400,7 +402,7 @@ public class VmMapper extends VmBaseMapper {
             }
 
             model.setRunOnce(entity.isRunOnce());
-            GraphicsType graphicsType = deriveGraphicsType(entity.getGraphicsInfos());
+            org.ovirt.engine.core.common.businessentities.GraphicsType graphicsType = deriveGraphicsType(entity.getGraphicsInfos());
             if (graphicsType != null) {
                 model.getDisplay().setType(DisplayMapper.map(graphicsType, null).value());
 
@@ -484,13 +486,13 @@ public class VmMapper extends VmBaseMapper {
     // for backwards compatibility
     // returns graphics type of a running vm (can be different than static graphics in vm device due to run once)
     // if vm has multiple graphics, returns SPICE
-    public static GraphicsType deriveGraphicsType(Map<GraphicsType, GraphicsInfo> graphicsInfos) {
+    public static org.ovirt.engine.core.common.businessentities.GraphicsType deriveGraphicsType(Map<org.ovirt.engine.core.common.businessentities.GraphicsType, GraphicsInfo> graphicsInfos) {
         if (graphicsInfos != null) {
-            if (graphicsInfos.containsKey(GraphicsType.SPICE)) {
-                return GraphicsType.SPICE;
+            if (graphicsInfos.containsKey(org.ovirt.engine.core.common.businessentities.GraphicsType.SPICE)) {
+                return org.ovirt.engine.core.common.businessentities.GraphicsType.SPICE;
             }
-            if (graphicsInfos.containsKey(GraphicsType.VNC)) {
-                return GraphicsType.VNC;
+            if (graphicsInfos.containsKey(org.ovirt.engine.core.common.businessentities.GraphicsType.VNC)) {
+                return org.ovirt.engine.core.common.businessentities.GraphicsType.VNC;
             }
         }
         return null;
@@ -571,6 +573,51 @@ public class VmMapper extends VmBaseMapper {
         }
 
         return params;
+    }
+
+    @Mapping(from = Map.Entry.class, to = GraphicsConsole.class)
+    public static GraphicsConsole map(Map.Entry<org.ovirt.engine.core.common.businessentities.GraphicsType, GraphicsInfo> graphicsInfo, GraphicsConsole template) {
+        GraphicsConsole model = template != null ? template : new GraphicsConsole();
+
+        String graphicsTypeString = map(graphicsInfo.getKey(), null).toString();
+        if (graphicsTypeString != null) {
+            model.setId(HexUtils.string2hex(graphicsTypeString));
+            model.setProtocol(graphicsTypeString);
+        }
+
+        model.setPort(graphicsInfo.getValue().getPort());
+        model.setTlsPort(graphicsInfo.getValue().getTlsPort());
+        model.setAddress(graphicsInfo.getValue().getIp());
+
+        return model;
+    }
+
+    @Mapping(from = GraphicsType.class, to = org.ovirt.engine.core.common.businessentities.GraphicsType.class)
+    public static org.ovirt.engine.core.common.businessentities.GraphicsType map(GraphicsType graphicsType, org.ovirt.engine.core.common.businessentities.GraphicsType template) {
+        if (graphicsType != null) {
+            switch (graphicsType) {
+                case SPICE:
+                    return org.ovirt.engine.core.common.businessentities.GraphicsType.SPICE;
+                case VNC:
+                    return org.ovirt.engine.core.common.businessentities.GraphicsType.VNC;
+            }
+        }
+
+        return null;
+    }
+
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.GraphicsType.class, to = GraphicsType.class)
+    public static GraphicsType map(org.ovirt.engine.core.common.businessentities.GraphicsType graphicsType, GraphicsType template) {
+        if (graphicsType != null) {
+            switch (graphicsType) {
+                case SPICE:
+                    return GraphicsType.SPICE;
+                case VNC:
+                    return GraphicsType.VNC;
+            }
+        }
+
+        return null;
     }
 
     @Mapping(from = String.class, to = CustomProperties.class)

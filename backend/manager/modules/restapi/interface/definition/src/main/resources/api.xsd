@@ -610,6 +610,7 @@
           <xs:element ref="nic_interfaces" minOccurs="0"/>
           <xs:element ref="os_types" minOccurs="0"/>
           <xs:element ref="disk_formats" minOccurs="0"/>
+          <xs:element ref="graphics_types" minOccurs="0"/>
           <xs:element ref="disk_storage_types" minOccurs="0"/>
           <xs:element ref="disk_interfaces" minOccurs="0"/>
           <xs:element ref="vm_affinities" minOccurs="0"/>
@@ -869,6 +870,20 @@
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="DiskFormats"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="graphics_types" type="GraphicsTypes"/>
+
+  <xs:complexType name="GraphicsTypes">
+    <xs:sequence>
+      <xs:element name="graphics_types" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="GraphicsTypes"/>
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
@@ -3031,6 +3046,40 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:element name="graphics_consoles" type="GraphicsConsoles"/>
+
+  <xs:complexType name="GraphicsConsoles">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="graphics_console" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="GraphicsConsoles"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+    <xs:element name="graphics_console" type="GraphicsConsole"/>
+
+    <xs:complexType name="GraphicsConsole">
+      <xs:complexContent>
+        <xs:extension base="BaseResource">
+          <xs:sequence>
+            <xs:element ref="vm" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="protocol" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="port" type="xs:int" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="tls_port" type="xs:int" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="address" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          </xs:sequence>
+        </xs:extension>
+      </xs:complexContent>
+    </xs:complexType>
+
   <xs:complexType name="Ticket">
     <xs:sequence>
       <xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="1"/>
@@ -3289,6 +3338,7 @@
           <xs:element name="custom_properties" type="CustomProperties" minOccurs="0" maxOccurs="1"/>
           <xs:element name="custom_emulated_machine" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="custom_cpu_model" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="graphics_consoles" type="GraphicsConsoles" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

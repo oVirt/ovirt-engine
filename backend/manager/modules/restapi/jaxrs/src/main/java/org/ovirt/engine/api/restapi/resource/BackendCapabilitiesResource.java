@@ -40,6 +40,8 @@ import org.ovirt.engine.api.model.GlusterState;
 import org.ovirt.engine.api.model.GlusterStates;
 import org.ovirt.engine.api.model.GlusterVolumeType;
 import org.ovirt.engine.api.model.GlusterVolumeTypes;
+import org.ovirt.engine.api.model.GraphicsType;
+import org.ovirt.engine.api.model.GraphicsTypes;
 import org.ovirt.engine.api.model.HookContentType;
 import org.ovirt.engine.api.model.HookStage;
 import org.ovirt.engine.api.model.HookStates;
@@ -243,6 +245,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addDisplayTypes(version, DisplayType.values());
         addNicInterfaces(version, NicInterface.values());
         addDiskFormats(version, DiskFormat.values());
+        addGraphicsTypes(version, GraphicsType.values());
         addDiskStorageTypes(version, DiskStorageType.values());
         addDiskInterfaces(version, DiskInterface.values());
         addCustomProperties(version, getVmHooksEnvs(v));
@@ -589,6 +592,13 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         version.setDiskFormats(new DiskFormats());
         for (DiskFormat type : types) {
             version.getDiskFormats().getDiskFormats().add(type.value());
+        }
+    }
+
+    private void addGraphicsTypes(VersionCaps version, GraphicsType... types) {
+        version.setGraphicsTypes(new GraphicsTypes());
+        for (GraphicsType type : types) {
+            version.getGraphicsTypes().getGraphicsTypes().add(type.value());
         }
     }
 

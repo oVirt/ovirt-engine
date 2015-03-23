@@ -30,6 +30,7 @@ import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.CreationResource;
 import org.ovirt.engine.api.resource.DevicesResource;
+import org.ovirt.engine.api.resource.VmGraphicsConsolesResource;
 import org.ovirt.engine.api.resource.SnapshotsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.VmApplicationsResource;
@@ -639,6 +640,11 @@ public class BackendVmResource extends
     }
 
     @Override
+    public VmGraphicsConsolesResource getVmGraphicsConsolesResource() {
+        return inject(new BackendVmGraphicsConsolesResource(guid));
+    }
+
+    @Override
     public Response maintenance(Action action) {
         validateParameters(action, "maintenanceEnabled");
 
@@ -668,4 +674,5 @@ public class BackendVmResource extends
     public KatelloErrataResource getKatelloErrataResource() {
         return inject(new BackendVmKatelloErrataResource(id));
     }
+
 }
