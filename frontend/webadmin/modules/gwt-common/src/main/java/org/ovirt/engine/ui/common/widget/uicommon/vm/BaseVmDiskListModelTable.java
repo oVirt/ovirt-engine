@@ -38,6 +38,7 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
     private static AbstractTextColumn<Disk> lunVendorIdColumn;
     private static AbstractTextColumn<Disk> lunProductIdColumn;
     private static AbstractTextColumn<Disk> interfaceColumn;
+    private static AbstractTextColumn<Disk> diskStorageTypeColumn;
     private static AbstractTextColumn<Disk> descriptionColumn;
 
     public BaseVmDiskListModelTable(
@@ -164,6 +165,9 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
                 statusColumn, constants.statusDisk(), images || cinder, "80px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
+                diskStorageTypeColumn, constants.typeDisk(), all, "80px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(
                 descriptionColumn, constants.descriptionDisk(), all || images || luns, "90px"); //$NON-NLS-1$
 
     }
@@ -182,6 +186,7 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
         lunVendorIdColumn = DisksViewColumns.getLunVendorIdColumn(null);
         lunProductIdColumn = DisksViewColumns.getLunProductIdColumn(null);
         interfaceColumn = DisksViewColumns.getInterfaceColumn(null);
+        diskStorageTypeColumn = DisksViewColumns.getDiskStorageTypeColumn(null);
         descriptionColumn = DisksViewColumns.getDescriptionColumn(null);
     }
 }

@@ -62,6 +62,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
     private static AbstractTextColumn<Disk> lunVendorIdColumn;
     private static AbstractTextColumn<Disk> lunProductIdColumn;
     private static AbstractTextColumn<Disk> qoutaColumn;
+    private static AbstractTextColumn<Disk> diskStorageTypeColumn;
     private static AbstractTextColumn<Disk> descriptionColumn;
 
     @Inject
@@ -202,6 +203,9 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
                 qoutaColumn, constants.quotaDisk(), images && isQuotaVisible, "120px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
+                diskStorageTypeColumn, constants.typeDisk(), all, "80px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(
                 descriptionColumn, constants.descriptionDisk(), all || images || luns || cinder,
                 "90px"); //$NON-NLS-1$
     }
@@ -220,6 +224,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         lunVendorIdColumn = DisksViewColumns.getLunVendorIdColumn(constants.empty());
         lunProductIdColumn = DisksViewColumns.getLunProductIdColumn(constants.empty());
         qoutaColumn = DisksViewColumns.getQoutaColumn(DiskConditionFieldAutoCompleter.QUOTA);
+        diskStorageTypeColumn = DisksViewColumns.getDiskStorageTypeColumn(DiskConditionFieldAutoCompleter.DISK_TYPE);
         descriptionColumn = DisksViewColumns.getDescriptionColumn(DiskConditionFieldAutoCompleter.DESCRIPTION);
     }
 

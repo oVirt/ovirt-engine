@@ -419,6 +419,17 @@ public class DisksViewColumns {
         return makeSortable(column, sortBy);
     }
 
+    public static final AbstractTextColumn<Disk> getDiskStorageTypeColumn(String sortBy) {
+        AbstractTextColumn<Disk> column = new AbstractEnumColumn<Disk, DiskStorageType>() {
+            @Override
+            protected DiskStorageType getRawValue(Disk object) {
+                return object.getDiskStorageType();
+            }
+        };
+
+        return makeSortable(column, sortBy);
+    }
+
     public static <C extends AbstractTextColumn<T>, T> C makeSortable(C column, String sortBy) {
         if (sortBy == null ) {
             // Client sorting
