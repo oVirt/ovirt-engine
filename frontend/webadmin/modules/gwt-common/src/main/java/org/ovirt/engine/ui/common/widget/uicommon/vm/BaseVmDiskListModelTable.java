@@ -39,6 +39,7 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
     private static AbstractTextColumn<Disk> lunProductIdColumn;
     private static AbstractTextColumn<Disk> interfaceColumn;
     private static AbstractTextColumn<Disk> diskStorageTypeColumn;
+    private static AbstractTextColumn<Disk> cinderVolumeTypeColumn;
     private static AbstractTextColumn<Disk> descriptionColumn;
 
     public BaseVmDiskListModelTable(
@@ -117,12 +118,6 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
                         all || images || luns || cinder, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.lunDiskColumn,
-                new ImageResourceHeader(DisksViewColumns.lunDiskColumn.getDefaultImage(),
-                        SafeHtmlUtils.fromSafeConstant(constants.lunDisksLabel())),
-                        all, "30px"); //$NON-NLS-1$
-
-        getTable().ensureColumnPresent(
                 sizeColumn, constants.provisionedSizeDisk(), all || images || luns || cinder, "110px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
@@ -136,6 +131,9 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.storageTypeColumn, constants.storageTypeDisk(), images, "100px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(
+                cinderVolumeTypeColumn, constants.cinderVolumeTypeDisk(), cinder, "80px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 dateCreatedColumn, constants.creationDateDisk(), images || cinder, "120px"); //$NON-NLS-1$
@@ -187,6 +185,7 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase<?>> extends 
         lunProductIdColumn = DisksViewColumns.getLunProductIdColumn(null);
         interfaceColumn = DisksViewColumns.getInterfaceColumn(null);
         diskStorageTypeColumn = DisksViewColumns.getDiskStorageTypeColumn(null);
+        cinderVolumeTypeColumn = DisksViewColumns.getCinderVolumeTypeColumn(null);
         descriptionColumn = DisksViewColumns.getDescriptionColumn(null);
     }
 }

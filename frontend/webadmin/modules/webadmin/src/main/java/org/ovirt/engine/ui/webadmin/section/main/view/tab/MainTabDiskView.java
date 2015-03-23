@@ -63,6 +63,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
     private static AbstractTextColumn<Disk> lunProductIdColumn;
     private static AbstractTextColumn<Disk> qoutaColumn;
     private static AbstractTextColumn<Disk> diskStorageTypeColumn;
+    private static AbstractTextColumn<Disk> cinderVolumeTypeColumn;
     private static AbstractTextColumn<Disk> descriptionColumn;
 
     @Inject
@@ -150,12 +151,6 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
                 all || images || luns || cinder, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.lunDiskColumn,
-                new ImageResourceHeader(DisksViewColumns.lunDiskColumn.getDefaultImage(),
-                        SafeHtmlUtils.fromSafeConstant(constants.lunDisksLabel())),
-                all, "30px"); //$NON-NLS-1$
-
-        getTable().ensureColumnPresent(
                 DisksViewColumns.diskContainersIconColumn, "", all || images || luns || cinder, //$NON-NLS-1$
                 "30px"); //$NON-NLS-1$
 
@@ -174,6 +169,9 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         getTable().ensureColumnPresent(
                 allocationColumn, constants.allocationDisk(), images,
                 "130px"); //$NON-NLS-1$
+
+        getTable().ensureColumnPresent(
+                cinderVolumeTypeColumn, constants.cinderVolumeTypeDisk(), cinder, "80px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 dateCreatedColumn, constants.creationDateDisk(), images || cinder,
@@ -225,6 +223,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         lunProductIdColumn = DisksViewColumns.getLunProductIdColumn(constants.empty());
         qoutaColumn = DisksViewColumns.getQoutaColumn(DiskConditionFieldAutoCompleter.QUOTA);
         diskStorageTypeColumn = DisksViewColumns.getDiskStorageTypeColumn(DiskConditionFieldAutoCompleter.DISK_TYPE);
+        cinderVolumeTypeColumn = DisksViewColumns.getCinderVolumeTypeColumn(null);
         descriptionColumn = DisksViewColumns.getDescriptionColumn(DiskConditionFieldAutoCompleter.DESCRIPTION);
     }
 

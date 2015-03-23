@@ -143,27 +143,6 @@ public class DisksViewColumns {
         }
     };
 
-    public static final AbstractImageResourceColumn<Disk> lunDiskColumn = new AbstractImageResourceColumn<Disk>() {
-        @Override
-        public ImageResource getValue(Disk object) {
-            return object.getDiskStorageType() == DiskStorageType.LUN ?
-                    resources.externalDiskIcon() : null;
-        }
-
-        @Override
-        public ImageResource getDefaultImage() {
-            return resources.externalDiskIcon();
-        }
-
-        @Override
-        public SafeHtml getTooltip(Disk object) {
-            if (object.getDiskStorageType() == DiskStorageType.LUN) {
-                return SafeHtmlUtils.fromSafeConstant(constants.lunDisksLabel());
-            }
-            return null;
-        }
-    };
-
     public static final AbstractImageResourceColumn<Disk> diskContainersIconColumn = new AbstractImageResourceColumn<Disk>() {
         @Override
         public ImageResource getValue(Disk object) {
@@ -424,6 +403,17 @@ public class DisksViewColumns {
             @Override
             protected DiskStorageType getRawValue(Disk object) {
                 return object.getDiskStorageType();
+            }
+        };
+
+        return makeSortable(column, sortBy);
+    }
+
+    public static final AbstractTextColumn<Disk> getCinderVolumeTypeColumn(String sortBy) {
+        AbstractTextColumn<Disk> column = new AbstractTextColumn<Disk>() {
+            @Override
+            public String getValue(Disk object) {
+                return object.getCinderVolumeType();
             }
         };
 
