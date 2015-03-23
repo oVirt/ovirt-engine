@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
@@ -107,6 +108,11 @@ public class EditDiskModel extends AbstractDiskModel
     }
 
     @Override
+    protected CinderDisk getCinderDisk() {
+        return (CinderDisk) getDisk();
+    }
+
+    @Override
     public void store(IFrontendActionAsyncCallback callback) {
         if (getProgress() != null || !validate()) {
             return;
@@ -142,6 +148,7 @@ public class EditDiskModel extends AbstractDiskModel
         getDataCenter().setIsChangable(false);
         getVolumeType().setIsChangable(false);
         getSize().setIsChangable(false);
+        getCinderVolumeType().setIsChangable(false);
 
         if (!isEditEnabled()) {
             getIsShareable().setIsChangable(false);
@@ -159,5 +166,10 @@ public class EditDiskModel extends AbstractDiskModel
     @Override
     protected void updateVolumeType(StorageType storageType) {
         // do nothing
+    }
+
+    @Override
+    protected void updateCinderVolumeTypes() {
+        getCinderVolumeType().setSelectedItem(getDisk().getCinderVolumeType());
     }
 }

@@ -1524,6 +1524,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("There are no active Storage Domains that you have permissions to create a disk on in the relevant Data Center.")
     String noActiveStorageDomainsInDC();
 
+    @DefaultStringValue("There are no available OpenStack Volume storage domains that you have permissions to create a disk on in the relevant Data Center.")
+    String noCinderStorageDomainsInDC();
+
     @DefaultStringValue("The relevant Data Center is not active.")
     String relevantDCnotActive();
 
@@ -2664,4 +2667,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Changing management network is only permitted via the 'Manage Cluster Networks' dialog.")
     String prohibitManagementNetworkChangeInEditClusterInfoMessage();
+
+    @DefaultStringValue("No volume type")
+    String noCinderVolumeType();
 }

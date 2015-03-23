@@ -1323,6 +1323,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("External (Direct LUN)")
     String externalDisk();
 
+    @DefaultStringValue("Cinder")
+    String cinderDisk();
+
     @DefaultStringValue("LUNs > Targets")
     String storageIscsiPopupLunToTargetsTabLabel();
 

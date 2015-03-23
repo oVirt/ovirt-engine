@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -16,6 +17,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
+import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -75,6 +78,7 @@ public abstract class AbstractDiskModel extends DiskModel
     private ListModel<StorageType> storageType;
     private ListModel<VDS> host;
     private ListModel<StoragePool> dataCenter;
+    private ListModel<String> cinderVolumeType;
 
     private SanStorageModel sanStorageModel;
     private VolumeFormat volumeFormat;
@@ -172,6 +176,15 @@ public abstract class AbstractDiskModel extends DiskModel
     public void setDataCenter(ListModel<StoragePool> dataCenter) {
         this.dataCenter = dataCenter;
     }
+
+    public ListModel<String> getCinderVolumeType() {
+        return cinderVolumeType;
+    }
+
+    public void setCinderVolumeType(ListModel<String> cinderVolumeType) {
+        this.cinderVolumeType = cinderVolumeType;
+    }
+
     public SanStorageModel getSanStorageModel() {
         return sanStorageModel;
     }
@@ -287,6 +300,9 @@ public abstract class AbstractDiskModel extends DiskModel
         getDiskInterface().getSelectedItemChangedEvent().addListener(this);
 
         setIsVirtioScsiEnabled(new EntityModel<Boolean>());
+
+        setCinderVolumeType(new ListModel<String>());
+        getCinderVolumeType().setIsAvailable(false);
     }
 
     public abstract boolean getIsNew();
@@ -301,20 +317,19 @@ public abstract class AbstractDiskModel extends DiskModel
 
     protected abstract LunDisk getLunDisk();
 
+    protected abstract CinderDisk getCinderDisk();
+
     protected abstract void setDefaultInterface();
 
     protected abstract void updateVolumeType(StorageType storageType);
 
     protected boolean isEditEnabled() {
-        return getIsFloating() || getIsNew() || getVm().isDown() || !getDisk().getPlugged();
+        return (getIsFloating() || getIsNew() || getVm().isDown() || !getDisk().getPlugged()) && getIsChangable();
     }
 
     @Override
     public void initialize() {
         commonInitialize();
-        if (getVm() != null) {
-            updateBootableDiskAvailable();
-        }
     }
 
     public void initialize(List<Disk> currentDisks) {
@@ -340,21 +355,35 @@ public abstract class AbstractDiskModel extends DiskModel
             public void onSuccess(Object target, Object returnValue) {
                 DiskModel diskModel = (DiskModel) target;
                 ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
-
-                ArrayList<StorageDomain> filteredStorageDomains = new ArrayList<StorageDomain>();
-                for (StorageDomain a : storageDomains) {
-                    if (!a.getStorageDomainType().isIsoOrImportExportDomain() && a.getStatus() == StorageDomainStatus.Active) {
-                        filteredStorageDomains.add(a);
-                    }
+                ArrayList<StorageDomain> filteredStorageDomains = new ArrayList<>();
+                switch (getDiskStorageType().getEntity()) {
+                    case IMAGE:
+                        filteredStorageDomains.addAll(Linq.filterStorageDomainsByStorageDomainType(
+                                storageDomains, StorageDomainType.Master));
+                        filteredStorageDomains.addAll(Linq.filterStorageDomainsByStorageDomainType(
+                                storageDomains, StorageDomainType.Data));
+                        break;
+                    case CINDER:
+                        filteredStorageDomains.addAll(Linq.filterStorageDomainsByStorageType(
+                                storageDomains, StorageType.CINDER));
+                        break;
                 }
 
+                filteredStorageDomains = (ArrayList<StorageDomain>) Linq.filterStorageDomainsByStorageStatus(
+                        filteredStorageDomains, StorageDomainStatus.Active);
                 Collections.sort(filteredStorageDomains, new NameableComparator());
                 StorageDomain storage = Linq.firstOrDefault(filteredStorageDomains);
-
-                diskModel.getStorageDomain().setItems(filteredStorageDomains);
-                diskModel.getStorageDomain().setSelectedItem(storage);
-
-                diskModel.setMessage(storage == null ? constants.noActiveStorageDomainsInDC() : "");
+                diskModel.getStorageDomain().setItems(filteredStorageDomains, storage);
+                if (storage == null) {
+                    switch (getDiskStorageType().getEntity()) {
+                        case IMAGE:
+                            diskModel.setMessage(constants.noActiveStorageDomainsInDC());
+                            break;
+                        case CINDER:
+                            diskModel.setMessage(constants.noCinderStorageDomainsInDC());
+                            break;
+                    }
+                }
             }
         }), datacenter.getId(), ActionGroup.CREATE_DISK);
     }
@@ -402,6 +431,7 @@ public abstract class AbstractDiskModel extends DiskModel
                     }
                 }
             })), getVm().getStoragePoolId());
+            updateBootableDiskAvailable();
         }
         else {
             AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(this, new INewAsyncCallback() {
@@ -527,6 +557,27 @@ public abstract class AbstractDiskModel extends DiskModel
         setDefaultInterface();
     }
 
+    protected void updateCinderVolumeTypes() {
+        StorageDomain storageDomain = getStorageDomain().getSelectedItem();
+        if (storageDomain == null || storageDomain.getStorageType() != StorageType.CINDER) {
+            return;
+        }
+
+        AsyncDataProvider.getInstance().getCinderVolumeTypesList(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object target, Object returnValue) {
+                AbstractDiskModel diskModel = (AbstractDiskModel) target;
+                List<CinderVolumeType> cinderVolumeTypes = (ArrayList<CinderVolumeType>) returnValue;
+                List<String> volumeTypesNames = new ArrayList<>();
+                for (CinderVolumeType cinderVolumeType : cinderVolumeTypes) {
+                    volumeTypesNames.add(cinderVolumeType.getName());
+                }
+                volumeTypesNames.add(constants.noCinderVolumeType());
+                diskModel.getCinderVolumeType().setItems(volumeTypesNames);
+            }
+        }), storageDomain.getId());
+    }
+
     private void updateDiskProfiles(StoragePool selectedItem) {
         StorageDomain storageDomain = getStorageDomain().getSelectedItem();
         if (storageDomain == null) {
@@ -626,16 +677,18 @@ public abstract class AbstractDiskModel extends DiskModel
         boolean isInVm = getVm() != null;
         boolean isDiskImage = getDiskStorageType().getEntity() == DiskStorageType.IMAGE;
         boolean isLunDisk = getDiskStorageType().getEntity() == DiskStorageType.LUN;
+        boolean isCinderDisk = getDiskStorageType().getEntity() == DiskStorageType.CINDER;
 
-        getSize().setIsAvailable(isDiskImage);
-        getSizeExtend().setIsAvailable(isDiskImage && !getIsNew());
-        getStorageDomain().setIsAvailable(isDiskImage);
+        getSize().setIsAvailable(isDiskImage || isCinderDisk);
+        getSizeExtend().setIsAvailable((isDiskImage || isCinderDisk) && !getIsNew());
+        getStorageDomain().setIsAvailable(isDiskImage || isCinderDisk);
         getVolumeType().setIsAvailable(isDiskImage);
         getIsWipeAfterDelete().setIsAvailable(isDiskImage);
         getHost().setIsAvailable(isLunDisk);
         getStorageType().setIsAvailable(isLunDisk);
         getDataCenter().setIsAvailable(!isInVm);
         getDiskProfile().setIsAvailable(isDiskImage);
+        getCinderVolumeType().setIsAvailable(isCinderDisk);
 
         if (!isDiskImage) {
             previousIsQuotaAvailable = getQuota().getIsAvailable();
@@ -643,6 +696,7 @@ public abstract class AbstractDiskModel extends DiskModel
 
         getQuota().setIsAvailable(isDiskImage ? previousIsQuotaAvailable : false);
 
+        setIsChangable(true);
         updateDatacenters();
     }
 
@@ -748,6 +802,13 @@ public abstract class AbstractDiskModel extends DiskModel
         }
     }
 
+    private void updateDiskSize(DiskImage diskImage) {
+        long sizeToAddInGigabytes = Long.valueOf(getSizeExtend().getEntity());
+        if (sizeToAddInGigabytes > 0) {
+            diskImage.setSizeInGigabytes(diskImage.getSizeInGigabytes() + sizeToAddInGigabytes);
+        }
+    }
+
     private boolean canDiskBePlugged(VM vm) {
         return vm.getStatus() == VMStatus.Up || vm.getStatus() == VMStatus.Down || vm.getStatus() == VMStatus.Paused;
     }
@@ -768,11 +829,14 @@ public abstract class AbstractDiskModel extends DiskModel
         updateDirectLunDiskEnabled(datacenter);
         updateInterface(isInVm ? getVm().getVdsGroupCompatibilityVersion() : null);
 
-        if (getDiskStorageType().getEntity() == DiskStorageType.IMAGE) {
-            updateStorageDomains(datacenter);
-        }
-        else {
-            updateHosts(datacenter);
+        switch (getDiskStorageType().getEntity()) {
+            case IMAGE:
+            case CINDER:
+                updateStorageDomains(datacenter);
+                break;
+            default:
+                updateHosts(datacenter);
+                break;
         }
     }
 
@@ -786,6 +850,7 @@ public abstract class AbstractDiskModel extends DiskModel
         }
         updateQuota(getDataCenter().getSelectedItem());
         updateDiskProfiles(getDataCenter().getSelectedItem());
+        updateCinderVolumeTypes();
     }
 
     public boolean validate() {
@@ -802,6 +867,8 @@ public abstract class AbstractDiskModel extends DiskModel
         if (dataCenter != null && dataCenter.getQuotaEnforcementType() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT) {
             getQuota().validateSelectedItem(new IValidation[] { new NotEmptyQuotaValidation() });
         }
+
+        getCinderVolumeType().validateSelectedItem(new IValidation[]{new NotEmptyValidation()});
 
         return getAlias().getIsValid() && getDescription().getIsValid() && getQuota().getIsValid()
                 && getDiskInterface().getIsValid();
@@ -857,28 +924,30 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     public void flush() {
-        if (getDiskStorageType().getEntity() == DiskStorageType.IMAGE) {
-            DiskImage diskImage = getDiskImage();
-            if (getQuota().getIsAvailable() && getQuota().getSelectedItem() != null) {
-                diskImage.setQuotaId(getQuota().getSelectedItem().getId());
-            }
-
-            long sizeToAddInGigabytes = Long.valueOf(getSizeExtend().getEntity());
-            if (sizeToAddInGigabytes > 0) {
-                diskImage.setSizeInGigabytes(diskImage.getSizeInGigabytes() + sizeToAddInGigabytes);
-            }
-
-            setDisk(diskImage);
-        }
-        else {
-            LunDisk lunDisk = getLunDisk();
-            DiskInterface diskInterface = getDiskInterface().getSelectedItem();
-            if (DiskInterface.VirtIO_SCSI.equals(diskInterface)) {
-                lunDisk.setSgio(!getIsScsiPassthrough().getEntity() ? null :
-                        getIsSgIoUnfiltered().getEntity() ?
-                        ScsiGenericIO.UNFILTERED : ScsiGenericIO.FILTERED);
-            }
-            setDisk(lunDisk);
+        switch (getDiskStorageType().getEntity()) {
+            case LUN:
+                LunDisk lunDisk = getLunDisk();
+                DiskInterface diskInterface = getDiskInterface().getSelectedItem();
+                if (DiskInterface.VirtIO_SCSI.equals(diskInterface)) {
+                    lunDisk.setSgio(!getIsScsiPassthrough().getEntity() ? null :
+                            getIsSgIoUnfiltered().getEntity() ?
+                                    ScsiGenericIO.UNFILTERED : ScsiGenericIO.FILTERED);
+                }
+                setDisk(lunDisk);
+                break;
+            case CINDER:
+                CinderDisk cinderDisk = getCinderDisk();
+                updateDiskSize(cinderDisk);
+                setDisk(cinderDisk);
+                break;
+            case IMAGE:
+                DiskImage diskImage = getDiskImage();
+                if (getQuota().getIsAvailable() && getQuota().getSelectedItem() != null) {
+                    diskImage.setQuotaId(getQuota().getSelectedItem().getId());
+                }
+                updateDiskSize(diskImage);
+                setDisk(diskImage);
+                break;
         }
 
         if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {

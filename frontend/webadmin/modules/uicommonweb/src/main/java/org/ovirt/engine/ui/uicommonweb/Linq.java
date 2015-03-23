@@ -50,6 +50,7 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
@@ -1587,5 +1588,35 @@ public final class Linq
         public int compare(ImportEntityData<T> entity1, ImportEntityData<T> entity2) {
             return lexoNumeric.compare(entity1.getName(), entity2.getName());
         }
+    }
+
+    public final static Collection<StorageDomain> filterStorageDomainsByStorageType(
+            Collection<StorageDomain> source, final StorageType storageType) {
+        return where(source, new IPredicate<StorageDomain>() {
+            @Override
+            public boolean match(StorageDomain source) {
+                return source.getStorageType() == storageType;
+            }
+        });
+    }
+
+    public final static Collection<StorageDomain> filterStorageDomainsByStorageDomainType(
+            Collection<StorageDomain> source, final StorageDomainType storageDomainType) {
+        return where(source, new IPredicate<StorageDomain>() {
+            @Override
+            public boolean match(StorageDomain source) {
+                return source.getStorageDomainType() == storageDomainType;
+            }
+        });
+    }
+
+    public final static Collection<StorageDomain> filterStorageDomainsByStorageStatus(
+            Collection<StorageDomain> source, final StorageDomainStatus storageDomainStatus) {
+        return where(source, new IPredicate<StorageDomain>() {
+            @Override
+            public boolean match(StorageDomain source) {
+                return source.getStatus() == storageDomainStatus;
+            }
+        });
     }
 }

@@ -299,7 +299,13 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 if ("Message".equals(propName)) { //$NON-NLS-1$
                     if (!StringHelper.isNullOrEmpty(disk.getMessage())) {
                         disableWidget(getWidget());
+                        enableWidget(diskTypePanel);
                         disk.getDefaultCommand().setIsExecutionAllowed(false);
+                        disk.setIsChangable(false);
+                    } else {
+                        enableWidget(getWidget());
+                        disk.getDefaultCommand().setIsExecutionAllowed(true);
+                        disk.setIsChangable(true);
                     }
                 }
             }
@@ -326,6 +332,18 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                     public void onClick(ClickEvent event) {
                         disk.getDiskStorageType().setEntity(DiskStorageType.LUN);
                         revealStorageView(disk);
+                        revealDiskPanel(disk);
+                    }
+                });
+
+        diskTypePanel.addRadioButton(
+                constants.cinderDisk(),
+                disk.getDisk() != null && disk.getDisk().getDiskStorageType() == DiskStorageType.CINDER,
+                disk.getIsNew(),
+                new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        disk.getDiskStorageType().setEntity(DiskStorageType.CINDER);
                         revealDiskPanel(disk);
                     }
                 });

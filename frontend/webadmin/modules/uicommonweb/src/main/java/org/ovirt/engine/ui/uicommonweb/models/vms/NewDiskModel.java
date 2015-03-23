@@ -7,12 +7,14 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.LUNs;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -138,19 +140,33 @@ public class NewDiskModel extends AbstractDiskModel
     }
 
     @Override
+    protected CinderDisk getCinderDisk() {
+        return new CinderDisk();
+    }
+
+    @Override
     public void flush() {
         super.flush();
-        if (getDiskStorageType().getEntity() == DiskStorageType.IMAGE) {
-            DiskImage diskImage = (DiskImage) getDisk();
-            diskImage.setSizeInGigabytes(getSize().getEntity());
-            diskImage.setVolumeType(getVolumeType().getSelectedItem());
-            diskImage.setvolumeFormat(getVolumeFormat());
-        }
-        else {
-            LunDisk lunDisk = (LunDisk) getDisk();
-            LUNs luns = (LUNs) getSanStorageModel().getAddedLuns().get(0).getEntity();
-            luns.setLunType(getStorageType().getSelectedItem());
-            lunDisk.setLun(luns);
+        switch (getDiskStorageType().getEntity()) {
+            case LUN:
+                LunDisk lunDisk = (LunDisk) getDisk();
+                LUNs luns = (LUNs) getSanStorageModel().getAddedLuns().get(0).getEntity();
+                luns.setLunType(getStorageType().getSelectedItem());
+                lunDisk.setLun(luns);
+                break;
+            case CINDER:
+                CinderDisk cinderDisk = (CinderDisk) getDisk();
+                cinderDisk.setSizeInGigabytes(getSize().getEntity());
+                cinderDisk.setvolumeFormat(VolumeFormat.RAW);
+                cinderDisk.setCinderVolumeType(getCinderVolumeType().getSelectedItem().equals(
+                        constants.noCinderVolumeType()) ? "" : getCinderVolumeType().getSelectedItem()); //$NON-NLS-1$
+                break;
+            default:
+                DiskImage diskImage = (DiskImage) getDisk();
+                diskImage.setSizeInGigabytes(getSize().getEntity());
+                diskImage.setVolumeType(getVolumeType().getSelectedItem());
+                diskImage.setvolumeFormat(getVolumeFormat());
+                break;
         }
     }
 
@@ -164,7 +180,8 @@ public class NewDiskModel extends AbstractDiskModel
 
         AddDiskParameters parameters = new AddDiskParameters(getVmId(), getDisk());
         parameters.setPlugDiskToVm(getIsPlugged().getEntity());
-        if (getDiskStorageType().getEntity() == DiskStorageType.IMAGE) {
+        if (getDiskStorageType().getEntity() == DiskStorageType.IMAGE ||
+                getDiskStorageType().getEntity() == DiskStorageType.CINDER) {
             StorageDomain storageDomain = getStorageDomain().getSelectedItem();
             parameters.setStorageDomainId(storageDomain.getId());
         }

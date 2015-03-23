@@ -26,13 +26,21 @@ public abstract class AbstractModelBoundPopupWidget<T extends Model> extends Com
         return nextTabIndex;
     }
 
-    public void disableWidget(Widget widget) {
+    private void setEnabled(Widget widget, boolean enable) {
         if (widget instanceof IndexedPanel) {
             for (int i = 0; i < ((IndexedPanel) widget).getWidgetCount(); i++) {
-                disableWidget(((IndexedPanel) widget).getWidget(i));
+                setEnabled(((IndexedPanel) widget).getWidget(i), enable);
             }
         } else if (widget instanceof HasEnabled) {
-            ((HasEnabled) widget).setEnabled(false);
+            ((HasEnabled) widget).setEnabled(enable);
         }
+    }
+
+    public void enableWidget(Widget widget) {
+        setEnabled(widget, true);
+    }
+
+    public void disableWidget(Widget widget) {
+        setEnabled(widget, false);
     }
 }

@@ -79,6 +79,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
+import org.ovirt.engine.core.common.businessentities.storage.CinderVolumeType;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
@@ -4053,6 +4054,16 @@ public class AsyncDataProvider {
         };
         VdsIdParametersBase parameters = new VdsIdParametersBase(hostId);
         Frontend.getInstance().runQuery(VdcQueryType.GetUnusedGlusterBricks, parameters, asyncQuery);
+    }
+
+    public void getCinderVolumeTypesList(AsyncQuery aQuery, Guid storageDomainId) {
+        aQuery.converterCallback = new IAsyncConverter<List<CinderVolumeType>>() {
+            @Override
+            public List<CinderVolumeType> Convert(Object source, AsyncQuery _asyncQuery) {
+                return (List<CinderVolumeType>) source;
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetCinderVolumeTypesByStorageDomainId, new IdQueryParameters(storageDomainId), aQuery);
     }
 
 }
