@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.renderer;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 
@@ -16,7 +17,7 @@ public class StorageDomainFreeSpaceRenderer<T extends StorageDomain> extends Abs
             return ""; //$NON-NLS-1$
         }
 
-        if (storageDomain.getAvailableDiskSize() == null) {
+        if (storageDomain.getAvailableDiskSize() == null || storageDomain.getStorageType() == StorageType.CINDER) {
             // 'getAvailableDiskSize' may return null when there's a connectivity issue with the storage domain
             return storageDomain.getStorageName();
         }
