@@ -212,7 +212,8 @@ public class DisksViewColumns {
     public static final AbstractTextColumn<Disk> storageTypeColumn = new AbstractEnumColumn<Disk, StorageType>() {
         @Override
         protected StorageType getRawValue(Disk object) {
-            if (object.getDiskStorageType() != DiskStorageType.IMAGE) {
+            if (object.getDiskStorageType() != DiskStorageType.IMAGE &&
+                    object.getDiskStorageType() != DiskStorageType.CINDER) {
                 return null;
             }
             DiskImage disk = (DiskImage) object;
@@ -225,9 +226,12 @@ public class DisksViewColumns {
         AbstractDiskSizeColumn<Disk> column = new AbstractDiskSizeColumn<Disk>() {
             @Override
             protected Long getRawValue(Disk object) {
-                return object.getDiskStorageType() == DiskStorageType.IMAGE ?
-                        ((DiskImage) object).getSize() :
-                        (long) (((LunDisk) object).getLun().getDeviceSize() * Math.pow(1024, 3));
+                switch (object.getDiskStorageType()) {
+                    case LUN:
+                        return (long) (((LunDisk) object).getLun().getDeviceSize() * Math.pow(1024, 3));
+                    default:
+                        return object.getSize();
+                }
             }
         };
 
@@ -238,7 +242,8 @@ public class DisksViewColumns {
         AbstractDiskSizeColumn<Disk> column = new AbstractDiskSizeColumn<Disk>(SizeConverter.SizeUnit.GB) {
             @Override
             protected Long getRawValue(Disk object) {
-                return object.getDiskStorageType() == DiskStorageType.IMAGE ?
+                return object.getDiskStorageType() == DiskStorageType.IMAGE ||
+                        object.getDiskStorageType() == DiskStorageType.CINDER ?
                         Math.round(((DiskImage) object).getActualDiskWithSnapshotsSize())
                         : (long) (((LunDisk) object).getLun().getDeviceSize());
             }
@@ -251,7 +256,8 @@ public class DisksViewColumns {
         AbstractTextColumn<Disk> column = new AbstractEnumColumn<Disk, VolumeType>() {
             @Override
             protected VolumeType getRawValue(Disk object) {
-                return object.getDiskStorageType() == DiskStorageType.IMAGE ?
+                return object.getDiskStorageType() == DiskStorageType.IMAGE ||
+                        object.getDiskStorageType() == DiskStorageType.CINDER ?
                         ((DiskImage) object).getVolumeType() : null;
             }
         };
@@ -274,7 +280,8 @@ public class DisksViewColumns {
         AbstractTextColumn<Disk> column = new AbstractFullDateTimeColumn<Disk>() {
             @Override
             protected Date getRawValue(Disk object) {
-                return object.getDiskStorageType() == DiskStorageType.IMAGE ?
+                return object.getDiskStorageType() == DiskStorageType.IMAGE ||
+                        object.getDiskStorageType() == DiskStorageType.CINDER ?
                         ((DiskImage) object).getCreationDate() : null;
             }
         };
@@ -286,7 +293,8 @@ public class DisksViewColumns {
         AbstractTextColumn<Disk> column = new AbstractEnumColumn<Disk, ImageStatus>() {
             @Override
             protected ImageStatus getRawValue(Disk object) {
-                return object.getDiskStorageType() == DiskStorageType.IMAGE ?
+                return object.getDiskStorageType() == DiskStorageType.IMAGE ||
+                        object.getDiskStorageType() == DiskStorageType.CINDER ?
                         ((DiskImage) object).getImageStatus() : null;
             }
         };
