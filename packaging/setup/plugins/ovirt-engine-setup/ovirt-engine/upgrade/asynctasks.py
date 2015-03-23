@@ -340,48 +340,73 @@ class Plugin(plugin.PluginBase):
             self._getCompensations(dbstatement),
         )
 
-    def _waitForTasksToClear(self, dbstatement):
-        with self._engineInMaintenance(
-            dbstatement=dbstatement,
-            parent=self,
-        ):
-            while True:
-                (
-                    runningTasks,
-                    runningCommands,
-                    compensations,
-                ) = self._checkRunningTasks()
-                if (
-                    not runningTasks and
-                    not runningCommands and
-                    not compensations
-                ):
-                    break
-
-                self.dialog.note(
-                    text=_(
-                        'Waiting for the completion of {number} '
-                        'running tasks during the next '
-                        '{cleanup_wait} seconds.\n'
-                        'Press Ctrl+C to interrupt. '
-                    ).format(
-                        cleanup_wait=self.environment[
-                            oenginecons.AsyncTasksEnv.
-                            CLEAR_TASKS_WAIT_PERIOD
-                        ],
-                        number=(
-                            len(runningTasks) +
-                            len(runningCommands) +
-                            len(compensations)
-                        ),
-                    )
+    def _unlockAll(self):
+        args = (
+            oenginecons.FileLocations.OVIRT_ENGINE_UNLOCK_ENTITY,
+            '-t', 'all',
+            '-l', self.environment[otopicons.CoreEnv.LOG_FILE_NAME],
+            '-u', self.environment[oenginecons.EngineDBEnv.USER],
+            '-s', self.environment[oenginecons.EngineDBEnv.HOST],
+            '-p', str(self.environment[oenginecons.EngineDBEnv.PORT]),
+            '-d', self.environment[oenginecons.EngineDBEnv.DATABASE],
+        )
+        envPwd = {
+            'DBFUNC_DB_PGPASSFILE': self.environment[
+                oenginecons.EngineDBEnv.PGPASS_FILE
+            ]
+        }
+        rc, tasks, stderr = self.execute(
+            args=args,
+            raiseOnError=False,
+            envAppend=envPwd,
+        )
+        if rc:
+            raise RuntimeError(
+                _(
+                    'Failed to unlock entities. '
+                    'Please access support in attempt to resolve '
+                    'the problem'
                 )
-                time.sleep(
-                    self.environment[
+            )
+
+    def _waitForTasksToClear(self):
+        while True:
+            (
+                runningTasks,
+                runningCommands,
+                compensations,
+            ) = self._checkRunningTasks()
+            if (
+                not runningTasks and
+                not runningCommands and
+                not compensations
+            ):
+                break
+
+            self.dialog.note(
+                text=_(
+                    'Waiting for the completion of {number} '
+                    'running tasks during the next '
+                    '{cleanup_wait} seconds.\n'
+                    'Press Ctrl+C to interrupt. '
+                ).format(
+                    cleanup_wait=self.environment[
                         oenginecons.AsyncTasksEnv.
                         CLEAR_TASKS_WAIT_PERIOD
-                    ]
+                    ],
+                    number=(
+                        len(runningTasks) +
+                        len(runningCommands) +
+                        len(compensations)
+                    ),
                 )
+            )
+            time.sleep(
+                self.environment[
+                    oenginecons.AsyncTasksEnv.
+                    CLEAR_TASKS_WAIT_PERIOD
+                ]
+            )
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -447,30 +472,38 @@ class Plugin(plugin.PluginBase):
             compensations,
         ) = self._checkRunningTasks()
 
-        if runningTasks or runningCommands or compensations:
-            self._askUserToWaitForTasks(
-                runningTasks,
-                runningCommands,
-                compensations,
-            )
-            dbstatement = database.Statement(
-                dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
-                environment=self.environment,
-            )
-            try:
-                self._waitForTasksToClear(dbstatement)
-            except KeyboardInterrupt:
-                self.logger.error(
-                    _(
-                        'Upgrade cannot be completed; asynchronious tasks '
-                        'or commands or compensations are still running. '
-                        'Please make sure that there are no running tasks '
-                        'before you continue.'
+        dbstatement = database.Statement(
+            dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
+            environment=self.environment,
+        )
+        with self._engineInMaintenance(
+            dbstatement=dbstatement,
+            parent=self,
+        ):
+            if runningTasks or runningCommands or compensations:
+                self._askUserToWaitForTasks(
+                    runningTasks,
+                    runningCommands,
+                    compensations,
+                )
+                try:
+                    self._waitForTasksToClear()
+                except KeyboardInterrupt:
+                    self.logger.error(
+                        _(
+                            'Upgrade cannot be completed; asynchronious tasks '
+                            'or commands or compensations are still running. '
+                            'Please make sure that there are no running tasks '
+                            'before you continue.'
+                        )
                     )
-                )
-                raise RuntimeError(
-                    _('Upgrade cannot be completed due to running tasks.')
-                )
+                    raise RuntimeError(
+                        _('Upgrade cannot be completed due to running tasks.')
+                    )
+            self.logger.info(
+                _('Unlocking existing entities')
+            )
+            self._unlockAll()
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
