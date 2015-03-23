@@ -1218,14 +1218,15 @@ Create or replace FUNCTION InsertVnicProfile(v_id UUID,
   v_network_id UUID,
   v_network_qos_id UUID,
   v_port_mirroring BOOLEAN,
+  v_passthrough BOOLEAN,
   v_custom_properties TEXT,
   v_description TEXT)
 RETURNS VOID
    AS $procedure$
 BEGIN
 
-   INSERT INTO vnic_profiles(id, name, network_id, network_qos_id, port_mirroring, custom_properties, description)
-       VALUES(v_id, v_name, v_network_id, v_network_qos_id, v_port_mirroring, v_custom_properties, v_description);
+   INSERT INTO vnic_profiles(id, name, network_id, network_qos_id, port_mirroring, passthrough, custom_properties, description)
+       VALUES(v_id, v_name, v_network_id, v_network_qos_id, v_port_mirroring, v_passthrough, v_custom_properties, v_description);
 
 END; $procedure$
 LANGUAGE plpgsql;
@@ -1236,6 +1237,7 @@ Create or replace FUNCTION UpdateVnicProfile(v_id UUID,
   v_network_id UUID,
   v_network_qos_id UUID,
   v_port_mirroring BOOLEAN,
+  v_passthrough BOOLEAN,
   v_custom_properties TEXT,
   v_description TEXT)
 RETURNS VOID
@@ -1244,7 +1246,7 @@ BEGIN
 
    UPDATE vnic_profiles
    SET id = v_id, name = v_name, network_id = v_network_id, network_qos_id = v_network_qos_id,
-   port_mirroring = v_port_mirroring, custom_properties = v_custom_properties,
+   port_mirroring = v_port_mirroring, passthrough = v_passthrough, custom_properties = v_custom_properties,
    description = v_description,_update_date = LOCALTIMESTAMP
    WHERE id = v_id;
 

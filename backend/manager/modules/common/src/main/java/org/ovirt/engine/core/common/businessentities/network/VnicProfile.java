@@ -30,6 +30,7 @@ public class VnicProfile extends IVdcQueryable implements BusinessEntity<Guid>, 
     private Guid networkQosId;
 
     private boolean portMirroring;
+    private boolean passthrough;
     private String description;
     private Map<String, String> customProperties;
 
@@ -58,6 +59,14 @@ public class VnicProfile extends IVdcQueryable implements BusinessEntity<Guid>, 
 
     public void setPortMirroring(boolean portMirroring) {
         this.portMirroring = portMirroring;
+    }
+
+    public boolean isPassthrough() {
+        return passthrough;
+    }
+
+    public void setPassthrough(boolean passthrough) {
+        this.passthrough = passthrough;
     }
 
     public Map<String, String> getCustomProperties() {
@@ -106,6 +115,7 @@ public class VnicProfile extends IVdcQueryable implements BusinessEntity<Guid>, 
         result = prime * result + ((getNetworkId() == null) ? 0 : getNetworkId().hashCode());
         result = prime * result + ((getNetworkQosId() == null) ? 0 : getNetworkQosId().hashCode());
         result = prime * result + (isPortMirroring() ? 1231 : 1237);
+        result = prime * result + (isPassthrough() ? 1231 : 1237);
         result = prime * result + ((getDescription() == null) ? 0 : getDescription().hashCode());
         return result;
     }
@@ -140,6 +150,9 @@ public class VnicProfile extends IVdcQueryable implements BusinessEntity<Guid>, 
         if (isPortMirroring() != other.isPortMirroring()) {
             return false;
         }
+        if (isPassthrough() != other.isPassthrough()) {
+            return false;
+        }
         if (!ObjectUtils.objectsEqual(getDescription(), other.getDescription())) {
             return false;
         }
@@ -158,6 +171,8 @@ public class VnicProfile extends IVdcQueryable implements BusinessEntity<Guid>, 
                 .append(getNetworkQosId())
                 .append(", portMirroring=")
                 .append(isPortMirroring())
+                .append(", passthrough=")
+                .append(isPassthrough())
                 .append(", customProperties=")
                 .append(getCustomProperties())
                 .append(", description=")

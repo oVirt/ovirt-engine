@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class VnicProfileDaoTest extends BaseDAOTestCase {
         vnicProfile.setNetworkId(FixturesTool.NETWORK_ENGINE);
         vnicProfile.setNetworkQosId(FixturesTool.NETWORK_QOS);
         vnicProfile.setPortMirroring(false);
+        vnicProfile.setPassthrough(false);
     }
 
     /**
@@ -52,6 +54,7 @@ public class VnicProfileDaoTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertEquals(FixturesTool.VM_NETWORK_INTERFACE_PROFILE, result.getId());
         assertEquals(false, result.isPortMirroring());
+        assertFalse(result.isPassthrough());
     }
 
     /**
@@ -64,6 +67,20 @@ public class VnicProfileDaoTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertEquals(FixturesTool.VM_NETWORK_INTERFACE_PM_PROFILE, result.getId());
         assertEquals(true, result.isPortMirroring());
+    }
+
+    /**
+     * Ensures that the network interface profile is returned.
+     */
+    @Test
+    public void testGetWithPassthrough() {
+        VnicProfile result = dao
+                .get(FixturesTool.VM_NETWORK_INTERFACE_PASSTHROUGH_PROFILE);
+
+        assertNotNull(result);
+        assertEquals(FixturesTool.VM_NETWORK_INTERFACE_PASSTHROUGH_PROFILE,
+                result.getId());
+        assertTrue(result.isPassthrough());
     }
 
     /**
@@ -120,6 +137,7 @@ public class VnicProfileDaoTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertEquals(vnicProfile.getId(), result.getId());
         assertEquals(false, result.isPortMirroring());
+        assertFalse(result.isPassthrough());
     }
 
     /**
@@ -129,11 +147,13 @@ public class VnicProfileDaoTest extends BaseDAOTestCase {
     public void testUpdate() {
         dao.save(vnicProfile);
         vnicProfile.setPortMirroring(true);
+        vnicProfile.setPassthrough(true);
         dao.update(vnicProfile);
         VnicProfile result = dao.get(vnicProfile.getId());
         assertNotNull(result);
         assertEquals(vnicProfile.getId(), result.getId());
         assertEquals(true, result.isPortMirroring());
+        assertTrue(result.isPassthrough());
     }
 
     /**

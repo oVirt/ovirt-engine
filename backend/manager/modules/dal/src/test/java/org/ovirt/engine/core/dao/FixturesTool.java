@@ -523,6 +523,7 @@ public class FixturesTool {
      * <li>name: engine_profile</li>
      * <li>network_id: 58d5c1c6-cb15-4832-b2a4-023770607188</li>
      * <li>port_mirroring: false</li>
+     * <li>passthrough: false</li>
      * </ul>
      */
     public static final Guid VM_NETWORK_INTERFACE_PROFILE = new Guid("fd81f1e1-785b-4579-ab75-1419ebb87052");
@@ -536,6 +537,9 @@ public class FixturesTool {
      * </ul>
      */
     public static final Guid VM_NETWORK_INTERFACE_PM_PROFILE = new Guid("a667da39-27b0-47ec-a5fa-d4293a62b222");
+
+    public static final Guid VM_NETWORK_INTERFACE_PASSTHROUGH_PROFILE =
+            new Guid("d0f2ca62-f564-447c-aa55-ce2aa12ea798");
 
     public static final Guid VM_NETWORK_INTERFACE_PROFILE_NOT_USED = new Guid("2b75e023-a1fb-4dcb-9738-0ec7fe2d51c6");
 

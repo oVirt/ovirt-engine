@@ -2268,6 +2268,7 @@ SELECT
     vnic_profiles.network_id AS network_id,
     vnic_profiles.network_qos_id AS network_qos_id,
     vnic_profiles.port_mirroring AS port_mirroring,
+    vnic_profiles.passthrough as passthrough,
     vnic_profiles.custom_properties AS custom_properties,
     vnic_profiles.description AS description,
     network.name AS network_name,

@@ -1596,6 +1596,7 @@
         <column>network_id</column>
         <column>network_qos_id</column>
         <column>port_mirroring</column>
+        <column>passthrough</column>
         <column>custom_properties</column>
         <column>description</column>
         <column>_create_date</column>
@@ -1605,6 +1606,7 @@
             <value>engine_profile</value>
             <value>58d5c1c6-cb15-4832-b2a4-023770607188</value>
             <value>de956031-6be2-43d6-bb90-5191c9253314</value>
+            <value>false</value>
             <value>false</value>
             <value>{ "prop1" : "true", "prop2" : "123456" }</value>
             <value>vnic profile description</value>
@@ -1617,6 +1619,7 @@
             <value>58d5c1c6-cb15-4832-b2a4-023770607188</value>
             <value>de956031-6be2-43d6-bb90-5191c9253315</value>
             <value>true</value>
+            <value>false</value>
             <null />
             <null />
             <value>2013-07-02 08:38:36</value>
@@ -1628,6 +1631,7 @@
             <value>58d5c1c6-cb15-4832-b2a4-023770607189</value>
             <null />
             <value>false</value>
+            <value>true</value>
             <value>{ "prop1" : "true", "prop2" : "123456" }</value>
             <value>2013-07-02 08:38:36</value>
             <value>2013-07-02 08:38:36</value>
@@ -1638,6 +1642,7 @@
             <value>58d5c1c6-cb15-4832-b2a4-023770607190</value>
             <null />
             <value>false</value>
+            <value>false</value>
             <value>{ "prop1" : "true" }</value>
             <value>2013-07-02 08:38:36</value>
             <value>2013-07-02 08:38:36</value>
@@ -1647,6 +1652,7 @@
             <value>engine4_profile</value>
             <value>58d5c1c6-cb15-4832-b2a4-023770607191</value>
             <value>de956031-6be2-43d6-bb90-5191c9253314</value>
+            <value>false</value>
             <value>false</value>
             <value>{}</value>
             <value>2013-07-02 08:38:36</value>

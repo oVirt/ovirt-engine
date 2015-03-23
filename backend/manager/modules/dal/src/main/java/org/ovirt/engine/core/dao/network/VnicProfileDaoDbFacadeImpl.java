@@ -32,6 +32,7 @@ public class VnicProfileDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<VnicPr
                 .addValue("network_id", profile.getNetworkId())
                 .addValue("network_qos_id", profile.getNetworkQosId())
                 .addValue("port_mirroring", profile.isPortMirroring())
+                .addValue("passthrough", profile.isPassthrough())
                 .addValue("description", profile.getDescription())
                 .addValue("custom_properties",
                         SerializationFactory.getSerializer().serialize(profile.getCustomProperties()));
@@ -60,6 +61,7 @@ public class VnicProfileDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<VnicPr
             entity.setCustomProperties(SerializationFactory.getDeserializer()
                     .deserializeOrCreateNew(rs.getString("custom_properties"), LinkedHashMap.class));
             entity.setPortMirroring(rs.getBoolean("port_mirroring"));
+            entity.setPassthrough(rs.getBoolean("passthrough"));
             entity.setDescription(rs.getString("description"));
             return entity;
         }
