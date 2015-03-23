@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VdcOption;
 
 public class VdcOptionDAOTest extends BaseDAOTestCase {
+    private static final int INVALID_ID = -1;
     private static final int OPTION_COUNT = 8;
     private VdcOptionDAO dao;
     private VdcOption existingOption;
@@ -35,7 +36,7 @@ public class VdcOptionDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        VdcOption result = dao.get(717);
+        VdcOption result = dao.get(INVALID_ID);
 
         assertNull(result);
     }
