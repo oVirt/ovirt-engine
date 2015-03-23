@@ -16,7 +16,6 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntityWithSt
         staticData = new StorageDomainStatic();
         dynamicData = new StorageDomainDynamic();
         setStoragePoolIsoMapData(new StoragePoolIsoMap());
-        totalDiskSize = 0;
         storageDomainSharedStatus = StorageDomainSharedStatus.Unattached;
     }
 

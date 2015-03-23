@@ -7,7 +7,7 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
     private static final long serialVersionUID = -5305319985243261293L;
 
     public StorageDomainDynamic() {
-        this (0, Guid.Empty, 0);
+        this (null, Guid.Empty, null);
     }
 
     public StorageDomainDynamic(Integer availableDiskSize, Guid id, Integer usedDiskSize) {
