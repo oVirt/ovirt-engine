@@ -1439,6 +1439,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Direct LUN")
     String lunDisksLabel();
 
+    @DefaultStringValue("Cinder")
+    String cinderDisksLabel();
+
     @DefaultStringValue("Current")
     String currentQuota();
 

@@ -18,6 +18,7 @@ public class DisksViewRadioGroup extends Composite {
     RadioButton allButton;
     RadioButton imagesButton;
     RadioButton lunsButton;
+    RadioButton cinderButton;
 
     public DisksViewRadioGroup() {
         initWidget(getRadioGroupPanel());
@@ -27,10 +28,12 @@ public class DisksViewRadioGroup extends Composite {
         allButton = new RadioButton("diskTypeView"); //$NON-NLS-1$
         imagesButton = new RadioButton("diskTypeView"); //$NON-NLS-1$
         lunsButton = new RadioButton("diskTypeView"); //$NON-NLS-1$
+        cinderButton = new RadioButton("diskTypeView"); //$NON-NLS-1$
 
         allButton.getElement().getStyle().setMarginRight(20, Unit.PX);
         imagesButton.getElement().getStyle().setMarginRight(20, Unit.PX);
         lunsButton.getElement().getStyle().setMarginRight(20, Unit.PX);
+        cinderButton.getElement().getStyle().setMarginRight(20, Unit.PX);
 
         FlowPanel buttonsPanel = new FlowPanel();
         buttonsPanel.getElement().getStyle().setProperty("marginLeft", "auto"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -38,6 +41,7 @@ public class DisksViewRadioGroup extends Composite {
         buttonsPanel.add(allButton);
         buttonsPanel.add(imagesButton);
         buttonsPanel.add(lunsButton);
+        buttonsPanel.add(cinderButton);
 
         setDiskStorageType(null);
         localize();
@@ -49,12 +53,14 @@ public class DisksViewRadioGroup extends Composite {
         allButton.addClickHandler(clickHandler);
         imagesButton.addClickHandler(clickHandler);
         lunsButton.addClickHandler(clickHandler);
+        cinderButton.addClickHandler(clickHandler);
     }
 
     void localize() {
         allButton.setText(constants.allDisksLabel());
         imagesButton.setText(constants.imageDisksLabel());
         lunsButton.setText(constants.lunDisksLabel());
+        cinderButton.setText(constants.cinderDisksLabel());
     }
 
     public RadioButton getAllButton() {
@@ -69,15 +75,21 @@ public class DisksViewRadioGroup extends Composite {
         return lunsButton;
     }
 
+    public RadioButton getCinderButton() {
+        return cinderButton;
+    }
+
     public DiskStorageType getDiskStorageType() {
         return imagesButton.getValue() ? DiskStorageType.IMAGE :
-                lunsButton.getValue() ? DiskStorageType.LUN : null;
+                lunsButton.getValue() ? DiskStorageType.LUN :
+                        cinderButton.getValue() ? DiskStorageType.CINDER : null;
     }
 
     public void setDiskStorageType(DiskStorageType diskStorageType) {
         allButton.setValue(diskStorageType == null);
         imagesButton.setValue(diskStorageType == DiskStorageType.IMAGE);
         lunsButton.setValue(diskStorageType == DiskStorageType.LUN);
+        cinderButton.setValue(diskStorageType == DiskStorageType.CINDER);
     }
 
 }

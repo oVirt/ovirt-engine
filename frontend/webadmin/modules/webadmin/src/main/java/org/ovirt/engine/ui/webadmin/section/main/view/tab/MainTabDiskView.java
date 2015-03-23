@@ -124,28 +124,29 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         boolean all = disksViewRadioGroup.getAllButton().getValue();
         boolean images = disksViewRadioGroup.getImagesButton().getValue();
         boolean luns = disksViewRadioGroup.getLunsButton().getValue();
+        boolean cinder = disksViewRadioGroup.getCinderButton().getValue();
 
         searchByDiskViewType(disksViewRadioGroup.getDiskStorageType());
 
         getTable().ensureColumnPresent(
-                aliasColumn, constants.aliasDisk(), all || images || luns,
+                aliasColumn, constants.aliasDisk(), all || images || luns || cinder,
                 "120px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                idColumn, constants.idDisk(), all || images || luns,
+                idColumn, constants.idDisk(), all || images || luns || cinder,
                 "120px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.bootableDiskColumn,
                 new ImageResourceHeader(DisksViewColumns.bootableDiskColumn.getDefaultImage(),
                         SafeHtmlUtils.fromSafeConstant(constants.bootableDisk())),
-                all || images || luns, "30px"); //$NON-NLS-1$
+                all || images || luns || cinder, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.shareableDiskColumn,
                 new ImageResourceHeader(DisksViewColumns.shareableDiskColumn.getDefaultImage(),
                         SafeHtmlUtils.fromSafeConstant(constants.shareable())),
-                all || images || luns, "30px"); //$NON-NLS-1$
+                all || images || luns || cinder, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.lunDiskColumn,
@@ -154,19 +155,19 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
                 all, "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.diskContainersIconColumn, "", all || images || luns, //$NON-NLS-1$
+                DisksViewColumns.diskContainersIconColumn, "", all || images || luns || cinder, //$NON-NLS-1$
                 "30px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.diskContainersColumn, constants.attachedToDisk(), all || images || luns,
+                DisksViewColumns.diskContainersColumn, constants.attachedToDisk(), all || images || luns || cinder,
                 "125px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.storageDomainsColumn, constants.storageDomainsDisk(), images,
+                DisksViewColumns.storageDomainsColumn, constants.storageDomainsDisk(), images || cinder,
                 "180px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                sizeColumn, constants.provisionedSizeDisk(), all || images || luns,
+                sizeColumn, constants.provisionedSizeDisk(), all || images || luns || cinder,
                 "110px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
@@ -174,11 +175,11 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
                 "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                dateCreatedColumn, constants.creationDateDisk(), images,
+                dateCreatedColumn, constants.creationDateDisk(), images || cinder,
                 "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                statusColumn, constants.statusDisk(), images,
+                statusColumn, constants.statusDisk(), images || cinder,
                 "80px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
@@ -201,7 +202,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
                 qoutaColumn, constants.quotaDisk(), images && isQuotaVisible, "120px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                descriptionColumn, constants.descriptionDisk(), all || images || luns,
+                descriptionColumn, constants.descriptionDisk(), all || images || luns || cinder,
                 "90px"); //$NON-NLS-1$
     }
 
