@@ -107,8 +107,8 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         StorageSizeColumn<StorageDomain> totalSpaceColumn = new StorageSizeColumn<StorageDomain>() {
             @Override
             public Long getRawValue(StorageDomain object) {
-                long totalSpace = object.getTotalDiskSize() != null ? object.getTotalDiskSize() : 0;
-                return (long) totalSpace;
+                Integer totalSpace = object.getTotalDiskSize();
+                return totalSpace == null ? null : Long.valueOf(totalSpace);
             }
         };
         getTable().addColumn(totalSpaceColumn, constants.totalSpaceStorage(), "130px"); //$NON-NLS-1$
@@ -116,8 +116,8 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         StorageSizeColumn<StorageDomain> freeSpaceColumn = new StorageSizeColumn<StorageDomain>() {
             @Override
             public Long getRawValue(StorageDomain object) {
-                long availableDiskSize = object.getAvailableDiskSize() != null ? object.getAvailableDiskSize() : 0;
-                return (long) availableDiskSize;
+                Integer availableDiskSize = object.getAvailableDiskSize();
+                return availableDiskSize == null ? null : Long.valueOf(availableDiskSize);
             }
         };
         freeSpaceColumn.makeSortable(StorageDomainFieldAutoCompleter.SIZE);

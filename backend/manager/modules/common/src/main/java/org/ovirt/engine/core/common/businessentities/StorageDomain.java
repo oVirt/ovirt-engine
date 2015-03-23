@@ -202,7 +202,7 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntityWithSt
         if (available != null && used != null) {
             setTotalDiskSize(available + used);
         } else {
-            setTotalDiskSize(0); // GREGM prevents NPEs
+            setTotalDiskSize(null);
         }
     }
 
@@ -214,10 +214,7 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntityWithSt
     }
 
     public void setTotalDiskSize(Integer value) {
-        value = (value == null) ? Integer.valueOf(0) : value;
-        if (!totalDiskSize.equals(value)) {
-            totalDiskSize = value;
-        }
+        totalDiskSize = value;
     }
 
     @Override
