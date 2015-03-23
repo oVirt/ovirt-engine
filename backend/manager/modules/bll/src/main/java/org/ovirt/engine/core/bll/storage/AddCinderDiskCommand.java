@@ -5,10 +5,7 @@ import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
-import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -16,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.storage.ImageStorageDomainM
 import org.ovirt.engine.core.common.businessentities.storage.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.storage.VolumeType;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -71,13 +67,7 @@ public class AddCinderDiskCommand<T extends AddDiskParameters> extends AddDiskCo
                 getDiskImageDynamicDao().save(diskDynamic);
 
                 if (getVm() != null) {
-                    VmDeviceUtils.addManagedDevice(new VmDeviceId(cinderDisk.getId(), getVmId()),
-                            VmDeviceGeneralType.DISK,
-                            VmDeviceType.DISK,
-                            null,
-                            shouldDiskBePlugged(),
-                            Boolean.TRUE.equals(cinderDisk.getReadOnly()),
-                            null);
+                    addManagedDeviceForDisk(cinderDisk.getId());
                 }
                 return null;
             }

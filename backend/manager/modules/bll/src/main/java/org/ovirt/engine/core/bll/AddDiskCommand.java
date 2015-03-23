@@ -39,6 +39,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
@@ -408,13 +409,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 getBaseDiskDao().save(getParameters().getDiskInfo());
                 getDiskLunMapDao().save(new DiskLunMap(getParameters().getDiskInfo().getId(), lun.getLUN_id()));
                 if (getVm() != null) {
-                    VmDeviceUtils.addManagedDevice(new VmDeviceId(getParameters().getDiskInfo().getId(), getVmId()),
-                            VmDeviceGeneralType.DISK,
-                            VmDeviceType.DISK,
-                            null,
-                            shouldDiskBePlugged(),
-                            Boolean.TRUE.equals(getParameters().getDiskInfo().getReadOnly()),
-                            null);
+                    addManagedDeviceForDisk(getParameters().getDiskInfo().getId());
                 }
                 return null;
             }
@@ -422,6 +417,16 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         getReturnValue().setActionReturnValue(getParameters().getDiskInfo().getId());
         plugDiskToVmIfNeeded();
         setSucceeded(true);
+    }
+
+    protected VmDevice addManagedDeviceForDisk(Guid diskId) {
+        return VmDeviceUtils.addManagedDevice(new VmDeviceId(diskId, getVmId()),
+                VmDeviceGeneralType.DISK,
+                VmDeviceType.DISK,
+                null,
+                shouldDiskBePlugged(),
+                Boolean.TRUE.equals(getParameters().getDiskInfo().getReadOnly()),
+                null);
     }
 
     protected boolean shouldDiskBePlugged() {
@@ -466,15 +471,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         taskList.addAll(tmpRetValue.getInternalVdsmTaskIdList());
 
         if (getVm() != null) {
-            getCompensationContext().snapshotNewEntity(VmDeviceUtils.addManagedDevice(new VmDeviceId(getParameters().getDiskInfo()
-                            .getId(),
-                            getVmId()),
-                    VmDeviceGeneralType.DISK,
-                    VmDeviceType.DISK,
-                    null,
-                    shouldDiskBePlugged(),
-                    Boolean.TRUE.equals(getParameters().getDiskInfo().getReadOnly()),
-                    null));
+            getCompensationContext().snapshotNewEntity(addManagedDeviceForDisk(getParameters().getDiskInfo().getId()));
             getCompensationContext().stateChanged();
         }
 
