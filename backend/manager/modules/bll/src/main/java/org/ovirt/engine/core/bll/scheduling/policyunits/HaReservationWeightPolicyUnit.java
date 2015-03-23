@@ -65,7 +65,7 @@ public class HaReservationWeightPolicyUnit extends PolicyUnitImpl {
                 if (hostId2HaVmMapping.containsKey(host.getId())) {
                     count = hostId2HaVmMapping.get(host.getId()).size();
                 }
-                maxCount = (maxCount < count) ? count : maxCount;
+                maxCount = Math.max(maxCount, count);
                 hostsHaVmCount.put(host.getId(), count);
             }
 
