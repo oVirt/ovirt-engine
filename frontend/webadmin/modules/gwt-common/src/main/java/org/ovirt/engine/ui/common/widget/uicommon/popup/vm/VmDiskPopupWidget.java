@@ -109,6 +109,11 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     ListModelListBoxEditor<VolumeType> volumeTypeEditor;
 
     @UiField(provided = true)
+    @Path("cinderVolumeType.selectedItem")
+    @WithElementId("cinderVolumeType")
+    ListModelListBoxEditor<String> cinderVolumeTypeEditor;
+
+    @UiField(provided = true)
     @Path("diskProfile.selectedItem")
     @WithElementId("diskProfile")
     ListModelListBoxEditor<DiskProfile> diskProfileEditor;
@@ -221,6 +226,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         diskProfileEditor.setLabel(constants.diskProfileVmDiskPopup());
         interfaceEditor.setLabel(constants.interfaceVmDiskPopup());
         volumeTypeEditor.setLabel(constants.allocationDisk());
+        cinderVolumeTypeEditor.setLabel(constants.cinderVolumeTypeDisk());
         storageTypeEditor.setLabel(constants.storageTypeVmDiskPopup());
         plugDiskToVmEditor.setLabel(constants.activateVmDiskPopup());
         wipeAfterDeleteEditor.setLabel(constants.wipeAfterDeleteVmDiskPopup());
@@ -244,6 +250,8 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         interfaceEditor = new ListModelListBoxEditor<>(new EnumRenderer());
 
         datacenterEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
+
+        cinderVolumeTypeEditor = new ListModelListBoxEditor<>();
 
         volumeTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer());
         storageTypeEditor = new ListModelListBoxEditor<>(new EnumRenderer());
@@ -464,6 +472,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         datacenterEditor.setTabIndex(nextTabIndex++);
         storageDomainEditor.setTabIndex(nextTabIndex++);
         volumeTypeEditor.setTabIndex(nextTabIndex++);
+        cinderVolumeTypeEditor.setTabIndex(nextTabIndex++);
         diskProfileEditor.setTabIndex(nextTabIndex++);
         quotaEditor.setTabIndex(nextTabIndex++);
         hostListEditor.setTabIndex(nextTabIndex++);

@@ -993,6 +993,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Allocation Policy")
     String allocationDisk();
 
+    @DefaultStringValue("Volume Type")
+    String cinderVolumeTypeDisk();
+
     @DefaultStringValue("Interface")
     String interfaceDisk();
 
