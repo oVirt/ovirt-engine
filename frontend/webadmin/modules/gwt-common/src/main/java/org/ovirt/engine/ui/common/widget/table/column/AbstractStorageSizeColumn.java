@@ -6,12 +6,6 @@ import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
 public abstract class AbstractStorageSizeColumn<T> extends AbstractSizeColumn<T> {
 
     public AbstractStorageSizeColumn() {
-        super(new DiskSizeRenderer<Long>(SizeConverter.SizeUnit.GB) {
-            @Override
-            protected boolean isUnavailable(Long size) {
-                return size == null || size.longValue() == 0;
-            }
-        });
+        super(new DiskSizeRenderer<Long>(SizeConverter.SizeUnit.GB));
     }
-
 }

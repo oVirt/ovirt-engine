@@ -70,7 +70,7 @@ BEGIN
 
     -- Adding a proper storage domain dynamic entry
     insert into storage_domain_dynamic(id, available_disk_size, used_disk_size)
-    select v_storage_domain_id, 0, 0
+    select v_storage_domain_id, NULL, NULL
     where not exists (select id from storage_domain_dynamic where id = v_storage_domain_id);
 
 END; $procedure$

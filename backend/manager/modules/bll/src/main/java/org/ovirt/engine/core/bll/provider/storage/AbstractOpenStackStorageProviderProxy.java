@@ -98,8 +98,8 @@ public abstract class AbstractOpenStackStorageProviderProxy<C extends OpenStackC
         // Storage domain dynamic
         StorageDomainDynamic domainDynamicEntry = new StorageDomainDynamic();
         domainDynamicEntry.setId(domainStaticEntry.getId());
-        domainDynamicEntry.setAvailableDiskSize(0);
-        domainDynamicEntry.setUsedDiskSize(0);
+        domainDynamicEntry.setAvailableDiskSize(null);
+        domainDynamicEntry.setUsedDiskSize(null);
         getDbFacade().getStorageDomainDynamicDao().save(domainDynamicEntry);
         return domainStaticEntry.getId();
     }
