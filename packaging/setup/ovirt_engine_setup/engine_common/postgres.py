@@ -32,6 +32,8 @@ from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.engine_common import database
 
+DEK = oengcommcons.DBEnvKeysConst
+
 
 def _(m):
     return gettext.dgettext(message=m, domain='ovirt-engine-setup')
@@ -100,7 +102,7 @@ class Provisioning(base.Base):
             """,
             args=dict(
                 database=self.environment[
-                    self._dbenvkeys['database']
+                    self._dbenvkeys[DEK.DATABASE]
                 ],
             ),
             ownConnection=True,
@@ -114,7 +116,7 @@ class Provisioning(base.Base):
             """,
             args=dict(
                 user=self.environment[
-                    self._dbenvkeys['user']
+                    self._dbenvkeys[DEK.USER]
                 ],
             ),
             ownConnection=True,
@@ -132,7 +134,7 @@ class Provisioning(base.Base):
             )
             if dbovirtutils.isNewDatabase(
                 database=self.environment[
-                    self._dbenvkeys['database']
+                    self._dbenvkeys[DEK.DATABASE]
                 ],
             ):
                 self.logger.debug('Found empty database')
@@ -144,8 +146,8 @@ class Provisioning(base.Base):
         if generate:
             self.logger.debug('Existing resources found, generating names')
             suffix = '_%s' % datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-            self.environment[self._dbenvkeys['database']] += suffix
-            self.environment[self._dbenvkeys['user']] += suffix
+            self.environment[self._dbenvkeys[DEK.DATABASE]] += suffix
+            self.environment[self._dbenvkeys[DEK.USER]] += suffix
             self._renamedDBResources = True
 
         return existing
@@ -166,7 +168,7 @@ class Provisioning(base.Base):
             ).format(
                 op=op,
                 user=self.environment[
-                    self._dbenvkeys['user']
+                    self._dbenvkeys[DEK.USER]
                 ],
             ),
 
@@ -180,10 +182,10 @@ class Provisioning(base.Base):
                 op=op,
                 to='to' if op == 'alter' else '',
                 database=self.environment[
-                    self._dbenvkeys['database']
+                    self._dbenvkeys[DEK.DATABASE]
                 ],
                 user=self.environment[
-                    self._dbenvkeys['user']
+                    self._dbenvkeys[DEK.USER]
                 ],
                 encoding="""
                     template template0
@@ -203,7 +205,7 @@ class Provisioning(base.Base):
                 statement=statement,
                 args=dict(
                     password=self.environment[
-                        self._dbenvkeys['password']
+                        self._dbenvkeys[DEK.PASSWORD]
                     ],
                 ),
                 ownConnection=True,
@@ -328,10 +330,10 @@ class Provisioning(base.Base):
             ).format(
                 host='host',
                 user=self.environment[
-                    self._dbenvkeys['user']
+                    self._dbenvkeys[DEK.USER]
                 ],
                 database=self.environment[
-                    self._dbenvkeys['database']
+                    self._dbenvkeys[DEK.DATABASE]
                 ],
                 address=address,
                 auth='md5',
@@ -445,12 +447,12 @@ class Provisioning(base.Base):
         return ''.join([rand.choice(self._PASSWORD_CHARS) for i in range(22)])
 
     def applyEnvironment(self):
-        for k in ('user', 'database', 'port', 'secured', 'hostValidation'):
+        for k in DEK.DEFAULTS_KEYS:
             if self.environment[self._dbenvkeys[k]] is None:
                 self.environment[self._dbenvkeys[k]] = self._defaults[k]
-        if self.environment[self._dbenvkeys['password']] is None:
+        if self.environment[self._dbenvkeys[DEK.PASSWORD]] is None:
             self.environment[
-                self._dbenvkeys['password']
+                self._dbenvkeys[DEK.PASSWORD]
             ] = self.generatePassword()
 
     def provision(self):
@@ -466,7 +468,7 @@ class Provisioning(base.Base):
 
         self.logger.info(
             _("Creating PostgreSQL '{database}' database").format(
-                database=self.environment[self._dbenvkeys['database']],
+                database=self.environment[self._dbenvkeys[DEK.DATABASE]],
             )
         )
         localtransaction = transaction.Transaction()
@@ -485,13 +487,13 @@ class Provisioning(base.Base):
                 ],
             ):
                 usockenv = {
-                    self._dbenvkeys['host']: '',  # usock
-                    self._dbenvkeys['port']: '',
-                    self._dbenvkeys['secured']: False,
-                    self._dbenvkeys['hostValidation']: False,
-                    self._dbenvkeys['user']: 'postgres',
-                    self._dbenvkeys['password']: '',
-                    self._dbenvkeys['database']: 'template1',
+                    self._dbenvkeys[DEK.HOST]: '',  # usock
+                    self._dbenvkeys[DEK.PORT]: '',
+                    self._dbenvkeys[DEK.SECURED]: False,
+                    self._dbenvkeys[DEK.HOST_VALIDATION]: False,
+                    self._dbenvkeys[DEK.USER]: 'postgres',
+                    self._dbenvkeys[DEK.PASSWORD]: '',
+                    self._dbenvkeys[DEK.DATABASE]: 'template1',
                 }
                 self._waitForDatabase(
                     environment=usockenv,

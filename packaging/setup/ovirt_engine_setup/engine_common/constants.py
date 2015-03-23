@@ -193,6 +193,43 @@ class Stages(object):
 @util.export
 @util.codegen
 @osetupattrsclass
+class DBEnvKeysConst(object):
+    HOST = 'host'
+    PORT = 'port'
+    SECURED = 'secured'
+    HOST_VALIDATION = 'hostValidation'
+    USER = 'user'
+    PASSWORD = 'password'
+    DATABASE = 'database'
+    CONNECTION = 'connection'
+    PGPASSFILE = 'pgpassfile'
+    NEW_DATABASE = 'newDatabase'
+
+    REQUIRED_KEYS = (
+        HOST,
+        PORT,
+        SECURED,
+        HOST_VALIDATION,
+        USER,
+        PASSWORD,
+        DATABASE,
+        CONNECTION,
+        PGPASSFILE,
+        NEW_DATABASE,
+    )
+
+    DEFAULTS_KEYS = (
+        USER,
+        DATABASE,
+        PORT,
+        SECURED,
+        HOST_VALIDATION,
+    )
+
+
+@util.export
+@util.codegen
+@osetupattrsclass
 class SystemEnv(object):
 
     USER_APACHE = 'OVESETUP_SYSTEM/userApache'

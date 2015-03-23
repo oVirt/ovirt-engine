@@ -31,6 +31,7 @@ from ovirt_engine import util as outil
 from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup import dialog
 from ovirt_engine_setup.engine_common import constants as oengcommcons
+DEK = oengcommcons.DBEnvKeysConst
 
 
 def _(m):
@@ -51,6 +52,12 @@ class Statement(base.Base):
     ):
         super(Statement, self).__init__()
         self._environment = environment
+        if not set(DEK.REQUIRED_KEYS) <= set(dbenvkeys.keys()):
+            raise RuntimeError(
+                _('Missing required db env keys: {keys}').format(
+                    keys=list(set(DEK.REQUIRED_KEYS) - set(dbenvkeys.keys())),
+                )
+            )
         self._dbenvkeys = dbenvkeys
 
     def connect(
@@ -64,21 +71,21 @@ class Statement(base.Base):
         database=None,
     ):
         if host is None:
-            host = self.environment[self._dbenvkeys['host']]
+            host = self.environment[self._dbenvkeys[DEK.HOST]]
         if port is None:
-            port = self.environment[self._dbenvkeys['port']]
+            port = self.environment[self._dbenvkeys[DEK.PORT]]
         if secured is None:
-            secured = self.environment[self._dbenvkeys['secured']]
+            secured = self.environment[self._dbenvkeys[DEK.SECURED]]
         if securedHostValidation is None:
             securedHostValidation = self.environment[
-                self._dbenvkeys['hostValidation']
+                self._dbenvkeys[DEK.HOST_VALIDATION]
             ]
         if user is None:
-            user = self.environment[self._dbenvkeys['user']]
+            user = self.environment[self._dbenvkeys[DEK.USER]]
         if password is None:
-            password = self.environment[self._dbenvkeys['password']]
+            password = self.environment[self._dbenvkeys[DEK.PASSWORD]]
         if database is None:
-            database = self.environment[self._dbenvkeys['database']]
+            database = self.environment[self._dbenvkeys[DEK.DATABASE]]
 
         sslmode = 'allow'
         if secured:
@@ -162,7 +169,7 @@ class Statement(base.Base):
                 args,
             )
             if not ownConnection:
-                connection = self.environment[self._dbenvkeys['connection']]
+                connection = self.environment[self._dbenvkeys[DEK.CONNECTION]]
             else:
                 self.logger.debug('Creating own connection')
 
@@ -243,6 +250,12 @@ class OvirtUtils(base.Base):
             if environment is None
             else environment
         )
+        if not set(DEK.REQUIRED_KEYS) <= set(dbenvkeys.keys()):
+            raise RuntimeError(
+                _('Missing required db env keys: {keys}').format(
+                    keys=list(set(DEK.REQUIRED_KEYS) - set(dbenvkeys.keys())),
+                )
+            )
         self._dbenvkeys = dbenvkeys
 
     def detectCommands(self):
@@ -277,21 +290,21 @@ class OvirtUtils(base.Base):
                     '# DB USER credentials.\n'
                     '{host}:{port}:{database}:{user}:{password}\n'
                 ).format(
-                    host=self.environment[self._dbenvkeys['host']],
-                    port=self.environment[self._dbenvkeys['port']],
-                    database=self.environment[self._dbenvkeys['database']],
-                    user=self.environment[self._dbenvkeys['user']],
+                    host=self.environment[self._dbenvkeys[DEK.HOST]],
+                    port=self.environment[self._dbenvkeys[DEK.PORT]],
+                    database=self.environment[self._dbenvkeys[DEK.DATABASE]],
+                    user=self.environment[self._dbenvkeys[DEK.USER]],
                     password=(
-                        self.environment[self._dbenvkeys['password']]
+                        self.environment[self._dbenvkeys[DEK.PASSWORD]]
                         if type(self)._plainPassword
                         else outil.escape(
-                            self.environment[self._dbenvkeys['password']],
+                            self.environment[self._dbenvkeys[DEK.PASSWORD]],
                             ':\\',
                         )
                     ),
                 ),
             )
-        self.environment[self._dbenvkeys['pgpassfile']] = pgpass
+        self.environment[self._dbenvkeys[DEK.PGPASSFILE]] = pgpass
 
     def tryDatabaseConnect(self, environment=None):
 
@@ -538,8 +551,8 @@ class OvirtUtils(base.Base):
 
         self.logger.info(
             _("Backing up database {host}:{database} to '{file}'.").format(
-                host=self.environment[self._dbenvkeys['host']],
-                database=self.environment[self._dbenvkeys['database']],
+                host=self.environment[self._dbenvkeys[DEK.HOST]],
+                database=self.environment[self._dbenvkeys[DEK.DATABASE]],
                 file=backupFile,
             )
         )
@@ -550,15 +563,17 @@ class OvirtUtils(base.Base):
                 '--disable-dollar-quoting',
                 '--disable-triggers',
                 '--format=c',
-                '-U', self.environment[self._dbenvkeys['user']],
-                '-h', self.environment[self._dbenvkeys['host']],
-                '-p', str(self.environment[self._dbenvkeys['port']]),
+                '-U', self.environment[self._dbenvkeys[DEK.USER]],
+                '-h', self.environment[self._dbenvkeys[DEK.HOST]],
+                '-p', str(self.environment[self._dbenvkeys[DEK.PORT]]),
                 '-f', backupFile,
-                self.environment[self._dbenvkeys['database']],
+                self.environment[self._dbenvkeys[DEK.DATABASE]],
             ),
             envAppend={
                 'PGPASSWORD': '',
-                'PGPASSFILE': self.environment[self._dbenvkeys['pgpassfile']],
+                'PGPASSFILE': self.environment[
+                    self._dbenvkeys[DEK.PGPASSFILE]
+                ],
             },
         )
 
@@ -598,16 +613,18 @@ class OvirtUtils(base.Base):
             (
                 self.command.get('pg_restore'),
                 '-w',
-                '-h', self.environment[self._dbenvkeys['host']],
-                '-p', str(self.environment[self._dbenvkeys['port']]),
-                '-U', self.environment[self._dbenvkeys['user']],
-                '-d', self.environment[self._dbenvkeys['database']],
+                '-h', self.environment[self._dbenvkeys[DEK.HOST]],
+                '-p', str(self.environment[self._dbenvkeys[DEK.PORT]]),
+                '-U', self.environment[self._dbenvkeys[DEK.USER]],
+                '-d', self.environment[self._dbenvkeys[DEK.DATABASE]],
                 '-j', '2',
                 backupFile,
             ),
             envAppend={
                 'PGPASSWORD': '',
-                'PGPASSFILE': self.environment[self._dbenvkeys['pgpassfile']],
+                'PGPASSFILE': self.environment[
+                    self._dbenvkeys[DEK.PGPASSFILE]
+                ],
             },
             raiseOnError=False,
         )
@@ -622,7 +639,7 @@ class OvirtUtils(base.Base):
                         'Errors while restoring {name} database, please check '
                         'the log file for details'
                     ).format(
-                        name=self.environment[self._dbenvkeys['database']],
+                        name=self.environment[self._dbenvkeys[DEK.DATABASE]],
                     )
                 )
                 self.logger.debug(
@@ -784,11 +801,11 @@ class OvirtUtils(base.Base):
         credsfile=None,
     ):
         interactive = None in (
-            self.environment[self._dbenvkeys['host']],
-            self.environment[self._dbenvkeys['port']],
-            self.environment[self._dbenvkeys['database']],
-            self.environment[self._dbenvkeys['user']],
-            self.environment[self._dbenvkeys['password']],
+            self.environment[self._dbenvkeys[DEK.HOST]],
+            self.environment[self._dbenvkeys[DEK.PORT]],
+            self.environment[self._dbenvkeys[DEK.DATABASE]],
+            self.environment[self._dbenvkeys[DEK.USER]],
+            self.environment[self._dbenvkeys[DEK.PASSWORD]],
         )
 
         if interactive:
@@ -825,22 +842,22 @@ class OvirtUtils(base.Base):
                         "Make sure that database can be accessed remotely.\n"
                         "\n"
                     ).format(
-                        user=defaultdbenvkeys['user'],
-                        database=defaultdbenvkeys['database'],
+                        user=defaultdbenvkeys[DEK.USER],
+                        database=defaultdbenvkeys[DEK.DATABASE],
                     ),
                 )
 
         connectionValid = False
         while not connectionValid:
-            host = self.environment[self._dbenvkeys['host']]
-            port = self.environment[self._dbenvkeys['port']]
-            secured = self.environment[self._dbenvkeys['secured']]
+            host = self.environment[self._dbenvkeys[DEK.HOST]]
+            port = self.environment[self._dbenvkeys[DEK.PORT]]
+            secured = self.environment[self._dbenvkeys[DEK.SECURED]]
             securedHostValidation = self.environment[
-                self._dbenvkeys['hostValidation']
+                self._dbenvkeys[DEK.HOST_VALIDATION]
             ]
-            db = self.environment[self._dbenvkeys['database']]
-            user = self.environment[self._dbenvkeys['user']]
-            password = self.environment[self._dbenvkeys['password']]
+            db = self.environment[self._dbenvkeys[DEK.DATABASE]]
+            user = self.environment[self._dbenvkeys[DEK.USER]]
+            password = self.environment[self._dbenvkeys[DEK.PASSWORD]]
 
             if host is None:
                 while True:
@@ -852,7 +869,7 @@ class OvirtUtils(base.Base):
                             name=name,
                         ),
                         prompt=True,
-                        default=defaultdbenvkeys['host'],
+                        default=defaultdbenvkeys[DEK.HOST],
                     )
                     try:
                         socket.getaddrinfo(host, None)
@@ -876,7 +893,7 @@ class OvirtUtils(base.Base):
                                     name=name,
                                 ),
                                 prompt=True,
-                                default=defaultdbenvkeys['port'],
+                                default=defaultdbenvkeys[DEK.PORT],
                             )
                         )
                         break  # do while missing in python
@@ -894,7 +911,7 @@ class OvirtUtils(base.Base):
                         name=name,
                     ),
                     prompt=True,
-                    default=defaultdbenvkeys['secured'],
+                    default=defaultdbenvkeys[DEK.SECURED],
                 )
 
             if not secured:
@@ -925,7 +942,7 @@ class OvirtUtils(base.Base):
                         name=name,
                     ),
                     prompt=True,
-                    default=defaultdbenvkeys['database'],
+                    default=defaultdbenvkeys[DEK.DATABASE],
                 )
 
             if user is None:
@@ -937,7 +954,7 @@ class OvirtUtils(base.Base):
                         name=name,
                     ),
                     prompt=True,
-                    default=defaultdbenvkeys['user'],
+                    default=defaultdbenvkeys[DEK.USER],
                 )
 
             if password is None:
@@ -953,13 +970,13 @@ class OvirtUtils(base.Base):
                 )
 
             dbenv = {
-                self._dbenvkeys['host']: host,
-                self._dbenvkeys['port']: port,
-                self._dbenvkeys['secured']: secured,
-                self._dbenvkeys['hostValidation']: securedHostValidation,
-                self._dbenvkeys['user']: user,
-                self._dbenvkeys['password']: password,
-                self._dbenvkeys['database']: db,
+                self._dbenvkeys[DEK.HOST]: host,
+                self._dbenvkeys[DEK.PORT]: port,
+                self._dbenvkeys[DEK.SECURED]: secured,
+                self._dbenvkeys[DEK.HOST_VALIDATION]: securedHostValidation,
+                self._dbenvkeys[DEK.USER]: user,
+                self._dbenvkeys[DEK.PASSWORD]: password,
+                self._dbenvkeys[DEK.DATABASE]: db,
             }
 
             if interactive:
@@ -983,12 +1000,12 @@ class OvirtUtils(base.Base):
 
         try:
             self.environment[
-                self._dbenvkeys['newDatabase']
+                self._dbenvkeys[DEK.NEW_DATABASE]
             ] = self.isNewDatabase()
         except:
             self.logger.debug('database connection failed', exc_info=True)
 
-        if not self.environment[self._dbenvkeys['newDatabase']]:
+        if not self.environment[self._dbenvkeys[DEK.NEW_DATABASE]]:
             self._checkDbConf(environment=dbenv, name=name)
 
 

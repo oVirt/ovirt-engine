@@ -32,6 +32,8 @@ from ovirt_engine_setup.engine_common import constants as oengcommcons
 
 from . import config
 
+DEK = oengcommcons.DBEnvKeysConst
+
 
 def _(m):
     return gettext.dgettext(message=m, domain='ovirt-engine-setup')
@@ -364,28 +366,28 @@ class Const(object):
     @classproperty
     def ENGINE_DB_ENV_KEYS(self):
         return {
-            'host': EngineDBEnv.HOST,
-            'port': EngineDBEnv.PORT,
-            'secured': EngineDBEnv.SECURED,
-            'hostValidation': EngineDBEnv.SECURED_HOST_VALIDATION,
-            'user': EngineDBEnv.USER,
-            'password': EngineDBEnv.PASSWORD,
-            'database': EngineDBEnv.DATABASE,
-            'connection': EngineDBEnv.CONNECTION,
-            'pgpassfile': EngineDBEnv.PGPASS_FILE,
-            'newDatabase': EngineDBEnv.NEW_DATABASE,
+            DEK.HOST: EngineDBEnv.HOST,
+            DEK.PORT: EngineDBEnv.PORT,
+            DEK.SECURED: EngineDBEnv.SECURED,
+            DEK.HOST_VALIDATION: EngineDBEnv.SECURED_HOST_VALIDATION,
+            DEK.USER: EngineDBEnv.USER,
+            DEK.PASSWORD: EngineDBEnv.PASSWORD,
+            DEK.DATABASE: EngineDBEnv.DATABASE,
+            DEK.CONNECTION: EngineDBEnv.CONNECTION,
+            DEK.PGPASSFILE: EngineDBEnv.PGPASS_FILE,
+            DEK.NEW_DATABASE: EngineDBEnv.NEW_DATABASE,
         }
 
     @classproperty
     def DEFAULT_ENGINE_DB_ENV_KEYS(self):
         return {
-            'host': Defaults.DEFAULT_DB_HOST,
-            'port': Defaults.DEFAULT_DB_PORT,
-            'secured': Defaults.DEFAULT_DB_SECURED,
-            'hostValidation': Defaults.DEFAULT_DB_SECURED_HOST_VALIDATION,
-            'user': Defaults.DEFAULT_DB_USER,
-            'password': Defaults.DEFAULT_DB_PASSWORD,
-            'database': Defaults.DEFAULT_DB_DATABASE,
+            DEK.HOST: Defaults.DEFAULT_DB_HOST,
+            DEK.PORT: Defaults.DEFAULT_DB_PORT,
+            DEK.SECURED: Defaults.DEFAULT_DB_SECURED,
+            DEK.HOST_VALIDATION: Defaults.DEFAULT_DB_SECURED_HOST_VALIDATION,
+            DEK.USER: Defaults.DEFAULT_DB_USER,
+            DEK.PASSWORD: Defaults.DEFAULT_DB_PASSWORD,
+            DEK.DATABASE: Defaults.DEFAULT_DB_DATABASE,
         }
 
 
