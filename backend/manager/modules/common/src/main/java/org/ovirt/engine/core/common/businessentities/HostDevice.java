@@ -16,6 +16,7 @@ public class HostDevice implements BusinessEntity<HostDeviceId> {
     private String vendorId;
     private String parentPhysicalFunction;
     private Integer totalVirtualFunctions;
+    private String networkInterfaceName;
     private Guid vmId;
 
     public Guid getHostId() {
@@ -98,6 +99,14 @@ public class HostDevice implements BusinessEntity<HostDeviceId> {
         this.parentPhysicalFunction = parentPhysicalFunction;
     }
 
+    public String getNetworkInterfaceName() {
+        return networkInterfaceName;
+    }
+
+    public void setNetworkInterfaceName(String networkInterfaceName) {
+        this.networkInterfaceName = networkInterfaceName;
+    }
+
     public Integer getTotalVirtualFunctions() {
         return totalVirtualFunctions;
     }
@@ -144,6 +153,7 @@ public class HostDevice implements BusinessEntity<HostDeviceId> {
                 ObjectUtils.objectsEqual(vendorId, other.vendorId) &&
                 ObjectUtils.objectsEqual(parentPhysicalFunction, other.parentPhysicalFunction) &&
                 ObjectUtils.objectsEqual(totalVirtualFunctions, other.totalVirtualFunctions) &&
+                ObjectUtils.objectsEqual(networkInterfaceName, other.networkInterfaceName) &&
                 ObjectUtils.objectsEqual(vmId, other.vmId);
     }
 
@@ -161,14 +171,28 @@ public class HostDevice implements BusinessEntity<HostDeviceId> {
         result = prime * result + (vendorId == null ? 0 : vendorId.hashCode());
         result = prime * result + (parentPhysicalFunction == null ? 0 : parentPhysicalFunction.hashCode());
         result = prime * result + (totalVirtualFunctions == null ? 0 : totalVirtualFunctions.hashCode());
+        result = prime * result + (networkInterfaceName == null ? 0 : networkInterfaceName.hashCode());
         result = prime * result + (vmId == null ? 0 :  vmId.hashCode());
         return result;
     }
 
     @Override
     public String toString() {
-        return String.format("HostDevice{hostId=%s, deviceName='%s', parentDeviceName='%s', capability='%s', iommuGroup=%d, " +
-                "productName='%s', productId='%s', vendorName='%s', vendorId='%s', parentPhysicalFunction='%s', totalVirtualFunctions=%s, vmId=%s}",
-                hostId, deviceName, parentDeviceName, capability, iommuGroup, productName, productId, vendorName, vendorId, parentPhysicalFunction, totalVirtualFunctions, vmId);
+        return String.format("HostDevice{hostId=%s, deviceName='%s', parentDeviceName='%s', capability='%s', iommuGroup=%d, "
+                +
+                "productName='%s', productId='%s', vendorName='%s', vendorId='%s', parentPhysicalFunction='%s', totalVirtualFunctions=%s, networkInterfaceName='%s', vmId=%s}",
+                hostId,
+                deviceName,
+                parentDeviceName,
+                capability,
+                iommuGroup,
+                productName,
+                productId,
+                vendorName,
+                vendorId,
+                parentPhysicalFunction,
+                totalVirtualFunctions,
+                networkInterfaceName,
+                vmId);
     }
 }

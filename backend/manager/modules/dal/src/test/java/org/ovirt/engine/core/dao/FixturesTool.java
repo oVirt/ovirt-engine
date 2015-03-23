@@ -719,4 +719,7 @@ public class FixturesTool {
 
     public static final Guid CPU_PROFILE_1 = new Guid("fd81f1e1-785b-4579-ab75-1419ebb87052");
     public static final Guid CPU_PROFILE_2 = new Guid("fd81f1e1-785b-4579-ab75-1419ebb87053");
+
+    public static final Guid NETWORK_HOST_DEVICE_HOST_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
+    public static final String NETWORK_HOST_DEVICE_NAME = "net_enp5s16f4_3e_fa_b0_f6_48_a3";
 }

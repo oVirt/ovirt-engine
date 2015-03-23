@@ -2063,6 +2063,9 @@ public class VdsBrokerObjectsBuilder {
             if (params.containsKey(VdsProperties.TOTAL_VFS)) {
                 device.setTotalVirtualFunctions(Integer.parseInt(params.get(VdsProperties.TOTAL_VFS).toString()));
             }
+            if (params.containsKey(VdsProperties.NET_INTERFACE_NAME)) {
+                device.setNetworkInterfaceName(params.get(VdsProperties.NET_INTERFACE_NAME).toString());
+            }
 
             // if the device is attached to running VM, the `vmId` property will be set
             if (entry.getValue().containsKey(VdsProperties.VM_ID)) {

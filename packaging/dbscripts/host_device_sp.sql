@@ -10,6 +10,7 @@ CREATE OR REPLACE FUNCTION InsertHostDevice(
   v_vendor_id VARCHAR(255),
   v_physfn VARCHAR(255),
   v_total_vfs INTEGER,
+  v_net_iface_name VARCHAR(50),
   v_vm_id UUID)
 RETURNS VOID
 AS $procedure$
@@ -27,6 +28,7 @@ BEGIN
     vendor_id,
     physfn,
     total_vfs,
+    net_iface_name,
     vm_id)
   VALUES(
     v_host_id,
@@ -40,6 +42,7 @@ BEGIN
     v_vendor_id,
     v_physfn,
     v_total_vfs,
+    v_net_iface_name,
     v_vm_id
   );
 END; $procedure$
@@ -57,6 +60,7 @@ CREATE OR REPLACE FUNCTION UpdateHostDevice(
   v_vendor_id VARCHAR(255),
   v_physfn VARCHAR(255),
   v_total_vfs INTEGER,
+  v_net_iface_name VARCHAR(50),
   v_vm_id UUID)
 RETURNS VOID
 AS $procedure$
@@ -75,6 +79,7 @@ BEGIN
     vendor_id = v_vendor_id,
     physfn = v_physfn,
     total_vfs = v_total_vfs,
+    net_iface_name = v_net_iface_name,
     vm_id = v_vm_id
   WHERE host_id = v_host_id AND device_name = v_device_name;
 END; $procedure$

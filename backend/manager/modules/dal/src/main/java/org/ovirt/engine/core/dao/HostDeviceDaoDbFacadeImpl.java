@@ -36,6 +36,7 @@ public class HostDeviceDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<
                 .addValue("vendor_id", entity.getVendorId())
                 .addValue("physfn", entity.getParentPhysicalFunction())
                 .addValue("total_vfs", entity.getTotalVirtualFunctions())
+                .addValue("net_iface_name", entity.getNetworkInterfaceName())
                 .addValue("vm_id", entity.getVmId());
     }
 
@@ -75,6 +76,7 @@ public class HostDeviceDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<
             device.setVendorId(rs.getString("vendor_id"));
             device.setParentPhysicalFunction(rs.getString("physfn"));
             device.setTotalVirtualFunctions((Integer) rs.getObject("total_vfs"));
+            device.setNetworkInterfaceName(rs.getString("net_iface_name"));
             device.setVmId(getGuid(rs, "vm_id"));
 
             return device;
