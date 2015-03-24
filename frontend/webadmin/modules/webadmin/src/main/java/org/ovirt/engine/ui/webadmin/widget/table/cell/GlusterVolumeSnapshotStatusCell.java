@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.widget.table.column;
+package org.ovirt.engine.ui.webadmin.widget.table.cell;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterSnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotEntity;
