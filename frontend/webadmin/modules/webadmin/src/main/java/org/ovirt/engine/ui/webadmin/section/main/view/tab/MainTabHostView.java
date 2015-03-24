@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.cell.Cell;
-import org.ovirt.engine.ui.common.widget.table.cell.StatusCompositeCellWithElementId;
+import org.ovirt.engine.ui.common.widget.table.cell.StatusCompositeCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
@@ -168,7 +168,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         list.add(statusColumn);
         list.add(reasonColumn);
 
-        Cell<VDS> compositeCell = new StatusCompositeCellWithElementId<VDS>(list);
+        Cell<VDS> compositeCell = new StatusCompositeCell<VDS>(list);
 
         AbstractColumn<VDS, VDS> statusTextColumn = new AbstractColumn<VDS, VDS>(compositeCell) {
             @Override

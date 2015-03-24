@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.cell.Cell;
-import org.ovirt.engine.ui.common.widget.table.cell.StatusCompositeCellWithElementId;
+import org.ovirt.engine.ui.common.widget.table.cell.StatusCompositeCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractEnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
@@ -214,7 +214,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         list.add(reasonColumn);
         list.add(migrationProgressColumn);
 
-        Cell<VM> compositeCell = new StatusCompositeCellWithElementId<VM>(list);
+        Cell<VM> compositeCell = new StatusCompositeCell<VM>(list);
 
         AbstractColumn<VM, VM> statusTextColumn = new AbstractColumn<VM, VM>(compositeCell) {
             @Override

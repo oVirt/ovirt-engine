@@ -13,7 +13,7 @@ import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
-public class StatusCompositeCellWithElementId<C> extends CompositeCell<C> {
+public class StatusCompositeCell<C> extends CompositeCell<C> {
     public interface StatusCompositeCellResources extends ClientBundle {
         @ClientBundle.Source("org/ovirt/engine/ui/common/css/StatusCompositeCell.css")
         StatusCompositeCellCss statusCompositeCellCss();
@@ -34,7 +34,7 @@ public class StatusCompositeCellWithElementId<C> extends CompositeCell<C> {
 
     private ContentTemplate template;
 
-    public StatusCompositeCellWithElementId(List<HasCell<C, ?>> hasCells) {
+    public StatusCompositeCell(List<HasCell<C, ?>> hasCells) {
         super(hasCells);
         this.hasCells = hasCells;
         style = RESOURCES.statusCompositeCellCss();
