@@ -41,6 +41,7 @@ class Plugin(plugin.PluginBase):
     class ApplicationMode(object):
         VirtOnly = 1
         GlusterOnly = 2
+        AllModes = 255
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -81,10 +82,7 @@ class Plugin(plugin.PluginBase):
             oengcommcons.Stages.DIALOG_TITLES_S_ENGINE,
             oenginecons.Stages.APPMODE_ALLOWED,
         ),
-        condition=lambda self: (
-            self._enabled and
-            self.environment[oenginecons.EngineDBEnv.NEW_DATABASE]
-        ),
+        condition=lambda self: self._enabled,
         name=osetupcons.Stages.CONFIG_APPLICATION_MODE_AVAILABLE,
     )
     def _customization(self):
@@ -139,23 +137,31 @@ class Plugin(plugin.PluginBase):
             ),
         )
 
-        if v != 'both':
-            self.environment[oenginecons.EngineDBEnv.STATEMENT].execute(
-                statement="""
-                    select fn_db_update_config_value(
-                        'ApplicationMode',
-                        %(mode)s,
-                        'general'
-                    )
-                """,
-                args=dict(
-                    mode=str(
-                        self.ApplicationMode.GlusterOnly
-                        if v == 'gluster'
-                        else self.ApplicationMode.VirtOnly
-                    ),
-                ),
+        if v == 'virt':
+            mode = self.ApplicationMode.VirtOnly
+        elif v == 'gluster':
+            mode = self.ApplicationMode.GlusterOnly
+        elif v == 'both':
+            mode = self.ApplicationMode.AllModes
+        else:
+            raise RuntimeError(
+                _('Selected application mode \'{v}\' is not allowed').format(
+                    v=v,
+                )
             )
+
+        self.environment[oenginecons.EngineDBEnv.STATEMENT].execute(
+            statement="""
+                select fn_db_update_config_value(
+                    'ApplicationMode',
+                    %(mode)s,
+                    'general'
+                )
+            """,
+            args=dict(
+                mode=str(mode),
+            ),
+        )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
