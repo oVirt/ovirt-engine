@@ -19,7 +19,8 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class SyntaxCheckerTest {
 
-    private final static String TAG_NAME = "tag1";
+    private final static String TAG_NAME = "'tag1'";
+    private final static String TAG_NAME_WITH_CHILDREN = "'tag1','all'";
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule();
@@ -48,7 +49,7 @@ public class SyntaxCheckerTest {
         tags.settag_name(TAG_NAME);
         Mockito.when(BaseConditionFieldAutoCompleter.tagsHandler.GetTagByTagName(Mockito.anyString())).thenReturn(tags);
         Mockito.when(BaseConditionFieldAutoCompleter.tagsHandler.GetTagNamesAndChildrenNamesByRegExp(Mockito.anyString()))
-                .thenReturn(TAG_NAME);
+                .thenReturn(TAG_NAME_WITH_CHILDREN);
 
         Config.setConfigUtils(configUtils);
     }
@@ -142,9 +143,9 @@ public class SyntaxCheckerTest {
         testValidSql("Host: EVENT.severity=error and CPU_USAGE > 80 sortby cpu_usage desc",
                 "SELECT * FROM ((SELECT distinct vds.* FROM  vds   LEFT OUTER JOIN audit_log ON vds.vds_id=audit_log.vds_id    WHERE (  audit_log.severity = '2'  AND  vds.usage_cpu_percent > 80  ))  ORDER BY usage_cpu_percent DESC NULLS LAST,vds_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
         testValidSql("Host: EVENT.severity=error and tag=tag1 sortby cpu_usage desc",
-                "SELECT * FROM (SELECT * FROM vds WHERE ( vds_id IN (SELECT distinct vds_with_tags.vds_id FROM  vds_with_tags   LEFT OUTER JOIN audit_log ON vds_with_tags.vds_id=audit_log.vds_id    WHERE (  audit_log.severity = '2'  AND  vds_with_tags.tag_name IN (tag1)  )))  ORDER BY usage_cpu_percent DESC NULLS LAST,vds_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+                "SELECT * FROM (SELECT * FROM vds WHERE ( vds_id IN (SELECT distinct vds_with_tags.vds_id FROM  vds_with_tags   LEFT OUTER JOIN audit_log ON vds_with_tags.vds_id=audit_log.vds_id    WHERE (  audit_log.severity = '2'  AND  vds_with_tags.tag_name IN ('tag1','all')  )))  ORDER BY usage_cpu_percent DESC NULLS LAST,vds_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
         testValidSql("Host: tag=\"tag1\"",
-                "SELECT * FROM (SELECT * FROM vds WHERE ( vds_id IN (SELECT distinct vds_with_tags.vds_id FROM  vds_with_tags   WHERE  vds_with_tags.tag_name IN (tag1) ))  ORDER BY vds_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+                "SELECT * FROM (SELECT * FROM vds WHERE ( vds_id IN (SELECT distinct vds_with_tags.vds_id FROM  vds_with_tags   WHERE  vds_with_tags.tag_name IN ('tag1','all') ))  ORDER BY vds_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
         // Before: 22ms
         // "SELECT * FROM (SELECT * FROM vds WHERE ( vds_id IN (SELECT vds_with_tags.vds_id FROM  vds_with_tags   LEFT OUTER JOIN vms_with_tags ON vds_with_tags.vds_id=vms_with_tags.run_on_vds    WHERE  vms_with_tags.vm_name LIKE 'vm1' ))  ORDER BY vds_name ASC ) as T1 OFFSET (1 -1) LIMIT 0"
         // Current: 11ms
@@ -180,7 +181,7 @@ public class SyntaxCheckerTest {
         testValidSql("Vm: user.name = user1",
                 "SELECT * FROM ((SELECT distinct vms.* FROM  vms   LEFT OUTER JOIN vdc_users_with_tags ON vms.vm_guid=vdc_users_with_tags.vm_guid    WHERE  vdc_users_with_tags.name LIKE user1 )  ORDER BY vm_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
         testValidSql("Vm: user.name = \"user1\" and user.tag=\"tag1\"",
-                "SELECT * FROM (SELECT * FROM vms WHERE ( vm_guid IN (SELECT distinct vms_with_tags.vm_guid FROM  vms_with_tags   LEFT OUTER JOIN vdc_users_with_tags ON vms_with_tags.vm_guid=vdc_users_with_tags.vm_guid    WHERE (  vdc_users_with_tags.name LIKE user1  AND  vdc_users_with_tags.tag_name IN (tag1)  )))  ORDER BY vm_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+                "SELECT * FROM (SELECT * FROM vms WHERE ( vm_guid IN (SELECT distinct vms_with_tags.vm_guid FROM  vms_with_tags   LEFT OUTER JOIN vdc_users_with_tags ON vms_with_tags.vm_guid=vdc_users_with_tags.vm_guid    WHERE (  vdc_users_with_tags.name LIKE user1  AND  vdc_users_with_tags.tag_name IN ('tag1','all')  )))  ORDER BY vm_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
 
         // Used to validate that searching values not in fields search all fields
         testValidSql("Vm: mac=00:1a:4a:d4:53:94",
@@ -457,12 +458,19 @@ public class SyntaxCheckerTest {
                 "SELECT * FROM ((SELECT distinct image_types_view.* FROM  image_types_view  )  ORDER BY name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
     }
 
+    @Test
+    public void testVmWithTags() {
+        testValidSql("VMs:tag=all",
+                "SELECT * FROM (SELECT * FROM vms WHERE ( vm_guid IN (SELECT distinct vms_with_tags.vm_guid FROM  vms_with_tags   WHERE  vms_with_tags.tag_name IN ('tag1','all') ))  ORDER BY vm_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+    }
+
     private void testValidSql(String dynamicQuery, String exepctedSQLResult) {
         SyntaxChecker chkr = new SyntaxChecker(20);
         ISyntaxChecker curSyntaxChecker = SyntaxCheckerFactory.createBackendSyntaxChecker("foo");
         SyntaxContainer res = curSyntaxChecker.analyzeSyntaxState(dynamicQuery, true);
         Assert.assertTrue("Invalid syntax: " + dynamicQuery, res.getvalid());
         String query = chkr.generateQueryFromSyntaxContainer(res, true);
+        System.out.println(query);
         Assert.assertEquals(exepctedSQLResult, query);
     }
 }

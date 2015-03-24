@@ -334,7 +334,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
                 } else {
                     pair.setSecond(StringFormat.format("('%1$s')", Guid.Empty));
                 }
-            } else if (pair.getFirst() != null && pair.getFirst().equals("LIKE")) {
+            } else if (pair.getFirst() != null && (pair.getFirst().equals("LIKE") || pair.getFirst().equals("ILIKE"))) {
                 pair.setFirst("IN");
                 pair.setSecond(StringHelper.trim(pair.getSecond(), '\'').replace("%", "*"));
 
