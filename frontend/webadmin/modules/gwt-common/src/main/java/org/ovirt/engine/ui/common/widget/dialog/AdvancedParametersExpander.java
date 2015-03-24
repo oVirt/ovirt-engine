@@ -30,7 +30,7 @@ public class AdvancedParametersExpander extends Composite implements FocusableCo
     private final static CommonApplicationResources resources = AssetProvider.getResources();
     private final static CommonApplicationConstants constants = AssetProvider.getConstants();
 
-    private String titleExpended = constants.advancedParameters();
+    private String titleExpanded = constants.advancedParameters();
     private String titleCollapsed = constants.advancedParameters();
 
     interface ViewUiBinder extends UiBinder<ToggleButton, AdvancedParametersExpander> {
@@ -56,7 +56,7 @@ public class AdvancedParametersExpander extends Composite implements FocusableCo
 
         SafeHtml collapseImage =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.expanderDownImage()).getHTML());
-        expander.getDownFace().setHTML(templates.imageTextButton(collapseImage, titleExpended));
+        expander.getDownFace().setHTML(templates.imageTextButton(collapseImage, titleExpanded));
 
     }
 
@@ -87,9 +87,8 @@ public class AdvancedParametersExpander extends Composite implements FocusableCo
         return nextTabIndex;
     }
 
-    // TODO rename "setTitleWhenExpanded"
-    public void setTitleWhenExpended(String title) {
-        titleExpended = title;
+    public void setTitleWhenExpanded(String title) {
+        titleExpanded = title;
         initStyle();
     }
 

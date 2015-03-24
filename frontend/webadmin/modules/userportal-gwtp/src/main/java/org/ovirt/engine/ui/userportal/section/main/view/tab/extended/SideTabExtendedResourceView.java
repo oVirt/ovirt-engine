@@ -211,13 +211,13 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
 
     private void localize() {
         vcpuExpander.setTitleWhenCollapsed(constants.showQuotaDistribution());
-        vcpuExpander.setTitleWhenExpended(constants.hideQuotaDistribution());
+        vcpuExpander.setTitleWhenExpanded(constants.hideQuotaDistribution());
 
         memoryExpander.setTitleWhenCollapsed(constants.showQuotaDistribution());
-        memoryExpander.setTitleWhenExpended(constants.hideQuotaDistribution());
+        memoryExpander.setTitleWhenExpanded(constants.hideQuotaDistribution());
 
         storageExpander.setTitleWhenCollapsed(constants.showQuotaDistribution());
-        storageExpander.setTitleWhenExpended(constants.hideQuotaDistribution());
+        storageExpander.setTitleWhenExpanded(constants.hideQuotaDistribution());
     }
 
     public void initQuotaList(ResourcesModel model) {

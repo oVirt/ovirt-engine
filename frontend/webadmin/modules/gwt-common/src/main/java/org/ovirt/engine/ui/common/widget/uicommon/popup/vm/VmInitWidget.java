@@ -480,22 +480,22 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         dnsServers.setWidgetTooltip(constants.cloudInitDnsServersToolTip());
         dnsSearchDomains.setWidgetTooltip(constants.cloudInitDnsSearchDomainsToolTip());
 
-        networkExpander.setTitleWhenExpended(constants.cloudInitNetworskLabel());
+        networkExpander.setTitleWhenExpanded(constants.cloudInitNetworskLabel());
         networkExpander.setTitleWhenCollapsed(constants.cloudInitNetworskLabel());
 
-        authenticationExpander.setTitleWhenExpended(constants.cloudInitAuthenticationLabel());
+        authenticationExpander.setTitleWhenExpanded(constants.cloudInitAuthenticationLabel());
         authenticationExpander.setTitleWhenCollapsed(constants.cloudInitAuthenticationLabel());
 
-        customScriptExpander.setTitleWhenExpended(constants.customScriptLabel());
+        customScriptExpander.setTitleWhenExpanded(constants.customScriptLabel());
         customScriptExpander.setTitleWhenCollapsed(constants.customScriptLabel());
 
-        sysprepScriptExpander.setTitleWhenExpended(constants.sysprepLabel());
+        sysprepScriptExpander.setTitleWhenExpanded(constants.sysprepLabel());
         sysprepScriptExpander.setTitleWhenCollapsed(constants.sysprepLabel());
 
-        sysprepPasswordExpander.setTitleWhenExpended(constants.sysprepAdminPasswordLabel());
+        sysprepPasswordExpander.setTitleWhenExpanded(constants.sysprepAdminPasswordLabel());
         sysprepPasswordExpander.setTitleWhenCollapsed(constants.sysprepAdminPasswordLabel());
 
-        sysprepInputsExpander.setTitleWhenExpended(constants.customLocaleLabel());
+        sysprepInputsExpander.setTitleWhenExpanded(constants.customLocaleLabel());
         sysprepInputsExpander.setTitleWhenCollapsed(constants.customLocaleLabel());
     }
 

@@ -85,7 +85,7 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
         message2.setHTML(listItem(messages.nextRunConfigurationCanBeAppliedImmediately()));
         applyCpuLaterEditor.setLabel(constants.applyLater());
 
-        changedFieldsExpander.setTitleWhenExpended(constants.changedFieldsList());
+        changedFieldsExpander.setTitleWhenExpanded(constants.changedFieldsList());
         changedFieldsExpander.setTitleWhenCollapsed(constants.changedFieldsList());
     }
 
