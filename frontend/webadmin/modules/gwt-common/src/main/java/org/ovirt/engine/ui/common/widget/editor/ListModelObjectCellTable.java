@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.common.widget.IsEditorDriver;
 import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
 import org.ovirt.engine.ui.common.widget.table.cell.RadioboxCell;
 import org.ovirt.engine.ui.common.widget.table.header.SafeHtmlHeader;
-import org.ovirt.engine.ui.common.widget.table.header.SelectAllCheckBoxHeader;
+import org.ovirt.engine.ui.common.widget.table.header.AbstractSelectAllCheckBoxHeader;
 import org.ovirt.engine.ui.common.widget.table.resize.ColumnResizeCellTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 
@@ -111,8 +111,8 @@ public class ListModelObjectCellTable<T, M extends ListModel> extends ColumnResi
                 }
             };
             if (showSelectAllCheckbox) {
-                final SelectAllCheckBoxHeader<T> selectAllHeader =
-                        new SelectAllCheckBoxHeader<T>() {
+                final AbstractSelectAllCheckBoxHeader<T> selectAllHeader =
+                        new AbstractSelectAllCheckBoxHeader<T>() {
 
                             @Override
                             protected void selectionChanged(Boolean value) {

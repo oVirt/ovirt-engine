@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractCheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
-import org.ovirt.engine.ui.common.widget.table.header.SelectAllCheckBoxHeader;
+import org.ovirt.engine.ui.common.widget.table.header.AbstractSelectAllCheckBoxHeader;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ImportIscsiStorageModel;
@@ -153,7 +153,7 @@ public class ImportIscsiStorageView extends AbstractStorageView<ImportIscsiStora
     }
 
     private void addTargetsSelectionColumn() {
-        SelectAllCheckBoxHeader<SanTargetModel> selectAllHeader = new SelectAllCheckBoxHeader<SanTargetModel>() {
+        AbstractSelectAllCheckBoxHeader<SanTargetModel> selectAllHeader = new AbstractSelectAllCheckBoxHeader<SanTargetModel>() {
             @Override
             protected void selectionChanged(Boolean value) {
                 ListModel listModel = targetsTable.asEditor().flush();

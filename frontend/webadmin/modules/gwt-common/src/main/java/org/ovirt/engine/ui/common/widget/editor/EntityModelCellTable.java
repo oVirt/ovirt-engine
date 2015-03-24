@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.common.widget.table.ElementIdCellTable;
 import org.ovirt.engine.ui.common.widget.table.cell.CheckboxCell;
 import org.ovirt.engine.ui.common.widget.table.cell.EventHandlingCell;
 import org.ovirt.engine.ui.common.widget.table.cell.RadioboxCell;
-import org.ovirt.engine.ui.common.widget.table.header.SelectAllCheckBoxHeader;
+import org.ovirt.engine.ui.common.widget.table.header.AbstractSelectAllCheckBoxHeader;
 import org.ovirt.engine.ui.common.widget.tooltip.TooltipMixin;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -273,7 +273,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
                     }
                 };
                 if (showSelectAllCheckbox) {
-                    SelectAllCheckBoxHeader<EntityModel> selectAllHeader = new SelectAllCheckBoxHeader<EntityModel>() {
+                    AbstractSelectAllCheckBoxHeader<EntityModel> selectAllHeader = new AbstractSelectAllCheckBoxHeader<EntityModel>() {
                         @Override
                         protected void selectionChanged(Boolean value) {
                             if (getListModel() == null || getListModel().getItems() == null) {
