@@ -168,6 +168,15 @@ public class IrsProxyData {
         return Injector.get(SchedulerUtilQuartzImpl.class);
     }
 
+    private void updateStoragePoolStatus(Guid poolId, StoragePoolStatus status, AuditLogType auditLogType, VdcBllErrors error) {
+        ResourceManager
+                .getInstance()
+                .getEventListener()
+                .storagePoolStatusChange(poolId, status,
+                        auditLogType,
+                        error);
+    }
+
     @OnTimerMethodAnnotation("_updatingTimer_Elapsed")
     public void _updatingTimer_Elapsed() {
         try {
@@ -176,6 +185,7 @@ public class IrsProxyData {
                     StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao()
                             .get(_storagePoolId);
 
+                    boolean poolStatusDeterminedByHostsStatus = FeatureSupported.dataCenterWithoutSpm(storagePool.getCompatibilityVersion());
                     if (storagePool != null) {
                         // when there are no hosts in status up, it means that there shouldn't be domain monitoring
                         // so all the domains need to move to "unknown" status as otherwise their status won't change.
@@ -186,6 +196,16 @@ public class IrsProxyData {
                             StoragePoolDomainHelper.updateApplicablePoolDomainsStatuses(_storagePoolId,
                                     StoragePoolDomainHelper.storageDomainMonitoredStatus,
                                     StorageDomainStatus.Unknown, "no reporting hosts");
+                            // TODO: need to check if it's fine to skip the update when the status is already NonResponsive (as domains status maybe be not updated.
+                            if (poolStatusDeterminedByHostsStatus && storagePool.getStatus() != StoragePoolStatus.NonResponsive) {
+                                updateStoragePoolStatus(storagePool.getId(), StoragePoolStatus.NonResponsive,
+                                        AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_NON_RESPONSIVE_NO_REPORTING_HOSTS,
+                                        VdcBllErrors.ENGINE);
+                            }
+                        }  else if (poolStatusDeterminedByHostsStatus && storagePool.getStatus() != StoragePoolStatus.Up) {
+                                updateStoragePoolStatus(storagePool.getId(), StoragePoolStatus.Up,
+                                        AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_UP_REPORTING_HOSTS,
+                                        null);
                         }
 
                         if (storagePool.getStatus() == StoragePoolStatus.Up
@@ -239,17 +259,11 @@ public class IrsProxyData {
             if (storagePool.getStatus() != StoragePoolStatus.NonResponsive
                     && storagePool.getStatus() != StoragePoolStatus.NotOperational) {
                 if (result != null && result.getVdsError() != null) {
-                    ResourceManager
-                            .getInstance()
-                            .getEventListener()
-                            .storagePoolStatusChange(_storagePoolId, StoragePoolStatus.NonResponsive,
+                    updateStoragePoolStatus(_storagePoolId, StoragePoolStatus.NonResponsive,
                                     AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC_WITH_ERROR,
                                     result.getVdsError().getCode());
                 } else {
-                    ResourceManager
-                            .getInstance()
-                            .getEventListener()
-                            .storagePoolStatusChange(_storagePoolId, StoragePoolStatus.NonResponsive,
+                    updateStoragePoolStatus(_storagePoolId, StoragePoolStatus.NonResponsive,
                                     AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC,
                                     VdcBllErrors.ENGINE);
                 }
@@ -846,10 +860,7 @@ public class IrsProxyData {
     }
 
     private void movePoolToProblematicInDB(StoragePool storagePool) {
-        ResourceManager
-                .getInstance()
-                .getEventListener()
-                .storagePoolStatusChange(storagePool.getId(), StoragePoolStatus.NonResponsive,
+        updateStoragePoolStatus(storagePool.getId(), StoragePoolStatus.NonResponsive,
                         AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC, VdcBllErrors.ENGINE);
 
         storagePool.setSpmVdsId(null);
