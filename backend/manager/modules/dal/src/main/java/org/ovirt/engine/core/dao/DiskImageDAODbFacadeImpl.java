@@ -13,6 +13,7 @@ import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -202,7 +203,7 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
             entity.setBoot(rs.getBoolean("boot"));
             entity.setReadRate(rs.getInt("read_rate"));
             entity.setWriteRate(rs.getInt("write_rate"));
-            entity.setOvfStore(rs.getBoolean("ovf_store"));
+            entity.setContentType(rs.getBoolean("ovf_store") ? DiskContentType.OVF_STORE : DiskContentType.DATA);
             entity.setReadLatency(rs.getObject("read_latency_seconds") != null ? rs.getDouble("read_latency_seconds")
                     : null);
             entity.setWriteLatency(rs.getObject("write_latency_seconds") != null ? rs.getDouble("write_latency_seconds")

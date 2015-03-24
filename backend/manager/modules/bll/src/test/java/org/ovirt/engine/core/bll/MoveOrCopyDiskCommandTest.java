@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.storage.DiskContentType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -161,7 +162,7 @@ public class MoveOrCopyDiskCommandTest {
     public void canDoActionDiskIsOvfStore() throws Exception {
         initializeCommand(ImageOperation.Move);
         initVmDiskImage(false);
-        command.getImage().setOvfStore(true);
+        command.getImage().setContentType(DiskContentType.OVF_STORE);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_OVF_DISK_NOT_SUPPORTED);
     }
