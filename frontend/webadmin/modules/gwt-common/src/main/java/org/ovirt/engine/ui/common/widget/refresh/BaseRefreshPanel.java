@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.refresh;
 
 import java.util.Set;
 
+import org.gwtbootstrap3.client.ui.constants.Placement;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
@@ -272,6 +273,7 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
         panel.add(refreshMenuButton);
         setWidget(panel);
         tooltip = new WidgetTooltip(this);
+        tooltip.setPlacement(Placement.BOTTOM);
         setTooltipText(refreshManager.getRefreshStatus());
     }
 
