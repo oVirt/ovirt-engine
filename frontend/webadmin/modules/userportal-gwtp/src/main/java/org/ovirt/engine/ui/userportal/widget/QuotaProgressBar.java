@@ -78,7 +78,7 @@ public abstract class QuotaProgressBar extends DoublePercentageProgressBar {
         }
 
         // update tooltip
-        tooltip.setText(getTooltip().asString());
+        tooltip.setHtml(getTooltip());
         tooltip.reconfigure();
     }
 

@@ -253,9 +253,11 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
 
                 @Override
                 public SafeHtml getTooltip(SnapshotModel model) {
-                    DiskImage image = model.getImageByDiskId(disk.getId());
-                    if (image.getImageStatus() == ImageStatus.ILLEGAL) {
-                        return SafeHtmlUtils.fromSafeConstant(constants.illegalStatus());
+                    if (disk != null && disk.getId() != null) {
+                        DiskImage image = model.getImageByDiskId(disk.getId());
+                        if (image != null && image.getImageStatus() == ImageStatus.ILLEGAL) {
+                            return SafeHtmlUtils.fromSafeConstant(constants.illegalStatus());
+                        }
                     }
                     return null;
                 }

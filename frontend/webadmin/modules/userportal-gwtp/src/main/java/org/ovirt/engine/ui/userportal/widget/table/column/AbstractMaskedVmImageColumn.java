@@ -48,7 +48,7 @@ public abstract class AbstractMaskedVmImageColumn<T> extends AbstractImageResour
         if (showMask.showMask(object)) {
             // TODO why hardcode to 19px left here?
             sb.appendHtmlConstant("<div style=\"position: absolute; left: 19px\" >"); //$NON-NLS-1$
-            SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(mask).getHTML());
+            sb.append(SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(mask).getHTML()));
             sb.appendHtmlConstant("</div>"); //$NON-NLS-1$
         }
         super.render(context, object, sb);

@@ -81,7 +81,7 @@ public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> impleme
                 && event.getKeyCode() == KeyCodes.KEY_ENTER;
         if (BrowserEvents.CHANGE.equals(type) || enterPressed) {
             InputElement input = parent.getFirstChild().cast();
-            Boolean isChecked = input.isChecked();
+            boolean isChecked = input.isChecked();
 
             /*
              * Toggle the value if the enter key was pressed and the cell handles selection or doesn't depend on
@@ -97,8 +97,8 @@ public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> impleme
              * Save the new value. However, if the cell depends on the selection, then do not save the value because we
              * can get into an inconsistent state.
              */
-            if ((value == null ? false : value.booleanValue()) !=
-                (isChecked == null ? false : isChecked.booleanValue()) && !dependsOnSelection()) {
+
+            if (value.booleanValue() != isChecked && !dependsOnSelection()) {
                 setViewData(context.getKey(), isChecked);
             } else {
                 clearViewData(context.getKey());

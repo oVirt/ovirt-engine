@@ -36,12 +36,16 @@ public class VolumeStatusColumn extends AbstractColumn<GlusterVolumeEntity, Glus
         switch (status) {
         case DOWN:
             tooltip = constants.down();
+            break;
         case UP:
             tooltip = constants.up();
+            break;
         case SOME_BRICKS_DOWN:
             tooltip = constants.volumeBricksDown();
+            break;
         case ALL_BRICKS_DOWN:
             tooltip = constants.volumeAllBricksDown();
+            break;
         default:
             tooltip = constants.down();
         }
