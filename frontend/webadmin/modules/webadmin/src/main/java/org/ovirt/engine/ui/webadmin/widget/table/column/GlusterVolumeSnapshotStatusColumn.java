@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.widget.table.cell.GlusterVolumeSnapshotStatusCell;
 
-import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
@@ -44,7 +43,6 @@ public class GlusterVolumeSnapshotStatusColumn extends AbstractColumn<GlusterVol
 
         // Find the image corresponding to the status of the brick:
         GlusterSnapshotStatus status = snapshot.getStatus();
-        ImageResource statusImage = null; // TODO not used, remove
         String tooltip;
 
         switch (status) {
