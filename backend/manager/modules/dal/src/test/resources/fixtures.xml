@@ -8353,4 +8353,44 @@
             <value>false</value>
         </row>
      </table>
+     <table name="vfs_config_networks">
+        <column>vfs_config_id</column>
+        <column>network_id</column>
+        <row>
+            <value>6b31bcc8-c6c3-4884-9a10-5f1f076f20c2</value>
+            <value>58d5c1c6-cb15-4832-b2a4-023770607188</value>
+        </row>
+        <row>
+            <value>6b31bcc8-c6c3-4884-9a10-5f1f076f20c2</value>
+            <value>58d5c1c6-cb15-4832-b2a4-023770607189</value>
+        </row>
+        <row>
+            <value>6b31bcc8-c6c3-4884-9a10-5f1f076f20c3</value>
+            <value>58d5c1c6-cb15-4832-b2a4-023770607188</value>
+        </row>
+     </table>
+     <table name="vfs_config_labels">
+        <column>vfs_config_id</column>
+        <column>label</column>
+        <row>
+            <value>6b31bcc8-c6c3-4884-9a10-5f1f076f20c2</value>
+            <value>label1</value>
+        </row>
+        <row>
+            <value>6b31bcc8-c6c3-4884-9a10-5f1f076f20c2</value>
+            <value>label2</value>
+        </row>
+        <row>
+            <value>6b31bcc8-c6c3-4884-9a10-5f1f076f20c3</value>
+            <value>label1</value>
+        </row>
+        <row>
+            <value>6b31bcc8-c6c3-4884-9a10-5f1f076f20c3</value>
+            <value>label2</value>
+        </row>
+        <row>
+            <value>6b31bcc8-c6c3-4884-9a10-5f1f076f20c3</value>
+            <value>label3</value>
+        </row>
+     </table>
 </dataset>

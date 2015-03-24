@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
@@ -28,9 +29,14 @@ public class HostNicVfsConfig extends IVdcQueryable implements Serializable, Bus
 
     private boolean allNetworksAllowed;
 
-    private List<Guid> networks;
+    private Set<Guid> networks;
 
-    private List<String> networkLabels;
+    private Set<String> networkLabels;
+
+    public HostNicVfsConfig() {
+        networks = new HashSet<>();
+        networkLabels = new HashSet<>();
+    }
 
     public Guid getNicId() {
         return nicId;
@@ -64,19 +70,19 @@ public class HostNicVfsConfig extends IVdcQueryable implements Serializable, Bus
         this.allNetworksAllowed = allNetworksAllowed;
     }
 
-    public List<Guid> getNetworks() {
+    public Set<Guid> getNetworks() {
         return networks;
     }
 
-    public void setNetworks(List<Guid> networks) {
+    public void setNetworks(Set<Guid> networks) {
         this.networks = networks;
     }
 
-    public List<String> getNetworkLabels() {
+    public Set<String> getNetworkLabels() {
         return networkLabels;
     }
 
-    public void setNetworkLabels(List<String> networkLabels) {
+    public void setNetworkLabels(Set<String> networkLabels) {
         this.networkLabels = networkLabels;
     }
 

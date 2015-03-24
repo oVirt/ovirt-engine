@@ -1463,3 +1463,90 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+----------------------------------------------------------------------
+--  vfsConfigNetworks
+----------------------------------------------------------------------
+
+Create or replace FUNCTION InsertVfsConfigNetwork(v_vfs_config_id UUID,
+        v_network_id  UUID)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+INSERT INTO vfs_config_networks(vfs_config_id, network_id)
+        VALUES(v_vfs_config_id, v_network_id);
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION DeleteVfsConfigNetwork(v_vfs_config_id UUID,
+        v_network_id UUID)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+   DELETE FROM vfs_config_networks
+   WHERE
+       vfs_config_id = v_vfs_config_id AND
+       network_id = v_network_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION DeleteAllVfsConfigNetworks(v_vfs_config_id UUID)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+   DELETE FROM vfs_config_networks
+   WHERE vfs_config_id = v_vfs_config_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION GetNetworksByVfsConfigId(v_vfs_config_id UUID) RETURNS SETOF UUID STABLE
+AS $procedure$
+BEGIN
+   RETURN QUERY SELECT network_id
+   FROM vfs_config_networks
+   WHERE vfs_config_id = v_vfs_config_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+----------------------------------------------------------------------
+--  vfsConfigLabels
+----------------------------------------------------------------------
+
+Create or replace FUNCTION InsertVfsConfigLabel(v_vfs_config_id UUID,
+        v_label TEXT)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+INSERT INTO vfs_config_labels(vfs_config_id, label)
+        VALUES(v_vfs_config_id, v_label);
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION DeleteVfsConfigLabel(v_vfs_config_id UUID,
+        v_label TEXT)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+   DELETE FROM vfs_config_labels
+   WHERE
+       vfs_config_id = v_vfs_config_id AND
+       label = v_label;
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION DeleteAllVfsConfigLabels(v_vfs_config_id UUID)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+   DELETE FROM vfs_config_labels
+   WHERE vfs_config_id = v_vfs_config_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION GetLabelsByVfsConfigId(v_vfs_config_id UUID) RETURNS SETOF TEXT STABLE
+AS $procedure$
+BEGIN
+   RETURN QUERY SELECT label
+   FROM vfs_config_labels
+   WHERE vfs_config_id = v_vfs_config_id;
+END; $procedure$
+LANGUAGE plpgsql;
