@@ -1,12 +1,10 @@
 package org.ovirt.engine.core.vdsbroker.gluster;
 
 import org.ovirt.engine.core.common.vdscommands.gluster.CreateGlusterVolumeSnapshotVDSParameters;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
 
 public class CreateGlusterVolumeSnapshotVDSCommand<P extends CreateGlusterVolumeSnapshotVDSParameters> extends AbstractGlusterBrokerCommand<P> {
-    private OneUuidReturnForXmlRpc uuidReturn;
+    private GlusterVolumeSnapshotCreateReturnForXmlRpc xmlRpcReturnValue;
 
     public CreateGlusterVolumeSnapshotVDSCommand(P params) {
         super(params);
@@ -14,7 +12,7 @@ public class CreateGlusterVolumeSnapshotVDSCommand<P extends CreateGlusterVolume
 
     @Override
     protected StatusForXmlRpc getReturnStatus() {
-        return uuidReturn.mStatus;
+        return xmlRpcReturnValue.mStatus;
     }
 
     @Override
@@ -23,11 +21,11 @@ public class CreateGlusterVolumeSnapshotVDSCommand<P extends CreateGlusterVolume
         String snapshotName = getParameters().getSnapshotName();
         String description = getParameters().getDescription() == null ? "" : getParameters().getDescription();
         boolean force = getParameters().getForce();
-        uuidReturn = getBroker().glusterSnapshotCreate(volumeName, snapshotName, description, force);
+        xmlRpcReturnValue = getBroker().glusterSnapshotCreate(volumeName, snapshotName, description, force);
         proceedProxyReturnValue();
 
         if (getVDSReturnValue().getSucceeded()) {
-            setReturnValue(Guid.createGuidFromStringDefaultEmpty(uuidReturn.mUuid));
+            setReturnValue(xmlRpcReturnValue.getSnapshot());
         }
     }
 }

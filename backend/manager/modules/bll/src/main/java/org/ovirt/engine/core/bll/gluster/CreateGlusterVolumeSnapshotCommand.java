@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
@@ -103,14 +102,12 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
                             return false;
                         } else {
                             // Persist the snapshot details
-                            GlusterVolumeSnapshotEntity slaveVolumeSnapshot = new GlusterVolumeSnapshotEntity();
+                            GlusterVolumeSnapshotEntity slaveVolumeSnapshot =
+                                    (GlusterVolumeSnapshotEntity) snapCreationRetVal.getReturnValue();
                             slaveVolumeSnapshot.setClusterId(slaveVolume.getClusterId());
                             slaveVolumeSnapshot.setVolumeId(slaveVolume.getId());
-                            slaveVolumeSnapshot.setSnapshotId((Guid) snapCreationRetVal.getReturnValue());
-                            slaveVolumeSnapshot.setSnapshotName(snapshot.getSnapshotName());
                             slaveVolumeSnapshot.setDescription(snapshot.getDescription());
                             slaveVolumeSnapshot.setStatus(GlusterSnapshotStatus.DEACTIVATED);
-                            slaveVolumeSnapshot.setCreatedAt(new Date());
                             getDbFacade().getGlusterVolumeSnapshotDao().save(slaveVolumeSnapshot);
                         }
                     }
@@ -150,10 +147,11 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
         if (!retVal.getSucceeded()) {
             handleVdsError(AuditLogType.GLUSTER_VOLUME_SNAPSHOT_CREATE_FAILED, retVal.getVdsError().getMessage());
         } else {
-            GlusterVolumeSnapshotEntity createdSnapshot = getParameters().getSnapshot();
-            createdSnapshot.setSnapshotId((Guid) retVal.getReturnValue());
+            GlusterVolumeSnapshotEntity createdSnapshot = (GlusterVolumeSnapshotEntity) retVal.getReturnValue();
+            createdSnapshot.setClusterId(snapshot.getClusterId());
+            createdSnapshot.setVolumeId(snapshot.getVolumeId());
+            createdSnapshot.setDescription(snapshot.getDescription());
             createdSnapshot.setStatus(GlusterSnapshotStatus.DEACTIVATED);
-            createdSnapshot.setCreatedAt(new Date());
             getDbFacade().getGlusterVolumeSnapshotDao().save(createdSnapshot);
         }
 
