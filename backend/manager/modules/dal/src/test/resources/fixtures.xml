@@ -8333,4 +8333,24 @@
             <value>2015-02-10 16:35:15.362494+05:30</value>
         </row>
      </table>
+     <table name="host_nic_vfs_config">
+        <column>id</column>
+        <column>nic_id</column>
+        <column>is_all_networks_allowed</column>
+        <row>
+            <value>6b31bcc8-c6c3-4884-9a10-5f1f076f20c1</value>
+            <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9db</value>
+            <value>true</value>
+        </row>
+        <row>
+            <value>6b31bcc8-c6c3-4884-9a10-5f1f076f20c2</value>
+            <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9de</value>
+            <value>false</value>
+        </row>
+        <row>
+            <value>6b31bcc8-c6c3-4884-9a10-5f1f076f20c3</value>
+            <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9dd</value>
+            <value>false</value>
+        </row>
+     </table>
 </dataset>

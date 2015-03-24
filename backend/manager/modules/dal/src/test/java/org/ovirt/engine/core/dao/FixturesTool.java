@@ -509,6 +509,17 @@ public class FixturesTool {
     /**
      * Predefined VdsNetworkInterface with the following properties :
      * <ul>
+     * <li>name: eth0</li>
+     * <li>network_name: engine2</li>
+     * <li>vds_id: afce7a39-8e8c-4819-ba9c-796d316592e7</li>
+     * <li>mac_addr: 78:E7:D1:E4:8C:71</li>
+     * </ul>
+     */
+    public static final Guid VDS_NETWORK_INTERFACE2 = new Guid("ba31682e-6ae7-4f9d-8c6f-04c93acca9dd");
+
+    /**
+     * Predefined VdsNetworkInterface with the following properties :
+     * <ul>
      * <li>name: eth1</li>
      * <li>network_name: engine2</li>
      * <li>vds_id: afce7a39-8e8c-4819-ba9c-796d316592e6</li>
@@ -726,4 +737,7 @@ public class FixturesTool {
 
     public static final Guid NETWORK_HOST_DEVICE_HOST_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
     public static final String NETWORK_HOST_DEVICE_NAME = "net_enp5s16f4_3e_fa_b0_f6_48_a3";
+
+    public static final Guid HOST_NIC_VFS_CONFIG_ALL_NETWORKS_ALLOWED = new Guid("6b31bcc8-c6c3-4884-9a10-5f1f076f20c1");
+    public static final Guid HOST_NIC_VFS_CONFIG = new Guid("6b31bcc8-c6c3-4884-9a10-5f1f076f20c2");
 }

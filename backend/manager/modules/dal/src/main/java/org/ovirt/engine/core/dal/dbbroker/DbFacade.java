@@ -145,6 +145,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotConfigDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotDao;
 import org.ovirt.engine.core.dao.gluster.StorageDeviceDao;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
+import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -1249,5 +1250,14 @@ public class DbFacade {
      */
     public HostDeviceDao getHostDeviceDao() {
         return getDao(HostDeviceDao.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig}.
+     *
+     * @return the dao
+     */
+    public HostNicVfsConfigDao getHostNicVfsConfigDao() {
+        return getDao(HostNicVfsConfigDao.class);
     }
 }

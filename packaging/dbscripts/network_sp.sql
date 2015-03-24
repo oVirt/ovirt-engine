@@ -1402,3 +1402,64 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+----------------------------------------------------------------------
+--  hostNicVfsConfig
+----------------------------------------------------------------------
+
+Create or replace FUNCTION InsertHostNicVfsConfig(v_id UUID,
+        v_nic_id  UUID,
+        v_is_all_networks_allowed BOOLEAN)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+INSERT INTO host_nic_vfs_config(id, nic_id, is_all_networks_allowed)
+        VALUES(v_id, v_nic_id, v_is_all_networks_allowed);
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION UpdateHostNicVfsConfig(v_id UUID,
+        v_nic_id  UUID,
+        v_is_all_networks_allowed BOOLEAN)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+      UPDATE host_nic_vfs_config
+      SET id = v_id, nic_id = v_nic_id,
+          is_all_networks_allowed = v_is_all_networks_allowed, _update_date = LOCALTIMESTAMP
+      WHERE id = v_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION DeleteHostNicVfsConfig(v_id UUID)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+
+   DELETE FROM host_nic_vfs_config
+   WHERE id = v_id;
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetHostNicVfsConfigById(v_id UUID) RETURNS SETOF host_nic_vfs_config STABLE
+AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM host_nic_vfs_config
+   WHERE id = v_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetAllFromHostNicVfsConfigs() RETURNS SETOF host_nic_vfs_config STABLE
+AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM host_nic_vfs_config;
+END; $procedure$
+LANGUAGE plpgsql;
+
