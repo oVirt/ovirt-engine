@@ -29,7 +29,6 @@
 		<include name="common/businessentities/AuditLog.java" />
 		<include name="common/businessentities/Bookmark.java" />
 		<include name="common/businessentities/CommandEntity.java" />
-		<include name="common/businessentities/DiskType.java" />
 		<include name="common/businessentities/DisplayType.java" />
         <include name="common/businessentities/GraphicsDevice.java" />
         <include name="common/businessentities/GraphicsType.java" />
