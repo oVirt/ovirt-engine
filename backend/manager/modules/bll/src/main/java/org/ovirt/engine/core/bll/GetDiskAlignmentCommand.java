@@ -110,7 +110,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK);
         }
 
-        if (getDiskType() == DiskStorageType.IMAGE) {
+        if (getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImagesValidator diskImagesValidator = new DiskImagesValidator(Arrays.asList((DiskImage) getDisk()));
             if (!validate(diskImagesValidator.diskImagesNotLocked()) ||
                     !validate(diskImagesValidator.diskImagesNotIllegal())) {
@@ -150,7 +150,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
         // Live scan is not supported yet, this might become: getVm().getId()
         Guid vmId = Guid.Empty;
 
-        if (getDiskType() == DiskStorageType.IMAGE) {
+        if (getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage diskImage = (DiskImage) getDisk();
 
             GetDiskImageAlignmentVDSCommandParameters imageParameters =
@@ -162,7 +162,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
             imageParameters.setImageId(diskImage.getImageId());
 
             parameters = imageParameters;
-        } else if (getDiskType() == DiskStorageType.LUN) {
+        } else if (getDiskStorageType() == DiskStorageType.LUN) {
             LunDisk lunDisk = (LunDisk) getDisk();
 
             GetDiskLunAlignmentVDSCommandParameters lunParameters =
@@ -173,7 +173,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
             parameters = lunParameters;
         } else {
             throw new VdcBLLException(VdcBllErrors.ENGINE, "Unknown DiskStorageType: " +
-                getDiskType().toString() + " Disk id: " + getDisk().getId().toString());
+                getDiskStorageType().toString() + " Disk id: " + getDisk().getId().toString());
         }
 
         Boolean isDiskAligned = (Boolean) runVdsCommand(
@@ -230,7 +230,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
          * lock is not needed since the alignment scan can run without any interference
          * by a concurrent running VM.
          */
-        return (getDiskType() == DiskStorageType.IMAGE &&
+        return (getDiskStorageType() == DiskStorageType.IMAGE &&
                 ((DiskImage) getDisk()).getVolumeFormat() != VolumeFormat.RAW);
     }
 
@@ -282,7 +282,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
         return "";
     }
 
-    protected DiskStorageType getDiskType() {
+    protected DiskStorageType getDiskStorageType() {
         return getDisk().getDiskStorageType();
     }
 
