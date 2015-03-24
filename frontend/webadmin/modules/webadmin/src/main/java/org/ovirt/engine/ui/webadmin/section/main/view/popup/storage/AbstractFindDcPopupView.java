@@ -35,14 +35,14 @@ public class AbstractFindDcPopupView extends AbstractModelBoundPopupView<ListMod
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         // Table Entity Columns
-        table.addEntityModelColumn(new AbstractEntityModelTextColumn<StoragePool>() {
+        table.addColumn(new AbstractEntityModelTextColumn<StoragePool>() {
             @Override
             public String getText(StoragePool storage) {
                 return storage.getName();
             }
         }, constants.nameDc());
 
-        table.addEntityModelColumn(new AbstractEntityModelTextColumn<StoragePool>() {
+        table.addColumn(new AbstractEntityModelTextColumn<StoragePool>() {
             @Override
             protected String getText(StoragePool entity) {
                 return entity.isLocal() ? constants.storageTypeLocal() : constants.storageTypeShared();

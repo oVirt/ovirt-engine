@@ -144,7 +144,7 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
         };
 
         storageDomainItems.setColumnWidth(nameColumn, "280px"); //$NON-NLS-1$
-        storageDomainItems.addEntityModelColumn(nameColumn, constants.nameStorage());
+        storageDomainItems.addColumn(nameColumn, constants.nameStorage());
 
         AbstractEntityModelTextColumn<StorageDomain> freeSpaceColumn = new AbstractEntityModelTextColumn<StorageDomain>() {
             @Override
@@ -157,7 +157,7 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
         };
 
         storageDomainItems.setColumnWidth(freeSpaceColumn, "80px"); //$NON-NLS-1$
-        storageDomainItems.addEntityModelColumn(freeSpaceColumn, constants.freeSpaceStorage());
+        storageDomainItems.addColumn(freeSpaceColumn, constants.freeSpaceStorage());
     }
 
 }

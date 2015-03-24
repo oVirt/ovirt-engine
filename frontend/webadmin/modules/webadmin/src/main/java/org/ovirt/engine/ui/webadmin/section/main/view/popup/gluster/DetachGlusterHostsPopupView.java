@@ -67,7 +67,7 @@ public class DetachGlusterHostsPopupView extends AbstractModelBoundPopupView<Det
 
     protected void initTableColumns(){
         // Table Entity Columns
-        hostsTable.addEntityModelColumn(new AbstractEntityModelTextColumn<String>() {
+        hostsTable.addColumn(new AbstractEntityModelTextColumn<String>() {
             @Override
             public String getText(String hostAddress) {
                 return hostAddress;

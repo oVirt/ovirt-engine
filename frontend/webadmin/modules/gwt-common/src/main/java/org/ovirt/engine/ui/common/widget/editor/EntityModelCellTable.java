@@ -353,11 +353,6 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
         return editorAdapter;
     }
 
-    // TODO this is a duplicate -- remove
-    public void addEntityModelColumn(Column<EntityModel, ?> column, String headerString) {
-        super.addColumn(column, headerString);
-    }
-
     public void setCustomSelectionColumn(Column customSelectionColumn, String width) {
         removeColumn(0);
         insertColumn(0, customSelectionColumn, SafeHtmlUtils.fromSafeConstant("<br/>")); //$NON-NLS-1$

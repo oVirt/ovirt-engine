@@ -61,7 +61,7 @@ public class GlusterVolumeGeoReplicationSessionConfigPopupView extends AbstractM
         geoReplicationConfigTable = new EntityModelCellTable<>(false, true);
         geoReplicationConfigTable.setSelectionModel(new NoSelectionModel());
 
-        geoReplicationConfigTable.addEntityModelColumn(new AbstractEntityModelTextColumn<Pair<Boolean, GlusterGeoRepSessionConfiguration>>() {
+        geoReplicationConfigTable.addColumn(new AbstractEntityModelTextColumn<Pair<Boolean, GlusterGeoRepSessionConfiguration>>() {
             @Override
             protected String getText(Pair<Boolean, GlusterGeoRepSessionConfiguration> entity) {
                 return entity.getSecond().getKey();
@@ -69,7 +69,7 @@ public class GlusterVolumeGeoReplicationSessionConfigPopupView extends AbstractM
         },
                 constants.optionKeyVolumeParameter());
 
-        geoReplicationConfigTable.addEntityModelColumn(new AbstractEntityModelTextColumn<Pair<Boolean, GlusterGeoRepSessionConfiguration>>() {
+        geoReplicationConfigTable.addColumn(new AbstractEntityModelTextColumn<Pair<Boolean, GlusterGeoRepSessionConfiguration>>() {
             @Override
             protected String getText(Pair<Boolean, GlusterGeoRepSessionConfiguration> entity) {
                 return entity.getSecond().getDescription() == null ? constants.notAvailableLabel() : entity.getSecond()

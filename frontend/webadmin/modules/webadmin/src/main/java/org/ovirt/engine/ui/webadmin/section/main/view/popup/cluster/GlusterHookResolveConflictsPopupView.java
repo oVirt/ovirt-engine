@@ -235,14 +235,14 @@ public class GlusterHookResolveConflictsPopupView extends AbstractModelBoundPopu
     }
 
     private void initTableColumns() {
-        contentSourcesTable.addEntityModelColumn(new AbstractEntityModelTextColumn<GlusterServerHook>() {
+        contentSourcesTable.addColumn(new AbstractEntityModelTextColumn<GlusterServerHook>() {
             @Override
             public String getText(GlusterServerHook entity) {
                 return entity.getServerName();
             }
         }, constants.sourceGlusterHook());
 
-        contentSourcesTable.addEntityModelColumn(new AbstractEntityModelEnumColumn<GlusterServerHook, GlusterHookStatus>() {
+        contentSourcesTable.addColumn(new AbstractEntityModelEnumColumn<GlusterServerHook, GlusterHookStatus>() {
             @Override
             protected GlusterHookStatus getEnum(GlusterServerHook entity) {
                 return entity.getStatus();

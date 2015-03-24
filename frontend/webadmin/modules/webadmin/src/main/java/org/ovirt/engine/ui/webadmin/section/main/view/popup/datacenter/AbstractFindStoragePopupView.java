@@ -37,14 +37,14 @@ public class AbstractFindStoragePopupView extends AbstractModelBoundPopupView<Li
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         // Table Entity Columns
-        table.addEntityModelColumn(new AbstractEntityModelTextColumn<StorageDomain>() {
+        table.addColumn(new AbstractEntityModelTextColumn<StorageDomain>() {
             @Override
             public String getText(StorageDomain storage) {
                 return storage.getStorageName();
             }
         }, constants.nameStorage());
 
-        table.addEntityModelColumn(new AbstractEntityModelEnumColumn<StorageDomain, StorageDomainType>() {
+        table.addColumn(new AbstractEntityModelEnumColumn<StorageDomain, StorageDomainType>() {
 
             @Override
             protected StorageDomainType getEnum(StorageDomain storage) {
@@ -52,7 +52,7 @@ public class AbstractFindStoragePopupView extends AbstractModelBoundPopupView<Li
             }
         }, constants.typeStorage());
 
-        table.addEntityModelColumn(new AbstractEntityModelTextColumn<StorageDomain>() {
+        table.addColumn(new AbstractEntityModelTextColumn<StorageDomain>() {
 
             @Override
             public String getText(StorageDomain storage) {

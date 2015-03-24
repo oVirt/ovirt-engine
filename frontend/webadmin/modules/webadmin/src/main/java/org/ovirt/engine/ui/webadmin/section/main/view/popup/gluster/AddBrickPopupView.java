@@ -177,14 +177,14 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
 
     protected void initTableColumns(){
         // Table Entity Columns
-        bricksTable.addEntityModelColumn(new AbstractEntityModelTextColumn<GlusterBrickEntity>() {
+        bricksTable.addColumn(new AbstractEntityModelTextColumn<GlusterBrickEntity>() {
             @Override
             public String getText(GlusterBrickEntity entity) {
                 return entity.getServerName();
             }
         }, constants.serverBricks());
 
-        bricksTable.addEntityModelColumn(new AbstractEntityModelTextColumn<GlusterBrickEntity>() {
+        bricksTable.addColumn(new AbstractEntityModelTextColumn<GlusterBrickEntity>() {
             @Override
             public String getText(GlusterBrickEntity entity) {
                 return entity.getBrickDirectory();

@@ -103,7 +103,7 @@ public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<Man
         manageSwiftServerLevel = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         hostServicesTable = new EntityModelCellTable<ListModel>(false, true);
-        hostServicesTable.addEntityModelColumn(new AbstractEntityModelTextColumn<GlusterServerService>() {
+        hostServicesTable.addColumn(new AbstractEntityModelTextColumn<GlusterServerService>() {
             @Override
             public String getText(GlusterServerService entity) {
                 return entity.getHostName();
@@ -152,7 +152,7 @@ public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<Man
                 }
             }
         });
-        hostServicesTable.addEntityModelColumn(startSwiftColumn, constants.startGlusterSwift());
+        hostServicesTable.addColumn(startSwiftColumn, constants.startGlusterSwift());
 
         Column<EntityModel, Boolean> stopSwiftColumn = new Column<EntityModel, Boolean>(new RadioboxCell(false, true)) {
             @Override
@@ -183,7 +183,7 @@ public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<Man
                 }
             }
         });
-        hostServicesTable.addEntityModelColumn(stopSwiftColumn, constants.stopGlusterSwift());
+        hostServicesTable.addColumn(stopSwiftColumn, constants.stopGlusterSwift());
 
         Column<EntityModel, Boolean> restartSwiftColumn =
                 new Column<EntityModel, Boolean>(new RadioboxCell(false, true)) {
@@ -213,7 +213,7 @@ public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<Man
                 }
             }
         });
-        hostServicesTable.addEntityModelColumn(restartSwiftColumn, constants.restartGlusterSwift());
+        hostServicesTable.addColumn(restartSwiftColumn, constants.restartGlusterSwift());
     }
 
     private void localize() {

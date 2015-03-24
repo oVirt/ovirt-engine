@@ -235,84 +235,84 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
     }
 
     private void initTableColumns() {
-        clientsTable.addEntityModelColumn(new AbstractEntityModelTextColumn<GlusterClientInfo>() {
+        clientsTable.addColumn(new AbstractEntityModelTextColumn<GlusterClientInfo>() {
             @Override
             public String getText(GlusterClientInfo entity) {
                 return entity.getHostname();
             }
         }, constants.clientBrickAdvancedLabel());
 
-        clientsTable.addEntityModelColumn(new AbstractEntityModelTextColumn<GlusterClientInfo>() {
+        clientsTable.addColumn(new AbstractEntityModelTextColumn<GlusterClientInfo>() {
             @Override
             public String getText(GlusterClientInfo entity) {
                 return String.valueOf(entity.getClientPort());
             }
         }, constants.clientPortBrickAdvancedLabel());
 
-        clientsTable.addEntityModelColumn(new AbstractEntityModelTextColumn<GlusterClientInfo>() {
+        clientsTable.addColumn(new AbstractEntityModelTextColumn<GlusterClientInfo>() {
             @Override
             public String getText(GlusterClientInfo entity) {
                 return String.valueOf(entity.getBytesRead());
             }
         }, constants.bytesReadBrickAdvancedLabel());
 
-        clientsTable.addEntityModelColumn(new AbstractEntityModelTextColumn<GlusterClientInfo>() {
+        clientsTable.addColumn(new AbstractEntityModelTextColumn<GlusterClientInfo>() {
             @Override
             public String getText(GlusterClientInfo entity) {
                 return String.valueOf(entity.getBytesWritten());
             }
         }, constants.bytesWrittenBrickAdvancedLabel());
 
-        memoryPoolsTable.addEntityModelColumn(new AbstractEntityModelTextColumn<Mempool>() {
+        memoryPoolsTable.addColumn(new AbstractEntityModelTextColumn<Mempool>() {
             @Override
             public String getText(Mempool entity) {
                 return entity.getName();
             }
         }, constants.nameBrickAdvancedLabel());
 
-        memoryPoolsTable.addEntityModelColumn(new AbstractEntityModelTextColumn<Mempool>() {
+        memoryPoolsTable.addColumn(new AbstractEntityModelTextColumn<Mempool>() {
             @Override
             public String getText(Mempool entity) {
                 return String.valueOf(entity.getHotCount());
             }
         }, constants.hotCountBrickAdvancedLabel());
 
-        memoryPoolsTable.addEntityModelColumn(new AbstractEntityModelTextColumn<Mempool>() {
+        memoryPoolsTable.addColumn(new AbstractEntityModelTextColumn<Mempool>() {
             @Override
             public String getText(Mempool entity) {
                 return String.valueOf(entity.getColdCount());
             }
         }, constants.coldCountBrickAdvancedLabel());
 
-        memoryPoolsTable.addEntityModelColumn(new AbstractEntityModelTextColumn<Mempool>() {
+        memoryPoolsTable.addColumn(new AbstractEntityModelTextColumn<Mempool>() {
             @Override
             public String getText(Mempool entity) {
                 return String.valueOf(entity.getPadddedSize());
             }
         }, constants.paddedSizeBrickAdvancedLabel());
 
-        memoryPoolsTable.addEntityModelColumn(new AbstractEntityModelTextColumn<Mempool>() {
+        memoryPoolsTable.addColumn(new AbstractEntityModelTextColumn<Mempool>() {
             @Override
             public String getText(Mempool entity) {
                 return String.valueOf(entity.getAllocCount());
             }
         }, constants.allocatedCountBrickAdvancedLabel());
 
-        memoryPoolsTable.addEntityModelColumn(new AbstractEntityModelTextColumn<Mempool>() {
+        memoryPoolsTable.addColumn(new AbstractEntityModelTextColumn<Mempool>() {
             @Override
             public String getText(Mempool entity) {
                 return String.valueOf(entity.getMaxAlloc());
             }
         }, constants.maxAllocatedBrickAdvancedLabel());
 
-        memoryPoolsTable.addEntityModelColumn(new AbstractEntityModelTextColumn<Mempool>() {
+        memoryPoolsTable.addColumn(new AbstractEntityModelTextColumn<Mempool>() {
             @Override
             public String getText(Mempool entity) {
                 return String.valueOf(entity.getPoolMisses());
             }
         }, constants.poolMissesBrickAdvancedLabel());
 
-        memoryPoolsTable.addEntityModelColumn(new AbstractEntityModelTextColumn<Mempool>() {
+        memoryPoolsTable.addColumn(new AbstractEntityModelTextColumn<Mempool>() {
             @Override
             public String getText(Mempool entity) {
                 return String.valueOf(entity.getMaxStdAlloc());

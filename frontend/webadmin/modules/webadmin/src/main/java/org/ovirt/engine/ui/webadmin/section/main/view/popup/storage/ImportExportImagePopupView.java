@@ -109,7 +109,7 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
         imageListPanel = new SimplePanel();
 
         imageList = new EntityModelCellTable<>(SelectionMode.NONE, true);
-        imageList.addEntityModelColumn(new AbstractEntityModelTextColumn<Object>() {
+        imageList.addColumn(new AbstractEntityModelTextColumn<Object>() {
             @Override
             public String getText(Object image) {
                 if (image instanceof RepoImage) {
@@ -120,7 +120,7 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
                 return constants.unknown();
             }
         }, constants.fileNameIso());
-        imageList.addEntityModelColumn(new AbstractEntityModelTextColumn<Object>() {
+        imageList.addColumn(new AbstractEntityModelTextColumn<Object>() {
             @Override
             public String getText(Object image) {
                 if (image instanceof RepoImage) {
@@ -131,7 +131,7 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
                 return constants.unknown();
             }
         }, constants.typeIso());
-        imageList.addEntityModelColumn(new AbstractDiskSizeColumn<EntityModel>() {
+        imageList.addColumn(new AbstractDiskSizeColumn<EntityModel>() {
             @Override
             protected Long getRawValue(EntityModel object) {
                 if (object.getEntity() instanceof RepoImage) {

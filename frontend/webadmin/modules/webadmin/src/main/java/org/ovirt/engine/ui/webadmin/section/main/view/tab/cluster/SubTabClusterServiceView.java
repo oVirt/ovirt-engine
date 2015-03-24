@@ -127,14 +127,14 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
 
     protected void initTableColumns() {
         // Table Entity Columns
-        servicesTable.addEntityModelColumn(new AbstractEntityModelTextColumn<GlusterServerService>() {
+        servicesTable.addColumn(new AbstractEntityModelTextColumn<GlusterServerService>() {
             @Override
             public String getText(GlusterServerService entity) {
                 return entity.getHostName();
             }
         }, constants.hostService());
 
-        servicesTable.addEntityModelColumn(new AbstractEntityModelTextColumn<GlusterServerService>() {
+        servicesTable.addColumn(new AbstractEntityModelTextColumn<GlusterServerService>() {
             @Override
             public String getText(GlusterServerService entity) {
                 return entity.getServiceType().name();
@@ -148,7 +148,7 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
             }
         }, constants.statusService());
 
-        servicesTable.addEntityModelColumn(new AbstractEntityModelTextColumn<GlusterServerService>() {
+        servicesTable.addColumn(new AbstractEntityModelTextColumn<GlusterServerService>() {
             @Override
             public String getText(GlusterServerService entity) {
                 if (entity.getPort() != null && entity.getPort() > 0) {
@@ -160,7 +160,7 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
             }
         }, constants.portService());
 
-        servicesTable.addEntityModelColumn(new AbstractEntityModelTextColumn<GlusterServerService>() {
+        servicesTable.addColumn(new AbstractEntityModelTextColumn<GlusterServerService>() {
             @Override
             public String getText(GlusterServerService entity) {
                 return String.valueOf(entity.getPid());
