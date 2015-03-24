@@ -1,7 +1,9 @@
 package org.ovirt.engine.ui.common.uicommon;
 
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 
 public class AbstractVnc {
 
@@ -17,7 +19,8 @@ public class AbstractVnc {
     private String releaseCursorHotKey;
 
     public AbstractVnc() {
-        setRemapCtrlAltDelete(true);
+        setRemapCtrlAltDelete((Boolean) AsyncDataProvider.getInstance()
+                .getConfigValuePreConverted(ConfigurationValues.RemapCtrlAltDelDefault));
     }
 
     public String getTitle() {

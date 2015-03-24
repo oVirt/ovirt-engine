@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WanColorDepth;
@@ -76,7 +78,8 @@ public abstract class AbstractSpice {
         setWANDisableEffects(new ArrayList<WANDisableEffects>());
         setWanOptionsEnabled(false);
         setWANColorDepth(WanColorDepth.depth16);
-        setRemapCtrlAltDel(true);
+        setRemapCtrlAltDel((Boolean) AsyncDataProvider.getInstance()
+                .getConfigValuePreConverted(ConfigurationValues.RemapCtrlAltDelDefault));
         setNoTaskMgrExecution(false);
     }
 
