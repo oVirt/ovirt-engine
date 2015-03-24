@@ -90,6 +90,14 @@ public class HostNicVfsConfigDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<H
         return parameterSource;
     }
 
+    @Override
+    public List<HostNicVfsConfig> getAllVfsConfigByHostId(Guid hostId) {
+        return getCallsHandler().executeReadList("GetAllVfsConfigByHostId",
+                createEntityRowMapper(),
+                getCustomMapSqlParameterSource()
+                .addValue("host_id", hostId));
+    }
+
     // VfsConfigNetworks
 
     Set<Guid> getNetworksByVfsConfigId(Guid vfsConfigId) {

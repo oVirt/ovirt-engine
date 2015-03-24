@@ -1463,6 +1463,18 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION GetAllVfsConfigByHostId(v_host_id UUID)
+RETURNS SETOF host_nic_vfs_config STABLE
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT host_nic_vfs_config.*
+   FROM host_nic_vfs_config
+   INNER JOIN vds_interface
+   ON host_nic_vfs_config.nic_id = vds_interface.id
+   WHERE vds_interface.vds_id = v_host_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
 ----------------------------------------------------------------------
 --  vfsConfigNetworks
 ----------------------------------------------------------------------
