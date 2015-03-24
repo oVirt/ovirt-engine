@@ -1387,6 +1387,11 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     SpiceProxyDefault,
 
+    @Reloadable
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    RemapCtrlAltDelDefault,
+
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     GlusterFsStorageEnabled,

@@ -25,6 +25,7 @@ public enum ConfigurationValues {
     ConsoleReleaseCursorKeys(ConfigAuthType.User),
     ConsoleToggleFullScreenKeys(ConfigAuthType.User),
     SpiceProxyDefault(ConfigAuthType.User),
+    RemapCtrlAltDelDefault(ConfigAuthType.User),
     ClientModeSpiceDefault(ConfigAuthType.User),
     ClientModeVncDefault(ConfigAuthType.User),
     ClientModeRdpDefault(ConfigAuthType.User),

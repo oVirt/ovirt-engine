@@ -260,6 +260,8 @@ select fn_db_add_config_value_for_versions_up_to('HostDevicePassthroughSupported
 -- by default use no proxy
 select fn_db_add_config_value('SpiceProxyDefault','','general');
 
+select fn_db_add_config_value('RemapCtrlAltDelDefault','true','general');
+
 --Handling Install virtualization software on Add Host
 
 select fn_db_add_config_value('InstallVds','true','general');
@@ -1115,4 +1117,3 @@ END; $procedure$
 LANGUAGE plpgsql;
 SELECT  __temp_set_pg_major_release();
 DROP FUNCTION __temp_set_pg_major_release();
-
