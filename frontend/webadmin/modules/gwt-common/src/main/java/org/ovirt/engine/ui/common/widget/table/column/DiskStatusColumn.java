@@ -20,7 +20,8 @@ public class DiskStatusColumn extends AbstractImageResourceColumn<Disk> {
 
     @Override
     public ImageResource getValue(Disk disk) {
-        if (disk.getDiskStorageType().equals(DiskStorageType.IMAGE)) {
+        if (disk.getDiskStorageType().equals(DiskStorageType.IMAGE) ||
+                disk.getDiskStorageType().equals(DiskStorageType.CINDER)) {
             DiskImage diskImage = (DiskImage) disk;
 
             if (diskImage.getImageStatus().equals(ImageStatus.LOCKED)) {
@@ -35,7 +36,8 @@ public class DiskStatusColumn extends AbstractImageResourceColumn<Disk> {
     @Override
     public SafeHtml getTooltip(Disk disk) {
         String tooltipContent = null;
-        if (disk.getDiskStorageType().equals(DiskStorageType.IMAGE)) {
+        if (disk.getDiskStorageType().equals(DiskStorageType.IMAGE) ||
+                disk.getDiskStorageType().equals(DiskStorageType.CINDER)) {
             DiskImage diskImage = (DiskImage) disk;
             if (diskImage.getImageStatus().equals(ImageStatus.LOCKED)) {
                 tooltipContent = EnumTranslator.getInstance().translate(diskImage.getImageStatus());
