@@ -4,14 +4,36 @@ import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 /**
  * LunSelectionCell. Supports tooltips.
  *
  */
 public class LunSelectionCell extends AbstractCell<LunModel> {
+
+    interface CellTemplate extends SafeHtmlTemplates {
+
+        @Template("<span id=\"{0}\" style=\"padding-left: 1px;\">{1}</span>")
+        SafeHtml span(String id, SafeHtml html);
+
+        @Template("<input id=\"{0}\" tabindex='-1' type=\"{1}\" checked />")
+        SafeHtml inputChecked(String id, String type);
+
+        @Template("<input id=\"{0}\" tabindex='-1' type=\"{1}\" checked disabled />")
+        SafeHtml inputCheckedDisabled(String id, String type);
+
+        @Template("<input id=\"{0}\" tabindex='-1' type=\"{1}\" />")
+        SafeHtml inputUnchecked(String id, String type);
+
+        @Template("<input id=\"{0}\" tabindex='-1' type=\"{1}\" disabled />")
+        SafeHtml inputUncheckedDisabled(String id, String type);
+    }
+
+    private static final CellTemplate templates = GWT.create(CellTemplate.class);
 
     private boolean multiSelection;
 
@@ -36,16 +58,27 @@ public class LunSelectionCell extends AbstractCell<LunModel> {
             // ImageResourceCell sets the id
             imageCell.render(context, resources.logWarningImage(), sb, id);
         } else {
-            sb.append(SafeHtmlUtils.fromTrustedString("<span id=\"" + id + " style=\"padding-left: 1px;\">")); //$NON-NLS-1$ //$NON-NLS-2$
+            boolean checked = value.getIsSelected();
+            boolean disabled = value.getIsGrayedOut();
+            String inputId = id + "_input"; //$NON-NLS-1$
 
-            String type = multiSelection ? "type='checkbox' " : "type='radio' "; //$NON-NLS-1$ //$NON-NLS-2$
-            String checked = value.getIsSelected() ? "checked='checked' " : ""; //$NON-NLS-1$ //$NON-NLS-2$
-            String disabled = value.getIsGrayedOut() ? "disabled='disabled' " : ""; //$NON-NLS-1$ //$NON-NLS-2$
-            // include the id
-            String input = "<input id=\"" + id + "_input" + "\" " + type + checked + disabled + " tabindex='-1'/>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            String type = multiSelection ? "checkbox" : "radio"; //$NON-NLS-1$ //$NON-NLS-2$
+            SafeHtml input = null;
 
-            sb.append(SafeHtmlUtils.fromTrustedString(input));
-            sb.append(SafeHtmlUtils.fromTrustedString("</span>")); //$NON-NLS-1$
+            if (checked && !disabled) {
+                input = templates.inputChecked(inputId, type);
+            }
+            else if (checked && disabled) {
+                input = templates.inputCheckedDisabled(inputId, type);
+            }
+            else if (!checked && !disabled) {
+                input = templates.inputUnchecked(inputId, type);
+            }
+            else {
+                input = templates.inputUncheckedDisabled(inputId, type);
+            }
+
+            sb.append(templates.span(id, input));
         }
     }
 

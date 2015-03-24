@@ -28,6 +28,12 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
 
         @Template("<option value=\"{0}\" selected=\"selected\">{0}</option>")
         SafeHtml selected(String option);
+
+        @Template("<select id=\"{0}\" class=\"{1}\" tabindex=\"-1\" >")
+        SafeHtml selectEnabled(String id, String classNames);
+
+        @Template("<select id=\"{0}\" class=\"{1}\" tabindex=\"-1\" disabled>")
+        SafeHtml selectDisabled(String id, String classNames);
     }
 
     private static CellTemplate template = GWT.create(CellTemplate.class);
@@ -93,9 +99,15 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
             viewData = null;
         }
 
-        int selectedIndex = getSelectedIndex(value);
-        sb.appendHtmlConstant("<select id=\"" + id + "\" class='" + style + "' tabindex=\"-1\" " + (isEnabled ? "" : "disabled") + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+        if (isEnabled) {
+            sb.append(template.selectEnabled(id, style));
+        }
+        else {
+            sb.append(template.selectDisabled(id, style));
+        }
+
         int index = 0;
+        int selectedIndex = getSelectedIndex(value);
         for (String option : options) {
             if (index++ == selectedIndex) {
                 sb.append(template.selected(option));

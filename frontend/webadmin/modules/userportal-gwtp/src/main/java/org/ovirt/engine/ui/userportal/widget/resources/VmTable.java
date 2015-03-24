@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.ui.common.SubTableResources;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
@@ -29,6 +31,8 @@ import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -39,9 +43,6 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SingleSelectionModel;
-
-import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 
 public class VmTable extends Composite implements HasEditorDriver<ResourcesModel> {
 
@@ -463,6 +464,13 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
 
 class StyledCompositeCell<T> extends CompositeCell<T> {
 
+    interface CellTemplate extends SafeHtmlTemplates {
+        @Template("<div id=\"{0}\" style=\"{1}\">")
+        SafeHtml div(String id, String style);
+    }
+
+    private static final CellTemplate templates = GWT.create(CellTemplate.class);
+
     private final List<HasCell<T, ?>> hasCells;
     private final StyledProvider<T> styleProvider;
 
@@ -475,12 +483,11 @@ class StyledCompositeCell<T> extends CompositeCell<T> {
     @Override
     public void render(Context context, T value, SafeHtmlBuilder sb, String id) {
         int i = 1;
-        // TODO use Template
         for (HasCell<T, ?> hasCell : hasCells) {
-            String style =
-                    styleProvider.styleStringOf(hasCell) == null ? "" : "style=\"" //$NON-NLS-1$ //$NON-NLS-2$
-                            + styleProvider.styleStringOf(hasCell) + "\""; //$NON-NLS-1$
-            sb.appendHtmlConstant("<div id=\"" + id + "_" + i + "\" " + style + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            String cellId = id + "_" + i; //$NON-NLS-1$
+            String style = styleProvider.styleStringOf(hasCell) == null ? "" : styleProvider.styleStringOf(hasCell); //$NON-NLS-1$
+
+            sb.append(templates.div(cellId, style));
             render(context, value, sb, hasCell);
             sb.appendHtmlConstant("</div>"); //$NON-NLS-1$
             i++;
