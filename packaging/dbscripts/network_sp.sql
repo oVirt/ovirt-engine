@@ -1455,6 +1455,16 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetVfsConfigByNicId(v_nic_id UUID) RETURNS SETOF host_nic_vfs_config STABLE
+AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM host_nic_vfs_config
+   WHERE nic_id = v_nic_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 Create or replace FUNCTION GetAllFromHostNicVfsConfigs() RETURNS SETOF host_nic_vfs_config STABLE
 AS $procedure$
 BEGIN

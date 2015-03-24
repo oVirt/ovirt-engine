@@ -20,6 +20,16 @@ public interface HostNicVfsConfigDao extends GenericDao<HostNicVfsConfig, Guid>,
     List<HostNicVfsConfig> getAllVfsConfigByHostId(Guid hostId);
 
     /**
+     * Retrieves the vfsConfig of the specified nic.
+     *
+     * @param nicId
+     *            the id of the nic
+     * @return the vfsConfig of the specified nic
+     *
+     */
+    HostNicVfsConfig getByNicId(Guid nicId);
+
+    /**
      * Attaches the <code>network</code> to the allowed network list of the specified vfs config
      *
      * @param vfsConfigId

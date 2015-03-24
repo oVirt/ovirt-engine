@@ -95,6 +95,27 @@ public class HostNicVfsConfigDaoTest extends BaseDAOTestCase {
     }
 
     /**
+     * Ensures that a null hostNicVfsConfig is returned.
+     */
+    @Test
+    public void testGetByNicWithInvalidNicId() {
+        HostNicVfsConfig result = dao.getByNicId(Guid.Empty);
+
+        assertNull(result);
+    }
+
+    /**
+     * Ensures that retrieving a hostNicVfsConfig by id works as expected.
+     */
+    @Test
+    public void testGetByNicId() {
+        HostNicVfsConfig result = dao.getByNicId(FixturesTool.VDS_NETWORK_INTERFACE);
+
+        assertNotNull(result);
+        assertEquals(FixturesTool.VDS_NETWORK_INTERFACE, result.getNicId());
+    }
+
+    /**
      * Ensures that saving a hostNicVfsConfig works as expected. No network and labels are added.
      */
     @Test

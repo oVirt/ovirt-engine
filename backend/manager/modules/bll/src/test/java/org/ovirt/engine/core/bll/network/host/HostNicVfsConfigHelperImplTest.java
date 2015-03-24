@@ -93,6 +93,7 @@ public class HostNicVfsConfigHelperImplTest {
         when(nic.getName()).thenReturn(NIC_NAME);
 
         when(hostNicVfsConfig.getNicId()).thenReturn(NIC_ID);
+        when(hostNicVfsConfigDao.getByNicId(NIC_ID)).thenReturn(hostNicVfsConfig);
     }
 
     @Test

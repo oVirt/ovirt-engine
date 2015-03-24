@@ -106,6 +106,13 @@ public class HostNicVfsConfigDaoDbFacadeImpl extends MassOperationsGenericDaoDbF
     }
 
     @Override
+    public HostNicVfsConfig getByNicId(Guid nicId) {
+        return getCallsHandler().executeRead("GetVfsConfigByNicId",
+                createEntityRowMapper(),
+                getCustomMapSqlParameterSource().addValue("nic_id", nicId));
+    }
+
+    @Override
     public void addNetwork(Guid vfsConfigId, Guid networkId) {
         getCallsHandler().executeModification("InsertVfsConfigNetwork",
                 createNetworkParametersMapper(vfsConfigId, networkId));
