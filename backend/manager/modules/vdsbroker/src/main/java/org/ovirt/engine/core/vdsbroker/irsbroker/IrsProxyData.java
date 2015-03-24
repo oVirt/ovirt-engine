@@ -208,10 +208,16 @@ public class IrsProxyData {
                                         null);
                         }
 
-                        if (storagePool.getStatus() == StoragePoolStatus.Up
-                                || storagePool.getStatus() == StoragePoolStatus.NonResponsive || storagePool
-                                        .getStatus() == StoragePoolStatus.Contend) {
-                            proceedStoragePoolStats(storagePool);
+                        if (storagePool.getStatus() == StoragePoolStatus.Up ||
+                                storagePool.getStatus() == StoragePoolStatus.NonResponsive ||
+                                storagePool.getStatus() == StoragePoolStatus.Contend) {
+                            if (!poolStatusDeterminedByHostsStatus) {
+                                proceedStoragePoolStats(storagePool);
+                            } else {
+                                List<StorageDomain> storageDomains = DbFacade.getInstance().getStorageDomainDao()
+                                        .getAllForStoragePool(storagePool.getId());
+                                domainsInMaintenanceCheck(storageDomains);
+                            }
                         }
                     }
 
@@ -340,7 +346,12 @@ public class IrsProxyData {
 
             }
         }
-        for (final StorageDomain domainInDb : domainsInDb) {
+
+        domainsInMaintenanceCheck(domainsInDb);
+    }
+
+    private void domainsInMaintenanceCheck(List<StorageDomain> storageDomains) {
+        for (StorageDomain domainInDb : storageDomains) {
             if (domainInDb.getStatus() == StorageDomainStatus.PreparingForMaintenance) {
                 queueDomainMaintenanceCheck(domainInDb);
             }
@@ -1095,10 +1106,10 @@ public class IrsProxyData {
                 Map<Guid, DomainMonitoringResult> domainsProblematicReportInfo = new HashMap<>();
                 // build a list of all domains in pool
                 // which are in status Active or Unknown
-                Set<Guid> domainsInPool = new HashSet<Guid>(
+                Set<Guid> activeDomainsInPool = new HashSet<Guid>(
                         DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
                                 _storagePoolId, StorageDomainStatus.Active));
-                domainsInPool.addAll(DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
+                Set<Guid> unknownDomainsInPool = new HashSet<>(DbFacade.getInstance().getStorageDomainStaticDao().getAllIds(
                         _storagePoolId, StorageDomainStatus.Unknown));
                 Set<Guid> inActiveDomainsInPool =
                         new HashSet<Guid>(DbFacade.getInstance()
@@ -1106,13 +1117,19 @@ public class IrsProxyData {
                                 .getAllIds(_storagePoolId, StorageDomainStatus.Inactive));
 
                 // build a list of all the domains in
-                // pool (domainsInPool) that are not
+                // pool (activeDomainsInPool and unknownDomainsInPool) that are not
                 // visible by the host.
                 Set<Guid> dataDomainIds = new HashSet<Guid>();
                 for (VDSDomainsData tempData : data) {
                     dataDomainIds.add(tempData.getDomainId());
                 }
-                for (Guid tempDomainId : domainsInPool) {
+                for (Guid tempDomainId : activeDomainsInPool) {
+                    if (!dataDomainIds.contains(tempDomainId)) {
+                        domainsProblematicReportInfo.put(tempDomainId, DomainMonitoringResult.NOT_REPORTED);
+                    }
+                }
+
+                for (Guid tempDomainId : unknownDomainsInPool) {
                     if (!dataDomainIds.contains(tempDomainId)) {
                         domainsProblematicReportInfo.put(tempDomainId, DomainMonitoringResult.NOT_REPORTED);
                     }
@@ -1125,14 +1142,18 @@ public class IrsProxyData {
                 // and are contained in the Active or
                 // Unknown domains in pool
                 for (VDSDomainsData tempData : data) {
-                    if (domainsInPool.contains(tempData.getDomainId())) {
+                    if (activeDomainsInPool.contains(tempData.getDomainId()) || unknownDomainsInPool.contains(tempData.getDomainId())) {
                         DomainMonitoringResult domainMonitoringResult = analyzeDomainReport(tempData, storagePool, false);
                         if (domainMonitoringResult.invalidAndActual()) {
                             domainsProblematicReportInfo.put(tempData.getDomainId(), domainMonitoringResult);
                         } else if (domainMonitoringResult.actual() && tempData.getDelay() > Config.<Double> getValue(ConfigValues.MaxStorageVdsDelayCheckSec)) {
                             logDelayedDomain(vdsId, tempData);
                         }
-                    } else if (inActiveDomainsInPool.contains(tempData.getDomainId())
+                    }
+
+                    else if ((inActiveDomainsInPool.contains(tempData.getDomainId()) ||
+                            // in data centers with spm, unknown domains are moving to Active status according to the pool metadata.
+                            (FeatureSupported.dataCenterWithoutSpm(storagePool.getCompatibilityVersion()) && unknownDomainsInPool.contains(tempData.getDomainId())))
                             && analyzeDomainReport(tempData, storagePool, false).validAndActual()) {
                         log.warn("Storage Domain '{}' was reported by Host '{}' as Active in Pool '{}', moving to active status",
                                 getDomainIdTuple(tempData.getDomainId()),
