@@ -23,9 +23,8 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
  *
  * @param <T>
  *            The data type of the cell (the model)
- * TODO rename abstract?
  */
-public abstract class ImageButtonCell<T> extends AbstractCell<T> {
+public abstract class AbstractImageButtonCell<T> extends AbstractCell<T> {
 
     interface CellTemplate extends SafeHtmlTemplates {
         @Template("<span id=\"{0}\" class=\"{1}\">{2}</span>")
@@ -40,7 +39,7 @@ public abstract class ImageButtonCell<T> extends AbstractCell<T> {
     private final SafeHtml disabledHtml;
     private final String disabledClassNames;
 
-    public ImageButtonCell(ImageResource enabledImage, String enabledClassNames,
+    public AbstractImageButtonCell(ImageResource enabledImage, String enabledClassNames,
             ImageResource disabledImage, String disabledClassNames) {
         super();
         this.enabledHtml = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(enabledImage).getHTML());

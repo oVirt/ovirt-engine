@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
-import org.ovirt.engine.ui.common.widget.table.cell.ImageButtonCell;
+import org.ovirt.engine.ui.common.widget.table.cell.AbstractImageButtonCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
@@ -58,7 +58,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    protected abstract class AbstractVmButtonsImageButtonCell extends ImageButtonCell<UserPortalItemModel> {
+    protected abstract class AbstractVmButtonsImageButtonCell extends AbstractImageButtonCell<UserPortalItemModel> {
 
         public AbstractVmButtonsImageButtonCell(ImageResource enabledImage, ImageResource disabledImage) {
             super(enabledImage, resources.sideTabExtendedVmStyle().vmButtonEnabled(),
@@ -325,7 +325,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected CompositeCell<UserPortalItemModel> createActionsCompositeCell(String elementIdPrefix) {
-        ImageButtonCell<UserPortalItemModel> runCell = new VmButtonsImageButtonCell(
+        AbstractImageButtonCell<UserPortalItemModel> runCell = new VmButtonsImageButtonCell(
                 resources.playIcon(), resources.playDisabledIcon()) {
             @Override
             public SafeHtml getTooltip(UserPortalItemModel value) {
@@ -340,7 +340,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
         runCell.setElementIdPrefix(elementIdPrefix);
         runCell.setColumnId("runButton"); //$NON-NLS-1$
 
-        ImageButtonCell<UserPortalItemModel> shutdownCell = new VmButtonsImageButtonCell(
+        AbstractImageButtonCell<UserPortalItemModel> shutdownCell = new VmButtonsImageButtonCell(
                 resources.stopIcon(), resources.stopDisabledIcon()) {
             @Override
             public SafeHtml getTooltip(UserPortalItemModel value) {
@@ -355,7 +355,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
         shutdownCell.setElementIdPrefix(elementIdPrefix);
         shutdownCell.setColumnId("shutdownButton"); //$NON-NLS-1$
 
-        ImageButtonCell<UserPortalItemModel> suspendCell = new VmButtonsImageButtonCell(
+        AbstractImageButtonCell<UserPortalItemModel> suspendCell = new VmButtonsImageButtonCell(
                 resources.suspendIcon(), resources.suspendDisabledIcon()) {
             @Override
             public SafeHtml getTooltip(UserPortalItemModel value) {
@@ -370,7 +370,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
         suspendCell.setElementIdPrefix(elementIdPrefix);
         suspendCell.setColumnId("suspendButton"); //$NON-NLS-1$
 
-        ImageButtonCell<UserPortalItemModel> stopCell = new VmButtonsImageButtonCell(
+        AbstractImageButtonCell<UserPortalItemModel> stopCell = new VmButtonsImageButtonCell(
                 resources.powerIcon(), resources.powerDisabledIcon()) {
             @Override
             public SafeHtml getTooltip(UserPortalItemModel value) {
@@ -385,7 +385,7 @@ public class SideTabExtendedVirtualMachineView extends AbstractSideTabWithDetail
         stopCell.setElementIdPrefix(elementIdPrefix);
         stopCell.setColumnId("stopButton"); //$NON-NLS-1$
 
-        ImageButtonCell<UserPortalItemModel> rebootCell = new VmButtonsImageButtonCell(
+        AbstractImageButtonCell<UserPortalItemModel> rebootCell = new VmButtonsImageButtonCell(
                 resources.rebootIcon(), resources.rebootDisabledIcon()) {
 
             @Override

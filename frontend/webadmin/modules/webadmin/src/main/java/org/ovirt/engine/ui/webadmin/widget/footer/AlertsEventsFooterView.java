@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTabModelProvider;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
-import org.ovirt.engine.ui.common.widget.table.cell.ImageButtonCell;
+import org.ovirt.engine.ui.common.widget.table.cell.AbstractImageButtonCell;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
@@ -508,7 +508,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         }
     }
 
-    class DismissAuditLogImageButtonCell extends ImageButtonCell<AuditLog> {
+    class DismissAuditLogImageButtonCell extends AbstractImageButtonCell<AuditLog> {
 
         AlertModelProvider alertModelProvider;
 
