@@ -294,11 +294,6 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
             protected String getDisabledMessage(Object model) {
                 return ((ImportVmData) model).getClone().getChangeProhibitionReason();
             }
-
-            @Override
-            public SafeHtml getTooltip(Object object) {
-                return super.getTooltip(object);
-            }
         };
         table.addColumn(cloneVMColumn, constants.cloneVM(), "50px"); //$NON-NLS-1$
 
