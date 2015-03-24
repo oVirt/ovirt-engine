@@ -435,16 +435,8 @@ install-packaging-files: \
 		EXCLUDE="$$(echo $$(find packaging/dbscripts \( -name '*.scripts.md5' -or -name '*.schema' -or -name '*.log' \)))"
 
 install-gwt-symbols:
-	install -d -m 0755 "$(DESTDIR)$(DATA_DIR)/gwt-symbols/userportal"
-	f=frontend/webadmin/modules/userportal-gwtp/target/generated-gwt/WEB-INF/deploy/userportal/symbolMaps; \
-	if [ -e "$${f}" ]; then \
-		install -m 0644 "$${f}"/*.symbolMap "$(DESTDIR)$(DATA_DIR)/gwt-symbols/userportal"; \
-	fi
-	install -d -m 0755 "$(DESTDIR)$(DATA_DIR)/gwt-symbols/webadmin"
-	f=frontend/webadmin/modules/webadmin/target/generated-gwt/WEB-INF/deploy/webadmin/symbolMaps; \
-	if [ -e "$${f}" ]; then \
-		install -m 0644 "$${f}"/*.symbolMap "$(DESTDIR)$(DATA_DIR)/gwt-symbols/webadmin"; \
-	fi
+	install -d -m 0755 "$(DESTDIR)$(DATA_DIR)/gwt-symbols"
+	find "$(MAVEN_OUTPUT_DIR)" -name 'frontend-symbols-*.jar' -not -name '*-tests.jar' -type f | grep -v tmp.repos | xargs -ijar -r -n 1 unzip -q -o -d "$(DESTDIR)$(DATA_DIR)/gwt-symbols" jar -x 'META-INF/*'
 
 install-layout: \
 		install-packaging-files \
