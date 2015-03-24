@@ -30,7 +30,7 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
         SafeHtml selected(String option);
     }
 
-    private static CellTemplate template;
+    private static CellTemplate template = GWT.create(CellTemplate.class);
 
     private final HashMap<String, Integer> indexForOption = new HashMap<String, Integer>();
 
@@ -48,9 +48,6 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
      */
     public CustomSelectionCell(List<String> options) {
         super();
-        if (template == null) {
-            template = GWT.create(CellTemplate.class);
-        }
         this.options = new ArrayList<String>(options);
         int index = 0;
         for (String option : options) {

@@ -47,7 +47,7 @@ public class TextCell extends AbstractCell<String> implements HasStyleClass {
     // by default, detect overflow and truncate with an ellipse
     boolean useOverflowTruncation = true;
 
-    private static CellTemplate template;
+    private static CellTemplate template = GWT.create(CellTemplate.class);
 
     public TextCell() {
         this(UNLIMITED_LENGTH, true);
@@ -65,11 +65,6 @@ public class TextCell extends AbstractCell<String> implements HasStyleClass {
         super();
         this.maxTextLength = maxTextLength;
         this.useOverflowTruncation = useOverflowTruncation;
-
-        // Delay cell template creation until the first time it's needed
-        if (template == null) {
-            template = GWT.create(CellTemplate.class);
-        }
     }
 
     public void setStyleClass(String styleClass) {
