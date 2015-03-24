@@ -10,10 +10,10 @@ import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTabModelProvider;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
-import org.ovirt.engine.ui.common.widget.table.cell.AbstractImageButtonCell;
+import org.ovirt.engine.ui.common.widget.table.cell.ImageButtonCell;
+import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractFullDateTimeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractImageResourceColumn;
-import org.ovirt.engine.ui.common.widget.table.column.AbstractColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AbstractTextColumn;
 import org.ovirt.engine.ui.common.widget.table.column.AuditLogSeverityColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -508,12 +508,12 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         }
     }
 
-    class DismissAuditLogImageButtonCell extends AbstractImageButtonCell<AuditLog> {
+    class DismissAuditLogImageButtonCell extends ImageButtonCell<AuditLog> {
 
         AlertModelProvider alertModelProvider;
 
         public DismissAuditLogImageButtonCell(AlertModelProvider alertModelProvider) {
-            super(resources.dialogIconClose());
+            super(resources.dialogIconClose(), "", resources.dialogIconClose(), ""); //$NON-NLS-1$ //$NON-NLS-2$
             this.alertModelProvider = alertModelProvider;
         }
 

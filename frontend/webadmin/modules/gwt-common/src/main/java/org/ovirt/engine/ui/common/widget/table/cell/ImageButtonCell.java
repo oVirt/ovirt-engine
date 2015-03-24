@@ -29,24 +29,24 @@ public abstract class ImageButtonCell<T> extends AbstractCell<T> {
 
     interface CellTemplate extends SafeHtmlTemplates {
         @Template("<span id=\"{0}\" class=\"{1}\">{2}</span>")
-        SafeHtml span(String id, String styleClass, SafeHtml html);
+        SafeHtml span(String id, String classNames, SafeHtml html);
     }
 
     private static CellTemplate template = GWT.create(CellTemplate.class);
 
     private final SafeHtml enabledHtml;
-    private final String enabledCss;
+    private final String enabledClassNames;
 
     private final SafeHtml disabledHtml;
-    private final String disabledCss;
+    private final String disabledClassNames;
 
-    public ImageButtonCell(ImageResource enabledImage, String enabledCss,
-            ImageResource disabledImage, String disabledCss) {
+    public ImageButtonCell(ImageResource enabledImage, String enabledClassNames,
+            ImageResource disabledImage, String disabledClassNames) {
         super();
         this.enabledHtml = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(enabledImage).getHTML());
-        this.enabledCss = enabledCss;
+        this.enabledClassNames = enabledClassNames;
         this.disabledHtml = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(disabledImage).getHTML());
-        this.disabledCss = disabledCss;
+        this.disabledClassNames = disabledClassNames;
     }
 
     /**
@@ -76,7 +76,7 @@ public abstract class ImageButtonCell<T> extends AbstractCell<T> {
 
     @Override
     public void render(Context context, T value, SafeHtmlBuilder sb, String id) {
-        String css = isEnabled(value) ? enabledCss : disabledCss;
+        String css = isEnabled(value) ? enabledClassNames : disabledClassNames;
         SafeHtml html = isEnabled(value) ? enabledHtml : disabledHtml;
 
         sb.append(template.span(id, css, html));
