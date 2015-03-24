@@ -19,6 +19,7 @@
     <module>gwt-common</module>
     <module>webadmin</module>
     <module>userportal-gwtp</module>
+    <module>frontend-symbols</module>
   </modules>
   <properties>
     <!-- Enforce java 1.6 compilation for GWT integration -->
