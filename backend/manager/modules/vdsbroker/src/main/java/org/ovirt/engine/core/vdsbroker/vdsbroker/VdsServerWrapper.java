@@ -22,6 +22,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusForXmlRp
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeOptionsInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeProfileInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotConfigReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotCreateReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeTaskReturnForXmlRpc;
@@ -1670,9 +1671,15 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public OneUuidReturnForXmlRpc glusterSnapshotCreate(String volumeName, String snapshotName, String description, boolean force) {
+    public GlusterVolumeSnapshotCreateReturnForXmlRpc glusterSnapshotCreate(String volumeName,
+            String snapshotName,
+            String description,
+            boolean force) {
         try {
-            return new OneUuidReturnForXmlRpc(vdsServer.glusterSnapshotCreate(volumeName, snapshotName, description, force));
+            return new GlusterVolumeSnapshotCreateReturnForXmlRpc(vdsServer.glusterSnapshotCreate(volumeName,
+                    snapshotName,
+                    description,
+                    force));
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);
         }

@@ -1,9 +1,6 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 
 import org.ovirt.engine.core.bll.Backend;
@@ -40,12 +37,10 @@ public class GlusterSnapshotScheduleJob implements Serializable {
             return;
         }
 
-        GlusterVolumeSnapshotEntity snapshot = new GlusterVolumeSnapshotEntity();
+        final GlusterVolumeSnapshotEntity snapshot = new GlusterVolumeSnapshotEntity();
         snapshot.setClusterId(volume.getClusterId());
         snapshot.setVolumeId(volume.getId());
-        DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-        final String snapshotName = snapshotNamePrefix + "-snap-" + df.format(new Date());
-        snapshot.setSnapshotName(snapshotName);
+        snapshot.setSnapshotName(snapshotNamePrefix);
         snapshot.setDescription(description);
 
         VdcReturnValueBase returnValue = getBackend().runInternalAction(VdcActionType.CreateGlusterVolumeSnapshot,
@@ -60,7 +55,7 @@ public class GlusterSnapshotScheduleJob implements Serializable {
                     AuditLogType.GLUSTER_VOLUME_SNAPSHOT_CREATE_FAILED,
                     new HashMap<String, String>() {
                         {
-                            put(GlusterConstants.VOLUME_SNAPSHOT_NAME, snapshotName);
+                            put(GlusterConstants.VOLUME_SNAPSHOT_NAME, snapshot.getSnapshotName());
                             put(GlusterConstants.VOLUME_NAME, volume.getName());
                         }
                     });

@@ -26,6 +26,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusForXmlRp
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeOptionsInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeProfileInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotConfigReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotCreateReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeSnapshotInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeTaskReturnForXmlRpc;
@@ -1754,7 +1755,10 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public OneUuidReturnForXmlRpc glusterSnapshotCreate(String volumeName, String snapshotName, String description, boolean force) {
+    public GlusterVolumeSnapshotCreateReturnForXmlRpc glusterSnapshotCreate(String volumeName,
+            String snapshotName,
+            String description,
+            boolean force) {
         JsonRpcRequest request =
                 new RequestBuilder("GlusterVolume.snapshotCreate").withParameter("volumeName", volumeName)
                         .withParameter("snapName", snapshotName)
@@ -1763,7 +1767,7 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withIgnoreResponseKey();
-        return new OneUuidReturnForXmlRpc(response);
+        return new GlusterVolumeSnapshotCreateReturnForXmlRpc(response);
     }
 
     @Override
