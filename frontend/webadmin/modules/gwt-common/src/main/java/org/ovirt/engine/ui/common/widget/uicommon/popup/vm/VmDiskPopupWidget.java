@@ -320,7 +320,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         });
 
         diskTypePanel.addRadioButton(
-                constants.internalDisk(),
+                constants.imageDisk(),
                 disk.getDisk() == null || disk.getDisk().getDiskStorageType() == DiskStorageType.IMAGE,
                 disk.getIsNew(),
                 new ClickHandler() {
@@ -332,7 +332,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
             });
 
         diskTypePanel.addRadioButton(
-                constants.externalDisk(),
+                constants.directLunDisk(),
                 disk.getDisk() != null && disk.getDisk().getDiskStorageType() == DiskStorageType.LUN,
                 disk.getIsNew(),
                 new ClickHandler() {

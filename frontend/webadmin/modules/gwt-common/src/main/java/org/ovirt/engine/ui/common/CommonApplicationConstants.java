@@ -1320,11 +1320,11 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Bootable")
     String bootable();
 
-    @DefaultStringValue("Internal")
-    String internalDisk();
+    @DefaultStringValue("Image")
+    String imageDisk();
 
-    @DefaultStringValue("External (Direct LUN)")
-    String externalDisk();
+    @DefaultStringValue("Direct LUN")
+    String directLunDisk();
 
     @DefaultStringValue("Cinder")
     String cinderDisk();
