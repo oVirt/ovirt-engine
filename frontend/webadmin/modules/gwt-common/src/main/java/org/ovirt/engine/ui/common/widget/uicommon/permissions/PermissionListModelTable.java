@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.permissions;
 
-import com.google.gwt.event.shared.EventBus;
+import java.util.Date;
+
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.gin.AssetProvider;
@@ -15,7 +16,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.AbstractModelBoundTableWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 
-import java.util.Date;
+import com.google.gwt.event.shared.EventBus;
 
 public class PermissionListModelTable<P extends PermissionListModel<?>> extends AbstractModelBoundTableWidget<Permission, P> {
 
@@ -31,22 +32,22 @@ public class PermissionListModelTable<P extends PermissionListModel<?>> extends 
     public void initTable() {
         getTable().enableColumnResizing();
         //add columns
-        addTypeColumn(constants);
-        addUserColumn(constants);
-        addAuthzColumn(constants);
-        addNameSpaceColumn(constants);
-        addRoleColumn(constants);
-        addCreationDateColum(constants);
+        addTypeColumn();
+        addUserColumn();
+        addAuthzColumn();
+        addNameSpaceColumn();
+        addRoleColumn();
+        addCreationDateColum();
         // add buttons
-        addAddPermissionsButton(constants);
-        addRemovePermissionsButton(constants);
+        addAddPermissionsButton();
+        addRemovePermissionsButton();
     }
 
-    private void addTypeColumn(CommonApplicationConstants constants) {
+    private void addTypeColumn() {
         getTable().addColumn(new PermissionTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
     }
 
-    private void addUserColumn(CommonApplicationConstants constants) {
+    private void addUserColumn() {
         AbstractTextColumn<Permission> userColumn = new AbstractTextColumn<Permission>() {
             @Override
             public String getValue(Permission object) {
@@ -57,7 +58,7 @@ public class PermissionListModelTable<P extends PermissionListModel<?>> extends 
         getTable().addColumn(userColumn, constants.userPermission(), "300px"); //$NON-NLS-1$
     }
 
-    private void addAuthzColumn(CommonApplicationConstants constants) {
+    private void addAuthzColumn() {
         AbstractTextColumn<Permission> authzColumn = new AbstractTextColumn<Permission>() {
             @Override
             public String getValue(Permission object) {
@@ -68,7 +69,7 @@ public class PermissionListModelTable<P extends PermissionListModel<?>> extends 
         getTable().addColumn(authzColumn, constants.authz(), "150px"); //$NON-NLS-1$
     }
 
-    private void addNameSpaceColumn(CommonApplicationConstants constants) {
+    private void addNameSpaceColumn() {
         AbstractTextColumn<Permission> namespaceColumn = new AbstractTextColumn<Permission>() {
             @Override
             public String getValue(Permission object) {
@@ -79,7 +80,7 @@ public class PermissionListModelTable<P extends PermissionListModel<?>> extends 
         getTable().addColumn(namespaceColumn, constants.namespace(), "150px"); //$NON-NLS-1$
     }
 
-        private void addRoleColumn(CommonApplicationConstants constants) {
+    private void addRoleColumn() {
             AbstractTextColumn<Permission> roleColumn = new AbstractTextColumn<Permission>() {
             @Override
             public String getValue(Permission object) {
@@ -90,7 +91,7 @@ public class PermissionListModelTable<P extends PermissionListModel<?>> extends 
         getTable().addColumn(roleColumn, constants.rolePermission(), "300px"); //$NON-NLS-1$
     }
 
-    private void addCreationDateColum(CommonApplicationConstants constants) {
+    private void addCreationDateColum() {
             AbstractTextColumn<Permission> creationDateColumn = new AbstractRenderedTextColumn<Permission, Date>(new FullDateTimeRenderer()) {
                 @Override
                 public Date getRawValue(Permission object) {
@@ -101,7 +102,7 @@ public class PermissionListModelTable<P extends PermissionListModel<?>> extends 
         creationDateColumn.makeSortable();
     }
 
-    private void addAddPermissionsButton(final CommonApplicationConstants constants) {
+    private void addAddPermissionsButton() {
         getTable().addActionButton(new UiCommandButtonDefinition<Permission>(getEventBus(), constants.addPermission()) {
             @Override
             protected UICommand resolveCommand() {
@@ -110,7 +111,7 @@ public class PermissionListModelTable<P extends PermissionListModel<?>> extends 
         });
     }
 
-        private void addRemovePermissionsButton(final CommonApplicationConstants constants) {
+    private void addRemovePermissionsButton() {
             getTable().addActionButton(new UiCommandButtonDefinition<Permission>(getEventBus(), constants.removePermission()) {
             @Override
             protected UICommand resolveCommand() {
