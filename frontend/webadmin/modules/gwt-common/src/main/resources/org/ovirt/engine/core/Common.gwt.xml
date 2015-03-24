@@ -390,6 +390,7 @@
         <include name="common/businessentities/ExternalHost.java"/>
         <include name="common/businessentities/ExternalDiscoveredHost.java"/>
         <include name="common/businessentities/ExternalComputeResource.java"/>
+        <include name="common/businessentities/Erratum.java"/>
 	</source>
 
 	<super-source path="ui/uioverrides" />
