@@ -8,9 +8,8 @@ import com.google.gwt.event.shared.EventBus;
 
 public abstract class WebAdminButtonDefinition<T> extends UiCommandButtonDefinition<T> {
 
-    public WebAdminButtonDefinition(String title, CommandLocation commandLocation,
-            boolean subTitledAction, String toolTip) {
-        super(getEventBus(), title, commandLocation, subTitledAction, toolTip);
+    public WebAdminButtonDefinition(String title, CommandLocation commandLocation, boolean subTitledAction) {
+        super(getEventBus(), title, commandLocation, subTitledAction);
     }
 
     public WebAdminButtonDefinition(String title, CommandLocation commandLocation) {

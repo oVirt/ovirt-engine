@@ -26,6 +26,8 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListModel<Void>, HostVmListModel>
         implements SubTabHostVmPresenter.ViewDef {
@@ -151,6 +153,11 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
             protected UICommand resolveCommand() {
                 return getDetailModel().getPauseCommand();
             }
+
+            @Override
+            public SafeHtml getTooltip() {
+                return SafeHtmlUtils.fromSafeConstant(constants.suspendVm());
+            }
         });
 
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.shutDownVm(),
@@ -159,12 +166,22 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
             protected UICommand resolveCommand() {
                 return getDetailModel().getShutdownCommand();
             }
+
+            @Override
+            public SafeHtml getTooltip() {
+                return SafeHtmlUtils.fromSafeConstant(constants.shutDownVm());
+            }
         });
 
         getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.powerOffVm(), CommandLocation.OnlyFromContext) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getStopCommand();
+            }
+
+            @Override
+            public SafeHtml getTooltip() {
+                return SafeHtmlUtils.fromSafeConstant(constants.powerOffVm());
             }
         });
 
@@ -174,6 +191,12 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
             protected UICommand resolveCommand() {
                 return getDetailModel().getConsoleConnectCommand();
             }
+
+            @Override
+            public SafeHtml getTooltip() {
+                return SafeHtmlUtils.fromSafeConstant(constants.consoleVm());
+            }
+
         });
 
         // TODO: separator

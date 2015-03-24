@@ -81,13 +81,13 @@ public interface ActionButtonDefinition<T> extends HasInitializeHandlers {
     boolean isSubTitledAction();
 
     /**
-     * Returns the tooltip for this action button or {@code null} to use button tooltip text.
+     * Returns the tooltip for this action button.
      */
-    String getButtonToolTip();
+    public SafeHtml getTooltip();
 
     /**
-     * Returns the tool-tip for the context menu item representing this action button.
+     * Returns the tooltip for the context menu item representing this action button.
      */
-    String getMenuItemToolTip();
+    public SafeHtml getMenuItemTooltip();
 
 }

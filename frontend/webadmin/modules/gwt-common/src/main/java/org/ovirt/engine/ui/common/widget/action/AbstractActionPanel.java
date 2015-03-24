@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.gwtbootstrap3.client.ui.constants.Placement;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.idhandler.ProvidesElementId;
 import org.ovirt.engine.ui.common.system.HeaderOffsetChangeEvent;
@@ -38,7 +39,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
@@ -427,9 +427,9 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
      * @param newActionButton The {@code ActionButton} to copy the style from.
      */
     private void copyStyleToCascadeButton(ActionButton newActionButton) {
-        String styleString = ((Widget) newActionButton).getStyleName();
-        if (styleString != null) {
-            String[] stylesArray = styleString.split(" "); //$NON-NLS-1$
+        String styleString = ((Widget) newActionButton).getStyleName().trim();
+        if (styleString != null && !styleString.isEmpty()) {
+            String[] stylesArray = styleString.split("\\s+"); //$NON-NLS-1$
             for (String singleStyle : stylesArray) {
                 if (!singleStyle.startsWith(GWT_PREFIX)) {
                     cascadeButton.addStyleName(singleStyle);
@@ -597,8 +597,10 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
         button.asWidget().setVisible(buttonDef.isAccessible(getSelectedItems())
                 && buttonDef.isVisible(getSelectedItems()) && !buttonDef.isCascaded());
         button.setEnabled(buttonDef.isEnabled(getSelectedItems()));
-        if (buttonDef.getButtonToolTip() != null) {
-            button.setTooltipText(buttonDef.getButtonToolTip());
+        if (buttonDef.getTooltip() != null) {
+            // this Panel is special. show the tooltips below the buttons because they're too
+            // hard to read with the default TOP placement.
+            button.setTooltip(buttonDef.getTooltip(), Placement.BOTTOM);
         }
         originallyVisible.put(button.asWidget(), buttonDef.isAccessible(getSelectedItems())
                 && buttonDef.isVisible(getSelectedItems()));
@@ -613,8 +615,8 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
         item.setVisible(buttonDef.isAccessible(getSelectedItems()) && buttonDef.isVisible(getSelectedItems()));
         item.setEnabled(buttonDef.isEnabled(getSelectedItems()));
 
-        if (buttonDef.getMenuItemToolTip() != null) {
-            TooltipMixin.addTooltipToElement(SafeHtmlUtils.fromString(buttonDef.getMenuItemToolTip()), item.getElement());
+        if (buttonDef.getMenuItemTooltip() != null) {
+            TooltipMixin.addTooltipToElement(buttonDef.getMenuItemTooltip(), item.getElement());
         }
     }
 

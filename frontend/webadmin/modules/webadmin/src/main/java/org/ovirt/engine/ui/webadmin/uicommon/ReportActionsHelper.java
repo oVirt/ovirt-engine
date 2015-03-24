@@ -14,6 +14,9 @@ import org.ovirt.engine.ui.uicompat.ReportParser.URI;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+
 public class ReportActionsHelper {
 
     private static final ReportActionsHelper INSTANCE = new ReportActionsHelper();
@@ -58,7 +61,7 @@ public class ReportActionsHelper {
         List<ActionButtonDefinition<T>> subActions = new LinkedList<ActionButtonDefinition<T>>();
 
         for (final URI uri : category.getUriList()) {
-            subActions.add(new WebAdminButtonDefinition<T>(uri.getName(), null, true, uri.getDescription()) {
+            subActions.add(new WebAdminButtonDefinition<T>(uri.getName(), null, true) {
 
                 @Override
                 public boolean isVisible(List<T> selectedItems) {
@@ -67,8 +70,12 @@ public class ReportActionsHelper {
 
                 @Override
                 protected UICommand resolveCommand() {
-
                     return modelProvider.getModel().addOpenReportCommand(uri.getId(), uri.isMultiple(), uri.getValue());
+                }
+
+                @Override
+                public SafeHtml getTooltip() {
+                    return SafeHtmlUtils.fromString(uri.getDescription());
                 }
 
             });

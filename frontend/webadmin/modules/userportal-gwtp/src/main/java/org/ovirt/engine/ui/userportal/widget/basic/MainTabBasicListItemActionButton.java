@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.widget.action.AbstractActionButton;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -29,10 +30,10 @@ public class MainTabBasicListItemActionButton extends AbstractActionButton imple
     @UiField
     Panel stylableButtonHolder;
 
-    public MainTabBasicListItemActionButton(String tooltipText, ImageResource enabledImage, ImageResource disabledImage,
+    public MainTabBasicListItemActionButton(SafeHtml tooltip, ImageResource enabledImage, ImageResource disabledImage,
             String additionalStyle) {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        setTooltipText(tooltipText);
+        setTooltip(tooltip);
         setEnabledHtml(SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(enabledImage).getHTML()));
         setDisabledHtml(SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(disabledImage).getHTML()));
         stylableButtonHolder.addStyleName(additionalStyle);

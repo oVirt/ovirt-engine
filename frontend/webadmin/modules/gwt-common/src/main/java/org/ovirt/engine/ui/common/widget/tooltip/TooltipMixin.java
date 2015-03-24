@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.tooltip;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.gwtbootstrap3.client.ui.constants.Placement;
 import org.ovirt.engine.ui.common.utils.JqueryUtils;
 
 import com.google.gwt.dom.client.BrowserEvents;
@@ -89,10 +90,11 @@ public class TooltipMixin {
         ElementTooltip.hideAll();
     }
 
-    public static ElementTooltip addTooltipToElement(SafeHtml tooltipContent, Element element) {
+    public static ElementTooltip addTooltipToElement(SafeHtml tooltipContent, Element element, Placement placement) {
         ElementTooltip tooltip = new ElementTooltip(element);
 
         tooltip.setContent(tooltipContent);
+        tooltip.setPlacement(placement);
         tooltip.reconfigure();
 
         String cellId = element.getId();
@@ -108,6 +110,10 @@ public class TooltipMixin {
         ElementTooltip.getRegistry().put(cellId, details);
 
         return tooltip;
+    }
+
+    public static ElementTooltip addTooltipToElement(SafeHtml tooltipContent, Element element) {
+        return addTooltipToElement(tooltipContent, element, TooltipConfig.PLACEMENT);
     }
 
     public static boolean isTooltipConfigured(Element parent) {

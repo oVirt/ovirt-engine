@@ -12,6 +12,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.resources.client.ImageResource.ImageOptions;
+import com.google.gwt.safehtml.shared.SafeHtml;
 
 public abstract class UiMenuBarButtonDefinition<T> extends ImageUiCommandButtonDefinition<T> {
 
@@ -120,7 +121,7 @@ public abstract class UiMenuBarButtonDefinition<T> extends ImageUiCommandButtonD
     }
 
     @Override
-    public String getMenuItemToolTip() {
+    public SafeHtml getMenuItemTooltip() {
         return null;
     }
 

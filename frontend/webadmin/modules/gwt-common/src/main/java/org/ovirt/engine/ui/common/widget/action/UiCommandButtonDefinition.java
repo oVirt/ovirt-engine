@@ -5,10 +5,10 @@ import java.util.List;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.event.logical.shared.InitializeEvent;
 import com.google.gwt.event.shared.EventBus;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 /**
  * Button definition that adapts to UiCommon {@linkplain UICommand commands}.
@@ -31,19 +31,18 @@ public abstract class UiCommandButtonDefinition<T> extends AbstractButtonDefinit
     private IEventListener<PropertyChangedEventArgs> propertyChangeListener;
 
     public UiCommandButtonDefinition(EventBus eventBus, String title,
-            CommandLocation commandLocation, boolean subTitledAction,
-            String toolTip) {
-        super(eventBus, title, commandLocation, subTitledAction, toolTip);
+            CommandLocation commandLocation, boolean subTitledAction) {
+        super(eventBus, title, commandLocation, subTitledAction);
         update();
     }
 
     public UiCommandButtonDefinition(EventBus eventBus, String title) {
-        this(eventBus, title, CommandLocation.ContextAndToolBar, false, null);
+        this(eventBus, title, CommandLocation.ContextAndToolBar, false);
     }
 
     public UiCommandButtonDefinition(EventBus eventBus, String title,
             CommandLocation commandLocation) {
-        this(eventBus, title, commandLocation, false, null);
+        this(eventBus, title, commandLocation, false);
     }
 
     /**

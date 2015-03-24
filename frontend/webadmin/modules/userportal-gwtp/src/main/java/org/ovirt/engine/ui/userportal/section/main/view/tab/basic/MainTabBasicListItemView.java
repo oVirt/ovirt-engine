@@ -31,6 +31,7 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -159,14 +160,15 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
 
     @Override
     public void updateRunButton(UICommand command, boolean isPool) {
-        runButton.setTooltipText(isPool ? constants.takeVm() : constants.runVm());
+        String tooltip = isPool ? constants.takeVm() : constants.runVm();
+        runButton.setTooltip(SafeHtmlUtils.fromSafeConstant(tooltip));
         updateButton(runButton, command);
     }
 
     @Override
     public HasClickHandlers addShutdownButton() {
         MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton(
-                constants.shutdownVm(), resources.stopIcon(), resources.stopDisabledIcon(),
+                SafeHtmlUtils.fromSafeConstant(constants.shutdownVm()), resources.stopIcon(), resources.stopDisabledIcon(),
                 style.shutdownButtonAdditionalStyle());
         this.shutdownButton = button;
         addButtonToPanel(button);
@@ -181,7 +183,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     @Override
     public HasClickHandlers addSuspendButton() {
         MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton(
-                constants.suspendVm(), resources.suspendIcon(), resources.suspendDisabledIcon(),
+                SafeHtmlUtils.fromSafeConstant(constants.suspendVm()), resources.suspendIcon(), resources.suspendDisabledIcon(),
                 style.suspendButtonAdditionalStyle());
         this.suspendButton = button;
         addButtonToPanel(button);
@@ -196,7 +198,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     @Override
     public HasClickHandlers addRebootButton() {
         MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton(
-                constants.rebootVm(),
+                SafeHtmlUtils.fromSafeConstant(constants.rebootVm()),
                 resources.rebootIcon(),
                 resources.rebootDisabledIcon(),
                 style.rebootButtonAdditionalStyle());

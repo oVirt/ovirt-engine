@@ -44,6 +44,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.inject.Inject;
 
@@ -287,12 +288,22 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             protected UICommand resolveCommand() {
                 return getMainModel().getRunCommand();
             }
+
+            @Override
+            public SafeHtml getTooltip() {
+                return SafeHtmlUtils.fromSafeConstant(constants.runVm());
+            }
         });
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.suspendVm(),
                 resources.suspendVmImage(), resources.suspendVmDisabledImage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getPauseCommand();
+            }
+
+            @Override
+            public SafeHtml getTooltip() {
+                return SafeHtmlUtils.fromSafeConstant(constants.suspendVm());
             }
         });
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.shutDownVm(),
@@ -301,11 +312,21 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             protected UICommand resolveCommand() {
                 return getMainModel().getShutdownCommand();
             }
+
+            @Override
+            public SafeHtml getTooltip() {
+                return SafeHtmlUtils.fromSafeConstant(constants.shutDownVm());
+            }
         });
         getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.powerOffVm(), CommandLocation.OnlyFromContext) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getStopCommand();
+            }
+
+            @Override
+            public SafeHtml getTooltip() {
+                return SafeHtmlUtils.fromSafeConstant(constants.powerOffVm());
             }
         });
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.rebootVm(),
@@ -314,6 +335,11 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             protected UICommand resolveCommand() {
                 return getMainModel().getRebootCommand();
             }
+
+            @Override
+            public SafeHtml getTooltip() {
+                return SafeHtmlUtils.fromSafeConstant(constants.rebootVm());
+            }
         });
         // TODO: separator
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.consoleVm(),
@@ -321,6 +347,11 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getConsoleConnectCommand();
+            }
+
+            @Override
+            public SafeHtml getTooltip() {
+                return SafeHtmlUtils.fromSafeConstant(constants.consoleVm());
             }
         });
         // TODO: separator

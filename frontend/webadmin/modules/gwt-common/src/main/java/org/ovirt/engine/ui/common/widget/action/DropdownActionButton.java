@@ -16,7 +16,6 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Command;
@@ -98,8 +97,8 @@ public class DropdownActionButton<T> extends AbstractActionButton {
     void updateMenuItem(MenuItem item, ActionButtonDefinition<T> buttonDef, List selectedItems) {
         item.setVisible(buttonDef.isAccessible(selectedItems) && buttonDef.isVisible(selectedItems));
         item.setEnabled(buttonDef.isEnabled(selectedItems));
-        if (buttonDef.getButtonToolTip() != null) {
-            TooltipMixin.addTooltipToElement(SafeHtmlUtils.fromString(buttonDef.getButtonToolTip()), item.getElement());
+        if (buttonDef.getTooltip() != null) {
+            TooltipMixin.addTooltipToElement(buttonDef.getTooltip(), item.getElement());
         }
     }
 

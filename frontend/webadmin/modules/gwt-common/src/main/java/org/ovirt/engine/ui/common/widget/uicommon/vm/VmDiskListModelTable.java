@@ -18,6 +18,8 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.event.logical.shared.InitializeEvent;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 
 public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListModel> {
 
@@ -77,13 +79,15 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
             }
 
             @Override
-            public String getButtonToolTip() {
+            public SafeHtml getTooltip() {
+                String tooltip = null;
                 if (!getModel().isVmDown() && getModel().isHotPlugAvailable()
                         && !getModel().getIsDiskHotPlugSupported()) {
-                    return constants.diskHotPlugNotSupported();
+                    tooltip = constants.diskHotPlugNotSupported();
                 } else {
-                    return this.getText();
+                    tooltip = this.getText();
                 }
+                return SafeHtmlUtils.fromString(tooltip);
             }
         };
         getTable().addActionButton(plugButtonDefinition);
@@ -96,14 +100,16 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
             }
 
             @Override
-            public String getButtonToolTip() {
+            public SafeHtml getTooltip() {
+                String tooltip = null;
                 if (!getModel().isVmDown() && getModel().isHotPlugAvailable()
                         && !getModel().getIsDiskHotPlugSupported()) {
-                    return constants.diskHotPlugNotSupported();
+                    tooltip = constants.diskHotPlugNotSupported();
                 }
                 else {
-                    return this.getText();
+                    tooltip = this.getText();
                 }
+                return SafeHtmlUtils.fromString(tooltip);
             }
         };
         getTable().addActionButton(unPlugButtonDefinition);

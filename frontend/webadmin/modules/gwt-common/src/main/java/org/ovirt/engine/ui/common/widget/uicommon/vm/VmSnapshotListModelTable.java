@@ -31,6 +31,8 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.LayoutPanel;
@@ -199,16 +201,18 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
             }
 
             @Override
-            public String getButtonToolTip() {
+            public SafeHtml getTooltip() {
+                String tooltip = null;
                 if (!getModel().getIsCloneVmSupported() && getModel().getEntity() != null) {
                     CommandVersionsInfo commandVersionsInfo =
                             AsyncDataProvider.getInstance().getCommandVersionsInfo(VdcActionType.AddVmFromSnapshot);
                     String minimalClusterVersion = commandVersionsInfo != null ?
                             commandVersionsInfo.getClusterVersion().toString(2) : ""; //$NON-NLS-1$
-                    return messages.cloneVmNotSupported(minimalClusterVersion);
+                    tooltip = messages.cloneVmNotSupported(minimalClusterVersion);
                 } else {
-                    return this.getText();
+                    tooltip = this.getText();
                 }
+                return SafeHtmlUtils.fromString(tooltip);
             }
         });
     }

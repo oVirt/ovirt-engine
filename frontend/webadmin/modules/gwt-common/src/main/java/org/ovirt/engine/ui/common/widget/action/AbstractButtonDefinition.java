@@ -31,23 +31,19 @@ public abstract class AbstractButtonDefinition<T> implements ActionButtonDefinit
     // Indicates whether this action button has a title action
     private final boolean subTitledAction;
 
-    private final String toolTip;
-
     private boolean isCascaded = false;
 
     public AbstractButtonDefinition(EventBus eventBus, String title,
-            CommandLocation commandLocation, boolean subTitledAction,
-            String toolTip) {
+            CommandLocation commandLocation, boolean subTitledAction) {
         this.eventBus = eventBus;
         this.title = SafeHtmlUtils.fromSafeConstant(title);
         this.commandLocation = commandLocation;
         this.subTitledAction = subTitledAction;
-        this.toolTip = toolTip;
     }
 
     public AbstractButtonDefinition(EventBus eventBus, String title,
             CommandLocation commandLocation) {
-        this(eventBus, title, commandLocation, false, null);
+        this(eventBus, title, commandLocation, false);
     }
 
     @Override
@@ -131,13 +127,13 @@ public abstract class AbstractButtonDefinition<T> implements ActionButtonDefinit
     }
 
     @Override
-    public String getButtonToolTip() {
+    public SafeHtml getTooltip() {
         return null;
     }
 
     @Override
-    public String getMenuItemToolTip() {
-        return toolTip;
+    public SafeHtml getMenuItemTooltip() {
+        return null;
     }
 
 }
