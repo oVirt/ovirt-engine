@@ -85,7 +85,7 @@ public final class MultipleActionsRunnersFactory {
     }
 
     private static boolean containsGlusterServer(ArrayList<VdcActionParametersBase> parameters) {
-        Set<Guid> processed = new HashSet<Guid>();
+        Set<Guid> processed = new HashSet<>();
         for (VdcActionParametersBase param : parameters) {
             VDS vds = DbFacade.getInstance().getVdsDao().get(((RemoveVdsParameters) param).getVdsId());
             if (vds != null && !processed.contains(vds.getVdsGroupId())) {

@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @NonTransactiveCommandAttribute
@@ -113,7 +112,7 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
         List<DiskImage> images =
                 ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), true, false, true);
         for (DiskImage image : images) {
-            image.setStorageIds(new ArrayList<Guid>(Arrays.asList(getParameters().getStorageDomainId())));
+            image.setStorageIds(new ArrayList<>(Arrays.asList(getParameters().getStorageDomainId())));
             image.setStoragePoolId(getParameters().getStoragePoolId());
         }
         removeVmImages(images);
@@ -157,7 +156,7 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
         if (exportVm == null) {
             GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(
                     getParameters().getStoragePoolId(), getParameters().getStorageDomainId());
-            tempVar.setIds(new ArrayList<Guid>(Collections.singletonList(getVmId())));
+            tempVar.setIds(new ArrayList<>(Collections.singletonList(getVmId())));
             VdcQueryReturnValue qretVal = runInternalQuery(
                     VdcQueryType.GetVmsFromExportDomain, tempVar);
 
@@ -175,7 +174,7 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
     @Override
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
-            jobProperties = new HashMap<String, String>();
+            jobProperties = new HashMap<>();
             jobProperties.put(VdcObjectType.VM.name().toLowerCase(),
                     (getVmName() == null) ? "" : getVmName());
             jobProperties.put(VdcObjectType.Storage.name().toLowerCase(), getStorageDomainName());

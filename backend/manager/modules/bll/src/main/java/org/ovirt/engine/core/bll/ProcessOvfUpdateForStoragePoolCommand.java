@@ -217,8 +217,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
      * Creates and returns a map containing valid templates metadata
      */
     protected Map<Guid, KeyValuePairCompat<String, List<Guid>>> populateTemplatesMetadataForOvfUpdate(List<Guid> idsToProcess) {
-        Map<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndTemplateMetadata =
-                new HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>();
+        Map<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndTemplateMetadata = new HashMap<>();
         List<VmTemplate> templates = getVmTemplateDAO().getVmTemplatesByIds(idsToProcess);
 
         for (VmTemplate template : templates) {
@@ -304,8 +303,7 @@ public class ProcessOvfUpdateForStoragePoolCommand <T extends StoragePoolParamet
      * Create and returns map contains valid vms metadata
      */
     protected Map<Guid, KeyValuePairCompat<String, List<Guid>>> populateVmsMetadataForOvfUpdate(List<Guid> idsToProcess) {
-        Map<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndTemplateMetadata =
-                new HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>();
+        Map<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndTemplateMetadata = new HashMap<>();
         List<VM> vms = getVmDAO().getVmsByIds(idsToProcess);
         for (VM vm : vms) {
             if (VMStatus.ImageLocked != vm.getStatus()) {

@@ -44,7 +44,7 @@ public abstract class AbstractGraphicsDeviceCommand<T extends GraphicsParameters
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        List<PermissionSubject> permissionList = new ArrayList<>();
         permissionList.add(new PermissionSubject(getParameters().getDev().getVmId(),
                 getParameters().isVm() ? VdcObjectType.VM : VdcObjectType.VmTemplate,
                 getActionType().getActionGroup()));

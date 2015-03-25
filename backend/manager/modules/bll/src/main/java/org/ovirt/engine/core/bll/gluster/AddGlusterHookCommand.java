@@ -30,7 +30,7 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 @NonTransactiveCommandAttribute
 public class AddGlusterHookCommand<T extends GlusterHookManageParameters> extends GlusterHookCommandBase<T> {
 
-    protected List<String> errors = new ArrayList<String>();
+    protected List<String> errors = new ArrayList<>();
     private List<GlusterServerHook> missingServerHooks = null;
 
     public AddGlusterHookCommand(T params) {
@@ -51,7 +51,7 @@ public class AddGlusterHookCommand<T extends GlusterHookManageParameters> extend
     private List<GlusterServerHook> getMissingServerHooks() {
         //get all destination servers - only serverhooks where hook is missing
         if (missingServerHooks == null) {
-            missingServerHooks = new ArrayList<GlusterServerHook>();
+            missingServerHooks = new ArrayList<>();
             for (GlusterServerHook serverHook: getGlusterHook().getServerHooks()) {
                 if (serverHook.getStatus().equals(GlusterHookStatus.MISSING)) {
                     missingServerHooks.add(serverHook);
@@ -94,7 +94,7 @@ public class AddGlusterHookCommand<T extends GlusterHookManageParameters> extend
 
         final boolean hookEnabled = entity.getStatus() == GlusterHookStatus.ENABLED;
 
-        List<Callable<Pair<GlusterServerHook, VDSReturnValue>>> taskList = new ArrayList<Callable<Pair<GlusterServerHook, VDSReturnValue>>>();
+        List<Callable<Pair<GlusterServerHook, VDSReturnValue>>> taskList = new ArrayList<>();
         for (final GlusterServerHook serverHook : getMissingServerHooks()) {
             taskList.add(new Callable<Pair<GlusterServerHook, VDSReturnValue>>() {
                 @Override
@@ -110,7 +110,7 @@ public class AddGlusterHookCommand<T extends GlusterHookManageParameters> extend
                                             entity.getContent(),
                                             entity.getChecksum(),
                                             hookEnabled));
-                    return new Pair<GlusterServerHook, VDSReturnValue>(serverHook, returnValue);
+                    return new Pair<>(serverHook, returnValue);
 
                 }
             });

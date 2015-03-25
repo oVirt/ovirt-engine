@@ -40,7 +40,7 @@ public class GetHostListFromExternalProviderQuery<P extends GetHostListFromExter
     }
 
     private Set<String> hostNameSet(List<VDS> hosts) {
-        Set<String> existingHostNames = new HashSet<String>();
+        Set<String> existingHostNames = new HashSet<>();
         for (VDS host : hosts) {
             existingHostNames.add(host.getHostName());
         }

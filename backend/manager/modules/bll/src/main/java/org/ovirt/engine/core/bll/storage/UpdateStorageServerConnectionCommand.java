@@ -314,7 +314,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
                                                                                StorageServerConnections storageServerConnection) {
         StorageServerConnectionManagementVDSParameters newConnectionParametersForVdsm =
                 new StorageServerConnectionManagementVDSParameters(vdsmId, storagePoolId, storageType,
-                        new ArrayList<StorageServerConnections>(Arrays.asList(storageServerConnection)));
+                        new ArrayList<>(Arrays.asList(storageServerConnection)));
         return newConnectionParametersForVdsm;
     }
 
@@ -328,7 +328,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        Map<String, Pair<String, String>> locks = new HashMap<String, Pair<String, String>>();
+        Map<String, Pair<String, String>> locks = new HashMap<>();
         domains = getStorageDomainsByConnId(getConnection().getid());
         if (!domains.isEmpty()) {
             for (StorageDomain domain : domains) {

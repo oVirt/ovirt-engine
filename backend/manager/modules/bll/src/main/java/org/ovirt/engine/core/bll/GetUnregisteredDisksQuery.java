@@ -56,7 +56,7 @@ public class GetUnregisteredDisksQuery<P extends GetUnregisteredDisksQueryParame
         for (DiskImage image : fromDao) {
             imagesList.remove(image.getId());
         }
-        List<Disk> unregisteredDisks = new ArrayList<Disk>();
+        List<Disk> unregisteredDisks = new ArrayList<>();
         for (Guid unregisteredDiskId : imagesList) {
             GetUnregisteredDiskQueryParameters unregQueryParams = new GetUnregisteredDiskQueryParameters(
                     unregisteredDiskId, getStorageDomainId(), getStoragePoolId());

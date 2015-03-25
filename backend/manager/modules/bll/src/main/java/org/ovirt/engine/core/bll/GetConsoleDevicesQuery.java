@@ -19,7 +19,7 @@ public class GetConsoleDevicesQuery<P extends IdQueryParameters> extends Queries
         final List<VmDevice> consoleDevices = getVmDeviceDAO().getVmDeviceByVmIdAndType(getParameters().getId(),
                 VmDeviceGeneralType.CONSOLE);
 
-        List<String> result = new ArrayList<String>(consoleDevices.size());
+        List<String> result = new ArrayList<>(consoleDevices.size());
         for (VmDevice v : consoleDevices) {
             result.add(v.getDevice());
         }

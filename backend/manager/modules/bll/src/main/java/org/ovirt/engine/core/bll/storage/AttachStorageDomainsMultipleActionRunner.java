@@ -34,11 +34,11 @@ public class AttachStorageDomainsMultipleActionRunner extends SortedMultipleActi
             StorageDomainPoolParametersBase storagePoolParameter = (StorageDomainPoolParametersBase) parameter;
             StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(storagePoolParameter.getStoragePoolId());
             if (pool.getStatus() == StoragePoolStatus.Uninitialized) {
-                ArrayList<Guid> storageDomainIds = new ArrayList<Guid>();
+                ArrayList<Guid> storageDomainIds = new ArrayList<>();
                 for (VdcActionParametersBase param : getParameters()) {
                     storageDomainIds.add(((StorageDomainPoolParametersBase) param).getStorageDomainId());
                 }
-                ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+                ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
                 parameters.add(new StoragePoolWithStoragesParameter(pool,
                         storageDomainIds,
                         storagePoolParameter.getSessionId()));

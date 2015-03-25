@@ -35,7 +35,7 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
 
     @Override
     protected void executeVmCommand() {
-        Set<Guid> mImagesToBeRemoved = new HashSet<Guid>();
+        Set<Guid> mImagesToBeRemoved = new HashSet<>();
         List<DiskImage> images = getParameters().images;
         if (images == null) {
             images =

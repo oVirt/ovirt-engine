@@ -249,7 +249,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         final VDS vds = getVds();
         EngineLock monitoringLock =
                 new EngineLock(Collections.singletonMap(getParameters().getVdsId().toString(),
-                        new Pair<String, String>(LockingGroup.VDS_INIT.name(), "")), null);
+                        new Pair<>(LockingGroup.VDS_INIT.name(), "")), null);
         log.info("Before acquiring lock in order to prevent monitoring for host '{}' from data-center '{}'",
                 vds.getName(),
                 vds.getStoragePoolName());

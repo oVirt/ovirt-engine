@@ -79,11 +79,11 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
         }));
 
         final List<LUNs> luns = getHostLuns(spmVds);
-        final Map<String, LUNs> lunsMap = new HashMap<String, LUNs>();
+        final Map<String, LUNs> lunsMap = new HashMap<>();
         for (LUNs lun : luns) {
             lunsMap.put(lun.getLUN_id(), lun);
         }
-        final List<LUNs> processedLunsList = new ArrayList<LUNs>();
+        final List<LUNs> processedLunsList = new ArrayList<>();
         for (String lunId : getParameters().getLunIds()) {
             LUNs lun = lunsMap.get(lunId);
             if (lun == null) {
@@ -123,7 +123,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
      *         map of luns Ids -> connected hosts
      */
     private Pair<Boolean, Map<String, List<Guid>>> ConnectVdsToLun(List<LUNs> luns) {
-        Map<String, List<Guid>> resultMap = new HashMap<String, List<Guid>>();
+        Map<String, List<Guid>> resultMap = new HashMap<>();
         for (VDS vds : getAllRunningVdssInPool()) {
             // try to connect vds to luns and getDeviceList in order to refresh them
             for (LUNs lun : luns) {
@@ -131,11 +131,11 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
                     log.error("Could not connect host '{}' to lun '{}'", vds.getName(), lun.getLUN_id());
                     setVds(vds);
                     handleFailure(vds, lun);
-                    return new Pair<Boolean, Map<String, List<Guid>>>(Boolean.FALSE, resultMap);
+                    return new Pair<>(Boolean.FALSE, resultMap);
                 } else {
                     List<Guid> hosts = resultMap.get(lun.getLUN_id());
                     if (hosts == null) {
-                        hosts = new ArrayList<Guid>();
+                        hosts = new ArrayList<>();
                         resultMap.put(lun.getLUN_id(), hosts);
                     }
                     hosts.add(vds.getId());
@@ -143,10 +143,10 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
             }
             // Refresh all connected luns to host
             if (!validateConnectedLuns(vds, getParameters().getLunIds())) {
-                return new Pair<Boolean, Map<String, List<Guid>>>(Boolean.FALSE, resultMap);
+                return new Pair<>(Boolean.FALSE, resultMap);
             }
         }
-        return new Pair<Boolean, Map<String, List<Guid>>>(Boolean.TRUE, resultMap);
+        return new Pair<>(Boolean.TRUE, resultMap);
     }
 
     private boolean connectStorageToLunByVdsId(VDS vds, LUNs lun) {

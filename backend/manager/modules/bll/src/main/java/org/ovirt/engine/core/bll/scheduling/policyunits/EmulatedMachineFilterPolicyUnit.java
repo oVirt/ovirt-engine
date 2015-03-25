@@ -26,7 +26,7 @@ public class EmulatedMachineFilterPolicyUnit extends PolicyUnitImpl {
     public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters,
                             PerHostMessages messages) {
         String requiredEmulatedMachine;
-        List<VDS> hostsToRunOn = new ArrayList<VDS>();
+        List<VDS> hostsToRunOn = new ArrayList<>();
 
         /* get required emulated machine */
         if (StringUtils.isNotEmpty(vm.getEmulatedMachine())) { // dynamic check - used for 1.migrating vms 2.run-once 3.after dynamic field is updated with current static-field\cluster

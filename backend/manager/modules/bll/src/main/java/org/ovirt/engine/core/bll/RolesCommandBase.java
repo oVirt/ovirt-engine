@@ -55,7 +55,7 @@ public abstract class RolesCommandBase<T extends RolesParameterBase> extends Com
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        List<PermissionSubject> permissionList = new ArrayList<>();
         permissionList.add(new PermissionSubject(getParameters().getRoleId(),
                 VdcObjectType.Role,
                 getActionType().getActionGroup()));
@@ -63,7 +63,7 @@ public abstract class RolesCommandBase<T extends RolesParameterBase> extends Com
     }
 
     protected List<ActionGroup> getActionGroupsByRoleId(Guid roleId) {
-        List<ActionGroup> allGroups = new ArrayList<ActionGroup>();
+        List<ActionGroup> allGroups = new ArrayList<>();
         List<RoleGroupMap> allGroupsMaps = getRoleGroupMapDAO().getAllForRole(roleId);
         for (RoleGroupMap map : allGroupsMaps) {
             allGroups.add(map.getActionGroup());

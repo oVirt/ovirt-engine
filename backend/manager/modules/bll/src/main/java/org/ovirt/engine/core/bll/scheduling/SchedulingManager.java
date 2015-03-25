@@ -89,7 +89,7 @@ public class SchedulingManager {
 
     private final Object policyUnitsLock = new Object();
 
-    private final ConcurrentHashMap<Guid, Semaphore> clusterLockMap = new ConcurrentHashMap<Guid, Semaphore>();
+    private final ConcurrentHashMap<Guid, Semaphore> clusterLockMap = new ConcurrentHashMap<>();
 
     private final VdsFreeMemoryChecker noWaitingMemoryChecker = new VdsFreeMemoryChecker(new NonWaitingDelayer());
     private MigrationHandler migrationHandler;
@@ -97,8 +97,8 @@ public class SchedulingManager {
     private final Map<Guid, Boolean> clusterId2isHaReservationSafe = new HashMap<>();
 
     private SchedulingManager() {
-        policyMap = new ConcurrentHashMap<Guid, ClusterPolicy>();
-        policyUnits = new ConcurrentHashMap<Guid, PolicyUnitImpl>();
+        policyMap = new ConcurrentHashMap<>();
+        policyUnits = new ConcurrentHashMap<>();
     }
 
     public void init() {
@@ -118,13 +118,13 @@ public class SchedulingManager {
 
     public void reloadPolicyUnits() {
         synchronized (policyUnitsLock) {
-            policyUnits = new ConcurrentHashMap<Guid, PolicyUnitImpl>();
+            policyUnits = new ConcurrentHashMap<>();
             loadPolicyUnits();
         }
     }
 
     public List<ClusterPolicy> getClusterPolicies() {
-        return new ArrayList<ClusterPolicy>(policyMap.values());
+        return new ArrayList<>(policyMap.values());
     }
 
     public ClusterPolicy getClusterPolicy(Guid clusterPolicyId) {
@@ -320,7 +320,7 @@ public class SchedulingManager {
 
     private void markVfsAsUsedByVm(Guid hostId, Guid vmId, Map<Guid, String> passthroughVnicToVfMap) {
         HostNicVfsConfigHelper hostNicVfsConfigHelper = Injector.get(HostNicVfsConfigHelper.class);
-        hostNicVfsConfigHelper.setVmIdOnVfs(hostId, vmId, new HashSet<String>(passthroughVnicToVfMap.values()));
+        hostNicVfsConfigHelper.setVmIdOnVfs(hostId, vmId, new HashSet<>(passthroughVnicToVfMap.values()));
     }
 
     /**
@@ -439,7 +439,7 @@ public class SchedulingManager {
     }
 
     protected Map<String, String> createClusterPolicyParameters(VDSGroup cluster) {
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> parameters = new HashMap<>();
         if (cluster.getClusterPolicyProperties() != null) {
             parameters.putAll(cluster.getClusterPolicyProperties());
         }
@@ -448,8 +448,8 @@ public class SchedulingManager {
 
     protected void updateInitialHostList(List<VDS> vdsList, List<Guid> list, boolean contains) {
         if (list != null && !list.isEmpty()) {
-            List<VDS> toRemoveList = new ArrayList<VDS>();
-            Set<Guid> listSet = new HashSet<Guid>(list);
+            List<VDS> toRemoveList = new ArrayList<>();
+            Set<Guid> listSet = new HashSet<>(list);
             for (VDS vds : vdsList) {
                 if (listSet.contains(vds.getId()) == contains) {
                     toRemoveList.add(vds);
@@ -469,8 +469,8 @@ public class SchedulingManager {
             boolean shouldRunExternalFilters,
             String correlationId) {
         SchedulingResult result = new SchedulingResult();
-        ArrayList<PolicyUnitImpl> internalFilters = new ArrayList<PolicyUnitImpl>();
-        ArrayList<PolicyUnitImpl> externalFilters = new ArrayList<PolicyUnitImpl>();
+        ArrayList<PolicyUnitImpl> internalFilters = new ArrayList<>();
+        ArrayList<PolicyUnitImpl> externalFilters = new ArrayList<>();
         sortFilters(filters, filterPositionMap);
         if (filters != null) {
             for (Guid filter : filters) {
@@ -524,7 +524,7 @@ public class SchedulingManager {
                     break;
                 }
                 filterPolicyUnit.setMemoryChecker(memoryChecker);
-                List<VDS> currentHostList = new ArrayList<VDS>(hostList);
+                List<VDS> currentHostList = new ArrayList<>(hostList);
                 hostList = filterPolicyUnit.filter(hostList, vm, parameters, result.getDetails());
                 logFilterActions(currentHostList,
                         toIdSet(hostList),
@@ -538,7 +538,7 @@ public class SchedulingManager {
     }
 
     private Set<Guid> toIdSet(List<VDS> hostList) {
-        Set<Guid> set = new HashSet<Guid>();
+        Set<Guid> set = new HashSet<>();
         if (hostList != null) {
             for (VDS vds : hostList) {
                 set.add(vds.getId());
@@ -574,11 +574,11 @@ public class SchedulingManager {
             String correlationId, SchedulingResult result) {
         List<Guid> filteredIDs = null;
         if (filters != null) {
-            List<String> filterNames = new ArrayList<String>();
+            List<String> filterNames = new ArrayList<>();
             for (PolicyUnitImpl filter : filters) {
                 filterNames.add(filter.getPolicyUnit().getName());
             }
-            List<Guid> hostIDs = new ArrayList<Guid>();
+            List<Guid> hostIDs = new ArrayList<>();
             for (VDS host : hostList) {
                 hostIDs.add(host.getId());
             }
@@ -587,7 +587,7 @@ public class SchedulingManager {
                     ExternalSchedulerFactory.getInstance().runFilters(filterNames, hostIDs, vm.getId(), parameters);
             if (filteredIDs != null) {
                 logFilterActions(hostList,
-                        new HashSet<Guid>(filteredIDs),
+                        new HashSet<>(filteredIDs),
                         VdcBllMessages.VAR__FILTERTYPE__EXTERNAL,
                         Arrays.toString(filterNames.toArray()),
                         result,
@@ -602,7 +602,7 @@ public class SchedulingManager {
         if (IDs == null) {
             return hosts;
         }
-        List<VDS> retList = new ArrayList<VDS>();
+        List<VDS> retList = new ArrayList<>();
         for (VDS vds : hosts) {
             if (IDs.contains(vds.getId())) {
                 retList.add(vds);
@@ -642,10 +642,10 @@ public class SchedulingManager {
         for (Pair<Guid, Integer> pair : functions) {
             PolicyUnitImpl currentPolicy = policyUnits.get(pair.getFirst());
             if (currentPolicy.getPolicyUnit().isInternal()) {
-                internalScoreFunctions.add(new Pair<PolicyUnitImpl, Integer>(currentPolicy, pair.getSecond()));
+                internalScoreFunctions.add(new Pair<>(currentPolicy, pair.getSecond()));
             } else {
                 if (currentPolicy.getPolicyUnit().isEnabled()) {
-                    externalScoreFunctions.add(new Pair<PolicyUnitImpl, Integer>(currentPolicy, pair.getSecond()));
+                    externalScoreFunctions.add(new Pair<>(currentPolicy, pair.getSecond()));
                 }
             }
         }
@@ -671,7 +671,7 @@ public class SchedulingManager {
             List<VDS> hostList,
             VM vm,
             Map<String, String> parameters) {
-        Map<Guid, Integer> hostCostTable = new HashMap<Guid, Integer>();
+        Map<Guid, Integer> hostCostTable = new HashMap<>();
         for (Pair<PolicyUnitImpl, Integer> pair : functions) {
             List<Pair<Guid, Integer>> scoreResult = pair.getFirst().score(hostList, vm, parameters);
             for (Pair<Guid, Integer> result : scoreResult) {
@@ -691,13 +691,13 @@ public class SchedulingManager {
             VM vm,
             Map<String, String> parameters,
             Map<Guid, Integer> hostCostTable) {
-        List<Pair<String, Integer>> scoreNameAndWeight = new ArrayList<Pair<String, Integer>>();
+        List<Pair<String, Integer>> scoreNameAndWeight = new ArrayList<>();
         for (Pair<PolicyUnitImpl, Integer> pair : functions) {
-            scoreNameAndWeight.add(new Pair<String, Integer>(pair.getFirst().getPolicyUnit().getName(),
+            scoreNameAndWeight.add(new Pair<>(pair.getFirst().getPolicyUnit().getName(),
                     pair.getSecond()));
         }
 
-        List<Guid> hostIDs = new ArrayList<Guid>();
+        List<Guid> hostIDs = new ArrayList<>();
         for (VDS vds : hostList) {
             hostIDs.add(vds.getId());
         }
@@ -729,7 +729,7 @@ public class SchedulingManager {
     }
 
     public Map<String, String> getCustomPropertiesRegexMap(ClusterPolicy clusterPolicy) {
-        Set<Guid> usedPolicyUnits = new HashSet<Guid>();
+        Set<Guid> usedPolicyUnits = new HashSet<>();
         if (clusterPolicy.getFilters() != null) {
             usedPolicyUnits.addAll(clusterPolicy.getFilters());
         }
@@ -741,7 +741,7 @@ public class SchedulingManager {
         if (clusterPolicy.getBalance() != null) {
             usedPolicyUnits.add(clusterPolicy.getBalance());
         }
-        Map<String, String> map = new LinkedHashMap<String, String>();
+        Map<String, String> map = new LinkedHashMap<>();
         for (Guid policyUnitId : usedPolicyUnits) {
             map.putAll(policyUnits.get(policyUnitId).getPolicyUnit().getParameterRegExMap());
         }
@@ -823,7 +823,7 @@ public class SchedulingManager {
             HaReservationHandling haReservationHandling = new HaReservationHandling();
             for (VDSGroup cluster : clusters) {
                 if (cluster.supportsHaReservation()) {
-                    List<VDS> returnedFailedHosts = new ArrayList<VDS>();
+                    List<VDS> returnedFailedHosts = new ArrayList<>();
                     boolean clusterHaStatus =
                             haReservationHandling.checkHaReservationStatusForCluster(cluster, returnedFailedHosts);
                     if (!clusterHaStatus) {
@@ -891,7 +891,7 @@ public class SchedulingManager {
     }
 
     private Pair<List<Guid>, Guid> externalRunBalance(PolicyUnitImpl policyUnit, VDSGroup cluster, List<VDS> hosts) {
-        List<Guid> hostIDs = new ArrayList<Guid>();
+        List<Guid> hostIDs = new ArrayList<>();
         for (VDS vds : hosts) {
             hostIDs.add(vds.getId());
         }
@@ -906,7 +906,7 @@ public class SchedulingManager {
      *         or null if the policy unit is not available.
      */
     public List<String> getClusterPoliciesNamesByPolicyUnitId(Guid policyUnitId) {
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         final PolicyUnitImpl policyUnitImpl = policyUnits.get(policyUnitId);
         if (policyUnitImpl == null) {
             log.warn("Trying to find usages of non-existing policy unit '{}'", policyUnitId);

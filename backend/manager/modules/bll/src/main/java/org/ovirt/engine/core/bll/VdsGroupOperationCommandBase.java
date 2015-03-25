@@ -131,7 +131,7 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
             cluster.setClusterPolicyProperties(new LinkedHashMap<String, String>());
         }
         Map<String, String> clusterPolicyProperties = cluster.getClusterPolicyProperties();
-        List<String> toRemoveKeysList = new ArrayList<String>();
+        List<String> toRemoveKeysList = new ArrayList<>();
         if (clusterPolicy.getParameterMap() != null) {
             for (Entry<String, String> entry : clusterPolicy.getParameterMap().entrySet()) {
                 if (!clusterPolicyProperties.containsKey(entry.getKey())) {

@@ -125,7 +125,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         setVm(parameters.getVm());
         setVdsGroupId(parameters.getVdsGroupId());
         if (parameters.getVm() != null && getVm().getDiskMap() != null) {
-            imageList = new ArrayList<DiskImage>();
+            imageList = new ArrayList<>();
             for (Disk disk : getVm().getDiskMap().values()) {
                 if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                     imageList.add((DiskImage) disk);
@@ -197,7 +197,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     @Override
     protected boolean canDoAction() {
-        Map<Guid, StorageDomain> domainsMap = new HashMap<Guid, StorageDomain>();
+        Map<Guid, StorageDomain> domainsMap = new HashMap<>();
 
         if (getVdsGroup() == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
@@ -274,7 +274,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
         }
 
-        Set<Guid> destGuids = new HashSet<Guid>(imageToDestinationDomainMap.values());
+        Set<Guid> destGuids = new HashSet<>(imageToDestinationDomainMap.values());
         for (Guid destGuid : destGuids) {
             StorageDomain storageDomain = getStorageDomain(destGuid);
             StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
@@ -351,7 +351,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
             // work properly.
             // we fix it to DestDomainId in
             // MoveOrCopyAllImageGroups();
-            image.setStorageIds(new ArrayList<Guid>(Arrays.asList(getSourceDomainId(image))));
+            image.setStorageIds(new ArrayList<>(Arrays.asList(getSourceDomainId(image))));
         }
 
         Map<Guid, List<DiskImage>> images = ImagesHandler.getImagesLeaf(getImages());
@@ -539,7 +539,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
      * @return true if we managed to assign storage domain for every memory volume, false otherwise
      */
     private boolean updateDomainsForMemoryImages(List<DiskImage> disksList) {
-        Map<String, String> handledMemoryVolumes = new HashMap<String, String>();
+        Map<String, String> handledMemoryVolumes = new HashMap<>();
         for (Snapshot snapshot : getVm().getSnapshots()) {
             String memoryVolume = snapshot.getMemoryVolume();
             if (memoryVolume.isEmpty()) {
@@ -943,7 +943,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     private void setDiskStorageDomainInfo(DiskImage disk) {
-        ArrayList<Guid> storageDomain = new ArrayList<Guid>();
+        ArrayList<Guid> storageDomain = new ArrayList<>();
         storageDomain.add(imageToDestinationDomainMap.get(disk.getId()));
         disk.setStorageIds(storageDomain);
     }
@@ -1220,7 +1220,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        List<QuotaConsumptionParameter> list = new ArrayList<>();
 
         for (Disk disk : getParameters().getVm().getDiskMap().values()) {
             //TODO: handle import more than once;

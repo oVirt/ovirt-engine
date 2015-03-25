@@ -64,7 +64,7 @@ public abstract class AbstractRngDeviceCommand<T extends RngDeviceParameters> ex
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        List<PermissionSubject> permissionList = new ArrayList<>();
         permissionList.add(new PermissionSubject(getParameters().getRngDevice().getVmId(),
                 getParameters().isVm() ? VdcObjectType.VM : VdcObjectType.VmTemplate,
                 getActionType().getActionGroup()));

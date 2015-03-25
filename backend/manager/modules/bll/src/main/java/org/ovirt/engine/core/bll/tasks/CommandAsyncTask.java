@@ -32,8 +32,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
 
     private static final Object _lockObject = new Object();
 
-    private static final Map<Guid, CommandMultiAsyncTasks> _multiTasksByCommandIds =
-            new HashMap<Guid, CommandMultiAsyncTasks>();
+    private static final Map<Guid, CommandMultiAsyncTasks> _multiTasksByCommandIds = new HashMap<>();
 
     public CommandMultiAsyncTasks getCommandMultiAsyncTasks() {
         CommandMultiAsyncTasks entityInfo = null;
@@ -138,7 +137,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
         boolean endActionRuntimeException = false;
 
         AsyncTask dbAsyncTask = getParameters().getDbAsyncTask();
-        ArrayList<VdcActionParametersBase> imagesParameters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> imagesParameters = new ArrayList<>();
         for (EndedTaskInfo taskInfo : entityInfo.getEndedTasksInfo().getTasksInfo()) {
             VdcActionParametersBase childTaskParameters =
                     taskInfo.getTaskParameters().getDbAsyncTask().getTaskParameters();

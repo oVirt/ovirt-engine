@@ -69,7 +69,7 @@ public class DiskImagesValidator {
      */
     public ValidationResult diskImagesAlreadyExist() {
 
-        List<String> existingDisksAliases = new ArrayList<String>();
+        List<String> existingDisksAliases = new ArrayList<>();
         for (DiskImage diskImage : diskImages) {
             DiskImage existingDisk = getExistingDisk(diskImage.getId());
             if (existingDisk != null) {
@@ -91,7 +91,7 @@ public class DiskImagesValidator {
      * @return A {@link ValidationResult} with the validation information.
      */
     public ValidationResult diskImagesNotExist() {
-        List<String> disksNotExistInDbIds = new ArrayList<String>();
+        List<String> disksNotExistInDbIds = new ArrayList<>();
         for (DiskImage diskImage : diskImages) {
             if (!isDiskExists(diskImage.getId())) {
                 disksNotExistInDbIds.add(diskImage.getId().toString());
@@ -118,7 +118,7 @@ public class DiskImagesValidator {
      *         {@link ValidationResult} with {@link #failMessage} and the names of the disks in that status is returned.
      */
     private ValidationResult diskImagesNotInStatus(ImageStatus status, VdcBllMessages failMessage) {
-        List<String> disksInStatus = new ArrayList<String>();
+        List<String> disksInStatus = new ArrayList<>();
         for (DiskImage diskImage : diskImages) {
             if (diskImage.getImageStatus() == status) {
                 disksInStatus.add(diskImage.getDiskAlias());

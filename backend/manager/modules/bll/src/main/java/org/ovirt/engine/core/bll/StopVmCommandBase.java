@@ -214,7 +214,7 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        List<QuotaConsumptionParameter> list = new ArrayList<>();
 
         if (getVm().getQuotaId() != null && !Guid.Empty.equals(getVm().getQuotaId())
                 && getQuotaManager().isVmStatusQuotaCountable(getVm().getStatus())) {
@@ -230,7 +230,7 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        List<QuotaConsumptionParameter> list = new ArrayList<>();
         if (!getVm().isStateless()) {
             return list;
         }

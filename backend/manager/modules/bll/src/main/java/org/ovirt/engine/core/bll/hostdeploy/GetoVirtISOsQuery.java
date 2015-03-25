@@ -46,7 +46,7 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
 
     @Override
     protected void executeQueryCommand() {
-        List<RpmVersion> availableISOsList = new ArrayList<RpmVersion>();
+        List<RpmVersion> availableISOsList = new ArrayList<>();
 
         VDS vds = getVdsByVdsId(getParameters().getVdsId());
         if (vds == null) {

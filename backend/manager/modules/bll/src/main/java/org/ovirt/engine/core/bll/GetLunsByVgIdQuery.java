@@ -27,7 +27,7 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
     @Override
     protected void executeQueryCommand() {
         List<LUNs> luns = getLunsForVgId(getVgId());
-        List<LUNs> nonDummyLuns = new ArrayList<LUNs>(luns.size());
+        List<LUNs> nonDummyLuns = new ArrayList<>(luns.size());
         StorageType storageType = getStorageType(luns);
         Map<String, LUNs> lunsFromDeviceMap = getLunsFromDeviceMap(storageType);
 
@@ -85,7 +85,7 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
     }
 
     protected Map<String, LUNs> getLunsFromDeviceMap(StorageType storageType) {
-        Map<String, LUNs> lunsMap = new HashMap<String, LUNs>();
+        Map<String, LUNs> lunsMap = new HashMap<>();
 
         if (getParameters().getVdsId() == null) {
             return lunsMap;

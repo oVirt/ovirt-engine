@@ -104,7 +104,7 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
     // addPermission can extend this command
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        List<PermissionSubject> permissionList = new ArrayList<>();
         Permission permission = getParameters().getPermission();
         permissionList.add(new PermissionSubject(permission.getObjectId(),
                 permission.getObjectType(),

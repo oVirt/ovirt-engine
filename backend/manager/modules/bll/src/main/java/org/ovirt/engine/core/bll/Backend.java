@@ -532,7 +532,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             ArrayList<VdcActionParametersBase> parameters, boolean isRunOnlyIfAllCanDoPass, boolean waitForResult) {
         VdcReturnValueBase returnValue = notAllowToRunAction(actionType);
         if (returnValue != null) {
-            ArrayList<VdcReturnValueBase> list = new ArrayList<VdcReturnValueBase>();
+            ArrayList<VdcReturnValueBase> list = new ArrayList<>();
             list.add(returnValue);
             return list;
         } else {

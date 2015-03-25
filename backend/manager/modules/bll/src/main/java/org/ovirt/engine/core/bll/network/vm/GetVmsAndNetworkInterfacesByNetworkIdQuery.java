@@ -30,12 +30,11 @@ public class GetVmsAndNetworkInterfacesByNetworkIdQuery<P extends GetVmsAndNetwo
 
         final Map<Guid, VM> vmsById = Entities.businessEntitiesById(vmList);
 
-        List<PairQueryable<VmNetworkInterface, VM>> vmInterfaceVmPairs =
-                new ArrayList<PairQueryable<VmNetworkInterface, VM>>();
+        List<PairQueryable<VmNetworkInterface, VM>> vmInterfaceVmPairs = new ArrayList<>();
         for (VmNetworkInterface vmNetworkInterface : vmNetworkInterfaceList) {
             VM vm = vmsById.get(vmNetworkInterface.getVmId());
             if (getParameters().getRunningVms() == null || getParameters().getRunningVms().equals(vm.isRunning())) {
-                vmInterfaceVmPairs.add(new PairQueryable<VmNetworkInterface, VM>(vmNetworkInterface, vm));
+                vmInterfaceVmPairs.add(new PairQueryable<>(vmNetworkInterface, vm));
             }
         }
 

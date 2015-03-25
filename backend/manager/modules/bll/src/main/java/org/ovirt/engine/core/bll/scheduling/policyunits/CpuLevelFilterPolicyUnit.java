@@ -27,7 +27,7 @@ public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
     @Override
     public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters,
                             PerHostMessages messages) {
-        List<VDS> hostsToRunOn = new ArrayList<VDS>();
+        List<VDS> hostsToRunOn = new ArrayList<>();
         String customCpu; // full name of the vm cpu
         Version latestVer = CpuFlagsManagerHandler.getLatestDictionaryVersion();
 

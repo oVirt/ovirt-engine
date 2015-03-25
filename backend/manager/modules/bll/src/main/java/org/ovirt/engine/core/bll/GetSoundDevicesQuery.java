@@ -19,7 +19,7 @@ public class GetSoundDevicesQuery<P extends IdQueryParameters> extends QueriesCo
         List<VmDevice> soundDevList =
                 getVmDeviceDAO().getVmDeviceByVmIdAndType(getParameters().getId(), VmDeviceGeneralType.SOUND);
 
-        List<String> result = new ArrayList<String>(soundDevList.size());
+        List<String> result = new ArrayList<>(soundDevList.size());
         for (VmDevice v : soundDevList) {
             result.add(v.getDevice());
         }

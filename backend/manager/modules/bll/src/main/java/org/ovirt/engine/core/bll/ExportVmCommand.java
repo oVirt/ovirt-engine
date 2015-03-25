@@ -194,7 +194,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         List<DiskImage> memoryDisksList = MemoryUtils.createDiskDummies(memorySize, metadataSize);
 
         //Set target domain in memory disks
-        ArrayList<Guid> sdId = new ArrayList<Guid>(Collections.singletonList(getStorageDomainId()));
+        ArrayList<Guid> sdId = new ArrayList<>(Collections.singletonList(getStorageDomainId()));
         for (DiskImage diskImage : memoryDisksList) {
             diskImage.setStorageIds(sdId);
         }
@@ -208,7 +208,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                     Collections.<Snapshot>singleton(activeSnapshot) : Collections.<Snapshot>emptyList();
         }
         else {
-            Map<String, Snapshot> memory2snapshot = new HashMap<String, Snapshot>();
+            Map<String, Snapshot> memory2snapshot = new HashMap<>();
             for (Snapshot snapshot : getSnapshotDao().getAll(getVmId())) {
                 memory2snapshot.put(snapshot.getMemoryVolume(), snapshot);
             }
@@ -256,10 +256,9 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     }
 
     private boolean updateCopyVmInSpm(Guid storagePoolId, VM vm, Guid storageDomainId) {
-        HashMap<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndMetaDictionary =
-                new HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>();
+        HashMap<Guid, KeyValuePairCompat<String, List<Guid>>> vmsAndMetaDictionary = new HashMap<>();
         OvfManager ovfManager = new OvfManager();
-        ArrayList<DiskImage> AllVmImages = new ArrayList<DiskImage>();
+        ArrayList<DiskImage> AllVmImages = new ArrayList<>();
         List<VmNetworkInterface> interfaces = vm.getInterfaces();
         if (interfaces != null) {
             // TODO remove this when the API changes
@@ -272,7 +271,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                 DiskImage diskImage = (DiskImage) disk;
                 diskImage.setParentId(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
                 diskImage.setImageTemplateId(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
-                diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(storageDomainId)));
+                diskImage.setStorageIds(new ArrayList<>(Arrays.asList(storageDomainId)));
                 DiskImage diskForVolumeInfo = getDiskForVolumeInfo(diskImage);
                 diskImage.setvolumeFormat(diskForVolumeInfo.getVolumeFormat());
                 diskImage.setVolumeType(diskForVolumeInfo.getVolumeType());
@@ -295,7 +294,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         String vmMeta = ovfManager.ExportVm(vm, AllVmImages, ClusterUtils.getCompatibilityVersion(vm));
 
-        vmsAndMetaDictionary.put(vm.getId(), new KeyValuePairCompat<String, List<Guid>>(vmMeta, imageGroupIds));
+        vmsAndMetaDictionary.put(vm.getId(), new KeyValuePairCompat<>(vmMeta, imageGroupIds));
         UpdateVMVDSCommandParameters tempVar = new UpdateVMVDSCommandParameters(storagePoolId, vmsAndMetaDictionary);
         tempVar.setStorageDomainId(storageDomainId);
         return runVdsCommand(VDSCommandType.UpdateVM, tempVar)
@@ -511,8 +510,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
     protected boolean updateVmInSpm() {
         OvfUpdateProcessHelper ovfHelper = new OvfUpdateProcessHelper();
-        Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary =
-                new HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>();
+        Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary = new HashMap<>();
         ovfHelper.loadVmData(getVm());
         ovfHelper.buildMetadataDictionaryForVm(getVm(),
                 metaDictionary,

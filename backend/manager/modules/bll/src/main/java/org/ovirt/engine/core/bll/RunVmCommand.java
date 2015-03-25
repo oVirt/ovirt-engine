@@ -315,7 +315,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private void cleanupPassthroughVnics() {
         Map<Guid, String> vnicToVfMap = getVnicToVfMap();
         if (vnicToVfMap != null) {
-            hostNicVfsConfigHelper.setVmIdOnVfs(getVdsId(), null, new HashSet<String>(vnicToVfMap.values()));
+            hostNicVfsConfigHelper.setVmIdOnVfs(getVdsId(), null, new HashSet<>(vnicToVfMap.values()));
         }
 
         vfScheduler.cleanVmData(getVmId());
@@ -1166,7 +1166,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        List<QuotaConsumptionParameter> list = new ArrayList<>();
 
         list.add(new QuotaVdsGroupConsumptionParameter(getVm().getQuotaId(),
                 null,

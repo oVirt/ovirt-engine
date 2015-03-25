@@ -38,7 +38,7 @@ public abstract class ChangeQuotaCommand extends CommandBase<ChangeQuotaParamete
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        List<PermissionSubject> permissionList = new ArrayList<>();
         permissionList.add(new PermissionSubject(getParameters().getQuotaId(),
                 VdcObjectType.Quota,
                 getActionType().getActionGroup()));

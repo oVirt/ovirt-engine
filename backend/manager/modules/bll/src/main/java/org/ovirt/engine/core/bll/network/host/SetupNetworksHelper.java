@@ -47,28 +47,28 @@ public class SetupNetworksHelper {
     private static final Logger log = LoggerFactory.getLogger(SetupNetworksHelper.class);
     private SetupNetworksParameters params;
     private VDS vds;
-    private Map<VdcBllMessages, List<String>> violations = new HashMap<VdcBllMessages, List<String>>();
+    private Map<VdcBllMessages, List<String>> violations = new HashMap<>();
     private Map<String, VdsNetworkInterface> existingIfaces;
     private Map<String, Network> existingClusterNetworks;
 
-    private List<Network> modifiedNetworks = new ArrayList<Network>();
-    private List<String> removedNetworks = new ArrayList<String>();
-    private Map<String, VdsNetworkInterface> modifiedBonds = new HashMap<String, VdsNetworkInterface>();
-    private Map<String, VdsNetworkInterface> removedBonds = new HashMap<String, VdsNetworkInterface>();
+    private List<Network> modifiedNetworks = new ArrayList<>();
+    private List<String> removedNetworks = new ArrayList<>();
+    private Map<String, VdsNetworkInterface> modifiedBonds = new HashMap<>();
+    private Map<String, VdsNetworkInterface> removedBonds = new HashMap<>();
     private List<VdsNetworkInterface> modifiedInterfaces = new ArrayList<>();
 
     /** All interfaces that were processed by the helper. */
     private Map<String, VdsNetworkInterface> ifaceByNames = new HashMap<>();
 
     /** Map of all bonds which were processed by the helper. Key = bond name, Value = list of slave NICs. */
-    private Map<String, List<VdsNetworkInterface>> bonds = new HashMap<String, List<VdsNetworkInterface>>();
+    private Map<String, List<VdsNetworkInterface>> bonds = new HashMap<>();
 
     private Map<String, Integer> ifaceSpeeds = new HashMap<>();
 
     /** All network`s names that are attached to some sort of interface. */
-    private Set<String> attachedNetworksNames = new HashSet<String>();
+    private Set<String> attachedNetworksNames = new HashSet<>();
 
-    private Map<String, List<NetworkType>> ifacesWithExclusiveNetwork = new HashMap<String, List<NetworkType>>();
+    private Map<String, List<NetworkType>> ifacesWithExclusiveNetwork = new HashMap<>();
 
     private boolean hostNetworkQosSupported;
     private boolean networkCustomPropertiesSupported;
@@ -231,7 +231,7 @@ public class SetupNetworksHelper {
     private void validateMTU() {
         Map<String, VdsNetworkInterface> ifacesByNetworkName =
                 Entities.hostInterfacesByNetworkName(params.getInterfaces());
-        Set<String> checkedNetworks = new HashSet<String>(getNetworks().size());
+        Set<String> checkedNetworks = new HashSet<>(getNetworks().size());
 
         for (Network network : getNetworks()) {
             if (!checkedNetworks.contains(network.getName())) {
@@ -252,7 +252,7 @@ public class SetupNetworksHelper {
     }
 
     private void reportMTUDifferences(List<Network> ifaceNetworks) {
-        List<String> mtuDiffNetworks = new ArrayList<String>();
+        List<String> mtuDiffNetworks = new ArrayList<>();
         for (Network net : ifaceNetworks) {
             mtuDiffNetworks.add(String.format("%s(%s)",
                     net.getName(),
@@ -437,7 +437,7 @@ public class SetupNetworksHelper {
                 util.convertProperties(Config.<String> getValue(ConfigValues.PreDefinedNetworkCustomProperties, version));
         validProperties.putAll(util.convertProperties(Config.<String> getValue(ConfigValues.UserDefinedNetworkCustomProperties,
                 version)));
-        Map<String, String> validPropertiesNonVm = new HashMap<String, String>(validProperties);
+        Map<String, String> validPropertiesNonVm = new HashMap<>(validProperties);
         validPropertiesNonVm.remove("bridge_opts");
         for (VdsNetworkInterface iface : params.getInterfaces()) {
             String networkName = iface.getNetworkName();
@@ -469,7 +469,7 @@ public class SetupNetworksHelper {
      */
     private List<Network> findNetworksOnInterface(VdsNetworkInterface iface) {
         String nameWithoutVlanId = NetworkUtils.stripVlan(iface);
-        List<Network> networks = new ArrayList<Network>();
+        List<Network> networks = new ArrayList<>();
         for (VdsNetworkInterface tmp : params.getInterfaces()) {
             if (NetworkUtils.stripVlan(tmp).equals(nameWithoutVlanId) && tmp.getNetworkName() != null) {
                 if (getExistingClusterNetworks().containsKey(tmp.getNetworkName())) {
@@ -483,7 +483,7 @@ public class SetupNetworksHelper {
     private void addViolation(VdcBllMessages violation, String violatingEntity) {
         List<String> violatingEntities = violations.get(violation);
         if (violatingEntities == null) {
-            violatingEntities = new ArrayList<String>();
+            violatingEntities = new ArrayList<>();
             violations.put(violation, violatingEntities);
         }
 
@@ -491,7 +491,7 @@ public class SetupNetworksHelper {
     }
 
     private List<String> translateViolations() {
-        List<String> violationMessages = new ArrayList<String>(violations.size() * 2);
+        List<String> violationMessages = new ArrayList<>(violations.size() * 2);
         for (Map.Entry<VdcBllMessages, List<String>> v : violations.entrySet()) {
             String violationName = v.getKey().name();
             violationMessages.add(violationName);
@@ -694,7 +694,7 @@ public class SetupNetworksHelper {
         List<NetworkType> networksOnIface = ifacesWithExclusiveNetwork.get(ifaceName);
 
         if (networksOnIface == null) {
-            networksOnIface = new ArrayList<SetupNetworksHelper.NetworkType>();
+            networksOnIface = new ArrayList<>();
             ifacesWithExclusiveNetwork.put(ifaceName, networksOnIface);
         }
 
@@ -809,7 +809,7 @@ public class SetupNetworksHelper {
     private void extractBondSlave(VdsNetworkInterface iface) {
         List<VdsNetworkInterface> slaves = bonds.get(iface.getBondName());
         if (slaves == null) {
-            slaves = new ArrayList<VdsNetworkInterface>();
+            slaves = new ArrayList<>();
             bonds.put(iface.getBondName(), slaves);
         }
 
@@ -922,7 +922,7 @@ public class SetupNetworksHelper {
     }
 
     public List<VdsNetworkInterface> getBonds() {
-        return new ArrayList<VdsNetworkInterface>(modifiedBonds.values());
+        return new ArrayList<>(modifiedBonds.values());
     }
 
     public Map<String, VdsNetworkInterface> getRemovedBonds() {

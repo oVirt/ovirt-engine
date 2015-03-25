@@ -23,8 +23,7 @@ import org.slf4j.LoggerFactory;
 public final class StoragePoolStatusHandler {
     private static final Logger log = LoggerFactory.getLogger(StoragePoolStatusHandler.class);
 
-    private static HashMap<Guid, StoragePoolStatusHandler> _nonOperationalPools =
-            new HashMap<Guid, StoragePoolStatusHandler>();
+    private static HashMap<Guid, StoragePoolStatusHandler> _nonOperationalPools = new HashMap<>();
 
     private Guid poolId;
     private String timerId;

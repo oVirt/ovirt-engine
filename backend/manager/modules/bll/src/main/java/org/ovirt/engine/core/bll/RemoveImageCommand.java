@@ -210,7 +210,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     }
 
     private void getImageChildren(Guid snapshot, List<Guid> children) {
-        List<Guid> list = new ArrayList<Guid>();
+        List<Guid> list = new ArrayList<>();
         for (DiskImage image : getDiskImageDao().getAllSnapshotsForParent(snapshot)) {
             list.add(image.getImageId());
         }
@@ -221,7 +221,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     }
 
     private void removeChildren(Guid snapshot) {
-        List<Guid> children = new ArrayList<Guid>();
+        List<Guid> children = new ArrayList<>();
         getImageChildren(snapshot, children);
         Collections.reverse(children);
         for (Guid child : children) {
@@ -233,7 +233,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
      * Prepare a {@link List} of {@link Snapshot} objects with the given disk (image group) removed from it.
      */
     private List<Snapshot> prepareSnapshotConfigWithoutImage(Guid imageGroupToRemove) {
-        List<Snapshot> result = new LinkedList<Snapshot>();
+        List<Snapshot> result = new LinkedList<>();
         List<DiskImage> snapshotDisks = getDiskImageDao().getAllSnapshotsForImageGroup(imageGroupToRemove);
         for (DiskImage snapshotDisk : snapshotDisks) {
             Guid vmSnapshotId = snapshotDisk.getVmSnapshotId();

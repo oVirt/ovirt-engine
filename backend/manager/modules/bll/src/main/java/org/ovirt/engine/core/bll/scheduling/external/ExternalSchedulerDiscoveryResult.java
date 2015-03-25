@@ -21,9 +21,9 @@ public class ExternalSchedulerDiscoveryResult {
     private List<ExternalSchedulerDiscoveryUnit> balance;
 
     ExternalSchedulerDiscoveryResult() {
-        filters = new LinkedList<ExternalSchedulerDiscoveryUnit>();
-        scores = new LinkedList<ExternalSchedulerDiscoveryUnit>();
-        balance = new LinkedList<ExternalSchedulerDiscoveryUnit>();
+        filters = new LinkedList<>();
+        scores = new LinkedList<>();
+        balance = new LinkedList<>();
     }
 
     public boolean populate(Object xmlRpcRawResult) {

@@ -23,7 +23,7 @@ public class MultipleActionsRunner {
 
     private VdcActionType actionType = VdcActionType.Unknown;
     private final Set<VdcActionParametersBase> parameters;
-    private final ArrayList<CommandBase<?>> commands = new ArrayList<CommandBase<?>>();
+    private final ArrayList<CommandBase<?>> commands = new ArrayList<>();
     protected boolean isInternal;
     private boolean isWaitForResult = false;
 
@@ -53,10 +53,10 @@ public class MultipleActionsRunner {
         // sanity - don't do anything if no parameters passed
         if (parameters == null || parameters.isEmpty()) {
             log.info("{} of type '{}' invoked with no actions", this.getClass().getSimpleName(), actionType);
-            return new ArrayList<VdcReturnValueBase>();
+            return new ArrayList<>();
         }
 
-        ArrayList<VdcReturnValueBase> returnValues = new ArrayList<VdcReturnValueBase>();
+        ArrayList<VdcReturnValueBase> returnValues = new ArrayList<>();
         try {
             initCommandsAndReturnValues(returnValues);
 
@@ -127,7 +127,7 @@ public class MultipleActionsRunner {
             int handleSize = Math.min(CONCURRENT_ACTIONS, getCommands().size() - i);
 
             int fixedSize = i + handleSize;
-            List<Callable<VdcReturnValueBase>> canDoActionTasks = new ArrayList<Callable<VdcReturnValueBase>>();
+            List<Callable<VdcReturnValueBase>> canDoActionTasks = new ArrayList<>();
             for (int j = i; j < fixedSize; j++) {
                 canDoActionTasks.add(buildCanDoActionAsynchronously(j, fixedSize));
             }

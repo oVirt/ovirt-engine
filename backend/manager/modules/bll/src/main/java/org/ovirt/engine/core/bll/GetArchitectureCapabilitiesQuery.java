@@ -26,11 +26,10 @@ public class GetArchitectureCapabilitiesQuery<P extends ArchCapabilitiesParamete
             return null;
         }
 
-        Map<ArchitectureType, Map<Version, Boolean>> supportMap =
-                new EnumMap<ArchitectureType, Map<Version, Boolean>>(ArchitectureType.class);
+        Map<ArchitectureType, Map<Version, Boolean>> supportMap = new EnumMap<>(ArchitectureType.class);
 
         for (ArchitectureType arch : ArchitectureType.values()) {
-            Map<Version, Boolean> archMap = new HashMap<Version, Boolean>();
+            Map<Version, Boolean> archMap = new HashMap<>();
 
             for (Version version : Version.ALL) {
                 archMap.put(version, isSupported(archCapabilitiesVerb, arch, version));

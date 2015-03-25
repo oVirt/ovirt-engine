@@ -18,7 +18,7 @@ public class GetAvailableClusterVersionsByStoragePoolQuery<P extends IdQueryPara
     @Override
     protected void executeQueryCommand() {
         if (getParameters().getId() != null) {
-            ArrayList<Version> result = new ArrayList<Version>();
+            ArrayList<Version> result = new ArrayList<>();
             StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().get(
                     getParameters().getId());
             if (storagePool != null) {
@@ -36,8 +36,7 @@ public class GetAvailableClusterVersionsByStoragePoolQuery<P extends IdQueryPara
             getQueryReturnValue().setReturnValue(result);
         } else {
             getQueryReturnValue().setReturnValue(
-                    new ArrayList<Version>(Config
-                            .<HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels)));
+                    new ArrayList<>(Config.<HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels)));
         }
     }
 }

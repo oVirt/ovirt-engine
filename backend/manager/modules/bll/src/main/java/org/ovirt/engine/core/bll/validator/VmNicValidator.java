@@ -107,7 +107,7 @@ public class VmNicValidator {
      */
     public ValidationResult isCompatibleWithOs() {
         List<String> networkDevices = getOsRepository().getNetworkDevices(osId, version);
-        List<VmInterfaceType> interfaceTypes = new ArrayList<VmInterfaceType>();
+        List<VmInterfaceType> interfaceTypes = new ArrayList<>();
 
         for (String networkDevice : networkDevices) {
             interfaceTypes.add(VmInterfaceType.valueOf(networkDevice));

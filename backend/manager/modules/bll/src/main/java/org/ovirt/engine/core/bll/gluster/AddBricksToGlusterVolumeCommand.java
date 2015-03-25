@@ -150,7 +150,7 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
     }
 
     private List<Guid> getBrickIds(List<GlusterBrickEntity> bricks) {
-        List<Guid> brickIds = new ArrayList<Guid>();
+        List<Guid> brickIds = new ArrayList<>();
         for (GlusterBrickEntity brick : bricks) {
             brickIds.add(brick.getId());
         }

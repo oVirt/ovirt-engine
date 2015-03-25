@@ -44,7 +44,7 @@ public class GetVdsInterfacesByVdsIdQuery<P extends IdQueryParameters> extends Q
         // we don't return bond1 because he is not connected to network and has
         // no child interfaces
 
-        List<VdsNetworkInterface> interfaces = new ArrayList<VdsNetworkInterface>(list.size());
+        List<VdsNetworkInterface> interfaces = new ArrayList<>(list.size());
 
         if (!list.isEmpty()) {
             VdsStatic vdsStatic = getDbFacade().getVdsStaticDao().get(getParameters().getId());

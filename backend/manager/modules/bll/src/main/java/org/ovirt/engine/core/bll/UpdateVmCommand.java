@@ -393,7 +393,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
 
             if (oldPayload != null) {
-                List<VmDeviceId> devs = new ArrayList<VmDeviceId>();
+                List<VmDeviceId> devs = new ArrayList<>();
                 devs.add(oldPayload.getId());
                 dao.removeAll(devs);
             }
@@ -860,7 +860,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        List<QuotaConsumptionParameter> list = new ArrayList<>();
 
         // The cases must be persistent with the create_functions_sp
         if (!getQuotaManager().isVmStatusQuotaCountable(getVm().getStatus())) {

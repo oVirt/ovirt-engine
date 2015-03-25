@@ -36,7 +36,7 @@ public class MultipleStorageDomainsValidator {
      */
     public MultipleStorageDomainsValidator(Guid storagePoolId, Collection<Guid> sdIds) {
         this.storagePoolId = storagePoolId;
-        domainValidators = new HashMap<Guid, StorageDomainValidator>();
+        domainValidators = new HashMap<>();
         for (Guid id : sdIds) {
             domainValidators.put(id, null);
         }

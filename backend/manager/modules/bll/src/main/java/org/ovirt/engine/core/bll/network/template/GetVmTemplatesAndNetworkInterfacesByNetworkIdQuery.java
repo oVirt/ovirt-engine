@@ -29,10 +29,9 @@ public class GetVmTemplatesAndNetworkInterfacesByNetworkIdQuery<P extends IdQuer
 
         final Map<Guid, VmTemplate> vmTemplatesById = Entities.businessEntitiesById(vmTemplateList);
 
-        List<PairQueryable<VmNetworkInterface, VmTemplate>> vmInterfaceVmPairs =
-                new ArrayList<PairQueryable<VmNetworkInterface, VmTemplate>>();
+        List<PairQueryable<VmNetworkInterface, VmTemplate>> vmInterfaceVmPairs = new ArrayList<>();
         for (VmNetworkInterface vmNetworkInterface : vmNetworkInterfaceList) {
-            vmInterfaceVmPairs.add(new PairQueryable<VmNetworkInterface, VmTemplate>(vmNetworkInterface,
+            vmInterfaceVmPairs.add(new PairQueryable<>(vmNetworkInterface,
                     vmTemplatesById.get(vmNetworkInterface.getVmTemplateId())));
         }
 

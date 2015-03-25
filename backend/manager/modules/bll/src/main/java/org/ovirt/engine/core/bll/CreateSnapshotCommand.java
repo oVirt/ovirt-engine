@@ -71,7 +71,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     protected VDSReturnValue performImageVdsmOperation() {
         setDestinationImageId(Guid.newGuid());
         newDiskImage = cloneDiskImage(getDestinationImageId());
-        newDiskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(getDestinationStorageDomainId())));
+        newDiskImage.setStorageIds(new ArrayList<>(Arrays.asList(getDestinationStorageDomainId())));
         setStoragePoolId(newDiskImage.getStoragePoolId() != null ? newDiskImage.getStoragePoolId()
                 : Guid.Empty);
         getParameters().setStoragePoolId(getStoragePoolId());

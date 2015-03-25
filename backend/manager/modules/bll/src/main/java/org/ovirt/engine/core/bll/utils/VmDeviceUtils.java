@@ -309,7 +309,7 @@ public class VmDeviceUtils {
             }
 
             id = Guid.newGuid();
-            Map<String, Object> specParams = new HashMap<String, Object>();
+            Map<String, Object> specParams = new HashMap<>();
             if (srcId.equals(Guid.Empty)) {
                 //add CD if not exists
                 if (addCD) {
@@ -641,8 +641,8 @@ public class VmDeviceUtils {
         if (isImportAsNewEntity) {
             setNewIdInImportedCollections(entity);
         }
-        List<VmDevice> vmDeviceToAdd = new ArrayList<VmDevice>();
-        List<VmDevice> vmDeviceToUpdate = new ArrayList<VmDevice>();
+        List<VmDevice> vmDeviceToAdd = new ArrayList<>();
+        List<VmDevice> vmDeviceToUpdate = new ArrayList<>();
         VmDeviceDAO dao = dbFacade.getVmDeviceDao();
         addImportedDisks(entity, vmDeviceToUpdate);
         addImportedInterfaces(entity, vmDeviceToUpdate);
@@ -652,7 +652,7 @@ public class VmDeviceUtils {
     }
 
     public static void setVmDevices(VmBase vmBase) {
-        Map<Guid, VmDevice> vmManagedDeviceMap = new HashMap<Guid, VmDevice>();
+        Map<Guid, VmDevice> vmManagedDeviceMap = new HashMap<>();
         List<VmDevice> devices = dbFacade.getVmDeviceDao().getVmDeviceByVmId(vmBase.getId());
         vmBase.setUnmanagedDeviceList(dbFacade.getVmDeviceDao().getUnmanagedDevicesByVmId(vmBase.getId()));
         for (VmDevice device : devices) {
@@ -803,11 +803,11 @@ public class VmDeviceUtils {
      * @return set of disks of the images collection
      */
     protected static Set<BaseDisk> getDisks(Collection<DiskImage> diskImages) {
-        Map<Guid, BaseDisk> diskMap = new HashMap<Guid, BaseDisk>();
+        Map<Guid, BaseDisk> diskMap = new HashMap<>();
         for (Disk diskImage : diskImages) {
             diskMap.put(diskImage.getId(), diskImage);
         }
-        return new HashSet<BaseDisk>(diskMap.values());
+        return new HashSet<>(diskMap.values());
     }
 
     private static <T extends VmBase> void updateVmDevice(T entity,
@@ -929,7 +929,7 @@ public class VmDeviceUtils {
      */
     private static Map<String, Object> getMemExpr(int numOfMonitors, boolean singleQxlPci) {
         int heads = singleQxlPci ? numOfMonitors : 1;
-        Map<String, Object> specParams = new HashMap<String, Object>();
+        Map<String, Object> specParams = new HashMap<>();
         specParams.put(HEADS, String.valueOf(heads));
         specParams.put(VRAM, VmDeviceCommonUtils.singlePciVRamByHeads(heads));
         if (singleQxlPci) {
@@ -981,7 +981,7 @@ public class VmDeviceUtils {
      * @return
      */
     private static Map<String, Object> getUsbControllerSpecParams(String model, int controllerNumber, int index) {
-        Map<String, Object> specParams = new HashMap<String, Object>();
+        Map<String, Object> specParams = new HashMap<>();
         specParams.put(VdsProperties.Model, model + controllerNumber);
         specParams.put(VdsProperties.Index, Integer.toString(index));
         return specParams;
@@ -993,7 +993,7 @@ public class VmDeviceUtils {
      * @return
      */
     private static Map<String, Object> getUsbSlotSpecParams() {
-        Map<String, Object> specParams = new HashMap<String, Object>();
+        Map<String, Object> specParams = new HashMap<>();
         return specParams;
     }
 
@@ -1055,7 +1055,7 @@ public class VmDeviceUtils {
         if (hasBalloon != shouldHaveBalloon) {
             if (!hasBalloon && shouldHaveBalloon) {
                 // add a balloon device
-                Map<String, Object> specParams = new HashMap<String, Object>();
+                Map<String, Object> specParams = new HashMap<>();
                 specParams.put(VdsProperties.Model, VdsProperties.Virtio);
                 addManagedDevice(new VmDeviceId(Guid.newGuid(), id) , VmDeviceGeneralType.BALLOON, VmDeviceType.MEMBALLOON, specParams, true, true, null, false);
             }

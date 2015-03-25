@@ -81,7 +81,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         newImage.setDiskProfileId(getParameters().getDiskProfileId());
         newImage.setParentId(Guid.Empty);
         newImage.setImageTemplateId(Guid.Empty);
-        newImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(getParameters().getDestinationStorageDomainId())));
+        newImage.setStorageIds(new ArrayList<>(Arrays.asList(getParameters().getDestinationStorageDomainId())));
         newImage.setActive(true);
         saveImage(newImage);
         getBaseDiskDao().save(newImage);

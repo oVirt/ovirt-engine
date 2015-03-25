@@ -160,7 +160,7 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         if (permissionsList == null) {
-            permissionsList = new ArrayList<PermissionSubject>();
+            permissionsList = new ArrayList<>();
             permissionsList.add(new PermissionSubject(getImage().getId(),
                     VdcObjectType.Disk, ActionGroup.EDIT_DISK_PROPERTIES));
         }

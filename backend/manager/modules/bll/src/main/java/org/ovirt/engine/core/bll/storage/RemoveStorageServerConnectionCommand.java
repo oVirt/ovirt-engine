@@ -176,7 +176,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        Map<String, Pair<String, String>> locks = new HashMap<String, Pair<String, String>>();
+        Map<String, Pair<String, String>> locks = new HashMap<>();
         locks.put(getConnection().getconnection(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
                         VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));

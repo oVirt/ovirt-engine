@@ -44,7 +44,7 @@ public class PowerManagementHelper {
 
         @Override
         public List<FenceAgent> next() {
-            List<FenceAgent> agentsWithSameOrder = new LinkedList<FenceAgent>();
+            List<FenceAgent> agentsWithSameOrder = new LinkedList<>();
             FenceAgent agent = agents.get(pos);
             agentsWithSameOrder.add(agent);
             pos += 1;

@@ -234,7 +234,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     }
 
     private List<String> getNamesOfDerivedVmsFromTemplate(DiskImage diskImage) {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         for (VM vm : getVmDAO().getAllWithTemplate(getVmTemplateId())) {
             for (Disk vmDisk : getDiskDao().getAllForVm(vm.getId())) {
                 if (vmDisk.getDiskStorageType() == DiskStorageType.IMAGE) {
@@ -389,7 +389,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         if (permsList == null && getDisk() != null) {
-            permsList = new ArrayList<PermissionSubject>();
+            permsList = new ArrayList<>();
             permsList.add(new PermissionSubject(getDisk().getId(),
                     VdcObjectType.Disk,
                     ActionGroup.DELETE_DISK));
@@ -437,7 +437,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             return null;
         }
 
-        Map<String, Pair<String, String>> result = new HashMap<String, Pair<String, String>>();
+        Map<String, Pair<String, String>> result = new HashMap<>();
         for (VM vm : listVms) {
             result.put(vm.getId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, getDiskIsBeingRemovedLockMessage()));
@@ -481,7 +481,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        List<QuotaConsumptionParameter> list = new ArrayList<>();
         if (getDisk() != null
                 && DiskStorageType.IMAGE == getDisk().getDiskStorageType()
                 && getQuotaId() != null

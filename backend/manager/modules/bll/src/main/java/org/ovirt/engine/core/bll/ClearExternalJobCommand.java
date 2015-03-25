@@ -55,7 +55,7 @@ public class ClearExternalJobCommand <T extends VdcActionParametersBase> extends
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject>  permissionList = new ArrayList<PermissionSubject>();
+        List<PermissionSubject>  permissionList = new ArrayList<>();
         permissionList.add(new PermissionSubject(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,
                 VdcObjectType.System,
                 ActionGroup.INJECT_EXTERNAL_TASKS));

@@ -40,10 +40,9 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
     private Guid serverId;
     private ServiceType serviceType;
     private String actionType;
-    private final List<String> errors = new ArrayList<String>();
+    private final List<String> errors = new ArrayList<>();
 
-    private static final Map<String, ManageActionDetail> manageActionDetailsMap =
-            new HashMap<String, ManageActionDetail>();
+    private static final Map<String, ManageActionDetail> manageActionDetailsMap = new HashMap<>();
 
     static {
         manageActionDetailsMap.put(GlusterConstants.MANAGE_GLUSTER_SERVICE_ACTION_TYPE_START,
@@ -135,7 +134,7 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
 
     private List<String> getServiceList() {
         List<GlusterService> serviceList = getGlusterServiceDao().getByServiceType(serviceType);
-        List<String> serviceListStr = new ArrayList<String>();
+        List<String> serviceListStr = new ArrayList<>();
         for (GlusterService srvc : serviceList) {
             serviceListStr.add(srvc.getServiceName());
         }
@@ -146,7 +145,7 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
     private List<Callable<Pair<VDS, VDSReturnValue>>> getCallableVdsCmdList() {
         List<VDS> servers = getClusterUtils().getAllUpServers(clusterId);
         final List<String> serviceList = getServiceList();
-        List<Callable<Pair<VDS, VDSReturnValue>>> commandList = new ArrayList<Callable<Pair<VDS, VDSReturnValue>>>();
+        List<Callable<Pair<VDS, VDSReturnValue>>> commandList = new ArrayList<>();
         for (final VDS upServer : servers) {
             commandList.add(new Callable<Pair<VDS, VDSReturnValue>>() {
                 @Override
@@ -154,7 +153,7 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
                     VDSReturnValue returnValue =
                             runVdsCommand(VDSCommandType.ManageGlusterService,
                                     new GlusterServiceVDSParameters(upServer.getId(), serviceList, actionType));
-                    Pair<VDS, VDSReturnValue> pairRetVal = new Pair<VDS, VDSReturnValue>(upServer, returnValue);
+                    Pair<VDS, VDSReturnValue> pairRetVal = new Pair<>(upServer, returnValue);
                     if (returnValue.getSucceeded()) {
                         updateService(upServer.getId(), (List<GlusterServerService>) returnValue.getReturnValue());
                     } else {
@@ -211,7 +210,7 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
 
     private void updateService(Guid serverId, List<GlusterServerService> fetchedServerServices) {
         // form the list of service ids
-        List<Guid> serviceIds = new ArrayList<Guid>();
+        List<Guid> serviceIds = new ArrayList<>();
         for (GlusterService srvc : getGlusterServiceDao().getByServiceType(serviceType)) {
             serviceIds.add(srvc.getId());
         }

@@ -90,7 +90,7 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        List<PermissionSubject> permissionList = new ArrayList<>();
         permissionList.add(new PermissionSubject(getParameters().getVmStaticData().getVdsGroupId(),
                 VdcObjectType.VdsGroups,
                 getActionType().getActionGroup()));
@@ -103,7 +103,7 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
     @Override
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
-            jobProperties = new HashMap<String, String>();
+            jobProperties = new HashMap<>();
             VmPool vmPool = getParameters().getVmPool();
             String vmPoolName = vmPool == null ? StringUtils.EMPTY : vmPool.getName();
             jobProperties.put(VdcObjectType.VmPool.name().toLowerCase(), vmPoolName);

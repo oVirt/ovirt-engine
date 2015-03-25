@@ -25,7 +25,7 @@ public class GetSystemStatisticsQuery<P extends GetSystemStatisticsQueryParamete
 
 
     private Map<String, Integer> getSystemStatistics() {
-        Map<String, Integer> res = new HashMap<String, Integer>();
+        Map<String, Integer> res = new HashMap<>();
 
         // VMs:
         int totalVMs = getTotalVMsStat();

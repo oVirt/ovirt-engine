@@ -42,7 +42,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.CancelMigrationVDSParameters;
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssParameters> extends CommandBase<T> {
-    private final HashMap<Guid, VDS> vdssToMaintenance = new HashMap<Guid, VDS>();
+    private final HashMap<Guid, VDS> vdssToMaintenance = new HashMap<>();
     private final List<PermissionSubject> inspectedEntitiesMap;
     private Map<String, Pair<String, String>> sharedLockMap;
 
@@ -53,7 +53,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     public MaintenanceNumberOfVdssCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         Iterable<Guid> vdsIdList = getParameters().getVdsIdList();
-        inspectedEntitiesMap = new ArrayList<PermissionSubject>();
+        inspectedEntitiesMap = new ArrayList<>();
         for (Guid g : vdsIdList) {
             inspectedEntitiesMap.add(new PermissionSubject(g,
                     VdcObjectType.VDS,
@@ -62,7 +62,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     }
 
     private void MoveVdssToGoingToMaintenanceMode() {
-        List<VDS> spms = new ArrayList<VDS>();
+        List<VDS> spms = new ArrayList<>();
         Iterator<VDS> it = vdssToMaintenance.values().iterator();
         while (it.hasNext()) {
             VDS vds = it.next();
@@ -164,12 +164,12 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     @Override
     protected boolean canDoAction() {
         boolean result = true;
-        Set<Guid> clustersAsSet = new HashSet<Guid>();
-        Set<Guid> vdsWithRunningVMs = new HashSet<Guid>();
-        List<String> hostNotRespondingList = new ArrayList<String>();
-        List<String> hostsWithNonMigratableVms = new ArrayList<String>();
+        Set<Guid> clustersAsSet = new HashSet<>();
+        Set<Guid> vdsWithRunningVMs = new HashSet<>();
+        List<String> hostNotRespondingList = new ArrayList<>();
+        List<String> hostsWithNonMigratableVms = new ArrayList<>();
         List<String> hostsWithVmsWithPluggedDiskSnapshots = new ArrayList<>();
-        List<String> nonMigratableVms = new ArrayList<String>();
+        List<String> nonMigratableVms = new ArrayList<>();
 
         for (Guid vdsId : getParameters().getVdsIdList()) {
             VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
@@ -209,7 +209,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                         }
                         clustersAsSet.add(vds.getVdsGroupId());
 
-                        List<String> nonMigratableVmDescriptionsToFrontEnd = new ArrayList<String>();
+                        List<String> nonMigratableVmDescriptionsToFrontEnd = new ArrayList<>();
                         for (VM vm : vms) {
                             // The Hosted Engine VM is migrated by the HA agent;
                             // other non-migratable VMs are reported
@@ -278,15 +278,15 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                 // In the end - if the clusters list is not empty - this is an
                 // error, use the "problematic clusters list" to format an error to
                 // the client
-                List<String> problematicClusters = new ArrayList<String>();
-                List<String> allHostsWithRunningVms = new ArrayList<String>();
+                List<String> problematicClusters = new ArrayList<>();
+                List<String> allHostsWithRunningVms = new ArrayList<>();
                 for (Guid clusterID : clustersAsSet) {
                     List<VDS> vdsList = DbFacade.getInstance().getVdsDao().getAllForVdsGroup(clusterID);
                     boolean vdsForMigrationExists =
                             checkIfThereIsVDSToHoldMigratedVMs(getParameters().getVdsIdList(), vdsList);
 
                     if (!vdsForMigrationExists) {
-                        List<String> candidateHostsWithRunningVms = new ArrayList<String>();
+                        List<String> candidateHostsWithRunningVms = new ArrayList<>();
                         for (VDS vdsInCluster : vdsList) {
                             if (vdsWithRunningVMs.contains(vdsInCluster.getId())) {
                                 candidateHostsWithRunningVms.add(vdsInCluster.getName());
@@ -357,7 +357,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
 
     private void addSharedLockEntry(VDS vds) {
         if (sharedLockMap == null) {
-            sharedLockMap = new HashMap<String, Pair<String, String>>();
+            sharedLockMap = new HashMap<>();
         }
         sharedLockMap.put(vds.getStoragePoolId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.POOL, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
@@ -385,7 +385,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
         // less than the number of UP parameters in that cluster - if this is
         // the case, we have
         // a VDS to migrate to
-        Set<Guid> upVdsIDsInCluster = new HashSet<Guid>();
+        Set<Guid> upVdsIDsInCluster = new HashSet<>();
         for (VDS vds : vdsInCluster) {
             if (vds.getStatus() == VDSStatus.Up) {
                 upVdsIDsInCluster.add(vds.getId());

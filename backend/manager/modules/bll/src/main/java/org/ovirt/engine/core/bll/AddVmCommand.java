@@ -115,7 +115,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     private static final Base64 BASE_64 = new Base64(0, null);
     protected HashMap<Guid, DiskImage> diskInfoDestinationMap;
-    protected Map<Guid, StorageDomain> destStorages = new HashMap<Guid, StorageDomain>();
+    protected Map<Guid, StorageDomain> destStorages = new HashMap<>();
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
     private String cachedDiskSharedLockMessage;
     protected Guid imageTypeId;
@@ -195,7 +195,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         initStoragePoolId();
         diskInfoDestinationMap = getParameters().getDiskInfoDestinationMap();
         if (diskInfoDestinationMap == null) {
-            diskInfoDestinationMap = new HashMap<Guid, DiskImage>();
+            diskInfoDestinationMap = new HashMap<>();
         }
         VmHandler.updateDefaultTimeZone(parameters.getVmStaticData());
 
@@ -213,7 +213,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
-        Map<String, Pair<String, String>> locks = new HashMap<String, Pair<String, String>>();
+        Map<String, Pair<String, String>> locks = new HashMap<>();
         locks.put(getVmTemplateId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, getTemplateSharedLockMessage()));
         for (DiskImage image: getImagesToCheckDestinationStorageDomains()) {
@@ -805,7 +805,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         newImage.setDiskAlias(image.getDiskAlias());
         newImage.setvolumeFormat(image.getVolumeFormat());
         newImage.setVolumeType(image.getVolumeType());
-        ArrayList<Guid> storageIds = new ArrayList<Guid>();
+        ArrayList<Guid> storageIds = new ArrayList<>();
         storageIds.add(storageId);
         newImage.setStorageIds(storageIds);
         newImage.setQuotaId(image.getQuotaId());
@@ -840,7 +840,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     protected void executeVmCommand() {
         VmHandler.warnMemorySizeLegal(getParameters().getVm().getStaticData(), getVdsGroup().getCompatibilityVersion());
 
-        ArrayList<String> errorMessages = new ArrayList<String>();
+        ArrayList<String> errorMessages = new ArrayList<>();
         if (canAddVm(errorMessages, destStorages.values())) {
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
@@ -1201,7 +1201,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        List<PermissionSubject> permissionList = new ArrayList<>();
         permissionList.add(new PermissionSubject(getVdsGroupId(),
                 VdcObjectType.VdsGroups,
                 getActionType().getActionGroup()));
@@ -1389,7 +1389,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        List<QuotaConsumptionParameter> list = new ArrayList<>();
 
         for (DiskImage disk : diskInfoDestinationMap.values()) {
             list.add(new QuotaStorageConsumptionParameter(
@@ -1404,7 +1404,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        List<QuotaConsumptionParameter> list = new ArrayList<>();
         list.add(new QuotaSanityParameter(getQuotaId(), null));
         return list;
     }

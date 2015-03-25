@@ -160,7 +160,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     protected void ensureDomainMap(Collection<DiskImage> images, Guid defaultDomainId) {
         if (imageToDestinationDomainMap == null) {
-            imageToDestinationDomainMap = new HashMap<Guid, Guid>();
+            imageToDestinationDomainMap = new HashMap<>();
         }
         if (imageToDestinationDomainMap.isEmpty() && images != null && defaultDomainId != null) {
             for (DiskImage image : images) {

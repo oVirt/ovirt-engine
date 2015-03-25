@@ -19,7 +19,7 @@ public class GetAllPolicyUnitsQuery extends QueriesCommandBase<VdcQueryParameter
     @Override
     protected void executeQueryCommand() {
         Map<Guid, PolicyUnitImpl> map = SchedulingManager.getInstance().getPolicyUnitsMap();
-        List<PolicyUnit> retList = new ArrayList<PolicyUnit>();
+        List<PolicyUnit> retList = new ArrayList<>();
         for (PolicyUnitImpl policyUnitImpl : map.values()) {
             retList.add(policyUnitImpl.getPolicyUnit());
         }

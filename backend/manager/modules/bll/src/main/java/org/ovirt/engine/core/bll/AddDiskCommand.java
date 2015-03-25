@@ -360,7 +360,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> listPermissionSubjects;
         if (getParameters().getVmId() == null || Guid.Empty.equals(getParameters().getVmId())) {
-            listPermissionSubjects = new ArrayList<PermissionSubject>();
+            listPermissionSubjects = new ArrayList<>();
         } else {
             listPermissionSubjects = super.getPermissionCheckSubjects();
         }
@@ -676,7 +676,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        List<QuotaConsumptionParameter> list = new ArrayList<>();
 
         if (getParameters().getDiskInfo().getDiskStorageType() == DiskStorageType.IMAGE) {
             list.add(new QuotaStorageConsumptionParameter(

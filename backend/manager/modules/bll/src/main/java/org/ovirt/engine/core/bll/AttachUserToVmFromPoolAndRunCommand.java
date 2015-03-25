@@ -326,7 +326,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        List<QuotaConsumptionParameter> list = new ArrayList<>();
         if (vmToAttach != null) {
             VM vm = getVmDAO().get(vmToAttach);
 

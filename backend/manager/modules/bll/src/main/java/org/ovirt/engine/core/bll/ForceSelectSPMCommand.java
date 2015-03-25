@@ -109,7 +109,7 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissions = new ArrayList<PermissionSubject>();
+        List<PermissionSubject> permissions = new ArrayList<>();
         permissions.add(new PermissionSubject(getParameters().getPreferredSPMId(),
                 VdcObjectType.VDS,
                 ActionGroup.MANIPULATE_HOST));

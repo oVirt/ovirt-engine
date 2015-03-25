@@ -218,7 +218,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
      * @param volume
      */
     private void setVolumeOptions(GlusterVolumeEntity volume) {
-        List<String> errors = new ArrayList<String>();
+        List<String> errors = new ArrayList<>();
         for (GlusterVolumeOptionEntity option : volume.getOptions()) {
             // make sure that volume id is set
             option.setVolumeId(volume.getId());
@@ -256,7 +256,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
     }
 
     private Map<String, String> getOptionValues(GlusterVolumeEntity volume, GlusterVolumeOptionEntity option) {
-        Map<String, String> values = new HashMap<String, String>();
+        Map<String, String> values = new HashMap<>();
         values.put(GlusterConstants.CLUSTER, getVdsGroupName());
         values.put(GlusterConstants.VOLUME, volume.getName());
         values.put(GlusterConstants.OPTION_KEY, option.getKey());

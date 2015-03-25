@@ -27,12 +27,12 @@ public class DefaultCompensationContext implements CompensationContext {
      * A set of all the entities which have been snapshotted ever in this context, since we only want to save the
      * initial snapshot of each entity the comand has changed/created.
      */
-    private Set<CachedEntityEntry> cachedEntities = new HashSet<CachedEntityEntry>();
+    private Set<CachedEntityEntry> cachedEntities = new HashSet<>();
 
     /**
      * All the entities that have been changed/added since the state/command began.
      */
-    private List<BusinessEntitySnapshot> entitiesToPersist = new LinkedList<BusinessEntitySnapshot>();
+    private List<BusinessEntitySnapshot> entitiesToPersist = new LinkedList<>();
 
     /**
      * The serializer which is used to convert the entity to a snapshot.

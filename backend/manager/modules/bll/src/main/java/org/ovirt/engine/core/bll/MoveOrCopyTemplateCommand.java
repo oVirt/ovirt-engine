@@ -83,7 +83,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         setVmTemplateId(parameters.getContainerId());
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
         imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();
-        imageFromSourceDomainMap = new HashMap<Guid, DiskImage>();
+        imageFromSourceDomainMap = new HashMap<>();
     }
 
     protected StorageDomain getSourceDomain() {
@@ -376,7 +376,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     protected void ensureDomainMap(Collection<DiskImage> images, Guid defaultDomainId) {
         if (imageToDestinationDomainMap == null) {
-            imageToDestinationDomainMap = new HashMap<Guid, Guid>();
+            imageToDestinationDomainMap = new HashMap<>();
         }
         if (imageToDestinationDomainMap.isEmpty() && images != null && defaultDomainId != null) {
             for (DiskImage image : images) {
@@ -395,8 +395,8 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
             if (imageToDestinationDomainMap == null || imageToDestinationDomainMap.isEmpty()) {
                 permissionCheckSubject = super.getPermissionCheckSubjects();
             } else {
-                permissionCheckSubject = new ArrayList<PermissionSubject>();
-                Set<PermissionSubject> permissionSet = new HashSet<PermissionSubject>();
+                permissionCheckSubject = new ArrayList<>();
+                Set<PermissionSubject> permissionSet = new HashSet<>();
                 for (Guid storageId : imageToDestinationDomainMap.values()) {
                     permissionSet.add(new PermissionSubject(storageId,
                             VdcObjectType.Storage,

@@ -32,11 +32,11 @@ public class QuotaManager {
     private static final QuotaManager INSTANCE = new QuotaManager();
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
     private final Logger log = LoggerFactory.getLogger(QuotaManager.class);
-    private HashMap<Guid, Map<Guid, Quota>> storagePoolQuotaMap = new HashMap<Guid, Map<Guid, Quota>>();
+    private HashMap<Guid, Map<Guid, Quota>> storagePoolQuotaMap = new HashMap<>();
 
     private final QuotaManagerAuditLogger quotaManagerAuditLogger = new QuotaManagerAuditLogger();
-    private final List<QuotaConsumptionParameter> corruptedParameters = new ArrayList<QuotaConsumptionParameter>();
-    private final List<Integer> nonCountableQutoaVmStatusesList = new ArrayList<Integer>();
+    private final List<QuotaConsumptionParameter> corruptedParameters = new ArrayList<>();
+    private final List<Integer> nonCountableQutoaVmStatusesList = new ArrayList<>();
 
     // Forbid the creation of new instances outside this class
     private QuotaManager() {
@@ -90,10 +90,10 @@ public class QuotaManager {
     private boolean validateAndSetStorageQuotaHelper(QuotaConsumptionParametersWrapper parameters,
             Pair<AuditLogType, AuditLogableBase> auditLogPair) {
         Map<Guid, Quota> quotaMap = storagePoolQuotaMap.get(parameters.getStoragePoolId());
-        Map<Guid, Map<Guid, Double>> desiredStorageSizeQuotaMap = new HashMap<Guid, Map<Guid, Double>>();
+        Map<Guid, Map<Guid, Double>> desiredStorageSizeQuotaMap = new HashMap<>();
 
-        Map<Guid, Double> newUsedGlobalStorageSize = new HashMap<Guid, Double>();
-        Map<Guid, Map<Guid, Double>> newUsedSpecificStorageSize = new HashMap<Guid, Map<Guid, Double>>();
+        Map<Guid, Double> newUsedGlobalStorageSize = new HashMap<>();
+        Map<Guid, Map<Guid, Double>> newUsedSpecificStorageSize = new HashMap<>();
 
         generateDesiredStorageSizeQuotaMap(parameters, desiredStorageSizeQuotaMap);
 
@@ -410,7 +410,7 @@ public class QuotaManager {
             Pair<AuditLogType, AuditLogableBase> auditLogPair) {
         boolean result = true;
 
-        List<QuotaVdsGroupConsumptionParameter> executed = new ArrayList<QuotaVdsGroupConsumptionParameter>();
+        List<QuotaVdsGroupConsumptionParameter> executed = new ArrayList<>();
         for (QuotaConsumptionParameter parameter : parameters.getParameters()) {
             QuotaVdsGroupConsumptionParameter vdsGroupConsumptionParameter;
             if (parameter.getParameterType() != QuotaConsumptionParameter.ParameterType.VDS_GROUP) {
@@ -556,7 +556,7 @@ public class QuotaManager {
      */
     public boolean consume(QuotaConsumptionParametersWrapper parameters) throws InvalidQuotaParametersException {
 
-        Pair<AuditLogType, AuditLogableBase> auditLogPair = new Pair<AuditLogType, AuditLogableBase>();
+        Pair<AuditLogType, AuditLogableBase> auditLogPair = new Pair<>();
         auditLogPair.setSecond(parameters.getAuditLogable());
 
         StoragePool storagePool = parameters.getAuditLogable().getStoragePool();
@@ -837,7 +837,7 @@ public class QuotaManager {
      *            quota list
      */
     public void updateUsage(List<Quota> quotaList) {
-        List<Quota> needToCache = new ArrayList<Quota>();
+        List<Quota> needToCache = new ArrayList<>();
 
         if (quotaList == null) {
             return;
@@ -929,8 +929,8 @@ public class QuotaManager {
      * @return - list of QuotaUsagePerUser
      */
     public Map<Guid, QuotaUsagePerUser> generatePerUserUsageReport(List<Quota> quotaIdsList) {
-        Map<Guid, QuotaUsagePerUser> quotaPerUserUsageEntityMap = new HashMap<Guid, QuotaUsagePerUser>();
-        List<Quota> needToCache = new ArrayList<Quota>();
+        Map<Guid, QuotaUsagePerUser> quotaPerUserUsageEntityMap = new HashMap<>();
+        List<Quota> needToCache = new ArrayList<>();
 
         if (quotaIdsList != null) {
             lock.readLock().lock();
@@ -1067,7 +1067,7 @@ public class QuotaManager {
             return;
         }
 
-        HashMap<Guid, Map<Guid, Quota>> newStoragePoolQuotaMap = new HashMap<Guid, Map<Guid, Quota>>();
+        HashMap<Guid, Map<Guid, Quota>> newStoragePoolQuotaMap = new HashMap<>();
         for (Quota quota : allQuotaIncludingConsumption) {
             if (!newStoragePoolQuotaMap.containsKey(quota.getStoragePoolId())) {
                 newStoragePoolQuotaMap.put(quota.getStoragePoolId(), new HashMap<Guid, Quota>());

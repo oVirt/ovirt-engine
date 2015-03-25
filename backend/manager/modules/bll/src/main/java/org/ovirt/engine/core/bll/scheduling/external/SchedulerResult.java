@@ -16,7 +16,7 @@ public class SchedulerResult {
 
     public void addPluginErrors(String pluginName, String errorMessage) {
         if (pluginErrors == null) {
-            pluginErrors = new HashMap<String, List<String>>();
+            pluginErrors = new HashMap<>();
         }
 
         if (pluginErrors.get(pluginName) == null) {
@@ -28,7 +28,7 @@ public class SchedulerResult {
 
     public void addError(String errorMessage) {
         if (errorMessages == null) {
-            errorMessages = new ArrayList<String>();
+            errorMessages = new ArrayList<>();
         }
     }
 

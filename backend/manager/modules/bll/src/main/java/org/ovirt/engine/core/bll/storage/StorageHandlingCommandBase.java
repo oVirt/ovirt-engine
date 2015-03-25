@@ -599,7 +599,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     private ArrayList<Object> initAsyncOperationParameters(List<VDS> allRunningVdsInPool) {
-        ArrayList<Object> parameters = new ArrayList<Object>();
+        ArrayList<Object> parameters = new ArrayList<>();
         parameters.add(allRunningVdsInPool);
         parameters.add(getStorageDomain());
         parameters.add(getStoragePool());

@@ -190,7 +190,7 @@ public class GlusterUtil {
     }
 
     private Set<String> getServers(NodeList listOfPeers) {
-        Set<String> servers = new HashSet<String>();
+        Set<String> servers = new HashSet<>();
         for (int i = 0; i < listOfPeers.getLength(); i++) {
             Node firstPeer = listOfPeers.item(i);
             if (firstPeer.getNodeType() == Node.ELEMENT_NODE) {
@@ -208,7 +208,7 @@ public class GlusterUtil {
 
     protected Map<String, String> getFingerprints(Set<String> servers) {
         VdcQueryReturnValue returnValue;
-        Map<String, String> fingerprints = new HashMap<String, String>();
+        Map<String, String> fingerprints = new HashMap<>();
         for (String server : servers) {
             returnValue = getBackendInstance().
                     runInternalQuery(VdcQueryType.GetServerSSHKeyFingerprint,
@@ -245,7 +245,7 @@ public class GlusterUtil {
     }
 
     public EngineLock acquireGlusterLockWait(Guid clusterId) {
-        Map<String, Pair<String, String>> exclusiveLocks = new HashMap<String, Pair<String, String>>();
+        Map<String, Pair<String, String>> exclusiveLocks = new HashMap<>();
         exclusiveLocks.put(clusterId.toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER,
                         VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_OPERATION_INPROGRESS));

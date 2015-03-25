@@ -33,7 +33,7 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 @NonTransactiveCommandAttribute
 public class UpdateGlusterHookCommand extends GlusterHookCommandBase<GlusterHookManageParameters> {
 
-    protected List<String> errors = new ArrayList<String>();
+    protected List<String> errors = new ArrayList<>();
 
     public UpdateGlusterHookCommand(GlusterHookManageParameters params) {
         super(params);
@@ -52,7 +52,7 @@ public class UpdateGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
 
     private List<GlusterServerHook> getContentConflictServerHooks() {
         //get all destination servers - only serverhooks where content is in conflict
-        List<GlusterServerHook> serverHooks = new ArrayList<GlusterServerHook>();
+        List<GlusterServerHook> serverHooks = new ArrayList<>();
         for (GlusterServerHook serverHook: getGlusterHook().getServerHooks()) {
             if (!serverHook.getStatus().equals(GlusterHookStatus.MISSING) && !serverHook.getChecksum().equals(getGlusterHook().getChecksum())) {
                 serverHooks.add(serverHook);
@@ -120,8 +120,8 @@ public class UpdateGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
         }
 
 
-        List<Callable<Pair<Guid, VDSReturnValue>>> taskList = new ArrayList<Callable<Pair<Guid, VDSReturnValue>>>();
-        List<Guid> serverIdsToUpdate = new ArrayList<Guid>();
+        List<Callable<Pair<Guid, VDSReturnValue>>> taskList = new ArrayList<>();
+        List<Guid> serverIdsToUpdate = new ArrayList<>();
         if (copyfromEngine) {
             for (final GlusterServerHook serverHook : getContentConflictServerHooks()) {
                 serverIdsToUpdate.add(serverHook.getServerId());
@@ -150,7 +150,7 @@ public class UpdateGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
                                                entity.getName(),
                                                hookContent,
                                                hookChecksum));
-                     return new Pair<Guid, VDSReturnValue>(serverId, returnValue);
+                     return new Pair<>(serverId, returnValue);
 
                 }
             });

@@ -114,7 +114,7 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        List<QuotaConsumptionParameter> list = new ArrayList<>();
 
         list.add(new QuotaStorageConsumptionParameter(
                 getParameters().getDiskImage().getQuotaId(),

@@ -24,8 +24,7 @@ public class GetVdsGroupsAndNetworksByNetworkIdQuery<P extends IdQueryParameters
 
     @Override
     protected void executeQueryCommand() {
-        List<PairQueryable<VDSGroup, NetworkCluster>> networkClusterPairs =
-                new ArrayList<PairQueryable<VDSGroup, NetworkCluster>>();
+        List<PairQueryable<VDSGroup, NetworkCluster>> networkClusterPairs = new ArrayList<>();
 
         Network network = getDbFacade().getNetworkDao().get(getParameters().getId());
         if (network != null && network.getDataCenterId() != null) {
@@ -38,7 +37,7 @@ public class GetVdsGroupsAndNetworksByNetworkIdQuery<P extends IdQueryParameters
                     Entities.businessEntitiesById(networkClusters);
 
             for (VDSGroup vdsGroup : vdsGroups) {
-                networkClusterPairs.add(new PairQueryable<VDSGroup, NetworkCluster>(vdsGroup,
+                networkClusterPairs.add(new PairQueryable<>(vdsGroup,
                         networkClustersById.get(new NetworkClusterId(vdsGroup.getId(), getParameters().getId()))));
             }
         }

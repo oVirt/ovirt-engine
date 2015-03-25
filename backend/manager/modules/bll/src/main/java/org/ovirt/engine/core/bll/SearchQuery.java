@@ -55,7 +55,7 @@ import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 
 public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<P> {
-    private static final HashMap<String, QueryData> mQueriesCache = new HashMap<String, QueryData>();
+    private static final HashMap<String, QueryData> mQueriesCache = new HashMap<>();
 
     public SearchQuery(P parameters) {
         super(parameters);
@@ -63,7 +63,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
 
     @Override
     protected void executeQueryCommand() {
-        List<? extends IVdcQueryable> returnValue = new ArrayList<IVdcQueryable>();
+        List<? extends IVdcQueryable> returnValue = new ArrayList<>();
         switch (getParameters().getSearchTypeValue()) {
         case VM: {
             returnValue = searchVmsFromDb();
@@ -267,7 +267,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             final Filter<T> filter) {
         final QueryData data = initQueryData(useCache);
         if (data == null) {
-            return new ArrayList<T>();
+            return new ArrayList<>();
         }
 
         log.debug("Executing generic query: {}", data.getQuery());

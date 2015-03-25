@@ -65,7 +65,7 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionsSubject = new ArrayList<PermissionSubject>();
+        List<PermissionSubject> permissionsSubject = new ArrayList<>();
         permissionsSubject.add(new PermissionSubject(getStoragePoolId(),
                 VdcObjectType.StoragePool,
                 getActionType().getActionGroup()));

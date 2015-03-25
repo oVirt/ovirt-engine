@@ -115,7 +115,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
                     ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVm().getVmtGuid()),
                             false,
                             false, true);
-            Map<Guid, DiskImage> templateImagesMap = new HashMap<Guid, DiskImage>();
+            Map<Guid, DiskImage> templateImagesMap = new HashMap<>();
             for (DiskImage image : imageList) {
                 templateImagesMap.put(image.getImageId(), image);
             }

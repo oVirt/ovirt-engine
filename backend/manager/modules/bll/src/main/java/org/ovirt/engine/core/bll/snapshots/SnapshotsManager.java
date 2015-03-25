@@ -528,8 +528,8 @@ public class SnapshotsManager {
         try {
             VmStatic oldVmStatic = vm.getStaticData();
             VM tempVM = new VM();
-            ArrayList<DiskImage> images = new ArrayList<DiskImage>();
-            ArrayList<VmNetworkInterface> interfaces = new ArrayList<VmNetworkInterface>();
+            ArrayList<DiskImage> images = new ArrayList<>();
+            ArrayList<VmNetworkInterface> interfaces = new ArrayList<>();
             new OvfManager().ImportVm(configuration, tempVM, images, interfaces);
             for (DiskImage diskImage : images) {
                 DiskImage dbImage = getDiskImageDao().getSnapshotById(diskImage.getImageId());
@@ -651,7 +651,7 @@ public class SnapshotsManager {
             Guid activeSnapshotId,
             List<DiskImage> disksFromSnapshot,
             String vmName) {
-        List<Guid> diskIdsFromSnapshot = new ArrayList<Guid>();
+        List<Guid> diskIdsFromSnapshot = new ArrayList<>();
 
         // Sync disks that exist or existed in the snapshot.
         int count = 1;

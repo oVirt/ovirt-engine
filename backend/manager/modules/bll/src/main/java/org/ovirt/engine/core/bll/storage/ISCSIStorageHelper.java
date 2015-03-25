@@ -130,7 +130,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                         }) : null;
         // if a luns were retrieved by vgId, they can belongs not only to storage but also to disks
         // at that case they should left at db
-        List<String> lunsByVgWithNoDisks = new ArrayList<String>();
+        List<String> lunsByVgWithNoDisks = new ArrayList<>();
         if (lunId.isEmpty()) {
             for (String lunIdByVg : lunsByVg) {
                 if (DbFacade.getInstance().getDiskLunMapDao().getDiskIdByLunId(lunIdByVg) == null) {
@@ -141,8 +141,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
             lunsByVgWithNoDisks.add(lunId);
         }
 
-        List<StorageServerConnections> toRemove =
-                new ArrayList<StorageServerConnections>();
+        List<StorageServerConnections> toRemove = new ArrayList<>();
         for (StorageServerConnections connection : connections) {
             fillConnectionDetailsIfNeeded(connection);
             if (connection.getid() != null) {

@@ -258,8 +258,8 @@ public class PmHealthCheckManager {
     public void startHosts(List<VDS> hostWithPMInStatusReboot) {
         for (VDS host : hostWithPMInStatusReboot) {
             RestartVdsCommand<FenceVdsActionParameters> restartVdsCommand =
-                    new RestartVdsCommand<FenceVdsActionParameters>(new
-                    FenceVdsActionParameters(host.getId()));
+                    new RestartVdsCommand<>(new
+                            FenceVdsActionParameters(host.getId()));
             if (new HostFenceActionExecutor(host).isHostPoweredOff()) {
                 VdcReturnValueBase retValue = Backend.getInstance().runInternalAction(VdcActionType.RestartVds, restartVdsCommand.getParameters());
                 if (retValue!= null && retValue.getSucceeded()) {

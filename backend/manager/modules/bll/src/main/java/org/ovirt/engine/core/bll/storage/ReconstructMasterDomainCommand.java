@@ -241,7 +241,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
             return;
         }
 
-        List<Callable<Void>> tasks = new ArrayList<Callable<Void>>();
+        List<Callable<Void>> tasks = new ArrayList<>();
         for (final VDS vds : getAllRunningVdssInPool()) {
             tasks.add(new Callable<Void>() {
                 @Override

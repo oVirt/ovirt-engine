@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 public class GlusterServiceSyncJob extends GlusterJob {
     private static final Logger log = LoggerFactory.getLogger(GlusterServiceSyncJob.class);
     private static final GlusterServiceSyncJob instance = new GlusterServiceSyncJob();
-    private final Map<String, GlusterService> serviceNameMap = new HashMap<String, GlusterService>();
+    private final Map<String, GlusterService> serviceNameMap = new HashMap<>();
 
     private GlusterServiceSyncJob() {
     }
@@ -82,7 +82,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
     }
 
     private Map<String, GlusterServiceStatus> updateGlusterServicesStatusForStoppedServer(VDS server) {
-        Map<String, GlusterServiceStatus> retMap = new HashMap<String, GlusterServiceStatus>();
+        Map<String, GlusterServiceStatus> retMap = new HashMap<>();
         List<GlusterServerService> serviceList =
                 getGlusterServerServiceDao().getByServerId(server.getId());
         for (GlusterServerService service : serviceList) {
@@ -95,7 +95,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
 
     private List<Callable<Map<String, GlusterServiceStatus>>> createTaskList(List<VDS> serversList) {
         List<Callable<Map<String, GlusterServiceStatus>>> taskList =
-                new ArrayList<Callable<Map<String, GlusterServiceStatus>>>();
+                new ArrayList<>();
         for (final VDS server : serversList) {
             taskList.add(new Callable<Map<String, GlusterServiceStatus>>() {
                 /**
@@ -143,8 +143,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
     }
 
     private Map<ServiceType, GlusterServiceStatus> createServiceTypeStatusMap(List<Map<String, GlusterServiceStatus>> serviceStatusMaps) {
-        Map<ServiceType, GlusterServiceStatus> fetchedServiceTypeStatusMap =
-                new HashMap<ServiceType, GlusterServiceStatus>();
+        Map<ServiceType, GlusterServiceStatus> fetchedServiceTypeStatusMap = new HashMap<>();
         for (Entry<String, GlusterServiceStatus> entry : mergeServiceStatusMaps(serviceStatusMaps).entrySet()) {
             String serviceName = entry.getKey();
             GlusterServiceStatus status = entry.getValue();
@@ -166,7 +165,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
     }
 
     private Map<String, GlusterServiceStatus> mergeServiceStatusMaps(List<Map<String, GlusterServiceStatus>> serviceStatusMaps) {
-        Map<String, GlusterServiceStatus> mergedServiceStatusMap = new HashMap<String, GlusterServiceStatus>();
+        Map<String, GlusterServiceStatus> mergedServiceStatusMap = new HashMap<>();
         for (Map<String, GlusterServiceStatus> serviceStatusMap : serviceStatusMaps) {
             for (Entry<String, GlusterServiceStatus> entry : serviceStatusMap.entrySet()) {
                 String serviceName = entry.getKey();
@@ -186,10 +185,10 @@ public class GlusterServiceSyncJob extends GlusterJob {
     private Map<ServiceType, GlusterClusterService> getClusterServiceMap(VDSGroup cluster) {
         List<GlusterClusterService> clusterServices = getGlusterClusterServiceDao().getByClusterId(cluster.getId());
         if (clusterServices == null) {
-            clusterServices = new ArrayList<GlusterClusterService>();
+            clusterServices = new ArrayList<>();
         }
 
-        Map<ServiceType, GlusterClusterService> clusterServiceMap = new HashMap<ServiceType, GlusterClusterService>();
+        Map<ServiceType, GlusterClusterService> clusterServiceMap = new HashMap<>();
         for (GlusterClusterService clusterService : clusterServices) {
             clusterServiceMap.put(clusterService.getServiceType(), clusterService);
         }
@@ -205,7 +204,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
      */
     @SuppressWarnings({ "unchecked", "serial" })
     private Map<String, GlusterServiceStatus> refreshServerServices(final VDS server) {
-        Map<String, GlusterServiceStatus> serviceStatusMap = new HashMap<String, GlusterServiceStatus>();
+        Map<String, GlusterServiceStatus> serviceStatusMap = new HashMap<>();
         if (server.getStatus() != VDSStatus.Up) {
             // Update the status of all the services of stopped server in single transaction
             TransactionSupport.executeInScope(TransactionScopeOption.Required,
@@ -219,7 +218,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
             acquireLock(server.getId());
             try {
                 Map<Guid, GlusterServerService> existingServicesMap = getExistingServicesMap(server);
-                List<GlusterServerService> servicesToUpdate = new ArrayList<GlusterServerService>();
+                List<GlusterServerService> servicesToUpdate = new ArrayList<>();
 
                 VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GlusterServicesList,
                         new GlusterServicesListVDSParameters(server.getId(), getServiceNameMap().keySet()));
@@ -274,7 +273,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
     }
 
     private Map<String, GlusterServiceStatus> updateStatusToUnknown(Collection<GlusterServerService> existingServices) {
-        Map<String, GlusterServiceStatus> serviceStatusMap = new HashMap<String, GlusterServiceStatus>();
+        Map<String, GlusterServiceStatus> serviceStatusMap = new HashMap<>();
 
         for (GlusterServerService existingService : existingServices) {
             existingService.setStatus(GlusterServiceStatus.UNKNOWN);
@@ -287,7 +286,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
 
     private Map<Guid, GlusterServerService> getExistingServicesMap(VDS server) {
         List<GlusterServerService> existingServices = getGlusterServerServiceDao().getByServerId(server.getId());
-        Map<Guid, GlusterServerService> existingServicesMap = new HashMap<Guid, GlusterServerService>();
+        Map<Guid, GlusterServerService> existingServicesMap = new HashMap<>();
         if (existingServices != null) {
             for (GlusterServerService service : existingServices) {
                 existingServicesMap.put(service.getServiceId(), service);

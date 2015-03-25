@@ -26,7 +26,7 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
  */
 @NonTransactiveCommandAttribute
 public abstract class GlusterHookStatusChangeCommand<T extends GlusterHookParameters> extends GlusterHookCommandBase<T> {
-    protected List<String> errors = new ArrayList<String>();
+    protected List<String> errors = new ArrayList<>();
 
     private List<VDS> upServers = null;
 
@@ -69,7 +69,7 @@ public abstract class GlusterHookStatusChangeCommand<T extends GlusterHookParame
             errors.add(VdcBllMessages.CLUSTER_ALL_SERVERS_NOT_UP.toString());
         }
 
-        List<Callable<Pair<VDS, VDSReturnValue>>> taskList = new ArrayList<Callable<Pair<VDS, VDSReturnValue>>>();
+        List<Callable<Pair<VDS, VDSReturnValue>>> taskList = new ArrayList<>();
         for (final VDS upServer : getAllUpServers()) {
             taskList.add(new Callable<Pair<VDS, VDSReturnValue>>() {
                 @Override
@@ -81,7 +81,7 @@ public abstract class GlusterHookStatusChangeCommand<T extends GlusterHookParame
                                             entity.getGlusterCommand(),
                                             entity.getStage(),
                                             entity.getName()));
-                    return new Pair<VDS, VDSReturnValue>(upServer, returnValue);
+                    return new Pair<>(upServer, returnValue);
                 }
             });
         }

@@ -107,7 +107,7 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
                 return NetworkUtils.interfaceBasedOn(bond, i.getBondName());
             }
         });
-        interfaces = new ArrayList<String>();
+        interfaces = new ArrayList<>();
         for (VdsNetworkInterface iface : vdsInterfaces) {
             interfaces.add(iface.getName());
         }

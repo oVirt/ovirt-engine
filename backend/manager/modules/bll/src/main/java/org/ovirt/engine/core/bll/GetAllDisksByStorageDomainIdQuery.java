@@ -31,7 +31,7 @@ public class GetAllDisksByStorageDomainIdQuery<P extends IdQueryParameters> exte
             List<DiskImage> diskImages =
                     getDbFacade().getDiskImageDao().getAllSnapshotsForStorageDomain(getParameters().getId());
 
-            Map<Guid, DiskImage> diskImagesMap = new HashMap<Guid, DiskImage>();
+            Map<Guid, DiskImage> diskImagesMap = new HashMap<>();
 
             // Get active diskImages
             for (DiskImage diskImage : diskImages) {
@@ -51,7 +51,7 @@ public class GetAllDisksByStorageDomainIdQuery<P extends IdQueryParameters> exte
                 }
             }
 
-            getQueryReturnValue().setReturnValue(new ArrayList<DiskImage>(diskImagesMap.values()));
+            getQueryReturnValue().setReturnValue(new ArrayList<>(diskImagesMap.values()));
         }
     }
 }

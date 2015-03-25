@@ -96,14 +96,14 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     }
 
     private boolean initTrustedService() {
-        List <String> hosts = new ArrayList<String> ();
+        List <String> hosts = new ArrayList<>();
 
         if (AttestThread.isTrustedVds(getVds().getId())) {
             return true;
         }
 
         hosts.add(getVds().getHostName());
-        List<AttestationValue> value = new ArrayList<AttestationValue> ();
+        List<AttestationValue> value = new ArrayList<>();
         try {
             value = AttestationService.getInstance().attestHosts(hosts);
         } catch (Exception e) {
@@ -432,7 +432,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         try (EngineLock lock = GlusterUtil.getInstance().acquireGlusterLockWait(getVds().getVdsGroupId())) {
             glusterPeerListSucceeded = true;
             glusterPeerProbeSucceeded = true;
-            Map<String, String> customLogValues = new HashMap<String, String>();
+            Map<String, String> customLogValues = new HashMap<>();
             List<VDS> vdsList = getVdsDAO().getAllForVdsGroupWithStatus(getVdsGroupId(), VDSStatus.Up);
             // If the cluster already having Gluster servers, get an up server
             if (vdsList != null && vdsList.size() > 0) {
@@ -535,7 +535,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
     @SuppressWarnings("unchecked")
     private List<GlusterServerInfo> getGlusterPeers(Guid upServerId) {
-        List<GlusterServerInfo> glusterServers = new ArrayList<GlusterServerInfo>();
+        List<GlusterServerInfo> glusterServers = new ArrayList<>();
         VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GlusterServersList,
                         new VdsIdVDSCommandParametersBase(upServerId));
         if (!returnValue.getSucceeded()) {

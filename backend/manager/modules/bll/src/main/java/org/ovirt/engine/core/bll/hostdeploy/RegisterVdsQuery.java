@@ -196,7 +196,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
             } else {
                 // TODO: always add in pending state, and if auto approve call
                 // approve command action after registration
-                RefObject<Boolean> isPending = new RefObject<Boolean>(Boolean.FALSE);
+                RefObject<Boolean> isPending = new RefObject<>(Boolean.FALSE);
                 getQueryReturnValue().setSucceeded(
                         HandleOldVdssWithSameHostName(vdsByUniqueId) && HandleOldVdssWithSameName(vdsByUniqueId)
                                 && CheckAutoApprovalDefinitions(isPending)
@@ -531,7 +531,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
     }
 
     private List<String> getAllHostNames(List<VDS> allHosts) {
-        List<String> allHostNames = new ArrayList<String>(allHosts.size());
+        List<String> allHostNames = new ArrayList<>(allHosts.size());
         for (VDS vds : allHosts) {
             allHostNames.add(vds.getName());
         }

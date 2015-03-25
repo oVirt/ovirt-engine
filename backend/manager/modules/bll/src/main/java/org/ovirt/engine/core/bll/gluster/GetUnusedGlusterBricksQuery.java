@@ -29,8 +29,8 @@ public class GetUnusedGlusterBricksQuery<P extends VdsIdParametersBase> extends 
     private List<StorageDevice> getUnUsedBricks(List<StorageDevice> storageDevicesInHost) {
         List<GlusterBrickEntity> usedBricks =
                 getDbFacade().getGlusterBrickDao().getGlusterVolumeBricksByServerId(getParameters().getVdsId());
-        List<StorageDevice> freeBricks = new ArrayList<StorageDevice>();
-        Set<String> bricksDir = new HashSet<String>();
+        List<StorageDevice> freeBricks = new ArrayList<>();
+        Set<String> bricksDir = new HashSet<>();
         for (GlusterBrickEntity brick : usedBricks) {
             bricksDir.add(brick.getBrickDirectory());
         }

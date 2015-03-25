@@ -67,14 +67,14 @@ public class GlusterHookSyncJob extends GlusterJob {
             return;
         }
 
-        List<Callable<Pair<VDS, VDSReturnValue>>> taskList = new ArrayList<Callable<Pair<VDS, VDSReturnValue>>>();
+        List<Callable<Pair<VDS, VDSReturnValue>>> taskList = new ArrayList<>();
         for (final VDS upServer : upServers) {
             taskList.add(new Callable<Pair<VDS, VDSReturnValue>>() {
                 @Override
                 public Pair<VDS, VDSReturnValue> call() throws Exception {
                     VDSReturnValue returnValue =runVdsCommand(VDSCommandType.GlusterHooksList,
                             new VdsIdVDSCommandParametersBase(upServer.getId()));
-                    return new Pair<VDS, VDSReturnValue>(upServer, returnValue);
+                    return new Pair<>(upServer, returnValue);
                 }
             });
         }
@@ -93,11 +93,11 @@ public class GlusterHookSyncJob extends GlusterJob {
 
         try {
             List<GlusterHookEntity> existingHooks = getHooksDao().getByClusterId(clusterId);
-            List<Callable<Pair<GlusterHookEntity, VDSReturnValue>>> contentTasksList = new ArrayList<Callable<Pair<GlusterHookEntity, VDSReturnValue>>>();
+            List<Callable<Pair<GlusterHookEntity, VDSReturnValue>>> contentTasksList = new ArrayList<>();
 
-            Map<String, GlusterHookEntity> existingHookMap = new HashMap<String, GlusterHookEntity>();
-            Map<Guid, Set<VDS>> existingHookServersMap = new HashMap<Guid, Set<VDS>>();
-            Map<String, Integer> existingHookConflictMap = new HashMap<String, Integer>();
+            Map<String, GlusterHookEntity> existingHookMap = new HashMap<>();
+            Map<Guid, Set<VDS>> existingHookServersMap = new HashMap<>();
+            Map<String, Integer> existingHookConflictMap = new HashMap<>();
             for (final GlusterHookEntity hook: existingHooks) {
                 existingHookServersMap.put(hook.getId(), new HashSet<VDS>());
                 existingHookConflictMap.put(hook.getHookKey(), hook.getConflictStatus());
@@ -106,12 +106,12 @@ public class GlusterHookSyncJob extends GlusterJob {
                 existingHookMap.put(hook.getHookKey(), hook);
             }
 
-            Set<String> fetchedHookKeyList = new HashSet<String>();
-            Map<String, GlusterHookEntity> newHookMap = new HashMap<String, GlusterHookEntity>();
-            List<GlusterServerHook> newServerHooks = new ArrayList<GlusterServerHook>();
-            List<GlusterServerHook> updatedServerHooks = new ArrayList<GlusterServerHook>();
-            List<GlusterServerHook> deletedServerHooks = new ArrayList<GlusterServerHook>();
-            Set<VDS> upServers = new HashSet<VDS>();
+            Set<String> fetchedHookKeyList = new HashSet<>();
+            Map<String, GlusterHookEntity> newHookMap = new HashMap<>();
+            List<GlusterServerHook> newServerHooks = new ArrayList<>();
+            List<GlusterServerHook> updatedServerHooks = new ArrayList<>();
+            List<GlusterServerHook> deletedServerHooks = new ArrayList<>();
+            Set<VDS> upServers = new HashSet<>();
 
 
             for (Pair<VDS, VDSReturnValue> pairResult : pairResults) {
@@ -206,7 +206,7 @@ public class GlusterHookSyncJob extends GlusterJob {
             syncExistingHooks(existingHookMap, existingHookServersMap, existingHookConflictMap, upServers);
 
             //Update missing conflicts for hooks found only in db and not on any of the servers
-            Set<String> hooksOnlyInDB = new HashSet<String>(existingHookMap.keySet());
+            Set<String> hooksOnlyInDB = new HashSet<>(existingHookMap.keySet());
             hooksOnlyInDB.removeAll(fetchedHookKeyList);
 
             for (String key: hooksOnlyInDB) {
@@ -263,7 +263,7 @@ public class GlusterHookSyncJob extends GlusterJob {
                 continue;
             }
             //Get servers on which the hooks are missing.
-            Set<VDS> hookMissingServers = new HashSet<VDS>(upServers);
+            Set<VDS> hookMissingServers = new HashSet<>(upServers);
             hookMissingServers.removeAll(entry.getValue());
 
             for (VDS missingServer : hookMissingServers) {
@@ -305,7 +305,7 @@ public class GlusterHookSyncJob extends GlusterJob {
             public Pair<GlusterHookEntity, VDSReturnValue> call() throws Exception {
                 VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GetGlusterHookContent,
                         new GlusterHookVDSParameters(server.getId(), hook.getGlusterCommand(), hook.getStage(), hook.getName()));
-                return new Pair<GlusterHookEntity, VDSReturnValue>(hook, returnValue);
+                return new Pair<>(hook, returnValue);
             }
         });
     }

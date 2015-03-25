@@ -261,7 +261,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
     }
 
     private void logTaskStartedFromCLI(VDSGroup cluster, GlusterAsyncTask task, GlusterVolumeEntity vol) {
-        Map<String, String> values = new HashMap<String, String>();
+        Map<String, String> values = new HashMap<>();
 
         AuditLogType logType;
         switch (task.getType()) {
@@ -332,7 +332,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         }
 
         //if task is in DB but not in running task list
-        final Set<Guid> tasksNotRunning = new HashSet<Guid>(taskListInDB);
+        final Set<Guid> tasksNotRunning = new HashSet<>(taskListInDB);
         tasksNotRunning.removeAll(allRunningTasksInCluster);
         log.debug("Tasks to be cleaned up in db '{}'", tasksNotRunning);
 
@@ -350,7 +350,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             //Volume is up, but gluster does not know of task
             //will mark job ended with status unknown.
             List<Step> steps = getStepDao().getStepsByExternalId(taskId);
-            Map<String, String> values = new HashMap<String, String>();
+            Map<String, String> values = new HashMap<>();
             values.put(GlusterConstants.CLUSTER, vol == null ? "" :vol.getVdsGroupName());
             values.put(GlusterConstants.VOLUME, vol == null ? "" : vol.getName());
             values.put(GlusterConstants.JOB_STATUS, JobExecutionStatus.UNKNOWN.toString());

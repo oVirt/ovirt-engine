@@ -346,7 +346,7 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private List<String> getVdsIps(VDS vds) {
-        List<String> vdsIps = new ArrayList<String>();
+        List<String> vdsIps = new ArrayList<>();
         for (VdsNetworkInterface iface : getInterfaceDao().getAllInterfacesForVds(vds.getId())) {
             if (iface.getAddress() != null) {
                 vdsIps.add(iface.getAddress());
@@ -357,7 +357,7 @@ public class GlusterSyncJob extends GlusterJob {
 
     private List<GlusterServerInfo> fetchServers(VDSGroup cluster, VDS upServer, List<VDS> existingServers) {
         // Create a copy of the existing servers as the fetchServer method can potentially remove elements from it
-        List<VDS> tempServers = new ArrayList<VDS>(existingServers);
+        List<VDS> tempServers = new ArrayList<>(existingServers);
         List<GlusterServerInfo> fetchedServers = fetchServers(upServer, tempServers);
 
         if (fetchedServers == null) {
@@ -461,7 +461,7 @@ public class GlusterSyncJob extends GlusterJob {
         acquireLock(cluster.getId());
         try {
             // Pass a copy of the existing servers as the fetchVolumes method can potentially remove elements from it
-            Map<Guid, GlusterVolumeEntity> volumesMap = fetchVolumes(upServer, new ArrayList<VDS>(existingServers));
+            Map<Guid, GlusterVolumeEntity> volumesMap = fetchVolumes(upServer, new ArrayList<>(existingServers));
             if (volumesMap == null) {
                 log.error("gluster volume info command failed on all servers of the cluster '{}'."
                         + "Can't refresh it's data at this point.", cluster.getName());
@@ -512,7 +512,7 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private void removeDeletedVolumes(Guid clusterId, Map<Guid, GlusterVolumeEntity> volumesMap) {
-        List<Guid> idsToRemove = new ArrayList<Guid>();
+        List<Guid> idsToRemove = new ArrayList<>();
         for (GlusterVolumeEntity volume : getVolumeDao().getByClusterId(clusterId)) {
             if (!volumesMap.containsKey(volume.getId())) {
                 idsToRemove.add(volume.getId());
@@ -643,7 +643,7 @@ public class GlusterSyncJob extends GlusterJob {
 
     @SuppressWarnings("serial")
     private void removeDeletedBricks(GlusterVolumeEntity existingVolume, List<GlusterBrickEntity> fetchedBricks) {
-        List<Guid> idsToRemove = new ArrayList<Guid>();
+        List<Guid> idsToRemove = new ArrayList<>();
         for (final GlusterBrickEntity existingBrick : existingVolume.getBricks()) {
             if (!GlusterCoreUtil.containsBrick(fetchedBricks, existingBrick)) {
                 idsToRemove.add(existingBrick.getId());
@@ -721,7 +721,7 @@ public class GlusterSyncJob extends GlusterJob {
     @SuppressWarnings("serial")
     private void removeDeletedOptions(GlusterVolumeEntity fetchedVolume,
             Collection<GlusterVolumeOptionEntity> existingOptions) {
-        List<Guid> idsToRemove = new ArrayList<Guid>();
+        List<Guid> idsToRemove = new ArrayList<>();
         for (final GlusterVolumeOptionEntity existingOption : existingOptions) {
             if (fetchedVolume.getOption(existingOption.getKey()) == null) {
                 idsToRemove.add(existingOption.getId());
@@ -770,10 +770,8 @@ public class GlusterSyncJob extends GlusterJob {
             }
         }
 
-        final List<GlusterVolumeOptionEntity> newOptionsSortedList =
-                new ArrayList<GlusterVolumeOptionEntity>(newOptions.values());
-        final List<GlusterVolumeOptionEntity> existingOptionsSortedList =
-                new ArrayList<GlusterVolumeOptionEntity>(existingOptions.values());
+        final List<GlusterVolumeOptionEntity> newOptionsSortedList = new ArrayList<>(newOptions.values());
+        final List<GlusterVolumeOptionEntity> existingOptionsSortedList = new ArrayList<>(existingOptions.values());
         Collections.sort(newOptionsSortedList);
         Collections.sort(existingOptionsSortedList);
 
@@ -938,9 +936,9 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     public void refreshVolumeDetails(VDS upServer, GlusterVolumeEntity volume) {
-        List<GlusterBrickEntity> bricksToUpdate = new ArrayList<GlusterBrickEntity>();
-        List<GlusterBrickEntity> brickPropertiesToUpdate = new ArrayList<GlusterBrickEntity>();
-        List<GlusterBrickEntity> brickPropertiesToAdd = new ArrayList<GlusterBrickEntity>();
+        List<GlusterBrickEntity> bricksToUpdate = new ArrayList<>();
+        List<GlusterBrickEntity> brickPropertiesToUpdate = new ArrayList<>();
+        List<GlusterBrickEntity> brickPropertiesToAdd = new ArrayList<>();
 
         GlusterVolumeAdvancedDetails volumeAdvancedDetails = getVolumeAdvancedDetails(upServer, volume.getClusterId(), volume.getName());
         if (volumeAdvancedDetails == null) {
@@ -1007,7 +1005,7 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private Map<Guid, BrickProperties> getBrickPropertiesMap(GlusterVolumeAdvancedDetails volumeDetails) {
-        Map<Guid, BrickProperties> brickStatusMap = new HashMap<Guid, BrickProperties>();
+        Map<Guid, BrickProperties> brickStatusMap = new HashMap<>();
         for (BrickDetails brickDetails : volumeDetails.getBrickDetails()) {
             if (brickDetails.getBrickProperties().getBrickId() != null) {
                 brickStatusMap.put(brickDetails.getBrickProperties().getBrickId(), brickDetails.getBrickProperties());

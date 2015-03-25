@@ -323,7 +323,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        List<PermissionSubject> permissionList = new ArrayList<>();
         VdsDynamic vdsDynamic = getVds().getDynamicData();
 
         // If the state of the host is PendingApproval then we just check if the user has a permission on the destination cluster
@@ -560,7 +560,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        Map<String, Pair<String, String>> locks = new HashMap<String, Pair<String, String>>();
+        Map<String, Pair<String, String>> locks = new HashMap<>();
         locks.put(getParameters().getVdsId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.VDS,
                         VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));

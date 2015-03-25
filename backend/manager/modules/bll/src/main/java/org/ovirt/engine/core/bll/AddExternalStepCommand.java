@@ -36,7 +36,7 @@ public class AddExternalStepCommand <T extends AddExternalStepParameters> extend
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject>  permissionList = new ArrayList<PermissionSubject>();
+        List<PermissionSubject>  permissionList = new ArrayList<>();
         permissionList.add(new PermissionSubject(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,
                 VdcObjectType.System,
                 ActionGroup.INJECT_EXTERNAL_TASKS));

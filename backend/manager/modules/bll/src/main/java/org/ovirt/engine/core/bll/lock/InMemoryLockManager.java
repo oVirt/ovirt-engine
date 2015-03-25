@@ -43,9 +43,9 @@ import org.slf4j.LoggerFactory;
 @Local(LockManager.class)
 public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBean {
 
-    private static final Pair<Boolean, Set<String>> LOCK_INSERT_SUCCESS_RESULT = new Pair<Boolean, Set<String>>(Boolean.TRUE, Collections.<String>emptySet());
+    private static final Pair<Boolean, Set<String>> LOCK_INSERT_SUCCESS_RESULT = new Pair<>(Boolean.TRUE, Collections.<String>emptySet());
     /** A map which is contains all internal representation of locks **/
-    private final Map<String, InternalLockView> locks = new HashMap<String, InternalLockView>();
+    private final Map<String, InternalLockView> locks = new HashMap<>();
     /** A lock which is used to synchronized acquireLock(), acquireLockWait() and releaseLock() operations **/
     private final Lock globalLock = new ReentrantLock();
     /** A condition which is used in order to notify for waiting threads that some lock was released**/
@@ -174,7 +174,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
         log.debug("All in memory locks will be shown");
         globalLock.lock();
         try {
-            returnValue = new ArrayList<String>();
+            returnValue = new ArrayList<>();
             for(Map.Entry<String, InternalLockView> entry : locks.entrySet()) {
                 String lock = new StringBuilder("The object id is : ").append(entry.getKey()).append(' ').append(entry.getValue()).toString();
                 returnValue.add(lock);
@@ -251,7 +251,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
                 lock.increaseCount();
                 lock.addMessage(message);
             } else if (lock.getExclusive()) {
-                return new Pair<Boolean, Set<String>>(Boolean.FALSE, lock.getMessages());
+                return new Pair<>(Boolean.FALSE, lock.getMessages());
             }
         } else if (!isCheckOnly) {
             locks.put(key, new InternalLockView(1, message, false));
@@ -266,7 +266,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
     private Pair<Boolean, Set<String>> insertExclusiveLock(String key, String message, boolean isCheckOnly) {
         InternalLockView lock = locks.get(key);
         if (lock != null) {
-            return new Pair<Boolean, Set<String>>(Boolean.FALSE, lock.getMessages());
+            return new Pair<>(Boolean.FALSE, lock.getMessages());
         }
         if (!isCheckOnly) {
             locks.put(key, new InternalLockView(0, message, true));
@@ -340,7 +340,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
         public InternalLockView(int count, String message, boolean exclusive) {
             this.count = count;
             this.exclusive = exclusive;
-            messages = new ArrayList<String>();
+            messages = new ArrayList<>();
             messages.add(message);
         }
 
@@ -361,7 +361,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
         }
 
         public Set<String> getMessages() {
-            return new HashSet<String>(messages);
+            return new HashSet<>(messages);
         }
 
         public void addMessage(String message) {

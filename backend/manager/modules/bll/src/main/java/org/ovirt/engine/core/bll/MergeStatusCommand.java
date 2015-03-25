@@ -94,7 +94,7 @@ public class MergeStatusCommand<T extends MergeParameters>
         List<String> vmIds = new ArrayList<>();
         vmIds.add(getParameters().getVmId().toString());
         VDS vds = getVdsDAO().get(getParameters().getVdsId());
-        Map[] vms = (Map[]) (new FullListVdsCommand<FullListVDSCommandParameters>(
+        Map[] vms = (Map[]) (new FullListVdsCommand<>(
                 new FullListVDSCommandParameters(vds, vmIds)).executeWithReturnValue());
 
         if (vms == null || vms.length == 0) {

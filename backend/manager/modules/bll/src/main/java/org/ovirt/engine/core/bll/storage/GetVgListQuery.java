@@ -35,13 +35,13 @@ public class GetVgListQuery<P extends VdsIdParametersBase> extends QueriesComman
                     }
                 });
 
-        HashSet<String> vgIdsFromDb = new HashSet<String>();
+        HashSet<String> vgIdsFromDb = new HashSet<>();
 
         for (StorageDomain domain : vgsFromDb) {
             vgIdsFromDb.add(domain.getStorage());
         }
 
-        ArrayList<StorageDomain> returnValue = new ArrayList<StorageDomain>();
+        ArrayList<StorageDomain> returnValue = new ArrayList<>();
 
         for (StorageDomain domain : vgsFromVds) {
             if (domain.getId().equals(Guid.Empty) && !vgIdsFromDb.contains(domain.getStorage())) {

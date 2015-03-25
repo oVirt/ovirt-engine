@@ -23,7 +23,7 @@ public class GetAllSiblingVlanInterfacesQuery<P extends InterfaceAndIdQueryParam
 
     @Override
     protected void executeQueryCommand() {
-        ArrayList<VdsNetworkInterface> retVal = new ArrayList<VdsNetworkInterface>();
+        ArrayList<VdsNetworkInterface> retVal = new ArrayList<>();
         List<VdsNetworkInterface> vdsInterfaces =
                 getDbFacade().getInterfaceDao().getAllInterfacesForVds(getParameters().getId());
         VdsNetworkInterface iface = LinqUtils.firstOrNull(vdsInterfaces, new Predicate<VdsNetworkInterface>() {

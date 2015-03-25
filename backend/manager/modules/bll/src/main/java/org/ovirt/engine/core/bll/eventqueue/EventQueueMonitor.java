@@ -27,10 +27,10 @@ public class EventQueueMonitor implements EventQueue {
 
     private static final Logger log = LoggerFactory.getLogger(EventQueueMonitor.class);
 
-    private static final ConcurrentMap<Guid, ReentrantLock> poolsLockMap = new ConcurrentHashMap<Guid, ReentrantLock>();
+    private static final ConcurrentMap<Guid, ReentrantLock> poolsLockMap = new ConcurrentHashMap<>();
     private static final Map<Guid, LinkedList<Pair<Event, FutureTask<EventResult>>>> poolsEventsMap =
-            new ConcurrentHashMap<Guid, LinkedList<Pair<Event, FutureTask<EventResult>>>>();
-    private static final Map<Guid, Event> poolCurrentEventMap = new ConcurrentHashMap<Guid, Event>();
+            new ConcurrentHashMap<>();
+    private static final Map<Guid, Event> poolCurrentEventMap = new ConcurrentHashMap<>();
 
     @Override
     public void submitEventAsync(Event event, Callable<EventResult> callable) {
@@ -119,8 +119,8 @@ public class EventQueueMonitor implements EventQueue {
     }
 
     private FutureTask<EventResult> addTaskToQueue(Event event, Callable<EventResult> callable, Guid storagePoolId, boolean addFirst) {
-        FutureTask<EventResult> task = new FutureTask<EventResult>(callable);
-        Pair<Event, FutureTask<EventResult>> queueEvent = new Pair<Event, FutureTask<EventResult>>(event, task);
+        FutureTask<EventResult> task = new FutureTask<>(callable);
+        Pair<Event, FutureTask<EventResult>> queueEvent = new Pair<>(event, task);
         if (addFirst) {
             getEventQueue(storagePoolId).addFirst(queueEvent);
         } else {
@@ -132,7 +132,7 @@ public class EventQueueMonitor implements EventQueue {
     private LinkedList<Pair<Event, FutureTask<EventResult>>> getEventQueue(Guid storagePoolId) {
         LinkedList<Pair<Event, FutureTask<EventResult>>> queue = poolsEventsMap.get(storagePoolId);
         if (queue == null) {
-            queue = new LinkedList<Pair<Event, FutureTask<EventResult>>>();
+            queue = new LinkedList<>();
             poolsEventsMap.put(storagePoolId, queue);
         }
         return queue;
@@ -188,8 +188,7 @@ public class EventQueueMonitor implements EventQueue {
                             log.info("Finished reconstruct for pool '{}'. Clearing event queue", storagePoolId);
                             lock.lock();
                             try {
-                                LinkedList<Pair<Event, FutureTask<EventResult>>> queue =
-                                        new LinkedList<Pair<Event, FutureTask<EventResult>>>();
+                                LinkedList<Pair<Event, FutureTask<EventResult>>> queue = new LinkedList<>();
                                 for (Pair<Event, FutureTask<EventResult>> task : poolsEventsMap.get(storagePoolId)) {
                                     EventType eventType = task.getFirst().getEventType();
                                     if (eventType == EventType.VDSCONNECTTOPOOL

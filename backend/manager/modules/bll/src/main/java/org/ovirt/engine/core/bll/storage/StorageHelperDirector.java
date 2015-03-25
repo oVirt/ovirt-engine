@@ -15,8 +15,7 @@ public class StorageHelperDirector {
     private static final Logger log = LoggerFactory.getLogger(StorageHelperDirector.class);
 
     private static StorageHelperDirector _instance = new StorageHelperDirector();
-    private Map<StorageType, IStorageHelper> _helpers =
-            new EnumMap<StorageType, IStorageHelper>(StorageType.class);
+    private Map<StorageType, IStorageHelper> _helpers = new EnumMap<>(StorageType.class);
 
     public static StorageHelperDirector getInstance() {
         return _instance;

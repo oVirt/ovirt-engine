@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -94,7 +93,7 @@ public final class ImagesHandler {
             List<StorageDomain> domains,
             Map<Guid, DiskImage> diskInfoDestinationMap,
             Map<Guid, StorageDomain> destStorages) {
-        Map<Guid, StorageDomain> storageDomainsMap = new HashMap<Guid, StorageDomain>();
+        Map<Guid, StorageDomain> storageDomainsMap = new HashMap<>();
         for (StorageDomain storageDomain : domains) {
             StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
             if (validator.isDomainExistAndActive().isValid() && validator.domainIsValidDestination().isValid()) {
@@ -104,7 +103,7 @@ public final class ImagesHandler {
         for (DiskImage image : template.getDiskTemplateMap().values()) {
             for (Guid storageId : image.getStorageIds()) {
                 if (storageDomainsMap.containsKey(storageId)) {
-                    ArrayList<Guid> storageIds = new ArrayList<Guid>();
+                    ArrayList<Guid> storageIds = new ArrayList<>();
                     storageIds.add(storageId);
                     image.setStorageIds(storageIds);
                     diskInfoDestinationMap.put(image.getId(), image);
@@ -197,13 +196,13 @@ public final class ImagesHandler {
 
     public static Map<Guid, List<DiskImage>> buildStorageToDiskMap(Collection<DiskImage> images,
             Map<Guid, DiskImage> diskInfoDestinationMap) {
-        Map<Guid, List<DiskImage>> storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
+        Map<Guid, List<DiskImage>> storageToDisksMap = new HashMap<>();
         for (DiskImage disk : images) {
             DiskImage diskImage = diskInfoDestinationMap.get(disk.getId());
             Guid storageDomainId = diskImage.getStorageIds().get(0);
             List<DiskImage> diskList = storageToDisksMap.get(storageDomainId);
             if (diskList == null) {
-                diskList = new ArrayList<DiskImage>();
+                diskList = new ArrayList<>();
                 storageToDisksMap.put(storageDomainId, diskList);
             }
             diskList.add(disk);
@@ -529,7 +528,7 @@ public final class ImagesHandler {
      * @param images The images to get the storage domain IDs for
      */
     public static Set<Guid> getAllStorageIdsForImageIds(Collection<DiskImage> images) {
-        Set<Guid> domainsIds = new HashSet<Guid>();
+        Set<Guid> domainsIds = new HashSet<>();
         for (DiskImage image : images) {
             domainsIds.addAll(image.getStorageIds());
         }
@@ -563,7 +562,7 @@ public final class ImagesHandler {
                                                    boolean allowOnlyNotShareableDisks,
                                                    boolean allowOnlySnapableDisks,
                                                    boolean allowOnlyActiveDisks) {
-        List<DiskImage> diskImages = new ArrayList<DiskImage>();
+        List<DiskImage> diskImages = new ArrayList<>();
         for (Disk disk : listOfDisks) {
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE &&
                     (!allowOnlyNotShareableDisks || !disk.isShareable()) &&
@@ -576,7 +575,7 @@ public final class ImagesHandler {
     }
 
     public static List<LunDisk> filterDiskBasedOnLuns(Collection<Disk> listOfDisks) {
-        List<LunDisk> lunDisks = new ArrayList<LunDisk>();
+        List<LunDisk> lunDisks = new ArrayList<>();
         for (Disk disk : listOfDisks) {
             if (disk.getDiskStorageType() == DiskStorageType.LUN) {
                 lunDisks.add((LunDisk) disk);
@@ -624,7 +623,7 @@ public final class ImagesHandler {
                 .remove(new DiskLunMapId(lunDisk.getId(), lun.getLUN_id()));
         DbFacade.getInstance().getBaseDiskDao().remove(lunDisk.getId());
 
-        lun.setLunConnections(new ArrayList<StorageServerConnections>(DbFacade.getInstance()
+        lun.setLunConnections(new ArrayList<>(DbFacade.getInstance()
                 .getStorageServerConnectionDao()
                 .getAllForLun(lun.getLUN_id())));
 
@@ -640,7 +639,7 @@ public final class ImagesHandler {
 
     // the last image in each list is the leaf
     public static Map<Guid, List<DiskImage>> getImagesLeaf(List<DiskImage> images) {
-        Map<Guid, List<DiskImage>> retVal = new HashMap<Guid, List<DiskImage>>();
+        Map<Guid, List<DiskImage>> retVal = new HashMap<>();
         for (DiskImage image : images) {
             MultiValueMapUtils.addToMap(image.getId(), image, retVal);
         }
@@ -652,7 +651,7 @@ public final class ImagesHandler {
     }
 
     public static void sortImageList(List<DiskImage> images) {
-        List<DiskImage> hold = new ArrayList<DiskImage>();
+        List<DiskImage> hold = new ArrayList<>();
         DiskImage curr = null;
 
         // find the first image
@@ -828,7 +827,7 @@ public final class ImagesHandler {
 
             if (snapshot.isVmConfigurationAvailable() && snapConfig != null) {
                 VM vmSnapshot = new VM();
-                ArrayList<DiskImage> snapshotImages = new ArrayList<DiskImage>();
+                ArrayList<DiskImage> snapshotImages = new ArrayList<>();
 
                 ovfManager.ImportVm(snapConfig,
                         vmSnapshot,
@@ -862,7 +861,7 @@ public final class ImagesHandler {
 
     public static DiskImage createDiskImageWithExcessData(DiskImage diskImage, Guid sdId) {
         DiskImage dummy = DiskImage.copyOf(diskImage);
-        dummy.setStorageIds(new ArrayList<Guid>(Collections.singletonList(sdId)));
+        dummy.setStorageIds(new ArrayList<>(Collections.singletonList(sdId)));
         dummy.getSnapshots().addAll(getAllImageSnapshots(dummy.getImageId()));
         return dummy;
     }

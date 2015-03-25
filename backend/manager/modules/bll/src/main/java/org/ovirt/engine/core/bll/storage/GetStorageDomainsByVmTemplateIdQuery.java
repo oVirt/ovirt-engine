@@ -34,14 +34,14 @@ public class GetStorageDomainsByVmTemplateIdQuery<P extends IdQueryParameters>
                 DbFacade.getInstance()
                         .getVmTemplateDao()
                         .get(getParameters().getId(), getUserID(), getParameters().isFiltered());
-        ArrayList<StorageDomain> result = new ArrayList<StorageDomain>();
+        ArrayList<StorageDomain> result = new ArrayList<>();
 
         if (vmTemplate != null && vmTemplate.getStoragePoolId() != null) {
             List<Disk> templateDisks = getTemplateDisks();
 
             if (templateDisks.size() > 0) {
 
-                Set<Guid> domains = new HashSet<Guid>();
+                Set<Guid> domains = new HashSet<>();
                 for (Disk templateDisk : templateDisks) {
                     domains.addAll(((DiskImage)templateDisk).getStorageIds());
                 }

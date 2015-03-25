@@ -26,7 +26,7 @@ public class GetGlusterVolumeSnapshotConfigQuery<P extends GlusterVolumeQueriesP
             }
         }
 
-        return new Pair<List<GlusterVolumeSnapshotConfig>, List<GlusterVolumeSnapshotConfig>>(clusterCfgs, volumeCfgs);
+        return new Pair<>(clusterCfgs, volumeCfgs);
     }
 
     @Override

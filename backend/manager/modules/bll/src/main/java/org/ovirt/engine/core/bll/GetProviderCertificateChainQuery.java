@@ -36,7 +36,7 @@ public class GetProviderCertificateChainQuery<P extends ProviderQueryParameters>
             ProviderProxy proxy = ProviderProxyFactory.getInstance().create(provider);
             List<? extends Certificate> chain = proxy.getCertificateChain();
             if (!chain.isEmpty()) {
-                List<CertificateInfo> results = new ArrayList<CertificateInfo>();
+                List<CertificateInfo> results = new ArrayList<>();
                 for (Certificate cert : chain) {
                     if (cert instanceof X509Certificate) {
                         results.add(createCertificateInfo((X509Certificate) cert));

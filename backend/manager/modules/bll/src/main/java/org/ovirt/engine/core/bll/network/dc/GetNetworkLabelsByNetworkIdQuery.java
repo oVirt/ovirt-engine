@@ -21,6 +21,6 @@ public class GetNetworkLabelsByNetworkIdQuery<P extends IdQueryParameters> exten
                 getDbFacade().getNetworkDao().get(getParameters().getId(), getUserID(), getParameters().isFiltered());
         getQueryReturnValue().setReturnValue(network == null || !NetworkUtils.isLabeled(network)
                 ? Collections.<NetworkLabel> emptyList()
-                : new ArrayList<NetworkLabel>(Arrays.asList((new NetworkLabel(network.getLabel())))));
+                : new ArrayList<>(Arrays.asList((new NetworkLabel(network.getLabel())))));
     }
 }

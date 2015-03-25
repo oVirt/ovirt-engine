@@ -18,7 +18,7 @@ public class GetStorageDomainListByIdQuery<P extends IdQueryParameters> extends 
     protected void executeQueryCommand() {
         List<StorageDomain> result = DbFacade.getInstance().getStorageDomainDao().getAllForStorageDomain(
                 getParameters().getId());
-        ArrayList<StorageDomain> temp = new ArrayList<StorageDomain>(result);
+        ArrayList<StorageDomain> temp = new ArrayList<>(result);
         for (StorageDomain domain : temp) {
             if (domain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached) {
                 result.remove(domain);

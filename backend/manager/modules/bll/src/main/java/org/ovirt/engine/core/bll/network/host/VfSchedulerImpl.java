@@ -118,7 +118,7 @@ public class VfSchedulerImpl implements VfScheduler {
             String vfName = freeVf.getDeviceName();
 
             if (usedVfsByNic == null) {
-                usedVfsByNic = new ArrayList<String>();
+                usedVfsByNic = new ArrayList<>();
                 nicToUsedVfs.put(nic.getId(), usedVfsByNic);
             }
             usedVfsByNic.add(vfName);

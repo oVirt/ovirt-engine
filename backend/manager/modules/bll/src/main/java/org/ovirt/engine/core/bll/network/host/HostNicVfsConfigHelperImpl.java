@@ -235,7 +235,7 @@ class HostNicVfsConfigHelperImpl implements HostNicVfsConfigHelper {
             }
         });
 
-        setVmIdOnVfsDevices(hostId, vmId, new HashSet<HostDevice>(vfs));
+        setVmIdOnVfsDevices(hostId, vmId, new HashSet<>(vfs));
     }
 
     private void setVmIdOnVfsDevices(Guid hostId, Guid vmId, Set<HostDevice> vfs) {
@@ -258,7 +258,7 @@ class HostNicVfsConfigHelperImpl implements HostNicVfsConfigHelper {
 
         Guid hostId = vfsUsedByVm.isEmpty() ? null : vfsUsedByVm.get(0).getHostId();
         if (hostId != null) {
-            setVmIdOnVfsDevices(hostId, null, new HashSet<HostDevice>(vfsUsedByVm));
+            setVmIdOnVfsDevices(hostId, null, new HashSet<>(vfsUsedByVm));
         }
 
         return hostId;

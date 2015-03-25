@@ -21,20 +21,20 @@ public class HostedEngineHAClusterWeightPolicyUnit extends PolicyUnitImpl {
 
     void fillDefaultScores(List<VDS> hosts, List<Pair<Guid, Integer>> scores) {
         for (VDS host : hosts) {
-            scores.add(new Pair<Guid, Integer>(host.getId(), DEFAULT_WEIGHT));
+            scores.add(new Pair<>(host.getId(), DEFAULT_WEIGHT));
         }
     }
 
     @Override
     public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, Map<String, String> parameters) {
-        List<Pair<Guid, Integer>> scores = new ArrayList<Pair<Guid, Integer>>();
+        List<Pair<Guid, Integer>> scores = new ArrayList<>();
         boolean isHostedEngine = vm.isHostedEngine();
 
         if (isHostedEngine) {
             // If the max HA score is higher than the max weight, then we normalize. Otherwise the ratio is 1, keeping the value as is
             float ratio = MAXIMUM_HA_SCORE > MaxSchedulerWeight ? ((float) MaxSchedulerWeight / MAXIMUM_HA_SCORE) : 1;
             for (VDS host : hosts) {
-                scores.add(new Pair<Guid, Integer>(host.getId(), MaxSchedulerWeight - Math.round(host.getHighlyAvailableScore() * ratio)));
+                scores.add(new Pair<>(host.getId(), MaxSchedulerWeight - Math.round(host.getHighlyAvailableScore() * ratio)));
             }
         } else {
             fillDefaultScores(hosts, scores);

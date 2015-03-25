@@ -218,7 +218,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
                     DbFacade.getInstance()
                             .getStorageDomainDao()
                             .getAllForStoragePool(getStoragePoolId());
-            Map<Guid, StorageDomain> storageDomainsMap = new HashMap<Guid, StorageDomain>();
+            Map<Guid, StorageDomain> storageDomainsMap = new HashMap<>();
             for (StorageDomain storageDomain : domains) {
                 StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
                 if (validate(validator.isDomainExistAndActive()) && validate(validator.domainIsValidDestination())) {
@@ -238,7 +238,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
                 logErrorOneOrMoreActiveDomainsAreMissing();
                 return false;
             }
-           List<Guid> storageDomainDest = new ArrayList<Guid>();
+            List<Guid> storageDomainDest = new ArrayList<>();
             for (DiskImage diskImage : diskInfoDestinationMap.values()) {
                 Guid storageDomainId = diskImage.getStorageIds().get(0);
                 if (storageDomainDest.contains(storageDomainId)) {
@@ -311,7 +311,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        List<PermissionSubject> permissionList = new ArrayList<>();
         permissionList.add(new PermissionSubject(getVdsGroupId(),
                 VdcObjectType.VdsGroups,
                 getActionType().getActionGroup()));
@@ -409,7 +409,7 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
 
     @Override
     protected void copyVmDevices() {
-        List<VmDevice> devices = new ArrayList<VmDevice>(getVmFromConfiguration().getVmUnamagedDeviceList());
+        List<VmDevice> devices = new ArrayList<>(getVmFromConfiguration().getVmUnamagedDeviceList());
         devices.addAll(getVmFromConfiguration().getManagedVmDeviceMap().values());
         VmDeviceUtils.copyVmDevices(getSourceVmId(),
                 getVmId(),

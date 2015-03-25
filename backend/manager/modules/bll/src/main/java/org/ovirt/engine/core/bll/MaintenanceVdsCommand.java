@@ -103,7 +103,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
     }
 
     private boolean canScheduleVm(VM vm) {
-        List<Guid> blacklist = new ArrayList<Guid>();
+        List<Guid> blacklist = new ArrayList<>();
         if (getVdsId() != null) {
             blacklist.add(getVdsId());
         }
@@ -153,7 +153,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
     protected CommandContext createMigrateVmContext(ExecutionContext parentContext, VM vm) {
         ExecutionContext ctx = new ExecutionContext();
         try {
-            Map<String, String> values = new HashMap<String, String>();
+            Map<String, String> values = new HashMap<>();
             values.put(VdcObjectType.VM.name().toLowerCase(), vm.getName());
             values.put(VdcObjectType.VDS.name().toLowerCase(), vm.getRunOnVdsName());
             Step step = ExecutionHandler.addSubStep(getExecutionContext(),

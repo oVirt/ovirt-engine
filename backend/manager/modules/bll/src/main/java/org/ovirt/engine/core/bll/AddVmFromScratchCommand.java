@@ -171,7 +171,7 @@ public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCom
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        List<PermissionSubject> permissionList = new ArrayList<>();
         permissionList.add(new PermissionSubject(getVdsGroupId(),
                 VdcObjectType.VdsGroups,
                 getActionType().getActionGroup()));

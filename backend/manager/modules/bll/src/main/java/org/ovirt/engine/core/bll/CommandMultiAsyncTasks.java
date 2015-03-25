@@ -27,7 +27,7 @@ public class CommandMultiAsyncTasks {
     }
 
     public CommandMultiAsyncTasks(Guid commandId) {
-        _listTasks = new HashMap<Guid, CommandAsyncTask>();
+        _listTasks = new HashMap<>();
         setCommandId(commandId);
     }
 
@@ -43,7 +43,7 @@ public class CommandMultiAsyncTasks {
     }
 
     private ArrayList<CommandAsyncTask> getCurrentTasks() {
-        ArrayList<CommandAsyncTask> retValue = new ArrayList<CommandAsyncTask>();
+        ArrayList<CommandAsyncTask> retValue = new ArrayList<>();
 
         for (CommandAsyncTask task : _listTasks.values()) {
             if (task.getParameters() != null
@@ -94,7 +94,7 @@ public class CommandMultiAsyncTasks {
 
     public EndedTasksInfo getEndedTasksInfo() {
         EndedTasksInfo endedTasksInfo = new EndedTasksInfo();
-        ArrayList<EndedTaskInfo> endedTaskInfoList = new ArrayList<EndedTaskInfo>();
+        ArrayList<EndedTaskInfo> endedTaskInfoList = new ArrayList<>();
 
         synchronized (_listTasks) {
             ArrayList<CommandAsyncTask> CurrentActionTypeTasks = getCurrentTasks();

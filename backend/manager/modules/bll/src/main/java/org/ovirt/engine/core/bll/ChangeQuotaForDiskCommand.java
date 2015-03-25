@@ -48,7 +48,7 @@ public class ChangeQuotaForDiskCommand extends ChangeQuotaCommand {
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        List<QuotaConsumptionParameter> list = new ArrayList<>();
         if (!ObjectUtils.equals(getQuotaId(), disk.getQuotaId())) {
             if (disk.getQuotaId() != null && !Guid.Empty.equals(disk.getQuotaId())) {
                 list.add(new QuotaStorageConsumptionParameter(

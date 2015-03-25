@@ -37,9 +37,9 @@ public class EvenGuestDistributionWeightPolicyUnit extends PolicyUnitImpl {
 
     @Override
     public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, Map<String, String> parameters) {
-        List<Pair<Guid, Integer>> scores = new ArrayList<Pair<Guid, Integer>>();
+        List<Pair<Guid, Integer>> scores = new ArrayList<>();
         for (VDS vds : hosts) {
-            scores.add(new Pair<Guid, Integer>(vds.getId(), calcEvenGuestDistributionScore(vds, parameters)));
+            scores.add(new Pair<>(vds.getId(), calcEvenGuestDistributionScore(vds, parameters)));
         }
         return scores;
     }

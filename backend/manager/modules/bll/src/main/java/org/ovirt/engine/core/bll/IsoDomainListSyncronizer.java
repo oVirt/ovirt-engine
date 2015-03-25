@@ -66,10 +66,10 @@ import org.slf4j.LoggerFactory;
 public class IsoDomainListSyncronizer {
     private static final Logger log = LoggerFactory.getLogger(IsoDomainListSyncronizer.class);
     private static final AuditLogDirector auditLogDirector = new AuditLogDirector();
-    private List<RepoImage> problematicRepoFileList = new ArrayList<RepoImage>();
+    private List<RepoImage> problematicRepoFileList = new ArrayList<>();
     private static final int MIN_TO_MILLISECONDS = 60 * 1000;
     private static volatile IsoDomainListSyncronizer isoDomainListSyncronizer;
-    private static final ConcurrentMap<Object, Lock> syncDomainForFileTypeMap = new ConcurrentHashMap<Object, Lock>();
+    private static final ConcurrentMap<Object, Lock> syncDomainForFileTypeMap = new ConcurrentHashMap<>();
     private int isoDomainRefreshRate;
     RepoFileMetaDataDAO repoStorageDom;
     ProviderDao providerDao;
@@ -141,7 +141,7 @@ public class IsoDomainListSyncronizer {
 
         resetProblematicList();
         // Iterate for each storage domain.
-        List<Callable<Void>> tasks = new ArrayList<Callable<Void>>();
+        List<Callable<Void>> tasks = new ArrayList<>();
         for (final RepoImage repoImage : repofileList) {
             // If the list should be refreshed and the refresh from the VDSM was succeeded, fetch the file list again
             // from the DB.
@@ -197,7 +197,7 @@ public class IsoDomainListSyncronizer {
 
     private boolean refreshRepos(Guid storageDomainId, ImageFileType imageType) {
         boolean refreshResult = false;
-        List<RepoImage> tempProblematicRepoFileList = new ArrayList<RepoImage>();
+        List<RepoImage> tempProblematicRepoFileList = new ArrayList<>();
         StorageDomain storageDomain = DbFacade.getInstance().getStorageDomainDao().get(storageDomainId);
 
         if (storageDomain.getStorageDomainType() == StorageDomainType.ISO) {
@@ -321,7 +321,7 @@ public class IsoDomainListSyncronizer {
             List<RepoImage> problematicRepoFileList,
             ImageFileType imageType) {
         boolean refreshSucceeded = false;
-        List<RepoImage> tempProblematicRepoFileList = new ArrayList<RepoImage>();
+        List<RepoImage> tempProblematicRepoFileList = new ArrayList<>();
 
         // Fetch all the Storage pools for this Iso domain Id.
         List<StoragePoolIsoMap> isoMapList =
@@ -408,7 +408,7 @@ public class IsoDomainListSyncronizer {
      */
     public List<RepoImage> getCachedIsoListByDomainId(Guid isoStorageDomainId,
             ImageFileType imageType) {
-        List<RepoImage> fileListMD = new ArrayList<RepoImage>();
+        List<RepoImage> fileListMD = new ArrayList<>();
         if (isoStorageDomainId != null) {
             fileListMD =
                     repoStorageDom.getRepoListForStorageDomain(isoStorageDomainId, imageType);
@@ -447,7 +447,7 @@ public class IsoDomainListSyncronizer {
      * @see #handleErrorLog(List)
      */
     private static void handleErrorLog(Guid storagePoolId, Guid storageDomainId, ImageFileType imageType) {
-        List<RepoImage> tempProblematicRepoFileList = new ArrayList<RepoImage>();
+        List<RepoImage> tempProblematicRepoFileList = new ArrayList<>();
 
         // set mock repo file meta data with storage domain id and storage pool id.
         RepoImage repoImage = new RepoImage();
@@ -474,7 +474,7 @@ public class IsoDomainListSyncronizer {
         if (problematicFileListForHandleError != null && !problematicFileListForHandleError.isEmpty()) {
             StringBuilder problematicStorages = new StringBuilder();
             StringBuilder problematicIsoDomainsForAuditLog = new StringBuilder();
-            Set<String> storageDomainNames = new HashSet<String>();
+            Set<String> storageDomainNames = new HashSet<>();
             for (RepoImage repoMap : problematicFileListForHandleError) {
                 problematicStorages.append(buildDetailedProblematicMapMsg(repoMap));
                 storageDomainNames.add(buildDetailedAuditLogMessage(repoMap));
@@ -548,7 +548,7 @@ public class IsoDomainListSyncronizer {
     private void updateCachedIsoFileListFromVdsm(RepoImage repoImage) {
         boolean isRefreshed = false;
         try {
-            List<RepoImage> problematicRepoFileList = new ArrayList<RepoImage>();
+            List<RepoImage> problematicRepoFileList = new ArrayList<>();
             isRefreshed =
                     refreshIsoDomain(repoImage.getRepoDomainId(),
                             problematicRepoFileList,
@@ -762,7 +762,7 @@ public class IsoDomainListSyncronizer {
      * @return - The Lock object, which represent the domain and the file type, to lock.
      */
     private static Lock getSyncObject(Guid domainId, ImageFileType imageType) {
-        Pair<Guid, ImageFileType> domainPerFileType = new Pair<Guid, ImageFileType>(domainId, imageType);
+        Pair<Guid, ImageFileType> domainPerFileType = new Pair<>(domainId, imageType);
         syncDomainForFileTypeMap.putIfAbsent(domainPerFileType, new ReentrantLock());
         return syncDomainForFileTypeMap.get(domainPerFileType);
     }

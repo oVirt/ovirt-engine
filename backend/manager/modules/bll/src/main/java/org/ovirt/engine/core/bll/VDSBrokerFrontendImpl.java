@@ -18,7 +18,7 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 public class VDSBrokerFrontendImpl implements VDSBrokerFrontend {
 
-    private Map<Guid, IVdsAsyncCommand> _asyncRunningCommands = new HashMap<Guid, IVdsAsyncCommand>();
+    private Map<Guid, IVdsAsyncCommand> _asyncRunningCommands = new HashMap<>();
 
     /*
      * (non-Javadoc)

@@ -34,9 +34,9 @@ public class HaReservationWeightPolicyUnit extends PolicyUnitImpl {
     public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, Map<String, String> parameters) {
 
         log.info("Started HA reservation scoring method");
-        List<Pair<Guid, Integer>> scores = new ArrayList<Pair<Guid, Integer>>();
+        List<Pair<Guid, Integer>> scores = new ArrayList<>();
 
-        Map<Guid, Integer> hostsHaVmCount = new HashMap<Guid, Integer>();
+        Map<Guid, Integer> hostsHaVmCount = new HashMap<>();
 
         // If the vm is not HA or the cluster is not marked as HA Reservation set default score.
         VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(hosts.get(0).getVdsGroupId());
@@ -81,7 +81,7 @@ public class HaReservationWeightPolicyUnit extends PolicyUnitImpl {
                 int haCount = hostsHaVmCount.get(host.getId());
                 haCount = (int) Math.ceil(haCount / scaleDownParameter.floatValue());
 
-                scores.add(new Pair<Guid, Integer>(host.getId(), haCount));
+                scores.add(new Pair<>(host.getId(), haCount));
 
                 log.info("Score for host '{}' is {}", host.getName(), haCount);
             }
@@ -94,7 +94,7 @@ public class HaReservationWeightPolicyUnit extends PolicyUnitImpl {
     // Fill all host with a neutral score
     private void fillDefaultScores(List<VDS> hosts, List<Pair<Guid, Integer>> scores) {
         for (VDS host : hosts) {
-            scores.add(new Pair<Guid, Integer>(host.getId(), DEFAULT_SCORE));
+            scores.add(new Pair<>(host.getId(), DEFAULT_SCORE));
         }
 
     }

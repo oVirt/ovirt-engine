@@ -89,7 +89,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
                 return false;
             }
 
-            if (!checkPciAndIdeLimit(oldIface, new ArrayList<VmNic>(interfaces), clusterCompatibilityVersion)) {
+            if (!checkPciAndIdeLimit(oldIface, new ArrayList<>(interfaces), clusterCompatibilityVersion)) {
                 return false;
             }
         }

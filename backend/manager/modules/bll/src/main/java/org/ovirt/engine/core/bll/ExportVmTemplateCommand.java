@@ -179,8 +179,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
         // revert
         // and there's no need for exporting the template's ovf.
         if (getParameters().getTaskGroupSuccess()) {
-            Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary =
-                    new HashMap<Guid, KeyValuePairCompat<String, List<Guid>>>();
+            Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary = new HashMap<>();
             OvfUpdateProcessHelper ovfUpdateProcessHelper = new OvfUpdateProcessHelper();
             ovfUpdateProcessHelper.loadTemplateData(getVmTemplate());
             VmTemplateHandler.updateDisksFromDb(getVmTemplate());

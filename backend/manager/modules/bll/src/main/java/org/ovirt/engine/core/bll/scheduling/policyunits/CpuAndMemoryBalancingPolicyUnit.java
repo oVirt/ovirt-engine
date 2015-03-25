@@ -123,7 +123,7 @@ public abstract class CpuAndMemoryBalancingPolicyUnit extends PolicyUnitImpl {
         }
 
         List<Guid> destinationHostsKeys = Entities.getIds(destinationHosts);
-        return new Pair<List<Guid>, Guid>(destinationHostsKeys, vmToMigrate.getId());
+        return new Pair<>(destinationHostsKeys, vmToMigrate.getId());
     }
 
     /**

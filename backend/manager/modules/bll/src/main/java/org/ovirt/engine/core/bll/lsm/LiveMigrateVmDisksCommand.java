@@ -55,8 +55,8 @@ import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> extends CommandBase<T>
         implements TaskHandlerCommand<LiveMigrateVmDisksParameters>, QuotaStorageDependent {
 
-    private Map<Guid, DiskImage> diskImagesMap = new HashMap<Guid, DiskImage>();
-    private Map<Guid, StorageDomain> storageDomainsMap = new HashMap<Guid, StorageDomain>();
+    private Map<Guid, DiskImage> diskImagesMap = new HashMap<>();
+    private Map<Guid, StorageDomain> storageDomainsMap = new HashMap<>();
 
     public LiveMigrateVmDisksCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
@@ -155,7 +155,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        List<PermissionSubject> permissionList = new ArrayList<>();
 
         for (LiveMigrateDiskParameters parameters : getParameters().getParametersList()) {
             DiskImage diskImage = getDiskImageDao().get(parameters.getImageId());
@@ -267,7 +267,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        List<QuotaConsumptionParameter> list = new ArrayList<>();
 
         for (LiveMigrateDiskParameters parameters : getParameters().getParametersList()) {
             DiskImage diskImage = getDiskImageByImageId(parameters.getImageId());
@@ -408,7 +408,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     }
 
     protected boolean validateDestDomainsSpaceRequirements() {
-        Map<Guid, List<DiskImage>> storageDomainsImagesMap = new HashMap<Guid, List<DiskImage>>();
+        Map<Guid, List<DiskImage>> storageDomainsImagesMap = new HashMap<>();
 
         for (LiveMigrateDiskParameters parameters : getParameters().getParametersList()) {
             MultiValueMapUtils.addToMap(parameters.getTargetStorageDomainId(),

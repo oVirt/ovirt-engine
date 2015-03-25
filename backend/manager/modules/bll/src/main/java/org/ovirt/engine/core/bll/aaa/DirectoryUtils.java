@@ -34,8 +34,8 @@ public class DirectoryUtils {
         dbUser = new DbUser(mapPrincipalRecordToDirectoryUser(authz, principal));
         dbUser.setId(userId);
         DbGroupDAO dao = DbFacade.getInstance().getDbGroupDao();
-        Set<Guid> groupIds = new HashSet<Guid>();
-        Set<String> groupsNames = new HashSet<String>();
+        Set<Guid> groupIds = new HashSet<>();
+        Set<String> groupsNames = new HashSet<>();
         for (ExtMap group : principal.get(PrincipalRecord.GROUPS, Collections.<ExtMap> emptyList())) {
             DbGroup dbGroup = dao.getByExternalId(authz, group.<String> get(GroupRecord.ID));
             if (dbGroup != null) {
@@ -74,7 +74,7 @@ public class DirectoryUtils {
         if (groups.size() == 0) {
             return null;
         }
-        return new ArrayList<DirectoryGroup>(groups).get(0);
+        return new ArrayList<>(groups).get(0);
     }
 
     public static Collection<DirectoryUser> findDirectoryUserByIds(
@@ -113,7 +113,7 @@ public class DirectoryUtils {
         if (users.size() == 0) {
             return null;
         }
-        return new ArrayList<DirectoryUser>(users).get(0);
+        return new ArrayList<>(users).get(0);
     }
 
     public static Collection<DirectoryGroup> findDirectoryGroupsByQuery(
@@ -160,7 +160,7 @@ public class DirectoryUtils {
             directoryUser.setEmail(principalRecord.<String> get(Authz.PrincipalRecord.EMAIL));
             directoryUser.setTitle(principalRecord.<String> get(Authz.PrincipalRecord.TITLE));
             directoryUser.setPrincipal(principalRecord.<String> get(Authz.PrincipalRecord.PRINCIPAL));
-            List<DirectoryGroup> directoryGroups = new ArrayList<DirectoryGroup>();
+            List<DirectoryGroup> directoryGroups = new ArrayList<>();
             List<ExtMap> groups = principalRecord.<List<ExtMap>> get(Authz.PrincipalRecord.GROUPS);
             if (groups != null) {
                 for (ExtMap group : groups) {

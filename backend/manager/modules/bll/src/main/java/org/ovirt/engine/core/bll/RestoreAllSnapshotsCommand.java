@@ -58,7 +58,7 @@ import org.ovirt.engine.core.dao.SnapshotDao;
  */
 public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters> extends VmCommand<T> implements QuotaStorageDependent {
 
-    private final Set<Guid> snapshotsToRemove = new HashSet<Guid>();
+    private final Set<Guid> snapshotsToRemove = new HashSet<>();
     private Snapshot snapshot;
     List<DiskImage> imagesToRestore = new ArrayList<>();
 
@@ -174,7 +174,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
     protected void deleteOrphanedImages() {
         VdcReturnValueBase returnValue;
         boolean noImagesRemovedYet = getTaskIdList().isEmpty();
-        Set<Guid> deletedDisksIds = new HashSet<Guid>();
+        Set<Guid> deletedDisksIds = new HashSet<>();
         for (DiskImage image : getDiskImageDao().getImagesWithNoDisk(getVm().getId())) {
             if (!deletedDisksIds.contains(image.getId())) {
                 deletedDisksIds.add(image.getId());
@@ -470,7 +470,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        List<QuotaConsumptionParameter> list = new ArrayList<>();
         List<DiskImage> disks = getImagesList();
 
         if (disks != null && !disks.isEmpty()) {

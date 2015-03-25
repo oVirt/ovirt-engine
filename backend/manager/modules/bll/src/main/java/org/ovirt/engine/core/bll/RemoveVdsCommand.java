@@ -276,7 +276,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        Map<String, Pair<String, String>> locks = new HashMap<String, Pair<String, String>>();
+        Map<String, Pair<String, String>> locks = new HashMap<>();
         locks.put(getParameters().getVdsId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.VDS,
                         VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));

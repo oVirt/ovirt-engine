@@ -59,7 +59,7 @@ public class OVirtNodeInfo {
         // Node OS
         final String regexNode[] = Config.<String> getValue(ConfigValues.OvirtNodeOS).split(delimiter);
 
-        info = new LinkedList<Entry>();
+        info = new LinkedList<>();
 
         log.debug("NodeInfo: regexISO length {} minimum length {} path length {} regexNode {}",
                 regexISO.length, minimumVersion.length, path.length, regexNode.length);

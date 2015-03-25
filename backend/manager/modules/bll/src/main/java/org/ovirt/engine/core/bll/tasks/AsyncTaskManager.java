@@ -94,7 +94,7 @@ public final class AsyncTaskManager {
 
     private AsyncTaskManager(CommandCoordinator coco) {
         this.coco = coco;
-        _tasks = new ConcurrentHashMap<Guid, SPMTask>();
+        _tasks = new ConcurrentHashMap<>();
 
         SchedulerUtil scheduler = SchedulerUtilQuartzImpl.getInstance();
         scheduler.scheduleAFixedDelayJob(this, "_timer_Elapsed", new Class[]{},
@@ -451,7 +451,7 @@ public final class AsyncTaskManager {
      * pool id.
      */
     private Map<Guid, Map<Guid, AsyncTaskStatus>> getSPMsTasksStatuses(Set<Guid> poolsOfActiveTasks) {
-        Map<Guid, Map<Guid, AsyncTaskStatus>> poolsAsyncTaskMap = new HashMap<Guid, Map<Guid, AsyncTaskStatus>>();
+        Map<Guid, Map<Guid, AsyncTaskStatus>> poolsAsyncTaskMap = new HashMap<>();
 
         // For each pool Id (SPM) ,add its tasks to the map.
         for (Guid storagePoolID : poolsOfActiveTasks) {
@@ -485,7 +485,7 @@ public final class AsyncTaskManager {
      * @return - Set of active tasks.
      */
     private Set<Guid> getPoolIdsTasks() {
-        Set<Guid> poolsOfActiveTasks = new HashSet<Guid>();
+        Set<Guid> poolsOfActiveTasks = new HashSet<>();
 
         for (SPMTask task : _tasks.values()) {
             if (task.getShouldPoll()) {
@@ -502,8 +502,8 @@ public final class AsyncTaskManager {
      * @return
      */
     synchronized private void removeClearedAndOldTasks() {
-        Set<Guid> poolsOfActiveTasks = new HashSet<Guid>();
-        Set<Guid> poolsOfClearedAndOldTasks = new HashSet<Guid>();
+        Set<Guid> poolsOfActiveTasks = new HashSet<>();
+        Set<Guid> poolsOfClearedAndOldTasks = new HashSet<>();
         ConcurrentMap<Guid, SPMTask> activeTaskMap = new ConcurrentHashMap<>();
         for (SPMTask task : _tasks.values()) {
             if (!cachingOver(task)) {
@@ -602,7 +602,7 @@ public final class AsyncTaskManager {
     }
 
     public synchronized ArrayList<AsyncTaskStatus> pollTasks(ArrayList<Guid> vdsmTaskIdList) {
-        ArrayList<AsyncTaskStatus> returnValue = new ArrayList<AsyncTaskStatus>();
+        ArrayList<AsyncTaskStatus> returnValue = new ArrayList<>();
 
         if (vdsmTaskIdList != null && vdsmTaskIdList.size() > 0) {
             for (Guid vdsmTaskId : vdsmTaskIdList) {
@@ -646,7 +646,7 @@ public final class AsyncTaskManager {
 
         if (currPoolTasks != null && currPoolTasks.size() > 0) {
             synchronized (this) {
-                final List<SPMTask> newlyAddedTasks = new ArrayList<SPMTask>();
+                final List<SPMTask> newlyAddedTasks = new ArrayList<>();
 
                 for (AsyncTaskCreationInfo creationInfo : currPoolTasks) {
                     creationInfo.setStoragePoolID(sp.getId());

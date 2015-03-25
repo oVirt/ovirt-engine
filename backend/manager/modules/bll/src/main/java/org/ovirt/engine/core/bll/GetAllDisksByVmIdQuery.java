@@ -24,7 +24,7 @@ public class GetAllDisksByVmIdQuery<P extends IdQueryParameters> extends Queries
         List<Disk> allDisks =
                 getDbFacade().getDiskDao().getAllForVm
                         (getParameters().getId(), getUserID(), getParameters().isFiltered());
-        List<Disk> disks = new ArrayList<Disk>();
+        List<Disk> disks = new ArrayList<>();
         for (Disk disk : allDisks) {
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                 DiskImage diskImage = (DiskImage) disk;

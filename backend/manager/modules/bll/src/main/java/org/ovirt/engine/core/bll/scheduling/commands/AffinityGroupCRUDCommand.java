@@ -35,7 +35,7 @@ public abstract class AffinityGroupCRUDCommand extends CommandBase<AffinityGroup
         }
         if (getParameters().getAffinityGroup().getEntityIds() != null) {
             VmStatic vmStatic = null;
-            Set<Guid> vmSet = new HashSet<Guid>();
+            Set<Guid> vmSet = new HashSet<>();
             for (Guid vmId : getParameters().getAffinityGroup().getEntityIds()) {
                 vmStatic = getVmStaticDAO().get(vmId);
                 if (vmStatic == null) {

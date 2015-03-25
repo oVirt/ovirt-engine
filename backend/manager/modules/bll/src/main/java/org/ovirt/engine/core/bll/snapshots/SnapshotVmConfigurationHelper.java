@@ -74,7 +74,7 @@ public class SnapshotVmConfigurationHelper {
         List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
         vm.setInterfaces(interfaces);
         List<DiskImage> disks = getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshotId);
-        vm.setImages(new ArrayList<DiskImage>(disks));
+        vm.setImages(new ArrayList<>(disks));
 
         // OvfReader sets disks as active during import which is required by VmHandler.updateDisksForVm to prepare the
         // VM disks.

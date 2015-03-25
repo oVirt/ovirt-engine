@@ -112,7 +112,7 @@ public class CoCoAsyncTaskHelper {
     public void revertTasks(CommandBase<?> command) {
         if (command.getParameters().getVdsmTaskIds() != null) {
             // list to send to the pollTasks method
-            ArrayList<Guid> taskIdAsList = new ArrayList<Guid>();
+            ArrayList<Guid> taskIdAsList = new ArrayList<>();
 
             for (Guid taskId : command.getParameters().getVdsmTaskIds()) {
                 taskIdAsList.add(taskId);

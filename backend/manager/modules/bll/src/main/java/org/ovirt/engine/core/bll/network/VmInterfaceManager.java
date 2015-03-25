@@ -168,7 +168,7 @@ public class VmInterfaceManager {
         }
 
         List<VM> runningVms = getVmDAO().getAllRunningForVds(vdsId);
-        List<String> vmNames = new ArrayList<String>();
+        List<String> vmNames = new ArrayList<>();
         for (VM vm : runningVms) {
             List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
             for (VmNetworkInterface vmNic : vmInterfaces) {

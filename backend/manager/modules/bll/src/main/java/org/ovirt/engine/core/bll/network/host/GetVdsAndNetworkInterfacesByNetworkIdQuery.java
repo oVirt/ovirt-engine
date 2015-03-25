@@ -66,11 +66,11 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQuery<P extends IdQueryParamet
                 getInterfaceDao().getVdsInterfacesByNetworkId(getParameters().getId());
         final Map<Guid, VDS> vdsById = Entities.businessEntitiesById(vdsList);
         List<PairQueryable<VdsNetworkInterface, VDS>> vdsInterfaceVdsPairs =
-                new ArrayList<PairQueryable<VdsNetworkInterface, VDS>>();
+                new ArrayList<>();
         Network network = getNetworkDao().get(getParameters().getId());
         HostNetworkQos qos = getHostNetworkQosDao().get(network.getQosId());
         for (final VdsNetworkInterface vdsNetworkInterface : vdsNetworkInterfaceList) {
-            vdsInterfaceVdsPairs.add(new PairQueryable<VdsNetworkInterface, VDS>(vdsNetworkInterface,
+            vdsInterfaceVdsPairs.add(new PairQueryable<>(vdsNetworkInterface,
                     vdsById.get(vdsNetworkInterface.getVdsId())));
             VdsNetworkInterface.NetworkImplementationDetails vdsInterfaceNetworkImplementationDetails =
                     NetworkUtils.calculateNetworkImplementationDetails(network, qos, vdsNetworkInterface);

@@ -161,7 +161,7 @@ public class GlusterTaskUtils {
     }
 
     public Map<String, String> getMessageMap(VDSGroup cluster, GlusterAsyncTask task) {
-        Map<String, String> values = new HashMap<String, String>();
+        Map<String, String> values = new HashMap<>();
         values.put(GlusterConstants.CLUSTER, cluster.getName());
         GlusterTaskParameters params = task.getTaskParameters();
         values.put(GlusterConstants.VOLUME, params != null ? params.getVolumeName() : "");

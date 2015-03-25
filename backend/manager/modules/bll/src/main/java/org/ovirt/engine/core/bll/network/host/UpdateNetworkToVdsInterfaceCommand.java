@@ -54,7 +54,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         String subnet = StringUtils.isEmpty(getParameters().getSubnet()) ? getParameters().getNetwork()
                 .getSubnet() : getParameters().getSubnet();
         String gateway = StringUtils.isEmpty(getParameters().getGateway()) ? "" : getParameters().getGateway();
-        ArrayList<String> interfaceNames = new ArrayList<String>();
+        ArrayList<String> interfaceNames = new ArrayList<>();
 
         Map<String, VdsNetworkInterface> interfaceByName = Entities.entitiesByName(interfaces);
         for (VdsNetworkInterface i : getParameters().getInterfaces()) {

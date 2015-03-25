@@ -26,7 +26,7 @@ public class HostedEngineHAClusterFilterPolicyUnit extends PolicyUnitImpl {
         // The filter is relevant only for Hosted Engine VM
         if (vm.isHostedEngine()) {
 
-            List<VDS> hostsToRunOn = new ArrayList<VDS>();
+            List<VDS> hostsToRunOn = new ArrayList<>();
             for (VDS host : hosts) {
                 int haScore = host.getHighlyAvailableScore();
                 if (haScore > 0) {

@@ -24,7 +24,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 @NonTransactiveCommandAttribute
 public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<GlusterVolumeRemoveBricksParameters> {
     private static final long serialVersionUID = 1465299601226267507L;
-    private final List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+    private final List<GlusterBrickEntity> bricks = new ArrayList<>();
 
     public GlusterVolumeRemoveBricksCommand(GlusterVolumeRemoveBricksParameters params) {
         super(params);

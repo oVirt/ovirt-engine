@@ -66,7 +66,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
                 return false;
             }
 
-            List<VmNic> interfacesForCheckPciLimit = new ArrayList<VmNic>(interfaces);
+            List<VmNic> interfacesForCheckPciLimit = new ArrayList<>(interfaces);
             interfacesForCheckPciLimit.add(getParameters().getInterface());
             if (!VmCommand.checkPciAndIdeLimit(getVmTemplate().getOsId(),
                     getVdsGroup().getCompatibilityVersion(),

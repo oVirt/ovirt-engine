@@ -150,10 +150,10 @@ public class JobRepositoryImpl implements JobRepository {
      * @return a collection of the steps.
      */
     private List<Step> buildStepsTree(List<Step> steps) {
-        List<Step> jobDirectSteps = new ArrayList<Step>();
+        List<Step> jobDirectSteps = new ArrayList<>();
 
         // a map of parent step id and a list of child-steps
-        Map<Guid, List<Step>> parentStepMap = new HashMap<Guid, List<Step>>();
+        Map<Guid, List<Step>> parentStepMap = new HashMap<>();
 
         for (Step step : steps) {
             if (step.getParentStepId() == null) {
@@ -176,7 +176,7 @@ public class JobRepositoryImpl implements JobRepository {
 
     @Override
     public List<Job> getJobsByEntityAndAction(Guid entityId, VdcActionType actionType) {
-        List<Job> jobList = new ArrayList<Job>();
+        List<Job> jobList = new ArrayList<>();
         List<Guid> jobIdsList = jobSubjectEntityDao.getJobIdByEntityId(entityId);
 
         for (Guid jobId : jobIdsList) {

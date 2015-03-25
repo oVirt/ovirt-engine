@@ -26,7 +26,7 @@ public class GetConfigurationValuesQuery<P extends VdcQueryParametersBase> exten
     }
 
     private static List<String> getVersionsList() {
-        List<String> versions = new ArrayList<String>();
+        List<String> versions = new ArrayList<>();
         versions.add(ConfigCommon.defaultConfigurationVersion);
         for (Version version : Version.ALL) {
             versions.add(version.toString());
@@ -36,8 +36,7 @@ public class GetConfigurationValuesQuery<P extends VdcQueryParametersBase> exten
 
     @Override
     protected void executeQueryCommand() {
-        Map<KeyValuePairCompat<ConfigurationValues, String>, Object> configValuesMap =
-                new HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object>();
+        Map<KeyValuePairCompat<ConfigurationValues, String>, Object> configValuesMap = new HashMap<>();
 
         for (ConfigurationValues configValue : ConfigurationValues.values()) {
             // Ignore an admin configuration value on filtered mode
@@ -63,10 +62,8 @@ public class GetConfigurationValuesQuery<P extends VdcQueryParametersBase> exten
     private void populateValueForConfigValue(ConfigurationValues configValue,
             String version,
             Map<KeyValuePairCompat<ConfigurationValues, String>, Object> configValuesMap) {
-        KeyValuePairCompat<ConfigurationValues, String> key
-                = new KeyValuePairCompat<ConfigurationValues, String>(configValue, version);
-        Object value
-                = Config.<Object>getValue(ConfigValues.valueOf(configValue.toString()), version);
+        KeyValuePairCompat<ConfigurationValues, String> key = new KeyValuePairCompat<>(configValue, version);
+        Object value = Config.<Object>getValue(ConfigValues.valueOf(configValue.toString()), version);
 
         configValuesMap.put(key, value);
     }

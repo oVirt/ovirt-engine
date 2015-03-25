@@ -38,7 +38,7 @@ public abstract class AbstractVmWatchdogCommand<T extends WatchdogParameters> ex
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        List<PermissionSubject> permissionList = new ArrayList<>();
         permissionList.add(new PermissionSubject(getParameters().getId(),
                 getParameters().isVm() ? VdcObjectType.VM : VdcObjectType.VmTemplate,
                 getActionType().getActionGroup()));
@@ -49,7 +49,7 @@ public abstract class AbstractVmWatchdogCommand<T extends WatchdogParameters> ex
      * Create specParams from the parameters.
      */
     protected HashMap<String, Object> getSpecParams() {
-        HashMap<String, Object> specParams = new HashMap<String, Object>();
+        HashMap<String, Object> specParams = new HashMap<>();
         specParams.put("action", getParameters().getAction().name().toLowerCase());
         specParams.put("model", getParameters().getModel().name());
         return specParams;

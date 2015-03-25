@@ -51,7 +51,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         implements QuotaStorageDependent {
 
     private List<DiskImage> imageTemplates;
-    private final Map<Guid, List<DiskImage>> storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
+    private final Map<Guid, List<DiskImage>> storageToDisksMap = new HashMap<>();
 
     @Inject
     private VmIconDao vmIconDao;
@@ -144,7 +144,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
         // check no vms from this template on selected domains
         List<VM> vms = getVmDAO().getAllWithTemplate(vmTemplateId);
-        List<String> problematicVmNames = new ArrayList<String>();
+        List<String> problematicVmNames = new ArrayList<>();
         for (VM vm : vms) {
             problematicVmNames.add(vm.getName());
         }
@@ -193,7 +193,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
      * Get a list of all domains id that the template is on
      */
     private Set<Guid> getStorageDomainsByDisks(List<DiskImage> disks, boolean isFillStorageTodDiskMap) {
-        Set<Guid> domainsList = new HashSet<Guid>();
+        Set<Guid> domainsList = new HashSet<>();
         if (disks != null) {
             for (DiskImage disk : disks) {
                 domainsList.addAll(disk.getStorageIds());
@@ -331,7 +331,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        List<QuotaConsumptionParameter> list = new ArrayList<>();
         fetchImageTemplates();
         if (imageTemplates != null) {
             for (DiskImage disk : imageTemplates) {

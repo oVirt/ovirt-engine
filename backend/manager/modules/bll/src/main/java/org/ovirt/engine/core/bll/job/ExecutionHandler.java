@@ -80,7 +80,7 @@ public class ExecutionHandler {
     }
 
     private static Map<Guid, VdcObjectType> getSubjectEntities(List<PermissionSubject> permSubjectList) {
-        Map<Guid, VdcObjectType> entities = new HashMap<Guid, VdcObjectType>();
+        Map<Guid, VdcObjectType> entities = new HashMap<>();
         for (PermissionSubject permSubj : permSubjectList) {
             if (permSubj.getObjectId() != null && permSubj.getObjectType() != null) {
                 entities.put(permSubj.getObjectId(), permSubj.getObjectType());

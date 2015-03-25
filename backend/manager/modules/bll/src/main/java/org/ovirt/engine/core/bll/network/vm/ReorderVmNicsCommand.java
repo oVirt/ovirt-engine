@@ -56,8 +56,8 @@ public class ReorderVmNicsCommand<T extends VmOperationParameterBase> extends Vm
     private void reorderNics() {
         Map<Guid, VmDevice> vmInterfaceDevices = getVmInterfaceDevices();
         List<VmNic> nics = getVmNicDao().getAllForVm(getParameters().getVmId());
-        List<VmNic> nicsToReorder = new ArrayList<VmNic>();
-        List<String> macsToReorder = new ArrayList<String>();
+        List<VmNic> nicsToReorder = new ArrayList<>();
+        List<String> macsToReorder = new ArrayList<>();
 
         for (VmNic nic : nics) {
             VmDevice nicDevice = vmInterfaceDevices.get(nic.getId());

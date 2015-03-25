@@ -327,7 +327,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         } else {
             List<VDS> poolHosts = getVdsDAO().getAllForStoragePool(getParameters().getStoragePoolId());
 
-            sharedLocks = new HashMap<String, Pair<String, String>>();
+            sharedLocks = new HashMap<>();
             for (VDS host : poolHosts) {
                 sharedLocks.put(host.getId().toString(),
                         LockMessagesMatchUtil.makeLockingPair(LockingGroup.VDS, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));

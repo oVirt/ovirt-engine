@@ -23,7 +23,7 @@ public class GetAllVmsAndVmPoolsQuery<P extends VdcQueryParametersBase> extends 
     @Override
     protected void executeQueryCommand() {
         boolean isSucceeded = true;
-        List<Object> retValList = new ArrayList<Object>();
+        List<Object> retValList = new ArrayList<>();
 
         // Add all VMs that the user has direct or indirect privileges on
         // that do not belong to a VM Pool

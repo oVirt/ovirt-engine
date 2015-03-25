@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.Permission;
 import org.ovirt.engine.core.compat.Guid;
@@ -22,7 +23,7 @@ public class UniquePermissionsSet extends HashSet<PermissionWithUniqueKeyEquals>
      * and not it's child
      */
     public List<Permission> asPermissionList() {
-        List<Permission> res = new ArrayList<Permission>();
+        List<Permission> res = new ArrayList<>();
 
         for (PermissionWithUniqueKeyEquals permission : this) {
             res.add(permission.asPermission());

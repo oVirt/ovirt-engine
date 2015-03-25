@@ -119,7 +119,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
 
     // Mapping
     private List<ExternalComputeResource> mapComputeResource(List<ForemanComputerResource> foremanCrs) {
-        ArrayList<ExternalComputeResource> crs = new ArrayList<ExternalComputeResource>(foremanCrs.size());
+        ArrayList<ExternalComputeResource> crs = new ArrayList<>(foremanCrs.size());
         for (ForemanComputerResource cr : foremanCrs) {
             ExternalComputeResource computeResource = new ExternalComputeResource();
             computeResource.setName(cr.getName());
@@ -133,7 +133,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     }
 
     private List<ExternalOperatingSystem> mapOperationSystem(List<ForemanOperatingSystem> foremanOss) {
-        ArrayList<ExternalOperatingSystem> oss = new ArrayList<ExternalOperatingSystem>(foremanOss.size());
+        ArrayList<ExternalOperatingSystem> oss = new ArrayList<>(foremanOss.size());
         for (ForemanOperatingSystem os : foremanOss) {
             ExternalOperatingSystem eos = new ExternalOperatingSystem();
             eos.setName(os.getName());
@@ -144,7 +144,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     }
 
     private List<ExternalDiscoveredHost> mapDiscoveredHosts(List<ForemanDiscoveredHost> foremanHosts) {
-        ArrayList<ExternalDiscoveredHost> hosts = new ArrayList<ExternalDiscoveredHost>(foremanHosts.size());
+        ArrayList<ExternalDiscoveredHost> hosts = new ArrayList<>(foremanHosts.size());
         for (ForemanDiscoveredHost host : foremanHosts) {
             ExternalDiscoveredHost dhost = new ExternalDiscoveredHost();
             dhost.setName(host.getName());
@@ -158,7 +158,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     }
 
     private List<VDS> mapHosts(List<ForemanHost> foremanHosts) {
-        ArrayList<VDS> hosts = new ArrayList<VDS>(foremanHosts.size());
+        ArrayList<VDS> hosts = new ArrayList<>(foremanHosts.size());
         for (ForemanHost host : foremanHosts) {
             VDS vds = new VDS();
             vds.setVdsName(host.getName());
@@ -169,7 +169,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     }
 
     private List<ExternalHostGroup> mapHostGroups(List<ForemanHostGroup> foremanHostGroups) {
-        ArrayList<ExternalHostGroup> hostGroups = new ArrayList<ExternalHostGroup>(foremanHostGroups.size());
+        ArrayList<ExternalHostGroup> hostGroups = new ArrayList<>(foremanHostGroups.size());
 
         for (ForemanHostGroup hostGroup : foremanHostGroups) {
             ExternalHostGroup hostgroup = new ExternalHostGroup();
@@ -352,7 +352,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     }
 
     private List<Erratum> mapErrata(List<ExternalErratum> externalErrata) {
-        ArrayList<Erratum> errata = new ArrayList<Erratum>(externalErrata.size());
+        ArrayList<Erratum> errata = new ArrayList<>(externalErrata.size());
         for (ExternalErratum externalErratum : externalErrata) {
             Erratum erratum = mapErratum(externalErratum);
             errata.add(erratum);

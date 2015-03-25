@@ -27,6 +27,6 @@ public class LockMessagesMatchUtil {
      * @return {@link Pair} of the given locking group and error message as Strings
      */
     public static Pair<String, String> makeLockingPair(LockingGroup group, String message) {
-        return new Pair<String, String>(group.name(), message);
+        return new Pair<>(group.name(), message);
     }
 }

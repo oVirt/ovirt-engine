@@ -25,7 +25,7 @@ public abstract class ExternalEventCommandBase<T extends VdcActionParametersBase
     }
 
     protected List<PermissionSubject> getPermissionList(AuditLog event){
-        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        List<PermissionSubject> permissionList = new ArrayList<>();
         if (event.getStorageDomainId() != null) {
             permissionList.add(new PermissionSubject(new Guid(event.getStorageDomainId().toString()),
                 VdcObjectType.Storage, ActionGroup.INJECT_EXTERNAL_EVENTS));

@@ -61,7 +61,7 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
     }
 
     protected Map<String, String> getStepMessageMap(JobExecutionStatus status, String jobInfo) {
-        Map<String, String> values = new HashMap<String, String>();
+        Map<String, String> values = new HashMap<>();
         values.put(GlusterConstants.CLUSTER, getVdsGroupName());
         values.put(GlusterConstants.VOLUME, getGlusterVolumeName());
         values.put(GlusterConstants.JOB_STATUS, status.toString());

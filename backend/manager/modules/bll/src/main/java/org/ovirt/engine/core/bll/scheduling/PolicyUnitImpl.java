@@ -133,9 +133,9 @@ public class PolicyUnitImpl {
 
     public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, Map<String, String> parameters) {
         log.error("Policy unit '{}' function is not implemented", getPolicyUnit().getName());
-        List<Pair<Guid, Integer>> pairs = new ArrayList<Pair<Guid, Integer>>();
+        List<Pair<Guid, Integer>> pairs = new ArrayList<>();
         for (VDS vds : hosts) {
-            pairs.add(new Pair<Guid, Integer>(vds.getId(), 1));
+            pairs.add(new Pair<>(vds.getId(), 1));
         }
         return pairs;
     }

@@ -21,7 +21,7 @@ public class PowerSavingWeightPolicyUnit extends EvenDistributionWeightPolicyUni
     @Override
     public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, Map<String, String> parameters) {
         VDSGroup vdsGroup = null;
-        List<Pair<Guid, Integer>> scores = new ArrayList<Pair<Guid, Integer>>();
+        List<Pair<Guid, Integer>> scores = new ArrayList<>();
         for (VDS vds : hosts) {
             int score = MaxSchedulerWeight - 1;
             if (vds.getVmCount() > 0) {
@@ -31,7 +31,7 @@ public class PowerSavingWeightPolicyUnit extends EvenDistributionWeightPolicyUni
                 score -=
                         calcEvenDistributionScore(vds, vm, vdsGroup != null ? vdsGroup.getCountThreadsAsCores() : false);
             }
-            scores.add(new Pair<Guid, Integer>(vds.getId(), score));
+            scores.add(new Pair<>(vds.getId(), score));
         }
         return scores;
     }

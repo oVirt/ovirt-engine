@@ -103,12 +103,12 @@ public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
         VM vm = migrableVmsOnRandomHost.get(new Random().nextInt(migrableVmsOnRandomHost.size()));
         log.info("VM to be migrated '{}'", vm.getName());
 
-        List<Guid> underUtilizedHostsKeys = new ArrayList<Guid>();
+        List<Guid> underUtilizedHostsKeys = new ArrayList<>();
         for (VDS vds : underUtilizedHosts) {
             underUtilizedHostsKeys.add(vds.getId());
         }
 
-        return new Pair<List<Guid>, Guid>(underUtilizedHostsKeys, vm.getId());
+        return new Pair<>(underUtilizedHostsKeys, vm.getId());
 
     }
 
@@ -124,7 +124,7 @@ public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
             Map<Guid, List<VM>> hostId2HaVmMapping,
             int UtilizationThreshold, Condition cond) {
 
-        List<VDS> utilizedHosts = new ArrayList<VDS>();
+        List<VDS> utilizedHosts = new ArrayList<>();
 
         for (VDS host : hosts) {
             int count = 0;

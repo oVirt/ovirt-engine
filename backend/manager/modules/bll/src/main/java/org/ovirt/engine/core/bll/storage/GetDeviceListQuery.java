@@ -24,7 +24,7 @@ public class GetDeviceListQuery<P extends GetDeviceListQueryParameters> extends 
 
     @Override
     protected void executeQueryCommand() {
-        List<LUNs> returnValue = new ArrayList<LUNs>();
+        List<LUNs> returnValue = new ArrayList<>();
         VDS vds = getDbFacade().getVdsDao().get(getParameters().getVdsId());
         boolean filteringLUNsEnabled = Config.<Boolean> getValue(ConfigValues.FilteringLUNsEnabled,
                 vds.getVdsGroupCompatibilityVersion().getValue());
@@ -38,7 +38,7 @@ public class GetDeviceListQuery<P extends GetDeviceListQueryParameters> extends 
 
         // Get LUNs from DB
         List<LUNs> lunsFromDb = getDbFacade().getLunDao().getAll();
-        HashMap<String, LUNs> lunsFromDbById = new HashMap<String, LUNs>();
+        HashMap<String, LUNs> lunsFromDbById = new HashMap<>();
         for (LUNs lun : lunsFromDb) {
             lunsFromDbById.put(lun.getLUN_id(), lun);
         }

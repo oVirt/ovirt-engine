@@ -22,8 +22,7 @@ import org.slf4j.LoggerFactory;
 
 public final class CpuFlagsManagerHandler {
     private static final Logger log = LoggerFactory.getLogger(CpuFlagsManagerHandler.class);
-    private static Map<Version, CpuFlagsManager> _managersDictionary =
-            new HashMap<Version, CpuFlagsManager>();
+    private static Map<Version, CpuFlagsManager> _managersDictionary = new HashMap<>();
 
     public static void initDictionaries() {
         log.info("Start initializing dictionaries");
@@ -63,7 +62,7 @@ public final class CpuFlagsManagerHandler {
         if (cpuFlagsManager != null) {
             return cpuFlagsManager.getAllServerCpuList();
         }
-        return new ArrayList<ServerCpu>();
+        return new ArrayList<>();
     }
 
     /**
@@ -124,7 +123,7 @@ public final class CpuFlagsManagerHandler {
         if (cpuFlagsManager != null) {
             return cpuFlagsManager.getSupportedServerCpuList(maxCpuName);
         }
-        return new ArrayList<ServerCpu>();
+        return new ArrayList<>();
 
     }
 
@@ -132,19 +131,13 @@ public final class CpuFlagsManagerHandler {
         private List<ServerCpu> _intelCpuList;
         private List<ServerCpu> _amdCpuList;
         private List<ServerCpu> _ibmCpuList;
-        private List<ServerCpu> _allCpuList = new ArrayList<ServerCpu>();
-        private Map<String, ServerCpu> _intelCpuByNameDictionary =
-                new HashMap<String, ServerCpu>();
-        private Map<String, ServerCpu> _amdCpuByNameDictionary =
-                new HashMap<String, ServerCpu>();
-        private Map<String, ServerCpu> _ibmCpuByNameDictionary =
-                new HashMap<String, ServerCpu>();
-        private Map<String, ServerCpu> _intelCpuByVdsNameDictionary =
-                new HashMap<String, ServerCpu>();
-        private Map<String, ServerCpu> _amdCpuByVdsNameDictionary =
-                new HashMap<String, ServerCpu>();
-        private Map<String, ServerCpu> _ibmCpuByVdsNameDictionary =
-                new HashMap<String, ServerCpu>();
+        private List<ServerCpu> _allCpuList = new ArrayList<>();
+        private Map<String, ServerCpu> _intelCpuByNameDictionary = new HashMap<>();
+        private Map<String, ServerCpu> _amdCpuByNameDictionary = new HashMap<>();
+        private Map<String, ServerCpu> _ibmCpuByNameDictionary = new HashMap<>();
+        private Map<String, ServerCpu> _intelCpuByVdsNameDictionary = new HashMap<>();
+        private Map<String, ServerCpu> _amdCpuByVdsNameDictionary = new HashMap<>();
+        private Map<String, ServerCpu> _ibmCpuByVdsNameDictionary = new HashMap<>();
         private final String _intelFlag = "vmx";
         private final String _amdFlag = "svm";
         private final String _ibmFlag = "powernv";
@@ -200,7 +193,7 @@ public final class CpuFlagsManagerHandler {
                         // if no flags at all create new list instead of split
                         HashSet<String> flgs =
                                 (StringUtils.isEmpty(info[2])) ? new HashSet<String>()
-                                        : new HashSet<String>(Arrays.asList(info[2].split("[,]", -1)));
+                                        : new HashSet<>(Arrays.asList(info[2].split("[,]", -1)));
 
                         String arch = info[4].trim();
                         ArchitectureType archType = ArchitectureType.valueOf(arch);
@@ -230,9 +223,9 @@ public final class CpuFlagsManagerHandler {
                     }
                 }
             }
-            _intelCpuList = new ArrayList<ServerCpu>(_intelCpuByNameDictionary.values());
-            _amdCpuList = new ArrayList<ServerCpu>(_amdCpuByNameDictionary.values());
-            _ibmCpuList = new ArrayList<ServerCpu>(_ibmCpuByNameDictionary.values());
+            _intelCpuList = new ArrayList<>(_intelCpuByNameDictionary.values());
+            _amdCpuList = new ArrayList<>(_amdCpuByNameDictionary.values());
+            _ibmCpuList = new ArrayList<>(_ibmCpuByNameDictionary.values());
 
             Comparator<ServerCpu> cpuComparator = new Comparator<ServerCpu>() {
                 @Override
@@ -292,7 +285,7 @@ public final class CpuFlagsManagerHandler {
 
             HashSet<String> lstServerflags =
                     (StringUtils.isEmpty(serverFlags)) ? new HashSet<String>()
-                            : new HashSet<String>(Arrays.asList(serverFlags.split("[,]", -1)));
+                            : new HashSet<>(Arrays.asList(serverFlags.split("[,]", -1)));
 
             // first find cluster cpu
             if (clusterCpuName != null
@@ -303,7 +296,7 @@ public final class CpuFlagsManagerHandler {
                 for (String flag : clusterCpu.getFlags()) {
                     if (!lstServerflags.contains(flag)) {
                         if (missingFlags == null) {
-                            missingFlags = new ArrayList<String>();
+                            missingFlags = new ArrayList<>();
                         }
                         missingFlags.add(flag);
                     }
@@ -364,7 +357,7 @@ public final class CpuFlagsManagerHandler {
         public ServerCpu FindMaxServerCpuByFlags(String flags) {
             ServerCpu result = null;
             HashSet<String> lstFlags = (StringUtils.isEmpty(flags)) ? new HashSet<String>()
-                    : new HashSet<String>(Arrays.asList(flags.split("[,]", -1)));
+                    : new HashSet<>(Arrays.asList(flags.split("[,]", -1)));
 
             if (lstFlags.contains(_intelFlag)) {
                 for (int i = _intelCpuList.size() - 1; i >= 0; i--) {
@@ -402,7 +395,7 @@ public final class CpuFlagsManagerHandler {
          */
         public List<ServerCpu> getSupportedServerCpuList(String maxCpuName) {
 
-            List<ServerCpu> supportedCpus = new ArrayList<ServerCpu>();
+            List<ServerCpu> supportedCpus = new ArrayList<>();
             if (_intelCpuByNameDictionary.containsKey(maxCpuName)) {
                 ServerCpu selected = _intelCpuByNameDictionary.get(maxCpuName);
                 int selectedCpuIndex = _intelCpuList.indexOf(selected);

@@ -28,7 +28,7 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 @NonTransactiveCommandAttribute
 public class RemoveGlusterHookCommand extends GlusterHookCommandBase<GlusterHookManageParameters> {
 
-    protected List<String> errors = new ArrayList<String>();
+    protected List<String> errors = new ArrayList<>();
     private List<VDS> serversInCluster = null;
 
     public RemoveGlusterHookCommand(GlusterHookManageParameters params) {
@@ -77,7 +77,7 @@ public class RemoveGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
         entity = getGlusterHook();
         addCustomValue(GlusterConstants.HOOK_NAME, entity.getName());
 
-        List<Callable<Pair<VDS, VDSReturnValue>>> taskList = new ArrayList<Callable<Pair<VDS, VDSReturnValue>>>();
+        List<Callable<Pair<VDS, VDSReturnValue>>> taskList = new ArrayList<>();
         for (final VDS server : getServersInCluster()) {
             taskList.add(new Callable<Pair<VDS, VDSReturnValue>>() {
                 @Override
@@ -91,7 +91,7 @@ public class RemoveGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
                                                entity.getStage(),
                                                entity.getName()
                                                ));
-                     return new Pair<VDS, VDSReturnValue>(server, returnValue);
+                     return new Pair<>(server, returnValue);
 
                 }
             });

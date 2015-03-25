@@ -119,7 +119,7 @@ public class GlusterGeoRepUtil {
 
     private List<Guid> getSessionSlaveVolumeIds() {
         List<GlusterGeoRepSession> existingSessions = getGeoRepDao().getAllSessions();
-        List<Guid> sessionSlavesIds = new ArrayList<Guid>();
+        List<Guid> sessionSlavesIds = new ArrayList<>();
         for(GlusterGeoRepSession currentSession : existingSessions) {
             sessionSlavesIds.add(currentSession.getSlaveVolumeId());
         }

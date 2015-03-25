@@ -342,7 +342,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         if (cachedPermsList == null) {
-            cachedPermsList = new ArrayList<PermissionSubject>();
+            cachedPermsList = new ArrayList<>();
 
             DiskImage image = getImage();
             Guid diskId = image == null ? Guid.Empty : image.getId();
@@ -461,7 +461,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        List<QuotaConsumptionParameter> list = new ArrayList<>();
 
         list.add(new QuotaStorageConsumptionParameter(
                 getDestinationQuotaId(),

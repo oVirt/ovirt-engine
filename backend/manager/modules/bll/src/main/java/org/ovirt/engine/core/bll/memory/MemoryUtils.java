@@ -43,7 +43,7 @@ public class MemoryUtils {
     }
 
     public static Set<String> getMemoryVolumesFromSnapshots(List<Snapshot> snapshots) {
-        Set<String> memories = new HashSet<String>();
+        Set<String> memories = new HashSet<>();
         for (Snapshot snapshot : snapshots) {
             memories.add(snapshot.getMemoryVolume());
         }

@@ -519,7 +519,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     // hosts that cannot be selected for scheduling (failed hosts + VM source host)
     private List<Guid> getVdsBlackList() {
-        List<Guid> blackList = new ArrayList<Guid>(getRunVdssList());
+        List<Guid> blackList = new ArrayList<>(getRunVdssList());
         if (getVdsId() != null) {
             blackList.add(getVdsId());
         }

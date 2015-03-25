@@ -400,7 +400,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         StorageDomain storageDomain = getStorageDomain();
         if (storageDomain != null) {
-            Map<String, Pair<String, String>> locks = new HashMap<String, Pair<String, String>>();
+            Map<String, Pair<String, String>> locks = new HashMap<>();
             locks.put(storageDomain.getId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
             if (storageDomain.getStorageDomainType() == StorageDomainType.Master) {

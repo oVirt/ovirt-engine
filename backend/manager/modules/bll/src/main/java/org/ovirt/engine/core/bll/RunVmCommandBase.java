@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import com.woorea.openstack.base.client.OpenStackResponseException;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -22,7 +21,6 @@ import org.ovirt.engine.core.common.action.ProcessDownVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
-import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -46,6 +44,8 @@ import org.ovirt.engine.core.vdsbroker.VdsMonitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.woorea.openstack.base.client.OpenStackResponseException;
+
 /**
  * Base class for asynchronous running process handling
  */
@@ -55,7 +55,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     private static final Logger log = LoggerFactory.getLogger(RunVmCommandBase.class);
     protected boolean _isRerun;
     private SnapshotsValidator snapshotsValidator=new SnapshotsValidator();
-    private final List<Guid> runVdsList = new ArrayList<Guid>();
+    private final List<Guid> runVdsList = new ArrayList<>();
     private Guid lastDecreasedVds;
 
     protected RunVmCommandBase(Guid commandId) {
@@ -256,9 +256,9 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         List<LunDisk> lunDisks = ImagesHandler.filterDiskBasedOnLuns(getVm().getDiskMap().values());
         for (LunDisk lunDisk : lunDisks) {
             LUNs lun = lunDisk.getLun();
-            lun.setLunConnections(new ArrayList<StorageServerConnections>(DbFacade.getInstance()
-                                            .getStorageServerConnectionDao()
-                                            .getAllForLun(lun.getLUN_id())));
+            lun.setLunConnections(new ArrayList<>(DbFacade.getInstance()
+                    .getStorageServerConnectionDao()
+                    .getAllForLun(lun.getLUN_id())));
 
             if (!lun.getLunConnections().isEmpty()
                     && !StorageHelperDirector.getInstance().getItem(lun.getLunConnections().get(0).getstorage_type())

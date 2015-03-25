@@ -37,8 +37,8 @@ public class OvfHelper {
      */
     public VM readVmFromOvf(String ovf) throws OvfReaderException {
         VM vm = new VM();
-        ArrayList<DiskImage> diskImages = new ArrayList<DiskImage>();
-        ArrayList<VmNetworkInterface> interfaces  = new ArrayList<VmNetworkInterface>();
+        ArrayList<DiskImage> diskImages = new ArrayList<>();
+        ArrayList<VmNetworkInterface> interfaces  = new ArrayList<>();
         ovfManager.ImportVm(ovf, vm, diskImages, interfaces);
 
         // add images
@@ -64,8 +64,8 @@ public class OvfHelper {
      * @throws OvfReaderException
      */
     public VmTemplate readVmTemplateFromOvf(String ovf) throws OvfReaderException {
-        ArrayList<DiskImage> diskImages = new ArrayList<DiskImage>();
-        ArrayList<VmNetworkInterface> interfaces = new ArrayList<VmNetworkInterface>();
+        ArrayList<DiskImage> diskImages = new ArrayList<>();
+        ArrayList<VmNetworkInterface> interfaces = new ArrayList<>();
         VmTemplate template = new VmTemplate();
         ovfManager.ImportTemplate(ovf, template, diskImages, interfaces);
         template.setInterfaces(interfaces);
@@ -97,7 +97,7 @@ public class OvfHelper {
      * Adds the given vm metadata to the given map
      */
     private String buildMetadataDictionaryForVm(VM vm) {
-        ArrayList<DiskImage> AllVmImages = new ArrayList<DiskImage>();
+        ArrayList<DiskImage> AllVmImages = new ArrayList<>();
         List<DiskImage> filteredDisks = ImagesHandler.filterImageDisks(vm.getDiskList(), false, true, true);
 
         for (DiskImage diskImage : filteredDisks) {

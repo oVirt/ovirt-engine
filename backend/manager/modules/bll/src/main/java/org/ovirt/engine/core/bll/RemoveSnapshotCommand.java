@@ -195,7 +195,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                         cloneContextAndDetachFromParent());
             }
 
-            List<Guid> quotasToRemoveFromCache = new ArrayList<Guid>();
+            List<Guid> quotasToRemoveFromCache = new ArrayList<>();
             quotasToRemoveFromCache.add(source.getQuotaId());
             if (dest != null) {
                 quotasToRemoveFromCache.add(dest.getQuotaId());
@@ -449,7 +449,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         //return empty list - the command only release quota so it could never fail the quota check
-        return new ArrayList<QuotaConsumptionParameter>();
+        return new ArrayList<>();
     }
 
     @Override

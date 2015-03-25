@@ -25,7 +25,7 @@ import org.ovirt.engine.core.compat.Guid;
 @InternalCommandAttribute
 public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters> extends BaseImagesCommand<T> {
 
-    private final ArrayList<Guid> _imagesToDelete = new ArrayList<Guid>();
+    private final ArrayList<Guid> _imagesToDelete = new ArrayList<>();
 
     public RestoreFromSnapshotCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);

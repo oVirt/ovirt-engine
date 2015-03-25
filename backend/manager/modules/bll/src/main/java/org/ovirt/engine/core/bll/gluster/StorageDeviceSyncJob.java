@@ -55,7 +55,7 @@ public class StorageDeviceSyncJob extends GlusterJob {
                 @Override
                 public Pair<VDS, List<StorageDevice>> call() throws Exception {
                     List<StorageDevice> storageDevices = getStorageDevicesFromServer(server);
-                    return new Pair<VDS, List<StorageDevice>>(server, storageDevices);
+                    return new Pair<>(server, storageDevices);
                 }
             });
         }

@@ -25,7 +25,7 @@ public class MigrateVMActionRunner extends SortedMultipleActionsRunnerBase {
     @Override
     protected void sortCommands() {
         ArrayList<CommandBase<?>> commands = getCommands();
-        final Map<Guid, VM> vms = new HashMap<Guid, VM>(commands.size());
+        final Map<Guid, VM> vms = new HashMap<>(commands.size());
         for (CommandBase<?> cmd : commands) {
             vms.put(cmd.getVmId(), DbFacade.getInstance().getVmDao().get(cmd.getVmId()));
         }

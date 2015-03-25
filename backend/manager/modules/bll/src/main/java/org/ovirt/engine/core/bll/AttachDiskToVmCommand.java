@@ -178,7 +178,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
         getVmDeviceDao().save(vmDevice);
 
         // update cached image
-        List<Disk> imageList = new ArrayList<Disk>();
+        List<Disk> imageList = new ArrayList<>();
         imageList.add(disk);
         VmHandler.updateDisksForVm(getVm(), imageList);
 
@@ -254,7 +254,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
             return null;
         }
 
-        Map<String, Pair<String, String>> locks = new HashMap<String, Pair<String, String>>();
+        Map<String, Pair<String, String>> locks = new HashMap<>();
         if (!disk.isShareable()) {
             locks.put(disk.getId().toString(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));

@@ -756,7 +756,7 @@ public class VmHandler {
 
     private static void updateDisksStorage(StorageDomain storageDomain, List<DiskImage> disksList) {
         for (DiskImage disk : disksList) {
-            disk.setStorageIds(new ArrayList<Guid>(Collections.singletonList(storageDomain.getId())));
+            disk.setStorageIds(new ArrayList<>(Collections.singletonList(storageDomain.getId())));
         }
         //There should be two disks in the disksList, first of which is memory disk. Only its volume type should be modified.
         updateDiskVolumeType(storageDomain.getStorageType(), disksList.get(0));

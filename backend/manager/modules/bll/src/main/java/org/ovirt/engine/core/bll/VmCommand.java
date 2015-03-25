@@ -391,7 +391,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        List<PermissionSubject> permissionList = new ArrayList<>();
         permissionList.add(new PermissionSubject(getParameters().getVmId(),
                 VdcObjectType.VM,
                 getActionType().getActionGroup()));

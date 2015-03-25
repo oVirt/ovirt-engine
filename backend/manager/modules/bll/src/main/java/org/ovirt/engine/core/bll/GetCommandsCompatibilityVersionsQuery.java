@@ -15,8 +15,7 @@ public class GetCommandsCompatibilityVersionsQuery<P extends VdcQueryParametersB
 
     @Override
     protected void executeQueryCommand() {
-        HashMap<VdcActionType, CommandVersionsInfo> resultMap =
-                new HashMap<VdcActionType, CommandVersionsInfo>();
+        HashMap<VdcActionType, CommandVersionsInfo> resultMap = new HashMap<>();
         for (ActionVersionMap actionVersionMap : getActionGroupDao().getAllActionVersionMap()) {
             CommandVersionsInfo info =
                     new CommandVersionsInfo(actionVersionMap.getstorage_pool_minimal_version(),

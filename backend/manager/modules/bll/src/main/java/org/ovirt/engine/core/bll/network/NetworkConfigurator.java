@@ -216,8 +216,8 @@ public class NetworkConfigurator {
     }
 
     public List<VdsNetworkInterface> filterBondsWithoutSlaves(List<VdsNetworkInterface> interfaces) {
-        List<VdsNetworkInterface> filteredList = new ArrayList<VdsNetworkInterface>();
-        Map<String, Integer> bonds = new HashMap<String, Integer>();
+        List<VdsNetworkInterface> filteredList = new ArrayList<>();
+        Map<String, Integer> bonds = new HashMap<>();
 
         for (VdsNetworkInterface iface : interfaces) {
             if (Boolean.TRUE.equals(iface.getBonded())) {

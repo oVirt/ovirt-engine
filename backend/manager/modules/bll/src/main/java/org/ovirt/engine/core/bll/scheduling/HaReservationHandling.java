@@ -76,8 +76,7 @@ public class HaReservationHandling {
             List<VM> vmList,
             List<Pair<Guid, Pair<Integer, Integer>>> hostsUnutilizedResources) {
 
-        Map<Guid, Pair<Integer, Integer>> additionalHostsUtilizedResources =
-                new HashMap<Guid, Pair<Integer, Integer>>();
+        Map<Guid, Pair<Integer, Integer>> additionalHostsUtilizedResources = new HashMap<>();
 
         for (VM vm : vmList) {
             int curVmMemSize = 0;
@@ -150,7 +149,7 @@ public class HaReservationHandling {
         for (VM vm : vms) {
             if (!Guid.isNullOrEmpty(vm.getRunOnVds())) {
                 if (!hostToHaVmsMapping.containsKey(vm.getRunOnVds())) {
-                    List<VM> vmsOfHost = new ArrayList<VM>();
+                    List<VM> vmsOfHost = new ArrayList<>();
                     vmsOfHost.add(vm);
                     hostToHaVmsMapping.put(vm.getRunOnVds(), vmsOfHost);
                 } else {

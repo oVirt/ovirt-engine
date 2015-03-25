@@ -110,7 +110,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
         setSucceeded(true);
         if (!images.isEmpty()) {
             for (DiskImage image : images) {
-                ArrayList<Guid> storageIds = new ArrayList<Guid>();
+                ArrayList<Guid> storageIds = new ArrayList<>();
                 storageIds.add(getParameters().getStorageDomainId());
                 image.setStorageIds(storageIds);
                 image.setStoragePoolId(getParameters().getStoragePoolId());
@@ -181,7 +181,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
     @Override
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
-            jobProperties = new HashMap<String, String>();
+            jobProperties = new HashMap<>();
             jobProperties.put(VdcObjectType.VmTemplate.name().toLowerCase(),
                     (getVmTemplateName() == null) ? "" : getVmTemplateName());
             jobProperties.put(VdcObjectType.Storage.name().toLowerCase(), getStorageDomainName());

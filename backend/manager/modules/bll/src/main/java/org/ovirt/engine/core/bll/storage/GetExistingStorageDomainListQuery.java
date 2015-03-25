@@ -28,7 +28,7 @@ public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomai
 
     @Override
     protected void executeQueryCommand() {
-        ArrayList<StorageDomain> returnValue = new ArrayList<StorageDomain>();
+        ArrayList<StorageDomain> returnValue = new ArrayList<>();
         VDSReturnValue vdsReturnValue = Backend
                 .getInstance()
                 .getResourceManager()
@@ -39,7 +39,7 @@ public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomai
                                 .getStorageDomainType(), getParameters().getPath()));
         if (vdsReturnValue.getSucceeded()) {
             ArrayList<Guid> guidsFromIrs = (ArrayList<Guid>) vdsReturnValue.getReturnValue();
-            HashSet<Guid> guidsFromDb = new HashSet<Guid>();
+            HashSet<Guid> guidsFromDb = new HashSet<>();
             if (guidsFromIrs.size() > 0) {
                 List<StorageDomain> domainsInDb = DbFacade.getInstance().getStorageDomainDao().getAll();
                 for (StorageDomain domain : domainsInDb) {

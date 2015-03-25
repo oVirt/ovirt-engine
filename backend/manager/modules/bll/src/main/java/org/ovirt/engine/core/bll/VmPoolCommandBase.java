@@ -178,7 +178,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(vmImages);
         ValidationResult disksNotLockedResult = diskImagesValidator.diskImagesNotLocked();
         if (!disksNotLockedResult.isValid()) {
-            List<String> messagesToAdd = new LinkedList<String>();
+            List<String> messagesToAdd = new LinkedList<>();
             messagesToAdd.add(disksNotLockedResult.getMessage().name());
             messagesToAdd.addAll(disksNotLockedResult.getVariableReplacements());
             return failVmFree(messages, messagesToAdd);
@@ -247,7 +247,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        List<PermissionSubject> permissionList = new ArrayList<>();
         permissionList.add(new PermissionSubject(getVmPoolId(),
                 VdcObjectType.VmPool,
                 getActionType().getActionGroup()));

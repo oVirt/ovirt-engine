@@ -43,7 +43,7 @@ public class OvfUpdateProcessHelper {
         String vmMeta = generateVmMetadata(vm, allVmImages);
         metaDictionary.put(
                 vm.getId(),
-                new KeyValuePairCompat<String, List<Guid>>(vmMeta, LinqUtils.transformToList(vm.getDiskMap().values(),
+                new KeyValuePairCompat<>(vmMeta, LinqUtils.transformToList(vm.getDiskMap().values(),
                         new Function<Disk, Guid>() {
                             @Override
                             public Guid eval(Disk a) {
@@ -64,7 +64,7 @@ public class OvfUpdateProcessHelper {
                                                         Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary) {
         List<DiskImage> allTemplateImages = template.getDiskList();
         String templateMeta = generateVmTemplateMetadata(template, allTemplateImages);
-        metaDictionary.put(template.getId(), new KeyValuePairCompat<String, List<Guid>>(
+        metaDictionary.put(template.getId(), new KeyValuePairCompat<>(
                 templateMeta, LinqUtils.transformToList(allTemplateImages, new Function<DiskImage, Guid>() {
             @Override
             public Guid eval(DiskImage diskImage) {

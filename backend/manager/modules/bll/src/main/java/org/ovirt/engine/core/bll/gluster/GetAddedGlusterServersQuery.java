@@ -36,7 +36,7 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
     @Override
     @SuppressWarnings("unchecked")
     protected void executeQueryCommand() {
-        Map<String, String> glusterServers = new HashMap<String, String>();
+        Map<String, String> glusterServers = new HashMap<>();
         VDS upServer = getClusterUtils().getUpServer(getParameters().getClusterId());
 
         if(upServer != null ) {
@@ -49,7 +49,7 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
     }
 
     private Map<String, String> getAddedGlusterServers(List<GlusterServerInfo> glusterServers) {
-        Map<String, String> serversAndFingerprint = new HashMap<String, String>();
+        Map<String, String> serversAndFingerprint = new HashMap<>();
 
         for (GlusterServerInfo server : glusterServers) {
             if (server.getStatus() == PeerStatus.CONNECTED && (!serverExists(server))) {

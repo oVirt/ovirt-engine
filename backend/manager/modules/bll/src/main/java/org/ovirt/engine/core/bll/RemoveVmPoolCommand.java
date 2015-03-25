@@ -43,7 +43,7 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
     }
 
     public static boolean canRemoveVmPoolWithoutReasons(Guid vmPoolId) {
-        ArrayList<String> reasons = new ArrayList<String>();
+        ArrayList<String> reasons = new ArrayList<>();
         return (canRemoveVmPool(vmPoolId, reasons));
     }
 

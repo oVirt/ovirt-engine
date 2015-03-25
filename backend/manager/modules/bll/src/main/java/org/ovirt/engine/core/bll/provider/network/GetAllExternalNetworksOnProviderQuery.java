@@ -29,11 +29,11 @@ public class GetAllExternalNetworksOnProviderQuery<P extends IdQueryParameters> 
         NetworkProviderProxy client = getProviderProxyFactory().create(provider);
         List<Network> externalNetworks = client.getAll();
 
-        Map<Network, Set<Guid>> externalNetworkToDcId = new HashMap<Network, Set<Guid>>();
+        Map<Network, Set<Guid>> externalNetworkToDcId = new HashMap<>();
         for (Network network : externalNetworks) {
             List<Guid> dcIds =
                     getDbFacade().getStoragePoolDao().getDcIdByExternalNetworkId(network.getProvidedBy().getExternalId());
-            externalNetworkToDcId.put(network, new HashSet<Guid>(dcIds));
+            externalNetworkToDcId.put(network, new HashSet<>(dcIds));
         }
 
         getQueryReturnValue().setReturnValue(externalNetworkToDcId);

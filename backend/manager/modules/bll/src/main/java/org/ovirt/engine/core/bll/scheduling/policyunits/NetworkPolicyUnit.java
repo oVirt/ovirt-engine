@@ -44,7 +44,7 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
             return null;
         }
 
-        List<VDS> toRemoveHostList = new ArrayList<VDS>();
+        List<VDS> toRemoveHostList = new ArrayList<>();
         List<VmNetworkInterface> vmNICs = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
         Guid clusterId = hosts.get(0).getVdsGroupId();
         List<Network> clusterNetworks = getNetworkDAO().getAllForCluster(clusterId);

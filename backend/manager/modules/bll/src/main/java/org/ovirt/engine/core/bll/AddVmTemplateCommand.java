@@ -90,7 +90,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmTemplateCommand<T>
         implements QuotaStorageDependent, QuotaVdsDependent {
 
-    private final List<DiskImage> mImages = new ArrayList<DiskImage>();
+    private final List<DiskImage> mImages = new ArrayList<>();
     private List<PermissionSubject> permissionCheckSubject;
     protected Map<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, List<DiskImage>> sourceImageDomainsImageMap;
@@ -98,7 +98,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     private boolean pendingAsyncTasks;
 
     private static final String BASE_TEMPLATE_VERSION_NAME = "base version";
-    private static Map<Guid, String> updateVmsJobIdMap = new ConcurrentHashMap<Guid, String>();
+    private static Map<Guid, String> updateVmsJobIdMap = new ConcurrentHashMap<>();
 
     private VmTemplate cachedBaseTemplate;
     private Guid vmSnapshotId;
@@ -167,9 +167,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     protected void updateDiskInfoDestinationMap() {
         diskInfoDestinationMap = getParameters().getDiskInfoDestinationMap();
         if (diskInfoDestinationMap == null) {
-            diskInfoDestinationMap = new HashMap<Guid, DiskImage>();
+            diskInfoDestinationMap = new HashMap<>();
         }
-        sourceImageDomainsImageMap = new HashMap<Guid, List<DiskImage>>();
+        sourceImageDomainsImageMap = new HashMap<>();
         for (DiskImage image : mImages) {
             MultiValueMapUtils.addToMap(image.getStorageIds().get(0), image, sourceImageDomainsImageMap);
             if (!diskInfoDestinationMap.containsKey(image.getId())) {
@@ -544,7 +544,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 return false;
             }
 
-            Map<Guid, StorageDomain> storageDomains = new HashMap<Guid, StorageDomain>();
+            Map<Guid, StorageDomain> storageDomains = new HashMap<>();
             Set<Guid> destImageDomains = getStorageGuidSet();
             destImageDomains.removeAll(sourceImageDomainsImageMap.keySet());
             for (Guid destImageDomain : destImageDomains) {
@@ -598,7 +598,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     private Set<Guid> getStorageGuidSet() {
-        Set<Guid> destImageDomains = new HashSet<Guid>();
+        Set<Guid> destImageDomains = new HashSet<>();
         for (DiskImage diskImage : diskInfoDestinationMap.values()) {
             destImageDomains.add(diskImage.getStorageIds().get(0));
         }
@@ -873,7 +873,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         if (permissionCheckSubject == null) {
-            permissionCheckSubject = new ArrayList<PermissionSubject>();
+            permissionCheckSubject = new ArrayList<>();
             if (getParameters().getTemplateType() != VmEntityType.INSTANCE_TYPE) {
                 Guid storagePoolId = getVdsGroup() == null ? null : getVdsGroup().getStoragePoolId();
                 permissionCheckSubject.add(new PermissionSubject(storagePoolId,
@@ -962,7 +962,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        List<QuotaConsumptionParameter> list = new ArrayList<>();
 
         for (DiskImage disk : getVm().getDiskList()) {
             list.add(new QuotaStorageConsumptionParameter(
@@ -981,7 +981,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        List<QuotaConsumptionParameter> list = new ArrayList<>();
         list.add(new QuotaSanityParameter(getQuotaId(), null));
         return list;
     }

@@ -120,10 +120,10 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             retVal = qretVal.getSucceeded();
             if (retVal) {
                 Map<VmTemplate, List<DiskImage>> templates = qretVal.getReturnValue();
-                ArrayList<DiskImage> images = new ArrayList<DiskImage>();
+                ArrayList<DiskImage> images = new ArrayList<>();
                 for (Map.Entry<VmTemplate, List<DiskImage>> entry : templates.entrySet()) {
                     if (entry.getKey().getId().equals(getVmTemplate().getId())) {
-                        images = new ArrayList<DiskImage>(entry.getValue());
+                        images = new ArrayList<>(entry.getValue());
                         getVmTemplate().setInterfaces(entry.getKey().getInterfaces());
                         getVmTemplate().setOvfVersion(entry.getKey().getOvfVersion());
                         break;
@@ -132,7 +132,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                 getParameters().setImages(images);
                 getVmTemplate().setImages(images);
                 ensureDomainMap(getImages(), getParameters().getDestDomainId());
-                HashMap<Guid, DiskImage> imageMap = new HashMap<Guid, DiskImage>();
+                HashMap<Guid, DiskImage> imageMap = new HashMap<>();
                 for (DiskImage image : images) {
                     if (Guid.Empty.equals(image.getVmSnapshotId())) {
                         retVal = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
@@ -155,7 +155,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                         break;
                     } else {
                         image.setStoragePoolId(getParameters().getStoragePoolId());
-                        image.setStorageIds(new ArrayList<Guid>(Arrays.asList(storageDomain.getId())));
+                        image.setStorageIds(new ArrayList<>(Arrays.asList(storageDomain.getId())));
                         imageMap.put(image.getImageId(), image);
                     }
                 }
@@ -543,7 +543,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     @Override
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
-            jobProperties = new HashMap<String, String>();
+            jobProperties = new HashMap<>();
             jobProperties.put(VdcObjectType.VmTemplate.name().toLowerCase(),
                     (getVmTemplateName() == null) ? "" : getVmTemplateName());
             jobProperties.put(VdcObjectType.StoragePool.name().toLowerCase(), getStoragePoolName());
@@ -572,7 +572,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        List<QuotaConsumptionParameter> list = new ArrayList<>();
 
         for (DiskImage disk : getParameters().getVmTemplate().getDiskList()) {
             //TODO: handle import more than once;

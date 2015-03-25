@@ -144,7 +144,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
     }
 
     private void refreshAllVdssInPool() {
-        final List<Guid> vdsIdsToSetNonOperational = new ArrayList<Guid>();
+        final List<Guid> vdsIdsToSetNonOperational = new ArrayList<>();
 
         getEventQueue().submitEventSync(
                 new Event(getParameters().getStoragePoolId(), getParameters().getStorageDomainId(), null, EventType.POOLREFRESH, ""),

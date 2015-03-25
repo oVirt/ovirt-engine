@@ -39,7 +39,7 @@ public class ExternalSchedulerDiscoveryThread extends Thread {
 
     private void updateDB(ExternalSchedulerDiscoveryResult discoveryResult) {
         List<PolicyUnit> allPolicyUnits = getPolicyUnitDao().getAll();
-        List<PolicyUnit> foundInBoth = new LinkedList<PolicyUnit>();
+        List<PolicyUnit> foundInBoth = new LinkedList<>();
         for (ExternalSchedulerDiscoveryUnit unit : discoveryResult.getFilters()) {
             PolicyUnit found = compareToDB(allPolicyUnits, unit, PolicyUnitType.FILTER);
             if (found != null) {

@@ -31,7 +31,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
     @Override
     protected DiskImage cloneDiskImage(Guid newImageGuid) {
         DiskImage returnValue = super.cloneDiskImage(newImageGuid);
-        returnValue.setStorageIds(new ArrayList<Guid>(Arrays.asList(getDestinationStorageDomainId())));
+        returnValue.setStorageIds(new ArrayList<>(Arrays.asList(getDestinationStorageDomainId())));
         returnValue.setQuotaId(getParameters().getQuotaId());
         returnValue.setDiskProfileId(getParameters().getDiskProfileId());
         // override to have no template

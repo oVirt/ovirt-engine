@@ -145,7 +145,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
                         getStorageDomainId(), getStoragePoolId(),
                         image1GroupId, hiberVol1, image2GroupId, hiberVol2));
 
-        getParameters().setVdsmTaskIds(new ArrayList<Guid>(getReturnValue().getVdsmTaskIdList()));
+        getParameters().setVdsmTaskIds(new ArrayList<>(getReturnValue().getVdsmTaskIdList()));
 
         setSucceeded(true);
     }

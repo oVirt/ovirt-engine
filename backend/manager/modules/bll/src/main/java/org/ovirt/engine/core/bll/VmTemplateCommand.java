@@ -192,7 +192,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        List<PermissionSubject> permissionList = new ArrayList<>();
         permissionList.add(new PermissionSubject(getVmTemplateId(),
                 VdcObjectType.VmTemplate,
                 getActionType().getActionGroup()));
@@ -202,7 +202,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
     @Override
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
-            jobProperties = new HashMap<String, String>();
+            jobProperties = new HashMap<>();
             jobProperties.put(VdcObjectType.StoragePool.name().toLowerCase(), getStoragePoolName());
             jobProperties.put(VdcObjectType.VmTemplate.name().toLowerCase(), getVmTemplateName());
         }

@@ -191,7 +191,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         if (permsList == null && getDisk() != null) {
-            permsList = new ArrayList<PermissionSubject>();
+            permsList = new ArrayList<>();
             permsList.add(new PermissionSubject(getDisk().getId(),
                     VdcObjectType.Disk, ActionGroup.ATTACH_DISK));
             permsList.add(new PermissionSubject(getDisk().getId(),

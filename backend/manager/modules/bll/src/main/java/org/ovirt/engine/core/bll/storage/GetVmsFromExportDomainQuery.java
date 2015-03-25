@@ -25,7 +25,7 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
     @Override
     protected List<VM> buildFromOVFs(List<String> ovfList) {
         OvfHelper ovfHelper = new OvfHelper();
-        List<VM> vms = new ArrayList<VM>();
+        List<VM> vms = new ArrayList<>();
 
         for (String ovf : ovfList) {
             try {

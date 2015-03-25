@@ -216,7 +216,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                 getDiskImage().getStoragePoolId(),
                 getDiskImage().getStorageIds().get(0),
                 getActiveDiskImage().getId(),
-                new ArrayList<Guid>(getParameters().getMergeStatusReturnValue().getImagesToRemove()),
+                new ArrayList<>(getParameters().getMergeStatusReturnValue().getImagesToRemove()),
                 getDiskImage().isWipeAfterDelete(),
                 false);
         parameters.setParentCommand(VdcActionType.RemoveSnapshotSingleDiskLive);

@@ -207,7 +207,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     @Override
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
-            jobProperties = new HashMap<String, String>();
+            jobProperties = new HashMap<>();
             jobProperties.put(VdcObjectType.VDS.name().toLowerCase(),
                     (getVdsName() == null) ? "" : getVdsName());
         }

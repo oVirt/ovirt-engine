@@ -92,7 +92,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
     @Override
     public List<StorageServerConnections> getStorageServerConnectionsByDomain(
             StorageDomainStatic storageDomain) {
-        return new ArrayList<StorageServerConnections>();
+        return new ArrayList<>();
     }
 
     @Override
@@ -103,7 +103,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
 
     public static Map<StorageType, List<StorageServerConnections>> filterConnectionsByStorageType(LUNs lun) {
         Map<StorageType, List<StorageServerConnections>> storageConnectionsForStorageTypeMap =
-                new EnumMap<StorageType, List<StorageServerConnections>>(StorageType.class);
+                new EnumMap<>(StorageType.class);
         for (StorageServerConnections lunConnections : lun.getLunConnections()) {
             MultiValueMapUtils.addToMap(lunConnections.getstorage_type(),
                     lunConnections,

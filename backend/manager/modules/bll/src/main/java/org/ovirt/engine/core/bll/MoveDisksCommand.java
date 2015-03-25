@@ -27,7 +27,7 @@ import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase<T> {
 
-    private List<VdcReturnValueBase> vdcReturnValues = new ArrayList<VdcReturnValueBase>();
+    private List<VdcReturnValueBase> vdcReturnValues = new ArrayList<>();
     private List<MoveDiskParameters> moveDiskParametersList = new ArrayList<>();
     private List<LiveMigrateVmDisksParameters> liveMigrateVmDisksParametersList = new ArrayList<>();
     private Map<Guid, DiskImage> diskMap = new HashMap<>();
@@ -222,7 +222,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
+        List<PermissionSubject> permissionList = new ArrayList<>();
 
         for (MoveOrCopyImageGroupParameters parameters : getParameters().getParametersList()) {
             DiskImage diskImage = getDiskImageDao().get(parameters.getImageId());

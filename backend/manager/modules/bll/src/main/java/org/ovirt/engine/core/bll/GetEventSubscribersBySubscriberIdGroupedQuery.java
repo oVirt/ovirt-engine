@@ -22,7 +22,7 @@ public class GetEventSubscribersBySubscriberIdGroupedQuery<P extends IdQueryPara
                 .getEventDao()
                 .getAllForSubscriber(getParameters().getId());
         if (list.size() > 0) {
-            HashMap<String, event_subscriber> dic = new HashMap<String, event_subscriber>();
+            HashMap<String, event_subscriber> dic = new HashMap<>();
 
             for (event_subscriber ev : list) {
                 // event_subscriber foundEv = groupedList.FirstOrDefault(a =>
@@ -35,7 +35,7 @@ public class GetEventSubscribersBySubscriberIdGroupedQuery<P extends IdQueryPara
                 }
             }
 
-            ArrayList<event_subscriber> groupedList = new ArrayList<event_subscriber>(dic.values());
+            ArrayList<event_subscriber> groupedList = new ArrayList<>(dic.values());
             for (event_subscriber event : groupedList) {
                 event.settag_name(StringUtils.strip(event.gettag_name(), ", "));
             }

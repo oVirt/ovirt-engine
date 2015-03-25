@@ -246,7 +246,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         CommandContext commandCtx = null;
 
         try {
-            Map<String, String> values = new HashMap<String, String>();
+            Map<String, String> values = new HashMap<>();
             values.put(VdcObjectType.VM.name().toLowerCase(), currentVmName);
             Step addVmStep = ExecutionHandler.addSubStep(getExecutionContext(),
                     getExecutionContext().getJob().getStep(StepEnum.EXECUTING),
@@ -311,7 +311,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             return false;
         }
 
-        List<Guid> storageIds = new ArrayList<Guid>();
+        List<Guid> storageIds = new ArrayList<>();
         for (DiskImage diskImage : diskInfoDestinationMap.values()) {
             Guid storageId = diskImage.getStorageIds().get(0);
             if (!storageIds.contains(storageId) && !areTemplateImagesInStorageReady(storageId)) {
@@ -397,7 +397,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     }
 
     public boolean checkDestDomains() {
-        List<Guid> validDomains = new ArrayList<Guid>();
+        List<Guid> validDomains = new ArrayList<>();
         for (DiskImage diskImage : diskInfoDestinationMap.values()) {
             Guid domainId = diskImage.getStorageIds().get(0);
             if (validDomains.contains(domainId)) {
@@ -468,7 +468,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        List<QuotaConsumptionParameter> list = new ArrayList<>();
         for (DiskImage disk : diskInfoDestinationMap.values()) {
             list.add(new QuotaStorageConsumptionParameter(
                     disk.getQuotaId(),

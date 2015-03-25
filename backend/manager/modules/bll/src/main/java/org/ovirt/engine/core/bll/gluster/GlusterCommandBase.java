@@ -80,7 +80,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     @Override
     public Map<String, String> getJobMessageProperties() {
         if (jobProperties == null) {
-            jobProperties = new HashMap<String, String>();
+            jobProperties = new HashMap<>();
             VDSGroup vdsGroup = getVdsGroup();
             jobProperties.put(GlusterConstants.CLUSTER, vdsGroup == null ? null : vdsGroup.getName());
         }
@@ -198,7 +198,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     }
 
     protected boolean validateDuplicateBricks(List<GlusterBrickEntity> newBricks) {
-        Set<String> bricks = new HashSet<String>();
+        Set<String> bricks = new HashSet<>();
         for (GlusterBrickEntity brick : newBricks) {
             if (bricks.contains(brick.getQualifiedName())) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DUPLICATE_BRICKS);

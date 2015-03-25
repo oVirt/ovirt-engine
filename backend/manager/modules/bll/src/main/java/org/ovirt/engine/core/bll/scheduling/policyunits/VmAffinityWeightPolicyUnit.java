@@ -26,21 +26,21 @@ public class VmAffinityWeightPolicyUnit extends PolicyUnitImpl {
                         hosts,
                         vm,
                         new PerHostMessages());
-        Map<Guid, VDS> acceptableHostsMap = new HashMap<Guid, VDS>();
+        Map<Guid, VDS> acceptableHostsMap = new HashMap<>();
         if (acceptableHostsList != null) {
             for (VDS acceptableHost : acceptableHostsList) {
                 acceptableHostsMap.put(acceptableHost.getId(), acceptableHost);
             }
         }
 
-        List<Pair<Guid, Integer>> retList = new ArrayList<Pair<Guid, Integer>>();
+        List<Pair<Guid, Integer>> retList = new ArrayList<>();
         int score;
         for (VDS host : hosts) {
             score = 1;
             if (!acceptableHostsMap.containsKey(host.getId())) {
                 score = MaxSchedulerWeight;
             }
-            retList.add(new Pair<Guid, Integer>(host.getId(), score));
+            retList.add(new Pair<>(host.getId(), score));
         }
 
         return retList;

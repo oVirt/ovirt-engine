@@ -309,7 +309,7 @@ public class UpdateVdsGroupCommand<T extends ManagementNetworkOnClusterOperation
         }
 
         if (result) {
-            List<VDS> vdss = new ArrayList<VDS>();
+            List<VDS> vdss = new ArrayList<>();
             isAddedToStoragePool = oldGroup.getStoragePoolId() == null
                     && getVdsGroup().getStoragePoolId() != null;
 

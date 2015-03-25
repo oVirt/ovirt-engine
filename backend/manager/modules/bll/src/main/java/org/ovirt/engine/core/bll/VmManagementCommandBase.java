@@ -97,7 +97,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
             return false;
         }
 
-        HashSet<Integer> vcpus = new HashSet<Integer>();
+        HashSet<Integer> vcpus = new HashSet<>();
         String[] rules = cpuPinning.split("_");
 
         int maxvCPU = vmStatic.getNumOfCpus();
@@ -154,8 +154,8 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
 
     private Collection<Integer> parsePCpuPinningNumbers(final String text) {
         try {
-            HashSet<Integer> include = new HashSet<Integer>();
-            HashSet<Integer> exclude = new HashSet<Integer>();
+            HashSet<Integer> include = new HashSet<>();
+            HashSet<Integer> exclude = new HashSet<>();
             String[] splitText = text.split(",");
             for (String section : splitText) {
                 if (section.startsWith("^")) {
@@ -185,7 +185,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
 
     private List<Integer> createRange(int start, int end) {
         if (start >= 0 && start < end) {
-            List<Integer> returnList = new LinkedList<Integer>();
+            List<Integer> returnList = new LinkedList<>();
             for (int i = start; i <= end; i++) {
                 returnList.add(i);
             }

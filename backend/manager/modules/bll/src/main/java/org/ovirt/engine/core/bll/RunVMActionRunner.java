@@ -20,13 +20,13 @@ public class RunVMActionRunner extends SortedMultipleActionsRunnerBase {
     protected void sortCommands() {
 
         ArrayList<CommandBase<?>> commandsList = getCommands();
-        HashMap<Guid, RunVmCommandBase<?>> runVmCommandsMap = new HashMap<Guid, RunVmCommandBase<?>>();
+        HashMap<Guid, RunVmCommandBase<?>> runVmCommandsMap = new HashMap<>();
         for (CommandBase<?> command : commandsList) {
             RunVmCommandBase<?> runVMCommandBase = (RunVmCommandBase<?>) command;
             runVmCommandsMap.put(runVMCommandBase.getVmId(), runVMCommandBase);
         }
 
-        List<Guid> guids = new ArrayList<Guid>();
+        List<Guid> guids = new ArrayList<>();
         guids.addAll(runVmCommandsMap.keySet());
         List<Guid> orderedGuids = DbFacade.getInstance().getVmStaticDao().getOrderedVmGuidsForRunMultipleActions(guids);
 
