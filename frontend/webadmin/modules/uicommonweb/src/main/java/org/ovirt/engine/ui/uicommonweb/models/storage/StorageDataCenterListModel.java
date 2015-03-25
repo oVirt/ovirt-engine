@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -245,14 +246,21 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
 
                                                                                  StorageDataCenterListModel listModel = (StorageDataCenterListModel) target;
                                                                                  listModel.setavailableDatacenters((ArrayList<StoragePool>) returnValue);
+                                                                                 boolean addDatacenter = false;
                                                                                  for (StoragePool dataCenter : listModel.getavailableDatacenters()) {
                                                                                      switch (getEntity().getStorageDomainType()) {
                                                                                          case Master:
                                                                                          case Data:
-                                                                                             boolean addDatacenter =
+                                                                                             addDatacenter =
                                                                                                      (dataCenter.getStatus() == StoragePoolStatus.Uninitialized || dataCenter.getStatus() == StoragePoolStatus.Up)
                                                                                                              && (dataCenter.getStoragePoolFormatType() == null || dataCenter.getStoragePoolFormatType() == getEntity().getStorageStaticData()
                                                                                                              .getStorageFormat() && dataCenter.isLocal() == (getEntity().getStorageType() == StorageType.LOCALFS));
+                                                                                             addToAttachCandidateDatacenters(dataCenter, addDatacenter);
+                                                                                             break;
+                                                                                         case Volume:
+                                                                                             boolean isCinderSupported = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
+                                                                                                     ConfigurationValues.CinderProviderSupported, dataCenter.getCompatibilityVersion().toString());
+                                                                                             addDatacenter = isCinderSupported && dataCenter.getStatus() == StoragePoolStatus.Up;
                                                                                              addToAttachCandidateDatacenters(dataCenter, addDatacenter);
                                                                                              break;
                                                                                          case ISO:
