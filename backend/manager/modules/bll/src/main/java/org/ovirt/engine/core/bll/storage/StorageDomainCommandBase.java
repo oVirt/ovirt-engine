@@ -38,6 +38,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
+import org.ovirt.engine.core.dao.CommandEntityDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
 import org.ovirt.engine.core.dao.ImageDao;
@@ -478,6 +479,10 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         public int compare(StorageDomain o1, StorageDomain o2) {
             return Long.compare(o1.getLastTimeUsedAsMaster(), o2.getLastTimeUsedAsMaster());
         }
+    }
+
+    protected CommandEntityDao getCommandEntityDao() {
+        return getDbFacade().getCommandEntityDao();
     }
 
     protected boolean isCinderStorageDomain() {
