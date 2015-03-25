@@ -329,6 +329,9 @@ class Defaults(object):
     DEFAULT_DB_PASSWORD = ''
     DEFAULT_DB_SECURED = False
     DEFAULT_DB_SECURED_HOST_VALIDATION = False
+    DEFAULT_DB_DUMPER = 'pg_custom'
+    DEFAULT_DB_RESTORE_JOBS = 2
+    DEFAULT_DB_FILTER = None
 
 
 @util.export
@@ -400,6 +403,9 @@ class Const(object):
             DEK.CONNECTION: EngineDBEnv.CONNECTION,
             DEK.PGPASSFILE: EngineDBEnv.PGPASS_FILE,
             DEK.NEW_DATABASE: EngineDBEnv.NEW_DATABASE,
+            DEK.DUMPER: EngineDBEnv.DUMPER,
+            DEK.FILTER: EngineDBEnv.FILTER,
+            DEK.RESTORE_JOBS: EngineDBEnv.RESTORE_JOBS,
         }
 
     @classproperty
@@ -412,6 +418,9 @@ class Const(object):
             DEK.USER: Defaults.DEFAULT_DB_USER,
             DEK.PASSWORD: Defaults.DEFAULT_DB_PASSWORD,
             DEK.DATABASE: Defaults.DEFAULT_DB_DATABASE,
+            DEK.DUMPER: Defaults.DEFAULT_DB_DUMPER,
+            DEK.FILTER: Defaults.DEFAULT_DB_FILTER,
+            DEK.RESTORE_JOBS: Defaults.DEFAULT_DB_RESTORE_JOBS,
         }
 
 
@@ -481,6 +490,24 @@ class EngineDBEnv(object):
     STATEMENT = 'OVESETUP_DB/statement'
     PGPASS_FILE = 'OVESETUP_DB/pgPassFile'
     NEW_DATABASE = 'OVESETUP_DB/newDatabase'
+
+    @osetupattrs(
+        answerfile=True,
+    )
+    def DUMPER(self):
+        return 'OVESETUP_DB/dumper'
+
+    @osetupattrs(
+        answerfile=True,
+    )
+    def FILTER(self):
+        return 'OVESETUP_DB/filter'
+
+    @osetupattrs(
+        answerfile=True,
+    )
+    def RESTORE_JOBS(self):
+        return 'OVESETUP_DB/restoreJobs'
 
     @osetupattrs(
         answerfile=True,

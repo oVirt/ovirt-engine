@@ -204,6 +204,9 @@ class DBEnvKeysConst(object):
     CONNECTION = 'connection'
     PGPASSFILE = 'pgpassfile'
     NEW_DATABASE = 'newDatabase'
+    DUMPER = 'dumper'
+    FILTER = 'filter'
+    RESTORE_JOBS = 'restoreJobs'
 
     REQUIRED_KEYS = (
         HOST,
@@ -216,6 +219,9 @@ class DBEnvKeysConst(object):
         CONNECTION,
         PGPASSFILE,
         NEW_DATABASE,
+        DUMPER,
+        FILTER,
+        RESTORE_JOBS,
     )
 
     DEFAULTS_KEYS = (

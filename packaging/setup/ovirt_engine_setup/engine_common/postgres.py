@@ -39,6 +39,10 @@ def _(m):
     return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
+def _ind_env(inst, keykey):
+    return inst.environment[inst._dbenvkeys[keykey]]
+
+
 @util.export
 class AlternateUser(object):
     def __init__(self, user):
@@ -101,9 +105,7 @@ class Provisioning(base.Base):
                 where datname = %(database)s
             """,
             args=dict(
-                database=self.environment[
-                    self._dbenvkeys[DEK.DATABASE]
-                ],
+                database=_ind_env(self, DEK.DATABASE),
             ),
             ownConnection=True,
             transaction=False,
@@ -115,9 +117,7 @@ class Provisioning(base.Base):
                 where usename = %(user)s
             """,
             args=dict(
-                user=self.environment[
-                    self._dbenvkeys[DEK.USER]
-                ],
+                user=_ind_env(self, DEK.USER),
             ),
             ownConnection=True,
             transaction=False,
@@ -133,9 +133,7 @@ class Provisioning(base.Base):
                 environment=environment,
             )
             if dbovirtutils.isNewDatabase(
-                database=self.environment[
-                    self._dbenvkeys[DEK.DATABASE]
-                ],
+                database=_ind_env(self, DEK.DATABASE),
             ):
                 self.logger.debug('Found empty database')
                 generate = False
@@ -167,9 +165,7 @@ class Provisioning(base.Base):
                 """
             ).format(
                 op=op,
-                user=self.environment[
-                    self._dbenvkeys[DEK.USER]
-                ],
+                user=_ind_env(self, DEK.USER),
             ),
 
             (
@@ -181,12 +177,8 @@ class Provisioning(base.Base):
             ).format(
                 op=op,
                 to='to' if op == 'alter' else '',
-                database=self.environment[
-                    self._dbenvkeys[DEK.DATABASE]
-                ],
-                user=self.environment[
-                    self._dbenvkeys[DEK.USER]
-                ],
+                database=_ind_env(self, DEK.DATABASE),
+                user=_ind_env(self, DEK.USER),
                 encoding="""
                     template template0
                     encoding 'UTF8'
@@ -204,9 +196,7 @@ class Provisioning(base.Base):
             dbstatement.execute(
                 statement=statement,
                 args=dict(
-                    password=self.environment[
-                        self._dbenvkeys[DEK.PASSWORD]
-                    ],
+                    password=_ind_env(self, DEK.PASSWORD),
                 ),
                 ownConnection=True,
                 transaction=False,
@@ -329,12 +319,8 @@ class Provisioning(base.Base):
                 '{auth}'
             ).format(
                 host='host',
-                user=self.environment[
-                    self._dbenvkeys[DEK.USER]
-                ],
-                database=self.environment[
-                    self._dbenvkeys[DEK.DATABASE]
-                ],
+                user=_ind_env(self, DEK.USER),
+                database=_ind_env(self, DEK.DATABASE),
                 address=address,
                 auth='md5',
             )
@@ -468,7 +454,7 @@ class Provisioning(base.Base):
 
         self.logger.info(
             _("Creating PostgreSQL '{database}' database").format(
-                database=self.environment[self._dbenvkeys[DEK.DATABASE]],
+                database=_ind_env(self, DEK.DATABASE),
             )
         )
         localtransaction = transaction.Transaction()

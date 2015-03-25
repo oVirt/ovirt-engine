@@ -38,6 +38,10 @@ def _(m):
     return gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
+def _ind_env(inst, keykey):
+    return inst.environment[inst._dbenvkeys[keykey]]
+
+
 @util.export
 class Statement(base.Base):
 
@@ -71,21 +75,19 @@ class Statement(base.Base):
         database=None,
     ):
         if host is None:
-            host = self.environment[self._dbenvkeys[DEK.HOST]]
+            host = _ind_env(self, DEK.HOST)
         if port is None:
-            port = self.environment[self._dbenvkeys[DEK.PORT]]
+            port = _ind_env(self, DEK.PORT)
         if secured is None:
-            secured = self.environment[self._dbenvkeys[DEK.SECURED]]
+            secured = _ind_env(self, DEK.SECURED)
         if securedHostValidation is None:
-            securedHostValidation = self.environment[
-                self._dbenvkeys[DEK.HOST_VALIDATION]
-            ]
+            securedHostValidation = _ind_env(self, DEK.HOST_VALIDATION)
         if user is None:
-            user = self.environment[self._dbenvkeys[DEK.USER]]
+            user = _ind_env(self, DEK.USER)
         if password is None:
-            password = self.environment[self._dbenvkeys[DEK.PASSWORD]]
+            password = _ind_env(self, DEK.PASSWORD)
         if database is None:
-            database = self.environment[self._dbenvkeys[DEK.DATABASE]]
+            database = _ind_env(self, DEK.DATABASE)
 
         sslmode = 'allow'
         if secured:
@@ -169,7 +171,7 @@ class Statement(base.Base):
                 args,
             )
             if not ownConnection:
-                connection = self.environment[self._dbenvkeys[DEK.CONNECTION]]
+                connection = _ind_env(self, DEK.CONNECTION)
             else:
                 self.logger.debug('Creating own connection')
 
@@ -290,15 +292,15 @@ class OvirtUtils(base.Base):
                     '# DB USER credentials.\n'
                     '{host}:{port}:{database}:{user}:{password}\n'
                 ).format(
-                    host=self.environment[self._dbenvkeys[DEK.HOST]],
-                    port=self.environment[self._dbenvkeys[DEK.PORT]],
-                    database=self.environment[self._dbenvkeys[DEK.DATABASE]],
-                    user=self.environment[self._dbenvkeys[DEK.USER]],
+                    host=_ind_env(self, DEK.HOST),
+                    port=_ind_env(self, DEK.PORT),
+                    database=_ind_env(self, DEK.DATABASE),
+                    user=_ind_env(self, DEK.USER),
                     password=(
-                        self.environment[self._dbenvkeys[DEK.PASSWORD]]
+                        _ind_env(self, DEK.PASSWORD)
                         if type(self)._plainPassword
                         else outil.escape(
-                            self.environment[self._dbenvkeys[DEK.PASSWORD]],
+                            _ind_env(self, DEK.PASSWORD),
                             ':\\',
                         )
                     ),
@@ -534,11 +536,100 @@ class OvirtUtils(base.Base):
                 transaction=False,
             )
 
+    def _backup_restore_filters_info(self):
+        return {
+            'gzip': {
+                'dump': ['gzip'],
+                'restore': ['zcat'],
+            },
+            'bzip2': {
+                'dump': ['bzip2'],
+                'restore': ['bzcat'],
+            },
+            'xz': {
+                'dump': ['xz'],
+                'restore': ['xzcat'],
+            },
+        }
+
+    def _dump_base_args(self):
+        return [
+            self.command.get('pg_dump'),
+            '-E', 'UTF8',
+            '--disable-dollar-quoting',
+            '--disable-triggers',
+            '-U', _ind_env(self, DEK.USER),
+            '-h', _ind_env(self, DEK.HOST),
+            '-p', str(_ind_env(self, DEK.PORT)),
+        ]
+
+    def _pg_restore_base_args(self):
+        return [
+            '-w',
+            '-h', _ind_env(self, DEK.HOST),
+            '-p', str(_ind_env(self, DEK.PORT)),
+            '-U', _ind_env(self, DEK.USER),
+            '-d', _ind_env(self, DEK.DATABASE),
+        ]
+
+    def _backup_restore_dumpers_info(self, backupfile, database):
+        # if backupfile is not supplied, we write to stdout
+        return {
+            'pg_custom': {
+                'dump_args': (
+                    self._dump_base_args() +
+                    [
+                        '--format=custom',
+                    ] +
+                    (
+                        ['--file=%s' % backupfile]
+                        if backupfile else []
+                    ) +
+                    [database]
+                ),
+                'restore_args': (
+                    [self.command.get('pg_restore')] +
+                    self._pg_restore_base_args() +
+                    (
+                        ['--jobs=%s' % _ind_env(self, DEK.RESTORE_JOBS)]
+                        if _ind_env(self, DEK.RESTORE_JOBS) and backupfile
+                        else []
+                    ) +
+                    (
+                        [backupfile]
+                        if backupfile else []
+                    )
+                ),
+            },
+            'pg_plain': {
+                'dump_args': (
+                    self._dump_base_args() +
+                    [
+                        '--format=plain',
+                    ] +
+                    (
+                        ['--file=%s' % backupfile]
+                        if backupfile else []
+                    ) +
+                    [database]
+                ),
+                'restore_args': (
+                    [self.command.get('psql')] +
+                    self._pg_restore_base_args() +
+                    (
+                        ['--file=%s' % backupfile]
+                        if backupfile else []
+                    )
+                ),
+            },
+        }
+
     def backup(
         self,
         dir,
         prefix,
     ):
+        database = _ind_env(self, DEK.DATABASE)
         fd, backupFile = tempfile.mkstemp(
             prefix='%s-%s.' % (
                 prefix,
@@ -551,87 +642,183 @@ class OvirtUtils(base.Base):
 
         self.logger.info(
             _("Backing up database {host}:{database} to '{file}'.").format(
-                host=self.environment[self._dbenvkeys[DEK.HOST]],
-                database=self.environment[self._dbenvkeys[DEK.DATABASE]],
+                host=_ind_env(self, DEK.HOST),
+                database=database,
                 file=backupFile,
             )
         )
-        self._plugin.execute(
-            (
-                self.command.get('pg_dump'),
-                '-E', 'UTF8',
-                '--disable-dollar-quoting',
-                '--disable-triggers',
-                '--format=c',
-                '-U', self.environment[self._dbenvkeys[DEK.USER]],
-                '-h', self.environment[self._dbenvkeys[DEK.HOST]],
-                '-p', str(self.environment[self._dbenvkeys[DEK.PORT]]),
-                '-f', backupFile,
-                self.environment[self._dbenvkeys[DEK.DATABASE]],
-            ),
-            envAppend={
-                'PGPASSWORD': '',
-                'PGPASSFILE': self.environment[
-                    self._dbenvkeys[DEK.PGPASSFILE]
-                ],
-            },
-        )
 
+        filt = _ind_env(self, DEK.FILTER)
+        f_infos = {}
+        if filt is not None:
+            f_infos = self._backup_restore_filters_info()
+            if filt not in f_infos:
+                raise RuntimeError(_('Unknown db filter {f}').format(f=filt))
+
+        dumper = _ind_env(self, DEK.DUMPER)
+        d_infos = self._backup_restore_dumpers_info(
+            None if filt else backupFile,
+            database
+        )
+        if dumper not in d_infos:
+            raise RuntimeError(_('Unknown db dumper {d}').format(d=dumper))
+
+        pipe = [
+            {
+                'args': d_infos[dumper]['dump_args'],
+            }
+        ]
+
+        stdout = None
+        if filt is not None:
+            pipe.append(
+                {
+                    'args': f_infos[filt]['dump']
+                }
+            )
+            stdout = open(backupFile, 'w')
+
+        res = None
+        try:
+            res = self._plugin.executePipeRaw(
+                pipe,
+                envAppend={
+                    'PGPASSWORD': '',
+                    'PGPASSFILE': _ind_env(self, DEK.PGPASSFILE),
+                },
+                stdout=stdout,
+            )
+        finally:
+            if stdout is not None:
+                stdout.close()
+
+        self.logger.debug('db backup res %s' % res)
+        if {r['rc'] for r in res['result']} != {0}:
+            raise RuntimeError(
+                _(
+                    'Failed to backup database, please check '
+                    'the log file for details'
+                )
+            )
         return backupFile
 
+    _IGNORED_ERRORS = (
+        # TODO: verify and get rid of all the '.*'s
+
+        '.*language "plpgsql" already exists',
+        '.*must be owner of language plpgsql',
+        # psql
+        'ERROR:  must be owner of extension plpgsql',
+        # pg_restore
+        (
+            'pg_restore: \[archiver \(db\)\] could not execute query: ERROR:  '
+            'must be owner of extension plpgsql'
+        ),
+
+        # older versions of dwh used uuid-ossp, which requires
+        # special privs, is not used anymore, and emits the following
+        # errors for normal users.
+        '.*permission denied for language c',
+        '.*function public.uuid_generate_v1() does not exist',
+        '.*function public.uuid_generate_v1mc() does not exist',
+        '.*function public.uuid_generate_v3(uuid, text) does not exist',
+        '.*function public.uuid_generate_v4() does not exist',
+        '.*function public.uuid_generate_v5(uuid, text) does not exist',
+        '.*function public.uuid_nil() does not exist',
+        '.*function public.uuid_ns_dns() does not exist',
+        '.*function public.uuid_ns_oid() does not exist',
+        '.*function public.uuid_ns_url() does not exist',
+        '.*function public.uuid_ns_x500() does not exist',
+
+        # Other stuff, added because if we want to support other
+        # formats etc we must explicitely filter all existing output
+        # and not just ERRORs.
+        'pg_restore: \[archiver \(db\)\] Error while PROCESSING TOC:',
+        '    Command was: COMMENT ON EXTENSION',
+        (
+            'pg_restore: \[archiver \(db\)\] Error from TOC entry \d+'
+            '; 0 0 COMMENT EXTENSION plpgsql'
+        ),
+        'pg_restore: WARNING:',
+        'WARNING: ',
+        'DETAIL:  ',
+    )
+
     _RE_IGNORED_ERRORS = re.compile(
-        flags=re.VERBOSE,
-        pattern=r"""
-            .*(
-             language\ "plpgsql"\ already\ exists
-            |must\ be\ owner\ of\ language\ plpgsql
-            |must\ be\ owner\ of\ extension\ plpgsql
-        """
-        #
-        # older versions of dwh used uuid-ossp, which requires special privs,
-        # is not used anymore, and emits the following errors for normal users.
-        r"""|permission\ denied\ for\ language\ c
-            |function\ public.uuid_generate_v1\(\)\ does\ not\ exist
-            |function\ public.uuid_generate_v1mc\(\)\ does\ not\ exist
-            |function\ public.uuid_generate_v3\(uuid,\ text\)\ does\ not\ exist
-            |function\ public.uuid_generate_v4\(\)\ does\ not\ exist
-            |function\ public.uuid_generate_v5\(uuid,\ text\)\ does\ not\ exist
-            |function\ public.uuid_nil\(\)\ does\ not\ exist
-            |function\ public.uuid_ns_dns\(\)\ does\ not\ exist
-            |function\ public.uuid_ns_oid\(\)\ does\ not\ exist
-            |function\ public.uuid_ns_url\(\)\ does\ not\ exist
-            |function\ public.uuid_ns_x500\(\)\ does\ not\ exist
-            ).*
-        """
+        pattern='|'.join(_IGNORED_ERRORS),
     )
 
     def restore(
         self,
         backupFile,
     ):
-        rc, stdout, stderr = self._plugin.execute(
-            (
-                self.command.get('pg_restore'),
-                '-w',
-                '-h', self.environment[self._dbenvkeys[DEK.HOST]],
-                '-p', str(self.environment[self._dbenvkeys[DEK.PORT]]),
-                '-U', self.environment[self._dbenvkeys[DEK.USER]],
-                '-d', self.environment[self._dbenvkeys[DEK.DATABASE]],
-                '-j', '2',
-                backupFile,
-            ),
-            envAppend={
-                'PGPASSWORD': '',
-                'PGPASSFILE': self.environment[
-                    self._dbenvkeys[DEK.PGPASSFILE]
-                ],
-            },
-            raiseOnError=False,
+        database = _ind_env(self, DEK.DATABASE)
+
+        self.logger.info(
+            _("Restoring file '{file}' to database {host}:{database}.").format(
+                host=_ind_env(self, DEK.HOST),
+                database=database,
+                file=backupFile,
+            )
         )
-        if (rc != 0) and stderr:
+
+        pipe = []
+
+        filt = _ind_env(self, DEK.FILTER)
+        f_infos = {}
+        if filt is not None:
+            f_infos = self._backup_restore_filters_info()
+            if filt not in f_infos:
+                raise RuntimeError(_('Unknown db filter {f}').format(f=filt))
+
+        stdin = None
+        if filt is not None:
+            pipe.append(
+                {
+                    'args': f_infos[filt]['restore'],
+                }
+            )
+            stdin = open(backupFile, 'r')
+
+        dumper = _ind_env(self, DEK.DUMPER)
+        d_infos = self._backup_restore_dumpers_info(
+            None if filt else backupFile,
+            database
+        )
+        if dumper not in d_infos:
+            raise RuntimeError(_('Unknown db dumper {d}').format(d=dumper))
+
+        pipe.append(
+            {
+                'args': d_infos[dumper]['restore_args'],
+            }
+        )
+
+        try:
+            res = self._plugin.executePipeRaw(
+                pipe,
+                envAppend={
+                    'PGPASSWORD': '',
+                    'PGPASSFILE': _ind_env(self, DEK.PGPASSFILE),
+                },
+                stdin=stdin,
+                # raiseOnError=False,
+            )
+        finally:
+            if stdin is not None:
+                stdin.close()
+
+        rc = res['result'][-1]['rc']
+        stderr = res['result'][-1]['stderr'].splitlines()
+
+        self.logger.debug('db restore rc %s stderr %s', rc, stderr)
+
+        # if (rc != 0) and stderr:
+        # Do something different for psql/pg_restore?
+        if stderr:
             errors = [
                 l for l in stderr
-                if 'ERROR: ' in l and not self._RE_IGNORED_ERRORS.match(l)
+                if l and not self._RE_IGNORED_ERRORS.match(l)
             ]
             if errors:
                 self.logger.error(
@@ -639,7 +826,7 @@ class OvirtUtils(base.Base):
                         'Errors while restoring {name} database, please check '
                         'the log file for details'
                     ).format(
-                        name=self.environment[self._dbenvkeys[DEK.DATABASE]],
+                        name=database,
                     )
                 )
                 self.logger.debug(
@@ -801,11 +988,11 @@ class OvirtUtils(base.Base):
         credsfile=None,
     ):
         interactive = None in (
-            self.environment[self._dbenvkeys[DEK.HOST]],
-            self.environment[self._dbenvkeys[DEK.PORT]],
-            self.environment[self._dbenvkeys[DEK.DATABASE]],
-            self.environment[self._dbenvkeys[DEK.USER]],
-            self.environment[self._dbenvkeys[DEK.PASSWORD]],
+            _ind_env(self, DEK.HOST),
+            _ind_env(self, DEK.PORT),
+            _ind_env(self, DEK.DATABASE),
+            _ind_env(self, DEK.USER),
+            _ind_env(self, DEK.PASSWORD),
         )
 
         if interactive:
@@ -849,15 +1036,13 @@ class OvirtUtils(base.Base):
 
         connectionValid = False
         while not connectionValid:
-            host = self.environment[self._dbenvkeys[DEK.HOST]]
-            port = self.environment[self._dbenvkeys[DEK.PORT]]
-            secured = self.environment[self._dbenvkeys[DEK.SECURED]]
-            securedHostValidation = self.environment[
-                self._dbenvkeys[DEK.HOST_VALIDATION]
-            ]
-            db = self.environment[self._dbenvkeys[DEK.DATABASE]]
-            user = self.environment[self._dbenvkeys[DEK.USER]]
-            password = self.environment[self._dbenvkeys[DEK.PASSWORD]]
+            host = _ind_env(self, DEK.HOST)
+            port = _ind_env(self, DEK.PORT)
+            secured = _ind_env(self, DEK.SECURED)
+            securedHostValidation = _ind_env(self, DEK.HOST_VALIDATION)
+            db = _ind_env(self, DEK.DATABASE)
+            user = _ind_env(self, DEK.USER)
+            password = _ind_env(self, DEK.PASSWORD)
 
             if host is None:
                 while True:
@@ -1005,7 +1190,7 @@ class OvirtUtils(base.Base):
         except:
             self.logger.debug('database connection failed', exc_info=True)
 
-        if not self.environment[self._dbenvkeys[DEK.NEW_DATABASE]]:
+        if not _ind_env(self, DEK.NEW_DATABASE):
             self._checkDbConf(environment=dbenv, name=name)
 
 

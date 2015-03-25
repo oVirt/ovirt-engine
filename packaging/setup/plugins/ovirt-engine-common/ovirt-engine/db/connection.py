@@ -84,6 +84,18 @@ class Plugin(plugin.PluginBase):
             oenginecons.EngineDBEnv.DATABASE,
             None
         )
+        self.environment.setdefault(
+            oenginecons.EngineDBEnv.DUMPER,
+            oenginecons.Defaults.DEFAULT_DB_DUMPER
+        )
+        self.environment.setdefault(
+            oenginecons.EngineDBEnv.FILTER,
+            oenginecons.Defaults.DEFAULT_DB_FILTER
+        )
+        self.environment.setdefault(
+            oenginecons.EngineDBEnv.RESTORE_JOBS,
+            oenginecons.Defaults.DEFAULT_DB_RESTORE_JOBS
+        )
 
         self.environment[oenginecons.EngineDBEnv.CONNECTION] = None
         self.environment[oenginecons.EngineDBEnv.STATEMENT] = None
