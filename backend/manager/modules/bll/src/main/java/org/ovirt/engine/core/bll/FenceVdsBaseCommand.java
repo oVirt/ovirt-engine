@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.validator.FenceValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
@@ -253,7 +254,9 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     }
 
     protected void setStatus(VDSStatus status) {
-        if (getVds().getStatus() != status) {
+        // we need to load current status from db
+        VdsDynamic currentHost = getDbFacade().getVdsDynamicDao().get(getVds().getId());
+        if (currentHost != null && currentHost.getStatus() != status) {
             getBackend().getResourceManager().RunVdsCommand(VDSCommandType.SetVdsStatus,
                     new SetVdsStatusVDSCommandParameters(getVds().getId(), status));
         }

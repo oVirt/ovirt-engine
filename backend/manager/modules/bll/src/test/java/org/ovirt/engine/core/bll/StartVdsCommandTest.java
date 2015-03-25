@@ -27,13 +27,14 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
+import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
@@ -46,6 +47,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.AuditLogDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -68,6 +70,8 @@ public class StartVdsCommandTest extends DbDependentTestBase {
     private DbFacade dbFacade;
     @Mock
     private VdsDAO vdsDao;
+    @Mock
+    private VdsDynamicDAO vdsDynamicDAO;
     @Mock
     private VmDAO vmDao;
     @Mock
@@ -98,6 +102,7 @@ public class StartVdsCommandTest extends DbDependentTestBase {
         mockVmDao();
         mockAuditLogDao();
         mockVdsDao();
+        mockVdsDynamicDao();
     }
 
     private void mockVdsGroupDao() {
@@ -121,6 +126,14 @@ public class StartVdsCommandTest extends DbDependentTestBase {
         VDS vds = createHost();
         when(vdsDao.get(FENCECD_HOST_ID)).thenReturn(vds);
         when(dbFacade.getVdsDao()).thenReturn(vdsDao);
+    }
+
+    private void mockVdsDynamicDao() {
+        VdsDynamic currentVds = new VdsDynamic();
+        currentVds.setId(FENCECD_HOST_ID);
+        currentVds.setStatus(VDSStatus.NonResponsive);
+        when(vdsDynamicDAO.get(FENCECD_HOST_ID)).thenReturn(currentVds);
+        when(dbFacade.getVdsDynamicDao()).thenReturn(vdsDynamicDAO);
     }
 
     private void initAgents() {
