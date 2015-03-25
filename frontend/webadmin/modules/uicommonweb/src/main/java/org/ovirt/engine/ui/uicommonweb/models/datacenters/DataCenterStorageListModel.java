@@ -353,13 +353,15 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
                     for (StorageDomain a : list)
                     {
                         addToList = false;
-
-                        if (!Linq.isSDItemExistInList(items, a.getId())
-                                && a.getStorageDomainType() == dcStorageModel.getStorageDomainType())
-                        {
-                            if (dcStorageModel.getStorageDomainType() == StorageDomainType.Data
-                                    && a.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)
-                            {
+                        if (Linq.isSDItemExistInList(items, a.getId()) ||
+                                a.getStorageDomainSharedStatus() != StorageDomainSharedStatus.Unattached) {
+                            continue;
+                        }
+                        if (a.getStorageDomainType() == StorageDomainType.Volume) {
+                            addToList = true;
+                        }
+                        else if (a.getStorageDomainType() == dcStorageModel.getStorageDomainType()) {
+                            if (dcStorageModel.getStorageDomainType() == StorageDomainType.Data) {
                                 if (dcStorageModel.getEntity().getStoragePoolFormatType() == null)
                                 {
                                     // skip V3 format for DC ver <= 3
@@ -387,18 +389,15 @@ public class DataCenterStorageListModel extends SearchableListModel<StoragePool,
                                     }
                                 }
                             }
-                            else if (dcStorageModel.getStorageDomainType() == StorageDomainType.ImportExport
-                                    && a.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)
-                            {
+                            else if (dcStorageModel.getStorageDomainType() == StorageDomainType.ImportExport) {
                                 addToList = true;
                             }
-
-                            if (addToList)
-                            {
-                                EntityModel tempVar2 = new EntityModel();
-                                tempVar2.setEntity(a);
-                                models.add(tempVar2);
-                            }
+                        }
+                        if (addToList)
+                        {
+                            EntityModel tempVar2 = new EntityModel();
+                            tempVar2.setEntity(a);
+                            models.add(tempVar2);
                         }
                     }
                     dcStorageModel.postAttachInternal(models);
