@@ -20,7 +20,10 @@ public class CinderProviderValidator extends ProviderValidator {
     }
 
     public ValidationResult validateAddProvider() {
-        return validateAttachStorageDomain();
+        if (getStoragePool() != null) {
+            return validateAttachStorageDomain();
+        }
+        return ValidationResult.VALID;
     }
 
     private ValidationResult validateAttachStorageDomain() {
