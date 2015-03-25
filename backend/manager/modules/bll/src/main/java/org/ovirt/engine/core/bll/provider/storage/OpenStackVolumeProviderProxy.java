@@ -5,6 +5,7 @@ import com.woorea.openstack.cinder.Cinder;
 import com.woorea.openstack.cinder.model.Limits;
 import com.woorea.openstack.cinder.model.Volume;
 import com.woorea.openstack.cinder.model.VolumeForCreate;
+import com.woorea.openstack.cinder.model.VolumeForUpdate;
 import com.woorea.openstack.cinder.model.VolumeType;
 import com.woorea.openstack.cinder.model.VolumeTypes;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
@@ -70,6 +71,14 @@ public class OpenStackVolumeProviderProxy extends AbstractOpenStackStorageProvid
 
     public void deleteVolume(String volumeId) {
         getClient(getTenantId()).volumes().delete(volumeId).execute();
+    }
+
+    public void updateVolume(String volumeId, VolumeForUpdate volumeForUpdate) {
+        getClient(getTenantId()).volumes().update(volumeId, volumeForUpdate).execute();
+    }
+
+    public void extendVolume(String volumeId, int newSize) {
+        getClient(getTenantId()).volumes().extend(volumeId, newSize).execute();
     }
 
     public Volume getVolumeById(String id) {
