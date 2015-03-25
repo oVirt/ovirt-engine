@@ -19,6 +19,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeSnapshotVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
+import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotConfigDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeSnapshotDao;
@@ -78,6 +80,17 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
                 new GlusterVolumeSnapshotVDSParameters(upServer.getId(), cluster.getId(), null));
         if (returnValue.getSucceeded()) {
             addOrUpdateSnapshots(cluster.getId(), (ArrayList<GlusterVolumeSnapshotEntity>) returnValue.getReturnValue());
+
+            // check if the snapshot soft limit reached for a volume and alert
+            List<GlusterVolumeEntity> volumes = getGlusterVolumeDao().getByClusterId(cluster.getId());
+            for (final GlusterVolumeEntity volume : volumes) {
+                // check if the snapshot soft limit reached for the volume and alert
+                getGlusterUtil().alertVolumeSnapshotSoftLimitReached(volume);
+
+                // Check and remove soft limit alert for the volume.
+                // It might have fallen below the soft limit as part of deletions of snapshots
+                getGlusterUtil().checkAndRemoveVolumeSnapshotSoftLimitAlert(volume);
+            }
         } else {
             log.error("VDS Error {}", returnValue.getVdsError().getMessage());
             log.debug("VDS Error {}", returnValue.getVdsError());
@@ -265,5 +278,13 @@ public class GlusterSnapshotSyncJob extends GlusterJob {
 
     protected GlusterVolumeSnapshotConfigDao getGlusterVolumeSnapshotConfigDao() {
         return DbFacade.getInstance().getGlusterVolumeSnapshotConfigDao();
+    }
+
+    protected GlusterDBUtils getGlusterDbUtils() {
+        return GlusterDBUtils.getInstance();
+    }
+
+    protected GlusterAuditLogUtil getAuditLogUtil() {
+        return GlusterAuditLogUtil.getInstance();
     }
 }

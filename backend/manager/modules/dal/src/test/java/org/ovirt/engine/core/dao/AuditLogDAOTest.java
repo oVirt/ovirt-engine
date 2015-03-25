@@ -29,10 +29,11 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
     private static final Guid VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
     private static final Guid VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
     private static final Guid VM_TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
+    private static final Guid GLUSTER_VOLUME_ID = new Guid("0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8");
     private static final long EXISTING_ENTRY_ID = 44291;
     private static final long EXTERNAL_ENTRY_ID = 44296;
-    private static final int FILTERED_COUNT = 5;
-    private static final int TOTAL_COUNT = 6;
+    private static final int FILTERED_COUNT = 6;
+    private static final int TOTAL_COUNT = 7;
     private AuditLogDAO dao;
 
     /** Note that {@link SimpleDateFormat} is inherently not thread-safe, and should not be static */
@@ -252,7 +253,7 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
             throws Exception {
         dao.removeAllForVds(VDS_ID, true);
         List<AuditLog> result = dao.getAll(null, false);
-        assertEquals(5, result.size());
+        assertEquals(6, result.size());
     }
 
     @Test
@@ -262,7 +263,7 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
                 AuditLogType.IRS_DISK_SPACE_LOW_ERROR.getValue());
         // show be 1 left that was in event_notification_hist
         List<AuditLog> result = dao.getAll(PRIVILEGED_USER_ID, true);
-        assertEquals(2, result.size());
+        assertEquals(3, result.size());
     }
 
     /**
@@ -324,5 +325,33 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
         AuditLog result = dao.get(existingAuditLog.getaudit_log_id());
 
         assertTrue(result.isDeleted());
+    }
+
+    @Test
+    public void testRemoveAllOfTypeForVolume() {
+        List<AuditLog> entries =
+                dao.getByVolumeIdAndType(GLUSTER_VOLUME_ID,
+                        AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SOFT_LIMIT_REACHED.getValue());
+
+        assertEquals(1, entries.size());
+
+        dao.removeAllOfTypeForVolume(GLUSTER_VOLUME_ID,
+                AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SOFT_LIMIT_REACHED.getValue());
+
+        List<AuditLog> entries1 =
+                dao.getByVolumeIdAndType(GLUSTER_VOLUME_ID,
+                        AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SOFT_LIMIT_REACHED.getValue());
+
+        assertEquals(1, entries1.size());
+        assertEquals(AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SOFT_LIMIT_REACHED, entries1.get(0).getlog_type());
+    }
+
+    @Test
+    public void testGetByVolumeIdAndType() {
+        List<AuditLog> entries =
+                dao.getByVolumeIdAndType(GLUSTER_VOLUME_ID,
+                        AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SOFT_LIMIT_REACHED.getValue());
+
+        assertEquals(1, entries.size());
     }
 }

@@ -108,4 +108,12 @@ public class AuditLogDaoMocker implements AuditLogDAO {
     public void clearAllDismissed() {
     }
 
+    @Override
+    public List<AuditLog> getByVolumeIdAndType(Guid volumeId, int type) {
+        return null;
+    }
+
+    @Override
+    public void removeAllOfTypeForVolume(Guid volumeId, int type) {
+    }
 }

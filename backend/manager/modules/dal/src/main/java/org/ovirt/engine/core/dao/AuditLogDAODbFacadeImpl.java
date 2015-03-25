@@ -95,6 +95,15 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
     }
 
     @Override
+    public List<AuditLog> getByVolumeIdAndType(Guid volumeId, int type) {
+        MapSqlParameterSource parameterSource =
+                getCustomMapSqlParameterSource()
+                        .addValue("gluster_volume_id", volumeId)
+                        .addValue("log_type", type);
+        return getCallsHandler().executeReadList("GetAuditLogByVolumeIdAndType", auditLogRowMapper, parameterSource);
+    }
+
+    @Override
     public void save(AuditLog event) {
         if (event.isExternal()) {
             getCallsHandler().executeModification("InsertExternalAuditLog", getExternalEventSqlMapper(event));
@@ -179,6 +188,14 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
                 .addValue("vds_id", id).addValue("log_type", type);
 
         getCallsHandler().executeModification("DeleteAuditAlertLogByVdsIDAndType", parameterSource);
+    }
+
+    @Override
+    public void removeAllOfTypeForVolume(Guid volumeId, int type) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("gluster_volume_id", volumeId).addValue("log_type", type);
+
+        getCallsHandler().executeModification("DeleteAuditAlertLogByVolumeIDAndType", parameterSource);
     }
 
     @Override

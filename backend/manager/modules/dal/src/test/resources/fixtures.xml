@@ -5795,6 +5795,40 @@
             <value></value>
             <value>false</value>
         </row>
+        <row>
+            <value>44297</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value>userportal2</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
+            <value>rhel5-pool-50</value>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
+            <value>1</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
+            <value>magenta-vdsc</value>
+            <value>2010-12-20 13:10:29</value>
+            <value>GLUSTER_VOLUME_SNAPSHOT_SOFT_LIMIT_REACHED</value>
+            <value>4148</value>
+            <value>10</value>
+            <value>Gluster Volume Snapshot soft limit reached for the volume</value>
+            <value>true</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+            <value>rhel6.iscsi</value>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
+            <value>fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
+            <value>test-vol-distribute-1</value>
+            <value>oVirt</value>
+            <value>-1</value>
+            <value>30</value>
+            <value></value>
+            <value>false</value>
+        </row>
     </table>
 
     <table name="event_notification_hist">

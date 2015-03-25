@@ -21,6 +21,8 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
@@ -29,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapsh
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -38,6 +41,9 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
+import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.XmlUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
@@ -317,5 +323,41 @@ public class GlusterUtil {
         calTo.setTimeInMillis(calFrom.getTimeInMillis());
 
         return new Time(calTo.get(Calendar.HOUR_OF_DAY), calTo.get(Calendar.MINUTE), calTo.get(Calendar.SECOND));
+    }
+
+    public void alertVolumeSnapshotSoftLimitReached(final GlusterVolumeEntity volume) {
+        // Check if the alert already exists and if so dont alert again
+        List<AuditLog> alerts =
+                DbFacade.getInstance()
+                        .getAuditLogDao()
+                        .getByVolumeIdAndType(volume.getId(),
+                                AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SOFT_LIMIT_REACHED.getValue());
+        if (!alerts.isEmpty()) {
+            for (AuditLog alert : alerts) {
+                if (!alert.isDeleted()) {
+                    return;
+                }
+            }
+        }
+
+        // Alert
+        if (GlusterDBUtils.getInstance().isSoftLimitReached(volume.getId())) {
+            GlusterAuditLogUtil.getInstance().logAuditMessage(volume.getClusterId(),
+                    volume,
+                    null,
+                    AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SOFT_LIMIT_REACHED,
+                    new HashMap<String, String>() {
+                        {
+                            put(GlusterConstants.VOLUME_NAME, volume.getName());
+                            put(GlusterConstants.CLUSTER, volume.getVdsGroupName());
+                        }
+                    });
+        }
+    }
+
+    public void checkAndRemoveVolumeSnapshotSoftLimitAlert(final GlusterVolumeEntity volume) {
+        if (!GlusterDBUtils.getInstance().isSoftLimitReached(volume.getId())) {
+            AlertDirector.removeVolumeAlert(volume.getId(), AuditLogType.GLUSTER_VOLUME_SNAPSHOT_SOFT_LIMIT_REACHED);
+        }
     }
 }

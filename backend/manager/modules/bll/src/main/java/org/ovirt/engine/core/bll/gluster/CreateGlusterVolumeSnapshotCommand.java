@@ -59,7 +59,7 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
         if (georepSessions != null && georepSessions.size() > 0) {
             for (GlusterGeoRepSession session : georepSessions) {
                 if (session.getStatus() != GeoRepSessionStatus.PAUSED) {
-                    GlusterVolumeEntity slaveVolume =
+                    final GlusterVolumeEntity slaveVolume =
                             getDbFacade().getGlusterVolumeDao().getById(session.getSlaveVolumeId());
 
                     if (slaveVolume == null) {
@@ -110,6 +110,10 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
                             slaveVolumeSnapshot.setDescription(snapshot.getDescription());
                             slaveVolumeSnapshot.setStatus(GlusterSnapshotStatus.DEACTIVATED);
                             getDbFacade().getGlusterVolumeSnapshotDao().save(slaveVolumeSnapshot);
+
+                            // check if the snapshot soft limit reached now for the volume and alert
+                            getGlusterUtil().alertVolumeSnapshotSoftLimitReached(slaveVolume);
+
                         }
                     }
                 }
@@ -155,6 +159,8 @@ public class CreateGlusterVolumeSnapshotCommand extends GlusterSnapshotCommandBa
             createdSnapshot.setStatus(GlusterSnapshotStatus.DEACTIVATED);
             getDbFacade().getGlusterVolumeSnapshotDao().save(createdSnapshot);
             addCustomValue(GlusterConstants.VOLUME_SNAPSHOT_NAME, createdSnapshot.getSnapshotName());
+            // check if the snapshot soft limit reached now for the volume and alert
+            getGlusterUtil().alertVolumeSnapshotSoftLimitReached(getGlusterVolume());
         }
 
         // Resume the snapshot sessions

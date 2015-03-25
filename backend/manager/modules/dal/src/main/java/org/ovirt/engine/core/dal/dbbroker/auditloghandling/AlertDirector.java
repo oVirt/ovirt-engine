@@ -47,6 +47,17 @@ public final class AlertDirector {
     }
 
     /**
+     * Removes the alert
+     * @param volumeId
+     *            The volume id
+     * @param type
+     *            The alert type
+     */
+    public static void removeVolumeAlert(Guid volumeId, AuditLogType type) {
+        DbFacade.getInstance().getAuditLogDao().removeAllOfTypeForVolume(volumeId, type.getValue());
+    }
+
+    /**
      * Removes all alerts.
      *
      * @param vdsId
