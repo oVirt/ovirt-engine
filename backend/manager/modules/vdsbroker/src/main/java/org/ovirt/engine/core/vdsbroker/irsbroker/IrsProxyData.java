@@ -312,7 +312,7 @@ public class IrsProxyData {
             for (final StorageDomain domainInDb : domainsInDb) {
                 if (domainInDb.getStorageDomainType() != StorageDomainType.Master
                         && domainInDb.getStatus() != StorageDomainStatus.Locked
-                        && !domainInDb.getStorageType().isOpenStackDomain()
+                        && !domainInDb.getStorageType().isCinderDomain()
                         && !domainsInVds.contains(domainInDb.getId())) {
                     // domain not attached to pool anymore
                     DbFacade.getInstance()

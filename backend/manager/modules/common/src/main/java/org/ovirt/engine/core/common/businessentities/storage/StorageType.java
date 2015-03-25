@@ -66,4 +66,8 @@ public enum StorageType implements Identifiable {
     public boolean isOpenStackDomain() {
         return this == GLANCE || this == CINDER;
     }
+
+    public boolean isCinderDomain() {
+        return this == CINDER;
+    }
 }
