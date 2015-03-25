@@ -145,8 +145,9 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 return failCanDoAction(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_MASTER_DOMAIN_WITH_TASKS_ON_POOL);
             } else if (getStorageDomain().getStorageDomainType() != StorageDomainType.ISO &&
                     !getParameters().getIsInternal()
-                    && getAsyncTaskDao().getAsyncTaskIdsByEntity(getParameters().getStorageDomainId()).size() > 0) {
-               return failCanDoAction(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_TASKS);
+                    && (getAsyncTaskDao().getAsyncTaskIdsByEntity(getParameters().getStorageDomainId()).size() > 0 ||
+                    getCommandEntityDao().getCommandIdsByEntity(getParameters().getStorageDomainId()).size() > 0)) {
+                return failCanDoAction(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_DOMAIN_WITH_TASKS);
             }
         }
         return true;
