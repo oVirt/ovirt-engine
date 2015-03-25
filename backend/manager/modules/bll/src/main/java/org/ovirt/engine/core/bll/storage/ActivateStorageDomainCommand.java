@@ -95,6 +95,10 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
 
     @Override
     protected void executeCommand() {
+        if (isCinderStorageDomain()) {
+            activateCinderStorageDomain();
+            return;
+        }
         final StoragePoolIsoMap map =
                 DbFacade.getInstance()
                         .getStoragePoolIsoMapDao()
@@ -133,6 +137,13 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
             IsoDomainListSyncronizer.getInstance().refresheIsoDomainWhenActivateDomain(getStorageDomain().getId(),
                     getStoragePool().getId());
         }
+        setSucceeded(true);
+    }
+
+    private void activateCinderStorageDomain() {
+        CINDERStorageHelper CINDERStorageHelper = new CINDERStorageHelper();
+        CINDERStorageHelper.activateCinderDomain(getParameters().getStorageDomainId(),
+                getParameters().getStoragePoolId());
         setSucceeded(true);
     }
 
