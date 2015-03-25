@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -255,8 +257,8 @@ public class SetupNetworksVDSCommandTest {
 
         List<String> nicsInStruct = (List<String>) bondMap.get(SetupNetworksVDSCommand.SLAVES);
         for (VdsNetworkInterface slave : slaves) {
-            assertTrue("Slave " + slave.getName() + " should've been sent but wasn't.",
-                    nicsInStruct.contains(slave.getName()));
+            assertThat("Slave " + slave.getName() + " should've been sent but wasn't.",
+                    nicsInStruct, hasItem(slave.getName()));
         }
 
         return bondMap;
