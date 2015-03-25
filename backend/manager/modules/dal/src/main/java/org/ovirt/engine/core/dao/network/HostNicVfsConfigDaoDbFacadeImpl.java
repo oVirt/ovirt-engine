@@ -10,12 +10,12 @@ import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DefaultGenericDaoDbFacade;
+import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-public class HostNicVfsConfigDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<HostNicVfsConfig, Guid> implements HostNicVfsConfigDao {
+public class HostNicVfsConfigDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<HostNicVfsConfig, Guid> implements HostNicVfsConfigDao {
 
     public HostNicVfsConfigDaoDbFacadeImpl() {
         super("HostNicVfsConfig");

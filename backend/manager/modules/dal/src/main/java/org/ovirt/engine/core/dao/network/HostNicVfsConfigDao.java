@@ -5,8 +5,9 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.network.HostNicVfsConfig;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.GenericDao;
+import org.ovirt.engine.core.dao.MassOperationsDao;
 
-public interface HostNicVfsConfigDao extends GenericDao<HostNicVfsConfig, Guid> {
+public interface HostNicVfsConfigDao extends GenericDao<HostNicVfsConfig, Guid>, MassOperationsDao<HostNicVfsConfig, Guid> {
     /**
      * Retrieves a list of all the vfsConfigs for the given host.
      * Notice: only nics which are SR-IOV enabled have vfsConfig.
