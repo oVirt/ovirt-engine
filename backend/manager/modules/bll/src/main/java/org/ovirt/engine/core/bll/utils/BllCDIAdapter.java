@@ -12,6 +12,7 @@ import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
+import org.ovirt.engine.core.dao.network.HostNicVfsConfigDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -84,6 +85,11 @@ public class BllCDIAdapter {
     @Produces
     private VdsDAO produceVdsDao(DbFacade dbFacade) {
         return dbFacade.getVdsDao();
+    }
+
+    @Produces
+    private HostNicVfsConfigDao produceHostNicVfsConfigDao(DbFacade dbFacade) {
+        return dbFacade.getHostNicVfsConfigDao();
     }
 
     private BllCDIAdapter() {
