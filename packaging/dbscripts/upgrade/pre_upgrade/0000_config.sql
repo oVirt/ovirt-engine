@@ -373,6 +373,7 @@ select fn_db_add_config_value('LocalAdminPassword','123456','general');
 select fn_db_add_config_value('LockPolicy','ON','general');
 select fn_db_add_config_value('LockRenewalIntervalSec','5','general');
 select fn_db_add_config_value('LogPhysicalMemoryThresholdInMB','1024','general');
+select fn_db_add_config_value('LogSwapMemoryThresholdInMB','1024','general');
 --Handling Log XML-RPC Data
 select fn_db_add_config_value('LowUtilizationForEvenlyDistribute','0','general');
 select fn_db_add_config_value('LowUtilizationForPowerSave','20','general');
@@ -586,6 +587,7 @@ select fn_db_add_config_value('WebSocketProxy','Off','general');
 select fn_db_add_config_value('WebSocketProxyTicketValiditySeconds','120','general');
 
 select fn_db_add_config_value('LogMaxPhysicalMemoryUsedThresholdInPercentage', '95', 'general');
+select fn_db_add_config_value('LogMaxSwapMemoryUsedThresholdInPercentage', '95', 'general');
 select fn_db_add_config_value('LogMaxCpuUsedThresholdInPercentage', '95', 'general');
 select fn_db_add_config_value('LogMaxNetworkUsedThresholdInPercentage', '95', 'general');
 select fn_db_add_config_value('LogMinFreeSwapThresholdInMB', '256', 'general');

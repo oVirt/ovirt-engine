@@ -354,9 +354,9 @@ public class HostMonitoring {
     private void checkVdsSwapThreshold(VdsStatistics stat) {
 
         final double THRESHOLD = 0.98;
-        Integer minAvailableThreshold = Config.getValue(ConfigValues.LogPhysicalMemoryThresholdInMB);
+        Integer minAvailableThreshold = Config.getValue(ConfigValues.LogSwapMemoryThresholdInMB);
         Integer maxUsedPercentageThreshold =
-                Config.getValue(ConfigValues.LogMaxPhysicalMemoryUsedThresholdInPercentage);
+                Config.getValue(ConfigValues.LogMaxSwapMemoryUsedThresholdInPercentage);
 
         if (stat.getSwapTotal() == null || stat.getSwapFree() == null || stat.getSwapTotal() == 0) {
             return;

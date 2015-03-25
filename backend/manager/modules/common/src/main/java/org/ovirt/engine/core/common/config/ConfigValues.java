@@ -769,6 +769,11 @@ public enum ConfigValues {
     @DefaultValueAttribute("1024")
     LogPhysicalMemoryThresholdInMB,
 
+    @Reloadable
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1024")
+    LogSwapMemoryThresholdInMB,
+
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("auth-conf")
     SASL_QOP,
@@ -1344,6 +1349,11 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("95")
     LogMaxPhysicalMemoryUsedThresholdInPercentage,
+
+    @Reloadable
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("95")
+    LogMaxSwapMemoryUsedThresholdInPercentage,
 
     @Reloadable
     @TypeConverterAttribute(Integer.class)
