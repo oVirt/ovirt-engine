@@ -24,7 +24,7 @@ public class ExtendCinderDiskCommand<T extends UpdateVmDiskParameters> extends U
     }
 
     public ExtendCinderDiskCommand(T parameters, CommandContext commandContext) {
-        super(parameters);
+        super(parameters, commandContext);
     }
 
     @Override

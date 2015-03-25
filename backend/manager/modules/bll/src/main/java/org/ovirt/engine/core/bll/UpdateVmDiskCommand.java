@@ -9,12 +9,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
@@ -27,6 +31,7 @@ import org.ovirt.engine.core.common.action.ExtendImageSizeParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -72,7 +77,11 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     private Disk oldDisk;
 
     public UpdateVmDiskCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public UpdateVmDiskCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         loadVmDiskAttachedToInfo();
     }
 
@@ -125,7 +134,14 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
 
         if (resizeDiskImageRequested()) {
-            extendDiskImageSize();
+            switch (getOldDisk().getDiskStorageType()) {
+                case IMAGE:
+                    extendDiskImageSize();
+                    break;
+                case CINDER:
+                    extendCinderDiskSize();
+                    break;
+            }
         } else {
             try {
                 performDiskUpdate(false);
@@ -172,7 +188,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 return false;
             }
         }
-        if (DiskStorageType.IMAGE == getOldDisk().getDiskStorageType() && !validateCanResizeDisk()) {
+        if ((DiskStorageType.IMAGE == getOldDisk().getDiskStorageType() ||
+                DiskStorageType.CINDER == getOldDisk().getDiskStorageType()) && !validateCanResizeDisk()) {
             return false;
         }
 
@@ -382,6 +399,14 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                     getImageDao().update(diskImage.getImage());
                     updateQuota(diskImage);
                     updateDiskProfile();
+                } else if (disk.getDiskStorageType() == DiskStorageType.CINDER) {
+                    CinderDisk cinderDisk = (CinderDisk) disk;
+                    setStorageDomainId(cinderDisk.getStorageIds().get(0));
+                    getCinderBroker().updateDisk(cinderDisk);
+                    if (unlockImage && cinderDisk.getImageStatus() == ImageStatus.LOCKED) {
+                        cinderDisk.setImageStatus(ImageStatus.OK);
+                    }
+                    getImageDao().update(cinderDisk.getImage());
                 }
 
                 reloadDisks();
@@ -509,10 +534,40 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         setSucceeded(ret.getSucceeded());
     }
 
+    private void extendCinderDiskSize() {
+        lockImageInDb();
+        CinderDisk newCinderDisk = (CinderDisk) getNewDisk();
+        Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+                VdcActionType.ExtendCinderDisk,
+                new UpdateVmDiskParameters(getVmId(), newCinderDisk.getId(), newCinderDisk),
+                cloneContextAndDetachFromParent());
+        addCustomValue("NewSize", String.valueOf(getNewDiskSizeInGB()));
+        try {
+            setReturnValue(future.get());
+            setSucceeded(getReturnValue().getSucceeded());
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Error extending Cinder disk '{}': {}",
+                    getNewDisk().getDiskAlias(),
+                    e.getMessage());
+            log.debug("Exception", e);
+        }
+    }
+
+    private VdcActionParametersBase buildExtendCinderDiskParameters(CinderDisk newCinderDisk) {
+        UpdateVmDiskParameters parameters = new UpdateVmDiskParameters(
+                getVmId(), newCinderDisk.getId(), newCinderDisk);
+        parameters.setParametersCurrentUser(getParameters().getParametersCurrentUser());
+        return parameters;
+    }
+
     @Override
     protected void endSuccessfully() {
+        if (!isDiskImage()) {
+            return;
+        }
+
         VdcReturnValueBase ret = getBackend().endAction(VdcActionType.ExtendImageSize,
-                        createExtendImageSizeParameters(),
+                createExtendImageSizeParameters(),
                 getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
 
         if (ret.getSucceeded()) {
@@ -561,7 +616,12 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.USER_UPDATE_VM_DISK : AuditLogType.USER_FAILED_UPDATE_VM_DISK;
+        if (getSucceeded()) {
+            return isCinderDisk() && resizeDiskImageRequested() ?
+                    AuditLogType.USER_EXTENDED_DISK_SIZE : AuditLogType.USER_UPDATE_VM_DISK;
+        } else {
+            return AuditLogType.USER_FAILED_UPDATE_VM_DISK;
+        }
     }
 
     @Override
@@ -584,7 +644,15 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     private boolean isDiskImage() {
-        return getOldDisk() != null && getNewDisk() != null && DiskStorageType.IMAGE == getOldDisk().getDiskStorageType();
+        return isDiskStorageType(DiskStorageType.IMAGE);
+    }
+
+    private boolean isCinderDisk() {
+        return isDiskStorageType(DiskStorageType.CINDER);
+    }
+
+    private boolean isDiskStorageType(DiskStorageType diskStorageType) {
+        return getOldDisk() != null && getNewDisk() != null && diskStorageType == getOldDisk().getDiskStorageType();
     }
 
     protected Guid getQuotaId() {
@@ -645,8 +713,14 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     private boolean resizeDiskImageRequested() {
-        return getNewDisk().getDiskStorageType() == DiskStorageType.IMAGE &&
-               vmDeviceForVm.getSnapshotId() == null && getNewDisk().getSize() != getOldDisk().getSize();
+        boolean sizeChanged = getNewDisk().getSize() != getOldDisk().getSize();
+        switch (getNewDisk().getDiskStorageType()) {
+            case IMAGE:
+                return sizeChanged && vmDeviceForVm.getSnapshotId() == null;
+            case CINDER:
+                return sizeChanged;
+        }
+        return false;
     }
 
     private boolean updateParametersRequiringVmDownRequested() {
