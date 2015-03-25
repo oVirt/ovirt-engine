@@ -92,6 +92,17 @@ public class CINDERStorageHelper extends StorageHelperBase {
         }
     }
 
+    public void detachCinderDomainFromPool(final StoragePoolIsoMap mapToRemove) {
+        execute(new Callable<Object>() {
+            @Override
+            public Object call() {
+                getStoragePoolIsoMapDAO().remove(new StoragePoolIsoMapId(mapToRemove.getstorage_id(),
+                        mapToRemove.getstorage_pool_id()));
+                return null;
+            }
+        });
+    }
+
     private void updateCinderDomainStatus(final Guid storageDomainId,
                                           final Guid storagePoolId,
                                           final StorageDomainStatus storageDomainStatus) {
