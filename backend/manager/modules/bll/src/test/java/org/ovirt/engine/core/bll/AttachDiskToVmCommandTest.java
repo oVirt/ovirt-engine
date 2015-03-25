@@ -100,7 +100,7 @@ public class AttachDiskToVmCommandTest {
             // Overridden here and not during spying, since it's called in the constructor
             @SuppressWarnings("synthetic-access")
             @Override
-            protected DiskDao getDiskDao() {
+            public DiskDao getDiskDao() {
                 return diskDao;
             }
         });

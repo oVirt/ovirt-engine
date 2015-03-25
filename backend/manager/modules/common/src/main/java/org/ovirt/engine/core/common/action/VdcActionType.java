@@ -430,6 +430,7 @@ public enum VdcActionType {
     // Cinder
     AddCinderDisk(3200, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.STORAGE),
     RemoveCinderDisk(3201, QuotaDependency.STORAGE),
+    ExtendCinderDisk(3202, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.STORAGE),
 
     // Host Devices
     RefreshHostDevices(4000, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE);

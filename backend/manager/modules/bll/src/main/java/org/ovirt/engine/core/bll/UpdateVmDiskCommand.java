@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -359,7 +360,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         return listPermissionSubjects;
     }
 
-    private void performDiskUpdate(final boolean unlockImage) {
+    protected void performDiskUpdate(final boolean unlockImage) {
         if (shouldPerformMetadataUpdate()) {
             updateMetaDataDescription((DiskImage) getNewDisk());
         }
@@ -577,6 +578,11 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         return jobProperties;
     }
 
+    public long getNewDiskSizeInGB() {
+        CinderDisk cinderDisk = (CinderDisk) getNewDisk();
+        return cinderDisk.getSize() / BYTES_IN_GB;
+    }
+
     private boolean isDiskImage() {
         return getOldDisk() != null && getNewDisk() != null && DiskStorageType.IMAGE == getOldDisk().getDiskStorageType();
     }
@@ -705,7 +711,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         return oldDisk;
     }
 
-    private Disk getNewDisk() {
+    protected Disk getNewDisk() {
         return getParameters().getDiskInfo();
     }
 
@@ -754,7 +760,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
          });
     }
 
-    private void unlockImageInDb() {
+    public void unlockImageInDb() {
         final DiskImage diskImage = (DiskImage) getOldDisk();
         diskImage.setImageStatus(ImageStatus.OK);
         ImagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.OK);

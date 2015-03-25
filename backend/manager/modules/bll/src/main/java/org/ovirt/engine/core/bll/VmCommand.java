@@ -524,7 +524,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return getDbFacade().getTagDao();
     }
 
-    protected DiskDao getDiskDao() {
+    public DiskDao getDiskDao() {
         return getDbFacade().getDiskDao();
     }
 
