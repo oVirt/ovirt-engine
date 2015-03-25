@@ -479,4 +479,8 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             return Long.compare(o1.getLastTimeUsedAsMaster(), o2.getLastTimeUsedAsMaster());
         }
     }
+
+    protected boolean isCinderStorageDomain() {
+        return getStorageDomain().getStorageType().isCinderDomain();
+    }
 }
