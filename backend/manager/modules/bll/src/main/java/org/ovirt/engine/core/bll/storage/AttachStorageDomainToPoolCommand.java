@@ -92,6 +92,10 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
     @Override
     protected void executeCommand() {
         if (getStorageDomain() != null) {
+            if (isCinderStorageDomain()) {
+                handleCinderDomain();
+                return;
+            }
             if (getStoragePool().getStatus() == StoragePoolStatus.Uninitialized) {
                 StoragePoolWithStoragesParameter parameters = new StoragePoolWithStoragesParameter(getStoragePool(),
                        Arrays.asList(getStorageDomain().getId()),
@@ -205,6 +209,16 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                 }
             }
         }
+    }
+
+    private void handleCinderDomain() {
+        CINDERStorageHelper CINDERStorageHelper = new CINDERStorageHelper();
+        CINDERStorageHelper.attachCinderDomainToPool(getStorageDomain().getId(),
+                getParameters().getStoragePoolId());
+        if (getParameters().getActivate()) {
+            attemptToActivateCinderDomain();
+        }
+        setSucceeded(true);
     }
 
     /**
@@ -429,6 +443,16 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                 .runInternalAction(VdcActionType.ActivateStorageDomain,
                         activateParameters,
                         cloneContext().withoutCompensationContext().withoutExecutionContext());
+    }
+
+    protected void attemptToActivateCinderDomain() {
+        try {
+            CINDERStorageHelper CINDERStorageHelper = new CINDERStorageHelper();
+            CINDERStorageHelper.activateCinderDomain(
+                    getParameters().getStorageDomainId(), getParameters().getStoragePoolId());
+        } catch (RuntimeException e) {
+            auditLogDirector.log(this, AuditLogType.USER_ACTIVATE_STORAGE_DOMAIN_FAILED);
+        }
     }
 
     @Override
