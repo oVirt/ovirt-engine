@@ -61,6 +61,10 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
 
     @Override
     protected void executeCommand() {
+        if (getStorageDomain().getStorageType().isCinderDomain()) {
+            detachCinderStorageDomain();
+            return;
+        }
         log.info("Start detach storage domain");
         changeStorageDomainStatusInTransaction(getStorageDomain().getStoragePoolIsoMapData(),
                 StorageDomainStatus.Detaching);
@@ -102,6 +106,12 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
         }
         log.info("End detach storage domain");
         setSucceeded(returnValue.getSucceeded());
+    }
+
+    private void detachCinderStorageDomain() {
+        CINDERStorageHelper CINDERStorageHelper = new CINDERStorageHelper();
+        CINDERStorageHelper.detachCinderDomainFromPool(getStorageDomain().getStoragePoolIsoMapData());
+        setSucceeded(true);
     }
 
     @Override
