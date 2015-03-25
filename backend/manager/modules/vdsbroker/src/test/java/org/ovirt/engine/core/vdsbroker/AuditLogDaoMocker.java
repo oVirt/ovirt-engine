@@ -97,4 +97,12 @@ public class AuditLogDaoMocker implements AuditLogDAO {
     public void deleteBackupRelatedAlerts() {
     }
 
+    @Override
+    public List<AuditLog> getByVolumeIdAndType(Guid volumeId, int type) {
+        return null;
+    }
+
+    @Override
+    public void removeAllOfTypeForVolume(Guid volumeId, int type) {
+    }
 }

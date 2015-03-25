@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.gluster;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
@@ -110,6 +111,7 @@ public class GlusterSnapshotSyncJobTest {
         doReturn(snapshotDao).when(syncJob).getGlusterVolumeSnapshotDao();
         doReturn(snapshotConfigDao).when(syncJob).getGlusterVolumeSnapshotConfigDao();
         doReturn(clusterUtils).when(syncJob).getClusterUtils();
+        doReturn(glusterUtil).when(syncJob).getGlusterUtil();
 
         doReturn(getClusters()).when(clusterDao).getAll();
         doReturn(getVolumes()).when(volumeDao).getByClusterId(argThat(validClusterId()));
@@ -118,6 +120,8 @@ public class GlusterSnapshotSyncJobTest {
         doReturn(getServer()).when(clusterUtils).getRandomUpServer(any(Guid.class));
 
         doReturn(engineLock).when(syncJob).acquireVolumeSnapshotLock(any(Guid.class));
+        doNothing().when(glusterUtil).alertVolumeSnapshotSoftLimitReached(any(GlusterVolumeEntity.class));
+        doNothing().when(glusterUtil).checkAndRemoveVolumeSnapshotSoftLimitAlert(any(GlusterVolumeEntity.class));
     }
 
     @Test

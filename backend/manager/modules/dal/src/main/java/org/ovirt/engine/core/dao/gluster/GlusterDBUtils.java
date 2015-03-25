@@ -4,11 +4,13 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotConfig;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
@@ -37,6 +39,10 @@ public class GlusterDBUtils {
 
     private GlusterServerDao getGlusterServerDao() {
         return getDbFacade().getGlusterServerDao();
+    }
+
+    private GlusterVolumeSnapshotConfigDao getGlusterVolumeSnapshotConfigDao() {
+        return getDbFacade().getGlusterVolumeSnapshotConfigDao();
     }
 
     public boolean hasBricks(Guid serverId) {
@@ -178,4 +184,26 @@ public class GlusterDBUtils {
         return getGlusterVolumeDao().getByName(vdsGroupId, volumeName);
     }
 
+    public boolean isSoftLimitReached(Guid volumeId) {
+        GlusterVolumeEntity volume = getGlusterVolumeDao().getById(volumeId);
+
+        if (volume != null) {
+            GlusterVolumeSnapshotConfig config =
+                    getGlusterVolumeSnapshotConfigDao().getConfigByClusterIdAndName(volume.getClusterId(),
+                            "snap-max-soft-limit");
+
+            if (config != null) {
+                // remove the % sign in the last
+                String configValue = StringUtils.removeEnd(config.getParamValue(), "%");
+                int snapMaxSoftLimitPcnt = Integer.parseInt(configValue);
+
+                int snapshotCount = volume.getSnapshotsCount();
+                int snapMaxLimit = volume.getSnapMaxLimit();
+
+                return snapshotCount >= (snapMaxLimit * snapMaxSoftLimitPcnt) / 100;
+            }
+        }
+
+        return false;
+    }
 }

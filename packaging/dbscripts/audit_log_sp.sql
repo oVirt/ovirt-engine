@@ -244,6 +244,16 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION DeleteAuditAlertLogByVolumeIDAndType(v_gluster_volume_id UUID,
+    v_log_type INTEGER)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+      UPDATE audit_log set deleted = true
+      where gluster_volume_id = v_gluster_volume_id and log_type = v_log_type;
+END; $procedure$
+LANGUAGE plpgsql;
+
 Create or replace FUNCTION DeleteAuditLogAlertsByVdsID(v_vds_id UUID,
     v_delete_config_alerts BOOLEAN=true)
 RETURNS VOID
@@ -304,3 +314,12 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION GetAuditLogByVolumeIdAndType(v_gluster_volume_id UUID, v_log_type INTEGER)
+RETURNS SETOF audit_log STABLE
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT *
+      FROM audit_log
+      WHERE gluster_volume_id = v_gluster_volume_id and log_type = v_log_type;
+END; $procedure$
+LANGUAGE plpgsql;

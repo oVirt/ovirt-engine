@@ -32,6 +32,16 @@ public interface AuditLogDAO extends DAO, SearchDAO<AuditLog> {
     AuditLog getByOriginAndCustomEventId(String origin, int customEventId);
 
     /**
+     * Get all entries got a volume with given type
+     * @param volumeId
+     *            The volume id
+     * @param type
+     *            The entry type
+     * @return
+     */
+    List<AuditLog> getByVolumeIdAndType(Guid volumeId, int type);
+
+    /**
      * Finds all entries created after the specified cutoff date
      *
      * @param cutoff
@@ -142,6 +152,15 @@ public interface AuditLogDAO extends DAO, SearchDAO<AuditLog> {
      *            the entry type
      */
     void removeAllOfTypeForVds(Guid id, int type);
+
+    /**
+     * Removes entries of the specified type for the given volume id.
+     * @param volumeId
+     *            The volume id
+     * @param type
+     *            The entry type
+     */
+    void removeAllOfTypeForVolume(Guid volumeId, int type);
 
     /**
      * Get time to wait in seconds before another PM operation is allowed on the given Host
