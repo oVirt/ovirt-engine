@@ -174,6 +174,9 @@ public class StorageDomainValidator {
     }
 
     public ValidationResult hasSpaceForNewDisks(Collection<DiskImage> diskImages) {
+        if (storageDomain.getStorageType().isCinderDomain()) {
+            return ValidationResult.VALID;
+        }
         Long availableSize = storageDomain.getAvailableDiskSizeInBytes();
         double totalSizeForDisks = getTotalSizeForNewDisks(diskImages);
 
@@ -181,6 +184,9 @@ public class StorageDomainValidator {
     }
 
     public ValidationResult hasSpaceForClonedDisks(Collection<DiskImage> diskImages) {
+        if (storageDomain.getStorageType().isCinderDomain()) {
+            return ValidationResult.VALID;
+        }
         Long availableSize = storageDomain.getAvailableDiskSizeInBytes();
         double totalSizeForDisks = getTotalSizeForClonedDisks(diskImages);
 
@@ -188,6 +194,9 @@ public class StorageDomainValidator {
     }
 
     public ValidationResult hasSpaceForDisksWithSnapshots(Collection<DiskImage> diskImages) {
+        if (storageDomain.getStorageType().isCinderDomain()) {
+            return ValidationResult.VALID;
+        }
         Long availableSize = storageDomain.getAvailableDiskSizeInBytes();
         double totalSizeForDisks = getTotalSizeForDisksWithSnapshots(diskImages);
 
@@ -195,6 +204,9 @@ public class StorageDomainValidator {
     }
 
     public ValidationResult hasSpaceForAllDisks(Collection<DiskImage> newDiskImages, Collection<DiskImage> clonedDiskImages) {
+        if (storageDomain.getStorageType().isCinderDomain()) {
+            return ValidationResult.VALID;
+        }
         Long availableSize = storageDomain.getAvailableDiskSizeInBytes();
         double totalSizeForNewDisks = getTotalSizeForNewDisks(newDiskImages);
         double totalSizeForClonedDisks = getTotalSizeForClonedDisks(clonedDiskImages);

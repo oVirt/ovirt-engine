@@ -44,7 +44,7 @@ public class StorageDomainValidatorFreeSpaceTest {
         List<Object[]> params = new ArrayList<>();
 
         for (StorageType storageType : StorageType.values()) {
-            if (storageType.isConcreteStorageType()) {
+            if (storageType.isConcreteStorageType() && !storageType.isCinderDomain()) {
                 List<VolumeType> volumeTypes =
                         storageType.isFileDomain() ? Arrays.asList(VolumeType.Preallocated, VolumeType.Sparse)
                                 : Collections.singletonList(VolumeType.Preallocated);
