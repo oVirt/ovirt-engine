@@ -216,6 +216,10 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
 
     @Override
     protected void executeCommand() {
+        if (isCinderStorageDomain()) {
+            deactivateCinderStorageDomain();
+            return;
+        }
         final StoragePoolIsoMap map =
                 getStoragePoolIsoMapDAO().get
                         (new StoragePoolIsoMapId(getParameters().getStorageDomainId(),
@@ -317,6 +321,13 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             notifyAsyncTasks();
         }
 
+        setSucceeded(true);
+    }
+
+    private void deactivateCinderStorageDomain() {
+        CINDERStorageHelper CINDERStorageHelper = new CINDERStorageHelper();
+        CINDERStorageHelper.deactivateCinderDomain(getParameters().getStorageDomainId(),
+                getParameters().getStoragePoolId());
         setSucceeded(true);
     }
 
