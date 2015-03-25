@@ -107,6 +107,10 @@ public class CINDERStorageHelper extends StorageHelperBase {
         });
     }
 
+    public void deactivateCinderDomain(Guid storageDomainId, Guid storagePoolId) {
+        updateCinderDomainStatus(storageDomainId, storagePoolId, StorageDomainStatus.Maintenance);
+    }
+
     private StoragePoolIsoMapDAO getStoragePoolIsoMapDAO() {
         return getDbFacade().getStoragePoolIsoMapDao();
     }
