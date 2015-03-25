@@ -428,7 +428,8 @@ public enum VdcActionType {
     RemoveMacPool(3102, ActionGroup.DELETE_MAC_POOL, false, QuotaDependency.NONE),
 
     // Cinder
-    AddCinderDisk(3200, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.NONE),
+    AddCinderDisk(3200, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.STORAGE),
+    RemoveCinderDisk(3201, QuotaDependency.STORAGE),
 
     // Host Devices
     RefreshHostDevices(4000, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE);

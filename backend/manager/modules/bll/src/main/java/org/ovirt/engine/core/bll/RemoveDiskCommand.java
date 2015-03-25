@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -13,6 +15,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskValidator;
@@ -47,8 +50,10 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -115,7 +120,8 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         // currently, only images have specific checks.
         // In the future, if LUNs get specific checks,
         // or additional storage types are added, other else-if clauses should be added.
-        if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
+        if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE ||
+                getDisk().getDiskStorageType() == DiskStorageType.CINDER) {
             return canRemoveDiskBasedOnImageStorageCheck();
         }
 
@@ -278,23 +284,41 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         return DbFacade.getInstance().getDiskImageDao();
     }
 
-    protected DiskDao getDiskDao() {
+    public DiskDao getDiskDao() {
         return DbFacade.getInstance().getDiskDao();
     }
 
     @Override
     protected void executeCommand() {
-        if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
-            VdcReturnValueBase vdcReturnValue =
-                    runInternalActionWithTasksContext(VdcActionType.RemoveImage,
-                            buildRemoveImageParameters(getDiskImage()));
-            if (vdcReturnValue.getSucceeded()) {
-                incrementVmsGeneration();
-                getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
-                setSucceeded(true);
-            }
-        } else {
-            removeLunDisk();
+        switch (getDisk().getDiskStorageType()) {
+            case IMAGE:
+                VdcReturnValueBase vdcReturnValue =
+                        runInternalActionWithTasksContext(VdcActionType.RemoveImage,
+                                buildRemoveImageParameters(getDiskImage()));
+                if (vdcReturnValue.getSucceeded()) {
+                    incrementVmsGeneration();
+                    getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
+                    setSucceeded(true);
+                }
+                break;
+            case LUN:
+                removeLunDisk();
+                break;
+            case CINDER:
+                Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+                        VdcActionType.RemoveCinderDisk,
+                        new RemoveDiskParameters(getParameters().getDiskId()),
+                        cloneContextAndDetachFromParent());
+                try {
+                    setReturnValue(future.get());
+                    setSucceeded(getReturnValue().getSucceeded());
+                } catch (InterruptedException | ExecutionException e) {
+                    log.error("Error removing Cinder disk '{}': {}",
+                            getDiskImage().getDiskAlias(),
+                            e.getMessage());
+                    log.debug("Exception", e);
+                }
+                break;
         }
     }
 
@@ -349,6 +373,9 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             if (getDisk().getDiskStorageType() == DiskStorageType.LUN) {
                 return getSucceeded() ? AuditLogType.USER_FINISHED_REMOVE_DISK_NO_DOMAIN
                         : AuditLogType.USER_FINISHED_FAILED_REMOVE_DISK_NO_DOMAIN;
+            } else if (getDisk().getDiskStorageType() == DiskStorageType.CINDER) {
+                return getSucceeded() ? AuditLogType.USER_REMOVE_DISK_INITIATED
+                        : AuditLogType.USER_FINISHED_FAILED_REMOVE_DISK;
             }
             return getSucceeded() ? AuditLogType.USER_FINISHED_REMOVE_DISK
                     : AuditLogType.USER_FINISHED_FAILED_REMOVE_DISK;
@@ -477,5 +504,13 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     @Override
     public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
+    }
+
+    protected BaseDiskDao getBaseDiskDao() {
+        return getDbFacade().getBaseDiskDao();
+    }
+
+    protected DiskImageDynamicDAO getDiskImageDynamicDAO() {
+        return getDbFacade().getDiskImageDynamicDao();
     }
 }
