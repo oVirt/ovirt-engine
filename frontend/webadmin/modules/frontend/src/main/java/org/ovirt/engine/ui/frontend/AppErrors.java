@@ -1702,6 +1702,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Changing management network in a non-empty cluster is not allowed.")
     String ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_CANNOT_BE_CHANGED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Moving a host to cluster with different management network is not allowed.")
+    String ACTION_TYPE_FAILED_TARGET_CLUSTER_WITH_DIFF_MANAGEMENT_NETWORK();
+
     @DefaultStringValue("Cannot ${action} ${type}. Management network has to be not external one.")
     String ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_CANNOT_BE_EXTERNAL();
 

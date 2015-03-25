@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.NetworkParametersBuilder;
@@ -45,6 +47,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -54,6 +57,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> extends VdsCommand<T> {
+
+    @Inject
+    private NetworkDao networkDao;
 
     private StoragePool targetStoragePool;
 
@@ -131,6 +137,10 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             }
         }
 
+        if (!isDetachedSourceCluster() && !isSameManagementNetwork()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_CANNOT_BE_CHANGED);
+        }
+
         if (FeatureSupported.hostNetworkQos(getSourceCluster().getCompatibilityVersion())
                 && !FeatureSupported.hostNetworkQos(getTargetCluster().getCompatibilityVersion())) {
             for (VdsNetworkInterface iface : getHostNics()) {
@@ -158,6 +168,18 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         }
 
         return true;
+    }
+
+    private boolean isDetachedSourceCluster() {
+        return getSourceCluster().getStoragePoolId() == null;
+    }
+
+    private boolean isSameManagementNetwork() {
+        final Network sourceManagementNetwork = getNetworkDao().getManagementNetwork(getSourceCluster().getId());
+        final Network targetManagementNetwork = getNetworkDao().getManagementNetwork(getTargetCluster().getId());
+
+        return targetManagementNetwork != null
+                && sourceManagementNetwork.getName().equals(targetManagementNetwork.getName());
     }
 
     private boolean hostHasLabeledNics() {
@@ -400,6 +422,10 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         return targetCluster;
     }
 
+    private NetworkDao getNetworkDao() {
+        return networkDao;
+    }
+
     private class ChangeClusterParametersBuilder extends NetworkParametersBuilder {
 
         public ChangeClusterParametersBuilder(CommandContext commandContext) {
@@ -407,7 +433,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         }
 
         public PersistentSetupNetworksParameters buildParameters(Guid hostId, Guid sourceClusterId, Guid targetClusterId) {
-            List<Network> targetClusterNetworks = getNetworkDAO().getAllForCluster(targetClusterId);
+            List<Network> targetClusterNetworks = getNetworkDao().getAllForCluster(targetClusterId);
             Map<String, Network> targetClusterNetworksByName = Entities.entitiesByName(targetClusterNetworks);
 
             PersistentSetupNetworksParameters params = createSetupNetworksParameters(hostId);
@@ -415,7 +441,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
                     Entities.hostInterfacesByNetworkName(params.getInterfaces());
             Map<String, List<Network>> targetNetworksByLabel = getClusterNetworksByLabel(targetClusterNetworks);
             Map<String, List<Network>> sourceNetworksByLabel =
-                    getClusterNetworksByLabel(getNetworkDAO().getAllForCluster(sourceClusterId));
+                    getClusterNetworksByLabel(getNetworkDao().getAllForCluster(sourceClusterId));
             List<VdsNetworkInterface> hostNics = new ArrayList<>(params.getInterfaces());
 
             // Detect which networks should be added and which should be removed
