@@ -11,6 +11,12 @@ import org.ovirt.engine.api.model.Option;
 import static org.ovirt.engine.api.restapi.util.FenceOptionsParser.parse;
 
 public class FenceOptionsParserTest extends Assert {
+    private static final String FENCE_OPTION = "apc:secure=secure,port=ipport,slot=port;apc_snmp:port=port,"
+            + "encrypt_options=encrypt_options;bladecenter:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,"
+            + "slot=port;drac5:secure=secure,slot=port;drac7:;eps:slot=port;hpblade:port=port;ilo:secure=ssl,"
+            + "port=ipport;ipmilan:;ilo2:secure=ssl,port=ipport;ilo3:;ilo4:;rsa:secure=secure,port=ipport;rsb:;"
+            + "wti:secure=secure,port=ipport,slot=port";
+    private static final String FENCE_OPTION_TYPES = "encrypt_options=bool,secure=bool,port=int,slot=int";
 
     @Test
     public void testParseEmpty() {
@@ -89,6 +95,14 @@ public class FenceOptionsParserTest extends Assert {
         assertNotNull(ret);
         assertEquals(1, ret.size());
         verifyResult(ret.get(0), "foo");
+    }
+
+    @Test
+    public void testParseSecureOptions() {
+        List<PowerManagement> ret = parse(FENCE_OPTION, FENCE_OPTION_TYPES);
+        assertNotNull(ret);
+        assertEquals(16, ret.size());
+        verifyResult(ret.get(1), "apc_snmp", "port", "int", "port", "encrypt_options", "bool", "encrypt_options");
     }
 
     @Test(expected = IllegalArgumentException.class)
