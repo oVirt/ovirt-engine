@@ -209,6 +209,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
         Collection<Disk> vmDisks = getVm().getDiskMap().values();
         List<DiskImage> vmImages = ImagesHandler.filterImageDisks(vmDisks, true, false, true);
+        vmImages.addAll(ImagesHandler.filterDisksBasedOnCinder(vmDisks));
         if (!vmImages.isEmpty()) {
             Set<Guid> storageIds = ImagesHandler.getAllStorageIdsForImageIds(vmImages);
             MultipleStorageDomainsValidator storageValidator = new MultipleStorageDomainsValidator(getVm().getStoragePoolId(), storageIds);
