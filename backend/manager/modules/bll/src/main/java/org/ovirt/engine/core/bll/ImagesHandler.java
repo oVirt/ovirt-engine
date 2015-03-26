@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.storage.BaseDisk;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -579,6 +580,23 @@ public final class ImagesHandler {
             }
         }
         return lunDisks;
+    }
+
+    public static List<CinderDisk> filterDisksBasedOnCinder(Collection<? extends Disk> listOfDisks) {
+        return filterDisksBasedOnCinder(listOfDisks, false);
+    }
+
+    private static List<CinderDisk> filterDisksBasedOnCinder(Collection<? extends Disk> listOfDisks,
+            boolean onlyPluggedDisks) {
+        List<CinderDisk> cinderDisks = new ArrayList<>();
+        for (Disk disk : listOfDisks) {
+            if (disk.getDiskStorageType() == DiskStorageType.CINDER) {
+                if (!onlyPluggedDisks || disk.getPlugged()) {
+                    cinderDisks.add((CinderDisk) disk);
+                }
+            }
+        }
+        return cinderDisks;
     }
 
     public static void removeDiskImage(DiskImage diskImage, Guid vmId) {
