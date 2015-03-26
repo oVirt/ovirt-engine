@@ -450,6 +450,7 @@ public class RsdlBuilder {
     }
 
     private void addHeaderParams(DetailedLink link, Action action) {
+        // Add the parameters that are specified in the metadata:
         if (action.getRequest().getHeaders() != null && !action.getRequest().getHeaders().isEmpty()) {
             link.getRequest().setHeaders(new Headers());
             for (Object key :  action.getRequest().getHeaders().keySet()) {
@@ -466,6 +467,30 @@ public class RsdlBuilder {
                 link.getRequest().getHeaders().getHeaders().add(header);
             }
         }
+
+        // All the operations that potentially modify the state of the system accept the "Correlation-Id" header, so
+        // instead of adding it explicitly in the metadata file it is better to add it implicitly:
+        if (!GET.equals(link.getRel())) {
+            addCorrelationIdHeader(link);
+        }
+    }
+
+    /**
+     * Adds the description of the {@code Correlation-Id} header to a link.
+     *
+     * @param link the link where the description of the header will be added
+     */
+    private void addCorrelationIdHeader(DetailedLink link) {
+        Headers headers = link.getRequest().getHeaders();
+        if (headers == null) {
+            headers = new Headers();
+            link.getRequest().setHeaders(headers);
+        }
+        Header header = new Header();
+        header.setName("Correlation-Id");
+        header.setValue("any string");
+        header.setRequired(false);
+        headers.getHeaders().add(header);
     }
 
     private void addUrlParams(DetailedLink link, Action action) {
