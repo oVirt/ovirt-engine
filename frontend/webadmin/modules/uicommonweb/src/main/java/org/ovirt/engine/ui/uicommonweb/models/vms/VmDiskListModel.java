@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -565,8 +566,13 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
     }
 
     private boolean isDiskLocked(Disk disk) {
-        return disk != null && disk.getDiskStorageType() == DiskStorageType.IMAGE &&
-                ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED;
+        switch (disk.getDiskStorageType()) {
+            case IMAGE:
+                return ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED;
+            case CINDER:
+                return ((CinderDisk) disk).getImageStatus() == ImageStatus.LOCKED;
+        }
+        return false;
     }
 
     private boolean isSingleDiskSelected() {
@@ -659,11 +665,8 @@ public class VmDiskListModel extends VmDiskListModelBase<VM> {
         ArrayList<Disk> disks =
                 getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
 
-        for (Disk disk : disks)
-        {
-            if (disk.getDiskStorageType() == DiskStorageType.IMAGE &&
-                    ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED || (!isVmDown() && disk.getPlugged()))
-            {
+        for (Disk disk : disks) {
+            if (isDiskLocked(disk) ||  (!isVmDown() && disk.getPlugged())) {
                 return false;
             }
         }

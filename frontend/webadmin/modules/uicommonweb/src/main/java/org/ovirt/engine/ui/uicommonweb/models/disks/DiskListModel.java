@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.action.GetDiskAlignmentParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
@@ -256,7 +257,8 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
 
             diskVmListModel.setIsAvailable(disk.getVmEntityType() == null || !disk.getVmEntityType().isTemplateType());
             diskTemplateListModel.setIsAvailable(disk.getVmEntityType() != null && disk.getVmEntityType().isTemplateType());
-            diskStorageListModel.setIsAvailable(disk.getDiskStorageType() == DiskStorageType.IMAGE);
+            diskStorageListModel.setIsAvailable(disk.getDiskStorageType() == DiskStorageType.IMAGE ||
+                    disk.getDiskStorageType() == DiskStorageType.CINDER);
         }
     }
 
@@ -479,8 +481,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
         ArrayList<Disk> disks = getSelectedItems() != null ? (ArrayList) getSelectedItems() : null;
         boolean shouldAllowEdit = true;
         if (disk != null) {
-            shouldAllowEdit = !disk.isOvfStore() && !(disk.getDiskStorageType() == DiskStorageType.IMAGE &&
-                    ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED);
+            shouldAllowEdit = !disk.isOvfStore() && !isDiskLocked(disk);
         }
 
         getNewCommand().setIsExecutionAllowed(true);
@@ -495,6 +496,16 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
                 getSelectedItems() != null ? (List) getSelectedItems() : null,
                 getSystemTreeSelectedItem(),
                 getChangeQuotaCommand());
+    }
+
+    private boolean isDiskLocked(Disk disk) {
+        switch (disk.getDiskStorageType()) {
+            case IMAGE:
+                return ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED;
+            case CINDER:
+                return ((CinderDisk) disk).getImageStatus() == ImageStatus.LOCKED;
+        }
+        return false;
     }
 
     private void updateCopyAndMoveCommandAvailability(List<Disk> disks) {
@@ -548,7 +559,7 @@ public class DiskListModel extends ListWithSimpleDetailsModel<Void, Disk> implem
                 return false;
             }
 
-            if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+            if (disk.getDiskStorageType() == DiskStorageType.IMAGE || disk.getDiskStorageType() == DiskStorageType.CINDER) {
                 ImageStatus imageStatus = ((DiskImage) disk).getImageStatus();
                 if (imageStatus == ImageStatus.LOCKED) {
                     return false;
