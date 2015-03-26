@@ -9,6 +9,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -42,6 +43,7 @@ public class NetworkTemplateListModel extends SearchableListModel
         setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
         setHelpTag(HelpTag.templates);
         setHashName("templates"); //$NON-NLS-1$
+        setAvailableInModes(ApplicationMode.VirtOnly);
 
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         updateActionAvailability();

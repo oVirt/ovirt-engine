@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -24,6 +25,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
+import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.ClusterNewNetworkModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -89,7 +91,7 @@ public class ClusterNetworkListModel extends SearchableListModel
         setManageCommand(new UICommand("Manage", this)); //$NON-NLS-1$
         setSetAsDisplayCommand(new UICommand("SetAsDisplay", this)); //$NON-NLS-1$
         setNewNetworkCommand(new UICommand("New", this)); //$NON-NLS-1$
-
+        getSetAsDisplayCommand().setIsAvailable(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
         updateActionAvailability();
     }
 
