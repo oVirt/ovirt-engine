@@ -18,6 +18,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
+import org.ovirt.engine.core.common.utils.SizeConverter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +37,7 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
+import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.DiskValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
@@ -696,6 +698,31 @@ public class UpdateVmDiskCommandTest {
         command.executeVmCommand();
         verify(command, times(1)).runVdsCommand(eq(VDSCommandType.SetVolumeDescription),
                 any(SetVolumeDescriptionVDSCommandParameters.class));
+    }
+
+    @Test
+    public void testExtendingDiskWithQuota() {
+        Guid quotaId = Guid.newGuid();
+
+        DiskImage oldDiskImage = createDiskImage();
+        oldDiskImage.setQuotaId(quotaId);
+        oldDiskImage.setSize(SizeConverter.convert(3, SizeConverter.SizeUnit.GB,
+                SizeConverter.SizeUnit.BYTES).longValue());
+
+        DiskImage newDiskImage = createDiskImage();
+        newDiskImage.setQuotaId(quotaId);
+        newDiskImage.setSize(SizeConverter.convert(5, SizeConverter.SizeUnit.GB,
+                SizeConverter.SizeUnit.BYTES).longValue());
+
+        UpdateVmDiskParameters parameters = new UpdateVmDiskParameters(vmId, diskImageGuid, newDiskImage);
+        long diskExtendingDiffInGB = newDiskImage.getSizeInGigabytes() - oldDiskImage.getSizeInGigabytes();
+
+        when(diskDao.get(diskImageGuid)).thenReturn(oldDiskImage);
+        initializeCommand(parameters);
+
+        QuotaStorageConsumptionParameter consumptionParameter =
+                (QuotaStorageConsumptionParameter) command.getQuotaStorageConsumptionParameters().get(0);
+        assertEquals(consumptionParameter.getRequestedStorageGB().longValue(), diskExtendingDiffInGB);
     }
 
     private void mockToUpdateDiskVm(List<VM> vms) {
