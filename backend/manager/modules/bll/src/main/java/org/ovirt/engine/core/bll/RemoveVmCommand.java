@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
@@ -29,6 +31,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.action.RemoveAllVmCinderDisksParameters;
 import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
@@ -38,6 +41,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
@@ -123,8 +127,12 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             }
         });
 
-        if (getParameters().isRemoveDisks() && !diskImages.isEmpty()) {
-            Collection<DiskImage> unremovedDisks = (Collection<DiskImage>)removeVmImages(diskImages).getActionReturnValue();
+        Collection<DiskImage> unremovedDisks = Collections.emptyList();
+        if (getParameters().isRemoveDisks()) {
+            if (!diskImages.isEmpty()) {
+                unremovedDisks = (Collection<DiskImage>) removeVmImages(diskImages).getActionReturnValue();
+            }
+            unremovedDisks.addAll(removeCinderDisks());
             if (!unremovedDisks.isEmpty()) {
                 processUnremovedDisks(unremovedDisks);
                 return false;
@@ -324,6 +332,30 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         }
     }
 
+    /**
+     * The following method will perform a removing of all cinder disks from vm. These is only DB operation
+     */
+    private Collection<CinderDisk> removeCinderDisks() {
+        Collection<CinderDisk> failedRemoveCinderDisks = null;
+        if (getParameters().isRemoveDisks()) {
+            List<CinderDisk> cinderDisks =
+                    ImagesHandler.filterDisksBasedOnCinder(getVm().getDiskMap().values());
+            RemoveAllVmCinderDisksParameters param = new RemoveAllVmCinderDisksParameters(getVmId(), cinderDisks);
+            param.setParentHasTasks(!getReturnValue().getVdsmTaskIdList().isEmpty());
+            Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+                    VdcActionType.RemoveAllVmCinderDisks,
+                    withRootCommandInfo(param, getActionType()),
+                    cloneContextAndDetachFromParent());
+            try {
+                failedRemoveCinderDisks = future.get().getActionReturnValue();
+            } catch (InterruptedException | ExecutionException e) {
+                failedRemoveCinderDisks.addAll(cinderDisks);
+                log.error("Exception", e);
+            }
+        }
+        return failedRemoveCinderDisks;
+    }
+
     @Override
     protected void endVmCommand() {
         // no audit log print here as the vm was already removed during the execute phase.
@@ -332,8 +364,8 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         setSucceeded(true);
     }
 
-    private void processUnremovedDisks(Collection<DiskImage> diskImages) {
-        List<String> disksLeftInVm = new ArrayList<String>();
+    private void processUnremovedDisks(Collection<? extends DiskImage> diskImages) {
+        List<String> disksLeftInVm = new ArrayList<>();
         for (DiskImage diskImage : diskImages) {
             disksLeftInVm.add(diskImage.getDiskAlias());
         }
