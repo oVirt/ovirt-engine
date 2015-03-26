@@ -24,6 +24,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.view.client.NoSelectionModel;
 import com.google.inject.Inject;
 
 public class GlusterVolumeSnapshotConfigureOptionsPopupView extends AbstractModelBoundPopupView<GlusterVolumeSnapshotConfigModel> implements GlusterVolumeSnapshotConfigureOptionsPopupPresenterWidget.ViewDef {
@@ -75,6 +76,7 @@ public class GlusterVolumeSnapshotConfigureOptionsPopupView extends AbstractMode
     private void initEditors() {
         configsTable =
                 new EntityModelCellTable<ListModel<EntityModel<VolumeSnapshotOptionModel>>>(false, true);
+        configsTable.setSelectionModel(new NoSelectionModel());
 
         configsTable.addColumn(new AbstractEntityModelTextColumn<VolumeSnapshotOptionModel>() {
             @Override

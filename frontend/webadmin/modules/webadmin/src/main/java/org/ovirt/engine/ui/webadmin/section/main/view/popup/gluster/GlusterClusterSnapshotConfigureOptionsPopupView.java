@@ -26,6 +26,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.view.client.NoSelectionModel;
 import com.google.inject.Inject;
 
 public class GlusterClusterSnapshotConfigureOptionsPopupView extends AbstractModelBoundPopupView<GlusterClusterSnapshotConfigModel> implements GlusterClusterSnapshotConfigureOptionsPopupPresenterWidget.ViewDef {
@@ -73,6 +74,7 @@ public class GlusterClusterSnapshotConfigureOptionsPopupView extends AbstractMod
         clusterEditor = new ListModelListBoxEditor<>(new NameRenderer<VDSGroup>());
 
         configsTable = new EntityModelCellTable<>(false, true);
+        configsTable.setSelectionModel(new NoSelectionModel());
 
         configsTable.addColumn(new AbstractEntityModelTextColumn<GlusterVolumeSnapshotConfig>() {
             @Override
