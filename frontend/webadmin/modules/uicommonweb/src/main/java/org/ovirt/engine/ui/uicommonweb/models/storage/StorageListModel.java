@@ -937,7 +937,8 @@ public class StorageListModel extends ListWithDetailsAndReportsModel<Void, Stora
     }
 
     private boolean isEditAvailable(StorageDomain storageDomain) {
-        if (storageDomain == null || storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Locked) {
+        if (storageDomain == null || storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Locked ||
+                storageDomain.getStorageType().isCinderDomain()) {
             return false;
         }
 
