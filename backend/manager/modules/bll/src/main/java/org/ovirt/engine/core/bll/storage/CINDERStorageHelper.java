@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.concurrent.Callable;
+
 import org.ovirt.engine.core.bll.provider.storage.OpenStackVolumeProviderProxy;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -19,19 +21,17 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.Callable;
-
 public class CINDERStorageHelper extends StorageHelperBase {
 
     private Logger log = LoggerFactory.getLogger(CINDERStorageHelper.class);
 
-    private boolean runInNewTransaction;
+    private boolean runInNewTransaction = true;
 
-    public CINDERStorageHelper() {
-        this(true);
+    public boolean isRunInNewTransaction() {
+        return runInNewTransaction;
     }
 
-    public CINDERStorageHelper(boolean runInNewTransaction) {
+    public void setRunInNewTransaction(boolean runInNewTransaction) {
         this.runInNewTransaction = runInNewTransaction;
     }
 
