@@ -44,20 +44,29 @@ public class EditDiskModel extends AbstractDiskModel
         getIsSgIoUnfiltered().setEntity(getDisk().getSgio() == ScsiGenericIO.UNFILTERED);
         getIsReadOnly().setEntity(getDisk().getReadOnly());
 
-        if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
-            DiskImage diskImage = (DiskImage) getDisk();
-            getDiskStorageType().setEntity(DiskStorageType.IMAGE);
-            getSize().setEntity((int) diskImage.getSizeInGigabytes());
-            getVolumeType().setSelectedItem(diskImage.getVolumeType());
+        switch (getDisk().getDiskStorageType()) {
+            case IMAGE:
+                DiskImage diskImage = (DiskImage) getDisk();
+                getDiskStorageType().setEntity(DiskStorageType.IMAGE);
+                getSize().setEntity((int) diskImage.getSizeInGigabytes());
+                getVolumeType().setSelectedItem(diskImage.getVolumeType());
 
-            boolean isExtendImageSizeEnabled = getVm() != null && !diskImage.isDiskSnapshot() &&
-                    VdcActionUtils.canExecute(Arrays.asList(getVm()), VM.class, VdcActionType.ExtendImageSize);
-            getSizeExtend().setIsChangable(isExtendImageSizeEnabled);
-        } else {
-            LunDisk lunDisk = (LunDisk) getDisk();
-            getDiskStorageType().setEntity(DiskStorageType.LUN);
-            getSize().setEntity(lunDisk.getLun().getDeviceSize());
-            getSizeExtend().setIsAvailable(false);
+                boolean isExtendImageSizeEnabled = getVm() != null && !diskImage.isDiskSnapshot() &&
+                        VdcActionUtils.canExecute(Arrays.asList(getVm()), VM.class, VdcActionType.ExtendImageSize);
+                getSizeExtend().setIsChangable(isExtendImageSizeEnabled);
+                break;
+            case LUN:
+                LunDisk lunDisk = (LunDisk) getDisk();
+                getDiskStorageType().setEntity(DiskStorageType.LUN);
+                getSize().setEntity(lunDisk.getLun().getDeviceSize());
+                getSizeExtend().setIsAvailable(false);
+                break;
+            case CINDER:
+                CinderDisk cinderDisk = (CinderDisk) getDisk();
+                getDiskStorageType().setEntity(DiskStorageType.CINDER);
+                getSize().setEntity((int) cinderDisk.getSizeInGigabytes());
+                getSizeExtend().setIsChangable(true);
+                break;
         }
 
         updateReadOnlyChangeability();
@@ -157,9 +166,26 @@ public class EditDiskModel extends AbstractDiskModel
         }
     }
 
+    private Guid getStorageDomainId() {
+        switch (getDisk().getDiskStorageType()) {
+            case IMAGE:
+                return  getDiskImage().getStorageIds().get(0);
+            case CINDER:
+                return  getCinderDisk().getStorageIds().get(0);
+        }
+        return null;
+    }
+
     @Override
     protected void updateStorageDomains(final StoragePool datacenter) {
-        // do nothing
+        AsyncDataProvider.getInstance().getStorageDomainById(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object target, Object returnValue) {
+                DiskModel diskModel = (DiskModel) target;
+                StorageDomain storageDomain = (StorageDomain) returnValue;
+                diskModel.getStorageDomain().setSelectedItem(storageDomain);
+            }
+        }), getStorageDomainId());
     }
 
     @Override

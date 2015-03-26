@@ -32,6 +32,7 @@ public class AttachDiskModel extends NewDiskModel {
         attachableDisksMap = new HashMap<DiskStorageType, ListModel<EntityModel<DiskModel>>>();
         attachableDisksMap.put(DiskStorageType.IMAGE, new ListModel<EntityModel<DiskModel>>());
         attachableDisksMap.put(DiskStorageType.LUN, new ListModel<EntityModel<DiskModel>>());
+        attachableDisksMap.put(DiskStorageType.CINDER, new ListModel<EntityModel<DiskModel>>());
     }
 
     public Map<DiskStorageType, ListModel<EntityModel<DiskModel>>> getAttachableDisksMap() {
@@ -56,16 +57,22 @@ public class AttachDiskModel extends NewDiskModel {
 
     public void loadAttachableDisks() {
         doLoadAttachableDisks(new GetDisksCallback(DiskStorageType.IMAGE),
-                new GetDisksCallback(DiskStorageType.LUN));
+                new GetDisksCallback(DiskStorageType.LUN),
+                new GetDisksCallback(DiskStorageType.CINDER));
     }
 
-    protected void doLoadAttachableDisks(GetDisksCallback imageCallback, GetDisksCallback lunCallback) {
+    protected void doLoadAttachableDisks(GetDisksCallback imageCallback, GetDisksCallback lunCallback,
+                                         GetDisksCallback cinderCallback) {
         AsyncDataProvider.getInstance().getAllAttachableDisks(
                 new AsyncQuery(this, imageCallback
                 ), getVm().getStoragePoolId(), getVm().getId());
 
         AsyncDataProvider.getInstance().getAllAttachableDisks(
                 new AsyncQuery(this, lunCallback
+                ), null, getVm().getId());
+
+        AsyncDataProvider.getInstance().getAllAttachableDisks(
+                new AsyncQuery(this, cinderCallback
                 ), null, getVm().getId());
     }
 

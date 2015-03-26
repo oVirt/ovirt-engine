@@ -13,20 +13,26 @@ import java.util.List;
 public class InstanceImagesAttachDiskModel extends AttachDiskModel {
 
     public void loadAttachableDisks(int os, Version compatibilityVersion, final Disk prevSelectedDisk) {
-        // Get internal attachable disks
+        // Get image attachable disks
         AsyncDataProvider.getInstance().getFilteredAttachableDisks(
                 new AsyncQuery(this, new InstanceImageGetDisksCallback(DiskStorageType.IMAGE, prevSelectedDisk)
                 ), getVm().getStoragePoolId(), getVm().getId(), os, compatibilityVersion);
 
-        // Get external attachable disks
+        // Get lun attachable disks
         AsyncDataProvider.getInstance().getFilteredAttachableDisks(
                 new AsyncQuery(this, new InstanceImageGetDisksCallback(DiskStorageType.LUN, prevSelectedDisk)
+                ), null, getVm().getId(), os, compatibilityVersion);
+
+        // Get cinder attachable disks
+        AsyncDataProvider.getInstance().getFilteredAttachableDisks(
+                new AsyncQuery(this, new InstanceImageGetDisksCallback(DiskStorageType.CINDER, prevSelectedDisk)
                 ), null, getVm().getId(), os, compatibilityVersion);
     }
 
     public void loadAttachableDisks(Disk prevSelected) {
         doLoadAttachableDisks(new InstanceImageGetDisksCallback(DiskStorageType.IMAGE, prevSelected),
-                new InstanceImageGetDisksCallback(DiskStorageType.LUN, prevSelected));
+                new InstanceImageGetDisksCallback(DiskStorageType.LUN, prevSelected),
+                new InstanceImageGetDisksCallback(DiskStorageType.CINDER, prevSelected));
     }
 
     class InstanceImageGetDisksCallback extends GetDisksCallback {
