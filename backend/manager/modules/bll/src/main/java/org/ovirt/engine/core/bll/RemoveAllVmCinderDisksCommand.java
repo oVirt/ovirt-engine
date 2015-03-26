@@ -9,6 +9,7 @@ import java.util.concurrent.Future;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallback;
 import org.ovirt.engine.core.common.action.RemoveAllVmCinderDisksParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -89,5 +90,10 @@ public class RemoveAllVmCinderDisksCommand<T extends RemoveAllVmCinderDisksParam
             }
         }
         return cinderDisks;
+    }
+
+    @Override
+    public CommandCallback getCallback() {
+        return new RemoveAllVmCinderDisksCommandCallBack<>();
     }
 }
