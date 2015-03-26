@@ -6,6 +6,7 @@ import java.util.Collection;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -31,6 +32,7 @@ public class NetworkProfileListModel extends SearchableListModel<NetworkView, Vn
         setHelpTag(HelpTag.profiles);
         setHashName("profiles"); //$NON-NLS-1$
 
+        setAvailableInModes(ApplicationMode.VirtOnly);
         setComparator(new Linq.VnicProfileViewComparator());
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
@@ -48,6 +50,7 @@ public class NetworkProfileListModel extends SearchableListModel<NetworkView, Vn
         newCommand = value;
     }
 
+    @Override
     public UICommand getEditCommand() {
         return editCommand;
     }
