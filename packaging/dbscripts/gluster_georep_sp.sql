@@ -13,14 +13,15 @@ Create or replace FUNCTION InsertGlusterGeoRepSession(v_session_id UUID,
                                                       v_slave_host_uuid UUID,
                                                       v_slave_volume_name VARCHAR(50),
                                                       v_slave_volume_id UUID,
-                                                      v_status VARCHAR(50))
+                                                      v_status VARCHAR(50),
+                                                      v_user_name VARCHAR(255))
 RETURNS VOID
 AS $procedure$
 BEGIN
     INSERT INTO gluster_georep_session(session_id, master_volume_id, session_key, slave_host_name,
-    slave_host_uuid, slave_volume_name, slave_volume_id, status)
+    slave_host_uuid, slave_volume_name, slave_volume_id, status, user_name)
     VALUES (v_session_id, v_master_volume_id, v_session_key, v_slave_host_name,
-    v_slave_host_uuid, v_slave_volume_name, v_slave_volume_id, v_status);
+    v_slave_host_uuid, v_slave_volume_name, v_slave_volume_id, v_status, v_user_name);
 END; $procedure$
 LANGUAGE plpgsql;
 

@@ -46,6 +46,7 @@ public class GlusterGeoRepDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
             entity.setSlaveNodeUuid(getGuid(rs, "slave_host_uuid"));
             entity.setSlaveVolumeId(getGuid(rs, "slave_volume_id"));
             entity.setSlaveVolumeName(rs.getString("slave_volume_name"));
+            entity.setUserName(rs.getString("user_name"));
             entity.setStatus(GeoRepSessionStatus.valueOf(rs.getString("status")));
             return entity;
         }
@@ -173,6 +174,7 @@ public class GlusterGeoRepDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
                 .addValue("slave_host_uuid", geoRepSession.getSlaveNodeUuid())
                 .addValue("slave_volume_name", geoRepSession.getSlaveVolumeName())
                 .addValue("slave_volume_id", geoRepSession.getSlaveVolumeId())
+                .addValue("user_name", geoRepSession.getUserName())
                 .addValue("status", EnumUtils.nameOrNull(geoRepSession.getStatus()));
     }
 

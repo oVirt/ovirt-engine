@@ -20,6 +20,7 @@ public class GlusterGeoRepSession extends IVdcQueryable implements BusinessEntit
     private Guid sessionId;
     private Guid slaveVolumeId;
     private GeoRepSessionStatus status;
+    private String userName;
     private ArrayList<GlusterGeoRepSessionDetails> sessionDetails;
 
     public Guid getMasterVolumeId() {
@@ -78,6 +79,14 @@ public class GlusterGeoRepSession extends IVdcQueryable implements BusinessEntit
         this.slaveVolumeId = slaveVolumeId;
     }
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
     @Override
     public GeoRepSessionStatus getStatus() {
         return status;
@@ -122,6 +131,7 @@ public class GlusterGeoRepSession extends IVdcQueryable implements BusinessEntit
         result = prime * result + ((slaveNodeUuid == null) ? 0 : slaveNodeUuid.hashCode());
         result = prime * result + ((slaveVolumeId == null) ? 0 : slaveVolumeId.hashCode());
         result = prime * result + ((slaveVolumeName == null) ? 0 : slaveVolumeName.hashCode());
+        result = prime * result + ((userName == null) ? 0 : userName.hashCode());
         result = prime * result + ((status == null) ? 0 : status.hashCode());
         return result;
     }
@@ -137,6 +147,7 @@ public class GlusterGeoRepSession extends IVdcQueryable implements BusinessEntit
                     && (ObjectUtils.objectsEqual(getSlaveNodeUuid(), session.getSlaveNodeUuid()))
                     && (ObjectUtils.objectsEqual(getSlaveVolumeId(), session.getSlaveVolumeId()))
                     && (ObjectUtils.objectsEqual(getSlaveVolumeName(), session.getSlaveVolumeName()))
+                    && (ObjectUtils.objectsEqual(getUserName(), session.getUserName()))
                     && (ObjectUtils.objectsEqual(getStatus(), session.getStatus()))) {
                 return true;
             }
