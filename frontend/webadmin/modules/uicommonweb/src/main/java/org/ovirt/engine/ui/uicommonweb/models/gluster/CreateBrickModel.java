@@ -11,6 +11,13 @@ import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.BrickMountPointValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -135,7 +142,42 @@ public class CreateBrickModel extends Model {
     }
 
     public boolean validate() {
+
+        getLvName().validateEntity(new IValidation[] { new NotEmptyValidation(), new LengthValidation(50),
+                new AsciiNameValidation() });
+
+        if (!getLvName().getIsValid()) {
+            return false;
+        }
+
+        getMountPoint().validateEntity(new IValidation[] { new NotEmptyValidation(), new BrickMountPointValidation() });
+        if (!getMountPoint().getIsValid()) {
+            return false;
+        }
+
+        IntegerValidation noOfPhysicalDiscsValidation = new IntegerValidation();
+        noOfPhysicalDiscsValidation.setMinimum(1);
+        getNoOfPhysicalDisksInRaidVolume().validateEntity(new IValidation[] { new NotEmptyValidation(),
+                noOfPhysicalDiscsValidation });
+        if (!getNoOfPhysicalDisksInRaidVolume().getIsValid()) {
+            return false;
+        }
+
+        IntegerValidation stripSizeValidation = new IntegerValidation();
+        stripSizeValidation.setMinimum(1);
+        getStripeSize().validateEntity(new IValidation[] { new NotEmptyValidation(),
+                stripSizeValidation });
+        if (!getStripeSize().getIsValid()) {
+            return false;
+        }
+
+        if (getStorageDevices().getSelectedItems() == null || getStorageDevices().getSelectedItems().isEmpty()) {
+            setMessage(ConstantsManager.getInstance().getConstants().selectStorageDevice());
+            return false;
+        }
         return true;
+
+
     }
 
     public String formatSize(double size) {

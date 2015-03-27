@@ -95,6 +95,10 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
     @WithElementId
     IntegerEntityModelTextBoxEditor stripeSizeEditor;
 
+    @UiField
+    @Ignore
+    Label messageLabel;
+
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     private final Driver driver = GWT.create(Driver.class);
@@ -177,5 +181,11 @@ public class CreateBrickPopupView extends AbstractModelBoundPopupView<CreateBric
     @Override
     public void setDeviceInfoVisibility(boolean isVisiable) {
         deviceSelectionInfo.setVisible(isVisiable);
+    }
+
+    @Override
+    public void setMessage(String message) {
+        super.setMessage(message);
+        messageLabel.setText(message);
     }
 }

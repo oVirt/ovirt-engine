@@ -2712,4 +2712,11 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Icon file is not parsable.")
     String iconIsNotParsable();
+
+    @DefaultStringValue("Please select a storage device to create brick.")
+    String selectStorageDevice();
+
+    @DefaultStringValue("Invalid Mount Point.")
+    String invalidMountPointMsg();
+
 }
