@@ -10,7 +10,11 @@
 			font-weight: bold;
 			padding: 5px;
 		}
-
+		.messageLabel {
+			color: #FF0000;
+			left: 10px;
+			padding-left: 5px;
+		}
 		.tablePanel {
 			height: 270px;
 			width: 530px;
@@ -24,7 +28,7 @@
 		}
 	</ui:style>
 
-	<d:SimpleDialogPanel width="550px" height="575px">
+	<d:SimpleDialogPanel width="550px" height="625px">
 		<d:content>
 			<g:FlowPanel>
 				<ge:StringEntityModelTextBoxEditor ui:field="lvNameEditor" />
@@ -42,6 +46,7 @@
 					</g:VerticalPanel>
 				</g:HorizontalPanel>
 				<ge:StringEntityModelLabelEditor ui:field="sizeEditor" />
+				<g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
 			</g:FlowPanel>
 		</d:content>
 	</d:SimpleDialogPanel>

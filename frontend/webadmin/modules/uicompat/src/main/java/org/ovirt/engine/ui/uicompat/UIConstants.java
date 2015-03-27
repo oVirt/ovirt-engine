@@ -2644,5 +2644,11 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Warning : Recommendations for geo-replication not met -")
     String geoReplicationRecommendedConfigViolation();
+
+    @DefaultStringValue("Please select a storage device to create brick.")
+    String selectStorageDevice();
+
+    @DefaultStringValue("Invalid Mount Point.")
+    String invalidMountPointMsg();
 }
 
