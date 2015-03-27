@@ -34,9 +34,9 @@ import org.ovirt.engine.core.utils.servlet.ServletUtils;
  * This servlet serves the help tag JSON files for easy consumption by GWT. It can merge
  * multiple files to limit server requests and handle overrides (last file wins).
  */
-public class HelpTagJsonServlet extends HttpServlet {
+public class ContextSensitiveHelpMappingServlet extends HttpServlet {
     private static final long serialVersionUID = -3938947636590096259L;
-    private static final Logger log = Logger.getLogger(HelpTagJsonServlet.class);
+    private static final Logger log = Logger.getLogger(ContextSensitiveHelpMappingServlet.class);
 
     private static final String CONFIG_FILE = "configFile"; //$NON-NLS-1$
 

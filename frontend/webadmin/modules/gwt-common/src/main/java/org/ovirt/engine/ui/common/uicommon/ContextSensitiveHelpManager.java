@@ -8,7 +8,7 @@ import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 
-public class DocumentationPathTranslator {
+public class ContextSensitiveHelpManager {
     private static Map<String, String> documentationPathMap;
 
     // GWT overlay for the JSON object containing the help mappings

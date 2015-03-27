@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
-import org.ovirt.engine.ui.common.uicommon.DocumentationPathTranslator;
+import org.ovirt.engine.ui.common.uicommon.ContextSensitiveHelpManager;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
@@ -104,7 +104,7 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
             setSpiceVersion(spiceVersion);
         } else if (ev.matchesDefinition(documentationFileFetchedEvent_Definition)) {
             String documentationPathFileContent = ((FileFetchEventArgs) args).getFileContent();
-            DocumentationPathTranslator.init(documentationPathFileContent);
+            ContextSensitiveHelpManager.init(documentationPathFileContent);
         } else if (ev.matchesDefinition(usbFilterFileFetchedEvent_Definition)) {
             String usbFilter = ((FileFetchEventArgs) args).getFileContent();
             setUsbFilter(usbFilter);

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
-import org.ovirt.engine.ui.common.uicommon.DocumentationPathTranslator;
+import org.ovirt.engine.ui.common.uicommon.ContextSensitiveHelpManager;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
@@ -55,7 +55,7 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
             setSpiceVersion(spiceVersion);
         } else if (ev.matchesDefinition(documentationFileFetchedEvent_Definition)) {
             String documentationPathFileContent = ((FileFetchEventArgs) args).getFileContent();
-            DocumentationPathTranslator.init(documentationPathFileContent);
+            ContextSensitiveHelpManager.init(documentationPathFileContent);
         }
     }
 

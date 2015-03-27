@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.common.presenter;
 
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
-import org.ovirt.engine.ui.common.uicommon.DocumentationPathTranslator;
+import org.ovirt.engine.ui.common.uicommon.ContextSensitiveHelpManager;
 import org.ovirt.engine.ui.common.uicommon.model.DeferredModelCommandInvoker;
 import org.ovirt.engine.ui.common.uicommon.model.ModelBoundPopupHandler;
 import org.ovirt.engine.ui.common.uicommon.model.ModelBoundPopupResolver;
@@ -245,7 +245,7 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         UICommand openDocumentationCommand = model.getOpenDocumentationCommand();
         if (openDocumentationCommand != null) {
             boolean isDocumentationAvailable = hashName != null &&
-                    DocumentationPathTranslator.getPath(hashName) != null;
+                    ContextSensitiveHelpManager.getPath(hashName) != null;
             openDocumentationCommand.setIsAvailable(isDocumentationAvailable);
             updateHelpCommand(isDocumentationAvailable ? openDocumentationCommand : null);
         }
@@ -296,7 +296,7 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
 
     protected void openDocumentation(T model) {
         String helpTag = model.getHelpTag().name;
-        String documentationPath = DocumentationPathTranslator.getPath(helpTag);
+        String documentationPath = ContextSensitiveHelpManager.getPath(helpTag);
         String documentationLibURL = model.getConfigurator().getDocumentationLibURL();
 
         WebUtils.openUrlInNewWindow("_blank", documentationLibURL + documentationPath,  //$NON-NLS-1$
