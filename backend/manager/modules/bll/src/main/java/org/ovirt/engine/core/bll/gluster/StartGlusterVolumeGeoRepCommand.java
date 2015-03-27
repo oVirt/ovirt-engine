@@ -42,7 +42,6 @@ public class StartGlusterVolumeGeoRepCommand extends GeoRepSessionCommandBase<Gl
 
     @Override
     protected boolean canDoAction() {
-        setGlusterVolumeId(getGeoRepSession().getMasterVolumeId());
         if (!super.canDoAction()) {
             return false;
         }

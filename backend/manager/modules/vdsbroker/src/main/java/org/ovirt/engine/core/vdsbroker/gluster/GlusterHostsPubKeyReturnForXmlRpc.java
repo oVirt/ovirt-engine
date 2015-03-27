@@ -9,12 +9,16 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
 public class GlusterHostsPubKeyReturnForXmlRpc extends StatusReturnForXmlRpc {
 
     private List<String> geoRepPublicKeys = null;
+    private static final String INFO = "info";
 
     private static final String GEO_REP_PUB_KEYS = "geoRepPubKeys";
 
     @SuppressWarnings("unchecked")
     public GlusterHostsPubKeyReturnForXmlRpc(Map<String, Object> innerMap) {
         super(innerMap);
+        if(innerMap.containsKey("info")) {
+            innerMap = (Map<String, Object>) innerMap.get(INFO);
+        }
         if (innerMap.containsKey(GEO_REP_PUB_KEYS)) {
             Object[] keys = (Object[]) innerMap.get(GEO_REP_PUB_KEYS);
             for (Object key : keys) {
