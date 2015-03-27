@@ -68,7 +68,6 @@ import org.slf4j.LoggerFactory;
 public class VdsManager {
     private static Logger log = LoggerFactory.getLogger(VdsManager.class);
     private static Map<Guid, String> recoveringJobIdMap = new ConcurrentHashMap<Guid, String>();
-    private final int numberRefreshesBeforeSave = Config.<Integer> getValue(ConfigValues.NumberVmRefreshesBeforeSave);
     private final Object lockObj = new Object();
     private final AtomicInteger mFailedToRunVmAttempts;
     private final AtomicInteger mUnrespondedAttempts;
@@ -80,7 +79,6 @@ public class VdsManager {
     private long updateStartTime;
     private long nextMaintenanceAttemptTime;
     private List<String> registeredJobs;
-    private int refreshIteration = 1;
     private boolean isSetNonOperationalExecuted;
     private MonitoringStrategy monitoringStrategy;
     private EngineLock monitoringLock;
@@ -93,6 +91,7 @@ public class VdsManager {
     private final ResourceManager resourceManager;
     private final DbFacade dbFacade;
     private Map<Guid, V2VJobInfo> vmIdToV2VJob = new ConcurrentHashMap<>();
+    private VMStatsRefresher vmsRefresher;
 
     public VdsManager(VDS vds, AuditLogDirector auditLogDirector, ResourceManager resourceManager, DbFacade dbFacade) {
         this.resourceManager = resourceManager;
@@ -138,19 +137,9 @@ public class VdsManager {
         SchedulerUtil sched = getSchedulUtil();
         int refreshRate = Config.<Integer> getValue(ConfigValues.VdsRefreshRate) * 1000;
 
-        // start with refresh statistics
-        refreshIteration = numberRefreshesBeforeSave - 1;
         registeredJobs.add(sched.scheduleAFixedDelayJob(
                 this,
                 "onTimer",
-                new Class[0],
-                new Object[0],
-                refreshRate,
-                refreshRate,
-                TimeUnit.MILLISECONDS));
-
-        registeredJobs.add(sched.scheduleAFixedDelayJob(this,
-                "vmsMonitoring",
                 new Class[0],
                 new Object[0],
                 refreshRate,
@@ -169,6 +158,9 @@ public class VdsManager {
                 rateInMinutes,
                 rateInMinutes,
                 TimeUnit.MINUTES));
+
+        vmsRefresher = RefresherFactory.create(this, auditLogDirector, getSchedulUtil());
+        vmsRefresher.startMonitoring();
     }
 
     private SchedulerUtil getSchedulUtil() {
@@ -210,11 +202,7 @@ public class VdsManager {
                     }
 
                     try {
-                        if (refreshIteration == numberRefreshesBeforeSave) {
-                            refreshIteration = 1;
-                        } else {
-                            refreshIteration++;
-                        }
+                        vmsRefresher.updateIteration();
                         if (isMonitoringNeeded()) {
                             setStartTime();
                             hostMonitoring =
@@ -278,24 +266,6 @@ public class VdsManager {
     private void refreshCachedVds() {
         cachedVds = dbFacade.getVdsDao().get(getVdsId());
         setMonitoringNeeded();
-    }
-
-    @OnTimerMethodAnnotation("vmsMonitoring")
-    public void vmsMonitoring() {
-        if (isMonitoringNeeded()) {
-            VmsListFetcher fetcher =
-                    getRefreshStatistics() ?
-                            new VmsStatisticsFetcher(this) :
-                            new VmsListFetcher(this);
-            long fetchTime = System.nanoTime();
-            fetcher.fetch();
-            new VmsMonitoring(this,
-                    fetcher.getChangedVms(),
-                    fetcher.getVmsWithChangedDevices(),
-                    auditLogDirector,
-                    fetchTime
-            ).perform();
-        }
     }
 
     @OnTimerMethodAnnotation("availableUpdates")
@@ -867,6 +837,7 @@ public class VdsManager {
             getSchedulUtil().deleteJob(jobId);
         }
 
+        vmsRefresher.stopMonitoring();
         vdsProxy.close();
     }
 
@@ -1022,7 +993,10 @@ public class VdsManager {
     }
 
     public boolean getRefreshStatistics() {
-        return (refreshIteration == numberRefreshesBeforeSave);
+        if (vmsRefresher == null) {
+            return false;
+        }
+        return vmsRefresher.getRefreshStatistics();
     }
 
     public Object getLockObj() {
