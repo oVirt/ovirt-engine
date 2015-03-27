@@ -1204,7 +1204,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     @Override
     public StatusOnlyReturnForXmlRpc glusterGeoRepKeysUpdate(List<String> geoRepPubKeys, String remoteUserName) {
         JsonRpcRequest request =
-                new RequestBuilder("Gluster.writeGeoRepPubKeys")
+                new RequestBuilder("GlusterVolume.geoRepKeysUpdate")
                         .withParameter("geoRepPubKeys", geoRepPubKeys)
                         .withOptionalParameter("userName", remoteUserName).build();
         Map<String, Object> response = new FutureMap(this.client, request);
@@ -1379,8 +1379,8 @@ public class JsonRpcVdsServer implements IVdsServer {
                 .withParameter("volumeName", volumeName)
                 .withParameter("remoteHost", slaveHost)
                 .withParameter("remoteVolumeName", slaveVolumeName)
-                .withParameter("key", configKey)
-                .withParameter("value", configValue).build();
+                .withParameter("optionName", configKey)
+                .withParameter("optionValue", configValue).build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }
@@ -1394,7 +1394,7 @@ public class JsonRpcVdsServer implements IVdsServer {
         .withParameter("volumeName", volumeName)
         .withParameter("remoteHost", slaveHost)
         .withParameter("remoteVolumeName", slaveVolumeName)
-        .withParameter("key", configKey)
+        .withParameter("optionName", configKey)
         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
