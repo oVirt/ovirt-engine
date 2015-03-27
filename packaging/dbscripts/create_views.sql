@@ -3104,7 +3104,8 @@ SELECT
     georep._create_date,
     georep._update_date,
     gluster_volumes.vol_name AS master_volume_name,
-    gluster_volumes.cluster_id AS cluster_id
+    gluster_volumes.cluster_id AS cluster_id,
+    georep.user_name
 FROM
     gluster_georep_session georep
 INNER JOIN gluster_volumes ON gluster_volumes.id = georep.master_volume_id;

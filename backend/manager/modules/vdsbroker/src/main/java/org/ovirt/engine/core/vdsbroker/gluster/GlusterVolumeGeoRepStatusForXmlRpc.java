@@ -77,6 +77,7 @@ public class GlusterVolumeGeoRepStatusForXmlRpc extends StatusReturnForXmlRpc {
         if(slaveNode.contains("@")) {
             String[] hostComponents = slaveNode.split("@");
             slaveNode = hostComponents[hostComponents.length - 1];
+            geoRepSession.setUserName(hostComponents[0]);
         }
         String slaveVolume = (String) innerMap.get(REMOTE_VOL_NAME);
         geoRepSession.setSlaveHostName(slaveNode);
