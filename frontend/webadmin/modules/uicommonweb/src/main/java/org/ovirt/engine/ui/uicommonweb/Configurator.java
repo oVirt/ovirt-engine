@@ -24,24 +24,21 @@ import com.google.gwt.i18n.client.LocaleInfo;
  */
 public abstract class Configurator {
 
-    private static final String DOCUMENTATION_LIB_PATH = "html/"; //$NON-NLS-1$
-    private static final String DOCUMENTATION_ROOT = BaseContextPathData.getInstance().getRelativePath()
-            + "docs/manual"; //$NON-NLS-1$
-    private static final String HELPTAG_MAPPING_ROOT = BaseContextPathData.getInstance().getRelativePath()
-            + "docs/manual/helptag"; //$NON-NLS-1$
+    private static final String DOCS_HTML_DIR = "html"; //$NON-NLS-1$
+    private static final String DOCS_ROOT = BaseContextPathData.getInstance().getRelativePath() + "docs/manual"; //$NON-NLS-1$
+    private static final String CSH_ROOT = BaseContextPathData.getInstance().getRelativePath() + "docs/csh"; //$NON-NLS-1$
+    private static final String JSON = ".json"; //$NON-NLS-1$
 
-    private static String documentationLangPath;
 
-    public static String getDocumentationLangPath() {
-        return documentationLangPath;
-    }
+    private static String localeDir;
 
     public Configurator() {
         // Set default configuration values
         setSpiceFullScreen(false);
 
-        String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName();
-        documentationLangPath = currentLocale.replaceAll("_", "-") + "/"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        String locale = LocaleInfo.getCurrentLocale().getLocaleName();
+        // doc package uses hyphens in the locale name dirs
+        localeDir = locale.replaceAll("_", "-"); //$NON-NLS-1$ //$NON-NLS-2$
 
         setSpiceVersion(new Version(4, 4));
         setSpiceDefaultUsbPort(32023);
@@ -174,33 +171,26 @@ public abstract class Configurator {
     }
 
     /**
-     * Returns the base URL for serving documentation resources.
+     * Returns the base URL for serving documentation.
      * <p>
-     * Example: <code>http://www.example.com/docs/</code>
+     * Example: <code>https://<ovirt-engine>/docs/manual/en-US/html/</code>
      *
      * @return Documentation base URL, including the trailing slash.
      */
-    public String getDocumentationBaseURL() {
-        return FrontendUrlUtils.getRootURL() + DOCUMENTATION_ROOT + "/"; //$NON-NLS-1$
+    public String getDocsBaseUrl() {
+        return FrontendUrlUtils.getRootURL() + DOCS_ROOT + "/" + localeDir + "/" + DOCS_HTML_DIR + "/"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     /**
-     * Returns the base URL for serving helptag mapping files.
-     * @return helptag mapping base URL, including the trailing slash.
-     */
-    public String getHelpTagMappingBaseURL() {
-        return FrontendUrlUtils.getRootURL() + HELPTAG_MAPPING_ROOT + "/"; //$NON-NLS-1$
-    }
-
-    /**
-     * Returns the base URL for serving locale-specific HTML documentation.
+     * Returns the URL for serving the csh mapping file.
      * <p>
-     * Example: <code>http://www.example.com/docs/en-US/html/</code>
+     * Example: <code>https://<ovirt-engine>/docs/csh/webadmin.json</code>
+     *          <code>https://<ovirt-engine>/docs/csh/userportal.json</code>
      *
-     * @return Locale-specific HTML documentation base URL, including the trailing slash.
+     * @return the url
      */
-    public String getDocumentationLibURL() {
-        return getDocumentationBaseURL() + documentationLangPath + DOCUMENTATION_LIB_PATH;
+    public String getCshMappingUrl(String application) {
+        return FrontendUrlUtils.getRootURL() + CSH_ROOT + "/" + application + JSON; //$NON-NLS-1$
     }
 
     /**
@@ -321,7 +311,7 @@ public abstract class Configurator {
     }
 
     public boolean isClientWindowsExplorer() {
-        return isClientWindows() && clientBrowserType().equalsIgnoreCase("Explorer"); //$NON-NLS-1$ //$NON-NLS-2$
+        return isClientWindows() && clientBrowserType().equalsIgnoreCase("Explorer"); //$NON-NLS-1$
     }
 
     public boolean isClientWindows() {

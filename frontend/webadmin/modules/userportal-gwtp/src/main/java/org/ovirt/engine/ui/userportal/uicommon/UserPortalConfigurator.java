@@ -24,7 +24,7 @@ import com.google.inject.Inject;
 
 public class UserPortalConfigurator extends Configurator implements IEventListener {
 
-    public static final String DOCUMENTATION_GUIDE_PATH = "User_Portal_Guide/index.html"; //$NON-NLS-1$
+    public static final String APPLICATION_NAME = "userportal"; //$NON-NLS-1$
 
     public EventDefinition spiceVersionFileFetchedEvent_Definition =
             new EventDefinition("spiceVersionFileFetched", UserPortalConfigurator.class); //$NON-NLS-1$
@@ -47,7 +47,8 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
         super();
         this.placeManager = placeManager;
         this.clientAgentType = clientAgentType;
-        fetchDocumentationFile();
+
+        prepareContextSensitiveHelp();
 
         // This means that it is UserPortal application.
         setIsAdmin(false);
@@ -63,6 +64,11 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
 
         // Update Spice version if needed
         updateSpiceVersion();
+    }
+
+    protected void prepareContextSensitiveHelp() {
+        fetchFile(getCshMappingUrl(APPLICATION_NAME), documentationFileFetchedEvent);
+        // async callback calls ContextSensitiveHelpManager.init
     }
 
     public void updateUsbFilter() {
@@ -103,8 +109,8 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
             Version spiceVersion = parseVersion(((FileFetchEventArgs) args).getFileContent());
             setSpiceVersion(spiceVersion);
         } else if (ev.matchesDefinition(documentationFileFetchedEvent_Definition)) {
-            String documentationPathFileContent = ((FileFetchEventArgs) args).getFileContent();
-            ContextSensitiveHelpManager.init(documentationPathFileContent);
+            String cshMapping = ((FileFetchEventArgs) args).getFileContent();
+            ContextSensitiveHelpManager.init(cshMapping);
         } else if (ev.matchesDefinition(usbFilterFileFetchedEvent_Definition)) {
             String usbFilter = ((FileFetchEventArgs) args).getFileContent();
             setUsbFilter(usbFilter);
@@ -143,10 +149,4 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
     public Float clientBrowserVersion() {
         return clientAgentType.version;
     }
-
-    protected void fetchDocumentationFile() {
-        // TODO: don't hardcode userportal application name here
-        fetchFile(getHelpTagMappingBaseURL() + "userportal.json", documentationFileFetchedEvent); //$NON-NLS-1$
-    }
-
 }

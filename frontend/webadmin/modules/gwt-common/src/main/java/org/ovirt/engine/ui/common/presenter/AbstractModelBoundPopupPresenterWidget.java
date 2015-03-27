@@ -252,7 +252,7 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
     }
 
     void updateHelpCommand(UICommand command) {
-        getView().setHelpCommand(command);
+        getView().setHelpCommand(command); // also sets the help icon visible
     }
 
     void updateItems(T model) {
@@ -294,13 +294,16 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         getView().stopProgress();
     }
 
+    /**
+     * Open the context-sensitive help for this model. Opens in a new window.
+     * ContextSensitiveHelpManager locates the proper URL via helptag/csh mapping file.
+     */
     protected void openDocumentation(T model) {
         String helpTag = model.getHelpTag().name;
-        String documentationPath = ContextSensitiveHelpManager.getPath(helpTag);
-        String documentationLibURL = model.getConfigurator().getDocumentationLibURL();
+        String docPath = ContextSensitiveHelpManager.getPath(helpTag);
+        String docBase = model.getConfigurator().getDocsBaseUrl();
 
-        WebUtils.openUrlInNewWindow("_blank", documentationLibURL + documentationPath,  //$NON-NLS-1$
-                WebUtils.OPTION_SCROLLBARS);
+        WebUtils.openUrlInNewWindow("_blank", docBase + docPath, WebUtils.OPTION_SCROLLBARS); //$NON-NLS-1$
     }
 
 }
