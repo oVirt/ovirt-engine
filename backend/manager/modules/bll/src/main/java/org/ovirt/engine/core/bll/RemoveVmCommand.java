@@ -349,7 +349,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             try {
                 failedRemoveCinderDisks = future.get().getActionReturnValue();
             } catch (InterruptedException | ExecutionException e) {
-                failedRemoveCinderDisks.addAll(cinderDisks);
+                failedRemoveCinderDisks = cinderDisks;
                 log.error("Exception", e);
             }
         }
