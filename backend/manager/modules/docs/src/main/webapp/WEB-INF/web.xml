@@ -75,18 +75,18 @@
   </servlet-mapping>
 
 
-  <!-- help tag mapping servlet -->
+  <!-- ContextSensitiveHelpMappingServlet -->
   <servlet>
     <servlet-name>ContextSensitiveHelpMappingServlet</servlet-name>
     <servlet-class>org.ovirt.engine.docs.utils.servlet.ContextSensitiveHelpMappingServlet</servlet-class>
     <init-param>
-      <param-name>configFile</param-name>
-      <param-value>%{ENGINE_MANUAL}/manual.properties</param-value>
+      <param-name>manualDir</param-name>
+      <param-value>%{ENGINE_MANUAL}</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>
       <servlet-name>ContextSensitiveHelpMappingServlet</servlet-name>
-      <url-pattern>/manual/helptag/*</url-pattern>
+      <url-pattern>/csh/*</url-pattern>
   </servlet-mapping>
 
   <!-- Filters -->

@@ -17,7 +17,7 @@ import com.google.inject.Inject;
 
 public class WebAdminConfigurator extends Configurator implements IEventListener<Configurator.FileFetchEventArgs> {
 
-    public static final String DOCUMENTATION_GUIDE_PATH = "Administration_Guide/index.html"; //$NON-NLS-1$
+    public static final String APPLICATION_NAME = "webadmin"; //$NON-NLS-1$
 
     public EventDefinition spiceVersionFileFetchedEvent_Definition =
             new EventDefinition("spiceVersionFileFetched", WebAdminConfigurator.class); //$NON-NLS-1$
@@ -34,7 +34,8 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
         super();
         this.clientAgentType = clientAgentType;
 
-        fetchDocumentationFile();
+        prepareContextSensitiveHelp();
+
         // This means that this is WebAdmin application.
         setIsAdmin(true);
         setSpiceAdminConsole(true);
@@ -47,14 +48,19 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
         updateSpiceVersion();
     }
 
+    protected void prepareContextSensitiveHelp() {
+        fetchFile(getCshMappingUrl(APPLICATION_NAME), documentationFileFetchedEvent);
+        // async callback calls ContextSensitiveHelpManager.init
+    }
+
     @Override
     public void eventRaised(Event<? extends FileFetchEventArgs> ev, Object sender, FileFetchEventArgs args) {
         if (ev.matchesDefinition(spiceVersionFileFetchedEvent_Definition)) {
             Version spiceVersion = parseVersion(args.getFileContent());
             setSpiceVersion(spiceVersion);
         } else if (ev.matchesDefinition(documentationFileFetchedEvent_Definition)) {
-            String documentationPathFileContent = args.getFileContent();
-            ContextSensitiveHelpManager.init(documentationPathFileContent);
+            String cshMapping = args.getFileContent();
+            ContextSensitiveHelpManager.init(cshMapping);
         }
     }
 
@@ -88,11 +94,6 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
     @Override
     public Float clientBrowserVersion() {
         return clientAgentType.version;
-    }
-
-    protected void fetchDocumentationFile() {
-        // TODO: don't hard code webadmin application name here
-        fetchFile(getHelpTagMappingBaseURL() + "webadmin.json", documentationFileFetchedEvent); //$NON-NLS-1$
     }
 
 }
