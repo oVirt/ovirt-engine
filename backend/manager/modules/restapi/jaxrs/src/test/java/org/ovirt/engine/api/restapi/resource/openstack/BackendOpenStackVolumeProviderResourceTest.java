@@ -22,24 +22,35 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 import javax.ws.rs.WebApplicationException;
+
+import java.util.Collections;
+import java.util.List;
 
 import static org.easymock.EasyMock.expect;
 
 public class BackendOpenStackVolumeProviderResourceTest
         extends AbstractBackendSubResourceTest<OpenStackVolumeProvider, Provider, BackendOpenStackVolumeProviderResource> {
     public BackendOpenStackVolumeProviderResourceTest() {
-        super(new BackendOpenStackVolumeProviderResource(GUIDS[0].toString()));
+        super(new BackendOpenStackVolumeProviderResource(GUIDS[0].toString(), new BackendOpenStackVolumeProvidersResource()));
+    }
+
+    protected void init() {
+        super.init();
+        initResource(resource.getParent());
     }
 
     @Test
     public void testBadGuid() throws Exception {
         control.replay();
         try {
-            new BackendOpenStackVolumeProviderResource("foo");
+            new BackendOpenStackVolumeProviderResource("foo", resource.getParent());
             fail("expected WebApplicationException");
         }
         catch (WebApplicationException wae) {
@@ -84,6 +95,7 @@ public class BackendOpenStackVolumeProviderResourceTest
     @Test
     public void testUpdate() throws Exception {
         setUpGetEntityExpectations(2);
+        setUpGetEntityExpectationsOnDoPopulate(false);
         setUriInfo(
             setUpActionExpectations(
                 VdcActionType.UpdateProvider,
@@ -161,6 +173,19 @@ public class BackendOpenStackVolumeProviderResourceTest
         return provider;
     }
 
+    public StorageDomainStatic getStorageDomainStatic() {
+        StorageDomainStatic storageDomainStatic = control.createMock(StorageDomainStatic.class);
+        expect(storageDomainStatic.getId()).andReturn(GUIDS[0]).anyTimes();
+        expect(storageDomainStatic.getName()).andReturn(NAMES[0]).anyTimes();
+        return storageDomainStatic;
+    }
+
+    public List<StoragePool> getStoragePools() {
+        StoragePool storagePool = new StoragePool();
+        storagePool.setId(GUIDS[1]);
+        return Collections.singletonList(storagePool);
+    }
+
     protected void setUpGetEntityExpectations(int times) throws Exception {
         setUpGetEntityExpectations(times, false);
     }
@@ -175,5 +200,20 @@ public class BackendOpenStackVolumeProviderResourceTest
                 notFound? null: getEntity(0)
             );
         }
+    }
+
+    protected void setUpGetEntityExpectationsOnDoPopulate(boolean notFound) throws Exception {
+        setUpGetEntityExpectations(
+                VdcQueryType.GetStorageDomainByName,
+                NameQueryParameters.class,
+                new String[] { "Name" },
+                new Object[] { NAMES[0] },
+                notFound ? null : getStorageDomainStatic());
+        setUpGetEntityExpectations(
+                VdcQueryType.GetStoragePoolsByStorageDomainId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                notFound ? null : getStoragePools());
     }
 }

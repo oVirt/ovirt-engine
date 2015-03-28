@@ -19,13 +19,27 @@ package org.ovirt.engine.api.restapi.resource.openstack;
 import org.ovirt.engine.api.model.OpenStackVolumeProvider;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProviderResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendExternalProviderResource;
+import org.ovirt.engine.core.common.businessentities.Provider;
 
 import static org.ovirt.engine.api.restapi.resource.openstack.BackendOpenStackVolumeProvidersResource.SUB_COLLECTIONS;
 
 public class BackendOpenStackVolumeProviderResource
         extends AbstractBackendExternalProviderResource<OpenStackVolumeProvider>
         implements OpenStackVolumeProviderResource {
-    public BackendOpenStackVolumeProviderResource(String id) {
+
+    private BackendOpenStackVolumeProvidersResource parent;
+
+    public BackendOpenStackVolumeProviderResource(String id, BackendOpenStackVolumeProvidersResource parent) {
         super(id, OpenStackVolumeProvider.class, SUB_COLLECTIONS);
+        this.parent = parent;
+    }
+
+    @Override
+    protected OpenStackVolumeProvider doPopulate(OpenStackVolumeProvider model, Provider entity) {
+        return parent.doPopulate(model, entity);
+    }
+
+    BackendOpenStackVolumeProvidersResource getParent() {
+        return parent;
     }
 }

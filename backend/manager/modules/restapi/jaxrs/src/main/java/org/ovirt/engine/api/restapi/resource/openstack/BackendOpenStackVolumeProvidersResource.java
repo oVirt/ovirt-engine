@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllProvidersParameters;
@@ -63,7 +64,8 @@ public class BackendOpenStackVolumeProvidersResource
     private OpenStackVolumeProviders mapCollection(List<Provider> entities) {
         OpenStackVolumeProviders collection = new OpenStackVolumeProviders();
         for (Provider entity : entities) {
-            collection.getOpenStackVolumeProviders().add(addLinks(map(entity)));
+            OpenStackVolumeProvider provider = map(entity);
+            collection.getOpenStackVolumeProviders().add(addLinks(populate(provider, entity)));
         }
         return collection;
     }
@@ -114,13 +116,17 @@ public class BackendOpenStackVolumeProvidersResource
 
     @Override
     protected OpenStackVolumeProvider doPopulate(OpenStackVolumeProvider model, Provider entity) {
+        StoragePool storagePool = getStoragePoolIdByStorageDomainName(entity.getName());
+        if (storagePool != null) {
+            model.setDataCenter(DataCenterMapper.map(storagePool, null));
+        }
         return model;
     }
 
     @Override
     @SingleEntityResource
     public OpenStackVolumeProviderResource getOpenStackVolumeProvider(@PathParam("id") String id) {
-        return inject(new BackendOpenStackVolumeProviderResource(id));
+        return inject(new BackendOpenStackVolumeProviderResource(id, this));
     }
 
     public StoragePool getStoragePool(DataCenter dataCenter) {
@@ -137,5 +143,17 @@ public class BackendOpenStackVolumeProvidersResource
             notFound(DataCenter.class);
         }
         return pool;
+    }
+
+    private StoragePool getStoragePoolIdByStorageDomainName(String storageDomainName) {
+        StorageDomainStatic storageDomain = getEntity(StorageDomainStatic.class, VdcQueryType.GetStorageDomainByName,
+                new NameQueryParameters(storageDomainName), "StorageDomain: name=" + storageDomainName);
+        List<StoragePool> storagePools = getEntity(List.class, VdcQueryType.GetStoragePoolsByStorageDomainId,
+                new IdQueryParameters(storageDomain.getId()), "Datacenters");
+        if (!storagePools.isEmpty()) {
+            return storagePools.get(0);
+        }
+        // The storage domain is unattached
+        return null;
     }
 }
