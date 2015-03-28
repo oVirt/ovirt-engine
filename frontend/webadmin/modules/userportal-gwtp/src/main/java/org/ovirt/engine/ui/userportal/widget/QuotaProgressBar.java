@@ -18,8 +18,8 @@ public abstract class QuotaProgressBar extends DoublePercentageProgressBar {
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     public QuotaProgressBar(QuotaUsagePerUser quotaUsagePerUser) {
-        this();
         setQuotaUsagePerUser(quotaUsagePerUser);
+        tooltip = new WidgetTooltip(this);
     }
 
     public QuotaProgressBar() {
