@@ -326,6 +326,8 @@ public class StorageDomainMapper {
             return org.ovirt.engine.core.common.businessentities.storage.StorageType.GLUSTERFS;
         case GLANCE:
             return org.ovirt.engine.core.common.businessentities.storage.StorageType.GLANCE;
+        case CINDER:
+            return org.ovirt.engine.core.common.businessentities.storage.StorageType.CINDER;
         default:
             return null;
         }
@@ -348,6 +350,8 @@ public class StorageDomainMapper {
             return StorageType.GLUSTERFS.value();
         case GLANCE:
             return StorageType.GLANCE.value();
+        case CINDER:
+            return StorageType.CINDER.value();
         default:
             return null;
         }

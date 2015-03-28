@@ -23,7 +23,8 @@ public enum StorageType {
     LOCALFS,
     POSIXFS,
     GLUSTERFS,
-    GLANCE;
+    GLANCE,
+    CINDER;
 
     public String value() {
         return name().toLowerCase();
