@@ -370,6 +370,8 @@ public class StorageDomainMapper {
             return org.ovirt.engine.core.common.businessentities.StorageDomainType.ImportExport;
         case IMAGE:
             return org.ovirt.engine.core.common.businessentities.StorageDomainType.Image;
+        case VOLUME:
+            return org.ovirt.engine.core.common.businessentities.StorageDomainType.Volume;
         default:
             return null;
         }
@@ -389,6 +391,8 @@ public class StorageDomainMapper {
             return StorageDomainType.EXPORT.value();
         case Image:
             return StorageDomainType.IMAGE.value();
+        case Volume:
+            return StorageDomainType.VOLUME.value();
         case Unknown:
         default:
             return null;
