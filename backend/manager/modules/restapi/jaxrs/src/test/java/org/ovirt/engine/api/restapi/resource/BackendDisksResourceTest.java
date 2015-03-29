@@ -64,9 +64,14 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpEntityQueryExpectations(VdcQueryType.GetDiskByDiskId,
                 IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[0] },
+                new String[]{ "Id" },
+                new Object[]{ GUIDS[0] },
                 getEntity(0));
+        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[2] },
+                getStorageDomains().get(0));
         Disk model = getModel(0);
         setUpCreationExpectations(VdcActionType.AddDisk,
                 AddDiskParameters.class,
@@ -95,9 +100,14 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpEntityQueryExpectations(VdcQueryType.GetDiskByDiskId,
                 IdQueryParameters.class,
-                new String[] { "Id" },
-                new Object[] { GUIDS[0] },
+                new String[]{ "Id" },
+                new Object[]{ GUIDS[0] },
                 getEntity(0));
+        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[2] },
+                getStorageDomains().get(0));
         Disk model = getModel(0);
         model.getStorageDomains().getStorageDomains().get(0).setId(null);
         model.getStorageDomains().getStorageDomains().get(0).setName("Storage_Domain_1");
@@ -127,7 +137,7 @@ public class BackendDisksResourceTest extends AbstractBackendCollectionResourceT
         assertNull(((Disk)response.getEntity()).getCreationStatus());
     }
 
-    private Object getStorageDomains() {
+    private List getStorageDomains() {
         List<org.ovirt.engine.core.common.businessentities.StorageDomain> sds = new LinkedList<org.ovirt.engine.core.common.businessentities.StorageDomain>();
         org.ovirt.engine.core.common.businessentities.StorageDomain sd = new org.ovirt.engine.core.common.businessentities.StorageDomain();
         sd.setStorageName("Storage_Domain_1");

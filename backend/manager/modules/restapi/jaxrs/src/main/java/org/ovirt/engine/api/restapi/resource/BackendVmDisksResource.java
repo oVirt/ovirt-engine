@@ -20,6 +20,7 @@ import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
 import org.ovirt.engine.api.restapi.resource.utils.DiskResourceUtils;
+import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
@@ -63,6 +64,10 @@ public class BackendVmDisksResource
                            .build();
         }else {
             validateDiskForCreation(disk);
+            org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain = getStorageDomainById(getStorageDomainId(disk));
+            if (storageDomain != null) {
+                disk.setStorageType(DiskMapper.map(storageDomain.getStorageDomainType()).value());
+            }
             return performCreate(addAction,
                     getAddParameters(map(disk), disk),
                     getEntityIdResolver(disk.getName()));
@@ -136,16 +141,7 @@ public class BackendVmDisksResource
     @Override
     protected VdcActionParametersBase getAddParameters(org.ovirt.engine.core.common.businessentities.storage.Disk entity, Disk disk) {
         AddDiskParameters parameters = new AddDiskParameters(parentId, entity);
-        if (disk.isSetStorageDomains() && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
-            parameters.setStorageDomainId(asGuid(disk.getStorageDomains().getStorageDomains().get(0).getId()));
-        } else if (disk.isSetStorageDomains() && disk.getStorageDomains().getStorageDomains().get(0).isSetName()) {
-            Guid storageDomainId = getStorageDomainId(disk.getStorageDomains().getStorageDomains().get(0).getName());
-            if (storageDomainId == null) {
-                notFound(StorageDomain.class);
-            } else {
-                parameters.setStorageDomainId(storageDomainId);
-            }
-        }
+        parameters.setStorageDomainId(getStorageDomainId(disk));
         if (disk.isSetActive()) {
             parameters.setPlugDiskToVm(disk.isActive());
         }
@@ -155,7 +151,22 @@ public class BackendVmDisksResource
         return parameters;
     }
 
-    private Guid getStorageDomainId(String storageDomainName) {
+    private Guid getStorageDomainId(Disk disk) {
+        if (disk.isSetStorageDomains() && disk.getStorageDomains().isSetStorageDomains()
+                && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
+            return asGuid(disk.getStorageDomains().getStorageDomains().get(0).getId());
+        } else if (disk.isSetStorageDomains() && disk.getStorageDomains().getStorageDomains().get(0).isSetName()) {
+            Guid storageDomainId = getStorageDomainIdByName(disk.getStorageDomains().getStorageDomains().get(0).getName());
+            if (storageDomainId == null) {
+                notFound(StorageDomain.class);
+            } else {
+                return storageDomainId;
+            }
+        }
+        return null;
+    }
+
+    private Guid getStorageDomainIdByName(String storageDomainName) {
         List<org.ovirt.engine.core.common.businessentities.StorageDomain> storageDomains =
                 getBackendCollection(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
                         VdcQueryType.GetAllStorageDomains,
@@ -166,6 +177,10 @@ public class BackendVmDisksResource
             }
         }
         return null;
+    }
+
+    private org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomainById(Guid id) {
+        return getEntity(org.ovirt.engine.core.common.businessentities.StorageDomain.class, VdcQueryType.GetStorageDomainById, new IdQueryParameters(id), id.toString());
     }
 
     @Override

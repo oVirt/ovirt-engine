@@ -610,6 +610,7 @@
           <xs:element ref="nic_interfaces" minOccurs="0"/>
           <xs:element ref="os_types" minOccurs="0"/>
           <xs:element ref="disk_formats" minOccurs="0"/>
+          <xs:element ref="disk_storage_types" minOccurs="0"/>
           <xs:element ref="disk_interfaces" minOccurs="0"/>
           <xs:element ref="vm_affinities" minOccurs="0"/>
           <xs:element ref="custom_properties" minOccurs="0"/>
@@ -868,6 +869,20 @@
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="DiskFormats"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="disk_storage_types" type="DiskStorageTypes"/>
+
+  <xs:complexType name="DiskStorageTypes">
+    <xs:sequence>
+      <xs:element name="disk_storage_type" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="DiskStorageTypes"/>
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
@@ -3675,6 +3690,7 @@
           <xs:element ref="snapshot" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="disk_profile" minOccurs="0" maxOccurs="1"/>
           <xs:element name="logical_name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="storage_type" type="xs:string" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

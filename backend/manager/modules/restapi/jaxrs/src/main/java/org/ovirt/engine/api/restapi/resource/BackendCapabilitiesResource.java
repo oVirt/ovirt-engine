@@ -30,6 +30,8 @@ import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskInterfaces;
 import org.ovirt.engine.api.model.DiskStates;
 import org.ovirt.engine.api.model.DiskStatus;
+import org.ovirt.engine.api.model.DiskStorageType;
+import org.ovirt.engine.api.model.DiskStorageTypes;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.DisplayTypes;
 import org.ovirt.engine.api.model.FenceType;
@@ -241,6 +243,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addDisplayTypes(version, DisplayType.values());
         addNicInterfaces(version, NicInterface.values());
         addDiskFormats(version, DiskFormat.values());
+        addDiskStorageTypes(version, DiskStorageType.values());
         addDiskInterfaces(version, DiskInterface.values());
         addCustomProperties(version, getVmHooksEnvs(v));
         addVmAffinities(version, VmAffinity.values());
@@ -586,6 +589,13 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         version.setDiskFormats(new DiskFormats());
         for (DiskFormat type : types) {
             version.getDiskFormats().getDiskFormats().add(type.value());
+        }
+    }
+
+    private void addDiskStorageTypes(VersionCaps version, DiskStorageType... types) {
+        version.setDiskStorageTypes(new DiskStorageTypes());
+        for (DiskStorageType type : types) {
+            version.getDiskStorageTypes().getDiskStorageTypes().add(type.value());
         }
     }
 

@@ -12,6 +12,7 @@ import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.api.resource.MovableCopyableDiskResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.resource.utils.DiskResourceUtils;
+import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -32,22 +33,37 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
     public Response add(Disk disk) {
         validateDiskForCreation(disk);
         AddDiskParameters params = new AddDiskParameters();
-        params.setDiskInfo(getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class).map(disk, null));
-        if (disk.isSetStorageDomains() && disk.getStorageDomains().isSetStorageDomains() && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
-            params.setStorageDomainId(Guid.createGuidFromStringDefaultEmpty(disk.getStorageDomains().getStorageDomains().get(0).getId()));
-        } else if (disk.isSetStorageDomains() && disk.getStorageDomains().getStorageDomains().get(0).isSetName()) {
-            Guid storageDomainId = getStorageDomainId(disk.getStorageDomains().getStorageDomains().get(0).getName());
-            if (storageDomainId == null) {
-                notFound(StorageDomain.class);
-            } else {
-                params.setStorageDomainId(storageDomainId);
-            }
+        Guid storageDomainId = getStorageDomainId(disk);
+        params.setStorageDomainId(storageDomainId);
+        org.ovirt.engine.core.common.businessentities.StorageDomain storageDomain = getStorageDomainById(storageDomainId);
+        if (storageDomain != null) {
+            disk.setStorageType(DiskMapper.map(storageDomain.getStorageDomainType()).value());
         }
+        params.setDiskInfo(getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.storage.Disk.class).map(disk, null));
         if (disk.isSetLunStorage() && disk.getLunStorage().isSetHost()) {
             params.setVdsId(getHostId(disk.getLunStorage().getHost()));
         }
         return performCreate(VdcActionType.AddDisk, params,
                 new QueryIdResolver<Guid>(VdcQueryType.GetDiskByDiskId, IdQueryParameters.class));
+    }
+
+    private Guid getStorageDomainId(Disk disk) {
+        if (disk.isSetStorageDomains() && disk.getStorageDomains().isSetStorageDomains()
+                && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
+            return asGuid(disk.getStorageDomains().getStorageDomains().get(0).getId());
+        } else if (disk.isSetStorageDomains() && disk.getStorageDomains().getStorageDomains().get(0).isSetName()) {
+            Guid storageDomainId = getStorageDomainIdByName(disk.getStorageDomains().getStorageDomains().get(0).getName());
+            if (storageDomainId == null) {
+                notFound(StorageDomain.class);
+            } else {
+                return storageDomainId;
+            }
+        }
+        return null;
+    }
+
+    private org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomainById(Guid id) {
+        return getEntity(org.ovirt.engine.core.common.businessentities.StorageDomain.class, VdcQueryType.GetStorageDomainById, new IdQueryParameters(id), id.toString());
     }
 
     protected void validateDiskForCreation(Disk disk) {
@@ -70,7 +86,7 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
         validateEnums(Disk.class, disk);
     }
 
-    private Guid getStorageDomainId(String storageDomainName) {
+    private Guid getStorageDomainIdByName(String storageDomainName) {
         List<org.ovirt.engine.core.common.businessentities.StorageDomain> storageDomains =
                 getBackendCollection(org.ovirt.engine.core.common.businessentities.StorageDomain.class,
                         VdcQueryType.GetAllStorageDomains,

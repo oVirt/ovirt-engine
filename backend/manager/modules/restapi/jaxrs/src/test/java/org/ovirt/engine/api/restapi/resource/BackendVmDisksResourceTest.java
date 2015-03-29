@@ -182,6 +182,11 @@ public class BackendVmDisksResourceTest
 
     private void doTestAddAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus creationStatus) throws Exception {
         setUriInfo(setUpBasicUriExpectations());
+        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[2] },
+                getStorageDomain(GUIDS[2]));
         setUpCreationExpectations(VdcActionType.AddDisk,
                                   AddDiskParameters.class,
                                   new String[] { "VmId" },
@@ -259,6 +264,11 @@ public class BackendVmDisksResourceTest
                                      new String[] { "Id" },
                                      new Object[] { PARENT_ID },
                                      asList(getEntity(0)));
+        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[2] },
+                getStorageDomain(GUIDS[2]));
         setUpCreationExpectations(VdcActionType.AddDisk,
                                   AddDiskParameters.class,
                                   new String[] { "VmId", "StorageDomainId" },
@@ -301,11 +311,19 @@ public class BackendVmDisksResourceTest
                                      new String[] { "Id" },
                                      new Object[] { PARENT_ID },
                                      asList(getEntity(0)));
-        setUpEntityQueryExpectations(VdcQueryType.GetAllStorageDomains,
-                VdcQueryParametersBase.class,
-                new String[] {},
-                new Object[] {},
-                getStorageDomains());
+        int times = 2;
+        while (times-- > 0) {
+            setUpEntityQueryExpectations(VdcQueryType.GetAllStorageDomains,
+                    VdcQueryParametersBase.class,
+                    new String[] {},
+                    new Object[] {},
+                    getStorageDomains());
+        }
+        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[2] },
+                getStorageDomain(GUIDS[2]));
         setUpCreationExpectations(VdcActionType.AddDisk,
                                   AddDiskParameters.class,
                                   new String[] { "VmId", "StorageDomainId" },
@@ -317,7 +335,7 @@ public class BackendVmDisksResourceTest
                                   asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
                                   VdcQueryType.GetAllDisksByVmId,
                                   IdQueryParameters.class,
-                new String[] { "Id" },
+                                  new String[] { "Id" },
                                   new Object[] { PARENT_ID },
                                   asList(getEntity(0)));
         Disk model = getModel(0);
@@ -332,13 +350,17 @@ public class BackendVmDisksResourceTest
         assertNull(((Disk)response.getEntity()).getCreationStatus());
     }
 
-    private Object getStorageDomains() {
-        List<org.ovirt.engine.core.common.businessentities.StorageDomain> sds = new LinkedList<org.ovirt.engine.core.common.businessentities.StorageDomain>();
+    private List getStorageDomains() {
+        List<org.ovirt.engine.core.common.businessentities.StorageDomain> sds = new LinkedList<>();
+        sds.add(getStorageDomain(GUIDS[2]));
+        return sds;
+    }
+
+    private org.ovirt.engine.core.common.businessentities.StorageDomain getStorageDomain(Guid guid) {
         org.ovirt.engine.core.common.businessentities.StorageDomain sd = new org.ovirt.engine.core.common.businessentities.StorageDomain();
         sd.setStorageName("Storage_Domain_1");
-        sd.setId(GUIDS[2]);
-        sds.add(sd);
-        return sds;
+        sd.setId(guid);
+        return sd;
     }
 
     @Test
@@ -350,6 +372,11 @@ public class BackendVmDisksResourceTest
                                      new String[] { "Id" },
                                      new Object[] { PARENT_ID },
                                      asList(getEntity(0)));
+        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[3] },
+                getStorageDomain(GUIDS[3]));
         setUpCreationExpectations(VdcActionType.AddDisk,
                                   AddDiskParameters.class,
                                   new String[] { "VmId", "StorageDomainId" },
@@ -389,6 +416,11 @@ public class BackendVmDisksResourceTest
     }
 
     private void doTestBadAddDisk(boolean canDo, boolean success, String detail) throws Exception {
+        setUpEntityQueryExpectations(VdcQueryType.GetStorageDomainById,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[2] },
+                getStorageDomain(GUIDS[2]));
         setUriInfo(setUpActionExpectations(VdcActionType.AddDisk,
                                            AddDiskParameters.class,
                                            new String[] { "VmId" },

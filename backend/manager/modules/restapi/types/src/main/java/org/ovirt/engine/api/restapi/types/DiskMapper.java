@@ -8,6 +8,7 @@ import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskProfile;
 import org.ovirt.engine.api.model.DiskStatus;
+import org.ovirt.engine.api.model.DiskStorageType;
 import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.ScsiGenericIO;
 import org.ovirt.engine.api.model.Snapshot;
@@ -15,7 +16,7 @@ import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
-import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.storage.LunDisk;
@@ -32,7 +33,20 @@ public class DiskMapper {
         if (engineDisk == null) {
             if (disk.isSetLunStorage()) {
                 engineDisk = new LunDisk();
-            } else {
+            } else if (disk.getStorageType() != null) {
+                DiskStorageType diskStorageType = DiskStorageType.fromValue(disk.getStorageType());
+                if (diskStorageType != null) {
+                    switch (diskStorageType) {
+                        case CINDER:
+                            engineDisk = new CinderDisk();
+                            break;
+                        case IMAGE:
+                            engineDisk = new DiskImage();
+                            break;
+                    }
+                }
+            }
+            if (engineDisk == null) {
                 engineDisk = new DiskImage();
             }
         }
@@ -165,7 +179,9 @@ public class DiskMapper {
         model.setShareable(entity.isShareable());
         model.setDescription(entity.getDiskDescription());
         model.setLogicalName(entity.getLogicalName());
-        if (entity.getDiskStorageType() == DiskStorageType.IMAGE) {
+        model.setStorageType(map(entity.getDiskStorageType()));
+        if (entity.getDiskStorageType() == org.ovirt.engine.core.common.businessentities.storage.DiskStorageType.IMAGE ||
+                entity.getDiskStorageType() == org.ovirt.engine.core.common.businessentities.storage.DiskStorageType.CINDER) {
             mapDiskImageToDiskFields((DiskImage) entity, model);
         } else {
             model.setLunStorage(StorageLogicalUnitMapper.map(((LunDisk) entity).getLun(), new Storage()));
@@ -303,6 +319,20 @@ public class DiskMapper {
         }
     }
 
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.storage.DiskStorageType.class, to = String.class)
+    public static String map(org.ovirt.engine.core.common.businessentities.storage.DiskStorageType diskStorageType) {
+        switch (diskStorageType) {
+            case IMAGE:
+                return DiskStorageType.IMAGE.value();
+            case CINDER:
+                return DiskStorageType.CINDER.value();
+            case LUN:
+                return DiskStorageType.LUN.value();
+            default:
+                return null;
+        }
+    }
+
     @Mapping(from = DiskStatus.class, to = ImageStatus.class)
     public static ImageStatus map(DiskStatus diskStatus) {
         if (diskStatus==null) {
@@ -332,6 +362,16 @@ public class DiskMapper {
             return DiskStatus.OK;
         default:
             return null;
+        }
+    }
+
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.StorageDomainType.class, to = DiskStorageType.class)
+    public static DiskStorageType map(org.ovirt.engine.core.common.businessentities.StorageDomainType storageDomainType) {
+        switch (storageDomainType) {
+            case Volume:
+                return DiskStorageType.CINDER;
+            default:
+                return DiskStorageType.IMAGE;
         }
     }
 }
