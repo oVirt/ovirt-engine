@@ -751,10 +751,12 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public LUNListReturnForXmlRpc getDeviceList(int storageType) {
+    public LUNListReturnForXmlRpc getDeviceList(int storageType, String[] devicesList) {
+        ArrayList<String> devicesListArray =
+                devicesList != null ? new ArrayList<String>(Arrays.asList(devicesList)) : null;
         JsonRpcRequest request =
                 new RequestBuilder("Host.getDeviceList").withParameter("storageType",
-                        storageType).build();
+                        storageType).withOptionalParameterAsList("guids", devicesListArray).build();
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseType(Object[].class)
                         .withResponseKey("devList");
@@ -1313,6 +1315,7 @@ public class JsonRpcVdsServer implements IVdsServer {
                 .withParameter("remoteVolumeName", remoteVolumeName)
                 .withOptionalParameter("remoteUserName", userName)
                 .build();
+
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }
@@ -1330,6 +1333,7 @@ public class JsonRpcVdsServer implements IVdsServer {
                 .withOptionalParameter("remoteUserName", userName)
                 .withParameter("force", force)
                 .build();
+
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }
@@ -1443,6 +1447,7 @@ public class JsonRpcVdsServer implements IVdsServer {
                 .withParameter("optionName", configKey)
                 .withOptionalParameter("remoteUserName", userName)
                 .build();
+
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }

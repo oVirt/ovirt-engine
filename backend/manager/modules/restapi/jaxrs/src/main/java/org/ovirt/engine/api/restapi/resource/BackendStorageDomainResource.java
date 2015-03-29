@@ -154,6 +154,22 @@ public class BackendStorageDomainResource extends
         return Response.ok().entity(returnedStorageDomain).build();
     }
 
+    @Override
+    public Response refreshLuns(Action action) {
+        StorageDomain model = get();
+        org.ovirt.engine.api.model.StorageType storageType = org.ovirt.engine.api.model.StorageType.fromValue(model.getStorage().getType());
+        if (storageType != null) {
+            switch (storageType) {
+                case ISCSI:
+                case FCP:
+                    refreshLunSize(action);
+                    break;
+                default:
+                    break;
+            }
+        }
+        return Response.ok().entity(model).build();
+    }
 
     @Override
     public FilesResource getFilesResource() {
@@ -187,6 +203,15 @@ public class BackendStorageDomainResource extends
                         : isImageDomain(storageDomain) ? new String[] { "templates", "vms", "files", "disks",
                                 "storageconnections" }
                                 : new String[] { "files", "images" };
+    }
+
+    private void refreshLunSize(Action action) {
+        List<LogicalUnit> incomingLuns = action.getLogicalUnits().getLogicalUnits();
+        if (!incomingLuns.isEmpty()) {
+
+            ExtendSANStorageDomainParameters params = createParameters(guid, incomingLuns, false);
+            performAction(VdcActionType.RefreshLunsSize, params);
+        }
     }
 
     /**

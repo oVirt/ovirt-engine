@@ -10,12 +10,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
 import org.junit.Test;
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.LogicalUnit;
+import org.ovirt.engine.api.model.LogicalUnits;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.model.StorageType;
+import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
@@ -111,6 +116,19 @@ public class BackendStorageDomainResourceTest
         expect(entity.getStorageName()).andReturn(NAMES[0]).anyTimes();
         expect(entity.getStorageDomainType()).andReturn(org.ovirt.engine.core.common.businessentities.StorageDomainType.Data).anyTimes();
         expect(entity.getStorageType()).andReturn(org.ovirt.engine.core.common.businessentities.storage.StorageType.FCP).anyTimes();
+        expect(entity.getStorage()).andReturn(GUIDS[0].toString()).anyTimes();
+        return entity;
+    }
+
+    private org.ovirt.engine.core.common.businessentities.StorageDomain getIscsiEntity() {
+        org.ovirt.engine.core.common.businessentities.StorageDomain entity =
+                control.createMock(org.ovirt.engine.core.common.businessentities.StorageDomain.class);
+        expect(entity.getId()).andReturn(GUIDS[0]).anyTimes();
+        expect(entity.getStorageName()).andReturn(NAMES[0]).anyTimes();
+        expect(entity.getStorageDomainType()).andReturn(org.ovirt.engine.core.common.businessentities.StorageDomainType.Data)
+                .anyTimes();
+        expect(entity.getStorageType()).andReturn(org.ovirt.engine.core.common.businessentities.storage.StorageType.ISCSI)
+                .anyTimes();
         expect(entity.getStorage()).andReturn(GUIDS[0].toString()).anyTimes();
         return entity;
     }
@@ -360,5 +378,40 @@ public class BackendStorageDomainResourceTest
         vds.setId(GUIDS[index]);
         vds.setName(NAMES[index]);
         return vds;
+    }
+
+    @Test
+    public void testRefreshLunsSize() throws Exception {
+        setUpGetEntityExpectations(1, getIscsiEntity());
+        setUpGetEntityExpectations(VdcQueryType.GetLunsByVgId,
+                GetLunsByVgIdParameters.class,
+                new String[] { "VgId" },
+                new Object[] { GUIDS[0].toString() },
+                setUpLuns());
+
+        List<String> lunsArray = new ArrayList();
+        lunsArray.add(GUIDS[2].toString());
+        setUriInfo(setUpActionExpectations(VdcActionType.RefreshLunsSize,
+                ExtendSANStorageDomainParameters.class,
+                new String[]{"LunIds"},
+                new Object[]{lunsArray},
+                true,
+                true));
+
+        Action action = new Action();
+        LogicalUnits luns= new LogicalUnits();
+        LogicalUnit lun = new LogicalUnit();
+        lun.setId(GUIDS[2].toString());
+        luns.getLogicalUnits().add(lun);
+        action.setLogicalUnits(luns);
+        Response response = resource.refreshLuns(action);
+        assertEquals("unexpected status", 200, response.getStatus());
+        verifyModelResponse(((StorageDomain) response.getEntity()), 0);
+    }
+
+    protected void verifyModelResponse(StorageDomain model, int index) {
+        assertNotNull(model);
+        assertEquals(GUIDS[index].toString(), model.getId());
+        verifyLinks(model);
     }
 }

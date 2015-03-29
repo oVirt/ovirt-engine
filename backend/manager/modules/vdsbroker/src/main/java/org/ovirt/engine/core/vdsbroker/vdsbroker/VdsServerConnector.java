@@ -127,6 +127,8 @@ public interface VdsServerConnector {
 
     public Map<String, Object> getVGInfo(String vgUUID);
 
+    public Map<String, Object> getDeviceList(int storageType, String[] devicesList);
+
     public Map<String, Object> getDeviceList(int storageType);
 
     public Map<String, Object> getDevicesVisibility(String[] devicesList);

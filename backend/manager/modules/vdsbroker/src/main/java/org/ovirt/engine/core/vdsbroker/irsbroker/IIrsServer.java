@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
+import org.ovirt.engine.core.vdsbroker.vdsbroker.ResizeStorageDomainPVMapReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StorageDomainListReturnForXmlRpc;
 
@@ -60,6 +61,8 @@ public interface IIrsServer {
     StatusOnlyReturnForXmlRpc extendStorageDomain(String sdUUID, String spUUID, String[] devlist);
 
     StatusOnlyReturnForXmlRpc extendStorageDomain(String sdUUID, String spUUID, String[] devlist, boolean force);
+
+    ResizeStorageDomainPVMapReturnForXmlRpc resizeStorageDomainPV(String sdUUID, String spUUID, String device);
 
     StoragePoolInfoReturnForXmlRpc getStoragePoolInfo(String spUUID);
 

@@ -99,6 +99,7 @@ public class FeaturesHelper {
             addCumulativeNetworkUsageFeature(features);
             addGuestMemoryBufferedCached(features);
             addOpenStackVolumeProvidersFeature(features);
+            addRefreshLunSize(features);
         }
         return features;
     }
@@ -566,6 +567,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("OpenStack Volume Providers");
         feature.setDescription("Add/modify/remove OpenStack volume providers.");
+        features.getFeature().add(feature);
+    }
+
+    private void addRefreshLunSize(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Refresh LUNs Size");
+        feature.setDescription("Refresh the LUN size in order to reflect an increase in the size of a storage domain");
         features.getFeature().add(feature);
     }
 }

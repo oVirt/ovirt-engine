@@ -2215,6 +2215,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     VmStatsEventsSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    RefreshLunSupported,
+
     Invalid
 
 }

@@ -68,6 +68,8 @@ public interface IrsServerConnector {
 
     public Map<String, Object> extendStorageDomain(String sdUUID, String spUUID, String[] devlist, boolean force);
 
+    public Map<String, Object> resizePV(String sdUUID, String spUUID, String device);
+
     public Map<String, Object> getStoragePoolInfo(String spUUID);
 
     public Map<String, Object> destroyStoragePool(String spUUID, int hostSpmId, String SCSIKey);

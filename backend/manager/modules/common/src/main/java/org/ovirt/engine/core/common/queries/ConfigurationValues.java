@@ -168,7 +168,8 @@ public enum ConfigurationValues {
     CinderProviderSupported,
     NetworkSriovSupported,
     HostDevicePassthroughCapabilities,
-    LiveStorageMigrationBetweenDifferentStorageTypes;
+    LiveStorageMigrationBetweenDifferentStorageTypes,
+    RefreshLunSupported;
 
     public static enum ConfigAuthType {
         Admin,

@@ -1061,6 +1061,19 @@ actions:
       - mandatoryArguments: {action.host.id: 'xs:string'}
         optionalArguments: {}
         description:
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+- name: /storagedomains/{storagedomain:id}/refreshluns|rel=refreshluns
+  description: Refresh the size of the provided LUNs
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {action.logical_units.logical_unit--COLLECTION: {logical_unit.id: 'xs:string'}}
+        optionalArguments: {}
+        description:
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
 - name: /storagedomains/{storagedomain:id}|rel=update
   description: update the storage domain
   request:

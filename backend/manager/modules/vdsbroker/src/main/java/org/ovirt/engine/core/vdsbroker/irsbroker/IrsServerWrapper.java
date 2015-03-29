@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 import java.util.Map;
 
 import org.apache.commons.httpclient.HttpClient;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.ResizeStorageDomainPVMapReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StorageDomainListReturnForXmlRpc;
 
@@ -192,6 +193,13 @@ public class IrsServerWrapper implements IIrsServer {
     public StatusOnlyReturnForXmlRpc extendStorageDomain(String sdUUID, String spUUID, String[] devlist, boolean force) {
         Map<String, Object> xmlRpcReturnValue = irsServer.extendStorageDomain(sdUUID, spUUID, devlist, force);
         StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
+        return wrapper;
+    }
+
+    @Override
+    public ResizeStorageDomainPVMapReturnForXmlRpc resizeStorageDomainPV(String sdUUID, String spUUID, String device){
+        Map<String, Object> xmlRpcReturnValue = irsServer.resizePV(sdUUID, spUUID, device);
+        ResizeStorageDomainPVMapReturnForXmlRpc wrapper = new ResizeStorageDomainPVMapReturnForXmlRpc(xmlRpcReturnValue);
         return wrapper;
     }
 

@@ -35,7 +35,7 @@ import org.ovirt.engine.api.model.VMs;
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface StorageDomainResource extends UpdatableResource<StorageDomain> {
 
-    @Path("{action: (isattached)}/{oid}")
+    @Path("{action: (isattached|refreshluns)}/{oid}")
     public ActionResource getActionSubresource(@PathParam("action")String action, @PathParam("oid")String oid);
 
     @Path("permissions")
@@ -74,4 +74,10 @@ public interface StorageDomainResource extends UpdatableResource<StorageDomain> 
     @DELETE
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
     public Response remove(StorageDomain storageDomain);
+
+    @POST
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Actionable
+    @Path("refreshluns")
+    public Response refreshLuns(Action action);
 }

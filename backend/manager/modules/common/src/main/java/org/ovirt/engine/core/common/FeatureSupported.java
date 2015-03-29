@@ -580,4 +580,13 @@ public class FeatureSupported {
     public static boolean dataCenterWithoutSpm(Version version) {
         return supportedInConfig(ConfigValues.DataCenterWithoutSpm, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if Refresh LUN is supported for the given version
+     */
+    public static boolean refreshLunSupported(Version version) {
+        return supportedInConfig(ConfigValues.RefreshLunSupported, version);
+    }
 }

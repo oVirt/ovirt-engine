@@ -306,6 +306,7 @@ public enum VdcBllErrors {
     LogicalVolumeWrongTagError(612),
     VG_METADATA_CRITICALLY_FULL(613),
     SMALL_VG_METADATA(614),
+    CouldNotResizePhysicalVolume(615),
     SpmStartError(650),
     AcquireLockFailure(651),
     SpmParamsMismatch(652),
@@ -487,6 +488,7 @@ public enum VdcBllErrors {
     PROVIDER_PROVISION_MISSING_HOSTGROUP(5057),
     PROVIDER_PROVISION_MISSING_COMPUTERESOURCE(5058),
     PROVIDER_IMPORT_CERTIFICATE_ERROR(5059),
+    REFRESH_LUN_ERROR(5060),
 
     // Network Labels
     LABELED_NETWORK_INTERFACE_NOT_FOUND(5200),

@@ -14,6 +14,7 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StorageStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.UUIDListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.ResizeStorageDomainPVMapReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StorageDomainListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.VolumeListReturnForXmlRpc;
@@ -364,6 +365,18 @@ public class JsonRpcIIrsServer implements IIrsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
+    }
+
+    @Override
+    public ResizeStorageDomainPVMapReturnForXmlRpc resizeStorageDomainPV(String sdUUID, String spUUID, String device) {
+        JsonRpcRequest request =
+                new RequestBuilder("StorageDomain.resizePV").withParameter("storagedomainID", sdUUID)
+                        .withParameter("storagepoolID", spUUID)
+                        .withParameter("guid", device)
+                        .build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request).withResponseKey("size");
+        return new ResizeStorageDomainPVMapReturnForXmlRpc(response);
     }
 
     @Override

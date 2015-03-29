@@ -263,6 +263,7 @@ public enum VdcActionType {
     ReconstructMasterDomain(913, QuotaDependency.NONE),
     DeactivateStorageDomainWithOvfUpdate(914, ActionGroup.MANIPULATE_STORAGE_DOMAIN, QuotaDependency.NONE),
     RecoveryStoragePool(915, ActionGroup.CREATE_STORAGE_POOL, QuotaDependency.NONE),
+    RefreshLunsSize(917, ActionGroup.EDIT_STORAGE_DOMAIN_CONFIGURATION, QuotaDependency.NONE),
     AddEmptyStoragePool(950, ActionGroup.CREATE_STORAGE_POOL, false, QuotaDependency.NONE),
     AddStoragePoolWithStorages(951, ActionGroup.CREATE_STORAGE_POOL, QuotaDependency.NONE),
     RemoveStoragePool(957, ActionGroup.DELETE_STORAGE_POOL, QuotaDependency.NONE),

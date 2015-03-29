@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -27,6 +28,7 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
     protected static final String DEVICE_ACTIVE_VALUE = "active";
     protected static final String DEVICE_STATE_FIELD = "state";
     protected static final String PHYSICAL_DEVICE_FIELD = "physdev";
+    protected static final String DEVICE_PATH_CAPACITY_FIELD = "capacity";
 
     private LUNListReturnForXmlRpc _result;
 
@@ -37,7 +39,9 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
     @Override
     protected void executeVdsBrokerCommand() {
         int storageType = getParameters().getStorageType().getValue();
-        _result = getBroker().getDeviceList(storageType);
+        List<String> lunsIdList = getParameters().getLunIds();
+        String[] lunsIdArray = lunsIdList != null ? lunsIdList.toArray(new String[lunsIdList.size()]) : null;
+        _result = getBroker().getDeviceList(storageType, lunsIdArray);
 
         proceedProxyReturnValue();
         setReturnValue(parseLUNList(_result.lunList));
@@ -75,6 +79,7 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
             Map<String, Object>[] pathStatus = null;
             if (temp != null) {
                 lun.setPathsDictionary(new HashMap<String, Boolean>());
+                lun.setPathsCapacity(new HashMap<String, Integer>());
                 pathStatus = new Map[temp.length];
                 for (int i = 0; i < temp.length; i++) {
                     pathStatus[i] = (Map<String, Object>) temp[i];
@@ -90,6 +95,14 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
                         lun.getPathsDictionary()
                                 .put(xcon.get(PHYSICAL_DEVICE_FIELD).toString(),
                                         DEVICE_ACTIVE_VALUE.equals(xcon.get(DEVICE_STATE_FIELD).toString()));
+                    }
+                    if (xcon.containsKey(PHYSICAL_DEVICE_FIELD) && xcon.containsKey(DEVICE_PATH_CAPACITY_FIELD)) {
+                        // set name and capacity
+                        Long size = IrsBrokerCommand.assignLongValue(xcon, DEVICE_PATH_CAPACITY_FIELD);
+                        lun.getPathsCapacity()
+                                .put(xcon.get(PHYSICAL_DEVICE_FIELD).toString(),
+                                        SizeConverter.convert(size,
+                                                SizeConverter.SizeUnit.BYTES, SizeConverter.SizeUnit.GiB).intValue());
                     }
                 }
             }
@@ -120,6 +133,12 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
         }
         if (size != null) {
             lun.setDeviceSize((int) (size / SizeConverter.BYTES_IN_GB));
+        }
+        if(xlun.containsKey("pvsize")){
+            Long pvSize = IrsBrokerCommand.assignLongValue(xlun, "pvsize");
+            if(pvSize!=null)
+                lun.setPvSize(SizeConverter.convert(pvSize,
+                        SizeConverter.SizeUnit.BYTES, SizeConverter.SizeUnit.GiB).intValue());
         }
         if (xlun.containsKey("vendorID")) {
             lun.setVendorName(xlun.get("vendorID").toString());

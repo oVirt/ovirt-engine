@@ -211,6 +211,8 @@
       <xs:element ref="disk" minOccurs="0" maxOccurs="1"/>
       <!-- For host maintenance (deactivate) -->
       <xs:element name="reason" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <!-- For storage domain refresh LUNs -->
+      <xs:element ref="logical_units" minOccurs="0"/>
     </xs:sequence>
   </xs:group>
 
@@ -2720,12 +2722,28 @@
   </xs:group>
 
   <xs:element name="logical_unit" type="LogicalUnit"/>
+  <xs:element name="logical_units" type="LogicalUnits" />
 
   <xs:complexType name="LogicalUnit">
     <xs:sequence>
       <xs:group ref="IscsiTarget"/>
     </xs:sequence>
     <xs:attribute name="id" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="LogicalUnits">
+      <xs:complexContent>
+          <xs:extension base="BaseResources">
+              <xs:sequence>
+                  <xs:annotation>
+                      <xs:appinfo>
+                          <jaxb:property name="LogicalUnits"/>
+                      </xs:appinfo>
+                  </xs:annotation>
+                  <xs:element ref="logical_unit" minOccurs="0" maxOccurs="unbounded"/>
+              </xs:sequence>
+          </xs:extension>
+      </xs:complexContent>
   </xs:complexType>
 
   <xs:element name="volume_group" type="VolumeGroup"/>

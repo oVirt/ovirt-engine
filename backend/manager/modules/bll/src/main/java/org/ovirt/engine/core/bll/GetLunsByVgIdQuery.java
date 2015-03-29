@@ -47,6 +47,8 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
             LUNs lunFromDeviceList = lunsFromDeviceMap.get(lun.getLUN_id());
             if (lunFromDeviceList != null) {
                 lun.setPathsDictionary(lunFromDeviceList.getPathsDictionary());
+                lun.setPathsCapacity(lunFromDeviceList.getPathsCapacity());
+                lun.setPvSize(lunFromDeviceList.getPvSize());
             }
         }
 

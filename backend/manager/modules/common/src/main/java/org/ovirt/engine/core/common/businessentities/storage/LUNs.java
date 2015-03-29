@@ -40,9 +40,13 @@ public class LUNs implements BusinessEntity<String> {
 
     private int deviceSize;
 
+    private int pvSize;
+
     private String vendorName;
 
     private HashMap<String, Boolean> pathsDictionary;
+
+    private HashMap<String, Integer> pathsCapacity;
 
     private StorageType lunType;
 
@@ -78,8 +82,10 @@ public class LUNs implements BusinessEntity<String> {
         result = prime * result + ((lunMapping == null) ? 0 : lunMapping.hashCode());
         result = prime * result + ((physicalVolumeId == null) ? 0 : physicalVolumeId.hashCode());
         result = prime * result + deviceSize;
+        result = prime * result + pvSize;
         result = prime * result + ((lunType == null) ? 0 : lunType.hashCode());
         result = prime * result + ((pathsDictionary == null) ? 0 : pathsDictionary.hashCode());
+        result = prime * result + ((pathsCapacity == null) ? 0 : pathsCapacity.hashCode());
         result = prime * result + ((vendorName == null) ? 0 : vendorName.hashCode());
         result = prime * result + ((productId == null) ? 0 : productId.hashCode());
         result = prime * result + ((serial == null) ? 0 : serial.hashCode());
@@ -110,8 +116,10 @@ public class LUNs implements BusinessEntity<String> {
                 && ObjectUtils.objectsEqual(lunMapping, other.lunMapping)
                 && ObjectUtils.objectsEqual(physicalVolumeId, other.physicalVolumeId)
                 && deviceSize == other.deviceSize
+                && pvSize == other.pvSize
                 && lunType == other.lunType
                 && ObjectUtils.objectsEqual(pathsDictionary, other.pathsDictionary)
+                && ObjectUtils.objectsEqual(pathsCapacity, other.pathsCapacity)
                 && ObjectUtils.objectsEqual(vendorName, other.vendorName)
                 && ObjectUtils.objectsEqual(productId, other.productId)
                 && ObjectUtils.objectsEqual(serial, other.serial)
@@ -196,6 +204,14 @@ public class LUNs implements BusinessEntity<String> {
         deviceSize = value;
     }
 
+    public int getPvSize() {
+        return pvSize;
+    }
+
+    public void setPvSize(int value) {
+        pvSize = value;
+    }
+
     public String getVendorName() {
         return vendorName;
     }
@@ -224,6 +240,15 @@ public class LUNs implements BusinessEntity<String> {
 
     public void setPathsDictionary(HashMap<String, Boolean> value) {
         pathsDictionary = value;
+    }
+
+
+    public HashMap<String, Integer> getPathsCapacity() {
+        return pathsCapacity;
+    }
+
+    public void setPathsCapacity(HashMap<String, Integer> value) {
+        pathsCapacity = value;
     }
 
     public StorageType getLunType() {
@@ -300,8 +325,10 @@ public class LUNs implements BusinessEntity<String> {
                 .append("productId", getProductId())
                 .append("lunConnections", getLunConnections())
                 .append("deviceSize", getDeviceSize())
+                .append("pvSize", getPvSize())
                 .append("vendorName", getVendorName())
                 .append("pathsDictionary", getPathsDictionary())
+                .append("pathsCapacity", getPathsCapacity())
                 .append("lunType", getLunType())
                 .append("status", getStatus())
                 .append("diskId", getDiskId())

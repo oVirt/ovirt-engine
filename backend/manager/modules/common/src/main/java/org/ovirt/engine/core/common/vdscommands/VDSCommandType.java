@@ -109,6 +109,7 @@ public enum VDSCommandType {
     ResetISOPath("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     MarkPoolInReconstructMode("org.ovirt.engine.core.vdsbroker.irsbroker"),
     ExtendStorageDomain("org.ovirt.engine.core.vdsbroker.irsbroker"),
+    ResizeStorageDomainPV("org.ovirt.engine.core.vdsbroker.irsbroker"),
     HotPlugDisk("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     HotUnPlugDisk("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     HotPlugNic("org.ovirt.engine.core.vdsbroker.vdsbroker"),
