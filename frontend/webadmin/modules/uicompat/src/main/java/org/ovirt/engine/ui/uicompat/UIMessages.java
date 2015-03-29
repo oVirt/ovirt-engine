@@ -83,7 +83,7 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Name (with suffix) can contain only alphanumeric, '.', '_' or '-' characters. Maximum length: {0}.")
     String newNameWithSuffixCannotContainBlankOrSpecialChars(int maxLen);
 
-    @DefaultMessage("Import process has begun for VM(s): {0}.\nYou can check import status in the main ''Events'' tab")
+    @DefaultMessage("Import process has begun for VM(s): {0}.\nYou can check import status in the main ''Events'' tab or in the ''Events'' or ''Tasks'' tabs in the footer pane.")
     String importProcessHasBegunForVms(String importedVms);
 
     @DefaultMessage("''{0}'' Storage Domain is not active. Please activate it.")
