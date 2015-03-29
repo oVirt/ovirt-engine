@@ -97,7 +97,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
 
         Disk diskInfo = getParameters().getDiskInfo();
-        if (diskInfo.getDiskStorageType() == DiskStorageType.IMAGE) {
+        if (diskInfo.getDiskStorageType() == DiskStorageType.IMAGE ||
+                diskInfo.getDiskStorageType() == DiskStorageType.CINDER) {
             getDiskImageInfo().setDiskSnapshot(false);
         }
 
