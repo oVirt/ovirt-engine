@@ -3304,6 +3304,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Geo-replication session is paused.")
     String ACTION_TYPE_FAILED_GEOREP_SESSION_ALREADY_PAUSED();
+
     @DefaultStringValue("Cannot ${action} ${type}. Cannot set the configuration.")
     String ACTION_TYPE_FAILED_GLUSTER_GEOREP_CONFIG_SET();
 
@@ -3612,6 +3613,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Preferred NUMA tune mode is allowed for a single pinned Virtual NUMA Node.")
     String VM_NUMA_NODE_PREFERRED_NOT_PINNED_TO_SINGLE_NODE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Assigned ${numaNodes} NUMA nodes for ${cpus} CPU cores. Cannot assign more NUMA nodes than CPU cores.")
+    String VM_NUMA_NODE_MORE_NODES_THAN_CPUS();
 
     @DefaultStringValue("$detailMessage it is not a Hosted Engine host.")
     String VAR__DETAIL__NOT_HE_HOST();

@@ -428,6 +428,7 @@ public enum VdcBllMessages {
     VM_NUMA_NODE_PINNED_INDEX_ERROR(ErrorType.BAD_PARAMETERS),
     VM_NUMA_NODE_MEMRORY_ERROR(ErrorType.BAD_PARAMETERS),
     VM_NUMA_NODE_PREFERRED_NOT_PINNED_TO_SINGLE_NODE(ErrorType.BAD_PARAMETERS),
+    VM_NUMA_NODE_MORE_NODES_THAN_CPUS(ErrorType.BAD_PARAMETERS),
     CANNOT_PREVIEW_ACTIVE_SNAPSHOT(ErrorType.BAD_PARAMETERS),
     VM_CANNOT_SUSPENDE_HAS_RUNNING_TASKS(ErrorType.CONFLICT),
     VM_CANNOT_REMOVE_HAS_RUNNING_TASKS(ErrorType.CONFLICT),
@@ -1238,7 +1239,7 @@ public enum VdcBllMessages {
 
     private ErrorType messageType;
 
-            VdcBllMessages() {
+    VdcBllMessages() {
         this.messageType = null;
     }
 

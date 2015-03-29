@@ -705,6 +705,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 getVmId()))) {
             return false;
         }
+        if (getParameters().getVm().getMigrationSupport() == MigrationSupport.PINNED_TO_HOST &&
+                !validate(VmHandler.checkVmNumaNodesIntegrity(getParameters().getVm(),
+                        getVm(),
+                        getParameters().isUpdateNuma()))) {
+            return false;
+        }
 
         if (getParameters().getVmLargeIcon() != null && !validate(IconValidator.validate(
                 IconValidator.DimensionsType.LARGE_CUSTOM_ICON,
