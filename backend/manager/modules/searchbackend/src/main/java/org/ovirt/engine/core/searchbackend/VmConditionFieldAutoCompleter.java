@@ -39,6 +39,9 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
     public static final String ID = "ID";
     public static final String DESCRIPTION = "DESCRIPTION";
     public static final String ARCHITECTURE = "ARCHITECTURE";
+    public static final String CUSTOM_EMULATED_MACHINE = "CUSTOM_EMULATED_MACHINE";
+    public static final String CUSTOM_CPU_TYPE = "CUSTOM_CPU_TYPE";
+    public static final String COMPATIBILITY_LEVEL = "COMPATIBILITY_LEVEL";
     private static final int MILISECOND = 1000;
 
     public VmConditionFieldAutoCompleter() {
@@ -69,6 +72,9 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         mVerbs.add(ID);
         mVerbs.add(DESCRIPTION);
         mVerbs.add(ARCHITECTURE);
+        mVerbs.add(CUSTOM_EMULATED_MACHINE);
+        mVerbs.add(CUSTOM_CPU_TYPE);
+        mVerbs.add(COMPATIBILITY_LEVEL);
         // Building the autoCompletion Dict
         buildCompletions();
 
@@ -99,6 +105,9 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         getTypeDictionary().put(ID, UUID.class);
         getTypeDictionary().put(DESCRIPTION, String.class);
         getTypeDictionary().put(ARCHITECTURE, ArchitectureType.class);
+        getTypeDictionary().put(CUSTOM_EMULATED_MACHINE, String.class);
+        getTypeDictionary().put(CUSTOM_CPU_TYPE, String.class);
+        getTypeDictionary().put(COMPATIBILITY_LEVEL, String.class);
 
         // building the ColumnName Dict
         columnNameDict.put(NAME, "vm_name");
@@ -128,6 +137,9 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put(ID, "vm_guid");
         columnNameDict.put(DESCRIPTION, "description");
         columnNameDict.put(ARCHITECTURE, "architecture");
+        columnNameDict.put(CUSTOM_EMULATED_MACHINE, "custom_emulated_machine");
+        columnNameDict.put(CUSTOM_CPU_TYPE, "custom_cpu_name");
+        columnNameDict.put(COMPATIBILITY_LEVEL, "vds_group_compatibility_version");
 
         // Override field names for purpose of sorting, if needed
         sortableFieldDict.put(IP, "vm_ip_inet_array");
