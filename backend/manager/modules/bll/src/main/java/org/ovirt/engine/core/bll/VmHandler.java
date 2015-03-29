@@ -873,8 +873,52 @@ public class VmHandler {
     }
 
     /**
-     * preferred supports single pinned vnuma node (without that VM fails to run in libvirt).
-     * used by add/update VM commands
+     * Cannot have more vm NUMA nodes than vm CPU core
+     *
+     * @param isNumaChanged
+     */
+    public static ValidationResult checkVmNumaNodesIntegrity(VM paramsVm, VM actualVm, boolean isNumaChanged) {
+        /* calculate the actual NUMA nodes */
+        List<VmNumaNode> paramVmNumaNodes = paramsVm.getvNumaNodeList();
+        boolean emptyParamVmNumaNodes = (paramVmNumaNodes == null) || (paramVmNumaNodes.isEmpty());
+        /* origVmNumaNodes = NUMA nodes list prior to update. */
+        List<VmNumaNode> origVmNumaNodes =
+                DbFacade.getInstance().getVmNumaNodeDAO().getAllVmNumaNodeByVmId(actualVm.getId());
+        boolean emptyOrigVmNumaNodes = (origVmNumaNodes == null) || (origVmNumaNodes.isEmpty());
+
+        int NUMAnodesCount = 0;
+
+        /* return valid if no NUMA nodes */
+        if (emptyParamVmNumaNodes && emptyOrigVmNumaNodes) {
+            return ValidationResult.VALID;
+        }
+        /* if no NUMA nodes in parameters, but there are NUMA nodes in previous vm */
+        if (emptyParamVmNumaNodes && !emptyOrigVmNumaNodes) {
+            /* REST-api always provide emptyParamVmNumaNodes */
+            /* REST-api modifies NUMA nodes via: addVmNumaNodeCommand/updateVmNumaNodeCommand */
+            /* count NUMA nodes in previous vm, by default */
+            NUMAnodesCount = origVmNumaNodes.size();
+            /* if GUI update to reset NUMA nodes */
+            if (isNumaChanged == true)
+                return ValidationResult.VALID; // no NUMA nodes.
+        }
+        if (!emptyParamVmNumaNodes) {// An update to NUMA nodes
+            NUMAnodesCount = paramVmNumaNodes.size();
+        }
+
+        int cpuCount = paramsVm.getNumOfCpus(); // REST-api assigns cpuCount to parameters.
+        if (cpuCount < NUMAnodesCount) {
+            return new ValidationResult(VdcBllMessages.VM_NUMA_NODE_MORE_NODES_THAN_CPUS,
+                    String.format("$numaNodes %d", NUMAnodesCount),
+                    String.format("$cpus %d", cpuCount));
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    /**
+     * preferred supports single pinned vnuma node (without that VM fails to run in libvirt). used by add/update VM
+     * commands
      */
     public static ValidationResult checkNumaPreferredTuneMode(NumaTuneMode numaTuneMode,
             List<VmNumaNode> vmNumaNodes,

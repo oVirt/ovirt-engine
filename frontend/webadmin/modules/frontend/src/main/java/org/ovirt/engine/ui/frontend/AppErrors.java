@@ -3294,6 +3294,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Preferred NUMA tune mode is allowed for a single pinned Virtual NUMA Node.")
     String VM_NUMA_NODE_PREFERRED_NOT_PINNED_TO_SINGLE_NODE();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Assigned ${numaNodes} NUMA nodes for ${cpus} CPU cores. Cannot assign more NUMA nodes than CPU cores.")
+    String VM_NUMA_NODE_MORE_NODES_THAN_CPUS();
+
     @DefaultStringValue("$detailMessage it is not a Hosted Engine host.")
     String VAR__DETAIL__NOT_HE_HOST();
 
