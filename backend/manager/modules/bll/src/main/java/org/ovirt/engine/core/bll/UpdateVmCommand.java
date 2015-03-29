@@ -635,6 +635,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 getVmId()))) {
             return false;
         }
+        if (getParameters().getVm().getMigrationSupport() == MigrationSupport.PINNED_TO_HOST &&
+                !validate(VmHandler.checkVmNumaNodesIntegrity(getParameters().getVm(),
+                        getVm(),
+                        getParameters().isUpdateNuma()))) {
+            return false;
+        }
 
         return true;
     }
