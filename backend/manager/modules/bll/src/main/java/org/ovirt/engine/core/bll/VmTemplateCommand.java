@@ -83,6 +83,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
             returnValue = res.isValid();
             if (!returnValue) {
                 reasons.add(res.getMessage().toString());
+                reasons.addAll(res.getVariableReplacements());
             }
         }
         if (returnValue && checkImagesExists) {
