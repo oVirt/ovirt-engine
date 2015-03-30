@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.ovirt.engine</groupId>
   <artifactId>root</artifactId>
-  <version>3.5.2-SNAPSHOT</version>
+  <version>3.5.2</version>
   <packaging>pom</packaging>
   <name>ovirt-root</name>
   <description>oVirt Engine Root Project</description>
@@ -73,7 +73,7 @@
     <sshd-core.version>0.11.0</sshd-core.version>
     <otopi.version>1.2.0</otopi.version>
     <ovirt-host-deploy.version>1.3.0</ovirt-host-deploy.version>
-    <org.ovirt.engine.api.ovirt-engine-extensions-api.version>0.0.0-SNAPSHOT</org.ovirt.engine.api.ovirt-engine-extensions-api.version>
+    <org.ovirt.engine.api.ovirt-engine-extensions-api.version>0.0.0</org.ovirt.engine.api.ovirt-engine-extensions-api.version>
     <slf4j.version>1.7.5</slf4j.version>
     <slf4j-jdk14.version>1.5.6</slf4j-jdk14.version>
     <vdsm-jsonrpc-java.version>1.0.15</vdsm-jsonrpc-java.version>
@@ -611,7 +611,7 @@
         <plugin>
           <groupId>org.ovirt.engine</groupId>
           <artifactId>jboss-modules-maven-plugin</artifactId>
-          <version>1.1-SNAPSHOT</version>
+          <version>1.1</version>
           <executions>
             <execution>
               <phase>package</phase>
