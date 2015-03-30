@@ -239,6 +239,10 @@ public class FutureMap implements Map<String, Object> {
         return this.responseMap.get(key);
     }
 
+    public boolean isRequestCompleted() {
+        return response.isDone() || response.isCancelled();
+    }
+
     @Override
     public Object remove(Object key) {
         lazyEval();
