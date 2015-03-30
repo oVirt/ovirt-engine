@@ -75,6 +75,9 @@ public class ApplicationModeHelper {
 
         for (SystemTreeItemModel systemTreeItemModel : list) {
             systemItem.getChildren().remove(systemTreeItemModel);
+            if(systemTreeItemModel.getChildren() != null && !systemItem.getChildren().containsAll(systemTreeItemModel.getChildren())) {
+                systemItem.getChildren().addAll(systemTreeItemModel.getChildren());
+            }
         }
         return !((systemItem.getApplicationMode().getValue() & getUiMode().getValue()) > 0);
     }
