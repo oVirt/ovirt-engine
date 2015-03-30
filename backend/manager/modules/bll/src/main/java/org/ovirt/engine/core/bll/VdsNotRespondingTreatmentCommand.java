@@ -126,10 +126,12 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
                 return;
             }
 
-            // proceed with non responding treatment only if PM action are allowed
-            if (!MonitoringStrategyFactory.getMonitoringStrategyForVds(getVds()).isPowerManagementSupported()) {
+            // proceed with non responding treatment only if PM action are allowed and PM enabled for host
+            if (!MonitoringStrategyFactory.getMonitoringStrategyForVds(getVds()).isPowerManagementSupported()
+                    || !getVds().isPmEnabled()) {
                 setSucceeded(false);
                 setCommandShouldBeLogged(false);
+                return;
             }
 
             retVal = runInternalAction(VdcActionType.VdsKdumpDetection,
