@@ -1,4 +1,11 @@
 #
+# Package information
+#
+PACKAGE_NAME="@PACKAGE_NAME@"
+PACKAGE_VERSION="@PACKAGE_VERSION@"
+PACKAGE_DISPLAY_VERSION="@DISPLAY_VERSION@"
+
+#
 # This is a default configuration file for oVirt/RHEV-M websockets proxy
 #
 PROXY_HOST=*

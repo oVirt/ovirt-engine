@@ -3,6 +3,13 @@
 #
 
 #
+# Package information
+#
+PACKAGE_NAME="@PACKAGE_NAME@"
+PACKAGE_VERSION="@PACKAGE_VERSION@"
+PACKAGE_DISPLAY_VERSION="@DISPLAY_VERSION@"
+
+#
 # Defines the IP address to receive fence_kdump messages on
 #
 # WARNING: If it's changed to specific address, please make sure the new

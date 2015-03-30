@@ -7,6 +7,13 @@
 #
 
 #
+# Package information
+#
+PACKAGE_NAME="@PACKAGE_NAME@"
+PACKAGE_VERSION="@PACKAGE_VERSION@"
+PACKAGE_DISPLAY_VERSION="@DISPLAY_VERSION@"
+
+#
 # Comma separated list of keys
 # not to be logged.
 #
