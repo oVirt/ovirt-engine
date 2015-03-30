@@ -79,6 +79,7 @@ import org.ovirt.engine.api.model.OpenStackNetwork;
 import org.ovirt.engine.api.model.OpenStackNetworkProvider;
 import org.ovirt.engine.api.model.OpenStackSubnet;
 import org.ovirt.engine.api.model.OpenStackVolumeProvider;
+import org.ovirt.engine.api.model.OpenStackVolumeType;
 import org.ovirt.engine.api.model.OperatingSystemInfo;
 import org.ovirt.engine.api.model.Parameter;
 import org.ovirt.engine.api.model.ParametersSet;
@@ -267,6 +268,8 @@ import org.ovirt.engine.api.resource.openstack.OpenStackSubnetResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackSubnetsResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProviderResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProvidersResource;
+import org.ovirt.engine.api.resource.openstack.OpenStackVolumeTypeResource;
+import org.ovirt.engine.api.resource.openstack.OpenStackVolumeTypesResource;
 
 /**
  * Contains a static addLinks() method which constructs any href attributes
@@ -555,6 +558,10 @@ public class LinkHelper {
         // OpenStack volume providers:
         map = new ParentToCollectionMap(OpenStackVolumeProviderResource.class, OpenStackVolumeProvidersResource.class);
         TYPES.put(OpenStackVolumeProvider.class, map);
+
+        map = new ParentToCollectionMap(OpenStackVolumeTypeResource.class, OpenStackVolumeTypesResource.class);
+        map.add(OpenStackVolumeTypeResource.class, OpenStackVolumeTypesResource.class, OpenStackVolumeProvider.class);
+        TYPES.put(OpenStackVolumeType.class, map);
 
         // OpenStack network providers:
         map = new ParentToCollectionMap(OpenStackNetworkProviderResource.class, OpenStackNetworkProvidersResource.class);

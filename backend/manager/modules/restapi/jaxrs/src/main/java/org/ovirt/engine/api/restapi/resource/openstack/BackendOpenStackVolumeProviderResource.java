@@ -18,6 +18,7 @@ package org.ovirt.engine.api.restapi.resource.openstack;
 
 import org.ovirt.engine.api.model.OpenStackVolumeProvider;
 import org.ovirt.engine.api.resource.openstack.OpenStackVolumeProviderResource;
+import org.ovirt.engine.api.resource.openstack.OpenStackVolumeTypesResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendExternalProviderResource;
 import org.ovirt.engine.core.common.businessentities.Provider;
 
@@ -32,6 +33,11 @@ public class BackendOpenStackVolumeProviderResource
     public BackendOpenStackVolumeProviderResource(String id, BackendOpenStackVolumeProvidersResource parent) {
         super(id, OpenStackVolumeProvider.class, SUB_COLLECTIONS);
         this.parent = parent;
+    }
+
+    @Override
+    public OpenStackVolumeTypesResource getOpenStackVolumeTypes() {
+        return inject(new BackendOpenStackVolumeTypesResource(id));
     }
 
     @Override

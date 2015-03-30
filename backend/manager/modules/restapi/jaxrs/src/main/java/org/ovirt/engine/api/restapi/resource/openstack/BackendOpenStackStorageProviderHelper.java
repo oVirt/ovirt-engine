@@ -25,9 +25,9 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * A set of utility functions for dealing with OpenStack image providers.
+ * A set of utility functions for dealing with OpenStack storage (image/volume) providers.
  */
-public class BackendOpenStackImageProviderHelper {
+public class BackendOpenStackStorageProviderHelper {
     /**
      * Finds the identifier of the storage domain corresponding to the given provider.
      *

@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2015 Red Hat, Inc.
+* Copyright (c) 2014 Red Hat, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -16,15 +16,20 @@
 
 package org.ovirt.engine.api.resource.openstack;
 
-import org.ovirt.engine.api.model.OpenStackVolumeProvider;
+import org.ovirt.engine.api.model.OpenStackVolumeTypes;
 import org.ovirt.engine.api.resource.ApiMediaType;
-import org.ovirt.engine.api.resource.ExternalProviderResource;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
+@Path("volumes")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-public interface OpenStackVolumeProviderResource extends ExternalProviderResource<OpenStackVolumeProvider> {
-    @Path("volumetypes")
-    public OpenStackVolumeTypesResource getOpenStackVolumeTypes();
+public interface OpenStackVolumeTypesResource {
+    @GET
+    public OpenStackVolumeTypes list();
+
+    @Path("{id}")
+    OpenStackVolumeTypeResource getOpenStackVolumeType(@PathParam("id") String id);
 }

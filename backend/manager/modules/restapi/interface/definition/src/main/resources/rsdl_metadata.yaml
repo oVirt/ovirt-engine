@@ -6168,6 +6168,21 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
+- name: /openstackvolumeproviders/{openstackvolumeprovider:id}/volumetypes|rel=get
+  description: get the list of volume types of the OpenStack volume provider
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+- name: /openstackvolumeproviders/{openstackvolumeprovider:id}/volumetypes/{volumetype:id}|rel=get
+  description: get the details of the specified volume type of the OpenStack volume provider
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
 
 - name: /openstacknetworkproviders|rel=get
   description: get the list of all OpenStack network providers in the system

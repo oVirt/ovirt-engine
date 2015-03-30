@@ -44,7 +44,7 @@ public class BackendOpenStackImagesResource
 
     @Override
     public OpenStackImages list() {
-        Guid storageDomainId = BackendOpenStackImageProviderHelper.getStorageDomainId(this, providerId);
+        Guid storageDomainId = BackendOpenStackStorageProviderHelper.getStorageDomainId(this, providerId);
         GetImagesListParameters parameters = new GetImagesListParameters(storageDomainId, ImageFileType.All);
         return mapCollection(getBackendCollection(VdcQueryType.GetImagesList, parameters));
     }

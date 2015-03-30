@@ -44,7 +44,7 @@ public class BackendOpenStackImageResource
 
     @Override
     public OpenStackImage get() {
-        Guid storageDomainId = BackendOpenStackImageProviderHelper.getStorageDomainId(this, providerId);
+        Guid storageDomainId = BackendOpenStackStorageProviderHelper.getStorageDomainId(this, providerId);
         return performGet(VdcQueryType.GetImageById, new GetImageByIdParameters(storageDomainId, id));
     }
 
@@ -64,7 +64,7 @@ public class BackendOpenStackImageResource
     @Override
     public Response doImport(Action action) {
         validateParameters(action, "storageDomain.id|name");
-        Guid storageDomainId = BackendOpenStackImageProviderHelper.getStorageDomainId(this, providerId);
+        Guid storageDomainId = BackendOpenStackStorageProviderHelper.getStorageDomainId(this, providerId);
         ImportRepoImageParameters parameters = new ImportRepoImageParameters();
         parameters.setSourceRepoImageId(id);
         parameters.setSourceStorageDomainId(storageDomainId);
