@@ -62,7 +62,14 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
     private Map<Guid, List<DiskImage>> storageToDisksMap;
     private Map<Guid, StorageDomain> destStorages = new HashMap<>();
+    /**
+     * This flag is set to true if all of the VMs were added successfully, false otherwise.
+     */
     private boolean addVmsSucceeded = true;
+    /**
+     * This flag is set to true if any of the VMs was added successfully, false otherwise.
+     */
+    private boolean vmsAdded = false;
     private NameForVmInPoolGenerator nameForVmInPoolGenerator;
 
     /**
@@ -139,6 +146,8 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         getReturnValue().setCanDoAction(isAddVmsSucceded());
         setSucceeded(isAddVmsSucceded());
         VmTemplateHandler.unlockVmTemplate(getParameters().getVmStaticData().getVmtGuid());
+        if (!isVmsAdded())
+            onNoVmsAdded(poolId);
         getCompensationContext().resetCompensation();
     }
 
@@ -164,6 +173,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             }
             else { // Succeed on that , reset subsequentFailedAttempts.
                 subsequentFailedAttempts = 0;
+                vmsAdded = true;
             }
             // if subsequent attempts failure exceeds configuration value , abort the loop.
             if (subsequentFailedAttempts == vmPoolMaxSubsequentFailures) {
@@ -172,6 +182,9 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                 break;
             }
         }
+    }
+
+    protected void onNoVmsAdded(Guid poolId) {
     }
 
     private String generateUniqueVmName() {
@@ -422,6 +435,10 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     protected boolean isAddVmsSucceded() {
         return addVmsSucceeded;
+    }
+
+    public boolean isVmsAdded() {
+        return vmsAdded;
     }
 
     protected boolean setAndValidateDiskProfiles() {
