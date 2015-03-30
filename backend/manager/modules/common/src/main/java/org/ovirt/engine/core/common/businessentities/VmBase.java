@@ -327,7 +327,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     private QuotaEnforcementTypeEnum quotaEnforcementType;
 
     @CopyOnNewVersion
-    @EditableField
+    @EditableOnVmStatusField
     @EditableOnTemplate
     @OvfExportOnlyField(valueToIgnore = "MIGRATABLE", exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
     private MigrationSupport migrationSupport;
