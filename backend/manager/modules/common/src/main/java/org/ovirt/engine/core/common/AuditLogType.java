@@ -575,8 +575,6 @@ public enum AuditLogType {
             AuditLogTimeInterval.MINUTE.getValue() * 15),
     VM_MEMORY_NOT_IN_RECOMMENDED_RANGE(178, AuditLogSeverity.WARNING),
 
-    USER_ADD_VM_POOL(300),
-    USER_ADD_VM_POOL_FAILED(301, AuditLogSeverity.ERROR),
     USER_ADD_VM_POOL_WITH_VMS(302),
     USER_ADD_VM_POOL_WITH_VMS_FAILED(303, AuditLogSeverity.ERROR),
     USER_ADD_VM_POOL_WITH_VMS_ADD_VDS_FAILED(320, AuditLogSeverity.ERROR),

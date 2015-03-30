@@ -56,7 +56,7 @@ import org.ovirt.engine.core.utils.NameForVmInPoolGenerator;
  * already exists - the number is increased. For example if vm_8 exists - vm_9 will be created instead of it.
  */
 
-public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> extends AddVmPoolCommand<T>
+public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> extends VmPoolCommandBase<T>
         implements QuotaStorageDependent {
 
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
@@ -75,6 +75,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     public CommonVmPoolWithVmsCommand(T parameters) {
         super(parameters);
+        setVmPool(parameters.getVmPool());
         setVdsGroupId(parameters.getVmPool().getVdsGroupId());
     }
 
