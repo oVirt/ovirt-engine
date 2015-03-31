@@ -7,17 +7,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.action.RemoveAllVmCinderDisksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
@@ -25,6 +30,7 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -43,13 +49,17 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
     private List<DiskImage> imageTemplates;
     private final Map<Guid, List<DiskImage>> storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
 
-    public RemoveVmTemplateCommand(T parameters) {
-        super(parameters);
+    public RemoveVmTemplateCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         super.setVmTemplateId(parameters.getVmTemplateId());
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
         if (getVmTemplate() != null) {
             setStoragePoolId(getVmTemplate().getStoragePoolId());
         }
+    }
+
+    public RemoveVmTemplateCommand(T parameters) {
+        this(parameters, null);
     }
 
     public RemoveVmTemplateCommand(Guid vmTemplateId) {
@@ -192,16 +202,24 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
     @Override
     protected void executeCommand() {
+        final List<CinderDisk> cinderDisks =
+                ImagesHandler.filterDisksBasedOnCinder(DbFacade.getInstance()
+                        .getDiskDao()
+                        .getAllForVm(getVmTemplateId()));
         // Set VM to lock status immediately, for reducing race condition.
         VmTemplateHandler.lockVmTemplateInTransaction(getVmTemplateId(), getCompensationContext());
 
-        if (!imageTemplates.isEmpty()) {
+        if (!imageTemplates.isEmpty() || !  cinderDisks.isEmpty()) {
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
                 @Override
                 public Void runInTransaction() {
-                    if (removeVmTemplateImages()) {
+                    if (!imageTemplates.isEmpty() && removeVmTemplateImages()) {
                         VmHandler.removeVmInitFromDB(getVmTemplate());
+                        setSucceeded(true);
+                    }
+                    if (!cinderDisks.isEmpty()) {
+                        removeCinderDisks(cinderDisks);
                         setSucceeded(true);
                     }
                     return null;
@@ -210,6 +228,23 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         } else {
             // if for some reason template doesn't have images, remove it now and not in end action
             HandleEndAction();
+        }
+    }
+
+    /**
+     * The following method performs a removing of all cinder disks from vm. These is only DB operation
+     */
+    private void removeCinderDisks(List<CinderDisk> cinderDisks) {
+        RemoveAllVmCinderDisksParameters removeParam = new RemoveAllVmCinderDisksParameters(getVmTemplateId(), cinderDisks);
+        removeParam.setParentHasTasks(!getReturnValue().getVdsmTaskIdList().isEmpty());
+        Future<VdcReturnValueBase> future =
+                CommandCoordinatorUtil.executeAsyncCommand(VdcActionType.RemoveAllVmCinderDisks,
+                        withRootCommandInfo(removeParam, getActionType()),
+                        cloneContextAndDetachFromParent());
+        try {
+            future.get().getActionReturnValue();
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Exception", e);
         }
     }
 
