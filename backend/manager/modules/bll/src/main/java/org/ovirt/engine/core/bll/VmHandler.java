@@ -53,6 +53,7 @@ import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.DiskInterface;
@@ -405,6 +406,8 @@ public class VmHandler {
      */
     public static void filterImageDisksForVM(VM vm) {
         List<DiskImage> filteredDisks = ImagesHandler.filterImageDisks(vm.getDiskMap().values(), false, false, true);
+        List<CinderDisk> filteredCinderDisks = ImagesHandler.filterDisksBasedOnCinder(vm.getDiskMap().values());
+        filteredDisks.addAll(filteredCinderDisks);
         Collection<? extends Disk> vmDisksToRemove = CollectionUtils.subtract(vm.getDiskMap().values(), filteredDisks);
         vm.clearDisks();
         updateDisksForVm(vm, filteredDisks);

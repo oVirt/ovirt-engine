@@ -58,6 +58,9 @@ public class StorageDomainValidator {
     }
 
     public ValidationResult isDomainWithinThresholds() {
+        if (storageDomain.getStorageType().isCinderDomain()) {
+            return ValidationResult.VALID;
+        }
         StorageDomainDynamic dynamic = storageDomain.getStorageDynamicData();
         if (dynamic != null
                 && dynamic.getAvailableDiskSize() != null

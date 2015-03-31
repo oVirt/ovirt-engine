@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
@@ -27,6 +29,7 @@ import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
+import org.ovirt.engine.core.bll.validator.storage.CinderDisksValidator;
 import org.ovirt.engine.core.bll.validator.storage.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StoragePoolValidator;
@@ -34,6 +37,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
+import org.ovirt.engine.core.common.action.CloneCinderDisksParameters;
 import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -59,7 +63,9 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.storage.CinderDisk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
+import org.ovirt.engine.core.common.businessentities.storage.DiskStorageType;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -94,6 +100,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     private static Map<Guid, String> updateVmsJobIdMap = new ConcurrentHashMap<Guid, String>();
 
     private VmTemplate cachedBaseTemplate;
+    private Guid vmSnapshotId;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -220,6 +227,12 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         return createParams;
     }
 
+    private CloneCinderDisksParameters buildCinderChildCommandParameters(List<CinderDisk> cinderDisks, Guid vmSnapshotId) {
+        CloneCinderDisksParameters createParams = new CloneCinderDisksParameters(cinderDisks, vmSnapshotId, diskInfoDestinationMap);
+        createParams.setParentHasTasks(!getReturnValue().getVdsmTaskIdList().isEmpty());
+        return withRootCommandInfo(createParams, getActionType());
+    }
+
     @Override
     protected void executeCommand() {
         // get vm status from db to check its really down before locking
@@ -274,6 +287,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             public Void runInTransaction() {
                 addPermission();
                 addVmTemplateImages(srcDeviceIdToTargetDeviceIdMapping);
+                List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(getVm().getDiskMap().values());
+                if (!cinderDisks.isEmpty() && !addVmTemplateCinderDisks(cinderDisks, srcDeviceIdToTargetDeviceIdMapping)) {
+                    setSucceeded(false);
+                    return null;
+                }
                 addVmInterfaces(srcDeviceIdToTargetDeviceIdMapping);
                 Set<GraphicsType> graphicsToSkip = getParameters().getGraphicsDevices().keySet();
                 if (isVmInDb) {
@@ -314,7 +332,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         // means that there are no asynchronous tasks to execute and that we can
         // end the command synchronously
-        pendingAsyncTasks = !getReturnValue().getVdsmTaskIdList().isEmpty();
+        pendingAsyncTasks = !getReturnValue().getVdsmTaskIdList().isEmpty() ||
+                !CommandCoordinatorUtil.getChildCommandIds(getCommandId()).isEmpty();
         if (!pendingAsyncTasks) {
             endSuccessfullySynchronous();
         }
@@ -468,7 +487,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (diskInfoDestinationMap != null && !diskInfoDestinationMap.isEmpty()) {
             Map<DiskImage, Guid> map = new HashMap<>();
             for (DiskImage diskImage : diskInfoDestinationMap.values()) {
-                map.put(diskImage, diskImage.getStorageIds().get(0));
+                if (diskImage.getDiskStorageType() == DiskStorageType.IMAGE) {
+                    map.put(diskImage, diskImage.getStorageIds().get(0));
+                }
             }
             return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
                     getStoragePool().getCompatibilityVersion(), getCurrentUser()));
@@ -498,7 +519,14 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 return false;
             }
 
+            List<CinderDisk> cinderDisks = ImagesHandler.filterDisksBasedOnCinder(mImages);
+            CinderDisksValidator cinderDisksValidator = new CinderDisksValidator(cinderDisks);
+            if (!validate(cinderDisksValidator.validateCinderDiskLimits())) {
+                return false;
+            }
+
             List<DiskImage> diskImagesToCheck = ImagesHandler.filterImageDisks(mImages, true, false, true);
+            diskImagesToCheck.addAll(cinderDisks);
             DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskImagesToCheck);
             if (!validate(diskImagesValidator.diskImagesNotIllegal()) ||
                     !validate(diskImagesValidator.diskImagesNotLocked())) {
@@ -677,8 +705,32 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
     }
 
+    protected boolean addVmTemplateCinderDisks(List<CinderDisk> cinderDisks, Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {
+        // Create Cinder disk templates
+        Future<VdcReturnValueBase> future = CommandCoordinatorUtil.executeAsyncCommand(
+                VdcActionType.CloneCinderDisks,
+                buildCinderChildCommandParameters(cinderDisks, getVmSnapshotId()),
+                cloneContextAndDetachFromParent());
+        try {
+            VdcReturnValueBase vdcReturnValueBase = future.get();
+            if (vdcReturnValueBase.getSucceeded()) {
+                Map<Guid, Guid> diskImageMap = vdcReturnValueBase.getActionReturnValue();
+                srcDeviceIdToTargetDeviceIdMapping.putAll(diskImageMap);
+            } else {
+                getReturnValue().setFault(vdcReturnValueBase.getFault());
+                log.error("Error cloning Cinder disks for template");
+                return false;
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            log.error("Error cloning Cinder disks for template", e);
+            return false;
+        }
+        return true;
+    }
+
     protected void addVmTemplateImages(Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {
-        for (DiskImage diskImage : mImages) {
+        List<DiskImage> diskImages = ImagesHandler.filterImageDisks(mImages, true, false, true);
+        for (DiskImage diskImage : diskImages) {
             // The return value of this action is the 'copyImage' task GUID:
             VdcReturnValueBase retValue = Backend.getInstance().runInternalAction(
                     VdcActionType.CreateImageTemplate,
@@ -697,7 +749,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
 
     private Guid getVmIdFromImageParameters(){
-        return ((CreateImageTemplateParameters)getParameters().getImagesParameters().get(0)).getVmId();
+        return getParameters().getMasterVm().getId();
     }
 
     @Override
@@ -950,5 +1002,12 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
         return validate(CpuProfileHelper.setAndValidateCpuProfile(getParameters().getMasterVm(),
                 getVdsGroup().getCompatibilityVersion()));
+    }
+
+    private Guid getVmSnapshotId() {
+        if (vmSnapshotId == null) {
+            vmSnapshotId = Guid.newGuid();
+        }
+        return vmSnapshotId;
     }
 }
