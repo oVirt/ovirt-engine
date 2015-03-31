@@ -44,6 +44,6 @@ public class SetupNetworksParametersTest {
 
         params.setConectivityTimeout(-1);
 
-        assertTrue(validator.validate(params).size() == 1);
+        assertTrue(validator.validate(params).size() == 2);
     }
 }
